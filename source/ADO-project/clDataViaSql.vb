@@ -1,6 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Public Class clDataViaSql
-    Private myds As DataSet = New DataSet
+    Private mDataSet As DataSet = New DataSet
     Private mydtStud As DataTable = New DataTable
     Private mydtNiveau As DataTable = New DataTable
     Private mydtDoetSport As DataTable = New DataTable
@@ -49,46 +49,53 @@ Public Class clDataViaSql
 
 
     Public Sub New()
-        m_constring = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
+        m_constring = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
     End Sub
 
     Public Function funConsql() As Boolean
-        Dim objcon As New SqlConnection(m_constring)
-        Dim value As DataRelationCollection
-        value = myds.Relations
-        MessageBox.Show(value.Count)
+
+        Dim SQLConnection As New SqlConnection(m_constring)
+        'Dim value As DataRelationCollection
+        'value = mDataSet.Relations
+        'MessageBox.Show(value.Count)
 
         Try
-            objcon.Open()
+            SQLConnection.Open()
         Catch ex As SqlException
             MessageBox.Show("foute connectie")
-            objcon.Dispose()
+            SQLConnection.Dispose()
 
             Return False
         End Try
 
-        Dim sqlqstr As String = "STORED_PROCEDRURE_datainlezen"
-        Dim myadap As New SqlDataAdapter(sqlqstr, objcon)
-        myadap.Fill(myds, "studentsport")    'selemp is vrij te kiezen slaagt op employees
-        mydtStud = myds.Tables("tblStudent")
-        mydtSport = myds.Tables("tblSport")
-        mydtDoetSport = myds.Tables("tblDoetSport")
-        mydtNiveau = myds.Tables("tblNiveau")
-        mydataviewStud = mydtStud.DefaultView
-        mydataviewSport = mydtSport.DefaultView
-        mydataviewNiveau = mydtNiveau.DefaultView
-        mydataviewDoetSport = mydtDoetSport.DefaultView
+        Dim SQLString As String = "STORED_PROCEDURE_tblstudentinlezen"
 
-        'mydataviewStud.Sort = "StudentNaam"
+        Dim AdaptSQLData As New SqlDataAdapter(SQLString, SQLConnection)
+
+        AdaptSQLData.Fill(mDataSet, "tblStudent")    'selemp is vrij te kiezen slaagt op employees
+
+        mydtStud = mDataSet.Tables("tblStudent")
+
+        mydataviewStud = mydtStud.DefaultView
+        'mydtSport = myds.Tables("tblSport")
+        'mydtDoetSport = myds.Tables("tblDoetSport")
+        'mydtNiveau = myds.Tables("tblNiveau")
+        'mydataviewStud = mydtStud.DefaultView
+        'mydataviewSport = mydtSport.DefaultView
+        'mydataviewNiveau = mydtNiveau.DefaultView
+        'mydataviewDoetSport = mydtDoetSport.DefaultView
+
+        mydataviewStud.Sort = "StudentNaam"
         'mydataviewSport.Sort = "SportNaam"
         'mydataviewNiveau.Sort = "Niveau"
         'mydataviewDoetSport.Sort = "DoetSportID"
 
-        myadap.Dispose()
-        objcon.Close()
-        objcon.Dispose()
+        AdaptSQLData.Dispose()
+        SQLConnection.Close()
+        SQLConnection.Dispose()
 
         Return True
+
 
     End Function
     Public Function studentdetails(ByVal i_id As Int16) As DataRowView
@@ -96,7 +103,7 @@ Public Class clDataViaSql
         Dim anyrow As DataRowView
         dataview = New DataView
         With dataview
-            .Table = myds.Tables("tblStudent")
+            .Table = mDataSet.Tables("tblStudent")
             .AllowDelete = True
             .AllowEdit = True
             .AllowNew = True

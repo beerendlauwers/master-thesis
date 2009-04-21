@@ -1,23 +1,27 @@
 Public Class BeheerStudent
+
     Private mycon As clDataViaSql
+
     Public Sub New()
 
         ' This call is required by the Windows Form Designer.
         InitializeComponent()
-
         ' Add any initialization after the InitializeComponent() call.
         mycon = New clDataViaSql
     End Sub
     Private Sub frmViaSql_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
         Dim blncongelukt As Boolean
         'Call conenab(False)
-        'Call MenuEnab(1)
+        Call MenuEnab(1)
         blncongelukt = mycon.funConsql()
 
+        If (blncongelukt) Then
+            Me.cboNaamData.DataSource = mycon.p_datavStud
+            Me.cboNaamData.DisplayMember = "StudentNaam"
+            Me.cboNaamData.ValueMember = "StudentID"
+        End If
 
-        Me.cboNaamData.DataSource = mycon.p_datavStud
-        Me.cboNaamData.DisplayMember = "StudentNaam"
-        Me.cboNaamData.ValueMember = "StudentID"
 
     End Sub
     Private Sub DetailToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DetailToolStripMenuItem.Click
@@ -48,7 +52,7 @@ Public Class BeheerStudent
     End Sub
 
     Private Sub MenuEnab(ByVal i_situatie As String)
-        Select i_situatie
+        Select Case i_situatie
             Case 1 'frm load
                 Me.EditToolStripMenuItem.Enabled = False
                 Me.DetailToolStripMenuItem.Enabled = True
