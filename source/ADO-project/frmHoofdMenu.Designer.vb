@@ -61,7 +61,7 @@ Partial Class frmHoofdMenu
         'DeelnameToolStripMenuItem
         '
         Me.DeelnameToolStripMenuItem.Name = "DeelnameToolStripMenuItem"
-        Me.DeelnameToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
+        Me.DeelnameToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.DeelnameToolStripMenuItem.Text = "deelname"
         '
         'frmHoofdMenu
