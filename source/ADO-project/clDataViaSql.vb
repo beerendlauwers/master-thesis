@@ -1,49 +1,49 @@
 ﻿Imports System.Data.SqlClient
 Public Class clDataViaSql
     Private mDataSet As DataSet = New DataSet
-    Private mydtStud As DataTable = New DataTable
-    Private mydtNiveau As DataTable = New DataTable
-    Private mydtDoetSport As DataTable = New DataTable
-    Private mydtSport As DataTable = New DataTable
-    Private mydataviewStud As DataView = New DataView
-    Private mydataviewSport As DataView = New DataView
-    Private mydataviewNiveau As DataView = New DataView
-    Private mydataviewDoetSport As DataView = New DataView
+    Private mDT_Student As DataTable = New DataTable
+    Private mDT_Niveau As DataTable = New DataTable
+    Private mDT_DoetSport As DataTable = New DataTable
+    Private mDT_Sport As DataTable = New DataTable
+    Private mDV_Student As DataView = New DataView
+    Private mDV_Sport As DataView = New DataView
+    Private mDV_Niveau As DataView = New DataView
+    Private mDV_DoetSport As DataView = New DataView
     Private m_constring As String
 
     Public Property p_datavStud() As DataView
         Get
-            Return mydataviewStud
+            Return mDV_Student
         End Get
         Set(ByVal value As DataView)
-            mydataviewStud = value
+            mDV_Student = value
         End Set
     End Property
 
     Public Property p_datavSport() As DataView
         Get
-            Return mydataviewSport
+            Return mDV_Sport
         End Get
         Set(ByVal value As DataView)
-            mydataviewSport = value
+            mDV_Sport = value
         End Set
     End Property
 
     Public Property p_datavDoetSport() As DataView
         Get
-            Return mydataviewDoetSport
+            Return mDV_DoetSport
         End Get
         Set(ByVal value As DataView)
-            mydataviewDoetSport = value
+            mDV_DoetSport = value
         End Set
     End Property
 
     Public Property p_datavNiveau() As DataView
         Get
-            Return mydataviewNiveau
+            Return mDV_Niveau
         End Get
         Set(ByVal value As DataView)
-            mydataviewNiveau = value
+            mDV_Niveau = value
         End Set
     End Property
 
@@ -55,47 +55,80 @@ Public Class clDataViaSql
     Public Function funConsql() As Boolean
 
         Dim SQLConnection As New SqlConnection(m_constring)
-        'Dim value As DataRelationCollection
-        'value = mDataSet.Relations
-        'MessageBox.Show(value.Count)
 
         Try
             SQLConnection.Open()
         Catch ex As SqlException
-            MessageBox.Show("foute connectie")
+            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
             SQLConnection.Dispose()
-
             Return False
         End Try
 
-        Dim SQLString As String = "STORED_PROCEDURE_tblstudentinlezen"
+        Dim SQLstudent As String = "STORED_PROCEDURE_tblstudentinlezen"
+        Dim SQLsport As String = "STORED_PROCEDURE_tblsportinlezen"
+        Dim SQLniveau As String = "STORED_PROCEDURE_tblniveauinlezen"
+        Dim SQLdoetsport As String = "STORED_PROCEDURE_tbldoetsportinlezen"
 
-        Dim AdaptSQLData As New SqlDataAdapter(SQLString, SQLConnection)
 
-        AdaptSQLData.Fill(mDataSet, "tblStudent")    'selemp is vrij te kiezen slaagt op employees
+        Dim studentAdapter As SqlDataAdapter = New SqlDataAdapter()
+        Dim sportAdapter As SqlDataAdapter = New SqlDataAdapter()
+        Dim niveauAdapter As SqlDataAdapter = New SqlDataAdapter()
+        Dim doetsportAdapter As SqlDataAdapter = New SqlDataAdapter()
 
-        mydtStud = mDataSet.Tables("tblStudent")
+        studentAdapter.TableMappings.Add("Table", "tblStudent")
+        sportAdapter.TableMappings.Add("Table", "tblSport")
+        niveauAdapter.TableMappings.Add("Table", "tblNiveau")
+        doetsportAdapter.TableMappings.Add("Table", "tblDoetSport")
 
-        mydataviewStud = mydtStud.DefaultView
-        'mydtSport = myds.Tables("tblSport")
-        'mydtDoetSport = myds.Tables("tblDoetSport")
-        'mydtNiveau = myds.Tables("tblNiveau")
-        'mydataviewStud = mydtStud.DefaultView
-        'mydataviewSport = mydtSport.DefaultView
-        'mydataviewNiveau = mydtNiveau.DefaultView
-        'mydataviewDoetSport = mydtDoetSport.DefaultView
+        Dim studentCmd As SqlCommand = New SqlCommand(SQLstudent, SQLConnection)
+        Dim sportCmd As SqlCommand = New SqlCommand(SQLsport, SQLConnection)
+        Dim niveauCmd As SqlCommand = New SqlCommand(SQLniveau, SQLConnection)
+        Dim doetsportCmd As SqlCommand = New SqlCommand(SQLdoetsport, SQLConnection)
 
-        mydataviewStud.Sort = "StudentNaam"
-        'mydataviewSport.Sort = "SportNaam"
-        'mydataviewNiveau.Sort = "Niveau"
-        'mydataviewDoetSport.Sort = "DoetSportID"
+        studentCmd.CommandType = CommandType.StoredProcedure
+        sportCmd.CommandType = CommandType.StoredProcedure
+        niveauCmd.CommandType = CommandType.StoredProcedure
+        doetsportCmd.CommandType = CommandType.StoredProcedure
 
-        AdaptSQLData.Dispose()
+        studentAdapter.SelectCommand = studentCmd
+        sportAdapter.SelectCommand = sportCmd
+        niveauAdapter.SelectCommand = niveauCmd
+        doetsportAdapter.SelectCommand = doetsportCmd
+
+        studentAdapter.Fill(mDataSet, "tblStudent")
+        sportAdapter.Fill(mDataSet, "tblSport")
+        niveauAdapter.Fill(mDataSet, "tblNiveau")
+        doetsportAdapter.Fill(mDataSet, "tblDoetSport")
+
+        mDT_Student = mDataSet.Tables("tblStudent")
+        mDT_Sport = mDataSet.Tables("tblSport")
+        mDT_Niveau = mDataSet.Tables("tblNiveau")
+        mDT_DoetSport = mDataSet.Tables("tblDoetSport")
+
+        mDV_Student = mDT_Student.DefaultView
+        mDV_Sport = mDT_Sport.DefaultView
+        mDV_Niveau = mDT_Niveau.DefaultView
+        mDV_DoetSport = mDT_DoetSport.DefaultView
+
+        mDV_Student.Sort = "StudentNaam"
+        mDV_Sport.Sort = "SportNaam"
+        mDV_Niveau.Sort = "Niveau"
+        mDV_DoetSport.Sort = "DoetSportID"
+
+        studentAdapter.Dispose()
+        sportAdapter.Dispose()
+        niveauAdapter.Dispose()
+        doetsportAdapter.Dispose()
+
+        studentCmd.Dispose()
+        sportCmd.Dispose()
+        niveauCmd.Dispose()
+        doetsportCmd.Dispose()
+
         SQLConnection.Close()
         SQLConnection.Dispose()
 
         Return True
-
 
     End Function
     Public Function studentdetails(ByVal i_id As Int16) As DataRowView

@@ -11,12 +11,12 @@ Public Class BeheerStudent
     End Sub
     Private Sub frmViaSql_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        Dim blncongelukt As Boolean
+        Dim BlnConnectieGelukt As Boolean
         'Call conenab(False)
         Call MenuEnab(1)
-        blncongelukt = mycon.funConsql()
+        BlnConnectieGelukt = mycon.funConsql()
 
-        If (blncongelukt) Then
+        If (BlnConnectieGelukt) Then
             Me.cboNaamData.DataSource = mycon.p_datavStud
             Me.cboNaamData.DisplayMember = "StudentNaam"
             Me.cboNaamData.ValueMember = "StudentID"
