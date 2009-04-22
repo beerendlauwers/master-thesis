@@ -507,4 +507,108 @@ Public Class clDataViaSql
 
         Return bGelukt
     End Function
+
+    Public Function f_NieuwNiveau(ByVal strNaam As String) As Int16
+        Dim iNewID As Int16
+
+        ' SQL-connectie openen
+        Dim MyDBconnection As SqlConnection = New SqlConnection(mConnectionString)
+
+        ' Een object van de SqlCommand-klasse maken
+        Dim AdoCommand As SqlCommand = New SqlCommand("STORED_PROCEDURE_nieuwniveau", MyDBconnection)
+        ' Aan het object vertellen welk type commando het is
+        AdoCommand.CommandType = CommandType.StoredProcedure
+
+        ' De parameters meegeven
+        AdoCommand.Parameters.Add(New SqlParameter("@tempNiveau", SqlDbType.NVarChar, 50)).Value = strNaam
+        AdoCommand.Parameters("@tempNiveau").Direction = ParameterDirection.Input
+
+        'ID meegeven
+        AdoCommand.Parameters.Add(New SqlParameter("@tempNiveauID", SqlDbType.Int, iNewID))
+        'Welk type input is dit (vanuit het zicht van de database) ?
+        AdoCommand.Parameters("@tempNiveauID").Direction = ParameterDirection.Output
+
+        'DB-connectie openen
+        MyDBconnection.Open()
+        'ADO-Command uitvoeren
+        AdoCommand.ExecuteNonQuery()
+
+        'Het ADoCommand geeft een array door (en terug), en we willen
+        'de ID van de nieuwe employee te pakken krijgen
+        iNewID = AdoCommand.Parameters(1).Value
+
+        'DB-connectie sluiten
+        MyDBconnection.Close()
+
+
+        'We hebben alles in de echte database gestoken,
+        'nu moeten we ook de nagebootste database in het
+        'RAM-geheugen updaten.
+
+        'DataRow klaarmaken en invullen met data.
+        Dim temp_datarow As DataRow = mDT_Niveau.NewRow
+        temp_datarow("Niveau") = strNaam
+        temp_datarow("NiveauID") = iNewID
+        'DataTable updaten.
+        mDT_Niveau.Rows.Add(temp_datarow)
+
+        'Gebruikt geheugen vrijmaken.
+        AdoCommand.Dispose()
+        MyDBconnection.Dispose()
+        temp_datarow = Nothing
+
+        Return iNewID
+    End Function
+
+    Public Function f_NieuweDeelname(ByVal ID_DB_StudentID As Int16, ByVal ID_DB_SportID As Int16, ByVal ID_DB_NiveauID As Int16)
+        Dim iNewID As Int16
+
+        ' SQL-connectie openen
+        Dim MyDBconnection As SqlConnection = New SqlConnection(mConnectionString)
+
+        ' Een object van de SqlCommand-klasse maken
+        Dim AdoCommand As SqlCommand = New SqlCommand("STORED_PROCEDURE_nieuwedeelname", MyDBconnection)
+        ' Aan het object vertellen welk type commando het is
+        AdoCommand.CommandType = CommandType.StoredProcedure
+
+        ' De parameters meegeven
+        AdoCommand.Parameters.Add(New SqlParameter("@tempStudentID", SqlDbType.Int, 4)).Value = ID_DB_StudentID
+        AdoCommand.Parameters("@tempStudentID").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempSportID", SqlDbType.Int, 4)).Value = ID_DB_SportID
+        AdoCommand.Parameters("@tempSportID").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempNiveauID", SqlDbType.Int, 4)).Value = ID_DB_NiveauID
+        AdoCommand.Parameters("@tempNiveauID").Direction = ParameterDirection.Input
+
+        'DB-connectie openen
+        MyDBconnection.Open()
+        'ADO-Command uitvoeren
+        AdoCommand.ExecuteNonQuery()
+
+        'Het ADoCommand geeft een array door (en terug), en we willen
+        'de ID van de nieuwe employee te pakken krijgen
+        'iNewID = AdoCommand.Parameters(1).Value
+
+        'DB-connectie sluiten
+        MyDBconnection.Close()
+
+
+        'We hebben alles in de echte database gestoken,
+        'nu moeten we ook de nagebootste database in het
+        'RAM-geheugen updaten.
+
+        'DataRow klaarmaken en invullen met data.
+        Dim temp_datarow As DataRow = mDT_DoetSport.NewRow
+        temp_datarow("SportID") = ID_DB_SportID
+        temp_datarow("LidID") = ID_DB_StudentID
+        temp_datarow("NiveauID") = ID_DB_NiveauID
+        'DataTable updaten.
+        mDT_DoetSport.Rows.Add(temp_datarow)
+
+        'Gebruikt geheugen vrijmaken.
+        AdoCommand.Dispose()
+        MyDBconnection.Dispose()
+        temp_datarow = Nothing
+
+        Return iNewID
+    End Function
 End Class

@@ -1,17 +1,18 @@
 Public Class Deelname
-    Private mBlnNewDeelname As Boolean = False
+    Private mBlnNewNiveau As Boolean = False
 
     Private Sub Deelname_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         'Alle textvelden disablen
-        'Call ConEnab(False)
+        Call ConEnab(False)
         Call MenuEnab(1)
+        Me.btnOpslaan.Enabled = False
 
         If (frmHoofdMenu.BlnConnectieGelukt) Then
             'De tblStudent ophalen
             Me.cboDeelnameStudent.DataSource = frmHoofdMenu.myConnection.p_datavStud
             Me.cboDeelnameStudent.DisplayMember = "StudentNaam"
-            Me.cboDeelnameSport.ValueMember = "StudentID"
+            Me.cboDeelnameStudent.ValueMember = "StudentID"
             'De tblSport ophalen
             Me.cboDeelnameSport.DataSource = frmHoofdMenu.myConnection.p_datavSport
             Me.cboDeelnameSport.DisplayMember = "SportNaam"
@@ -26,37 +27,13 @@ Public Class Deelname
     Private Sub MenuEnab(ByVal i_situatie As String)
         Select Case i_situatie
             Case 1 'Form load
-                Me.EditToolStripMenuItem.Enabled = False
-                Me.DetailsToolStripMenuItem.Enabled = True
-                Me.SaveToolStripMenuItem.Enabled = False
-                Me.NewToolStripMenuItem.Enabled = True
-                Me.DeleteToolStripMenuItem.Enabled = False
-                Me.CancelToolStripMenuItem.Enabled = False
-                Me.ExitToolStripMenuItem.Enabled = True
-            Case 2 'Geklikt op New
-                Me.EditToolStripMenuItem.Enabled = False
-                Me.DetailsToolStripMenuItem.Enabled = False
+                Me.OverviewToolStripMenuItem.Enabled = True
                 Me.SaveToolStripMenuItem.Enabled = True
-                Me.NewToolStripMenuItem.Enabled = False
-                Me.DeleteToolStripMenuItem.Enabled = False
-                Me.CancelToolStripMenuItem.Enabled = True
-                Me.ExitToolStripMenuItem.Enabled = False
-            Case 3 'Geklikt op Detail
-                Me.EditToolStripMenuItem.Enabled = True
-                Me.DetailsToolStripMenuItem.Enabled = False
-                Me.SaveToolStripMenuItem.Enabled = False
-                Me.NewToolStripMenuItem.Enabled = False
-                Me.DeleteToolStripMenuItem.Enabled = True
-                Me.CancelToolStripMenuItem.Enabled = True
                 Me.ExitToolStripMenuItem.Enabled = True
-            Case 4 'Geklikt op Edit
-                Me.EditToolStripMenuItem.Enabled = False
-                Me.DetailsToolStripMenuItem.Enabled = False
-                Me.SaveToolStripMenuItem.Enabled = True
-                Me.NewToolStripMenuItem.Enabled = False
-                Me.DeleteToolStripMenuItem.Enabled = False
-                Me.CancelToolStripMenuItem.Enabled = True
-                Me.ExitToolStripMenuItem.Enabled = False
+            Case 2 '<Nieuw Niveau> is geselecteerd
+                Me.OverviewToolStripMenuItem.Enabled = True
+                Me.SaveToolStripMenuItem.Enabled = False
+                Me.ExitToolStripMenuItem.Enabled = True
         End Select
     End Sub
 
@@ -76,4 +53,58 @@ Public Class Deelname
         End If
         Return blntest
     End Function
+
+    Private Function CheckCombos() As Boolean
+        Dim blntest As Boolean = True
+        If (Me.cboDeelnameStudent.Text = String.Empty Or Me.cboDeelnameSport.Text = String.Empty Or Me.cboNiveau.Text = String.Empty) Then
+            Return blntest = False
+        End If
+        Return blntest
+    End Function
+
+    Private Sub cboNiveau_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboNiveau.SelectedIndexChanged
+        If Me.cboNiveau.Text = "< Nieuw Niveau >" Then
+            mBlnNewNiveau = True
+            Call ConEnab(True)
+            Call ConClear()
+            Call MenuEnab(2)
+        End If
+    End Sub
+
+    Private Sub cboNiveau_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboNiveau.TextChanged
+        Call ConEnab(False)
+        Call ConClear()
+        Call MenuEnab(1)
+    End Sub
+
+    Private Sub btnOpslaan_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnOpslaan.Click
+        If (CheckClear()) Then
+            If (mBlnNewNiveau) Then
+                'Als er een nieuwe sport wordt toegevoegd, voeren we deze functie uit:
+                Dim newID = frmHoofdMenu.myConnection.f_NieuwNiveau(Me.txtNiveau.Text)
+            End If
+            Call MenuEnab(1)
+            Call ConEnab(False)
+            Call ConClear()
+        Else
+            MsgBox("Er zijn één of meerdere velden niet ingevuld.")
+        End If
+    End Sub
+
+    Private Sub txtNiveau_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtNiveau.TextChanged
+        If (CheckClear()) Then
+            Me.btnOpslaan.Enabled = True
+        Else
+            Me.btnOpslaan.Enabled = False
+        End If
+    End Sub
+
+    Private Sub SaveToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveToolStripMenuItem.Click
+        If (CheckCombos()) Then
+            If Me.cboNiveau.Text = "< Nieuw Niveau >" Then
+                Exit Sub
+            End If
+            frmHoofdMenu.myConnection.f_NieuweDeelname(Me.cboDeelnameStudent.SelectedValue, Me.cboDeelnameSport.SelectedValue, Me.cboNiveau.SelectedValue)
+        End If
+    End Sub
 End Class

@@ -24,12 +24,8 @@ Partial Class Deelname
     Private Sub InitializeComponent()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
         Me.BeheerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.DetailsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.NewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.EditToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.OverviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.SaveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.DeleteToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.CancelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.cboDeelnameStudent = New System.Windows.Forms.ComboBox
         Me.lblDeelnameStudent = New System.Windows.Forms.Label
@@ -39,6 +35,7 @@ Partial Class Deelname
         Me.lblNiveau = New System.Windows.Forms.Label
         Me.cboNiveau = New System.Windows.Forms.ComboBox
         Me.lblNiveauCombo = New System.Windows.Forms.Label
+        Me.btnOpslaan = New System.Windows.Forms.Button
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -47,61 +44,38 @@ Partial Class Deelname
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(284, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(463, 24)
         Me.MenuStrip1.TabIndex = 0
         Me.MenuStrip1.Text = "MenuStrip1"
         '
         'BeheerToolStripMenuItem
         '
-        Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DetailsToolStripMenuItem, Me.NewToolStripMenuItem, Me.EditToolStripMenuItem, Me.SaveToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.CancelToolStripMenuItem, Me.ExitToolStripMenuItem})
+        Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OverviewToolStripMenuItem, Me.SaveToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.BeheerToolStripMenuItem.Name = "BeheerToolStripMenuItem"
-        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
+        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(53, 20)
         Me.BeheerToolStripMenuItem.Text = "Beheer"
         '
-        'DetailsToolStripMenuItem
+        'OverviewToolStripMenuItem
         '
-        Me.DetailsToolStripMenuItem.Name = "DetailsToolStripMenuItem"
-        Me.DetailsToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.DetailsToolStripMenuItem.Text = "Details"
-        '
-        'NewToolStripMenuItem
-        '
-        Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
-        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.NewToolStripMenuItem.Text = "New"
-        '
-        'EditToolStripMenuItem
-        '
-        Me.EditToolStripMenuItem.Name = "EditToolStripMenuItem"
-        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.EditToolStripMenuItem.Text = "Edit"
+        Me.OverviewToolStripMenuItem.Name = "OverviewToolStripMenuItem"
+        Me.OverviewToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OverviewToolStripMenuItem.Text = "Overview"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.SaveToolStripMenuItem.Text = "Save"
-        '
-        'DeleteToolStripMenuItem
-        '
-        Me.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem"
-        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.DeleteToolStripMenuItem.Text = "Delete"
-        '
-        'CancelToolStripMenuItem
-        '
-        Me.CancelToolStripMenuItem.Name = "CancelToolStripMenuItem"
-        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.CancelToolStripMenuItem.Text = "Cancel"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'cboDeelnameStudent
         '
+        Me.cboDeelnameStudent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboDeelnameStudent.FormattingEnabled = True
         Me.cboDeelnameStudent.Location = New System.Drawing.Point(151, 45)
         Me.cboDeelnameStudent.Name = "cboDeelnameStudent"
@@ -119,6 +93,7 @@ Partial Class Deelname
         '
         'cboDeelnameSport
         '
+        Me.cboDeelnameSport.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboDeelnameSport.FormattingEnabled = True
         Me.cboDeelnameSport.Location = New System.Drawing.Point(151, 91)
         Me.cboDeelnameSport.Name = "cboDeelnameSport"
@@ -152,6 +127,7 @@ Partial Class Deelname
         '
         'cboNiveau
         '
+        Me.cboNiveau.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboNiveau.FormattingEnabled = True
         Me.cboNiveau.Location = New System.Drawing.Point(151, 142)
         Me.cboNiveau.Name = "cboNiveau"
@@ -167,11 +143,21 @@ Partial Class Deelname
         Me.lblNiveauCombo.TabIndex = 8
         Me.lblNiveauCombo.Text = "Niveau"
         '
+        'btnOpslaan
+        '
+        Me.btnOpslaan.Location = New System.Drawing.Point(257, 210)
+        Me.btnOpslaan.Name = "btnOpslaan"
+        Me.btnOpslaan.Size = New System.Drawing.Size(57, 24)
+        Me.btnOpslaan.TabIndex = 9
+        Me.btnOpslaan.Text = "Opslaan"
+        Me.btnOpslaan.UseVisualStyleBackColor = True
+        '
         'Deelname
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 264)
+        Me.ClientSize = New System.Drawing.Size(463, 336)
+        Me.Controls.Add(Me.btnOpslaan)
         Me.Controls.Add(Me.lblNiveauCombo)
         Me.Controls.Add(Me.cboNiveau)
         Me.Controls.Add(Me.lblNiveau)
@@ -192,12 +178,8 @@ Partial Class Deelname
     End Sub
     Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
     Friend WithEvents BeheerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents DetailsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents NewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents EditToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents OverviewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SaveToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents DeleteToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents CancelToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ExitToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents cboDeelnameStudent As System.Windows.Forms.ComboBox
     Friend WithEvents lblDeelnameStudent As System.Windows.Forms.Label
@@ -207,4 +189,5 @@ Partial Class Deelname
     Friend WithEvents lblNiveau As System.Windows.Forms.Label
     Friend WithEvents cboNiveau As System.Windows.Forms.ComboBox
     Friend WithEvents lblNiveauCombo As System.Windows.Forms.Label
+    Friend WithEvents btnOpslaan As System.Windows.Forms.Button
 End Class
