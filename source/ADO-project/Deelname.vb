@@ -105,11 +105,16 @@ Public Class Deelname
                 Exit Sub
             End If
             frmHoofdMenu.myConnection.f_NieuweDeelname(Me.cboDeelnameStudent.SelectedValue, Me.cboDeelnameSport.SelectedValue, Me.cboNiveau.SelectedValue)
+            MessageBox.Show("Deelname opgeslagen.", "Deelname Opgeslagen")
         End If
     End Sub
 
     Private Sub OverviewToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OverviewToolStripMenuItem.Click
         Dim frm As frmDeelnameOverzicht = New frmDeelnameOverzicht()
-        frm.Show()
+        frm.ShowDialog()
+    End Sub
+
+    Private Sub ExitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitToolStripMenuItem.Click
+        Me.Close()
     End Sub
 End Class

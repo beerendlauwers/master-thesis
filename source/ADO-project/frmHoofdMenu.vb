@@ -1,6 +1,7 @@
 Public Class frmHoofdMenu
     Public myConnection As clDataViaSql
     Public BlnConnectieGelukt As Boolean
+    Private HuidigForm As Form = New BeheerStudent()
 
     Public Sub New()
 
@@ -11,26 +12,33 @@ Public Class frmHoofdMenu
     End Sub
 
     Private Sub StudentenToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StudentenToolStripMenuItem1.Click
-        Dim frm2 As BeheerStudent = New BeheerStudent()
-        frm2.MdiParent = Me
-        frm2.Show()
+        Call ClearOtherWindows()
+        HuidigForm = New BeheerStudent()
+        HuidigForm.MdiParent = Me
+        HuidigForm.Show()
     End Sub
 
     Private Sub SporttakkenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SporttakkenToolStripMenuItem.Click
-        Dim frm3 As BeheerSporttakken = New BeheerSporttakken()
-        frm3.MdiParent = Me
-
-        frm3.Show()
+        Call ClearOtherWindows()
+        HuidigForm = New BeheerSporttakken()
+        HuidigForm.MdiParent = Me
+        HuidigForm.Show()
     End Sub
 
     Private Sub DeelnameToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeelnameToolStripMenuItem.Click
-        Dim frm4 As Deelname = New Deelname()
-        frm4.MdiParent = Me
-        frm4.Show()
+        Call ClearOtherWindows()
+        HuidigForm = New Deelname()
+        HuidigForm.MdiParent = Me
+        HuidigForm.Show()
     End Sub
 
     Private Sub frmHoofdMenu_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         BlnConnectieGelukt = myConnection.f_VerbindMetDatabase()
+    End Sub
 
+    Private Sub ClearOtherWindows()
+        If (HuidigForm.Created) Then
+            HuidigForm.Close()
+        End If
     End Sub
 End Class

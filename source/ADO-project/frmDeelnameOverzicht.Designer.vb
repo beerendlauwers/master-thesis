@@ -29,19 +29,21 @@ Partial Class frmDeelnameOverzicht
         'dgrDoetSport
         '
         Me.dgrDoetSport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgrDoetSport.Location = New System.Drawing.Point(21, 12)
+        Me.dgrDoetSport.Location = New System.Drawing.Point(-1, 0)
         Me.dgrDoetSport.Name = "dgrDoetSport"
-        Me.dgrDoetSport.Size = New System.Drawing.Size(457, 234)
+        Me.dgrDoetSport.Size = New System.Drawing.Size(443, 226)
         Me.dgrDoetSport.TabIndex = 0
         '
         'frmDeelnameOverzicht
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(490, 310)
+        Me.AutoSize = True
+        Me.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+        Me.ClientSize = New System.Drawing.Size(438, 225)
         Me.Controls.Add(Me.dgrDoetSport)
         Me.Name = "frmDeelnameOverzicht"
-        Me.Text = "frmDeelnameOverzicht"
+        Me.Text = "Deelnameoverzicht"
         CType(Me.dgrDoetSport, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 

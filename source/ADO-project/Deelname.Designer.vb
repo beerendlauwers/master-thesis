@@ -58,13 +58,13 @@ Partial Class Deelname
         'OverviewToolStripMenuItem
         '
         Me.OverviewToolStripMenuItem.Name = "OverviewToolStripMenuItem"
-        Me.OverviewToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OverviewToolStripMenuItem.Size = New System.Drawing.Size(131, 22)
         Me.OverviewToolStripMenuItem.Text = "Overview"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(131, 22)
         Me.SaveToolStripMenuItem.Text = "Save"
         '
         'ExitToolStripMenuItem
@@ -157,6 +157,7 @@ Partial Class Deelname
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(514, 527)
+        Me.ControlBox = False
         Me.Controls.Add(Me.btnOpslaan)
         Me.Controls.Add(Me.lblNiveauCombo)
         Me.Controls.Add(Me.cboNiveau)
@@ -167,6 +168,7 @@ Partial Class Deelname
         Me.Controls.Add(Me.lblDeelnameStudent)
         Me.Controls.Add(Me.cboDeelnameStudent)
         Me.Controls.Add(Me.MenuStrip1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.MinimizeBox = False

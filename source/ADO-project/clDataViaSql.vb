@@ -11,6 +11,7 @@ Public Class clDataViaSql
     Private mDV_DoetSport As DataView = New DataView
     Private mConnectionString As String
     Private mDataSetIsInitialized As Boolean = False
+    Private mtblDeelnameIsInitialized As Boolean = False
 
     Public Property p_dataset() As DataSet
         Get
@@ -65,15 +66,21 @@ Public Class clDataViaSql
 
     Public Function f_HaalDeelnameDataOp() As Boolean
 
-            Dim SQLConnection As New SqlConnection(mConnectionString)
+        Dim SQLConnection As New SqlConnection(mConnectionString)
 
-            Try
-                SQLConnection.Open()
-            Catch ex As SqlException
-                MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
-                SQLConnection.Dispose()
+        Try
+            SQLConnection.Open()
+        Catch ex As SqlException
+            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
+            SQLConnection.Dispose()
             Return False
-            End Try
+        End Try
+
+        If (mtblDeelnameIsInitialized) Then
+            If (mDataSet.Tables("tblDeelname").Rows.Count > 0) Then
+                mDataSet.Tables("tblDeelname").Clear()
+            End If
+        End If
 
         Dim SQLdeelname As String = "STORED_PROCEDURE_tbldoetsportdatagrid"
         Dim deelnameAdapter As SqlDataAdapter = New SqlDataAdapter()
@@ -82,16 +89,14 @@ Public Class clDataViaSql
         deelnameCmd.CommandType = CommandType.StoredProcedure
         deelnameAdapter.SelectCommand = deelnameCmd
         deelnameAdapter.Fill(mDataSet, "tblDeelname")
-        If (mDataSet.Tables("tblDeelname").Rows.Count > 0) Then
-            mDataSet.Tables("tblDeelname").Clear()
-        End If
-        deelnameAdapter.Fill(mDataSet, "tblDeelname")
-            SQLConnection.Close()
-            SQLConnection.Dispose()
-            deelnameAdapter.Dispose()
-            deelnameCmd.Dispose()
+        SQLConnection.Close()
+        SQLConnection.Dispose()
+        deelnameAdapter.Dispose()
+        deelnameCmd.Dispose()
 
-            Return True
+        mtblDeelnameIsInitialized = True
+
+        Return True
 
     End Function
 
