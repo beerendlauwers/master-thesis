@@ -8,13 +8,9 @@ Public Class BeheerSporttakken
 
         'De tblSport ophalen
         If (frmHoofdMenu.BlnConnectieGelukt) Then
-            Dim inttel As Int16 = 0
-            While inttel <= frmHoofdMenu.myConnection.p_datavSport.Count
-                Me.cboSporttak.DataSource = frmHoofdMenu.myConnection.p_datavSport
-                Me.cboSporttak.DisplayMember = "SportNaam"
-                Me.cboSporttak.ValueMember = "SportID"
-                inttel += 1
-            End While
+            Me.cboSporttak.DataSource = frmHoofdMenu.myConnection.p_datavSport
+            Me.cboSporttak.DisplayMember = "SportNaam"
+            Me.cboSporttak.ValueMember = "SportID"
         End If
     End Sub
 

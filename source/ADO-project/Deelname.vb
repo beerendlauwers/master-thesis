@@ -7,36 +7,19 @@ Public Class Deelname
         'Call ConEnab(False)
         Call MenuEnab(1)
 
-        'De tblStudent ophalen
         If (frmHoofdMenu.BlnConnectieGelukt) Then
-            Dim inttel1 As Int16 = 0
-            While inttel1 <= frmHoofdMenu.myConnection.p_datavStud.Count
-                Me.cboDeelnameStudent.DataSource = frmHoofdMenu.myConnection.p_datavStud
-                Me.cboDeelnameStudent.DisplayMember = "StudentNaam"
-                Me.cboDeelnameSport.ValueMember = "StudentID"
-                inttel1 += 1
-            End While
-        End If
-
-        'De tblSport ophalen
-        If (frmHoofdMenu.BlnConnectieGelukt) Then
-            Dim inttel2 As Int16 = 0
-            While inttel2 <= frmHoofdMenu.myConnection.p_datavSport.Count
-                Me.cboDeelnameSport.DataSource = frmHoofdMenu.myConnection.p_datavSport
-                Me.cboDeelnameSport.DisplayMember = "SportNaam"
-                Me.cboDeelnameSport.ValueMember = "SportID"
-                inttel2 += 1
-            End While
-        End If
-
-        If (frmHoofdMenu.BlnConnectieGelukt) Then
-            Dim inttel3 As Int16 = 0
-            While inttel3 <= frmHoofdMenu.myConnection.p_datavNiveau.Count
-                Me.cboNiveau.DataSource = frmHoofdMenu.myConnection.p_datavNiveau
-                Me.cboNiveau.DisplayMember = "Niveau"
-                Me.cboNiveau.ValueMember = "NiveauID"
-                inttel3 += 1
-            End While
+            'De tblStudent ophalen
+            Me.cboDeelnameStudent.DataSource = frmHoofdMenu.myConnection.p_datavStud
+            Me.cboDeelnameStudent.DisplayMember = "StudentNaam"
+            Me.cboDeelnameSport.ValueMember = "StudentID"
+            'De tblSport ophalen
+            Me.cboDeelnameSport.DataSource = frmHoofdMenu.myConnection.p_datavSport
+            Me.cboDeelnameSport.DisplayMember = "SportNaam"
+            Me.cboDeelnameSport.ValueMember = "SportID"
+            'De tblNiveau ophalen
+            Me.cboNiveau.DataSource = frmHoofdMenu.myConnection.p_datavNiveau
+            Me.cboNiveau.DisplayMember = "Niveau"
+            Me.cboNiveau.ValueMember = "NiveauID"
         End If
     End Sub
 
