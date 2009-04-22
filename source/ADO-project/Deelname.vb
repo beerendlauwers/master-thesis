@@ -61,6 +61,19 @@ Public Class Deelname
     End Sub
 
     Private Sub ConEnab(ByVal BlnEnabled As Boolean)
-
+        Me.txtNiveau.Enabled = BlnEnabled
     End Sub
+
+    Private Sub ConClear()
+        Me.txtNiveau.Text = String.Empty
+    End Sub
+
+    Private Function CheckClear() As Boolean
+        Dim blntest As Boolean = True
+        If (Me.txtNiveau.Text = String.Empty) Then
+            Return blntest = False
+            Exit Function
+        End If
+        Return blntest
+    End Function
 End Class
