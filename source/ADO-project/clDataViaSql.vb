@@ -50,7 +50,7 @@ Public Class clDataViaSql
 
 
     Public Sub New()
-        mConnectionString = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
+        mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
     End Sub
 
     Public Function f_VerbindMetDatabase() As Boolean
