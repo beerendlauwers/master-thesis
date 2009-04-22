@@ -12,6 +12,15 @@ Public Class clDataViaSql
     Private mConnectionString As String
     Private mDataSetIsInitialized As Boolean = False
 
+    Public Property p_dataset() As DataSet
+        Get
+            Return mDataSet
+        End Get
+        Set(ByVal value As DataSet)
+            mDataSet = value
+        End Set
+    End Property
+
     Public Property p_datavStud() As DataView
         Get
             Return mDV_Student
@@ -53,6 +62,38 @@ Public Class clDataViaSql
         mConnectionString = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
         'mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
     End Sub
+
+    Public Function f_HaalDeelnameDataOp() As Boolean
+
+            Dim SQLConnection As New SqlConnection(mConnectionString)
+
+            Try
+                SQLConnection.Open()
+            Catch ex As SqlException
+                MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
+                SQLConnection.Dispose()
+            Return False
+            End Try
+
+        Dim SQLdeelname As String = "STORED_PROCEDURE_tbldoetsportdatagrid"
+        Dim deelnameAdapter As SqlDataAdapter = New SqlDataAdapter()
+        deelnameAdapter.TableMappings.Add("Table", "tblDeelname")
+        Dim deelnameCmd As SqlCommand = New SqlCommand(SQLdeelname, SQLConnection)
+        deelnameCmd.CommandType = CommandType.StoredProcedure
+        deelnameAdapter.SelectCommand = deelnameCmd
+        deelnameAdapter.Fill(mDataSet, "tblDeelname")
+        If (mDataSet.Tables("tblDeelname").Rows.Count > 0) Then
+            mDataSet.Tables("tblDeelname").Clear()
+        End If
+        deelnameAdapter.Fill(mDataSet, "tblDeelname")
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            deelnameAdapter.Dispose()
+            deelnameCmd.Dispose()
+
+            Return True
+
+    End Function
 
     Public Function f_VerbindMetDatabase() As Boolean
 
@@ -118,6 +159,18 @@ Public Class clDataViaSql
         mDV_Sport.Sort = "SportNaam"
         mDV_Niveau.Sort = "Niveau"
         mDV_DoetSport.Sort = "DoetSportID"
+
+        ' Create a DataRelation to link the two tables
+        ' based on the SupplierID.
+        Dim parentColumn As DataColumn = _
+           mDataSet.Tables("tblNiveau").Columns("NiveauID")
+        Dim childColumn As DataColumn = _
+           mDataSet.Tables("tblDoetSport").Columns("NiveauID")
+        Dim relation As DataRelation = New  _
+           System.Data.DataRelation("Niveau_DoetSport", _
+           parentColumn, childColumn)
+        mDataSet.Relations.Add(relation)
+
 
         studentAdapter.Dispose()
         sportAdapter.Dispose()

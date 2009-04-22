@@ -73,6 +73,12 @@
     <Compile Include="Deelname.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmDeelnameOverzicht.Designer.vb">
+      <DependentUpon>frmDeelnameOverzicht.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmDeelnameOverzicht.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmHoofdMenu.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +115,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>Deelname.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmDeelnameOverzicht.resx">
+      <DependentUpon>frmDeelnameOverzicht.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmHoofdMenu.resx">
       <SubType>Designer</SubType>
       <DependentUpon>frmHoofdMenu.vb</DependentUpon>
@@ -125,6 +135,7 @@
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
+    <None Include="My Project\DataSources\clDataViaSql.datasource" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <CustomToolNamespace>My</CustomToolNamespace>

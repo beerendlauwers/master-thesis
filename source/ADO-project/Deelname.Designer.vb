@@ -44,7 +44,7 @@ Partial Class Deelname
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(463, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
         Me.MenuStrip1.TabIndex = 0
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -156,7 +156,7 @@ Partial Class Deelname
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(463, 336)
+        Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.Controls.Add(Me.btnOpslaan)
         Me.Controls.Add(Me.lblNiveauCombo)
         Me.Controls.Add(Me.cboNiveau)
@@ -168,8 +168,13 @@ Partial Class Deelname
         Me.Controls.Add(Me.cboDeelnameStudent)
         Me.Controls.Add(Me.MenuStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
         Me.Name = "Deelname"
+        Me.ShowIcon = False
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Deelname"
+        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         Me.ResumeLayout(False)
