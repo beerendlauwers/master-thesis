@@ -35,7 +35,7 @@ Partial Class frmHoofdMenu
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StudentenToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(284, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(516, 24)
         Me.MenuStrip1.TabIndex = 0
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -43,35 +43,38 @@ Partial Class frmHoofdMenu
         '
         Me.StudentenToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StudentenToolStripMenuItem1, Me.SporttakkenToolStripMenuItem, Me.DeelnameToolStripMenuItem})
         Me.StudentenToolStripMenuItem.Name = "StudentenToolStripMenuItem"
-        Me.StudentenToolStripMenuItem.Size = New System.Drawing.Size(61, 20)
+        Me.StudentenToolStripMenuItem.Size = New System.Drawing.Size(58, 20)
         Me.StudentenToolStripMenuItem.Text = "Bestand"
         '
         'StudentenToolStripMenuItem1
         '
         Me.StudentenToolStripMenuItem1.Name = "StudentenToolStripMenuItem1"
-        Me.StudentenToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.StudentenToolStripMenuItem1.Size = New System.Drawing.Size(142, 22)
         Me.StudentenToolStripMenuItem1.Text = "Studenten"
         '
         'SporttakkenToolStripMenuItem
         '
         Me.SporttakkenToolStripMenuItem.Name = "SporttakkenToolStripMenuItem"
-        Me.SporttakkenToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.SporttakkenToolStripMenuItem.Size = New System.Drawing.Size(142, 22)
         Me.SporttakkenToolStripMenuItem.Text = "sporttakken"
         '
         'DeelnameToolStripMenuItem
         '
         Me.DeelnameToolStripMenuItem.Name = "DeelnameToolStripMenuItem"
-        Me.DeelnameToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.DeelnameToolStripMenuItem.Size = New System.Drawing.Size(142, 22)
         Me.DeelnameToolStripMenuItem.Text = "deelname"
         '
         'frmHoofdMenu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 264)
+        Me.ClientSize = New System.Drawing.Size(516, 529)
         Me.Controls.Add(Me.MenuStrip1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.IsMdiContainer = True
         Me.MainMenuStrip = Me.MenuStrip1
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
         Me.Name = "frmHoofdMenu"
         Me.Text = "frmHoofdMenu"
         Me.MenuStrip1.ResumeLayout(False)
