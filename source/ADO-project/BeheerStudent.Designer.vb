@@ -50,6 +50,7 @@ Partial Class BeheerStudent
         Me.lblVoornaam = New System.Windows.Forms.Label
         Me.btnStudentMail = New System.Windows.Forms.Button
         Me.dtpGebDat = New System.Windows.Forms.DateTimePicker
+        Me.EmailVergelijkenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -73,7 +74,7 @@ Partial Class BeheerStudent
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem, Me.EmailVergelijkenToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(516, 24)
@@ -84,49 +85,49 @@ Partial Class BeheerStudent
         '
         Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DetailToolStripMenuItem, Me.NewToolStripMenuItem, Me.EditToolStripMenuItem, Me.SaveToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.CancelToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.BeheerToolStripMenuItem.Name = "BeheerToolStripMenuItem"
-        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(53, 20)
+        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
         Me.BeheerToolStripMenuItem.Text = "Beheer"
         '
         'DetailToolStripMenuItem
         '
         Me.DetailToolStripMenuItem.Name = "DetailToolStripMenuItem"
-        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.DetailToolStripMenuItem.Text = "Detail"
         '
         'NewToolStripMenuItem
         '
         Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
-        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.NewToolStripMenuItem.Text = "New"
         '
         'EditToolStripMenuItem
         '
         Me.EditToolStripMenuItem.Name = "EditToolStripMenuItem"
-        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.EditToolStripMenuItem.Text = "Edit"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.SaveToolStripMenuItem.Text = "Save"
         '
         'DeleteToolStripMenuItem
         '
         Me.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem"
-        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.DeleteToolStripMenuItem.Text = "Delete"
         '
         'CancelToolStripMenuItem
         '
         Me.CancelToolStripMenuItem.Name = "CancelToolStripMenuItem"
-        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.CancelToolStripMenuItem.Text = "Cancel"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'cboNaamData
@@ -268,6 +269,12 @@ Partial Class BeheerStudent
         Me.dtpGebDat.Size = New System.Drawing.Size(180, 20)
         Me.dtpGebDat.TabIndex = 21
         '
+        'EmailVergelijkenToolStripMenuItem
+        '
+        Me.EmailVergelijkenToolStripMenuItem.Name = "EmailVergelijkenToolStripMenuItem"
+        Me.EmailVergelijkenToolStripMenuItem.Size = New System.Drawing.Size(108, 20)
+        Me.EmailVergelijkenToolStripMenuItem.Text = "Email vergelijken"
+        '
         'BeheerStudent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -337,4 +344,5 @@ Partial Class BeheerStudent
     Friend WithEvents lblVoornaam As System.Windows.Forms.Label
     Friend WithEvents btnStudentMail As System.Windows.Forms.Button
     Friend WithEvents dtpGebDat As System.Windows.Forms.DateTimePicker
+    Friend WithEvents EmailVergelijkenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class

@@ -19,4 +19,8 @@
     '        e.Value = String.Format("{0} : {1}", row.Cells("NiveauID").Value, row.Cells("NiveauID").Value)
     '    End If
     'End Sub
+
+    Private Sub dgrDoetSport_CellContentClick(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles dgrDoetSport.CellContentClick
+
+    End Sub
 End Class

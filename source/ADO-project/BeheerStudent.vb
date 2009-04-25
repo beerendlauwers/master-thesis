@@ -74,6 +74,7 @@ Public Class BeheerStudent
                 Me.DeleteToolStripMenuItem.Enabled = True
                 Me.CancelToolStripMenuItem.Enabled = True
                 Me.ExitToolStripMenuItem.Enabled = True
+                Me.btnStudentMail.Enabled = True
             Case 4 'Geklikt op Edit
                 Me.EditToolStripMenuItem.Enabled = False
                 Me.DetailToolStripMenuItem.Enabled = False
@@ -188,5 +189,14 @@ Public Class BeheerStudent
         Call MenuEnab(1)
         Call ConClear()
         Call ConEnab(False)
+    End Sub
+
+    Private Sub btnStudentMail_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnStudentMail.Click
+        Process.Start("mailto:" & Me.txtSchoolMail.Text & "?subject=Vult zelf is iets in luierik!! &body=")
+
+    End Sub
+
+    Private Sub EmailVergelijkenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EmailVergelijkenToolStripMenuItem.Click
+
     End Sub
 End Class

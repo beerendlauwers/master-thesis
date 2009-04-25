@@ -1,4 +1,5 @@
 ﻿Imports System.Data.SqlClient
+
 Public Class clDataViaSql
     Private mDataSet As DataSet = New DataSet
     Private mDT_Student As DataTable = New DataTable
@@ -9,6 +10,7 @@ Public Class clDataViaSql
     Private mDV_Sport As DataView = New DataView
     Private mDV_Niveau As DataView = New DataView
     Private mDV_DoetSport As DataView = New DataView
+    Private mDV_access As DataView = New DataView
     Private mConnectionString As String
     Private mDataSetIsInitialized As Boolean = False
     Private mtblDeelnameIsInitialized As Boolean = False
@@ -58,11 +60,13 @@ Public Class clDataViaSql
         End Set
     End Property
 
-
     Public Sub New()
-        mConnectionString = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
-        'mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
+        'mConnectionString = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
+        mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
+        'dbconn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\frank\Documents\ADOdbEmailadressen.mdb"
     End Sub
+
+   
 
     Public Function f_HaalDeelnameDataOp() As Boolean
 

@@ -66,6 +66,7 @@
     <Compile Include="BeheerStudent.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="clDataViaAccess.vb" />
     <Compile Include="clDataViaSql.vb" />
     <Compile Include="Deelname.Designer.vb">
       <DependentUpon>Deelname.vb</DependentUpon>
