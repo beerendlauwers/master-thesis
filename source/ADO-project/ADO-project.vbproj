@@ -87,6 +87,12 @@
       <DependentUpon>frmHoofdMenu.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmListbox.Designer.vb">
+      <DependentUpon>frmListbox.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmListbox.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -123,6 +129,10 @@
     <EmbeddedResource Include="frmHoofdMenu.resx">
       <SubType>Designer</SubType>
       <DependentUpon>frmHoofdMenu.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmListbox.resx">
+      <DependentUpon>frmListbox.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

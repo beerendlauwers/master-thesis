@@ -1,5 +1,6 @@
 Public Class BeheerStudent
     Private mBlnNewStudent As Boolean = False
+    Private HuidigForm As Form = New frmListbox()
 
     Private Sub frmViaSql_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -193,10 +194,15 @@ Public Class BeheerStudent
 
     Private Sub btnStudentMail_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnStudentMail.Click
         Process.Start("mailto:" & Me.txtSchoolMail.Text & "?subject=Vult zelf is iets in luierik!! &body=")
-
     End Sub
 
     Private Sub EmailVergelijkenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EmailVergelijkenToolStripMenuItem.Click
+        HuidigForm = New frmListbox()
+        'HuidigForm.MdiParent = Me
+        HuidigForm.Show()
+    End Sub
+
+    Private Sub MenuStrip1_ItemClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles MenuStrip1.ItemClicked
 
     End Sub
 End Class

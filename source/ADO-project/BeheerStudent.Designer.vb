@@ -33,6 +33,7 @@ Partial Class BeheerStudent
         Me.DeleteToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.CancelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.EmailVergelijkenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.cboNaamData = New System.Windows.Forms.ComboBox
         Me.lblZoekenOp = New System.Windows.Forms.Label
         Me.txtNaam = New System.Windows.Forms.TextBox
@@ -50,7 +51,6 @@ Partial Class BeheerStudent
         Me.lblVoornaam = New System.Windows.Forms.Label
         Me.btnStudentMail = New System.Windows.Forms.Button
         Me.dtpGebDat = New System.Windows.Forms.DateTimePicker
-        Me.EmailVergelijkenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -129,6 +129,12 @@ Partial Class BeheerStudent
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
         Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
+        '
+        'EmailVergelijkenToolStripMenuItem
+        '
+        Me.EmailVergelijkenToolStripMenuItem.Name = "EmailVergelijkenToolStripMenuItem"
+        Me.EmailVergelijkenToolStripMenuItem.Size = New System.Drawing.Size(108, 20)
+        Me.EmailVergelijkenToolStripMenuItem.Text = "Email vergelijken"
         '
         'cboNaamData
         '
@@ -269,17 +275,11 @@ Partial Class BeheerStudent
         Me.dtpGebDat.Size = New System.Drawing.Size(180, 20)
         Me.dtpGebDat.TabIndex = 21
         '
-        'EmailVergelijkenToolStripMenuItem
-        '
-        Me.EmailVergelijkenToolStripMenuItem.Name = "EmailVergelijkenToolStripMenuItem"
-        Me.EmailVergelijkenToolStripMenuItem.Size = New System.Drawing.Size(108, 20)
-        Me.EmailVergelijkenToolStripMenuItem.Text = "Email vergelijken"
-        '
         'BeheerStudent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(516, 529)
+        Me.ClientSize = New System.Drawing.Size(516, 417)
         Me.ControlBox = False
         Me.Controls.Add(Me.dtpGebDat)
         Me.Controls.Add(Me.btnStudentMail)

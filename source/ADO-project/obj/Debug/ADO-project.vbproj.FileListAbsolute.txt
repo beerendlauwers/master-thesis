@@ -17,3 +17,5 @@ C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-pro
 C:\School\Progge 2\ADOPROJECT\source\ADO-project\obj\Debug\ADO-project.exe
 C:\School\Progge 2\ADOPROJECT\source\ADO-project\obj\Debug\ADO-project.xml
 C:\School\Progge 2\ADOPROJECT\source\ADO-project\obj\Debug\ADO-project.pdb
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmDeelnameOverzicht.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmListbox.resources
