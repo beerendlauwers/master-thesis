@@ -70,14 +70,14 @@ Partial Class Deelname
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(131, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'cboDeelnameStudent
         '
         Me.cboDeelnameStudent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboDeelnameStudent.FormattingEnabled = True
-        Me.cboDeelnameStudent.Location = New System.Drawing.Point(151, 45)
+        Me.cboDeelnameStudent.Location = New System.Drawing.Point(252, 42)
         Me.cboDeelnameStudent.Name = "cboDeelnameStudent"
         Me.cboDeelnameStudent.Size = New System.Drawing.Size(121, 21)
         Me.cboDeelnameStudent.TabIndex = 1
@@ -85,7 +85,7 @@ Partial Class Deelname
         'lblDeelnameStudent
         '
         Me.lblDeelnameStudent.AutoSize = True
-        Me.lblDeelnameStudent.Location = New System.Drawing.Point(13, 45)
+        Me.lblDeelnameStudent.Location = New System.Drawing.Point(114, 42)
         Me.lblDeelnameStudent.Name = "lblDeelnameStudent"
         Me.lblDeelnameStudent.Size = New System.Drawing.Size(44, 13)
         Me.lblDeelnameStudent.TabIndex = 2
@@ -95,7 +95,7 @@ Partial Class Deelname
         '
         Me.cboDeelnameSport.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboDeelnameSport.FormattingEnabled = True
-        Me.cboDeelnameSport.Location = New System.Drawing.Point(151, 91)
+        Me.cboDeelnameSport.Location = New System.Drawing.Point(252, 88)
         Me.cboDeelnameSport.Name = "cboDeelnameSport"
         Me.cboDeelnameSport.Size = New System.Drawing.Size(121, 21)
         Me.cboDeelnameSport.TabIndex = 3
@@ -103,7 +103,7 @@ Partial Class Deelname
         'lblDeelnameSport
         '
         Me.lblDeelnameSport.AutoSize = True
-        Me.lblDeelnameSport.Location = New System.Drawing.Point(13, 91)
+        Me.lblDeelnameSport.Location = New System.Drawing.Point(114, 88)
         Me.lblDeelnameSport.Name = "lblDeelnameSport"
         Me.lblDeelnameSport.Size = New System.Drawing.Size(32, 13)
         Me.lblDeelnameSport.TabIndex = 4
@@ -111,7 +111,7 @@ Partial Class Deelname
         '
         'txtNiveau
         '
-        Me.txtNiveau.Location = New System.Drawing.Point(151, 213)
+        Me.txtNiveau.Location = New System.Drawing.Point(252, 210)
         Me.txtNiveau.Name = "txtNiveau"
         Me.txtNiveau.Size = New System.Drawing.Size(100, 20)
         Me.txtNiveau.TabIndex = 5
@@ -119,7 +119,7 @@ Partial Class Deelname
         'lblNiveau
         '
         Me.lblNiveau.AutoSize = True
-        Me.lblNiveau.Location = New System.Drawing.Point(16, 213)
+        Me.lblNiveau.Location = New System.Drawing.Point(117, 210)
         Me.lblNiveau.Name = "lblNiveau"
         Me.lblNiveau.Size = New System.Drawing.Size(74, 13)
         Me.lblNiveau.TabIndex = 6
@@ -129,7 +129,7 @@ Partial Class Deelname
         '
         Me.cboNiveau.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboNiveau.FormattingEnabled = True
-        Me.cboNiveau.Location = New System.Drawing.Point(151, 142)
+        Me.cboNiveau.Location = New System.Drawing.Point(252, 139)
         Me.cboNiveau.Name = "cboNiveau"
         Me.cboNiveau.Size = New System.Drawing.Size(121, 21)
         Me.cboNiveau.TabIndex = 7
@@ -137,7 +137,7 @@ Partial Class Deelname
         'lblNiveauCombo
         '
         Me.lblNiveauCombo.AutoSize = True
-        Me.lblNiveauCombo.Location = New System.Drawing.Point(16, 142)
+        Me.lblNiveauCombo.Location = New System.Drawing.Point(117, 139)
         Me.lblNiveauCombo.Name = "lblNiveauCombo"
         Me.lblNiveauCombo.Size = New System.Drawing.Size(41, 13)
         Me.lblNiveauCombo.TabIndex = 8
@@ -145,7 +145,7 @@ Partial Class Deelname
         '
         'btnOpslaan
         '
-        Me.btnOpslaan.Location = New System.Drawing.Point(257, 210)
+        Me.btnOpslaan.Location = New System.Drawing.Point(358, 207)
         Me.btnOpslaan.Name = "btnOpslaan"
         Me.btnOpslaan.Size = New System.Drawing.Size(57, 24)
         Me.btnOpslaan.TabIndex = 9

@@ -23,39 +23,51 @@ Partial Class frmListbox
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.lstEmail = New System.Windows.Forms.ListBox
-        Me.lblEmaildressen = New System.Windows.Forms.Label
+        Me.lblText1 = New System.Windows.Forms.Label
+        Me.lblText2 = New System.Windows.Forms.Label
         Me.SuspendLayout()
         '
         'lstEmail
         '
         Me.lstEmail.FormattingEnabled = True
-        Me.lstEmail.Location = New System.Drawing.Point(31, 28)
+        Me.lstEmail.Location = New System.Drawing.Point(28, 48)
         Me.lstEmail.Name = "lstEmail"
-        Me.lstEmail.Size = New System.Drawing.Size(120, 95)
+        Me.lstEmail.Size = New System.Drawing.Size(223, 186)
         Me.lstEmail.TabIndex = 0
         '
-        'lblEmaildressen
+        'lblText1
         '
-        Me.lblEmaildressen.AutoSize = True
-        Me.lblEmaildressen.Location = New System.Drawing.Point(13, 12)
-        Me.lblEmaildressen.Name = "lblEmaildressen"
-        Me.lblEmaildressen.Size = New System.Drawing.Size(138, 13)
-        Me.lblEmaildressen.TabIndex = 1
-        Me.lblEmaildressen.Text = "Vergelijking E-mail adressen"
+        Me.lblText1.AutoSize = True
+        Me.lblText1.Location = New System.Drawing.Point(25, 9)
+        Me.lblText1.Name = "lblText1"
+        Me.lblText1.Size = New System.Drawing.Size(226, 13)
+        Me.lblText1.TabIndex = 1
+        Me.lblText1.Text = "De volgende E-mail adressen staan in Access,"
+        '
+        'lblText2
+        '
+        Me.lblText2.AutoSize = True
+        Me.lblText2.Location = New System.Drawing.Point(74, 22)
+        Me.lblText2.Name = "lblText2"
+        Me.lblText2.Size = New System.Drawing.Size(128, 13)
+        Me.lblText2.TabIndex = 2
+        Me.lblText2.Text = "maar niet in MSSQL2005."
         '
         'frmListbox
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(284, 264)
-        Me.Controls.Add(Me.lblEmaildressen)
+        Me.Controls.Add(Me.lblText2)
+        Me.Controls.Add(Me.lblText1)
         Me.Controls.Add(Me.lstEmail)
         Me.Name = "frmListbox"
-        Me.Text = "frmListbox"
+        Me.Text = "Vergelijking E-mail adressen"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Friend WithEvents lstEmail As System.Windows.Forms.ListBox
-    Friend WithEvents lblEmaildressen As System.Windows.Forms.Label
+    Friend WithEvents lblText1 As System.Windows.Forms.Label
+    Friend WithEvents lblText2 As System.Windows.Forms.Label
 End Class
