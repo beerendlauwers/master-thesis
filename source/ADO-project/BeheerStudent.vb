@@ -1,3 +1,5 @@
+Imports System.Text.RegularExpressions
+
 Public Class BeheerStudent
     Private mBlnNewStudent As Boolean = False
     Private HuidigForm As Form = New frmListbox()
@@ -131,6 +133,20 @@ Public Class BeheerStudent
 
     Private Sub SaveToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveToolStripMenuItem.Click
         If (CheckClear()) Then
+
+            If (Not EmailAddressCheck(Me.txtPriveMail.Text) And Not EmailAddressCheck(Me.txtSchoolMail.Text)) Then
+                MsgBox("De tekstvelden 'Privé-mail' en 'Schoolmail' zijn incorrect ingevuld.")
+                Exit Sub
+            End If
+            If (Not EmailAddressCheck(Me.txtPriveMail.Text)) Then
+                MsgBox("Het tekstveld 'Privé-mail' is incorrect ingevuld.")
+                Exit Sub
+            End If
+            If (Not EmailAddressCheck(Me.txtSchoolMail.Text)) Then
+                MsgBox("Het tekstveld 'Schoolmail' is incorrect ingevuld.")
+                Exit Sub
+            End If
+
             If (mBlnNewStudent) Then
                 'Als er een nieuwe student wordt toegevoegd, voeren we deze functie uit:
                 Dim newID = frmHoofdMenu.myConnection.f_NieuweStudent(Me.txtNaam.Text, Me.txtVoornaam.Text, Me.txtGSM.Text, Me.txtSchoolMail.Text, Me.txtPriveMail.Text, Me.dtpGebDat.Text, Me.txtFinRek.Text)
@@ -142,6 +158,7 @@ Public Class BeheerStudent
             Call ConEnab(False)
         Else
             MsgBox("Er zijn één of meerdere velden niet ingevuld.")
+            Exit Sub
         End If
     End Sub
 
@@ -185,6 +202,26 @@ Public Class BeheerStudent
         Call ConClear()
         Call ConEnab(False)
     End Sub
+
+    Function EmailAddressCheck(ByVal emailAddress As String) As Boolean
+        'Uitleg: ^ zorgt ervoor dat ons patroon bij het begin van de string begint te zoeken.
+        'De [a-zA-Z] laat ons toe alle soorten letters te typen.
+        ' \w refereert naar [A-Za-z0-9_], \. laat ons toe een punt te typen,
+        'en de - laat ons een minpunt typen. De * laat ons toe deze voorgaande
+        'patronen oneindig toe te passen. [a-zA-Z0-9] zoekt dan nog eens naar alle
+        'letters en nummers om bv. adressen zoals 'beerend.lauwers' te vangen. Hierna komt de @ .
+        'Na de @ hebben we opnieuw de bovengenoemde filters, dan een punt ( \. ),
+        'En dan zoeken we naar geldig top-level domains, die tevens een punt mogen
+        'bevatten. het $ teken betekent dat deze filter op het einde van de string moet worden toegepast.
+        Dim pattern As String = "^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"
+        'We vergelijken het email-adres met onze filter.
+        Dim emailAddressMatch As Match = Regex.Match(emailAddress, pattern)
+        If emailAddressMatch.Success Then
+            EmailAddressCheck = True
+        Else
+            EmailAddressCheck = False
+        End If
+    End Function
 
     Private Sub cboNaamData_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboNaamData.TextChanged
         Call MenuEnab(1)
