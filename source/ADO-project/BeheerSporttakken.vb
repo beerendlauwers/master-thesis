@@ -7,8 +7,8 @@ Public Class BeheerSporttakken
         Call MenuEnab(1)
 
         'De tblSport ophalen
-        If (frmHoofdMenu.BlnConnectieGelukt) Then
-            Me.cboSporttak.DataSource = frmHoofdMenu.myConnection.p_datavSport
+        If (frmHoofdMenu.BlnSQLConnectieGelukt) Then
+            Me.cboSporttak.DataSource = frmHoofdMenu.mySQLConnection.p_datavSport
             Me.cboSporttak.DisplayMember = "SportNaam"
             Me.cboSporttak.ValueMember = "SportID"
         End If
@@ -70,7 +70,7 @@ Public Class BeheerSporttakken
         End If
 
         'Data uit de DataRowView overkopiëren
-        MyDataRowView = frmHoofdMenu.myConnection.f_ToonSportDetails(iSportID)
+        MyDataRowView = frmHoofdMenu.mySQLConnection.f_ToonSportDetails(iSportID)
 
         Me.txtSportNaam.DataBindings.Add("text", MyDataRowView, "SportNaam")
         Me.txtSportNaam.DataBindings.Clear()
@@ -101,10 +101,10 @@ Public Class BeheerSporttakken
         If (CheckClear()) Then
             If (mBlnNewSport) Then
                 'Als er een nieuwe sport wordt toegevoegd, voeren we deze functie uit:
-                Dim newID = frmHoofdMenu.myConnection.f_NieuweSport(Me.txtSportNaam.Text)
+                Dim newID = frmHoofdMenu.mySQLConnection.f_NieuweSport(Me.txtSportNaam.Text)
             Else
                 'Anders voeren we de update-functie uit:
-                frmHoofdMenu.myConnection.f_UpdateSport(Me.txtSportNaam.Text, Me.cboSporttak.SelectedValue, Me.cboSporttak.SelectedIndex)
+                frmHoofdMenu.mySQLConnection.f_UpdateSport(Me.txtSportNaam.Text, Me.cboSporttak.SelectedValue, Me.cboSporttak.SelectedIndex)
             End If
             Call MenuEnab(1)
             Call ConEnab(False)
@@ -114,7 +114,7 @@ Public Class BeheerSporttakken
     End Sub
 
     Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
-        If (frmHoofdMenu.myConnection.f_VerwijderSport(Me.cboSporttak.SelectedValue, Me.cboSporttak.SelectedIndex)) Then
+        If (frmHoofdMenu.mySQLConnection.f_VerwijderSport(Me.cboSporttak.SelectedValue, Me.cboSporttak.SelectedIndex)) Then
             Call ConClear()
             MsgBox("Sport verwijderd.")
         End If

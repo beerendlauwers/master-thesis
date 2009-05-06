@@ -3,13 +3,9 @@
     
     Private Sub frmListbox_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
-        'Access Dataset opvullen met data van Access. Misschien dit ook in frmHoofdmenu plaatsen?
-        Dim clDataViaAccess As clDataViaAccess = New clDataViaAccess
-        clDataViaAccess.f_fill()
-
         'Tijdelijke Datatables waaruit we de e-mails gaan halen, opvullen
-        Dim tblSQL As DataTable = frmHoofdMenu.myConnection.p_dataset.Tables("tblStudent")
-        Dim tblAccess As DataTable = clDataViaAccess.p_datatAccess
+        Dim tblSQL As DataTable = frmHoofdMenu.mySQLConnection.p_dataset.Tables("tblStudent")
+        Dim tblAccess As DataTable = frmHoofdMenu.myAccessConnection.p_datatAccess
 
         'Twee arrays van Strings voor de emails
         Dim EmailsVanAccess(tblAccess.Rows.Count()) As String

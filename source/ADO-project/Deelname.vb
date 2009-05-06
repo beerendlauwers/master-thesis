@@ -8,17 +8,17 @@ Public Class Deelname
         Call MenuEnab(1)
         Me.btnOpslaan.Enabled = False
 
-        If (frmHoofdMenu.BlnConnectieGelukt) Then
+        If (frmHoofdMenu.BlnSQLConnectieGelukt) Then
             'De tblStudent ophalen
-            Me.cboDeelnameStudent.DataSource = frmHoofdMenu.myConnection.p_datavStud
+            Me.cboDeelnameStudent.DataSource = frmHoofdMenu.mySQLConnection.p_datavStud
             Me.cboDeelnameStudent.DisplayMember = "StudentNaam"
             Me.cboDeelnameStudent.ValueMember = "StudentID"
             'De tblSport ophalen
-            Me.cboDeelnameSport.DataSource = frmHoofdMenu.myConnection.p_datavSport
+            Me.cboDeelnameSport.DataSource = frmHoofdMenu.mySQLConnection.p_datavSport
             Me.cboDeelnameSport.DisplayMember = "SportNaam"
             Me.cboDeelnameSport.ValueMember = "SportID"
             'De tblNiveau ophalen
-            Me.cboNiveau.DataSource = frmHoofdMenu.myConnection.p_datavNiveau
+            Me.cboNiveau.DataSource = frmHoofdMenu.mySQLConnection.p_datavNiveau
             Me.cboNiveau.DisplayMember = "Niveau"
             Me.cboNiveau.ValueMember = "NiveauID"
         End If
@@ -81,7 +81,7 @@ Public Class Deelname
         If (CheckClear()) Then
             If (mBlnNewNiveau) Then
                 'Als er een nieuwe sport wordt toegevoegd, voeren we deze functie uit:
-                Dim newID = frmHoofdMenu.myConnection.f_NieuwNiveau(Me.txtNiveau.Text)
+                Dim newID = frmHoofdMenu.mySQLConnection.f_NieuwNiveau(Me.txtNiveau.Text)
             End If
             Call MenuEnab(1)
             Call ConEnab(False)
@@ -104,7 +104,7 @@ Public Class Deelname
             If Me.cboNiveau.Text = "< Nieuw Niveau >" Then
                 Exit Sub
             End If
-            frmHoofdMenu.myConnection.f_NieuweDeelname(Me.cboDeelnameStudent.SelectedValue, Me.cboDeelnameSport.SelectedValue, Me.cboNiveau.SelectedValue)
+            frmHoofdMenu.mySQLConnection.f_NieuweDeelname(Me.cboDeelnameStudent.SelectedValue, Me.cboDeelnameSport.SelectedValue, Me.cboNiveau.SelectedValue)
             MessageBox.Show("Deelname opgeslagen.", "Deelname Opgeslagen")
         End If
     End Sub

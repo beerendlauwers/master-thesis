@@ -49,19 +49,19 @@ Partial Class frmHoofdMenu
         'StudentenToolStripMenuItem1
         '
         Me.StudentenToolStripMenuItem1.Name = "StudentenToolStripMenuItem1"
-        Me.StudentenToolStripMenuItem1.Size = New System.Drawing.Size(142, 22)
+        Me.StudentenToolStripMenuItem1.Size = New System.Drawing.Size(143, 22)
         Me.StudentenToolStripMenuItem1.Text = "Studenten"
         '
         'SporttakkenToolStripMenuItem
         '
         Me.SporttakkenToolStripMenuItem.Name = "SporttakkenToolStripMenuItem"
-        Me.SporttakkenToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.SporttakkenToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.SporttakkenToolStripMenuItem.Text = "Sporttakken"
         '
         'DeelnameToolStripMenuItem
         '
         Me.DeelnameToolStripMenuItem.Name = "DeelnameToolStripMenuItem"
-        Me.DeelnameToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.DeelnameToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.DeelnameToolStripMenuItem.Text = "Deelname"
         '
         'frmHoofdMenu

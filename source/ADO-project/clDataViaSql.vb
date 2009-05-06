@@ -60,13 +60,22 @@ Public Class clDataViaSql
         End Set
     End Property
 
+    Public Property p_mConnectionString() As String
+        Get
+            Return mConnectionString
+        End Get
+        Set(ByVal value As String)
+            mConnectionString = value
+        End Set
+    End Property
+
     Public Sub New()
         'mConnectionString = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
-        mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
+        'Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Persist Security Info=True;User ID=tester2;Password=CBA2W-DIS
+        'mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
         'dbconn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\frank\Documents\ADOdbEmailadressen.mdb"
     End Sub
 
-   
 
     Public Function f_HaalDeelnameDataOp() As Boolean
 
@@ -672,5 +681,46 @@ Public Class clDataViaSql
         temp_datarow = Nothing
 
         Return iNewID
+    End Function
+
+    Public Function f_TestSQL(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean) As Boolean
+        Dim connectiestring As String
+
+        connectiestring = String.Concat("Data Source=", SQLServer, ";Initial Catalog=", SQLDatabase)
+        If (UsesIntegratedSecurity) Then
+            connectiestring = String.Concat(connectiestring, ";Integrated Security=True")
+        Else
+            connectiestring = String.Concat(connectiestring, ";Persist Security Info=True;User ID=", SQLGebruiker, ";Password=", SQLPaswoord)
+        End If
+
+        Dim SQLConnection As New SqlConnection(connectiestring)
+
+        Try
+            SQLConnection.Open()
+
+        Catch ex As SqlException
+            SQLConnection.Dispose()
+            Return False
+        End Try
+
+        Dim SQLTestString1 As String = String.Concat("SELECT TOP 5 * INTO tbl", SQLGebruiker, " FROM tblStudent")
+        Dim SQLTestString2 As String = String.Concat("DROP TABLE tbl", SQLGebruiker)
+
+        Dim SQLTest1 As SqlCommand = New SqlCommand(SQLTestString1, SQLConnection)
+        Dim SQLTest2 As SqlCommand = New SqlCommand(SQLTestString2, SQLConnection)
+
+        Try
+            SQLTest1.ExecuteNonQuery()
+            SQLTest2.ExecuteNonQuery()
+        Catch ex As SqlException
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return False
+        End Try
+
+        SQLConnection.Close()
+        SQLConnection.Dispose()
+
+        Return True
     End Function
 End Class

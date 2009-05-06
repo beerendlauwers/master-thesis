@@ -16,8 +16,8 @@ Public Class BeheerStudent
         Call MenuEnab(1)
 
         'De tblStudent ophalen
-        If (frmHoofdMenu.BlnConnectieGelukt) Then
-            Me.cboNaamData.DataSource = frmHoofdMenu.myConnection.p_datavStud
+        If (frmHoofdMenu.BlnSQLConnectieGelukt) Then
+            Me.cboNaamData.DataSource = frmHoofdMenu.mySQLConnection.p_datavStud
         End If
     End Sub
 
@@ -31,7 +31,7 @@ Public Class BeheerStudent
         End If
 
         'Data uit de DataRowView overkopiëren
-        MyDataRowView = frmHoofdMenu.myConnection.f_ToonStudentDetails(iStudentID)
+        MyDataRowView = frmHoofdMenu.mySQLConnection.f_ToonStudentDetails(iStudentID)
 
         Me.txtNaam.DataBindings.Add("text", MyDataRowView, "StudentNaam")
         Me.txtNaam.DataBindings.Clear()
@@ -149,10 +149,10 @@ Public Class BeheerStudent
 
             If (mBlnNewStudent) Then
                 'Als er een nieuwe student wordt toegevoegd, voeren we deze functie uit:
-                Dim newID = frmHoofdMenu.myConnection.f_NieuweStudent(Me.txtNaam.Text, Me.txtVoornaam.Text, Me.txtGSM.Text, Me.txtSchoolMail.Text, Me.txtPriveMail.Text, Me.dtpGebDat.Text, Me.txtFinRek.Text)
+                Dim newID = frmHoofdMenu.mySQLConnection.f_NieuweStudent(Me.txtNaam.Text, Me.txtVoornaam.Text, Me.txtGSM.Text, Me.txtSchoolMail.Text, Me.txtPriveMail.Text, Me.dtpGebDat.Text, Me.txtFinRek.Text)
             Else
                 'Anders voeren we de update-functie uit:
-                frmHoofdMenu.myConnection.f_UpdateStudent(Me.txtNaam.Text, Me.txtVoornaam.Text, Me.txtGSM.Text, Me.txtSchoolMail.Text, Me.txtPriveMail.Text, Me.dtpGebDat.Text, Me.txtFinRek.Text, Me.cboNaamData.SelectedValue, Me.cboNaamData.SelectedIndex)
+                frmHoofdMenu.mySQLConnection.f_UpdateStudent(Me.txtNaam.Text, Me.txtVoornaam.Text, Me.txtGSM.Text, Me.txtSchoolMail.Text, Me.txtPriveMail.Text, Me.dtpGebDat.Text, Me.txtFinRek.Text, Me.cboNaamData.SelectedValue, Me.cboNaamData.SelectedIndex)
             End If
             Call MenuEnab(1)
             Call ConEnab(False)
@@ -163,7 +163,7 @@ Public Class BeheerStudent
     End Sub
 
     Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
-        If (frmHoofdMenu.myConnection.f_VerwijderStudent(Me.cboNaamData.SelectedValue, Me.cboNaamData.SelectedIndex)) Then
+        If (frmHoofdMenu.mySQLConnection.f_VerwijderStudent(Me.cboNaamData.SelectedValue, Me.cboNaamData.SelectedIndex)) Then
             Call ConClear()
             MsgBox("Student verwijderd.")
         End If
@@ -189,7 +189,7 @@ Public Class BeheerStudent
 
     Private Sub cboStudentNaam_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboStudentNaam.TextChanged
 
-        frmHoofdMenu.myConnection.s_FilterStudentOp(Me.cboStudentNaam.Text)
+        frmHoofdMenu.mySQLConnection.s_FilterStudentOp(Me.cboStudentNaam.Text)
 
         If (Me.cboStudentNaam.Text = "Naam") Then
             Me.cboNaamData.DisplayMember = "StudentNaam"
@@ -235,11 +235,6 @@ Public Class BeheerStudent
 
     Private Sub EmailVergelijkenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EmailVergelijkenToolStripMenuItem.Click
         HuidigForm = New frmListbox()
-        'HuidigForm.MdiParent = Me
         HuidigForm.Show()
-    End Sub
-
-    Private Sub MenuStrip1_ItemClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles MenuStrip1.ItemClicked
-
     End Sub
 End Class

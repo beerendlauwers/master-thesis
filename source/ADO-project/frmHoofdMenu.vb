@@ -1,14 +1,17 @@
 Public Class frmHoofdMenu
-    Public myConnection As clDataViaSql
-    Public BlnConnectieGelukt As Boolean
-    Private HuidigForm As Form = New BeheerStudent()
+    Public mySQLConnection As clDataViaSql
+    Public myAccessConnection As clDataViaAccess
+    Public BlnSQLConnectieGelukt As Boolean
+    Public BlnAccessConnectieGelukt As Boolean
+    Private HuidigForm As Form = New frmStart()
 
     Public Sub New()
 
         ' This call is required by the Windows Form Designer.
         InitializeComponent()
         ' Add any initialization after the InitializeComponent() call.
-        myConnection = New clDataViaSql
+        mySQLConnection = New clDataViaSql
+        myAccessConnection = New clDataViaAccess
     End Sub
 
     Private Sub StudentenToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StudentenToolStripMenuItem1.Click
@@ -32,13 +35,14 @@ Public Class frmHoofdMenu
         HuidigForm.Show()
     End Sub
 
-    Private Sub frmHoofdMenu_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        BlnConnectieGelukt = myConnection.f_VerbindMetDatabase()
-    End Sub
-
     Private Sub ClearOtherWindows()
         If (HuidigForm.Created) Then
             HuidigForm.Close()
         End If
+    End Sub
+
+    Private Sub frmHoofdMenu_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        HuidigForm.MdiParent = Me
+        HuidigForm.Show()
     End Sub
 End Class

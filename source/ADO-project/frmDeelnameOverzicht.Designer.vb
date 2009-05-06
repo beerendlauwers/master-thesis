@@ -23,16 +23,35 @@ Partial Class frmDeelnameOverzicht
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.dgrDoetSport = New System.Windows.Forms.DataGridView
+        Me.lblFilter = New System.Windows.Forms.Label
+        Me.cboFilter = New System.Windows.Forms.ComboBox
         CType(Me.dgrDoetSport, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'dgrDoetSport
         '
         Me.dgrDoetSport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgrDoetSport.Location = New System.Drawing.Point(-1, 0)
+        Me.dgrDoetSport.Location = New System.Drawing.Point(1, 58)
         Me.dgrDoetSport.Name = "dgrDoetSport"
         Me.dgrDoetSport.Size = New System.Drawing.Size(443, 226)
         Me.dgrDoetSport.TabIndex = 0
+        '
+        'lblFilter
+        '
+        Me.lblFilter.AutoSize = True
+        Me.lblFilter.Location = New System.Drawing.Point(12, 22)
+        Me.lblFilter.Name = "lblFilter"
+        Me.lblFilter.Size = New System.Drawing.Size(47, 13)
+        Me.lblFilter.TabIndex = 1
+        Me.lblFilter.Text = "Student:"
+        '
+        'cboFilter
+        '
+        Me.cboFilter.FormattingEnabled = True
+        Me.cboFilter.Location = New System.Drawing.Point(65, 19)
+        Me.cboFilter.Name = "cboFilter"
+        Me.cboFilter.Size = New System.Drawing.Size(121, 21)
+        Me.cboFilter.TabIndex = 2
         '
         'frmDeelnameOverzicht
         '
@@ -40,13 +59,18 @@ Partial Class frmDeelnameOverzicht
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoSize = True
         Me.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
-        Me.ClientSize = New System.Drawing.Size(438, 225)
+        Me.ClientSize = New System.Drawing.Size(446, 287)
+        Me.Controls.Add(Me.cboFilter)
+        Me.Controls.Add(Me.lblFilter)
         Me.Controls.Add(Me.dgrDoetSport)
         Me.Name = "frmDeelnameOverzicht"
         Me.Text = "Deelnameoverzicht"
         CType(Me.dgrDoetSport, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents dgrDoetSport As System.Windows.Forms.DataGridView
+    Friend WithEvents lblFilter As System.Windows.Forms.Label
+    Friend WithEvents cboFilter As System.Windows.Forms.ComboBox
 End Class
