@@ -1,4 +1,4 @@
-Public Class Deelname
+Public Class frmDeelname
     Private mBlnNewNiveau As Boolean = False
 
     Private Sub Deelname_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -115,6 +115,6 @@ Public Class Deelname
     End Sub
 
     Private Sub ExitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitToolStripMenuItem.Click
-        Me.Close()
+        frmHoofdMenu.ToonStartScherm()
     End Sub
 End Class

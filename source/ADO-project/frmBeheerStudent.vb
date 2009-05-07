@@ -1,15 +1,15 @@
 Imports System.Text.RegularExpressions
 
-Public Class BeheerStudent
+Public Class frmBeheerStudent
     Private mBlnNewStudent As Boolean = False
-    Private HuidigForm As Form = New frmListbox()
+    Private mCollection As Collection
 
     Private Sub frmViaSql_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         'Combobox invullen
-        Me.cboStudentNaam.Items.Add("Naam")
-        Me.cboStudentNaam.Items.Add("Voornaam")
-        Me.cboStudentNaam.SelectedIndex = 0
+        Me.cboNaamFilter.Items.Add("Naam")
+        Me.cboNaamFilter.Items.Add("Voornaam")
+        Me.cboNaamFilter.SelectedIndex = 0
 
         'Alle textvelden disablen
         Call ConEnab(False)
@@ -90,23 +90,23 @@ Public Class BeheerStudent
     End Sub
 
     Private Sub ConEnab(ByVal BlnEnabled As Boolean)
-        Dim TextControl As Control
-        For Each TextControl In Controls
-            If TextControl.Name.Substring(0, 3) = "txt" Then
-                TextControl.Enabled = BlnEnabled
-            End If
-        Next
+        Me.txtVoornaam.Enabled = BlnEnabled
+        Me.txtNaam.Enabled = BlnEnabled
+        Me.txtGSM.Enabled = BlnEnabled
+        Me.txtFinRek.Enabled = BlnEnabled
+        Me.txtPriveMail.Enabled = BlnEnabled
+        Me.txtSchoolMail.Enabled = BlnEnabled
         Me.dtpGebDat.Enabled = BlnEnabled
         Me.btnStudentMail.Enabled = BlnEnabled
     End Sub
 
     Private Sub ConClear()
-        Dim TextControl As Control
-        For Each TextControl In Controls
-            If TextControl.Name.Substring(0, 3) = "txt" Then
-                TextControl.Text = String.Empty
-            End If
-        Next
+        Me.txtVoornaam.Text = String.Empty
+        Me.txtNaam.Text = String.Empty
+        Me.txtGSM.Text = String.Empty
+        Me.txtFinRek.Text = String.Empty
+        Me.txtPriveMail.Text = String.Empty
+        Me.txtSchoolMail.Text = String.Empty
         Me.dtpGebDat.Value = "01-01-1980"
     End Sub
 
@@ -170,7 +170,7 @@ Public Class BeheerStudent
     End Sub
 
     Private Sub ExitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitToolStripMenuItem.Click
-        Me.Close()
+        frmHoofdMenu.ToonStartScherm()
     End Sub
 
     Private Function CheckClear() As Boolean
@@ -187,11 +187,11 @@ Public Class BeheerStudent
         Return blntest
     End Function
 
-    Private Sub cboStudentNaam_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboStudentNaam.TextChanged
+    Private Sub cboStudentNaam_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboNaamFilter.TextChanged
 
-        frmHoofdMenu.mySQLConnection.s_FilterStudentOp(Me.cboStudentNaam.Text)
+        frmHoofdMenu.mySQLConnection.s_FilterStudentOp(Me.cboNaamFilter.Text)
 
-        If (Me.cboStudentNaam.Text = "Naam") Then
+        If (Me.cboNaamFilter.Text = "Naam") Then
             Me.cboNaamData.DisplayMember = "StudentNaam"
         Else
             Me.cboNaamData.DisplayMember = "StudentVoornaam"
@@ -231,10 +231,5 @@ Public Class BeheerStudent
 
     Private Sub btnStudentMail_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnStudentMail.Click
         Process.Start("mailto:" & Me.txtSchoolMail.Text & "?subject=Vult zelf is iets in luierik!! &body=")
-    End Sub
-
-    Private Sub EmailVergelijkenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EmailVergelijkenToolStripMenuItem.Click
-        HuidigForm = New frmListbox()
-        HuidigForm.Show()
     End Sub
 End Class

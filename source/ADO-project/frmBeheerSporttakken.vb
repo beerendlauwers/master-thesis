@@ -1,4 +1,4 @@
-Public Class BeheerSporttakken
+Public Class frmBeheerSporttakken
     Private mBlnNewSport As Boolean = False
 
     Private Sub BeheerSporttakken_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -130,7 +130,7 @@ Public Class BeheerSporttakken
     End Function
 
     Private Sub ExitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitToolStripMenuItem.Click
-        Me.Close()
+        frmHoofdMenu.ToonStartScherm()
     End Sub
 
     Private Sub cboSporttak_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboSporttak.SelectedIndexChanged

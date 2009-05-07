@@ -1,16 +1,21 @@
 ﻿Public Class frmDeelnameOverzicht
 
     Private Sub frmDeelnameOverzicht_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+        'We halen de recentste deelnamedata op van de SQL-server
         Dim blngeslaagd = frmHoofdMenu.mySQLConnection.f_HaalDeelnameDataOp()
+
         If (blngeslaagd) Then
             dgrDoetSport.DataSource = frmHoofdMenu.mySQLConnection.p_dataset.Tables("tblDeelname")
             f_VulNaamFilter(frmHoofdMenu.mySQLConnection.p_dataset.Tables("tblDeelname"), "StudentNaam", "StudentNaam")
         Else
             MsgBox("Kon de data niet ophalen.")
         End If
+
     End Sub
 
     Private Sub cboFilter_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboFilter.TextChanged
+        'We passen de rowfilter op tblDeelname aan omdat we de filtercombobox hebben veranderd.
         frmHoofdMenu.mySQLConnection.p_dataset.Tables("tblDeelname").DefaultView.RowFilter = "StudentNaam='" + Me.cboFilter.Text + "'"
     End Sub
 

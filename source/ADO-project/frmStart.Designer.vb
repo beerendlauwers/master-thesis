@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+ï»¿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
 Partial Class frmStart
     Inherits System.Windows.Forms.Form
 
@@ -22,321 +22,214 @@ Partial Class frmStart
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
-        Me.BeheerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.OpenConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.ConfigOpslaanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.txtSQLServer = New System.Windows.Forms.TextBox
-        Me.lblSQLServer = New System.Windows.Forms.Label
-        Me.grpInstellingen = New System.Windows.Forms.GroupBox
-        Me.btnSQLTestConnectie = New System.Windows.Forms.Button
-        Me.chkSQLOpslaan = New System.Windows.Forms.CheckBox
-        Me.pctSQLGeldig = New System.Windows.Forms.PictureBox
-        Me.lblSQLGeldig = New System.Windows.Forms.Label
-        Me.txtSQLPaswoord = New System.Windows.Forms.TextBox
-        Me.txtSQLGebruiker = New System.Windows.Forms.TextBox
-        Me.lblSQLPaswoord = New System.Windows.Forms.Label
-        Me.lblSQLGebruiker = New System.Windows.Forms.Label
-        Me.chkIntegratedSecurity = New System.Windows.Forms.CheckBox
-        Me.txtSQLDatabase = New System.Windows.Forms.TextBox
-        Me.lblSQLDatabase = New System.Windows.Forms.Label
-        Me.grpAccess = New System.Windows.Forms.GroupBox
-        Me.txtAccessKolom = New System.Windows.Forms.TextBox
-        Me.lblAccessKolom = New System.Windows.Forms.Label
-        Me.txtAccessTabel = New System.Windows.Forms.TextBox
-        Me.lblAccessTabel = New System.Windows.Forms.Label
-        Me.pctAccessGeldig = New System.Windows.Forms.PictureBox
-        Me.btnAccessOpenen = New System.Windows.Forms.Button
-        Me.lblAccessGeldig = New System.Windows.Forms.Label
-        Me.txtAccessBestand = New System.Windows.Forms.TextBox
-        Me.lblAccessBestand = New System.Windows.Forms.Label
-        Me.chkAccessOpslaan = New System.Windows.Forms.CheckBox
-        Me.btnUseConfig = New System.Windows.Forms.Button
-        Me.MenuStrip1.SuspendLayout()
-        Me.grpInstellingen.SuspendLayout()
-        CType(Me.pctSQLGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpAccess.SuspendLayout()
-        CType(Me.pctAccessGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grpMenus = New System.Windows.Forms.GroupBox
+        Me.lblDeelnameBeheer = New System.Windows.Forms.Label
+        Me.btnDeelnameBeheer = New System.Windows.Forms.Button
+        Me.lblSportBeheer = New System.Windows.Forms.Label
+        Me.btnSportBeheer = New System.Windows.Forms.Button
+        Me.lblStudentenBeheer = New System.Windows.Forms.Label
+        Me.btlnStudentenBeheer = New System.Windows.Forms.Button
+        Me.grpProcessen = New System.Windows.Forms.GroupBox
+        Me.lblImporteerUitExcel = New System.Windows.Forms.Label
+        Me.btnImporteerUitExcel = New System.Windows.Forms.Button
+        Me.lblExporteerNaarXML = New System.Windows.Forms.Label
+        Me.BtnExporteerNaarXML = New System.Windows.Forms.Button
+        Me.lblExporteerNaarOracle2 = New System.Windows.Forms.Label
+        Me.lblExporteerNaarOracle1 = New System.Windows.Forms.Label
+        Me.btnExporteerNaarOracle = New System.Windows.Forms.Button
+        Me.lblVergelijkMetAccess2 = New System.Windows.Forms.Label
+        Me.lblVergelijkMetAccess1 = New System.Windows.Forms.Label
+        Me.btnVergelijkMetAccess = New System.Windows.Forms.Button
+        Me.grpMenus.SuspendLayout()
+        Me.grpProcessen.SuspendLayout()
         Me.SuspendLayout()
         '
-        'MenuStrip1
+        'grpMenus
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
-        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
-        Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
-        Me.MenuStrip1.TabIndex = 0
-        Me.MenuStrip1.Text = "MenuStrip1"
+        Me.grpMenus.Controls.Add(Me.lblDeelnameBeheer)
+        Me.grpMenus.Controls.Add(Me.btnDeelnameBeheer)
+        Me.grpMenus.Controls.Add(Me.lblSportBeheer)
+        Me.grpMenus.Controls.Add(Me.btnSportBeheer)
+        Me.grpMenus.Controls.Add(Me.lblStudentenBeheer)
+        Me.grpMenus.Controls.Add(Me.btlnStudentenBeheer)
+        Me.grpMenus.Location = New System.Drawing.Point(17, 51)
+        Me.grpMenus.Name = "grpMenus"
+        Me.grpMenus.Size = New System.Drawing.Size(482, 129)
+        Me.grpMenus.TabIndex = 0
+        Me.grpMenus.TabStop = False
+        Me.grpMenus.Text = "Beheer"
         '
-        'BeheerToolStripMenuItem
+        'lblDeelnameBeheer
         '
-        Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenConfigToolStripMenuItem, Me.ConfigOpslaanToolStripMenuItem})
-        Me.BeheerToolStripMenuItem.Name = "BeheerToolStripMenuItem"
-        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(50, 20)
-        Me.BeheerToolStripMenuItem.Text = "Config"
+        Me.lblDeelnameBeheer.AutoSize = True
+        Me.lblDeelnameBeheer.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDeelnameBeheer.Location = New System.Drawing.Point(151, 94)
+        Me.lblDeelnameBeheer.Name = "lblDeelnameBeheer"
+        Me.lblDeelnameBeheer.Size = New System.Drawing.Size(274, 15)
+        Me.lblDeelnameBeheer.TabIndex = 5
+        Me.lblDeelnameBeheer.Text = "Verwijder of voeg deelnames toe aan het syteem."
         '
-        'OpenConfigToolStripMenuItem
+        'btnDeelnameBeheer
         '
-        Me.OpenConfigToolStripMenuItem.Name = "OpenConfigToolStripMenuItem"
-        Me.OpenConfigToolStripMenuItem.Size = New System.Drawing.Size(157, 22)
-        Me.OpenConfigToolStripMenuItem.Text = "Openen"
+        Me.btnDeelnameBeheer.Location = New System.Drawing.Point(20, 91)
+        Me.btnDeelnameBeheer.Name = "btnDeelnameBeheer"
+        Me.btnDeelnameBeheer.Size = New System.Drawing.Size(125, 23)
+        Me.btnDeelnameBeheer.TabIndex = 4
+        Me.btnDeelnameBeheer.Text = "Deelnamebeheer"
+        Me.btnDeelnameBeheer.UseVisualStyleBackColor = True
         '
-        'ConfigOpslaanToolStripMenuItem
+        'lblSportBeheer
         '
-        Me.ConfigOpslaanToolStripMenuItem.Name = "ConfigOpslaanToolStripMenuItem"
-        Me.ConfigOpslaanToolStripMenuItem.Size = New System.Drawing.Size(157, 22)
-        Me.ConfigOpslaanToolStripMenuItem.Text = "Opslaan"
+        Me.lblSportBeheer.AutoSize = True
+        Me.lblSportBeheer.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblSportBeheer.Location = New System.Drawing.Point(151, 62)
+        Me.lblSportBeheer.Name = "lblSportBeheer"
+        Me.lblSportBeheer.Size = New System.Drawing.Size(318, 15)
+        Me.lblSportBeheer.TabIndex = 3
+        Me.lblSportBeheer.Text = "Wijzig, verwijder of voeg sporttakken toe aan het systeem."
         '
-        'txtSQLServer
+        'btnSportBeheer
         '
-        Me.txtSQLServer.Location = New System.Drawing.Point(77, 22)
-        Me.txtSQLServer.Name = "txtSQLServer"
-        Me.txtSQLServer.Size = New System.Drawing.Size(407, 20)
-        Me.txtSQLServer.TabIndex = 1
+        Me.btnSportBeheer.Location = New System.Drawing.Point(20, 59)
+        Me.btnSportBeheer.Name = "btnSportBeheer"
+        Me.btnSportBeheer.Size = New System.Drawing.Size(125, 23)
+        Me.btnSportBeheer.TabIndex = 2
+        Me.btnSportBeheer.Text = "Sporttakkenbeheer"
+        Me.btnSportBeheer.UseVisualStyleBackColor = True
         '
-        'lblSQLServer
+        'lblStudentenBeheer
         '
-        Me.lblSQLServer.AutoSize = True
-        Me.lblSQLServer.Location = New System.Drawing.Point(6, 25)
-        Me.lblSQLServer.Name = "lblSQLServer"
-        Me.lblSQLServer.Size = New System.Drawing.Size(65, 13)
-        Me.lblSQLServer.TabIndex = 2
-        Me.lblSQLServer.Text = "SQL-Server:"
+        Me.lblStudentenBeheer.AutoSize = True
+        Me.lblStudentenBeheer.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblStudentenBeheer.Location = New System.Drawing.Point(151, 28)
+        Me.lblStudentenBeheer.Name = "lblStudentenBeheer"
+        Me.lblStudentenBeheer.Size = New System.Drawing.Size(309, 15)
+        Me.lblStudentenBeheer.TabIndex = 1
+        Me.lblStudentenBeheer.Text = "Wijzig, verwijder of voeg studenten toe aan het systeem."
         '
-        'grpInstellingen
+        'btlnStudentenBeheer
         '
-        Me.grpInstellingen.Controls.Add(Me.btnSQLTestConnectie)
-        Me.grpInstellingen.Controls.Add(Me.chkSQLOpslaan)
-        Me.grpInstellingen.Controls.Add(Me.pctSQLGeldig)
-        Me.grpInstellingen.Controls.Add(Me.lblSQLGeldig)
-        Me.grpInstellingen.Controls.Add(Me.txtSQLPaswoord)
-        Me.grpInstellingen.Controls.Add(Me.txtSQLGebruiker)
-        Me.grpInstellingen.Controls.Add(Me.lblSQLPaswoord)
-        Me.grpInstellingen.Controls.Add(Me.lblSQLGebruiker)
-        Me.grpInstellingen.Controls.Add(Me.chkIntegratedSecurity)
-        Me.grpInstellingen.Controls.Add(Me.txtSQLDatabase)
-        Me.grpInstellingen.Controls.Add(Me.lblSQLDatabase)
-        Me.grpInstellingen.Controls.Add(Me.lblSQLServer)
-        Me.grpInstellingen.Controls.Add(Me.txtSQLServer)
-        Me.grpInstellingen.Location = New System.Drawing.Point(12, 43)
-        Me.grpInstellingen.Name = "grpInstellingen"
-        Me.grpInstellingen.Size = New System.Drawing.Size(490, 191)
-        Me.grpInstellingen.TabIndex = 3
-        Me.grpInstellingen.TabStop = False
-        Me.grpInstellingen.Text = "SQL-Server Instellingen"
+        Me.btlnStudentenBeheer.Location = New System.Drawing.Point(20, 25)
+        Me.btlnStudentenBeheer.Name = "btlnStudentenBeheer"
+        Me.btlnStudentenBeheer.Size = New System.Drawing.Size(125, 23)
+        Me.btlnStudentenBeheer.TabIndex = 0
+        Me.btlnStudentenBeheer.Text = "Studentenbeheer"
+        Me.btlnStudentenBeheer.UseVisualStyleBackColor = True
         '
-        'btnSQLTestConnectie
+        'grpProcessen
         '
-        Me.btnSQLTestConnectie.Location = New System.Drawing.Point(408, 105)
-        Me.btnSQLTestConnectie.Name = "btnSQLTestConnectie"
-        Me.btnSQLTestConnectie.Size = New System.Drawing.Size(75, 42)
-        Me.btnSQLTestConnectie.TabIndex = 13
-        Me.btnSQLTestConnectie.Text = "Test Connectie"
-        Me.btnSQLTestConnectie.UseVisualStyleBackColor = True
+        Me.grpProcessen.Controls.Add(Me.lblImporteerUitExcel)
+        Me.grpProcessen.Controls.Add(Me.btnImporteerUitExcel)
+        Me.grpProcessen.Controls.Add(Me.lblExporteerNaarXML)
+        Me.grpProcessen.Controls.Add(Me.BtnExporteerNaarXML)
+        Me.grpProcessen.Controls.Add(Me.lblExporteerNaarOracle2)
+        Me.grpProcessen.Controls.Add(Me.lblExporteerNaarOracle1)
+        Me.grpProcessen.Controls.Add(Me.btnExporteerNaarOracle)
+        Me.grpProcessen.Controls.Add(Me.lblVergelijkMetAccess2)
+        Me.grpProcessen.Controls.Add(Me.lblVergelijkMetAccess1)
+        Me.grpProcessen.Controls.Add(Me.btnVergelijkMetAccess)
+        Me.grpProcessen.Location = New System.Drawing.Point(17, 186)
+        Me.grpProcessen.Name = "grpProcessen"
+        Me.grpProcessen.Size = New System.Drawing.Size(482, 172)
+        Me.grpProcessen.TabIndex = 1
+        Me.grpProcessen.TabStop = False
+        Me.grpProcessen.Text = "Processen"
         '
-        'chkSQLOpslaan
+        'lblImporteerUitExcel
         '
-        Me.chkSQLOpslaan.AutoSize = True
-        Me.chkSQLOpslaan.Location = New System.Drawing.Point(6, 168)
-        Me.chkSQLOpslaan.Name = "chkSQLOpslaan"
-        Me.chkSQLOpslaan.Size = New System.Drawing.Size(134, 17)
-        Me.chkSQLOpslaan.TabIndex = 12
-        Me.chkSQLOpslaan.Text = "Opslaan in configuratie"
-        Me.chkSQLOpslaan.UseVisualStyleBackColor = True
+        Me.lblImporteerUitExcel.AutoSize = True
+        Me.lblImporteerUitExcel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblImporteerUitExcel.Location = New System.Drawing.Point(151, 136)
+        Me.lblImporteerUitExcel.Name = "lblImporteerUitExcel"
+        Me.lblImporteerUitExcel.Size = New System.Drawing.Size(265, 15)
+        Me.lblImporteerUitExcel.TabIndex = 9
+        Me.lblImporteerUitExcel.Text = "Importeer studentendata uit een Excel-bestand."
         '
-        'pctSQLGeldig
+        'btnImporteerUitExcel
         '
-        Me.pctSQLGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.pctSQLGeldig.Location = New System.Drawing.Point(411, 169)
-        Me.pctSQLGeldig.Name = "pctSQLGeldig"
-        Me.pctSQLGeldig.Size = New System.Drawing.Size(17, 14)
-        Me.pctSQLGeldig.TabIndex = 11
-        Me.pctSQLGeldig.TabStop = False
+        Me.btnImporteerUitExcel.Location = New System.Drawing.Point(20, 133)
+        Me.btnImporteerUitExcel.Name = "btnImporteerUitExcel"
+        Me.btnImporteerUitExcel.Size = New System.Drawing.Size(125, 23)
+        Me.btnImporteerUitExcel.TabIndex = 8
+        Me.btnImporteerUitExcel.Text = "Importeer Uit Excel"
+        Me.btnImporteerUitExcel.UseVisualStyleBackColor = True
         '
-        'lblSQLGeldig
+        'lblExporteerNaarXML
         '
-        Me.lblSQLGeldig.AutoSize = True
-        Me.lblSQLGeldig.ForeColor = System.Drawing.Color.Firebrick
-        Me.lblSQLGeldig.Location = New System.Drawing.Point(434, 169)
-        Me.lblSQLGeldig.Name = "lblSQLGeldig"
-        Me.lblSQLGeldig.Size = New System.Drawing.Size(49, 13)
-        Me.lblSQLGeldig.TabIndex = 10
-        Me.lblSQLGeldig.Text = "Ongeldig"
+        Me.lblExporteerNaarXML.AutoSize = True
+        Me.lblExporteerNaarXML.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblExporteerNaarXML.Location = New System.Drawing.Point(151, 102)
+        Me.lblExporteerNaarXML.Name = "lblExporteerNaarXML"
+        Me.lblExporteerNaarXML.Size = New System.Drawing.Size(247, 15)
+        Me.lblExporteerNaarXML.TabIndex = 7
+        Me.lblExporteerNaarXML.Text = "Exporteer het deelnameoverzicht naar XML."
         '
-        'txtSQLPaswoord
+        'BtnExporteerNaarXML
         '
-        Me.txtSQLPaswoord.Location = New System.Drawing.Point(77, 129)
-        Me.txtSQLPaswoord.MaxLength = 128
-        Me.txtSQLPaswoord.Name = "txtSQLPaswoord"
-        Me.txtSQLPaswoord.Size = New System.Drawing.Size(240, 20)
-        Me.txtSQLPaswoord.TabIndex = 9
-        Me.txtSQLPaswoord.UseSystemPasswordChar = True
+        Me.BtnExporteerNaarXML.Location = New System.Drawing.Point(20, 99)
+        Me.BtnExporteerNaarXML.Name = "BtnExporteerNaarXML"
+        Me.BtnExporteerNaarXML.Size = New System.Drawing.Size(125, 23)
+        Me.BtnExporteerNaarXML.TabIndex = 6
+        Me.BtnExporteerNaarXML.Text = "Exporteer Naar XML"
+        Me.BtnExporteerNaarXML.UseVisualStyleBackColor = True
         '
-        'txtSQLGebruiker
+        'lblExporteerNaarOracle2
         '
-        Me.txtSQLGebruiker.Location = New System.Drawing.Point(77, 101)
-        Me.txtSQLGebruiker.MaxLength = 128
-        Me.txtSQLGebruiker.Name = "txtSQLGebruiker"
-        Me.txtSQLGebruiker.Size = New System.Drawing.Size(240, 20)
-        Me.txtSQLGebruiker.TabIndex = 8
+        Me.lblExporteerNaarOracle2.AutoSize = True
+        Me.lblExporteerNaarOracle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblExporteerNaarOracle2.Location = New System.Drawing.Point(151, 72)
+        Me.lblExporteerNaarOracle2.Name = "lblExporteerNaarOracle2"
+        Me.lblExporteerNaarOracle2.Size = New System.Drawing.Size(134, 15)
+        Me.lblExporteerNaarOracle2.TabIndex = 5
+        Me.lblExporteerNaarOracle2.Text = "Oracle-database staan."
         '
-        'lblSQLPaswoord
+        'lblExporteerNaarOracle1
         '
-        Me.lblSQLPaswoord.AutoSize = True
-        Me.lblSQLPaswoord.Location = New System.Drawing.Point(6, 132)
-        Me.lblSQLPaswoord.Name = "lblSQLPaswoord"
-        Me.lblSQLPaswoord.Size = New System.Drawing.Size(57, 13)
-        Me.lblSQLPaswoord.TabIndex = 7
-        Me.lblSQLPaswoord.Text = "Paswoord:"
+        Me.lblExporteerNaarOracle1.AutoSize = True
+        Me.lblExporteerNaarOracle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblExporteerNaarOracle1.Location = New System.Drawing.Point(151, 57)
+        Me.lblExporteerNaarOracle1.Name = "lblExporteerNaarOracle1"
+        Me.lblExporteerNaarOracle1.Size = New System.Drawing.Size(296, 15)
+        Me.lblExporteerNaarOracle1.TabIndex = 4
+        Me.lblExporteerNaarOracle1.Text = "Exporteer sportnamen naar Oracle die nog niet in de "
         '
-        'lblSQLGebruiker
+        'btnExporteerNaarOracle
         '
-        Me.lblSQLGebruiker.AutoSize = True
-        Me.lblSQLGebruiker.Location = New System.Drawing.Point(6, 104)
-        Me.lblSQLGebruiker.Name = "lblSQLGebruiker"
-        Me.lblSQLGebruiker.Size = New System.Drawing.Size(56, 13)
-        Me.lblSQLGebruiker.TabIndex = 6
-        Me.lblSQLGebruiker.Text = "Gebruiker:"
+        Me.btnExporteerNaarOracle.Location = New System.Drawing.Point(20, 62)
+        Me.btnExporteerNaarOracle.Name = "btnExporteerNaarOracle"
+        Me.btnExporteerNaarOracle.Size = New System.Drawing.Size(125, 23)
+        Me.btnExporteerNaarOracle.TabIndex = 3
+        Me.btnExporteerNaarOracle.Text = "Exporteer Naar Oracle"
+        Me.btnExporteerNaarOracle.UseVisualStyleBackColor = True
         '
-        'chkIntegratedSecurity
+        'lblVergelijkMetAccess2
         '
-        Me.chkIntegratedSecurity.AutoSize = True
-        Me.chkIntegratedSecurity.Location = New System.Drawing.Point(27, 77)
-        Me.chkIntegratedSecurity.Name = "chkIntegratedSecurity"
-        Me.chkIntegratedSecurity.Size = New System.Drawing.Size(210, 17)
-        Me.chkIntegratedSecurity.TabIndex = 5
-        Me.chkIntegratedSecurity.Text = "Inloggen met geîntegreerde beveiliging"
-        Me.chkIntegratedSecurity.UseVisualStyleBackColor = True
+        Me.lblVergelijkMetAccess2.AutoSize = True
+        Me.lblVergelijkMetAccess2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblVergelijkMetAccess2.Location = New System.Drawing.Point(151, 34)
+        Me.lblVergelijkMetAccess2.Name = "lblVergelijkMetAccess2"
+        Me.lblVergelijkMetAccess2.Size = New System.Drawing.Size(106, 15)
+        Me.lblVergelijkMetAccess2.TabIndex = 2
+        Me.lblVergelijkMetAccess2.Text = "de SQL-database."
         '
-        'txtSQLDatabase
+        'lblVergelijkMetAccess1
         '
-        Me.txtSQLDatabase.Location = New System.Drawing.Point(77, 51)
-        Me.txtSQLDatabase.Name = "txtSQLDatabase"
-        Me.txtSQLDatabase.Size = New System.Drawing.Size(407, 20)
-        Me.txtSQLDatabase.TabIndex = 4
+        Me.lblVergelijkMetAccess1.AutoSize = True
+        Me.lblVergelijkMetAccess1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblVergelijkMetAccess1.Location = New System.Drawing.Point(151, 19)
+        Me.lblVergelijkMetAccess1.Name = "lblVergelijkMetAccess1"
+        Me.lblVergelijkMetAccess1.Size = New System.Drawing.Size(284, 15)
+        Me.lblVergelijkMetAccess1.TabIndex = 1
+        Me.lblVergelijkMetAccess1.Text = "Vergelijk de E-mailadressen in Access met die van "
         '
-        'lblSQLDatabase
+        'btnVergelijkMetAccess
         '
-        Me.lblSQLDatabase.AutoSize = True
-        Me.lblSQLDatabase.Location = New System.Drawing.Point(6, 54)
-        Me.lblSQLDatabase.Name = "lblSQLDatabase"
-        Me.lblSQLDatabase.Size = New System.Drawing.Size(56, 13)
-        Me.lblSQLDatabase.TabIndex = 3
-        Me.lblSQLDatabase.Text = "Database:"
-        '
-        'grpAccess
-        '
-        Me.grpAccess.Controls.Add(Me.txtAccessKolom)
-        Me.grpAccess.Controls.Add(Me.lblAccessKolom)
-        Me.grpAccess.Controls.Add(Me.txtAccessTabel)
-        Me.grpAccess.Controls.Add(Me.lblAccessTabel)
-        Me.grpAccess.Controls.Add(Me.pctAccessGeldig)
-        Me.grpAccess.Controls.Add(Me.btnAccessOpenen)
-        Me.grpAccess.Controls.Add(Me.lblAccessGeldig)
-        Me.grpAccess.Controls.Add(Me.txtAccessBestand)
-        Me.grpAccess.Controls.Add(Me.lblAccessBestand)
-        Me.grpAccess.Controls.Add(Me.chkAccessOpslaan)
-        Me.grpAccess.Location = New System.Drawing.Point(12, 247)
-        Me.grpAccess.Name = "grpAccess"
-        Me.grpAccess.Size = New System.Drawing.Size(489, 154)
-        Me.grpAccess.TabIndex = 4
-        Me.grpAccess.TabStop = False
-        Me.grpAccess.Text = "MS-Access Instellingen"
-        '
-        'txtAccessKolom
-        '
-        Me.txtAccessKolom.Location = New System.Drawing.Point(69, 82)
-        Me.txtAccessKolom.Name = "txtAccessKolom"
-        Me.txtAccessKolom.Size = New System.Drawing.Size(209, 20)
-        Me.txtAccessKolom.TabIndex = 20
-        '
-        'lblAccessKolom
-        '
-        Me.lblAccessKolom.AutoSize = True
-        Me.lblAccessKolom.Location = New System.Drawing.Point(7, 85)
-        Me.lblAccessKolom.Name = "lblAccessKolom"
-        Me.lblAccessKolom.Size = New System.Drawing.Size(39, 13)
-        Me.lblAccessKolom.TabIndex = 19
-        Me.lblAccessKolom.Text = "Kolom:"
-        '
-        'txtAccessTabel
-        '
-        Me.txtAccessTabel.Location = New System.Drawing.Point(69, 54)
-        Me.txtAccessTabel.Name = "txtAccessTabel"
-        Me.txtAccessTabel.Size = New System.Drawing.Size(209, 20)
-        Me.txtAccessTabel.TabIndex = 18
-        '
-        'lblAccessTabel
-        '
-        Me.lblAccessTabel.AutoSize = True
-        Me.lblAccessTabel.Location = New System.Drawing.Point(7, 57)
-        Me.lblAccessTabel.Name = "lblAccessTabel"
-        Me.lblAccessTabel.Size = New System.Drawing.Size(37, 13)
-        Me.lblAccessTabel.TabIndex = 17
-        Me.lblAccessTabel.Text = "Tabel:"
-        '
-        'pctAccessGeldig
-        '
-        Me.pctAccessGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.pctAccessGeldig.Location = New System.Drawing.Point(411, 132)
-        Me.pctAccessGeldig.Name = "pctAccessGeldig"
-        Me.pctAccessGeldig.Size = New System.Drawing.Size(17, 14)
-        Me.pctAccessGeldig.TabIndex = 14
-        Me.pctAccessGeldig.TabStop = False
-        '
-        'btnAccessOpenen
-        '
-        Me.btnAccessOpenen.Location = New System.Drawing.Point(408, 13)
-        Me.btnAccessOpenen.Name = "btnAccessOpenen"
-        Me.btnAccessOpenen.Size = New System.Drawing.Size(75, 41)
-        Me.btnAccessOpenen.TabIndex = 16
-        Me.btnAccessOpenen.Text = "Bestand Openen..."
-        Me.btnAccessOpenen.UseVisualStyleBackColor = True
-        '
-        'lblAccessGeldig
-        '
-        Me.lblAccessGeldig.AutoSize = True
-        Me.lblAccessGeldig.ForeColor = System.Drawing.Color.Firebrick
-        Me.lblAccessGeldig.Location = New System.Drawing.Point(434, 132)
-        Me.lblAccessGeldig.Name = "lblAccessGeldig"
-        Me.lblAccessGeldig.Size = New System.Drawing.Size(49, 13)
-        Me.lblAccessGeldig.TabIndex = 13
-        Me.lblAccessGeldig.Text = "Ongeldig"
-        '
-        'txtAccessBestand
-        '
-        Me.txtAccessBestand.Location = New System.Drawing.Point(69, 24)
-        Me.txtAccessBestand.Name = "txtAccessBestand"
-        Me.txtAccessBestand.Size = New System.Drawing.Size(333, 20)
-        Me.txtAccessBestand.TabIndex = 15
-        '
-        'lblAccessBestand
-        '
-        Me.lblAccessBestand.AutoSize = True
-        Me.lblAccessBestand.Location = New System.Drawing.Point(7, 27)
-        Me.lblAccessBestand.Name = "lblAccessBestand"
-        Me.lblAccessBestand.Size = New System.Drawing.Size(56, 13)
-        Me.lblAccessBestand.TabIndex = 14
-        Me.lblAccessBestand.Text = "Database:"
-        '
-        'chkAccessOpslaan
-        '
-        Me.chkAccessOpslaan.AutoSize = True
-        Me.chkAccessOpslaan.Location = New System.Drawing.Point(6, 131)
-        Me.chkAccessOpslaan.Name = "chkAccessOpslaan"
-        Me.chkAccessOpslaan.Size = New System.Drawing.Size(134, 17)
-        Me.chkAccessOpslaan.TabIndex = 13
-        Me.chkAccessOpslaan.Text = "Opslaan in configuratie"
-        Me.chkAccessOpslaan.UseVisualStyleBackColor = True
-        '
-        'btnUseConfig
-        '
-        Me.btnUseConfig.Location = New System.Drawing.Point(132, 445)
-        Me.btnUseConfig.Name = "btnUseConfig"
-        Me.btnUseConfig.Size = New System.Drawing.Size(225, 37)
-        Me.btnUseConfig.TabIndex = 5
-        Me.btnUseConfig.Text = "Deze configuratie gebruiken"
-        Me.btnUseConfig.UseVisualStyleBackColor = True
+        Me.btnVergelijkMetAccess.Location = New System.Drawing.Point(20, 23)
+        Me.btnVergelijkMetAccess.Name = "btnVergelijkMetAccess"
+        Me.btnVergelijkMetAccess.Size = New System.Drawing.Size(125, 23)
+        Me.btnVergelijkMetAccess.TabIndex = 0
+        Me.btnVergelijkMetAccess.Text = "Vergelijk Met Access"
+        Me.btnVergelijkMetAccess.UseVisualStyleBackColor = True
         '
         'frmStart
         '
@@ -344,59 +237,39 @@ Partial Class frmStart
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
-        Me.Controls.Add(Me.btnUseConfig)
-        Me.Controls.Add(Me.grpAccess)
-        Me.Controls.Add(Me.grpInstellingen)
-        Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.grpProcessen)
+        Me.Controls.Add(Me.grpMenus)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
-        Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "frmStart"
         Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "Instellingen"
+        Me.Text = "Overzicht"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
-        Me.MenuStrip1.ResumeLayout(False)
-        Me.MenuStrip1.PerformLayout()
-        Me.grpInstellingen.ResumeLayout(False)
-        Me.grpInstellingen.PerformLayout()
-        CType(Me.pctSQLGeldig, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.grpAccess.ResumeLayout(False)
-        Me.grpAccess.PerformLayout()
-        CType(Me.pctAccessGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpMenus.ResumeLayout(False)
+        Me.grpMenus.PerformLayout()
+        Me.grpProcessen.ResumeLayout(False)
+        Me.grpProcessen.PerformLayout()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
-    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
-    Friend WithEvents BeheerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents OpenConfigToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ConfigOpslaanToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents txtSQLServer As System.Windows.Forms.TextBox
-    Friend WithEvents lblSQLServer As System.Windows.Forms.Label
-    Friend WithEvents grpInstellingen As System.Windows.Forms.GroupBox
-    Friend WithEvents txtSQLDatabase As System.Windows.Forms.TextBox
-    Friend WithEvents lblSQLDatabase As System.Windows.Forms.Label
-    Friend WithEvents chkIntegratedSecurity As System.Windows.Forms.CheckBox
-    Friend WithEvents lblSQLPaswoord As System.Windows.Forms.Label
-    Friend WithEvents lblSQLGebruiker As System.Windows.Forms.Label
-    Friend WithEvents txtSQLGebruiker As System.Windows.Forms.TextBox
-    Friend WithEvents txtSQLPaswoord As System.Windows.Forms.TextBox
-    Friend WithEvents lblSQLGeldig As System.Windows.Forms.Label
-    Friend WithEvents pctSQLGeldig As System.Windows.Forms.PictureBox
-    Friend WithEvents grpAccess As System.Windows.Forms.GroupBox
-    Friend WithEvents chkSQLOpslaan As System.Windows.Forms.CheckBox
-    Friend WithEvents chkAccessOpslaan As System.Windows.Forms.CheckBox
-    Friend WithEvents txtAccessBestand As System.Windows.Forms.TextBox
-    Friend WithEvents lblAccessBestand As System.Windows.Forms.Label
-    Friend WithEvents btnAccessOpenen As System.Windows.Forms.Button
-    Friend WithEvents pctAccessGeldig As System.Windows.Forms.PictureBox
-    Friend WithEvents lblAccessGeldig As System.Windows.Forms.Label
-    Friend WithEvents txtAccessTabel As System.Windows.Forms.TextBox
-    Friend WithEvents lblAccessTabel As System.Windows.Forms.Label
-    Friend WithEvents lblAccessKolom As System.Windows.Forms.Label
-    Friend WithEvents txtAccessKolom As System.Windows.Forms.TextBox
-    Friend WithEvents btnSQLTestConnectie As System.Windows.Forms.Button
-    Friend WithEvents btnUseConfig As System.Windows.Forms.Button
+    Friend WithEvents grpMenus As System.Windows.Forms.GroupBox
+    Friend WithEvents btlnStudentenBeheer As System.Windows.Forms.Button
+    Friend WithEvents lblStudentenBeheer As System.Windows.Forms.Label
+    Friend WithEvents btnSportBeheer As System.Windows.Forms.Button
+    Friend WithEvents lblSportBeheer As System.Windows.Forms.Label
+    Friend WithEvents btnDeelnameBeheer As System.Windows.Forms.Button
+    Friend WithEvents lblDeelnameBeheer As System.Windows.Forms.Label
+    Friend WithEvents grpProcessen As System.Windows.Forms.GroupBox
+    Friend WithEvents btnVergelijkMetAccess As System.Windows.Forms.Button
+    Friend WithEvents lblVergelijkMetAccess1 As System.Windows.Forms.Label
+    Friend WithEvents lblVergelijkMetAccess2 As System.Windows.Forms.Label
+    Friend WithEvents btnExporteerNaarOracle As System.Windows.Forms.Button
+    Friend WithEvents lblExporteerNaarOracle2 As System.Windows.Forms.Label
+    Friend WithEvents lblExporteerNaarOracle1 As System.Windows.Forms.Label
+    Friend WithEvents BtnExporteerNaarXML As System.Windows.Forms.Button
+    Friend WithEvents lblExporteerNaarXML As System.Windows.Forms.Label
+    Friend WithEvents btnImporteerUitExcel As System.Windows.Forms.Button
+    Friend WithEvents lblImporteerUitExcel As System.Windows.Forms.Label
 End Class

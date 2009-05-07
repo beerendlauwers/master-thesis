@@ -7,13 +7,6 @@ Public Class clDataViaAccess
     Private mConnectionString As String
     Private mSQLString As String
 
-    Public Sub New()
-        'mConnectionString = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
-        'mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
-        'mConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\frank\Documents\ADOdbEmailadressen.mdb"
-        'mConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\School\Progge 2\ADOPROJECT\database\ADOdbEmailadressen.mdb"
-    End Sub
-
     Public Property p_datatAccess() As DataTable
         Get
             Return mDT_Access
@@ -42,7 +35,7 @@ Public Class clDataViaAccess
     End Property
 
     Public Function f_fill() As Boolean
-        Dim AccessConnection = New OleDbConnection(mConnectionString)
+        Dim AccessConnection As OleDbConnection = New OleDbConnection(mConnectionString)
         Try
             AccessConnection.Open()
 
@@ -52,10 +45,9 @@ Public Class clDataViaAccess
             Return False
         End Try
 
-        Dim myadap As OleDbDataAdapter = New OleDbDataAdapter(mSQLString, mConnectionString)
-        myadap.Fill(mDatasetAccess, "tblEmailAdressen")
+        Dim AccessAdapter As OleDbDataAdapter = New OleDbDataAdapter(mSQLString, mConnectionString)
+        AccessAdapter.Fill(mDatasetAccess, "tblEmailAdressen")
         AccessConnection.Close()
-
 
         mDT_Access = mDatasetAccess.Tables("tblEmailAdressen")
         mDV_Access = mDT_Access.DefaultView
@@ -63,29 +55,33 @@ Public Class clDataViaAccess
 
 
         AccessConnection.Dispose()
-        myadap.Dispose()
+        AccessAdapter.Dispose()
         Return True
 
 
     End Function
 
     Public Function f_TestAccess(ByVal AccessBestand As String, ByVal AccessTabel As String, ByVal AccessKolom As String) As Boolean
+        'Deze functie test snel de connectie met een Access-database.
+
+        'Connectiestring opstellen.
         Dim connectiestring As String = String.Concat("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=", AccessBestand)
+
+        'OleDBconnection opstellen.
         Dim Accessconnection = New OleDbConnection(connectiestring)
+
+        'We selecteren 1 row uit de gewenste tabel en kolom als test.
         Dim AccessTestString As String = String.Concat("SELECT TOP 1 ", AccessKolom, " FROM ", AccessTabel)
 
         Try
             Accessconnection.Open()
-        Catch ex As OleDbException
-            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de Access-database.")
-            Accessconnection.Dispose()
-            Return False
-        End Try
 
-        Try
             Dim AccessAdapter As OleDbDataAdapter = New OleDbDataAdapter(AccessTestString, connectiestring)
             Dim testset As DataSet = New DataSet
+
+            'We vullen een testdataset met deze ene row als test.
             AccessAdapter.Fill(testset, AccessTabel)
+
             Accessconnection.Close()
             AccessAdapter.Dispose()
         Catch ex As OleDbException

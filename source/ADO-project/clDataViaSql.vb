@@ -69,14 +69,6 @@ Public Class clDataViaSql
         End Set
     End Property
 
-    Public Sub New()
-        'mConnectionString = "Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
-        'Data Source=BEERDUDE-46D334\SQLEXPRESS;Initial Catalog=SPORTIMS2A5;Persist Security Info=True;User ID=tester2;Password=CBA2W-DIS
-        'mConnectionString = "Data Source=PC_VAN_FRANK;Initial Catalog=SPORTIMS2A5;Integrated Security=True"
-        'dbconn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\frank\Documents\ADOdbEmailadressen.mdb"
-    End Sub
-
-
     Public Function f_HaalDeelnameDataOp() As Boolean
 
         Dim SQLConnection As New SqlConnection(mConnectionString)
@@ -291,6 +283,76 @@ Public Class clDataViaSql
         temp_datarow("StudentPriveEmail") = strPrivemail
         temp_datarow("StudentGebDat") = datGebDat
         temp_datarow("StudentFinRek") = strFinRek
+        temp_datarow("StudentID") = iNewID
+        'DataTable updaten.
+        mDT_Student.Rows.Add(temp_datarow)
+
+        'Gebruikt geheugen vrijmaken.
+        AdoCommand.Dispose()
+        MyDBconnection.Dispose()
+        temp_datarow = Nothing
+
+        Return iNewID
+    End Function
+
+    Public Function f_NieuweStudent(ByVal DataRow As DataRow) As Int16
+        Dim iNewID As Int16
+
+        ' SQL-connectie openen
+        Dim MyDBconnection As SqlConnection = New SqlConnection(mConnectionString)
+
+        ' Een object van de SqlCommand-klasse maken
+        Dim AdoCommand As SqlCommand = New SqlCommand("STORED_PROCEDURE_nieuwestudent", MyDBconnection)
+        ' Aan het object vertellen welk type commando het is
+        AdoCommand.CommandType = CommandType.StoredProcedure
+
+        ' De parameters meegeven
+        AdoCommand.Parameters.Add(New SqlParameter("@tempNaam", SqlDbType.NVarChar, 50)).Value = DataRow.Item("StudentNaam")
+        AdoCommand.Parameters("@tempNaam").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempVoornaam", SqlDbType.NVarChar, 50)).Value = DataRow.Item("StudentVoornaam")
+        AdoCommand.Parameters("@tempVoornaam").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempGSM", SqlDbType.NVarChar, 50)).Value = DataRow.Item("StudentGSM")
+        AdoCommand.Parameters("@tempGSM").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempSchoolmail", SqlDbType.NVarChar, 50)).Value = DataRow.Item("StudentSchoolEmail")
+        AdoCommand.Parameters("@tempSchoolmail").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempPrivemail", SqlDbType.NVarChar, 50)).Value = DataRow.Item("StudentPriveEmail")
+        AdoCommand.Parameters("@tempPrivemail").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempGebDat", SqlDbType.DateTime, 50)).Value = DataRow.Item("StudentGebDat")
+        AdoCommand.Parameters("@tempGebDat").Direction = ParameterDirection.Input
+        AdoCommand.Parameters.Add(New SqlParameter("@tempFinRek", SqlDbType.NVarChar, 50)).Value = DataRow.Item("StudentFinRek")
+        AdoCommand.Parameters("@tempFinRek").Direction = ParameterDirection.Input
+
+        'ID meegeven
+        AdoCommand.Parameters.Add(New SqlParameter("@tempStudentID", SqlDbType.Int, iNewID))
+        'Welk type input is dit (vanuit het zicht van de database) ?
+        AdoCommand.Parameters("@tempStudentID").Direction = ParameterDirection.Output
+
+        'DB-connectie openen
+        MyDBconnection.Open()
+        'ADO-Command uitvoeren
+        AdoCommand.ExecuteNonQuery()
+
+        'Het ADoCommand geeft een array door (en terug), en we willen
+        'de ID van de nieuwe employee te pakken krijgen
+        iNewID = AdoCommand.Parameters(7).Value
+
+        'DB-connectie sluiten
+        MyDBconnection.Close()
+
+
+        'We hebben alles in de echte database gestoken,
+        'nu moeten we ook de nagebootste database in het
+        'RAM-geheugen updaten.
+
+        'DataRow klaarmaken en invullen met data.
+        Dim temp_datarow As DataRow = mDT_Student.NewRow
+        temp_datarow("StudentNaam") = DataRow.Item("StudentNaam")
+        temp_datarow("StudentVoornaam") = DataRow.Item("StudentVoornaam")
+        temp_datarow("StudentGSM") = DataRow.Item("StudentGSM")
+        temp_datarow("StudentSchoolEmail") = DataRow.Item("StudentSchoolEmail")
+        temp_datarow("StudentPriveEmail") = DataRow.Item("StudentPriveEmail")
+        temp_datarow("StudentGebDat") = DataRow.Item("StudentGebDat")
+        temp_datarow("StudentFinRek") = DataRow.Item("StudentFinRek")
         temp_datarow("StudentID") = iNewID
         'DataTable updaten.
         mDT_Student.Rows.Add(temp_datarow)
@@ -683,9 +745,13 @@ Public Class clDataViaSql
         Return iNewID
     End Function
 
+
     Public Function f_TestSQL(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean) As Boolean
+        'Deze functie test snel de connectie met SQL uit.
+
         Dim connectiestring As String
 
+        'Connectiestring maken.
         connectiestring = String.Concat("Data Source=", SQLServer, ";Initial Catalog=", SQLDatabase)
         If (UsesIntegratedSecurity) Then
             connectiestring = String.Concat(connectiestring, ";Integrated Security=True")
@@ -693,6 +759,7 @@ Public Class clDataViaSql
             connectiestring = String.Concat(connectiestring, ";Persist Security Info=True;User ID=", SQLGebruiker, ";Password=", SQLPaswoord)
         End If
 
+        'SQLConnection
         Dim SQLConnection As New SqlConnection(connectiestring)
 
         Try
@@ -703,12 +770,15 @@ Public Class clDataViaSql
             Return False
         End Try
 
+        'We maken een nieuwe tabel met 5 rows van tblStudent en droppen deze dan als test.
         Dim SQLTestString1 As String = String.Concat("SELECT TOP 5 * INTO tbl", SQLGebruiker, " FROM tblStudent")
         Dim SQLTestString2 As String = String.Concat("DROP TABLE tbl", SQLGebruiker)
 
+        'De queries in SQLCommand-vorm gieten
         Dim SQLTest1 As SqlCommand = New SqlCommand(SQLTestString1, SQLConnection)
         Dim SQLTest2 As SqlCommand = New SqlCommand(SQLTestString2, SQLConnection)
 
+        'De queries uitvoeren
         Try
             SQLTest1.ExecuteNonQuery()
             SQLTest2.ExecuteNonQuery()

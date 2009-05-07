@@ -1,5 +1,5 @@
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class BeheerSporttakken
+Partial Class frmBeheerSporttakken
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -35,22 +35,24 @@ Partial Class BeheerSporttakken
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.lblNaam = New System.Windows.Forms.Label
         Me.txtSportNaam = New System.Windows.Forms.TextBox
+        Me.grpSport = New System.Windows.Forms.GroupBox
         Me.MenuStrip1.SuspendLayout()
+        Me.grpSport.SuspendLayout()
         Me.SuspendLayout()
         '
         'cboSporttak
         '
         Me.cboSporttak.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboSporttak.FormattingEnabled = True
-        Me.cboSporttak.Location = New System.Drawing.Point(232, 53)
+        Me.cboSporttak.Location = New System.Drawing.Point(98, 22)
         Me.cboSporttak.Name = "cboSporttak"
-        Me.cboSporttak.Size = New System.Drawing.Size(155, 21)
+        Me.cboSporttak.Size = New System.Drawing.Size(168, 21)
         Me.cboSporttak.TabIndex = 0
         '
         'lblSporttak
         '
         Me.lblSporttak.AutoSize = True
-        Me.lblSporttak.Location = New System.Drawing.Point(108, 56)
+        Me.lblSporttak.Location = New System.Drawing.Point(6, 25)
         Me.lblSporttak.Name = "lblSporttak"
         Me.lblSporttak.Size = New System.Drawing.Size(50, 13)
         Me.lblSporttak.TabIndex = 1
@@ -117,7 +119,7 @@ Partial Class BeheerSporttakken
         'lblNaam
         '
         Me.lblNaam.AutoSize = True
-        Me.lblNaam.Location = New System.Drawing.Point(108, 94)
+        Me.lblNaam.Location = New System.Drawing.Point(6, 56)
         Me.lblNaam.Name = "lblNaam"
         Me.lblNaam.Size = New System.Drawing.Size(38, 13)
         Me.lblNaam.TabIndex = 3
@@ -125,34 +127,46 @@ Partial Class BeheerSporttakken
         '
         'txtSportNaam
         '
-        Me.txtSportNaam.Location = New System.Drawing.Point(232, 94)
+        Me.txtSportNaam.Location = New System.Drawing.Point(98, 53)
         Me.txtSportNaam.Name = "txtSportNaam"
-        Me.txtSportNaam.Size = New System.Drawing.Size(155, 20)
+        Me.txtSportNaam.Size = New System.Drawing.Size(168, 20)
         Me.txtSportNaam.TabIndex = 4
         '
-        'BeheerSporttakken
+        'grpSport
+        '
+        Me.grpSport.Controls.Add(Me.lblSporttak)
+        Me.grpSport.Controls.Add(Me.txtSportNaam)
+        Me.grpSport.Controls.Add(Me.cboSporttak)
+        Me.grpSport.Controls.Add(Me.lblNaam)
+        Me.grpSport.Location = New System.Drawing.Point(17, 51)
+        Me.grpSport.Name = "grpSport"
+        Me.grpSport.Size = New System.Drawing.Size(482, 83)
+        Me.grpSport.TabIndex = 11
+        Me.grpSport.TabStop = False
+        Me.grpSport.Text = "Sportbeheer"
+        '
+        'frmBeheerSporttakken
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoSize = True
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
-        Me.Controls.Add(Me.txtSportNaam)
-        Me.Controls.Add(Me.lblNaam)
-        Me.Controls.Add(Me.lblSporttak)
-        Me.Controls.Add(Me.cboSporttak)
+        Me.Controls.Add(Me.grpSport)
         Me.Controls.Add(Me.MenuStrip1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.MinimizeBox = False
-        Me.Name = "BeheerSporttakken"
+        Me.Name = "frmBeheerSporttakken"
         Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Sporttakbeheer"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
+        Me.grpSport.ResumeLayout(False)
+        Me.grpSport.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -170,4 +184,5 @@ Partial Class BeheerSporttakken
     Friend WithEvents ExitToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents lblNaam As System.Windows.Forms.Label
     Friend WithEvents txtSportNaam As System.Windows.Forms.TextBox
+    Friend WithEvents grpSport As System.Windows.Forms.GroupBox
 End Class

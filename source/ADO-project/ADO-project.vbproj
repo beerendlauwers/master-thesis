@@ -55,36 +55,43 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BeheerSporttakken.Designer.vb">
-      <DependentUpon>BeheerSporttakken.vb</DependentUpon>
+    <Compile Include="frmBeheerSporttakken.Designer.vb">
+      <DependentUpon>frmBeheerSporttakken.vb</DependentUpon>
     </Compile>
-    <Compile Include="BeheerSporttakken.vb">
+    <Compile Include="frmBeheerSporttakken.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BeheerStudent.Designer.vb">
-      <DependentUpon>BeheerStudent.vb</DependentUpon>
+    <Compile Include="frmBeheerStudent.Designer.vb">
+      <DependentUpon>frmBeheerStudent.vb</DependentUpon>
     </Compile>
-    <Compile Include="BeheerStudent.vb">
+    <Compile Include="frmBeheerStudent.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="clDataViaAccess.vb" />
+    <Compile Include="clDataViaExcel.vb" />
     <Compile Include="clDataViaSql.vb" />
-    <Compile Include="frmStart.Designer.vb">
-      <DependentUpon>frmStart.vb</DependentUpon>
+    <Compile Include="frmConfig.Designer.vb">
+      <DependentUpon>frmConfig.vb</DependentUpon>
     </Compile>
-    <Compile Include="frmStart.vb">
+    <Compile Include="frmConfig.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Deelname.Designer.vb">
-      <DependentUpon>Deelname.vb</DependentUpon>
+    <Compile Include="frmDeelname.Designer.vb">
+      <DependentUpon>frmDeelname.vb</DependentUpon>
     </Compile>
-    <Compile Include="Deelname.vb">
+    <Compile Include="frmDeelname.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmDeelnameOverzicht.Designer.vb">
       <DependentUpon>frmDeelnameOverzicht.vb</DependentUpon>
     </Compile>
     <Compile Include="frmDeelnameOverzicht.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmExporteerNaarXML.Designer.vb">
+      <DependentUpon>frmExporteerNaarXML.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmExporteerNaarXML.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmHoofdMenu.vb">
@@ -94,10 +101,22 @@
       <DependentUpon>frmHoofdMenu.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmListbox.Designer.vb">
-      <DependentUpon>frmListbox.vb</DependentUpon>
+    <Compile Include="frmImporteerUitExcel.Designer.vb">
+      <DependentUpon>frmImporteerUitExcel.vb</DependentUpon>
     </Compile>
-    <Compile Include="frmListbox.vb">
+    <Compile Include="frmImporteerUitExcel.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmVergelijkemails.Designer.vb">
+      <DependentUpon>frmVergelijkemails.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmVergelijkemails.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmStart.Designer.vb">
+      <DependentUpon>frmStart.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmStart.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -117,32 +136,44 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BeheerSporttakken.resx">
+    <EmbeddedResource Include="frmBeheerSporttakken.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>BeheerSporttakken.vb</DependentUpon>
+      <DependentUpon>frmBeheerSporttakken.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BeheerStudent.resx">
+    <EmbeddedResource Include="frmBeheerStudent.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>BeheerStudent.vb</DependentUpon>
+      <DependentUpon>frmBeheerStudent.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmStart.resx">
-      <DependentUpon>frmStart.vb</DependentUpon>
+    <EmbeddedResource Include="frmConfig.resx">
+      <DependentUpon>frmConfig.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Deelname.resx">
+    <EmbeddedResource Include="frmDeelname.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Deelname.vb</DependentUpon>
+      <DependentUpon>frmDeelname.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDeelnameOverzicht.resx">
       <DependentUpon>frmDeelnameOverzicht.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmExporteerNaarXML.resx">
+      <DependentUpon>frmExporteerNaarXML.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmHoofdMenu.resx">
       <SubType>Designer</SubType>
       <DependentUpon>frmHoofdMenu.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmListbox.resx">
-      <DependentUpon>frmListbox.vb</DependentUpon>
+    <EmbeddedResource Include="frmImporteerUitExcel.resx">
+      <DependentUpon>frmImporteerUitExcel.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmVergelijkemails.resx">
+      <DependentUpon>frmVergelijkemails.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmStart.resx">
+      <DependentUpon>frmStart.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">

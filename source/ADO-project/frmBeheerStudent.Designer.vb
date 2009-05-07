@@ -1,5 +1,5 @@
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class BeheerStudent
+Partial Class frmBeheerStudent
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,8 +22,6 @@ Partial Class BeheerStudent
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.cboStudentNaam = New System.Windows.Forms.ComboBox
-        Me.lblStudNaam = New System.Windows.Forms.Label
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
         Me.BeheerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.DetailToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -33,9 +31,6 @@ Partial Class BeheerStudent
         Me.DeleteToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.CancelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.EmailVergelijkenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.cboNaamData = New System.Windows.Forms.ComboBox
-        Me.lblZoekenOp = New System.Windows.Forms.Label
         Me.txtNaam = New System.Windows.Forms.TextBox
         Me.txtPriveMail = New System.Windows.Forms.TextBox
         Me.txtFinRek = New System.Windows.Forms.TextBox
@@ -51,30 +46,20 @@ Partial Class BeheerStudent
         Me.lblVoornaam = New System.Windows.Forms.Label
         Me.btnStudentMail = New System.Windows.Forms.Button
         Me.dtpGebDat = New System.Windows.Forms.DateTimePicker
+        Me.grpStudentDetails = New System.Windows.Forms.GroupBox
+        Me.lblStudNaam = New System.Windows.Forms.Label
+        Me.cboNaamData = New System.Windows.Forms.ComboBox
+        Me.cboNaamFilter = New System.Windows.Forms.ComboBox
+        Me.lblZoekenOp = New System.Windows.Forms.Label
+        Me.grpNieuweDeelname = New System.Windows.Forms.GroupBox
         Me.MenuStrip1.SuspendLayout()
+        Me.grpStudentDetails.SuspendLayout()
+        Me.grpNieuweDeelname.SuspendLayout()
         Me.SuspendLayout()
-        '
-        'cboStudentNaam
-        '
-        Me.cboStudentNaam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboStudentNaam.FormattingEnabled = True
-        Me.cboStudentNaam.Location = New System.Drawing.Point(215, 53)
-        Me.cboStudentNaam.Name = "cboStudentNaam"
-        Me.cboStudentNaam.Size = New System.Drawing.Size(180, 21)
-        Me.cboStudentNaam.TabIndex = 0
-        '
-        'lblStudNaam
-        '
-        Me.lblStudNaam.AutoSize = True
-        Me.lblStudNaam.Location = New System.Drawing.Point(99, 111)
-        Me.lblStudNaam.Name = "lblStudNaam"
-        Me.lblStudNaam.Size = New System.Drawing.Size(75, 13)
-        Me.lblStudNaam.TabIndex = 1
-        Me.lblStudNaam.Text = "Student Naam"
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem, Me.EmailVergelijkenToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
@@ -130,68 +115,44 @@ Partial Class BeheerStudent
         Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
-        'EmailVergelijkenToolStripMenuItem
-        '
-        Me.EmailVergelijkenToolStripMenuItem.Name = "EmailVergelijkenToolStripMenuItem"
-        Me.EmailVergelijkenToolStripMenuItem.Size = New System.Drawing.Size(98, 20)
-        Me.EmailVergelijkenToolStripMenuItem.Text = "Email vergelijken"
-        '
-        'cboNaamData
-        '
-        Me.cboNaamData.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboNaamData.FormattingEnabled = True
-        Me.cboNaamData.Location = New System.Drawing.Point(215, 111)
-        Me.cboNaamData.Name = "cboNaamData"
-        Me.cboNaamData.Size = New System.Drawing.Size(180, 21)
-        Me.cboNaamData.TabIndex = 1
-        '
-        'lblZoekenOp
-        '
-        Me.lblZoekenOp.AutoSize = True
-        Me.lblZoekenOp.Location = New System.Drawing.Point(102, 53)
-        Me.lblZoekenOp.Name = "lblZoekenOp"
-        Me.lblZoekenOp.Size = New System.Drawing.Size(62, 13)
-        Me.lblZoekenOp.TabIndex = 4
-        Me.lblZoekenOp.Text = "Zoeken op:"
-        '
         'txtNaam
         '
-        Me.txtNaam.Location = New System.Drawing.Point(215, 160)
+        Me.txtNaam.Location = New System.Drawing.Point(116, 21)
         Me.txtNaam.Name = "txtNaam"
         Me.txtNaam.Size = New System.Drawing.Size(180, 20)
         Me.txtNaam.TabIndex = 2
         '
         'txtPriveMail
         '
-        Me.txtPriveMail.Location = New System.Drawing.Point(215, 264)
+        Me.txtPriveMail.Location = New System.Drawing.Point(116, 123)
         Me.txtPriveMail.Name = "txtPriveMail"
         Me.txtPriveMail.Size = New System.Drawing.Size(180, 20)
         Me.txtPriveMail.TabIndex = 6
         '
         'txtFinRek
         '
-        Me.txtFinRek.Location = New System.Drawing.Point(215, 316)
+        Me.txtFinRek.Location = New System.Drawing.Point(116, 175)
         Me.txtFinRek.Name = "txtFinRek"
         Me.txtFinRek.Size = New System.Drawing.Size(180, 20)
         Me.txtFinRek.TabIndex = 8
         '
         'txtSchoolMail
         '
-        Me.txtSchoolMail.Location = New System.Drawing.Point(215, 238)
+        Me.txtSchoolMail.Location = New System.Drawing.Point(116, 96)
         Me.txtSchoolMail.Name = "txtSchoolMail"
         Me.txtSchoolMail.Size = New System.Drawing.Size(180, 20)
         Me.txtSchoolMail.TabIndex = 5
         '
         'txtGSM
         '
-        Me.txtGSM.Location = New System.Drawing.Point(215, 212)
+        Me.txtGSM.Location = New System.Drawing.Point(116, 72)
         Me.txtGSM.Name = "txtGSM"
         Me.txtGSM.Size = New System.Drawing.Size(180, 20)
         Me.txtGSM.TabIndex = 4
         '
         'txtVoornaam
         '
-        Me.txtVoornaam.Location = New System.Drawing.Point(215, 186)
+        Me.txtVoornaam.Location = New System.Drawing.Point(116, 47)
         Me.txtVoornaam.Name = "txtVoornaam"
         Me.txtVoornaam.Size = New System.Drawing.Size(180, 20)
         Me.txtVoornaam.TabIndex = 3
@@ -199,7 +160,7 @@ Partial Class BeheerStudent
         'lblNaam
         '
         Me.lblNaam.AutoSize = True
-        Me.lblNaam.Location = New System.Drawing.Point(105, 160)
+        Me.lblNaam.Location = New System.Drawing.Point(6, 24)
         Me.lblNaam.Name = "lblNaam"
         Me.lblNaam.Size = New System.Drawing.Size(35, 13)
         Me.lblNaam.TabIndex = 12
@@ -208,7 +169,7 @@ Partial Class BeheerStudent
         'lblSchoolMail
         '
         Me.lblSchoolMail.AutoSize = True
-        Me.lblSchoolMail.Location = New System.Drawing.Point(105, 238)
+        Me.lblSchoolMail.Location = New System.Drawing.Point(7, 99)
         Me.lblSchoolMail.Name = "lblSchoolMail"
         Me.lblSchoolMail.Size = New System.Drawing.Size(61, 13)
         Me.lblSchoolMail.TabIndex = 14
@@ -217,7 +178,7 @@ Partial Class BeheerStudent
         'lblFinRek
         '
         Me.lblFinRek.AutoSize = True
-        Me.lblFinRek.Location = New System.Drawing.Point(105, 316)
+        Me.lblFinRek.Location = New System.Drawing.Point(6, 178)
         Me.lblFinRek.Name = "lblFinRek"
         Me.lblFinRek.Size = New System.Drawing.Size(99, 13)
         Me.lblFinRek.TabIndex = 16
@@ -226,16 +187,16 @@ Partial Class BeheerStudent
         'lblGebDat
         '
         Me.lblGebDat.AutoSize = True
-        Me.lblGebDat.Location = New System.Drawing.Point(105, 290)
+        Me.lblGebDat.Location = New System.Drawing.Point(6, 152)
         Me.lblGebDat.Name = "lblGebDat"
-        Me.lblGebDat.Size = New System.Drawing.Size(83, 13)
+        Me.lblGebDat.Size = New System.Drawing.Size(80, 13)
         Me.lblGebDat.TabIndex = 17
-        Me.lblGebDat.Text = "Geboorte datum"
+        Me.lblGebDat.Text = "Geboortedatum"
         '
         'lblPriveMail
         '
         Me.lblPriveMail.AutoSize = True
-        Me.lblPriveMail.Location = New System.Drawing.Point(105, 264)
+        Me.lblPriveMail.Location = New System.Drawing.Point(6, 126)
         Me.lblPriveMail.Name = "lblPriveMail"
         Me.lblPriveMail.Size = New System.Drawing.Size(52, 13)
         Me.lblPriveMail.TabIndex = 18
@@ -244,7 +205,7 @@ Partial Class BeheerStudent
         'lblGSM
         '
         Me.lblGSM.AutoSize = True
-        Me.lblGSM.Location = New System.Drawing.Point(105, 212)
+        Me.lblGSM.Location = New System.Drawing.Point(6, 75)
         Me.lblGSM.Name = "lblGSM"
         Me.lblGSM.Size = New System.Drawing.Size(73, 13)
         Me.lblGSM.TabIndex = 19
@@ -253,7 +214,7 @@ Partial Class BeheerStudent
         'lblVoornaam
         '
         Me.lblVoornaam.AutoSize = True
-        Me.lblVoornaam.Location = New System.Drawing.Point(105, 186)
+        Me.lblVoornaam.Location = New System.Drawing.Point(6, 50)
         Me.lblVoornaam.Name = "lblVoornaam"
         Me.lblVoornaam.Size = New System.Drawing.Size(55, 13)
         Me.lblVoornaam.TabIndex = 20
@@ -261,7 +222,7 @@ Partial Class BeheerStudent
         '
         'btnStudentMail
         '
-        Me.btnStudentMail.Location = New System.Drawing.Point(215, 357)
+        Me.btnStudentMail.Location = New System.Drawing.Point(9, 215)
         Me.btnStudentMail.Name = "btnStudentMail"
         Me.btnStudentMail.Size = New System.Drawing.Size(121, 23)
         Me.btnStudentMail.TabIndex = 9
@@ -270,54 +231,112 @@ Partial Class BeheerStudent
         '
         'dtpGebDat
         '
-        Me.dtpGebDat.Location = New System.Drawing.Point(215, 290)
+        Me.dtpGebDat.Location = New System.Drawing.Point(116, 148)
         Me.dtpGebDat.Name = "dtpGebDat"
         Me.dtpGebDat.Size = New System.Drawing.Size(180, 20)
         Me.dtpGebDat.TabIndex = 21
         '
-        'BeheerStudent
+        'grpStudentDetails
+        '
+        Me.grpStudentDetails.Controls.Add(Me.lblNaam)
+        Me.grpStudentDetails.Controls.Add(Me.btnStudentMail)
+        Me.grpStudentDetails.Controls.Add(Me.txtVoornaam)
+        Me.grpStudentDetails.Controls.Add(Me.dtpGebDat)
+        Me.grpStudentDetails.Controls.Add(Me.txtGSM)
+        Me.grpStudentDetails.Controls.Add(Me.txtNaam)
+        Me.grpStudentDetails.Controls.Add(Me.lblGebDat)
+        Me.grpStudentDetails.Controls.Add(Me.lblVoornaam)
+        Me.grpStudentDetails.Controls.Add(Me.lblGSM)
+        Me.grpStudentDetails.Controls.Add(Me.lblFinRek)
+        Me.grpStudentDetails.Controls.Add(Me.lblSchoolMail)
+        Me.grpStudentDetails.Controls.Add(Me.lblPriveMail)
+        Me.grpStudentDetails.Controls.Add(Me.txtFinRek)
+        Me.grpStudentDetails.Controls.Add(Me.txtSchoolMail)
+        Me.grpStudentDetails.Controls.Add(Me.txtPriveMail)
+        Me.grpStudentDetails.Location = New System.Drawing.Point(17, 158)
+        Me.grpStudentDetails.Name = "grpStudentDetails"
+        Me.grpStudentDetails.Size = New System.Drawing.Size(482, 255)
+        Me.grpStudentDetails.TabIndex = 23
+        Me.grpStudentDetails.TabStop = False
+        Me.grpStudentDetails.Text = "Studentdetails"
+        '
+        'lblStudNaam
+        '
+        Me.lblStudNaam.AutoSize = True
+        Me.lblStudNaam.Location = New System.Drawing.Point(6, 53)
+        Me.lblStudNaam.Name = "lblStudNaam"
+        Me.lblStudNaam.Size = New System.Drawing.Size(75, 13)
+        Me.lblStudNaam.TabIndex = 1
+        Me.lblStudNaam.Text = "Student Naam"
+        '
+        'cboNaamData
+        '
+        Me.cboNaamData.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboNaamData.FormattingEnabled = True
+        Me.cboNaamData.Location = New System.Drawing.Point(116, 50)
+        Me.cboNaamData.Name = "cboNaamData"
+        Me.cboNaamData.Size = New System.Drawing.Size(180, 21)
+        Me.cboNaamData.TabIndex = 1
+        '
+        'cboNaamFilter
+        '
+        Me.cboNaamFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboNaamFilter.FormattingEnabled = True
+        Me.cboNaamFilter.Location = New System.Drawing.Point(116, 23)
+        Me.cboNaamFilter.Name = "cboNaamFilter"
+        Me.cboNaamFilter.Size = New System.Drawing.Size(180, 21)
+        Me.cboNaamFilter.TabIndex = 0
+        '
+        'lblZoekenOp
+        '
+        Me.lblZoekenOp.AutoSize = True
+        Me.lblZoekenOp.Location = New System.Drawing.Point(6, 26)
+        Me.lblZoekenOp.Name = "lblZoekenOp"
+        Me.lblZoekenOp.Size = New System.Drawing.Size(62, 13)
+        Me.lblZoekenOp.TabIndex = 4
+        Me.lblZoekenOp.Text = "Zoeken op:"
+        '
+        'grpNieuweDeelname
+        '
+        Me.grpNieuweDeelname.Controls.Add(Me.lblZoekenOp)
+        Me.grpNieuweDeelname.Controls.Add(Me.cboNaamFilter)
+        Me.grpNieuweDeelname.Controls.Add(Me.cboNaamData)
+        Me.grpNieuweDeelname.Controls.Add(Me.lblStudNaam)
+        Me.grpNieuweDeelname.Location = New System.Drawing.Point(17, 51)
+        Me.grpNieuweDeelname.Name = "grpNieuweDeelname"
+        Me.grpNieuweDeelname.Size = New System.Drawing.Size(482, 89)
+        Me.grpNieuweDeelname.TabIndex = 22
+        Me.grpNieuweDeelname.TabStop = False
+        Me.grpNieuweDeelname.Text = "Selecteer Student"
+        '
+        'frmBeheerStudent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
-        Me.Controls.Add(Me.dtpGebDat)
-        Me.Controls.Add(Me.btnStudentMail)
-        Me.Controls.Add(Me.lblVoornaam)
-        Me.Controls.Add(Me.lblGSM)
-        Me.Controls.Add(Me.lblPriveMail)
-        Me.Controls.Add(Me.lblGebDat)
-        Me.Controls.Add(Me.lblFinRek)
-        Me.Controls.Add(Me.lblSchoolMail)
-        Me.Controls.Add(Me.lblNaam)
-        Me.Controls.Add(Me.txtVoornaam)
-        Me.Controls.Add(Me.txtGSM)
-        Me.Controls.Add(Me.txtSchoolMail)
-        Me.Controls.Add(Me.txtFinRek)
-        Me.Controls.Add(Me.txtPriveMail)
-        Me.Controls.Add(Me.txtNaam)
-        Me.Controls.Add(Me.lblZoekenOp)
-        Me.Controls.Add(Me.cboNaamData)
-        Me.Controls.Add(Me.lblStudNaam)
-        Me.Controls.Add(Me.cboStudentNaam)
+        Me.Controls.Add(Me.grpStudentDetails)
+        Me.Controls.Add(Me.grpNieuweDeelname)
         Me.Controls.Add(Me.MenuStrip1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.MinimizeBox = False
-        Me.Name = "BeheerStudent"
+        Me.Name = "frmBeheerStudent"
         Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Studentenbeheer"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
+        Me.grpStudentDetails.ResumeLayout(False)
+        Me.grpStudentDetails.PerformLayout()
+        Me.grpNieuweDeelname.ResumeLayout(False)
+        Me.grpNieuweDeelname.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents cboStudentNaam As System.Windows.Forms.ComboBox
-    Friend WithEvents lblStudNaam As System.Windows.Forms.Label
     Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
     Friend WithEvents BeheerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents DetailToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -327,8 +346,6 @@ Partial Class BeheerStudent
     Friend WithEvents CancelToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ExitToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents NewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents cboNaamData As System.Windows.Forms.ComboBox
-    Friend WithEvents lblZoekenOp As System.Windows.Forms.Label
     Friend WithEvents txtNaam As System.Windows.Forms.TextBox
     Friend WithEvents txtPriveMail As System.Windows.Forms.TextBox
     Friend WithEvents txtFinRek As System.Windows.Forms.TextBox
@@ -344,5 +361,10 @@ Partial Class BeheerStudent
     Friend WithEvents lblVoornaam As System.Windows.Forms.Label
     Friend WithEvents btnStudentMail As System.Windows.Forms.Button
     Friend WithEvents dtpGebDat As System.Windows.Forms.DateTimePicker
-    Friend WithEvents EmailVergelijkenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents grpStudentDetails As System.Windows.Forms.GroupBox
+    Friend WithEvents lblStudNaam As System.Windows.Forms.Label
+    Friend WithEvents cboNaamData As System.Windows.Forms.ComboBox
+    Friend WithEvents cboNaamFilter As System.Windows.Forms.ComboBox
+    Friend WithEvents lblZoekenOp As System.Windows.Forms.Label
+    Friend WithEvents grpNieuweDeelname As System.Windows.Forms.GroupBox
 End Class
