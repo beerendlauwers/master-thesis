@@ -52,9 +52,12 @@ Partial Class frmBeheerStudent
         Me.cboNaamFilter = New System.Windows.Forms.ComboBox
         Me.lblZoekenOp = New System.Windows.Forms.Label
         Me.grpNieuweDeelname = New System.Windows.Forms.GroupBox
+        Me.pctGeldigeRekening = New System.Windows.Forms.PictureBox
+        Me.lblGeldigeRekening = New System.Windows.Forms.Label
         Me.MenuStrip1.SuspendLayout()
         Me.grpStudentDetails.SuspendLayout()
         Me.grpNieuweDeelname.SuspendLayout()
+        CType(Me.pctGeldigeRekening, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'MenuStrip1
@@ -70,49 +73,49 @@ Partial Class frmBeheerStudent
         '
         Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DetailToolStripMenuItem, Me.NewToolStripMenuItem, Me.EditToolStripMenuItem, Me.SaveToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.CancelToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.BeheerToolStripMenuItem.Name = "BeheerToolStripMenuItem"
-        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(53, 20)
+        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
         Me.BeheerToolStripMenuItem.Text = "Beheer"
         '
         'DetailToolStripMenuItem
         '
         Me.DetailToolStripMenuItem.Name = "DetailToolStripMenuItem"
-        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.DetailToolStripMenuItem.Text = "Detail"
         '
         'NewToolStripMenuItem
         '
         Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
-        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.NewToolStripMenuItem.Text = "New"
         '
         'EditToolStripMenuItem
         '
         Me.EditToolStripMenuItem.Name = "EditToolStripMenuItem"
-        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.EditToolStripMenuItem.Text = "Edit"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.SaveToolStripMenuItem.Text = "Save"
         '
         'DeleteToolStripMenuItem
         '
         Me.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem"
-        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.DeleteToolStripMenuItem.Text = "Delete"
         '
         'CancelToolStripMenuItem
         '
         Me.CancelToolStripMenuItem.Name = "CancelToolStripMenuItem"
-        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.CancelToolStripMenuItem.Text = "Cancel"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'txtNaam
@@ -238,6 +241,8 @@ Partial Class frmBeheerStudent
         '
         'grpStudentDetails
         '
+        Me.grpStudentDetails.Controls.Add(Me.pctGeldigeRekening)
+        Me.grpStudentDetails.Controls.Add(Me.lblGeldigeRekening)
         Me.grpStudentDetails.Controls.Add(Me.lblNaam)
         Me.grpStudentDetails.Controls.Add(Me.btnStudentMail)
         Me.grpStudentDetails.Controls.Add(Me.txtVoornaam)
@@ -309,6 +314,25 @@ Partial Class frmBeheerStudent
         Me.grpNieuweDeelname.TabStop = False
         Me.grpNieuweDeelname.Text = "Selecteer Student"
         '
+        'pctGeldigeRekening
+        '
+        Me.pctGeldigeRekening.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.pctGeldigeRekening.Location = New System.Drawing.Point(180, 198)
+        Me.pctGeldigeRekening.Name = "pctGeldigeRekening"
+        Me.pctGeldigeRekening.Size = New System.Drawing.Size(17, 14)
+        Me.pctGeldigeRekening.TabIndex = 23
+        Me.pctGeldigeRekening.TabStop = False
+        '
+        'lblGeldigeRekening
+        '
+        Me.lblGeldigeRekening.AutoSize = True
+        Me.lblGeldigeRekening.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblGeldigeRekening.Location = New System.Drawing.Point(203, 198)
+        Me.lblGeldigeRekening.Name = "lblGeldigeRekening"
+        Me.lblGeldigeRekening.Size = New System.Drawing.Size(98, 13)
+        Me.lblGeldigeRekening.TabIndex = 22
+        Me.lblGeldigeRekening.Text = "Rekening Ongeldig"
+        '
         'frmBeheerStudent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -333,6 +357,7 @@ Partial Class frmBeheerStudent
         Me.grpStudentDetails.PerformLayout()
         Me.grpNieuweDeelname.ResumeLayout(False)
         Me.grpNieuweDeelname.PerformLayout()
+        CType(Me.pctGeldigeRekening, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -367,4 +392,6 @@ Partial Class frmBeheerStudent
     Friend WithEvents cboNaamFilter As System.Windows.Forms.ComboBox
     Friend WithEvents lblZoekenOp As System.Windows.Forms.Label
     Friend WithEvents grpNieuweDeelname As System.Windows.Forms.GroupBox
+    Friend WithEvents pctGeldigeRekening As System.Windows.Forms.PictureBox
+    Friend WithEvents lblGeldigeRekening As System.Windows.Forms.Label
 End Class

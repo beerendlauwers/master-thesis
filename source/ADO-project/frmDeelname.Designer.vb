@@ -54,25 +54,25 @@ Partial Class frmDeelname
         '
         Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OverviewToolStripMenuItem, Me.SaveToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.BeheerToolStripMenuItem.Name = "BeheerToolStripMenuItem"
-        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(53, 20)
+        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
         Me.BeheerToolStripMenuItem.Text = "Beheer"
         '
         'OverviewToolStripMenuItem
         '
         Me.OverviewToolStripMenuItem.Name = "OverviewToolStripMenuItem"
-        Me.OverviewToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OverviewToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.OverviewToolStripMenuItem.Text = "Overzicht"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.SaveToolStripMenuItem.Text = "Opslaan"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.ExitToolStripMenuItem.Text = "Sluiten"
         '
         'cboDeelnameStudent

@@ -232,4 +232,28 @@ Public Class frmBeheerStudent
     Private Sub btnStudentMail_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnStudentMail.Click
         Process.Start("mailto:" & Me.txtSchoolMail.Text & "?subject=Vult zelf is iets in luierik!! &body=")
     End Sub
+
+    Private Sub MenuStrip1_ItemClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles MenuStrip1.ItemClicked
+
+    End Sub
+
+    Private Sub txtFinRek_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFinRek.TextChanged
+        Dim rekeningstring As String = Me.txtFinRek.Text
+
+        If (Not rekeningstring = String.Empty) Then
+            Dim rekeningarray() As String = rekeningstring.Split("-")
+            Dim ab As String = rekeningarray(0) & rekeningarray(1)
+            Dim c As String = rekeningarray(2)
+            Dim d As Int32 = CInt(ab) Mod 97
+            If (d = CInt(c)) Then
+                Me.pctGeldigeRekening.Image = My.Resources.tick
+                Me.lblGeldigeRekening.Text = "Rekening Geldig"
+                Me.lblGeldigeRekening.ForeColor = Color.ForestGreen
+            Else
+                Me.pctGeldigeRekening.Image = My.Resources.remove
+                Me.lblGeldigeRekening.Text = "Rekening Ongeldig"
+                Me.lblGeldigeRekening.ForeColor = Color.Firebrick
+            End If
+        End If
+    End Sub
 End Class
