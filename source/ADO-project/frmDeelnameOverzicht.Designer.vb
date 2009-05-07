@@ -47,6 +47,7 @@ Partial Class frmDeelnameOverzicht
         '
         'cboFilter
         '
+        Me.cboFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboFilter.FormattingEnabled = True
         Me.cboFilter.Location = New System.Drawing.Point(65, 19)
         Me.cboFilter.Name = "cboFilter"

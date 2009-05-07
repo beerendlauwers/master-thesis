@@ -58,12 +58,13 @@ Public Class frmExporteerNaarXML
                 'deelname is de root node.
                 xm.WriteStartElement("deelname")
 
-                'student is de child node die wij gebruiken.
-                xm.WriteStartElement("student")
-
                 'Voor elke student slaan we zijn naam, sport en niveau op.
                 'Deze data halen we uit een DataRow die we uit xmltabel halen.
                 For i = 0 To xmltabel.Rows.Count() - 1
+
+                    'student is de child node die wij gebruiken.
+                    xm.WriteStartElement("student")
+
                     datarow = xmltabel.Rows(i)
                     xm.WriteStartElement("naam")
                     xm.WriteValue(datarow.Item("StudentNaam"))
@@ -76,10 +77,11 @@ Public Class frmExporteerNaarXML
                     xm.WriteStartElement("niveau")
                     xm.WriteValue(datarow.Item("Niveau"))
                     xm.WriteEndElement()
-                Next i
 
-                'we sluiten onze child node student.
-                xm.WriteEndElement()
+                    'we sluiten onze child node student.
+                    xm.WriteEndElement()
+
+                Next i
 
                 'we sluiten onze root node deelname.
                 xm.WriteEndDocument()
