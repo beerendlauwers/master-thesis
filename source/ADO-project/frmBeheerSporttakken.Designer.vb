@@ -24,7 +24,7 @@ Partial Class frmBeheerSporttakken
     Private Sub InitializeComponent()
         Me.cboSporttak = New System.Windows.Forms.ComboBox
         Me.lblSporttak = New System.Windows.Forms.Label
-        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
+        Me.mnuBeheerSporttakken = New System.Windows.Forms.MenuStrip
         Me.BeheerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.DetailToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.NewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -36,8 +36,11 @@ Partial Class frmBeheerSporttakken
         Me.lblNaam = New System.Windows.Forms.Label
         Me.txtSportNaam = New System.Windows.Forms.TextBox
         Me.grpSport = New System.Windows.Forms.GroupBox
-        Me.MenuStrip1.SuspendLayout()
+        Me.picNaamGeldig = New System.Windows.Forms.PictureBox
+        Me.lblNaamgeldig = New System.Windows.Forms.Label
+        Me.mnuBeheerSporttakken.SuspendLayout()
         Me.grpSport.SuspendLayout()
+        CType(Me.picNaamGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'cboSporttak
@@ -58,14 +61,14 @@ Partial Class frmBeheerSporttakken
         Me.lblSporttak.TabIndex = 1
         Me.lblSporttak.Text = "Sporttak:"
         '
-        'MenuStrip1
+        'mnuBeheerSporttakken
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
-        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
-        Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
-        Me.MenuStrip1.TabIndex = 2
-        Me.MenuStrip1.Text = "MenuStrip1"
+        Me.mnuBeheerSporttakken.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
+        Me.mnuBeheerSporttakken.Location = New System.Drawing.Point(0, 0)
+        Me.mnuBeheerSporttakken.Name = "mnuBeheerSporttakken"
+        Me.mnuBeheerSporttakken.Size = New System.Drawing.Size(514, 24)
+        Me.mnuBeheerSporttakken.TabIndex = 2
+        Me.mnuBeheerSporttakken.Text = "Sporttakkenbeheer"
         '
         'BeheerToolStripMenuItem
         '
@@ -77,44 +80,44 @@ Partial Class frmBeheerSporttakken
         'DetailToolStripMenuItem
         '
         Me.DetailToolStripMenuItem.Name = "DetailToolStripMenuItem"
-        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
+        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
         Me.DetailToolStripMenuItem.Text = "Detail"
         '
         'NewToolStripMenuItem
         '
         Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
-        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
-        Me.NewToolStripMenuItem.Text = "New"
+        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.NewToolStripMenuItem.Text = "Nieuw"
         '
         'EditToolStripMenuItem
         '
         Me.EditToolStripMenuItem.Name = "EditToolStripMenuItem"
-        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
-        Me.EditToolStripMenuItem.Text = "Edit"
+        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.EditToolStripMenuItem.Text = "Wijzig"
         '
         'DeleteToolStripMenuItem
         '
         Me.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem"
-        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
-        Me.DeleteToolStripMenuItem.Text = "Delete"
+        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.DeleteToolStripMenuItem.Text = "Verwijder"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
-        Me.SaveToolStripMenuItem.Text = "Save"
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.SaveToolStripMenuItem.Text = "Opslaan"
         '
         'CancelToolStripMenuItem
         '
         Me.CancelToolStripMenuItem.Name = "CancelToolStripMenuItem"
-        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
-        Me.CancelToolStripMenuItem.Text = "Cancel"
+        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.CancelToolStripMenuItem.Text = "Annuleer"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(117, 22)
-        Me.ExitToolStripMenuItem.Text = "Exit"
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.ExitToolStripMenuItem.Text = "Sluiten"
         '
         'lblNaam
         '
@@ -128,13 +131,16 @@ Partial Class frmBeheerSporttakken
         'txtSportNaam
         '
         Me.txtSportNaam.Location = New System.Drawing.Point(98, 53)
+        Me.txtSportNaam.MaxLength = 50
         Me.txtSportNaam.Name = "txtSportNaam"
         Me.txtSportNaam.Size = New System.Drawing.Size(168, 20)
         Me.txtSportNaam.TabIndex = 4
         '
         'grpSport
         '
+        Me.grpSport.Controls.Add(Me.picNaamGeldig)
         Me.grpSport.Controls.Add(Me.lblSporttak)
+        Me.grpSport.Controls.Add(Me.lblNaamgeldig)
         Me.grpSport.Controls.Add(Me.txtSportNaam)
         Me.grpSport.Controls.Add(Me.cboSporttak)
         Me.grpSport.Controls.Add(Me.lblNaam)
@@ -145,6 +151,25 @@ Partial Class frmBeheerSporttakken
         Me.grpSport.TabStop = False
         Me.grpSport.Text = "Sportbeheer"
         '
+        'picNaamGeldig
+        '
+        Me.picNaamGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picNaamGeldig.Location = New System.Drawing.Point(270, 56)
+        Me.picNaamGeldig.Name = "picNaamGeldig"
+        Me.picNaamGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picNaamGeldig.TabIndex = 31
+        Me.picNaamGeldig.TabStop = False
+        '
+        'lblNaamgeldig
+        '
+        Me.lblNaamgeldig.AutoSize = True
+        Me.lblNaamgeldig.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblNaamgeldig.Location = New System.Drawing.Point(293, 56)
+        Me.lblNaamgeldig.Name = "lblNaamgeldig"
+        Me.lblNaamgeldig.Size = New System.Drawing.Size(80, 13)
+        Me.lblNaamgeldig.TabIndex = 30
+        Me.lblNaamgeldig.Text = "Naam Ongeldig"
+        '
         'frmBeheerSporttakken
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -153,9 +178,9 @@ Partial Class frmBeheerSporttakken
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
         Me.Controls.Add(Me.grpSport)
-        Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.mnuBeheerSporttakken)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
-        Me.MainMenuStrip = Me.MenuStrip1
+        Me.MainMenuStrip = Me.mnuBeheerSporttakken
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "frmBeheerSporttakken"
@@ -163,17 +188,18 @@ Partial Class frmBeheerSporttakken
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Sporttakbeheer"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
-        Me.MenuStrip1.ResumeLayout(False)
-        Me.MenuStrip1.PerformLayout()
+        Me.mnuBeheerSporttakken.ResumeLayout(False)
+        Me.mnuBeheerSporttakken.PerformLayout()
         Me.grpSport.ResumeLayout(False)
         Me.grpSport.PerformLayout()
+        CType(Me.picNaamGeldig, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Friend WithEvents cboSporttak As System.Windows.Forms.ComboBox
     Friend WithEvents lblSporttak As System.Windows.Forms.Label
-    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
+    Friend WithEvents mnuBeheerSporttakken As System.Windows.Forms.MenuStrip
     Friend WithEvents BeheerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents DetailToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents NewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -185,4 +211,6 @@ Partial Class frmBeheerSporttakken
     Friend WithEvents lblNaam As System.Windows.Forms.Label
     Friend WithEvents txtSportNaam As System.Windows.Forms.TextBox
     Friend WithEvents grpSport As System.Windows.Forms.GroupBox
+    Friend WithEvents picNaamGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents lblNaamgeldig As System.Windows.Forms.Label
 End Class

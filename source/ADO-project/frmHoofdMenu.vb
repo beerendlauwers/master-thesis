@@ -25,10 +25,6 @@ Public Class frmHoofdMenu
         HuidigForm.Show()
     End Sub
 
-    Private Sub VergelijkMetAccessToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-
-    End Sub
-
     Public Sub ToonStartScherm()
         ClearOtherWindows()
         HuidigForm = New frmStart()

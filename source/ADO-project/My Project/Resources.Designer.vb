@@ -67,6 +67,46 @@ Namespace My.Resources
             End Get
         End Property
         
+        '''<summary>
+        '''  Looks up a localized string similar to INSERT INTO tblNiveau VALUES(&apos;&lt; Nieuw Niveau &gt;&apos;).
+        '''</summary>
+        Friend ReadOnly Property startdata() As String
+            Get
+                Return ResourceManager.GetString("startdata", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to SET ANSI_NULLS ON
+        '''GO
+        '''SET QUOTED_IDENTIFIER ON
+        '''GO
+        '''CREATE PROCEDURE STORED_PROCEDURE_nieuwesport
+        '''	@tempSport VARCHAR(50), @tempSportID INT OUTPUT
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	INSERT INTO tblSport(SportNaam) VALUES(@tempSport)
+        '''	SELECT @@IDENTITY AS [@@IDENTITY]
+        '''	SET @tempSportID = @@IDENTITY
+        '''END
+        '''GO
+        '''
+        '''SET ANSI_NULLS ON
+        '''GO
+        '''SET QUOTED_IDENTIFIER ON
+        '''GO
+        '''CREATE PROCEDURE STORED_PROCEDURE_updatesport [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property stored_procedures() As String
+            Get
+                Return ResourceManager.GetString("stored_procedures", resourceCulture)
+            End Get
+        End Property
+        
         Friend ReadOnly Property tick() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("tick", resourceCulture)

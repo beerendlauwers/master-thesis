@@ -45,18 +45,26 @@ Public Class clDataViaAccess
             Return False
         End Try
 
-        Dim AccessAdapter As OleDbDataAdapter = New OleDbDataAdapter(mSQLString, mConnectionString)
-        AccessAdapter.Fill(mDatasetAccess, "tblEmailAdressen")
-        AccessConnection.Close()
+        Try
 
-        mDT_Access = mDatasetAccess.Tables("tblEmailAdressen")
-        mDV_Access = mDT_Access.DefaultView
-        mDV_Access.Sort = "Email"
+            Dim AccessAdapter As OleDbDataAdapter = New OleDbDataAdapter(mSQLString, mConnectionString)
+            AccessAdapter.Fill(mDatasetAccess, "tblEmailAdressen")
+            AccessConnection.Close()
+
+            mDT_Access = mDatasetAccess.Tables("tblEmailAdressen")
+            mDV_Access = mDT_Access.DefaultView
+            mDV_Access.Sort = "Email"
 
 
-        AccessConnection.Dispose()
-        AccessAdapter.Dispose()
-        Return True
+            AccessConnection.Dispose()
+            AccessAdapter.Dispose()
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: " & ex.Message)
+            AccessConnection.Dispose()
+            Return False
+        End Try
 
 
     End Function

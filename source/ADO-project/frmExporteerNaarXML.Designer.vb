@@ -23,25 +23,25 @@ Partial Class frmExporteerNaarXML
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.grpSelecteerBestand = New System.Windows.Forms.GroupBox
-        Me.pctExported = New System.Windows.Forms.PictureBox
+        Me.btnBestandOpenen = New System.Windows.Forms.Button
+        Me.picExported = New System.Windows.Forms.PictureBox
         Me.btnDataExporteren = New System.Windows.Forms.Button
         Me.lblExported = New System.Windows.Forms.Label
-        Me.btnBestandslocatie = New System.Windows.Forms.Button
         Me.txtBestandsLocatie = New System.Windows.Forms.TextBox
         Me.lblBestandsLocatie = New System.Windows.Forms.Label
-        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
+        Me.mnuExporteerNaarXML = New System.Windows.Forms.MenuStrip
         Me.SluitenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.grpSelecteerBestand.SuspendLayout()
-        CType(Me.pctExported, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.MenuStrip1.SuspendLayout()
+        CType(Me.picExported, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.mnuExporteerNaarXML.SuspendLayout()
         Me.SuspendLayout()
         '
         'grpSelecteerBestand
         '
-        Me.grpSelecteerBestand.Controls.Add(Me.pctExported)
+        Me.grpSelecteerBestand.Controls.Add(Me.btnBestandOpenen)
+        Me.grpSelecteerBestand.Controls.Add(Me.picExported)
         Me.grpSelecteerBestand.Controls.Add(Me.btnDataExporteren)
         Me.grpSelecteerBestand.Controls.Add(Me.lblExported)
-        Me.grpSelecteerBestand.Controls.Add(Me.btnBestandslocatie)
         Me.grpSelecteerBestand.Controls.Add(Me.txtBestandsLocatie)
         Me.grpSelecteerBestand.Controls.Add(Me.lblBestandsLocatie)
         Me.grpSelecteerBestand.Location = New System.Drawing.Point(17, 51)
@@ -51,18 +51,28 @@ Partial Class frmExporteerNaarXML
         Me.grpSelecteerBestand.TabStop = False
         Me.grpSelecteerBestand.Text = "Selecteer Bestandslocatie"
         '
-        'pctExported
+        'btnBestandOpenen
         '
-        Me.pctExported.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.pctExported.Location = New System.Drawing.Point(360, 105)
-        Me.pctExported.Name = "pctExported"
-        Me.pctExported.Size = New System.Drawing.Size(17, 14)
-        Me.pctExported.TabIndex = 13
-        Me.pctExported.TabStop = False
+        Me.btnBestandOpenen.Enabled = False
+        Me.btnBestandOpenen.Location = New System.Drawing.Point(357, 83)
+        Me.btnBestandOpenen.Name = "btnBestandOpenen"
+        Me.btnBestandOpenen.Size = New System.Drawing.Size(119, 23)
+        Me.btnBestandOpenen.TabIndex = 14
+        Me.btnBestandOpenen.Text = "Bestand Openen"
+        Me.btnBestandOpenen.UseVisualStyleBackColor = True
+        '
+        'picExported
+        '
+        Me.picExported.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picExported.Location = New System.Drawing.Point(140, 24)
+        Me.picExported.Name = "picExported"
+        Me.picExported.Size = New System.Drawing.Size(17, 14)
+        Me.picExported.TabIndex = 13
+        Me.picExported.TabStop = False
         '
         'btnDataExporteren
         '
-        Me.btnDataExporteren.Location = New System.Drawing.Point(168, 100)
+        Me.btnDataExporteren.Location = New System.Drawing.Point(9, 19)
         Me.btnDataExporteren.Name = "btnDataExporteren"
         Me.btnDataExporteren.Size = New System.Drawing.Size(126, 23)
         Me.btnDataExporteren.TabIndex = 3
@@ -73,24 +83,16 @@ Partial Class frmExporteerNaarXML
         '
         Me.lblExported.AutoSize = True
         Me.lblExported.ForeColor = System.Drawing.Color.Firebrick
-        Me.lblExported.Location = New System.Drawing.Point(383, 105)
+        Me.lblExported.Location = New System.Drawing.Point(163, 24)
         Me.lblExported.Name = "lblExported"
         Me.lblExported.Size = New System.Drawing.Size(93, 13)
         Me.lblExported.TabIndex = 12
         Me.lblExported.Text = "Niet Geëxporteerd"
         '
-        'btnBestandslocatie
-        '
-        Me.btnBestandslocatie.Location = New System.Drawing.Point(401, 50)
-        Me.btnBestandslocatie.Name = "btnBestandslocatie"
-        Me.btnBestandslocatie.Size = New System.Drawing.Size(75, 23)
-        Me.btnBestandslocatie.TabIndex = 2
-        Me.btnBestandslocatie.Text = "Selecteer..."
-        Me.btnBestandslocatie.UseVisualStyleBackColor = True
-        '
         'txtBestandsLocatie
         '
-        Me.txtBestandsLocatie.Location = New System.Drawing.Point(89, 24)
+        Me.txtBestandsLocatie.Enabled = False
+        Me.txtBestandsLocatie.Location = New System.Drawing.Point(89, 57)
         Me.txtBestandsLocatie.Name = "txtBestandsLocatie"
         Me.txtBestandsLocatie.Size = New System.Drawing.Size(387, 20)
         Me.txtBestandsLocatie.TabIndex = 1
@@ -98,20 +100,20 @@ Partial Class frmExporteerNaarXML
         'lblBestandsLocatie
         '
         Me.lblBestandsLocatie.AutoSize = True
-        Me.lblBestandsLocatie.Location = New System.Drawing.Point(6, 27)
+        Me.lblBestandsLocatie.Location = New System.Drawing.Point(6, 60)
         Me.lblBestandsLocatie.Name = "lblBestandsLocatie"
         Me.lblBestandsLocatie.Size = New System.Drawing.Size(85, 13)
         Me.lblBestandsLocatie.TabIndex = 0
         Me.lblBestandsLocatie.Text = "Bestandslocatie:"
         '
-        'MenuStrip1
+        'mnuExporteerNaarXML
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SluitenToolStripMenuItem})
-        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
-        Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
-        Me.MenuStrip1.TabIndex = 3
-        Me.MenuStrip1.Text = "MenuStrip1"
+        Me.mnuExporteerNaarXML.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SluitenToolStripMenuItem})
+        Me.mnuExporteerNaarXML.Location = New System.Drawing.Point(0, 0)
+        Me.mnuExporteerNaarXML.Name = "mnuExporteerNaarXML"
+        Me.mnuExporteerNaarXML.Size = New System.Drawing.Size(514, 24)
+        Me.mnuExporteerNaarXML.TabIndex = 3
+        Me.mnuExporteerNaarXML.Text = "Exporteer Naar XML"
         '
         'SluitenToolStripMenuItem
         '
@@ -126,9 +128,9 @@ Partial Class frmExporteerNaarXML
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
         Me.Controls.Add(Me.grpSelecteerBestand)
-        Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.mnuExporteerNaarXML)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
-        Me.MainMenuStrip = Me.MenuStrip1
+        Me.MainMenuStrip = Me.mnuExporteerNaarXML
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "frmExporteerNaarXML"
@@ -138,20 +140,20 @@ Partial Class frmExporteerNaarXML
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.grpSelecteerBestand.ResumeLayout(False)
         Me.grpSelecteerBestand.PerformLayout()
-        CType(Me.pctExported, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.MenuStrip1.ResumeLayout(False)
-        Me.MenuStrip1.PerformLayout()
+        CType(Me.picExported, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.mnuExporteerNaarXML.ResumeLayout(False)
+        Me.mnuExporteerNaarXML.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Friend WithEvents grpSelecteerBestand As System.Windows.Forms.GroupBox
-    Friend WithEvents btnBestandslocatie As System.Windows.Forms.Button
-    Friend WithEvents txtBestandsLocatie As System.Windows.Forms.TextBox
     Friend WithEvents lblBestandsLocatie As System.Windows.Forms.Label
     Friend WithEvents btnDataExporteren As System.Windows.Forms.Button
-    Friend WithEvents pctExported As System.Windows.Forms.PictureBox
+    Friend WithEvents picExported As System.Windows.Forms.PictureBox
     Friend WithEvents lblExported As System.Windows.Forms.Label
-    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
+    Friend WithEvents mnuExporteerNaarXML As System.Windows.Forms.MenuStrip
     Friend WithEvents SluitenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents txtBestandsLocatie As System.Windows.Forms.TextBox
+    Friend WithEvents btnBestandOpenen As System.Windows.Forms.Button
 End Class

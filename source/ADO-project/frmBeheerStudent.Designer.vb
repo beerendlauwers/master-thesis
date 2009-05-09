@@ -47,17 +47,35 @@ Partial Class frmBeheerStudent
         Me.btnStudentMail = New System.Windows.Forms.Button
         Me.dtpGebDat = New System.Windows.Forms.DateTimePicker
         Me.grpStudentDetails = New System.Windows.Forms.GroupBox
+        Me.picGeboorteDatumGeldig = New System.Windows.Forms.PictureBox
+        Me.lblGeboorteDatumGeldig = New System.Windows.Forms.Label
+        Me.picGSMGeldig = New System.Windows.Forms.PictureBox
+        Me.lblGSMGeldig = New System.Windows.Forms.Label
+        Me.picVoornaamGeldig = New System.Windows.Forms.PictureBox
+        Me.lblVoornaamGeldig = New System.Windows.Forms.Label
+        Me.picNaamGeldig = New System.Windows.Forms.PictureBox
+        Me.lblNaamgeldig = New System.Windows.Forms.Label
+        Me.picSchoolMailGeldig = New System.Windows.Forms.PictureBox
+        Me.lblSchoolMailGeldig = New System.Windows.Forms.Label
+        Me.picPriveMailGeldig = New System.Windows.Forms.PictureBox
+        Me.lblPriveMailGeldig = New System.Windows.Forms.Label
+        Me.picGeldigeRekening = New System.Windows.Forms.PictureBox
+        Me.lblGeldigeRekening = New System.Windows.Forms.Label
         Me.lblStudNaam = New System.Windows.Forms.Label
         Me.cboNaamData = New System.Windows.Forms.ComboBox
         Me.cboNaamFilter = New System.Windows.Forms.ComboBox
         Me.lblZoekenOp = New System.Windows.Forms.Label
         Me.grpNieuweDeelname = New System.Windows.Forms.GroupBox
-        Me.pctGeldigeRekening = New System.Windows.Forms.PictureBox
-        Me.lblGeldigeRekening = New System.Windows.Forms.Label
         Me.MenuStrip1.SuspendLayout()
         Me.grpStudentDetails.SuspendLayout()
+        CType(Me.picGeboorteDatumGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picGSMGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picVoornaamGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picNaamGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picSchoolMailGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picPriveMailGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picGeldigeRekening, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpNieuweDeelname.SuspendLayout()
-        CType(Me.pctGeldigeRekening, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'MenuStrip1
@@ -73,75 +91,79 @@ Partial Class frmBeheerStudent
         '
         Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DetailToolStripMenuItem, Me.NewToolStripMenuItem, Me.EditToolStripMenuItem, Me.SaveToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.CancelToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.BeheerToolStripMenuItem.Name = "BeheerToolStripMenuItem"
-        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
+        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(53, 20)
         Me.BeheerToolStripMenuItem.Text = "Beheer"
         '
         'DetailToolStripMenuItem
         '
         Me.DetailToolStripMenuItem.Name = "DetailToolStripMenuItem"
-        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
+        Me.DetailToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
         Me.DetailToolStripMenuItem.Text = "Detail"
         '
         'NewToolStripMenuItem
         '
         Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
-        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.NewToolStripMenuItem.Text = "New"
+        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.NewToolStripMenuItem.Text = "Nieuw"
         '
         'EditToolStripMenuItem
         '
         Me.EditToolStripMenuItem.Name = "EditToolStripMenuItem"
-        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.EditToolStripMenuItem.Text = "Edit"
+        Me.EditToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.EditToolStripMenuItem.Text = "Wijzig"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.SaveToolStripMenuItem.Text = "Save"
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.SaveToolStripMenuItem.Text = "Opslaan"
         '
         'DeleteToolStripMenuItem
         '
         Me.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem"
-        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.DeleteToolStripMenuItem.Text = "Delete"
+        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.DeleteToolStripMenuItem.Text = "Verwijder"
         '
         'CancelToolStripMenuItem
         '
         Me.CancelToolStripMenuItem.Name = "CancelToolStripMenuItem"
-        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.CancelToolStripMenuItem.Text = "Cancel"
+        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.CancelToolStripMenuItem.Text = "Annuleer"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(110, 22)
-        Me.ExitToolStripMenuItem.Text = "Exit"
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.ExitToolStripMenuItem.Text = "Sluiten"
         '
         'txtNaam
         '
         Me.txtNaam.Location = New System.Drawing.Point(116, 21)
+        Me.txtNaam.MaxLength = 50
         Me.txtNaam.Name = "txtNaam"
         Me.txtNaam.Size = New System.Drawing.Size(180, 20)
         Me.txtNaam.TabIndex = 2
         '
         'txtPriveMail
         '
-        Me.txtPriveMail.Location = New System.Drawing.Point(116, 123)
+        Me.txtPriveMail.Location = New System.Drawing.Point(116, 121)
+        Me.txtPriveMail.MaxLength = 50
         Me.txtPriveMail.Name = "txtPriveMail"
         Me.txtPriveMail.Size = New System.Drawing.Size(180, 20)
         Me.txtPriveMail.TabIndex = 6
         '
         'txtFinRek
         '
-        Me.txtFinRek.Location = New System.Drawing.Point(116, 175)
+        Me.txtFinRek.Location = New System.Drawing.Point(116, 174)
+        Me.txtFinRek.MaxLength = 50
         Me.txtFinRek.Name = "txtFinRek"
         Me.txtFinRek.Size = New System.Drawing.Size(180, 20)
         Me.txtFinRek.TabIndex = 8
         '
         'txtSchoolMail
         '
-        Me.txtSchoolMail.Location = New System.Drawing.Point(116, 96)
+        Me.txtSchoolMail.Location = New System.Drawing.Point(116, 97)
+        Me.txtSchoolMail.MaxLength = 50
         Me.txtSchoolMail.Name = "txtSchoolMail"
         Me.txtSchoolMail.Size = New System.Drawing.Size(180, 20)
         Me.txtSchoolMail.TabIndex = 5
@@ -149,6 +171,7 @@ Partial Class frmBeheerStudent
         'txtGSM
         '
         Me.txtGSM.Location = New System.Drawing.Point(116, 72)
+        Me.txtGSM.MaxLength = 50
         Me.txtGSM.Name = "txtGSM"
         Me.txtGSM.Size = New System.Drawing.Size(180, 20)
         Me.txtGSM.TabIndex = 4
@@ -156,6 +179,7 @@ Partial Class frmBeheerStudent
         'txtVoornaam
         '
         Me.txtVoornaam.Location = New System.Drawing.Point(116, 47)
+        Me.txtVoornaam.MaxLength = 50
         Me.txtVoornaam.Name = "txtVoornaam"
         Me.txtVoornaam.Size = New System.Drawing.Size(180, 20)
         Me.txtVoornaam.TabIndex = 3
@@ -172,7 +196,7 @@ Partial Class frmBeheerStudent
         'lblSchoolMail
         '
         Me.lblSchoolMail.AutoSize = True
-        Me.lblSchoolMail.Location = New System.Drawing.Point(7, 99)
+        Me.lblSchoolMail.Location = New System.Drawing.Point(7, 100)
         Me.lblSchoolMail.Name = "lblSchoolMail"
         Me.lblSchoolMail.Size = New System.Drawing.Size(61, 13)
         Me.lblSchoolMail.TabIndex = 14
@@ -181,7 +205,7 @@ Partial Class frmBeheerStudent
         'lblFinRek
         '
         Me.lblFinRek.AutoSize = True
-        Me.lblFinRek.Location = New System.Drawing.Point(6, 178)
+        Me.lblFinRek.Location = New System.Drawing.Point(6, 177)
         Me.lblFinRek.Name = "lblFinRek"
         Me.lblFinRek.Size = New System.Drawing.Size(99, 13)
         Me.lblFinRek.TabIndex = 16
@@ -190,7 +214,7 @@ Partial Class frmBeheerStudent
         'lblGebDat
         '
         Me.lblGebDat.AutoSize = True
-        Me.lblGebDat.Location = New System.Drawing.Point(6, 152)
+        Me.lblGebDat.Location = New System.Drawing.Point(6, 151)
         Me.lblGebDat.Name = "lblGebDat"
         Me.lblGebDat.Size = New System.Drawing.Size(80, 13)
         Me.lblGebDat.TabIndex = 17
@@ -199,7 +223,7 @@ Partial Class frmBeheerStudent
         'lblPriveMail
         '
         Me.lblPriveMail.AutoSize = True
-        Me.lblPriveMail.Location = New System.Drawing.Point(6, 126)
+        Me.lblPriveMail.Location = New System.Drawing.Point(6, 124)
         Me.lblPriveMail.Name = "lblPriveMail"
         Me.lblPriveMail.Size = New System.Drawing.Size(52, 13)
         Me.lblPriveMail.TabIndex = 18
@@ -225,6 +249,7 @@ Partial Class frmBeheerStudent
         '
         'btnStudentMail
         '
+        Me.btnStudentMail.Enabled = False
         Me.btnStudentMail.Location = New System.Drawing.Point(9, 215)
         Me.btnStudentMail.Name = "btnStudentMail"
         Me.btnStudentMail.Size = New System.Drawing.Size(121, 23)
@@ -234,14 +259,26 @@ Partial Class frmBeheerStudent
         '
         'dtpGebDat
         '
-        Me.dtpGebDat.Location = New System.Drawing.Point(116, 148)
+        Me.dtpGebDat.Location = New System.Drawing.Point(116, 147)
         Me.dtpGebDat.Name = "dtpGebDat"
         Me.dtpGebDat.Size = New System.Drawing.Size(180, 20)
         Me.dtpGebDat.TabIndex = 21
         '
         'grpStudentDetails
         '
-        Me.grpStudentDetails.Controls.Add(Me.pctGeldigeRekening)
+        Me.grpStudentDetails.Controls.Add(Me.picGeboorteDatumGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.lblGeboorteDatumGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.picGSMGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.lblGSMGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.picVoornaamGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.lblVoornaamGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.picNaamGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.lblNaamgeldig)
+        Me.grpStudentDetails.Controls.Add(Me.picSchoolMailGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.lblSchoolMailGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.picPriveMailGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.lblPriveMailGeldig)
+        Me.grpStudentDetails.Controls.Add(Me.picGeldigeRekening)
         Me.grpStudentDetails.Controls.Add(Me.lblGeldigeRekening)
         Me.grpStudentDetails.Controls.Add(Me.lblNaam)
         Me.grpStudentDetails.Controls.Add(Me.btnStudentMail)
@@ -264,6 +301,139 @@ Partial Class frmBeheerStudent
         Me.grpStudentDetails.TabIndex = 23
         Me.grpStudentDetails.TabStop = False
         Me.grpStudentDetails.Text = "Studentdetails"
+        '
+        'picGeboorteDatumGeldig
+        '
+        Me.picGeboorteDatumGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picGeboorteDatumGeldig.Location = New System.Drawing.Point(300, 151)
+        Me.picGeboorteDatumGeldig.Name = "picGeboorteDatumGeldig"
+        Me.picGeboorteDatumGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picGeboorteDatumGeldig.TabIndex = 35
+        Me.picGeboorteDatumGeldig.TabStop = False
+        '
+        'lblGeboorteDatumGeldig
+        '
+        Me.lblGeboorteDatumGeldig.AutoSize = True
+        Me.lblGeboorteDatumGeldig.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblGeboorteDatumGeldig.Location = New System.Drawing.Point(323, 151)
+        Me.lblGeboorteDatumGeldig.Name = "lblGeboorteDatumGeldig"
+        Me.lblGeboorteDatumGeldig.Size = New System.Drawing.Size(125, 13)
+        Me.lblGeboorteDatumGeldig.TabIndex = 34
+        Me.lblGeboorteDatumGeldig.Text = "Geboortedatum Ongeldig"
+        '
+        'picGSMGeldig
+        '
+        Me.picGSMGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picGSMGeldig.Location = New System.Drawing.Point(300, 75)
+        Me.picGSMGeldig.Name = "picGSMGeldig"
+        Me.picGSMGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picGSMGeldig.TabIndex = 33
+        Me.picGSMGeldig.TabStop = False
+        '
+        'lblGSMGeldig
+        '
+        Me.lblGSMGeldig.AutoSize = True
+        Me.lblGSMGeldig.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblGSMGeldig.Location = New System.Drawing.Point(323, 75)
+        Me.lblGSMGeldig.Name = "lblGSMGeldig"
+        Me.lblGSMGeldig.Size = New System.Drawing.Size(76, 13)
+        Me.lblGSMGeldig.TabIndex = 32
+        Me.lblGSMGeldig.Text = "GSM Ongeldig"
+        '
+        'picVoornaamGeldig
+        '
+        Me.picVoornaamGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picVoornaamGeldig.Location = New System.Drawing.Point(300, 50)
+        Me.picVoornaamGeldig.Name = "picVoornaamGeldig"
+        Me.picVoornaamGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picVoornaamGeldig.TabIndex = 31
+        Me.picVoornaamGeldig.TabStop = False
+        '
+        'lblVoornaamGeldig
+        '
+        Me.lblVoornaamGeldig.AutoSize = True
+        Me.lblVoornaamGeldig.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblVoornaamGeldig.Location = New System.Drawing.Point(323, 50)
+        Me.lblVoornaamGeldig.Name = "lblVoornaamGeldig"
+        Me.lblVoornaamGeldig.Size = New System.Drawing.Size(100, 13)
+        Me.lblVoornaamGeldig.TabIndex = 30
+        Me.lblVoornaamGeldig.Text = "Voornaam Ongeldig"
+        '
+        'picNaamGeldig
+        '
+        Me.picNaamGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picNaamGeldig.Location = New System.Drawing.Point(300, 24)
+        Me.picNaamGeldig.Name = "picNaamGeldig"
+        Me.picNaamGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picNaamGeldig.TabIndex = 29
+        Me.picNaamGeldig.TabStop = False
+        '
+        'lblNaamgeldig
+        '
+        Me.lblNaamgeldig.AutoSize = True
+        Me.lblNaamgeldig.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblNaamgeldig.Location = New System.Drawing.Point(323, 24)
+        Me.lblNaamgeldig.Name = "lblNaamgeldig"
+        Me.lblNaamgeldig.Size = New System.Drawing.Size(80, 13)
+        Me.lblNaamgeldig.TabIndex = 28
+        Me.lblNaamgeldig.Text = "Naam Ongeldig"
+        '
+        'picSchoolMailGeldig
+        '
+        Me.picSchoolMailGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picSchoolMailGeldig.Location = New System.Drawing.Point(300, 100)
+        Me.picSchoolMailGeldig.Name = "picSchoolMailGeldig"
+        Me.picSchoolMailGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picSchoolMailGeldig.TabIndex = 27
+        Me.picSchoolMailGeldig.TabStop = False
+        '
+        'lblSchoolMailGeldig
+        '
+        Me.lblSchoolMailGeldig.AutoSize = True
+        Me.lblSchoolMailGeldig.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblSchoolMailGeldig.Location = New System.Drawing.Point(323, 100)
+        Me.lblSchoolMailGeldig.Name = "lblSchoolMailGeldig"
+        Me.lblSchoolMailGeldig.Size = New System.Drawing.Size(106, 13)
+        Me.lblSchoolMailGeldig.TabIndex = 26
+        Me.lblSchoolMailGeldig.Text = "School-mail Ongeldig"
+        '
+        'picPriveMailGeldig
+        '
+        Me.picPriveMailGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picPriveMailGeldig.Location = New System.Drawing.Point(300, 124)
+        Me.picPriveMailGeldig.Name = "picPriveMailGeldig"
+        Me.picPriveMailGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picPriveMailGeldig.TabIndex = 25
+        Me.picPriveMailGeldig.TabStop = False
+        '
+        'lblPriveMailGeldig
+        '
+        Me.lblPriveMailGeldig.AutoSize = True
+        Me.lblPriveMailGeldig.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblPriveMailGeldig.Location = New System.Drawing.Point(323, 124)
+        Me.lblPriveMailGeldig.Name = "lblPriveMailGeldig"
+        Me.lblPriveMailGeldig.Size = New System.Drawing.Size(97, 13)
+        Me.lblPriveMailGeldig.TabIndex = 24
+        Me.lblPriveMailGeldig.Text = "Privé-mail Ongeldig"
+        '
+        'picGeldigeRekening
+        '
+        Me.picGeldigeRekening.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picGeldigeRekening.Location = New System.Drawing.Point(300, 177)
+        Me.picGeldigeRekening.Name = "picGeldigeRekening"
+        Me.picGeldigeRekening.Size = New System.Drawing.Size(17, 14)
+        Me.picGeldigeRekening.TabIndex = 23
+        Me.picGeldigeRekening.TabStop = False
+        '
+        'lblGeldigeRekening
+        '
+        Me.lblGeldigeRekening.AutoSize = True
+        Me.lblGeldigeRekening.ForeColor = System.Drawing.Color.Firebrick
+        Me.lblGeldigeRekening.Location = New System.Drawing.Point(323, 177)
+        Me.lblGeldigeRekening.Name = "lblGeldigeRekening"
+        Me.lblGeldigeRekening.Size = New System.Drawing.Size(98, 13)
+        Me.lblGeldigeRekening.TabIndex = 22
+        Me.lblGeldigeRekening.Text = "Rekening Ongeldig"
         '
         'lblStudNaam
         '
@@ -314,25 +484,6 @@ Partial Class frmBeheerStudent
         Me.grpNieuweDeelname.TabStop = False
         Me.grpNieuweDeelname.Text = "Selecteer Student"
         '
-        'pctGeldigeRekening
-        '
-        Me.pctGeldigeRekening.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.pctGeldigeRekening.Location = New System.Drawing.Point(180, 198)
-        Me.pctGeldigeRekening.Name = "pctGeldigeRekening"
-        Me.pctGeldigeRekening.Size = New System.Drawing.Size(17, 14)
-        Me.pctGeldigeRekening.TabIndex = 23
-        Me.pctGeldigeRekening.TabStop = False
-        '
-        'lblGeldigeRekening
-        '
-        Me.lblGeldigeRekening.AutoSize = True
-        Me.lblGeldigeRekening.ForeColor = System.Drawing.Color.Firebrick
-        Me.lblGeldigeRekening.Location = New System.Drawing.Point(203, 198)
-        Me.lblGeldigeRekening.Name = "lblGeldigeRekening"
-        Me.lblGeldigeRekening.Size = New System.Drawing.Size(98, 13)
-        Me.lblGeldigeRekening.TabIndex = 22
-        Me.lblGeldigeRekening.Text = "Rekening Ongeldig"
-        '
         'frmBeheerStudent
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -355,9 +506,15 @@ Partial Class frmBeheerStudent
         Me.MenuStrip1.PerformLayout()
         Me.grpStudentDetails.ResumeLayout(False)
         Me.grpStudentDetails.PerformLayout()
+        CType(Me.picGeboorteDatumGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picGSMGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picVoornaamGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picNaamGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picSchoolMailGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picPriveMailGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picGeldigeRekening, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpNieuweDeelname.ResumeLayout(False)
         Me.grpNieuweDeelname.PerformLayout()
-        CType(Me.pctGeldigeRekening, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -392,6 +549,18 @@ Partial Class frmBeheerStudent
     Friend WithEvents cboNaamFilter As System.Windows.Forms.ComboBox
     Friend WithEvents lblZoekenOp As System.Windows.Forms.Label
     Friend WithEvents grpNieuweDeelname As System.Windows.Forms.GroupBox
-    Friend WithEvents pctGeldigeRekening As System.Windows.Forms.PictureBox
+    Friend WithEvents picGeldigeRekening As System.Windows.Forms.PictureBox
     Friend WithEvents lblGeldigeRekening As System.Windows.Forms.Label
+    Friend WithEvents picPriveMailGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents lblPriveMailGeldig As System.Windows.Forms.Label
+    Friend WithEvents picSchoolMailGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents lblSchoolMailGeldig As System.Windows.Forms.Label
+    Friend WithEvents picGeboorteDatumGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents lblGeboorteDatumGeldig As System.Windows.Forms.Label
+    Friend WithEvents picGSMGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents lblGSMGeldig As System.Windows.Forms.Label
+    Friend WithEvents picVoornaamGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents lblVoornaamGeldig As System.Windows.Forms.Label
+    Friend WithEvents picNaamGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents lblNaamgeldig As System.Windows.Forms.Label
 End Class

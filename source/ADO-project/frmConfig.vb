@@ -31,10 +31,6 @@ Public Class frmConfig
         Me.lblSQLPaswoord.Enabled = Not Me.chkIntegratedSecurity.Checked
     End Sub
 
-    Private Sub VensterSluitenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        Me.Close()
-    End Sub
-
     Private Sub CheckSQLconnectie()
         'Tekst van form binnenhalen
         Dim server As String = Me.txtSQLServer.Text
@@ -47,7 +43,7 @@ Public Class frmConfig
         (integratedsecurity = False And (gebruiker = String.Empty Or database = String.Empty)) Then
             Me.lblSQLGeldig.Text = "Ongeldig"
             Me.lblSQLGeldig.ForeColor = Color.Firebrick
-            Me.pctSQLGeldig.Image = ADO_project.My.Resources.remove
+            Me.picSQLGeldig.Image = ADO_project.My.Resources.remove
         Else
             'Als alles op het form geldig is, kunnen we een connectietest uitvoeren
             Dim blnGeslaagd As Boolean = False
@@ -61,12 +57,12 @@ Public Class frmConfig
             If (blnGeslaagd) Then
                 Me.lblSQLGeldig.Text = "Geldig"
                 Me.lblSQLGeldig.ForeColor = Color.ForestGreen
-                Me.pctSQLGeldig.Image = ADO_project.My.Resources.tick
+                Me.picSQLGeldig.Image = ADO_project.My.Resources.tick
                 Me.chkSQLOpslaan.Checked = True
             Else
                 Me.lblSQLGeldig.Text = "Ongeldig"
                 Me.lblSQLGeldig.ForeColor = Color.Firebrick
-                Me.pctSQLGeldig.Image = ADO_project.My.Resources.remove
+                Me.picSQLGeldig.Image = ADO_project.My.Resources.remove
             End If
 
             'Schoonmaken
@@ -83,7 +79,7 @@ Public Class frmConfig
         If (database = String.Empty Or tabel = String.Empty Or kolom = String.Empty) Then
             Me.lblAccessGeldig.Text = "Ongeldig"
             Me.lblAccessGeldig.ForeColor = Color.Firebrick
-            Me.pctAccessGeldig.Image = ADO_project.My.Resources.remove
+            Me.picAccessGeldig.Image = ADO_project.My.Resources.remove
         Else
             'Als alles op het form geldig is, kunnen we een connectietest uitvoeren
             Dim blnGeslaagd As Boolean = False
@@ -97,12 +93,12 @@ Public Class frmConfig
             If (blnGeslaagd) Then
                 Me.lblAccessGeldig.Text = "Geldig"
                 Me.lblAccessGeldig.ForeColor = Color.ForestGreen
-                Me.pctAccessGeldig.Image = ADO_project.My.Resources.tick
+                Me.picAccessGeldig.Image = ADO_project.My.Resources.tick
                 Me.chkAccessOpslaan.Checked = True
             Else
                 Me.lblAccessGeldig.Text = "Ongeldig"
                 Me.lblAccessGeldig.ForeColor = Color.Firebrick
-                Me.pctAccessGeldig.Image = ADO_project.My.Resources.remove
+                Me.picAccessGeldig.Image = ADO_project.My.Resources.remove
             End If
 
             'Schoonmaken
@@ -373,8 +369,10 @@ Public Class frmConfig
         Dim data As String = GetConfig()
         My.Computer.FileSystem.WriteAllText("config.cfg", data, False)
 
-        'Toon het startscherm.
-        frmHoofdMenu.ToonStartScherm()
+        If (frmHoofdMenu.BlnAccessConnectieGelukt And frmHoofdMenu.BlnSQLConnectieGelukt) Then
+            'Toon het startscherm.
+            frmHoofdMenu.ToonStartScherm()
+        End If
     End Sub
 
     Private Sub LegenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LegenToolStripMenuItem.Click
@@ -390,5 +388,12 @@ Public Class frmConfig
         Me.chkAccessOpslaan.Checked = False
         Me.chkSQLOpslaan.Checked = False
 
+    End Sub
+
+    Private Sub NieuweDatabaseAanleggenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NieuweDatabaseAanleggenToolStripMenuItem.Click
+        frmHoofdMenu.ClearOtherWindows()
+        frmHoofdMenu.HuidigForm = New frmNieuweDatabase()
+        frmHoofdMenu.HuidigForm.MdiParent = frmHoofdMenu
+        frmHoofdMenu.HuidigForm.Show()
     End Sub
 End Class

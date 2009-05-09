@@ -22,16 +22,17 @@ Partial Class frmConfig
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
+        Me.mnuConfig = New System.Windows.Forms.MenuStrip
         Me.BeheerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.OpenConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ConfigOpslaanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.LegenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.txtSQLServer = New System.Windows.Forms.TextBox
         Me.lblSQLServer = New System.Windows.Forms.Label
         Me.grpInstellingen = New System.Windows.Forms.GroupBox
         Me.btnSQLTestConnectie = New System.Windows.Forms.Button
         Me.chkSQLOpslaan = New System.Windows.Forms.CheckBox
-        Me.pctSQLGeldig = New System.Windows.Forms.PictureBox
+        Me.picSQLGeldig = New System.Windows.Forms.PictureBox
         Me.lblSQLGeldig = New System.Windows.Forms.Label
         Me.txtSQLPaswoord = New System.Windows.Forms.TextBox
         Me.txtSQLGebruiker = New System.Windows.Forms.TextBox
@@ -45,29 +46,29 @@ Partial Class frmConfig
         Me.lblAccessKolom = New System.Windows.Forms.Label
         Me.txtAccessTabel = New System.Windows.Forms.TextBox
         Me.lblAccessTabel = New System.Windows.Forms.Label
-        Me.pctAccessGeldig = New System.Windows.Forms.PictureBox
+        Me.picAccessGeldig = New System.Windows.Forms.PictureBox
         Me.btnAccessOpenen = New System.Windows.Forms.Button
         Me.lblAccessGeldig = New System.Windows.Forms.Label
         Me.txtAccessBestand = New System.Windows.Forms.TextBox
         Me.lblAccessBestand = New System.Windows.Forms.Label
         Me.chkAccessOpslaan = New System.Windows.Forms.CheckBox
         Me.btnUseConfig = New System.Windows.Forms.Button
-        Me.LegenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.MenuStrip1.SuspendLayout()
+        Me.NieuweDatabaseAanleggenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuConfig.SuspendLayout()
         Me.grpInstellingen.SuspendLayout()
-        CType(Me.pctSQLGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picSQLGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpAccess.SuspendLayout()
-        CType(Me.pctAccessGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.picAccessGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
-        'MenuStrip1
+        'mnuConfig
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
-        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
-        Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
-        Me.MenuStrip1.TabIndex = 0
-        Me.MenuStrip1.Text = "MenuStrip1"
+        Me.mnuConfig.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem, Me.NieuweDatabaseAanleggenToolStripMenuItem})
+        Me.mnuConfig.Location = New System.Drawing.Point(0, 0)
+        Me.mnuConfig.Name = "mnuConfig"
+        Me.mnuConfig.Size = New System.Drawing.Size(514, 24)
+        Me.mnuConfig.TabIndex = 0
+        Me.mnuConfig.Text = "Configuratie"
         '
         'BeheerToolStripMenuItem
         '
@@ -79,14 +80,20 @@ Partial Class frmConfig
         'OpenConfigToolStripMenuItem
         '
         Me.OpenConfigToolStripMenuItem.Name = "OpenConfigToolStripMenuItem"
-        Me.OpenConfigToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OpenConfigToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.OpenConfigToolStripMenuItem.Text = "Openen"
         '
         'ConfigOpslaanToolStripMenuItem
         '
         Me.ConfigOpslaanToolStripMenuItem.Name = "ConfigOpslaanToolStripMenuItem"
-        Me.ConfigOpslaanToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ConfigOpslaanToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.ConfigOpslaanToolStripMenuItem.Text = "Opslaan"
+        '
+        'LegenToolStripMenuItem
+        '
+        Me.LegenToolStripMenuItem.Name = "LegenToolStripMenuItem"
+        Me.LegenToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
+        Me.LegenToolStripMenuItem.Text = "Legen"
         '
         'txtSQLServer
         '
@@ -108,7 +115,7 @@ Partial Class frmConfig
         '
         Me.grpInstellingen.Controls.Add(Me.btnSQLTestConnectie)
         Me.grpInstellingen.Controls.Add(Me.chkSQLOpslaan)
-        Me.grpInstellingen.Controls.Add(Me.pctSQLGeldig)
+        Me.grpInstellingen.Controls.Add(Me.picSQLGeldig)
         Me.grpInstellingen.Controls.Add(Me.lblSQLGeldig)
         Me.grpInstellingen.Controls.Add(Me.txtSQLPaswoord)
         Me.grpInstellingen.Controls.Add(Me.txtSQLGebruiker)
@@ -145,14 +152,14 @@ Partial Class frmConfig
         Me.chkSQLOpslaan.Text = "Opslaan in configuratie"
         Me.chkSQLOpslaan.UseVisualStyleBackColor = True
         '
-        'pctSQLGeldig
+        'picSQLGeldig
         '
-        Me.pctSQLGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.pctSQLGeldig.Location = New System.Drawing.Point(411, 169)
-        Me.pctSQLGeldig.Name = "pctSQLGeldig"
-        Me.pctSQLGeldig.Size = New System.Drawing.Size(17, 14)
-        Me.pctSQLGeldig.TabIndex = 11
-        Me.pctSQLGeldig.TabStop = False
+        Me.picSQLGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picSQLGeldig.Location = New System.Drawing.Point(411, 169)
+        Me.picSQLGeldig.Name = "picSQLGeldig"
+        Me.picSQLGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picSQLGeldig.TabIndex = 11
+        Me.picSQLGeldig.TabStop = False
         '
         'lblSQLGeldig
         '
@@ -231,7 +238,7 @@ Partial Class frmConfig
         Me.grpAccess.Controls.Add(Me.lblAccessKolom)
         Me.grpAccess.Controls.Add(Me.txtAccessTabel)
         Me.grpAccess.Controls.Add(Me.lblAccessTabel)
-        Me.grpAccess.Controls.Add(Me.pctAccessGeldig)
+        Me.grpAccess.Controls.Add(Me.picAccessGeldig)
         Me.grpAccess.Controls.Add(Me.btnAccessOpenen)
         Me.grpAccess.Controls.Add(Me.lblAccessGeldig)
         Me.grpAccess.Controls.Add(Me.txtAccessBestand)
@@ -276,14 +283,14 @@ Partial Class frmConfig
         Me.lblAccessTabel.TabIndex = 17
         Me.lblAccessTabel.Text = "Tabel:"
         '
-        'pctAccessGeldig
+        'picAccessGeldig
         '
-        Me.pctAccessGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.pctAccessGeldig.Location = New System.Drawing.Point(411, 132)
-        Me.pctAccessGeldig.Name = "pctAccessGeldig"
-        Me.pctAccessGeldig.Size = New System.Drawing.Size(17, 14)
-        Me.pctAccessGeldig.TabIndex = 14
-        Me.pctAccessGeldig.TabStop = False
+        Me.picAccessGeldig.Image = Global.ADO_project.My.Resources.Resources.remove
+        Me.picAccessGeldig.Location = New System.Drawing.Point(411, 132)
+        Me.picAccessGeldig.Name = "picAccessGeldig"
+        Me.picAccessGeldig.Size = New System.Drawing.Size(17, 14)
+        Me.picAccessGeldig.TabIndex = 14
+        Me.picAccessGeldig.TabStop = False
         '
         'btnAccessOpenen
         '
@@ -339,11 +346,11 @@ Partial Class frmConfig
         Me.btnUseConfig.Text = "Deze configuratie gebruiken"
         Me.btnUseConfig.UseVisualStyleBackColor = True
         '
-        'LegenToolStripMenuItem
+        'NieuweDatabaseAanleggenToolStripMenuItem
         '
-        Me.LegenToolStripMenuItem.Name = "LegenToolStripMenuItem"
-        Me.LegenToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
-        Me.LegenToolStripMenuItem.Text = "Legen"
+        Me.NieuweDatabaseAanleggenToolStripMenuItem.Name = "NieuweDatabaseAanleggenToolStripMenuItem"
+        Me.NieuweDatabaseAanleggenToolStripMenuItem.Size = New System.Drawing.Size(157, 20)
+        Me.NieuweDatabaseAanleggenToolStripMenuItem.Text = "Nieuwe Database Aanleggen"
         '
         'frmConfig
         '
@@ -354,9 +361,9 @@ Partial Class frmConfig
         Me.Controls.Add(Me.btnUseConfig)
         Me.Controls.Add(Me.grpAccess)
         Me.Controls.Add(Me.grpInstellingen)
-        Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.mnuConfig)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
-        Me.MainMenuStrip = Me.MenuStrip1
+        Me.MainMenuStrip = Me.mnuConfig
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "frmConfig"
@@ -364,19 +371,19 @@ Partial Class frmConfig
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Instellingen"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
-        Me.MenuStrip1.ResumeLayout(False)
-        Me.MenuStrip1.PerformLayout()
+        Me.mnuConfig.ResumeLayout(False)
+        Me.mnuConfig.PerformLayout()
         Me.grpInstellingen.ResumeLayout(False)
         Me.grpInstellingen.PerformLayout()
-        CType(Me.pctSQLGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picSQLGeldig, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpAccess.ResumeLayout(False)
         Me.grpAccess.PerformLayout()
-        CType(Me.pctAccessGeldig, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.picAccessGeldig, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
+    Friend WithEvents mnuConfig As System.Windows.Forms.MenuStrip
     Friend WithEvents BeheerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents OpenConfigToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ConfigOpslaanToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -391,14 +398,14 @@ Partial Class frmConfig
     Friend WithEvents txtSQLGebruiker As System.Windows.Forms.TextBox
     Friend WithEvents txtSQLPaswoord As System.Windows.Forms.TextBox
     Friend WithEvents lblSQLGeldig As System.Windows.Forms.Label
-    Friend WithEvents pctSQLGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents picSQLGeldig As System.Windows.Forms.PictureBox
     Friend WithEvents grpAccess As System.Windows.Forms.GroupBox
     Friend WithEvents chkSQLOpslaan As System.Windows.Forms.CheckBox
     Friend WithEvents chkAccessOpslaan As System.Windows.Forms.CheckBox
     Friend WithEvents txtAccessBestand As System.Windows.Forms.TextBox
     Friend WithEvents lblAccessBestand As System.Windows.Forms.Label
     Friend WithEvents btnAccessOpenen As System.Windows.Forms.Button
-    Friend WithEvents pctAccessGeldig As System.Windows.Forms.PictureBox
+    Friend WithEvents picAccessGeldig As System.Windows.Forms.PictureBox
     Friend WithEvents lblAccessGeldig As System.Windows.Forms.Label
     Friend WithEvents txtAccessTabel As System.Windows.Forms.TextBox
     Friend WithEvents lblAccessTabel As System.Windows.Forms.Label
@@ -407,4 +414,5 @@ Partial Class frmConfig
     Friend WithEvents btnSQLTestConnectie As System.Windows.Forms.Button
     Friend WithEvents btnUseConfig As System.Windows.Forms.Button
     Friend WithEvents LegenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents NieuweDatabaseAanleggenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class

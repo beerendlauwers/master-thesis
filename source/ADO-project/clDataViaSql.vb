@@ -1,11 +1,9 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class clDataViaSql
+
+#Region "Private Variabelen"
     Private mDataSet As DataSet = New DataSet
-    Private mDT_Student As DataTable = New DataTable
-    Private mDT_Niveau As DataTable = New DataTable
-    Private mDT_DoetSport As DataTable = New DataTable
-    Private mDT_Sport As DataTable = New DataTable
     Private mDV_Student As DataView = New DataView
     Private mDV_Sport As DataView = New DataView
     Private mDV_Niveau As DataView = New DataView
@@ -14,7 +12,9 @@ Public Class clDataViaSql
     Private mConnectionString As String
     Private mDataSetIsInitialized As Boolean = False
     Private mtblDeelnameIsInitialized As Boolean = False
+#End Region
 
+#Region "Properties"
     Public Property p_dataset() As DataSet
         Get
             Return mDataSet
@@ -68,43 +68,9 @@ Public Class clDataViaSql
             mConnectionString = value
         End Set
     End Property
+#End Region
 
-    Public Function f_HaalDeelnameDataOp() As Boolean
-
-        Dim SQLConnection As New SqlConnection(mConnectionString)
-
-        Try
-            SQLConnection.Open()
-        Catch ex As SqlException
-            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
-            SQLConnection.Dispose()
-            Return False
-        End Try
-
-        If (mtblDeelnameIsInitialized) Then
-            If (mDataSet.Tables("tblDeelname").Rows.Count > 0) Then
-                mDataSet.Tables("tblDeelname").Clear()
-            End If
-        End If
-
-        Dim SQLdeelname As String = "STORED_PROCEDURE_tbldoetsportdatagrid"
-        Dim deelnameAdapter As SqlDataAdapter = New SqlDataAdapter()
-        deelnameAdapter.TableMappings.Add("Table", "tblDeelname")
-        Dim deelnameCmd As SqlCommand = New SqlCommand(SQLdeelname, SQLConnection)
-        deelnameCmd.CommandType = CommandType.StoredProcedure
-        deelnameAdapter.SelectCommand = deelnameCmd
-        deelnameAdapter.Fill(mDataSet, "tblDeelname")
-        SQLConnection.Close()
-        SQLConnection.Dispose()
-        deelnameAdapter.Dispose()
-        deelnameCmd.Dispose()
-
-        mtblDeelnameIsInitialized = True
-
-        Return True
-
-    End Function
-
+#Region "Function: Data uit database ophalen"
     Public Function f_VerbindMetDatabase() As Boolean
 
         Dim SQLConnection As New SqlConnection(mConnectionString)
@@ -117,87 +83,78 @@ Public Class clDataViaSql
             Return False
         End Try
 
-        Dim SQLstudent As String = "STORED_PROCEDURE_tblstudentinlezen"
-        Dim SQLsport As String = "STORED_PROCEDURE_tblsportinlezen"
-        Dim SQLniveau As String = "STORED_PROCEDURE_tblniveauinlezen"
-        Dim SQLdoetsport As String = "STORED_PROCEDURE_tbldoetsportinlezen"
+        Try
 
+            Dim SQLstudent As String = "STORED_PROCEDURE_tblstudentinlezen"
+            Dim SQLsport As String = "STORED_PROCEDURE_tblsportinlezen"
+            Dim SQLniveau As String = "STORED_PROCEDURE_tblniveauinlezen"
+            Dim SQLdoetsport As String = "STORED_PROCEDURE_tbldoetsportinlezen"
 
-        Dim studentAdapter As SqlDataAdapter = New SqlDataAdapter()
-        Dim sportAdapter As SqlDataAdapter = New SqlDataAdapter()
-        Dim niveauAdapter As SqlDataAdapter = New SqlDataAdapter()
-        Dim doetsportAdapter As SqlDataAdapter = New SqlDataAdapter()
+            Dim studentAdapter As SqlDataAdapter = New SqlDataAdapter()
+            Dim sportAdapter As SqlDataAdapter = New SqlDataAdapter()
+            Dim niveauAdapter As SqlDataAdapter = New SqlDataAdapter()
+            Dim doetsportAdapter As SqlDataAdapter = New SqlDataAdapter()
 
-        studentAdapter.TableMappings.Add("Table", "tblStudent")
-        sportAdapter.TableMappings.Add("Table", "tblSport")
-        niveauAdapter.TableMappings.Add("Table", "tblNiveau")
-        doetsportAdapter.TableMappings.Add("Table", "tblDoetSport")
+            studentAdapter.TableMappings.Add("Table", "tblStudent")
+            sportAdapter.TableMappings.Add("Table", "tblSport")
+            niveauAdapter.TableMappings.Add("Table", "tblNiveau")
+            doetsportAdapter.TableMappings.Add("Table", "tblDoetSport")
 
-        Dim studentCmd As SqlCommand = New SqlCommand(SQLstudent, SQLConnection)
-        Dim sportCmd As SqlCommand = New SqlCommand(SQLsport, SQLConnection)
-        Dim niveauCmd As SqlCommand = New SqlCommand(SQLniveau, SQLConnection)
-        Dim doetsportCmd As SqlCommand = New SqlCommand(SQLdoetsport, SQLConnection)
+            Dim studentCmd As SqlCommand = New SqlCommand(SQLstudent, SQLConnection)
+            Dim sportCmd As SqlCommand = New SqlCommand(SQLsport, SQLConnection)
+            Dim niveauCmd As SqlCommand = New SqlCommand(SQLniveau, SQLConnection)
+            Dim doetsportCmd As SqlCommand = New SqlCommand(SQLdoetsport, SQLConnection)
 
-        studentCmd.CommandType = CommandType.StoredProcedure
-        sportCmd.CommandType = CommandType.StoredProcedure
-        niveauCmd.CommandType = CommandType.StoredProcedure
-        doetsportCmd.CommandType = CommandType.StoredProcedure
+            studentCmd.CommandType = CommandType.StoredProcedure
+            sportCmd.CommandType = CommandType.StoredProcedure
+            niveauCmd.CommandType = CommandType.StoredProcedure
+            doetsportCmd.CommandType = CommandType.StoredProcedure
 
-        studentAdapter.SelectCommand = studentCmd
-        sportAdapter.SelectCommand = sportCmd
-        niveauAdapter.SelectCommand = niveauCmd
-        doetsportAdapter.SelectCommand = doetsportCmd
+            studentAdapter.SelectCommand = studentCmd
+            sportAdapter.SelectCommand = sportCmd
+            niveauAdapter.SelectCommand = niveauCmd
+            doetsportAdapter.SelectCommand = doetsportCmd
 
-        studentAdapter.Fill(mDataSet, "tblStudent")
-        sportAdapter.Fill(mDataSet, "tblSport")
-        niveauAdapter.Fill(mDataSet, "tblNiveau")
-        doetsportAdapter.Fill(mDataSet, "tblDoetSport")
+            studentAdapter.Fill(mDataSet, "tblStudent")
+            sportAdapter.Fill(mDataSet, "tblSport")
+            niveauAdapter.Fill(mDataSet, "tblNiveau")
+            doetsportAdapter.Fill(mDataSet, "tblDoetSport")
 
-        SQLConnection.Close()
-        SQLConnection.Dispose()
+            SQLConnection.Close()
+            SQLConnection.Dispose()
 
-        mDT_Student = mDataSet.Tables("tblStudent")
-        mDT_Sport = mDataSet.Tables("tblSport")
-        mDT_Niveau = mDataSet.Tables("tblNiveau")
-        mDT_DoetSport = mDataSet.Tables("tblDoetSport")
+            mDV_Student = mDataSet.Tables("tblStudent").DefaultView
+            mDV_Sport = mDataSet.Tables("tblSport").DefaultView
+            mDV_Niveau = mDataSet.Tables("tblNiveau").DefaultView
+            mDV_DoetSport = mDataSet.Tables("tblDoetSport").DefaultView
 
-        mDV_Student = mDT_Student.DefaultView
-        mDV_Sport = mDT_Sport.DefaultView
-        mDV_Niveau = mDT_Niveau.DefaultView
-        mDV_DoetSport = mDT_DoetSport.DefaultView
+            mDV_Sport.Sort = "SportNaam"
+            mDV_Niveau.Sort = "Niveau"
+            mDV_DoetSport.Sort = "DoetSportID"
 
-        mDV_Sport.Sort = "SportNaam"
-        mDV_Niveau.Sort = "Niveau"
-        mDV_DoetSport.Sort = "DoetSportID"
+            studentAdapter.Dispose()
+            sportAdapter.Dispose()
+            niveauAdapter.Dispose()
+            doetsportAdapter.Dispose()
 
-        ' Create a DataRelation to link the two tables
-        ' based on the SupplierID.
-        Dim parentColumn As DataColumn = _
-           mDataSet.Tables("tblNiveau").Columns("NiveauID")
-        Dim childColumn As DataColumn = _
-           mDataSet.Tables("tblDoetSport").Columns("NiveauID")
-        Dim relation As DataRelation = New  _
-           System.Data.DataRelation("Niveau_DoetSport", _
-           parentColumn, childColumn)
-        mDataSet.Relations.Add(relation)
+            studentCmd.Dispose()
+            sportCmd.Dispose()
+            niveauCmd.Dispose()
+            doetsportCmd.Dispose()
 
+            mDataSetIsInitialized = True
 
-        studentAdapter.Dispose()
-        sportAdapter.Dispose()
-        niveauAdapter.Dispose()
-        doetsportAdapter.Dispose()
-
-        studentCmd.Dispose()
-        sportCmd.Dispose()
-        niveauCmd.Dispose()
-        doetsportCmd.Dispose()
-
-        mDataSetIsInitialized = True
-
-        Return True
+            Return True
+        Catch ex As Exception
+            MsgBox("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: " & ex.Message)
+            SQLConnection.Dispose()
+            Return False
+        End Try
 
     End Function
+#End Region
 
+#Region "Functions voor tblStudent"
     Public Sub s_FilterStudentOp(ByVal naamfilter As String)
         If mDataSetIsInitialized Then
             If (naamfilter = "Naam") Then
@@ -263,7 +220,7 @@ Public Class clDataViaSql
         AdoCommand.ExecuteNonQuery()
 
         'Het ADoCommand geeft een array door (en terug), en we willen
-        'de ID van de nieuwe employee te pakken krijgen
+        'de ID van de nieuwe student te pakken krijgen
         iNewID = AdoCommand.Parameters(7).Value
 
         'DB-connectie sluiten
@@ -275,7 +232,7 @@ Public Class clDataViaSql
         'RAM-geheugen updaten.
 
         'DataRow klaarmaken en invullen met data.
-        Dim temp_datarow As DataRow = mDT_Student.NewRow
+        Dim temp_datarow As DataRow = mDataSet.Tables("tblStudent").NewRow
         temp_datarow("StudentNaam") = strNaam
         temp_datarow("StudentVoornaam") = strVoornaam
         temp_datarow("StudentGSM") = strGSM
@@ -285,7 +242,7 @@ Public Class clDataViaSql
         temp_datarow("StudentFinRek") = strFinRek
         temp_datarow("StudentID") = iNewID
         'DataTable updaten.
-        mDT_Student.Rows.Add(temp_datarow)
+        mDataSet.Tables("tblStudent").Rows.Add(temp_datarow)
 
         'Gebruikt geheugen vrijmaken.
         AdoCommand.Dispose()
@@ -333,7 +290,7 @@ Public Class clDataViaSql
         AdoCommand.ExecuteNonQuery()
 
         'Het ADoCommand geeft een array door (en terug), en we willen
-        'de ID van de nieuwe employee te pakken krijgen
+        'de ID van de nieuwe student te pakken krijgen
         iNewID = AdoCommand.Parameters(7).Value
 
         'DB-connectie sluiten
@@ -345,7 +302,7 @@ Public Class clDataViaSql
         'RAM-geheugen updaten.
 
         'DataRow klaarmaken en invullen met data.
-        Dim temp_datarow As DataRow = mDT_Student.NewRow
+        Dim temp_datarow As DataRow = mDataSet.Tables("tblStudent").NewRow
         temp_datarow("StudentNaam") = DataRow.Item("StudentNaam")
         temp_datarow("StudentVoornaam") = DataRow.Item("StudentVoornaam")
         temp_datarow("StudentGSM") = DataRow.Item("StudentGSM")
@@ -355,7 +312,7 @@ Public Class clDataViaSql
         temp_datarow("StudentFinRek") = DataRow.Item("StudentFinRek")
         temp_datarow("StudentID") = iNewID
         'DataTable updaten.
-        mDT_Student.Rows.Add(temp_datarow)
+        mDataSet.Tables("tblStudent").Rows.Add(temp_datarow)
 
         'Gebruikt geheugen vrijmaken.
         AdoCommand.Dispose()
@@ -405,7 +362,6 @@ Public Class clDataViaSql
 
         Return bGelukt
     End Function
-
 
     Public Function f_UpdateStudent(ByVal strNaam As String, ByVal strVoornaam As String, ByVal strGSM As String, ByVal strSchoolmail As String, ByVal strPrivemail As String, ByVal datGebDat As Date, ByVal strFinRek As String, ByVal ID_ForDataBase As Int16, ByVal ID_ForComboBox As Int16) As Boolean
         Dim bGelukt As Boolean = True
@@ -476,8 +432,9 @@ Public Class clDataViaSql
 
         Return bGelukt
     End Function
+#End Region
 
-
+#Region "Functions voor tblSport"
     Public Function f_ToonSportDetails(ByVal i_id As Int16) As DataRowView
         Dim dataview As DataView
         Dim anyrow As DataRowView
@@ -521,7 +478,7 @@ Public Class clDataViaSql
         AdoCommand.ExecuteNonQuery()
 
         'Het ADoCommand geeft een array door (en terug), en we willen
-        'de ID van de nieuwe employee te pakken krijgen
+        'de ID van de nieuwe sport te pakken krijgen
         iNewID = AdoCommand.Parameters(1).Value
 
         'DB-connectie sluiten
@@ -533,11 +490,11 @@ Public Class clDataViaSql
         'RAM-geheugen updaten.
 
         'DataRow klaarmaken en invullen met data.
-        Dim temp_datarow As DataRow = mDT_Sport.NewRow
+        Dim temp_datarow As DataRow = mDataSet.Tables("tblSport").NewRow
         temp_datarow("SportNaam") = strNaam
         temp_datarow("SportID") = iNewID
         'DataTable updaten.
-        mDT_Sport.Rows.Add(temp_datarow)
+        mDataSet.Tables("tblSport").Rows.Add(temp_datarow)
 
         'Gebruikt geheugen vrijmaken.
         AdoCommand.Dispose()
@@ -640,7 +597,9 @@ Public Class clDataViaSql
 
         Return bGelukt
     End Function
+#End Region
 
+#Region "Functions voor tblNiveau"
     Public Function f_NieuwNiveau(ByVal strNaam As String) As Int16
         Dim iNewID As Int16
 
@@ -667,7 +626,7 @@ Public Class clDataViaSql
         AdoCommand.ExecuteNonQuery()
 
         'Het ADoCommand geeft een array door (en terug), en we willen
-        'de ID van de nieuwe employee te pakken krijgen
+        'de ID van het nieuwe niveau te pakken krijgen
         iNewID = AdoCommand.Parameters(1).Value
 
         'DB-connectie sluiten
@@ -679,11 +638,11 @@ Public Class clDataViaSql
         'RAM-geheugen updaten.
 
         'DataRow klaarmaken en invullen met data.
-        Dim temp_datarow As DataRow = mDT_Niveau.NewRow
+        Dim temp_datarow As DataRow = mDataSet.Tables("tblNiveau").NewRow
         temp_datarow("Niveau") = strNaam
         temp_datarow("NiveauID") = iNewID
         'DataTable updaten.
-        mDT_Niveau.Rows.Add(temp_datarow)
+        mDataSet.Tables("tblNiveau").Rows.Add(temp_datarow)
 
         'Gebruikt geheugen vrijmaken.
         AdoCommand.Dispose()
@@ -692,7 +651,9 @@ Public Class clDataViaSql
 
         Return iNewID
     End Function
+#End Region
 
+#Region "Functions voor tblDeelname"
     Public Function f_NieuweDeelname(ByVal ID_DB_StudentID As Int16, ByVal ID_DB_SportID As Int16, ByVal ID_DB_NiveauID As Int16)
         Dim iNewID As Int16
 
@@ -717,10 +678,6 @@ Public Class clDataViaSql
         'ADO-Command uitvoeren
         AdoCommand.ExecuteNonQuery()
 
-        'Het ADoCommand geeft een array door (en terug), en we willen
-        'de ID van de nieuwe employee te pakken krijgen
-        'iNewID = AdoCommand.Parameters(1).Value
-
         'DB-connectie sluiten
         MyDBconnection.Close()
 
@@ -730,12 +687,12 @@ Public Class clDataViaSql
         'RAM-geheugen updaten.
 
         'DataRow klaarmaken en invullen met data.
-        Dim temp_datarow As DataRow = mDT_DoetSport.NewRow
+        Dim temp_datarow As DataRow = mDataSet.Tables("tblDoetSport").NewRow
         temp_datarow("SportID") = ID_DB_SportID
         temp_datarow("LidID") = ID_DB_StudentID
         temp_datarow("NiveauID") = ID_DB_NiveauID
         'DataTable updaten.
-        mDT_DoetSport.Rows.Add(temp_datarow)
+        mDataSet.Tables("tblDoetSport").Rows.Add(temp_datarow)
 
         'Gebruikt geheugen vrijmaken.
         AdoCommand.Dispose()
@@ -745,7 +702,44 @@ Public Class clDataViaSql
         Return iNewID
     End Function
 
+    Public Function f_HaalDeelnameDataOp() As Boolean
 
+        Dim SQLConnection As New SqlConnection(mConnectionString)
+
+        Try
+            SQLConnection.Open()
+        Catch ex As SqlException
+            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
+            SQLConnection.Dispose()
+            Return False
+        End Try
+
+        If (mtblDeelnameIsInitialized) Then
+            If (mDataSet.Tables("tblDeelname").Rows.Count > 0) Then
+                mDataSet.Tables("tblDeelname").Clear()
+            End If
+        End If
+
+        Dim SQLdeelname As String = "STORED_PROCEDURE_tbldoetsportdatagrid"
+        Dim deelnameAdapter As SqlDataAdapter = New SqlDataAdapter()
+        deelnameAdapter.TableMappings.Add("Table", "tblDeelname")
+        Dim deelnameCmd As SqlCommand = New SqlCommand(SQLdeelname, SQLConnection)
+        deelnameCmd.CommandType = CommandType.StoredProcedure
+        deelnameAdapter.SelectCommand = deelnameCmd
+        deelnameAdapter.Fill(mDataSet, "tblDeelname")
+        SQLConnection.Close()
+        SQLConnection.Dispose()
+        deelnameAdapter.Dispose()
+        deelnameCmd.Dispose()
+
+        mtblDeelnameIsInitialized = True
+
+        Return True
+
+    End Function
+#End Region
+
+#Region "Function: Connectietest"
     Public Function f_TestSQL(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean) As Boolean
         'Deze functie test snel de connectie met SQL uit.
 
@@ -792,5 +786,119 @@ Public Class clDataViaSql
         SQLConnection.Dispose()
 
         Return True
+    End Function
+#End Region
+
+    Public Function f_NieuweDatabase(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean) As Boolean
+        'Deze functie tracht een nieuwe database aan te maken.
+
+        Dim connectiestring As String
+        'Connectiestring maken.
+        connectiestring = String.Concat("Data Source=", SQLServer, ";Initial Catalog=")
+        If (UsesIntegratedSecurity) Then
+            connectiestring = String.Concat(connectiestring, ";Integrated Security=True")
+        Else
+            connectiestring = String.Concat(connectiestring, ";Persist Security Info=True;User ID=", SQLGebruiker, ";Password=", SQLPaswoord)
+        End If
+        'SQLConnection
+        Dim SQLConnection As New SqlConnection(connectiestring)
+
+        'We maken een CREATE DATABASE query
+        Dim SQLDBstring As String = String.Concat("CREATE DATABASE ", SQLDatabase)
+        'De query in SQLCommand-vorm gieten
+        Dim SQLDBcmd As SqlCommand = New SqlCommand(SQLDBstring, SQLConnection)
+
+        Try
+
+            SQLConnection.Open()
+
+            'De queries uitvoeren
+            SQLDBcmd.ExecuteNonQuery()
+
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show("Er is een fout gebeurd tijdens het aanmaken van de database. Details: " & ex.Message)
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return False
+        End Try
+    End Function
+
+    Public Function f_TestDatabase(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean) As Boolean
+        'Deze functie tracht een database te gebruiken om te zien of hij bestaat.
+
+        Dim connectiestring As String
+        'Connectiestring maken.
+        connectiestring = String.Concat("Data Source=", SQLServer, ";Initial Catalog=", SQLDatabase)
+        If (UsesIntegratedSecurity) Then
+            connectiestring = String.Concat(connectiestring, ";Integrated Security=True")
+        Else
+            connectiestring = String.Concat(connectiestring, ";Persist Security Info=True;User ID=", SQLGebruiker, ";Password=", SQLPaswoord)
+        End If
+        'SQLConnection
+        Dim SQLConnection As New SqlConnection(connectiestring)
+
+        'We maken een USE DATABASE query
+        Dim SQLDBstring As String = String.Concat("USE ", SQLDatabase)
+        'De query in SQLCommand-vorm gieten
+        Dim SQLDBcmd As SqlCommand = New SqlCommand(SQLDBstring, SQLConnection)
+
+        Try
+            SQLConnection.Open()
+            'De queries uitvoeren
+            SQLDBcmd.ExecuteNonQuery()
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return True
+
+        Catch ex As Exception
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return False
+        End Try
+    End Function
+
+    Public Function f_VulNieuweDatabase(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean, ByVal StoredProcedures As String, ByVal StartData As String, ByVal ExtraData As String) As Boolean
+        Dim connectiestring As String
+        'Connectiestring maken.
+        connectiestring = String.Concat("Data Source=", SQLServer, ";Initial Catalog=", SQLDatabase)
+        If (UsesIntegratedSecurity) Then
+            connectiestring = String.Concat(connectiestring, ";Integrated Security=True")
+        Else
+            connectiestring = String.Concat(connectiestring, ";Persist Security Info=True;User ID=", SQLGebruiker, ";Password=", SQLPaswoord)
+        End If
+        'SQLConnection
+        Dim SQLConnection As New SqlConnection(connectiestring)
+
+        'De queries in SQLCommand-vorm gieten
+        'Eerst de startdata, die de tabellen en 1 insert bevat
+        'Dan de Stored Procedures
+        Dim SQLDBcmd1 As SqlCommand = New SqlCommand(String.Concat("USE ", SQLDatabase), SQLConnection)
+        Dim SQLDBcmd2 As SqlCommand = New SqlCommand(StartData, SQLConnection)
+        Dim SQLDBcmd3 As SqlCommand = New SqlCommand(StoredProcedures, SQLConnection)
+        Dim SQLDBcmd4 As SqlCommand = New SqlCommand(ExtraData, SQLConnection)
+
+        Try
+            SQLConnection.Open()
+            'De queries uitvoeren
+
+            SQLDBcmd1.ExecuteNonQuery()
+            SQLDBcmd2.ExecuteNonQuery()
+            SQLDBcmd3.ExecuteNonQuery()
+            SQLDBcmd4.ExecuteNonQuery()
+
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show("Er is een fout gebeurd tijdens het populeren van de database. Details: " & ex.Message)
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return False
+        End Try
     End Function
 End Class

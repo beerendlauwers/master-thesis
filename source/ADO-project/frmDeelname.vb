@@ -1,3 +1,5 @@
+Imports System.Text.RegularExpressions
+
 Public Class frmDeelname
     Private mBlnNewNiveau As Boolean = False
 
@@ -46,20 +48,33 @@ Public Class frmDeelname
     End Sub
 
     Private Function CheckClear() As Boolean
-        Dim blntest As Boolean = True
-        If (Me.txtNiveau.Text = String.Empty) Then
-            Return blntest = False
-            Exit Function
+        If (Me.txtNiveau.Text = String.Empty Or BestaatUitSpatiesOfTabs(Me.txtNiveau.Text)) Then
+            Return False
+        Else
+            Return True
         End If
-        Return blntest
+    End Function
+
+    Private Function BestaatUitSpatiesOfTabs(ByVal Text As String) As Boolean
+        If (Text.Length > 0) Then
+            'Het patroon \s is gelijk aan een spatie, tab of line break
+            Dim bestaatuitwitruimtes As Match = Regex.Match(Text, "^\s*$")
+            If (bestaatuitwitruimtes.Success) Then
+                Return True
+            Else
+                Return False
+            End If
+        End If
+
+        Return True
     End Function
 
     Private Function CheckCombos() As Boolean
-        Dim blntest As Boolean = True
         If (Me.cboDeelnameStudent.Text = String.Empty Or Me.cboDeelnameSport.Text = String.Empty Or Me.cboNiveau.Text = String.Empty) Then
-            Return blntest = False
+            Return False
+        Else
+            Return True
         End If
-        Return blntest
     End Function
 
     Private Sub cboNiveau_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboNiveau.SelectedIndexChanged
@@ -80,7 +95,7 @@ Public Class frmDeelname
     Private Sub btnOpslaan_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnOpslaan.Click
         If (CheckClear()) Then
             If (mBlnNewNiveau) Then
-                'Als er een nieuwe sport wordt toegevoegd, voeren we deze functie uit:
+                'Als er een nieuw niveau wordt toegevoegd, voeren we deze functie uit:
                 Dim newID = frmHoofdMenu.mySQLConnection.f_NieuwNiveau(Me.txtNiveau.Text)
             End If
             Call MenuEnab(1)
@@ -102,10 +117,13 @@ Public Class frmDeelname
     Private Sub SaveToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveToolStripMenuItem.Click
         If (CheckCombos()) Then
             If Me.cboNiveau.Text = "< Nieuw Niveau >" Then
+                MessageBox.Show("Gelieve een niveau te selecteren.")
                 Exit Sub
             End If
             frmHoofdMenu.mySQLConnection.f_NieuweDeelname(Me.cboDeelnameStudent.SelectedValue, Me.cboDeelnameSport.SelectedValue, Me.cboNiveau.SelectedValue)
             MessageBox.Show("Deelname opgeslagen.", "Deelname Opgeslagen")
+        Else
+            MessageBox.Show("U moet een optie selecteren uit alle dropdown-boxes.")
         End If
     End Sub
 
@@ -118,7 +136,7 @@ Public Class frmDeelname
         frmHoofdMenu.ToonStartScherm()
     End Sub
 
-    Private Sub MenuStrip1_ItemClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles MenuStrip1.ItemClicked
+    Private Sub MenuStrip1_ItemClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles mnuDeelnameBeheer.ItemClicked
 
     End Sub
 End Class

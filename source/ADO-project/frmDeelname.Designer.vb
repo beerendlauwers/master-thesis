@@ -22,7 +22,7 @@ Partial Class frmDeelname
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
+        Me.mnuDeelnameBeheer = New System.Windows.Forms.MenuStrip
         Me.BeheerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.OverviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.SaveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -37,42 +37,42 @@ Partial Class frmDeelname
         Me.lblNiveauCombo = New System.Windows.Forms.Label
         Me.btnOpslaan = New System.Windows.Forms.Button
         Me.grpNieuweDeelname = New System.Windows.Forms.GroupBox
-        Me.MenuStrip1.SuspendLayout()
+        Me.mnuDeelnameBeheer.SuspendLayout()
         Me.grpNieuweDeelname.SuspendLayout()
         Me.SuspendLayout()
         '
-        'MenuStrip1
+        'mnuDeelnameBeheer
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
-        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
-        Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
-        Me.MenuStrip1.TabIndex = 0
-        Me.MenuStrip1.Text = "MenuStrip1"
+        Me.mnuDeelnameBeheer.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem})
+        Me.mnuDeelnameBeheer.Location = New System.Drawing.Point(0, 0)
+        Me.mnuDeelnameBeheer.Name = "mnuDeelnameBeheer"
+        Me.mnuDeelnameBeheer.Size = New System.Drawing.Size(514, 24)
+        Me.mnuDeelnameBeheer.TabIndex = 0
+        Me.mnuDeelnameBeheer.Text = "Deelnamebeheer"
         '
         'BeheerToolStripMenuItem
         '
         Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OverviewToolStripMenuItem, Me.SaveToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.BeheerToolStripMenuItem.Name = "BeheerToolStripMenuItem"
-        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
+        Me.BeheerToolStripMenuItem.Size = New System.Drawing.Size(53, 20)
         Me.BeheerToolStripMenuItem.Text = "Beheer"
         '
         'OverviewToolStripMenuItem
         '
         Me.OverviewToolStripMenuItem.Name = "OverviewToolStripMenuItem"
-        Me.OverviewToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
+        Me.OverviewToolStripMenuItem.Size = New System.Drawing.Size(131, 22)
         Me.OverviewToolStripMenuItem.Text = "Overzicht"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(131, 22)
         Me.SaveToolStripMenuItem.Text = "Opslaan"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(131, 22)
         Me.ExitToolStripMenuItem.Text = "Sluiten"
         '
         'cboDeelnameStudent
@@ -179,9 +179,9 @@ Partial Class frmDeelname
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
         Me.Controls.Add(Me.grpNieuweDeelname)
-        Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.mnuDeelnameBeheer)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
-        Me.MainMenuStrip = Me.MenuStrip1
+        Me.MainMenuStrip = Me.mnuDeelnameBeheer
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "frmDeelname"
@@ -189,15 +189,15 @@ Partial Class frmDeelname
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Deelnamebeheer"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
-        Me.MenuStrip1.ResumeLayout(False)
-        Me.MenuStrip1.PerformLayout()
+        Me.mnuDeelnameBeheer.ResumeLayout(False)
+        Me.mnuDeelnameBeheer.PerformLayout()
         Me.grpNieuweDeelname.ResumeLayout(False)
         Me.grpNieuweDeelname.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
+    Friend WithEvents mnuDeelnameBeheer As System.Windows.Forms.MenuStrip
     Friend WithEvents BeheerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents OverviewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SaveToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem

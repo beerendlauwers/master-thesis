@@ -33,6 +33,7 @@ Partial Class frmDeelnameOverzicht
         Me.dgrDoetSport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgrDoetSport.Location = New System.Drawing.Point(1, 58)
         Me.dgrDoetSport.Name = "dgrDoetSport"
+        Me.dgrDoetSport.ReadOnly = True
         Me.dgrDoetSport.Size = New System.Drawing.Size(443, 226)
         Me.dgrDoetSport.TabIndex = 0
         '

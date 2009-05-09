@@ -61,7 +61,7 @@ Public Class clDataViaExcel
             'De data is opgehaald.
             blnDataOpgehaald = True
         Catch ex As Exception
-            MsgBox(ex.Message)
+            MsgBox("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: " & ex.Message)
             Return False
         End Try
 

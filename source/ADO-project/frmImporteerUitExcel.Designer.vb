@@ -34,13 +34,13 @@ Partial Class frmImporteerUitExcel
         Me.dtgExcelData = New System.Windows.Forms.DataGridView
         Me.lblSuccess = New System.Windows.Forms.Label
         Me.btnDataOpslaan = New System.Windows.Forms.Button
-        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip
+        Me.mnuImporteerUitExcel = New System.Windows.Forms.MenuStrip
         Me.SluitenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.pctSuccess = New System.Windows.Forms.PictureBox
         Me.grpSelecteerBestand.SuspendLayout()
         CType(Me.pctGeldigFormaat, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dtgExcelData, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.MenuStrip1.SuspendLayout()
+        Me.mnuImporteerUitExcel.SuspendLayout()
         CType(Me.pctSuccess, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -158,14 +158,14 @@ Partial Class frmImporteerUitExcel
         Me.btnDataOpslaan.Text = "Sla Data Op"
         Me.btnDataOpslaan.UseVisualStyleBackColor = True
         '
-        'MenuStrip1
+        'mnuImporteerUitExcel
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SluitenToolStripMenuItem})
-        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
-        Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(514, 24)
-        Me.MenuStrip1.TabIndex = 17
-        Me.MenuStrip1.Text = "MenuStrip1"
+        Me.mnuImporteerUitExcel.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SluitenToolStripMenuItem})
+        Me.mnuImporteerUitExcel.Location = New System.Drawing.Point(0, 0)
+        Me.mnuImporteerUitExcel.Name = "mnuImporteerUitExcel"
+        Me.mnuImporteerUitExcel.Size = New System.Drawing.Size(514, 24)
+        Me.mnuImporteerUitExcel.TabIndex = 17
+        Me.mnuImporteerUitExcel.Text = "Importeer Uit Excel"
         '
         'SluitenToolStripMenuItem
         '
@@ -194,9 +194,9 @@ Partial Class frmImporteerUitExcel
         Me.Controls.Add(Me.dtgExcelData)
         Me.Controls.Add(Me.btnHaalDataOp)
         Me.Controls.Add(Me.grpSelecteerBestand)
-        Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.mnuImporteerUitExcel)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
-        Me.MainMenuStrip = Me.MenuStrip1
+        Me.MainMenuStrip = Me.mnuImporteerUitExcel
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "frmImporteerUitExcel"
@@ -207,8 +207,8 @@ Partial Class frmImporteerUitExcel
         Me.grpSelecteerBestand.PerformLayout()
         CType(Me.pctGeldigFormaat, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dtgExcelData, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.MenuStrip1.ResumeLayout(False)
-        Me.MenuStrip1.PerformLayout()
+        Me.mnuImporteerUitExcel.ResumeLayout(False)
+        Me.mnuImporteerUitExcel.PerformLayout()
         CType(Me.pctSuccess, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -227,6 +227,6 @@ Partial Class frmImporteerUitExcel
     Friend WithEvents pctSuccess As System.Windows.Forms.PictureBox
     Friend WithEvents lblSuccess As System.Windows.Forms.Label
     Friend WithEvents btnDataOpslaan As System.Windows.Forms.Button
-    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
+    Friend WithEvents mnuImporteerUitExcel As System.Windows.Forms.MenuStrip
     Friend WithEvents SluitenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class
