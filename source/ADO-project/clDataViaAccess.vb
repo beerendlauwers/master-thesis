@@ -1,18 +1,16 @@
 ﻿Imports System.Data.OleDb
-Public Class clDataViaAccess
 
+Public Class clDataViaAccess
     Private mDatasetAccess As DataSet = New DataSet
-    Private mDT_Access As DataTable = New DataTable
-    Private mDV_Access As DataView = New DataView
     Private mConnectionString As String
     Private mSQLString As String
 
-    Public Property p_datatAccess() As DataTable
+    Public Property p_dataset() As DataSet
         Get
-            Return mDT_Access
+            Return mDatasetAccess
         End Get
-        Set(ByVal value As DataTable)
-            mDT_Access = value
+        Set(ByVal value As DataSet)
+            mDatasetAccess = value
         End Set
     End Property
 
@@ -40,7 +38,7 @@ Public Class clDataViaAccess
             AccessConnection.Open()
 
         Catch ex As OleDbException
-            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
+            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database. Details: " & ex.Message)
             AccessConnection.Dispose()
             Return False
         End Try
@@ -48,13 +46,8 @@ Public Class clDataViaAccess
         Try
 
             Dim AccessAdapter As OleDbDataAdapter = New OleDbDataAdapter(mSQLString, mConnectionString)
-            AccessAdapter.Fill(mDatasetAccess, "tblEmailAdressen")
+            AccessAdapter.Fill(mDatasetAccess, frmHoofdMenu.mLabels.AccessTabel.ToString)
             AccessConnection.Close()
-
-            mDT_Access = mDatasetAccess.Tables("tblEmailAdressen")
-            mDV_Access = mDT_Access.DefaultView
-            mDV_Access.Sort = "Email"
-
 
             AccessConnection.Dispose()
             AccessAdapter.Dispose()
@@ -92,6 +85,7 @@ Public Class clDataViaAccess
 
             Accessconnection.Close()
             AccessAdapter.Dispose()
+            testset.Dispose()
         Catch ex As OleDbException
             Accessconnection.Dispose()
             Return False

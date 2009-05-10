@@ -1,9 +1,23 @@
 Public Class frmHoofdMenu
+
+#Region "Publieke Variabelen"
     Public mySQLConnection As clDataViaSql
     Public myAccessConnection As clDataViaAccess
     Public BlnSQLConnectieGelukt As Boolean
     Public BlnAccessConnectieGelukt As Boolean
     Public HuidigForm As Form = New frmConfig()
+
+    Public Structure LabelSettings
+        Public SQLServer As String
+        Public SQLDataBase As String
+        Public SQLGebruiker As String
+        Public AccessDataBase As String
+        Public AccessTabel As String
+        Public AccessKolom As String
+    End Structure
+
+    Public mLabels As LabelSettings
+#End Region
 
     Public Sub New()
 
@@ -29,6 +43,9 @@ Public Class frmHoofdMenu
         ClearOtherWindows()
         HuidigForm = New frmStart()
         HuidigForm.MdiParent = Me
+        If (HuidigForm.Name = frmStart.Name) Then
+            CType(HuidigForm, frmStart).mLabels = Me.mLabels
+        End If
         HuidigForm.Show()
     End Sub
 End Class

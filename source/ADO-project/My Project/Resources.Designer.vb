@@ -68,7 +68,32 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to INSERT INTO tblNiveau VALUES(&apos;&lt; Nieuw Niveau &gt;&apos;).
+        '''  Looks up a localized string similar to 
+        '''
+        '''CREATE TABLE tblNiveau
+        '''(
+        '''NiveauID INT NOT NULL
+        '''IDENTITY(1,1) PRIMARY KEY,
+        '''Niveau VARCHAR(50) NOT NULL
+        ''');
+        '''
+        '''CREATE TABLE tblSport
+        '''(
+        '''SportID INT NOT NULL
+        '''IDENTITY(1,1) PRIMARY KEY,
+        '''SportNaam VARCHAR(50) NOT NULL
+        ''');
+        '''
+        '''CREATE TABLE tblStudent
+        '''(
+        '''StudentID INT NOT NULL
+        '''IDENTITY(1,1) PRIMARY KEY,
+        '''StudentNaam VARCHAR(50) NOT NULL,
+        '''StudentVoornaam VARCHAR(50) NOT NULL,
+        '''StudentGSM VARCHAR(50) NOT NULL,
+        '''StudentSchoolEmail VARCHAR(50) NOT NULL,
+        '''StudentPriveEmail VARCHAR(50) NOT NULL,
+        '''StudentGeb [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property startdata() As String
             Get
@@ -77,11 +102,48 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to SET ANSI_NULLS ON
-        '''GO
-        '''SET QUOTED_IDENTIFIER ON
-        '''GO
-        '''CREATE PROCEDURE STORED_PROCEDURE_nieuwesport
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_datainlezen
+        '''
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	SELECT * FROM tblDoetSport, tblNiveau, tblSport, tblStudent
+        '''END
+        '''.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_datainlezen() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_datainlezen", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_nieuwedeelname
+        '''	-- Add the parameters for the stored procedure here
+        '''	@tempSportID INT, @tempStudentID  INT, @tempNiveauID INT
+        '''AS
+        '''BEGIN
+        '''
+        '''	SET NOCOUNT ON;
+        '''
+        '''	INSERT INTO tblDoetSport(SportID,LidID,NiveauID)
+        '''	SELECT A.SportID, B.StudentID, C.NiveauID
+        '''	FROM (SELECT SportID FROM tblSport WHERE SportID = @tempSportID) A,
+        '''	(SELECT StudentID FROM tblStudent WHERE StudentID = @tempStudentID) B,
+        '''	(SELECT NiveauID FROM tblNiveau WHERE NiveauID = @tempNiveauID) C
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_nieuwedeelname() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_nieuwedeelname", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_nieuwesport
         '''	@tempSport VARCHAR(50), @tempSportID INT OUTPUT
         '''AS
         '''BEGIN
@@ -93,17 +155,216 @@ Namespace My.Resources
         '''	SELECT @@IDENTITY AS [@@IDENTITY]
         '''	SET @tempSportID = @@IDENTITY
         '''END
-        '''GO
-        '''
-        '''SET ANSI_NULLS ON
-        '''GO
-        '''SET QUOTED_IDENTIFIER ON
-        '''GO
-        '''CREATE PROCEDURE STORED_PROCEDURE_updatesport [rest of string was truncated]&quot;;.
+        '''.
         '''</summary>
-        Friend ReadOnly Property stored_procedures() As String
+        Friend ReadOnly Property STORED_PROCEDURE_nieuwesport() As String
             Get
-                Return ResourceManager.GetString("stored_procedures", resourceCulture)
+                Return ResourceManager.GetString("STORED_PROCEDURE_nieuwesport", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_nieuwestudent
+        '''	@tempNaam VARCHAR(50), @tempVoornaam VARCHAR(50), @tempGSM VARCHAR(50),
+        '''	@tempSchoolmail VARCHAR(50), @tempPrivemail VARCHAR(50), @tempGebDat DATETIME, 
+        '''	@tempFinRek VARCHAR(20), @tempStudentID INT OUTPUT
+        '''AS
+        '''BEGIN
+        '''	SET DATEFORMAT dmy
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	INSERT INTO tblStudent( StudentNaam , StudentVoornaam , StudentGSM ,
+        '''	StudentSchoolEmail , StudentP [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_nieuwestudent() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_nieuwestudent", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_nieuwniveau 
+        '''	@tempNiveau VARCHAR(50), @tempNiveauID INT OUTPUT
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''    -- Insert statements for procedure here
+        '''	INSERT INTO tblNiveau(Niveau) VALUES(@tempNiveau)
+        '''	SELECT @@IDENTITY AS [@@IDENTITY]
+        '''	SET @tempNiveauID = @@IDENTITY
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_nieuwniveau() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_nieuwniveau", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_tbldoetsportdatagrid
+        '''	
+        '''AS
+        '''BEGIN
+        '''	
+        '''	SET NOCOUNT ON;
+        '''	SELECT StudentNaam, SportNaam, Niveau
+        '''	FROM tblDoetSport inner join tblStudent ON (tblDoetSport.LidID = tblStudent.StudentID) 
+        '''	inner join tblSport ON (tblDoetSport.SportID = tblSport.SportID) 
+        '''	inner join tblNiveau ON (tblDoetSport.NiveauID = tblNiveau.NiveauID);
+        '''  
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_tbldoetsportdatagrid() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_tbldoetsportdatagrid", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_tbldoetsportinlezen
+        '''AS
+        '''BEGIN
+        '''	SET NOCOUNT ON;
+        '''
+        '''    -- Insert statements for procedure here
+        '''	SELECT * FROM tblDoetSport
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_tbldoetsportinlezen() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_tbldoetsportinlezen", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_tblniveauinlezen
+        '''AS
+        '''BEGIN
+        '''	SET NOCOUNT ON;
+        '''
+        '''    -- Insert statements for procedure here
+        '''	SELECT * FROM tblNiveau
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_tblniveauinlezen() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_tblniveauinlezen", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_tblsportinlezen
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	SELECT * FROM tblSport
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_tblsportinlezen() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_tblsportinlezen", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_tblstudentinlezen
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	SELECT * FROM tblStudent
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_tblstudentinlezen() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_tblstudentinlezen", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_updatesport
+        '''	@tempSport VARCHAR(50), @tempSportID INT
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	UPDATE tblSport SET SportNaam = @tempSport WHERE SportID = @tempSportID
+        '''END
+        '''.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_updatesport() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_updatesport", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_updatestudent
+        '''	@tempNaam VARCHAR(50), @tempVoornaam VARCHAR(50), @tempGSM VARCHAR(50),
+        '''	@tempSchoolmail VARCHAR(50), @tempPrivemail VARCHAR(50), @tempGebDat DATETIME, 
+        '''	@tempFinRek VARCHAR(20), @tempStudentID INT
+        '''AS
+        '''BEGIN
+        '''	SET DATEFORMAT dmy
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	UPDATE tblStudent
+        '''	SET StudentNaam = @tempNaam, StudentVoornaam = @tempVoornaam, StudentGSM = @tempGSM ,
+        ''' [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_updatestudent() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_updatestudent", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_verwijdersport
+        '''	@tempSportID INT
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	DELETE FROM tblSport WHERE @tempSportID = SportID
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_verwijdersport() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_verwijdersport", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to CREATE PROCEDURE STORED_PROCEDURE_verwijderstudent
+        '''	@tempStudentID INT
+        '''AS
+        '''BEGIN
+        '''	-- SET NOCOUNT ON added to prevent extra result sets from
+        '''	-- interfering with SELECT statements.
+        '''	SET NOCOUNT ON;
+        '''
+        '''	DELETE FROM tblStudent WHERE @tempStudentID = StudentID
+        '''END.
+        '''</summary>
+        Friend ReadOnly Property STORED_PROCEDURE_verwijderstudent() As String
+            Get
+                Return ResourceManager.GetString("STORED_PROCEDURE_verwijderstudent", resourceCulture)
             End Get
         End Property
         

@@ -27,6 +27,7 @@ Partial Class frmConfig
         Me.OpenConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ConfigOpslaanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.LegenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.NieuweDatabaseAanleggenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.txtSQLServer = New System.Windows.Forms.TextBox
         Me.lblSQLServer = New System.Windows.Forms.Label
         Me.grpInstellingen = New System.Windows.Forms.GroupBox
@@ -53,7 +54,6 @@ Partial Class frmConfig
         Me.lblAccessBestand = New System.Windows.Forms.Label
         Me.chkAccessOpslaan = New System.Windows.Forms.CheckBox
         Me.btnUseConfig = New System.Windows.Forms.Button
-        Me.NieuweDatabaseAanleggenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuConfig.SuspendLayout()
         Me.grpInstellingen.SuspendLayout()
         CType(Me.picSQLGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -80,20 +80,26 @@ Partial Class frmConfig
         'OpenConfigToolStripMenuItem
         '
         Me.OpenConfigToolStripMenuItem.Name = "OpenConfigToolStripMenuItem"
-        Me.OpenConfigToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
+        Me.OpenConfigToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.OpenConfigToolStripMenuItem.Text = "Openen"
         '
         'ConfigOpslaanToolStripMenuItem
         '
         Me.ConfigOpslaanToolStripMenuItem.Name = "ConfigOpslaanToolStripMenuItem"
-        Me.ConfigOpslaanToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
+        Me.ConfigOpslaanToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.ConfigOpslaanToolStripMenuItem.Text = "Opslaan"
         '
         'LegenToolStripMenuItem
         '
         Me.LegenToolStripMenuItem.Name = "LegenToolStripMenuItem"
-        Me.LegenToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
+        Me.LegenToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.LegenToolStripMenuItem.Text = "Legen"
+        '
+        'NieuweDatabaseAanleggenToolStripMenuItem
+        '
+        Me.NieuweDatabaseAanleggenToolStripMenuItem.Name = "NieuweDatabaseAanleggenToolStripMenuItem"
+        Me.NieuweDatabaseAanleggenToolStripMenuItem.Size = New System.Drawing.Size(156, 20)
+        Me.NieuweDatabaseAanleggenToolStripMenuItem.Text = "Nieuwe Database Aanmaken"
         '
         'txtSQLServer
         '
@@ -345,12 +351,6 @@ Partial Class frmConfig
         Me.btnUseConfig.TabIndex = 5
         Me.btnUseConfig.Text = "Deze configuratie gebruiken"
         Me.btnUseConfig.UseVisualStyleBackColor = True
-        '
-        'NieuweDatabaseAanleggenToolStripMenuItem
-        '
-        Me.NieuweDatabaseAanleggenToolStripMenuItem.Name = "NieuweDatabaseAanleggenToolStripMenuItem"
-        Me.NieuweDatabaseAanleggenToolStripMenuItem.Size = New System.Drawing.Size(157, 20)
-        Me.NieuweDatabaseAanleggenToolStripMenuItem.Text = "Nieuwe Database Aanleggen"
         '
         'frmConfig
         '

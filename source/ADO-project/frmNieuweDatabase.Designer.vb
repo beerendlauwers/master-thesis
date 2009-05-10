@@ -23,6 +23,7 @@ Partial Class frmNieuweDatabase
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.grpInstellingen = New System.Windows.Forms.GroupBox
+        Me.prgDatabaseAanmaken = New System.Windows.Forms.ProgressBar
         Me.btnDatabaseAanmaken = New System.Windows.Forms.Button
         Me.chkSQLOpslaan = New System.Windows.Forms.CheckBox
         Me.picSQLGeldig = New System.Windows.Forms.PictureBox
@@ -36,37 +37,46 @@ Partial Class frmNieuweDatabase
         Me.lblSQLDatabase = New System.Windows.Forms.Label
         Me.lblSQLServer = New System.Windows.Forms.Label
         Me.txtSQLServer = New System.Windows.Forms.TextBox
-        Me.mnuConfig = New System.Windows.Forms.MenuStrip
         Me.BeheerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.OpenConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ConfigOpslaanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.LegenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.NieuweDatabaseAanleggenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.AanleggenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.grpQueries = New System.Windows.Forms.GroupBox
+        Me.btnDataVerwijderen = New System.Windows.Forms.Button
+        Me.btnStoredProcedureVerwijderen = New System.Windows.Forms.Button
+        Me.lstData = New System.Windows.Forms.ListBox
+        Me.lstStoredProcedures = New System.Windows.Forms.ListBox
         Me.btnPopuleerDatabase = New System.Windows.Forms.Button
         Me.picDataGevonden = New System.Windows.Forms.PictureBox
-        Me.btnManueelExtraData = New System.Windows.Forms.Button
+        Me.btnDataToevoegen = New System.Windows.Forms.Button
         Me.lblDataGevonden = New System.Windows.Forms.Label
-        Me.txtExtraData = New System.Windows.Forms.TextBox
         Me.lblExtraData = New System.Windows.Forms.Label
-        Me.btnManueelStartData = New System.Windows.Forms.Button
-        Me.txtStartData = New System.Windows.Forms.TextBox
-        Me.lblStartData = New System.Windows.Forms.Label
-        Me.btnManeelStoredProcedures = New System.Windows.Forms.Button
-        Me.txtStoredProcedures = New System.Windows.Forms.TextBox
+        Me.btnStoredProcedureToevoegen = New System.Windows.Forms.Button
         Me.lblStoredProcedures = New System.Windows.Forms.Label
         Me.picDatabaseGepopuleerd = New System.Windows.Forms.PictureBox
         Me.lblDatabaseGepopuleerd = New System.Windows.Forms.Label
+        Me.ConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.OpenenToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.OpslaanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.LegenToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuConfig = New System.Windows.Forms.MenuStrip
+        Me.ConfigToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
+        Me.OpenenToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
+        Me.OpslaanToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
+        Me.LegenToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem
+        Me.TerugNaarConfiguratieschermToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.grpInstellingen.SuspendLayout()
         CType(Me.picSQLGeldig, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.mnuConfig.SuspendLayout()
         Me.grpQueries.SuspendLayout()
         CType(Me.picDataGevonden, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.picDatabaseGepopuleerd, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.mnuConfig.SuspendLayout()
         Me.SuspendLayout()
         '
         'grpInstellingen
         '
+        Me.grpInstellingen.Controls.Add(Me.prgDatabaseAanmaken)
         Me.grpInstellingen.Controls.Add(Me.btnDatabaseAanmaken)
         Me.grpInstellingen.Controls.Add(Me.chkSQLOpslaan)
         Me.grpInstellingen.Controls.Add(Me.picSQLGeldig)
@@ -86,6 +96,16 @@ Partial Class frmNieuweDatabase
         Me.grpInstellingen.TabIndex = 4
         Me.grpInstellingen.TabStop = False
         Me.grpInstellingen.Text = "SQL-Server Instellingen"
+        '
+        'prgDatabaseAanmaken
+        '
+        Me.prgDatabaseAanmaken.Enabled = False
+        Me.prgDatabaseAanmaken.Location = New System.Drawing.Point(407, 100)
+        Me.prgDatabaseAanmaken.Maximum = 5
+        Me.prgDatabaseAanmaken.Name = "prgDatabaseAanmaken"
+        Me.prgDatabaseAanmaken.Size = New System.Drawing.Size(75, 10)
+        Me.prgDatabaseAanmaken.Step = 1
+        Me.prgDatabaseAanmaken.TabIndex = 16
         '
         'btnDatabaseAanmaken
         '
@@ -204,15 +224,6 @@ Partial Class frmNieuweDatabase
         Me.txtSQLServer.Size = New System.Drawing.Size(407, 20)
         Me.txtSQLServer.TabIndex = 1
         '
-        'mnuConfig
-        '
-        Me.mnuConfig.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BeheerToolStripMenuItem, Me.NieuweDatabaseAanleggenToolStripMenuItem})
-        Me.mnuConfig.Location = New System.Drawing.Point(0, 0)
-        Me.mnuConfig.Name = "mnuConfig"
-        Me.mnuConfig.Size = New System.Drawing.Size(514, 24)
-        Me.mnuConfig.TabIndex = 5
-        Me.mnuConfig.Text = "Configuratie"
-        '
         'BeheerToolStripMenuItem
         '
         Me.BeheerToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenConfigToolStripMenuItem, Me.ConfigOpslaanToolStripMenuItem, Me.LegenToolStripMenuItem})
@@ -238,37 +249,70 @@ Partial Class frmNieuweDatabase
         Me.LegenToolStripMenuItem.Size = New System.Drawing.Size(124, 22)
         Me.LegenToolStripMenuItem.Text = "Legen"
         '
-        'NieuweDatabaseAanleggenToolStripMenuItem
+        'AanleggenToolStripMenuItem
         '
-        Me.NieuweDatabaseAanleggenToolStripMenuItem.Name = "NieuweDatabaseAanleggenToolStripMenuItem"
-        Me.NieuweDatabaseAanleggenToolStripMenuItem.Size = New System.Drawing.Size(141, 20)
-        Me.NieuweDatabaseAanleggenToolStripMenuItem.Text = "Terug Naar Gebruikconfig"
+        Me.AanleggenToolStripMenuItem.Name = "AanleggenToolStripMenuItem"
+        Me.AanleggenToolStripMenuItem.Size = New System.Drawing.Size(141, 20)
+        Me.AanleggenToolStripMenuItem.Text = "Terug Naar Gebruikconfig"
         '
         'grpQueries
         '
+        Me.grpQueries.Controls.Add(Me.btnDataVerwijderen)
+        Me.grpQueries.Controls.Add(Me.btnStoredProcedureVerwijderen)
+        Me.grpQueries.Controls.Add(Me.lstData)
+        Me.grpQueries.Controls.Add(Me.lstStoredProcedures)
         Me.grpQueries.Controls.Add(Me.btnPopuleerDatabase)
         Me.grpQueries.Controls.Add(Me.picDataGevonden)
-        Me.grpQueries.Controls.Add(Me.btnManueelExtraData)
+        Me.grpQueries.Controls.Add(Me.btnDataToevoegen)
         Me.grpQueries.Controls.Add(Me.lblDataGevonden)
-        Me.grpQueries.Controls.Add(Me.txtExtraData)
         Me.grpQueries.Controls.Add(Me.lblExtraData)
-        Me.grpQueries.Controls.Add(Me.btnManueelStartData)
-        Me.grpQueries.Controls.Add(Me.txtStartData)
-        Me.grpQueries.Controls.Add(Me.lblStartData)
-        Me.grpQueries.Controls.Add(Me.btnManeelStoredProcedures)
-        Me.grpQueries.Controls.Add(Me.txtStoredProcedures)
+        Me.grpQueries.Controls.Add(Me.btnStoredProcedureToevoegen)
         Me.grpQueries.Controls.Add(Me.lblStoredProcedures)
-        Me.grpQueries.Location = New System.Drawing.Point(12, 240)
+        Me.grpQueries.Location = New System.Drawing.Point(12, 238)
         Me.grpQueries.Name = "grpQueries"
-        Me.grpQueries.Size = New System.Drawing.Size(490, 203)
+        Me.grpQueries.Size = New System.Drawing.Size(490, 268)
         Me.grpQueries.TabIndex = 6
         Me.grpQueries.TabStop = False
         Me.grpQueries.Text = "Query-Instellingen"
         '
+        'btnDataVerwijderen
+        '
+        Me.btnDataVerwijderen.Location = New System.Drawing.Point(404, 19)
+        Me.btnDataVerwijderen.Name = "btnDataVerwijderen"
+        Me.btnDataVerwijderen.Size = New System.Drawing.Size(58, 22)
+        Me.btnDataVerwijderen.TabIndex = 29
+        Me.btnDataVerwijderen.Text = "Verwijder"
+        Me.btnDataVerwijderen.UseVisualStyleBackColor = True
+        '
+        'btnStoredProcedureVerwijderen
+        '
+        Me.btnStoredProcedureVerwijderen.Location = New System.Drawing.Point(179, 19)
+        Me.btnStoredProcedureVerwijderen.Name = "btnStoredProcedureVerwijderen"
+        Me.btnStoredProcedureVerwijderen.Size = New System.Drawing.Size(58, 22)
+        Me.btnStoredProcedureVerwijderen.TabIndex = 28
+        Me.btnStoredProcedureVerwijderen.Text = "Verwijder"
+        Me.btnStoredProcedureVerwijderen.UseVisualStyleBackColor = True
+        '
+        'lstData
+        '
+        Me.lstData.FormattingEnabled = True
+        Me.lstData.Location = New System.Drawing.Point(248, 44)
+        Me.lstData.Name = "lstData"
+        Me.lstData.Size = New System.Drawing.Size(228, 186)
+        Me.lstData.TabIndex = 27
+        '
+        'lstStoredProcedures
+        '
+        Me.lstStoredProcedures.FormattingEnabled = True
+        Me.lstStoredProcedures.Location = New System.Drawing.Point(9, 44)
+        Me.lstStoredProcedures.Name = "lstStoredProcedures"
+        Me.lstStoredProcedures.Size = New System.Drawing.Size(228, 186)
+        Me.lstStoredProcedures.TabIndex = 26
+        '
         'btnPopuleerDatabase
         '
         Me.btnPopuleerDatabase.Enabled = False
-        Me.btnPopuleerDatabase.Location = New System.Drawing.Point(157, 174)
+        Me.btnPopuleerDatabase.Location = New System.Drawing.Point(27, 234)
         Me.btnPopuleerDatabase.Name = "btnPopuleerDatabase"
         Me.btnPopuleerDatabase.Size = New System.Drawing.Size(184, 23)
         Me.btnPopuleerDatabase.TabIndex = 25
@@ -278,93 +322,54 @@ Partial Class frmNieuweDatabase
         'picDataGevonden
         '
         Me.picDataGevonden.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.picDataGevonden.Location = New System.Drawing.Point(351, 96)
+        Me.picDataGevonden.Location = New System.Drawing.Point(300, 239)
         Me.picDataGevonden.Name = "picDataGevonden"
         Me.picDataGevonden.Size = New System.Drawing.Size(17, 14)
         Me.picDataGevonden.TabIndex = 17
         Me.picDataGevonden.TabStop = False
         '
-        'btnManueelExtraData
+        'btnDataToevoegen
         '
-        Me.btnManueelExtraData.Location = New System.Drawing.Point(407, 112)
-        Me.btnManueelExtraData.Name = "btnManueelExtraData"
-        Me.btnManueelExtraData.Size = New System.Drawing.Size(75, 37)
-        Me.btnManueelExtraData.TabIndex = 24
-        Me.btnManueelExtraData.Text = "Selecteer Bestand"
-        Me.btnManueelExtraData.UseVisualStyleBackColor = True
+        Me.btnDataToevoegen.Location = New System.Drawing.Point(336, 19)
+        Me.btnDataToevoegen.Name = "btnDataToevoegen"
+        Me.btnDataToevoegen.Size = New System.Drawing.Size(62, 23)
+        Me.btnDataToevoegen.TabIndex = 24
+        Me.btnDataToevoegen.Text = "Voeg Toe"
+        Me.btnDataToevoegen.UseVisualStyleBackColor = True
         '
         'lblDataGevonden
         '
         Me.lblDataGevonden.AutoSize = True
         Me.lblDataGevonden.ForeColor = System.Drawing.Color.Firebrick
-        Me.lblDataGevonden.Location = New System.Drawing.Point(374, 96)
+        Me.lblDataGevonden.Location = New System.Drawing.Point(321, 239)
         Me.lblDataGevonden.Name = "lblDataGevonden"
-        Me.lblDataGevonden.Size = New System.Drawing.Size(108, 13)
+        Me.lblDataGevonden.Size = New System.Drawing.Size(155, 13)
         Me.lblDataGevonden.TabIndex = 16
-        Me.lblDataGevonden.Text = "Data Niet Gevonden."
+        Me.lblDataGevonden.Text = "Standaarddata Niet Gevonden."
         Me.lblDataGevonden.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        'txtExtraData
-        '
-        Me.txtExtraData.Location = New System.Drawing.Point(106, 121)
-        Me.txtExtraData.Name = "txtExtraData"
-        Me.txtExtraData.Size = New System.Drawing.Size(293, 20)
-        Me.txtExtraData.TabIndex = 23
         '
         'lblExtraData
         '
         Me.lblExtraData.AutoSize = True
-        Me.lblExtraData.Location = New System.Drawing.Point(4, 124)
+        Me.lblExtraData.Location = New System.Drawing.Point(270, 24)
         Me.lblExtraData.Name = "lblExtraData"
         Me.lblExtraData.Size = New System.Drawing.Size(60, 13)
         Me.lblExtraData.TabIndex = 22
         Me.lblExtraData.Text = "Extra Data:"
         '
-        'btnManueelStartData
+        'btnStoredProcedureToevoegen
         '
-        Me.btnManueelStartData.Location = New System.Drawing.Point(409, 56)
-        Me.btnManueelStartData.Name = "btnManueelStartData"
-        Me.btnManueelStartData.Size = New System.Drawing.Size(75, 37)
-        Me.btnManueelStartData.TabIndex = 21
-        Me.btnManueelStartData.Text = "Manueel Selecteren"
-        Me.btnManueelStartData.UseVisualStyleBackColor = True
-        '
-        'txtStartData
-        '
-        Me.txtStartData.Location = New System.Drawing.Point(108, 65)
-        Me.txtStartData.Name = "txtStartData"
-        Me.txtStartData.Size = New System.Drawing.Size(293, 20)
-        Me.txtStartData.TabIndex = 20
-        '
-        'lblStartData
-        '
-        Me.lblStartData.AutoSize = True
-        Me.lblStartData.Location = New System.Drawing.Point(6, 68)
-        Me.lblStartData.Name = "lblStartData"
-        Me.lblStartData.Size = New System.Drawing.Size(53, 13)
-        Me.lblStartData.TabIndex = 19
-        Me.lblStartData.Text = "Startdata:"
-        '
-        'btnManeelStoredProcedures
-        '
-        Me.btnManeelStoredProcedures.Location = New System.Drawing.Point(409, 13)
-        Me.btnManeelStoredProcedures.Name = "btnManeelStoredProcedures"
-        Me.btnManeelStoredProcedures.Size = New System.Drawing.Size(75, 37)
-        Me.btnManeelStoredProcedures.TabIndex = 18
-        Me.btnManeelStoredProcedures.Text = "Manueel Selecteren"
-        Me.btnManeelStoredProcedures.UseVisualStyleBackColor = True
-        '
-        'txtStoredProcedures
-        '
-        Me.txtStoredProcedures.Location = New System.Drawing.Point(110, 22)
-        Me.txtStoredProcedures.Name = "txtStoredProcedures"
-        Me.txtStoredProcedures.Size = New System.Drawing.Size(293, 20)
-        Me.txtStoredProcedures.TabIndex = 17
+        Me.btnStoredProcedureToevoegen.Location = New System.Drawing.Point(115, 19)
+        Me.btnStoredProcedureToevoegen.Name = "btnStoredProcedureToevoegen"
+        Me.btnStoredProcedureToevoegen.Size = New System.Drawing.Size(62, 22)
+        Me.btnStoredProcedureToevoegen.TabIndex = 18
+        Me.btnStoredProcedureToevoegen.Text = "Voeg Toe"
+        Me.btnStoredProcedureToevoegen.UseVisualStyleBackColor = True
         '
         'lblStoredProcedures
         '
         Me.lblStoredProcedures.AutoSize = True
-        Me.lblStoredProcedures.Location = New System.Drawing.Point(6, 25)
+        Me.lblStoredProcedures.Location = New System.Drawing.Point(11, 24)
         Me.lblStoredProcedures.Name = "lblStoredProcedures"
         Me.lblStoredProcedures.Size = New System.Drawing.Size(98, 13)
         Me.lblStoredProcedures.TabIndex = 16
@@ -373,7 +378,7 @@ Partial Class frmNieuweDatabase
         'picDatabaseGepopuleerd
         '
         Me.picDatabaseGepopuleerd.Image = Global.ADO_project.My.Resources.Resources.remove
-        Me.picDatabaseGepopuleerd.Location = New System.Drawing.Point(177, 446)
+        Me.picDatabaseGepopuleerd.Location = New System.Drawing.Point(177, 509)
         Me.picDatabaseGepopuleerd.Name = "picDatabaseGepopuleerd"
         Me.picDatabaseGepopuleerd.Size = New System.Drawing.Size(17, 14)
         Me.picDatabaseGepopuleerd.TabIndex = 27
@@ -383,11 +388,75 @@ Partial Class frmNieuweDatabase
         '
         Me.lblDatabaseGepopuleerd.AutoSize = True
         Me.lblDatabaseGepopuleerd.ForeColor = System.Drawing.Color.Firebrick
-        Me.lblDatabaseGepopuleerd.Location = New System.Drawing.Point(200, 446)
+        Me.lblDatabaseGepopuleerd.Location = New System.Drawing.Point(200, 510)
         Me.lblDatabaseGepopuleerd.Name = "lblDatabaseGepopuleerd"
         Me.lblDatabaseGepopuleerd.Size = New System.Drawing.Size(142, 13)
         Me.lblDatabaseGepopuleerd.TabIndex = 26
         Me.lblDatabaseGepopuleerd.Text = "Database Niet Gepopuleerd."
+        '
+        'ConfigToolStripMenuItem
+        '
+        Me.ConfigToolStripMenuItem.Name = "ConfigToolStripMenuItem"
+        Me.ConfigToolStripMenuItem.Size = New System.Drawing.Size(50, 20)
+        Me.ConfigToolStripMenuItem.Text = "Config"
+        '
+        'OpenenToolStripMenuItem
+        '
+        Me.OpenenToolStripMenuItem.Name = "OpenenToolStripMenuItem"
+        Me.OpenenToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OpenenToolStripMenuItem.Text = "Openen"
+        '
+        'OpslaanToolStripMenuItem
+        '
+        Me.OpslaanToolStripMenuItem.Name = "OpslaanToolStripMenuItem"
+        Me.OpslaanToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OpslaanToolStripMenuItem.Text = "Opslaan"
+        '
+        'LegenToolStripMenuItem1
+        '
+        Me.LegenToolStripMenuItem1.Name = "LegenToolStripMenuItem1"
+        Me.LegenToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.LegenToolStripMenuItem1.Text = "Legen"
+        '
+        'mnuConfig
+        '
+        Me.mnuConfig.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ConfigToolStripMenuItem1, Me.TerugNaarConfiguratieschermToolStripMenuItem})
+        Me.mnuConfig.Location = New System.Drawing.Point(0, 0)
+        Me.mnuConfig.Name = "mnuConfig"
+        Me.mnuConfig.Size = New System.Drawing.Size(514, 24)
+        Me.mnuConfig.TabIndex = 28
+        Me.mnuConfig.Text = "Configuratie"
+        '
+        'ConfigToolStripMenuItem1
+        '
+        Me.ConfigToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenenToolStripMenuItem1, Me.OpslaanToolStripMenuItem1, Me.LegenToolStripMenuItem2})
+        Me.ConfigToolStripMenuItem1.Name = "ConfigToolStripMenuItem1"
+        Me.ConfigToolStripMenuItem1.Size = New System.Drawing.Size(50, 20)
+        Me.ConfigToolStripMenuItem1.Text = "Config"
+        '
+        'OpenenToolStripMenuItem1
+        '
+        Me.OpenenToolStripMenuItem1.Name = "OpenenToolStripMenuItem1"
+        Me.OpenenToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.OpenenToolStripMenuItem1.Text = "Openen"
+        '
+        'OpslaanToolStripMenuItem1
+        '
+        Me.OpslaanToolStripMenuItem1.Name = "OpslaanToolStripMenuItem1"
+        Me.OpslaanToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.OpslaanToolStripMenuItem1.Text = "Opslaan"
+        '
+        'LegenToolStripMenuItem2
+        '
+        Me.LegenToolStripMenuItem2.Name = "LegenToolStripMenuItem2"
+        Me.LegenToolStripMenuItem2.Size = New System.Drawing.Size(152, 22)
+        Me.LegenToolStripMenuItem2.Text = "Legen"
+        '
+        'TerugNaarConfiguratieschermToolStripMenuItem
+        '
+        Me.TerugNaarConfiguratieschermToolStripMenuItem.Name = "TerugNaarConfiguratieschermToolStripMenuItem"
+        Me.TerugNaarConfiguratieschermToolStripMenuItem.Size = New System.Drawing.Size(130, 20)
+        Me.TerugNaarConfiguratieschermToolStripMenuItem.Text = "Terug naar Instellingen"
         '
         'frmNieuweDatabase
         '
@@ -395,10 +464,10 @@ Partial Class frmNieuweDatabase
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
+        Me.Controls.Add(Me.mnuConfig)
         Me.Controls.Add(Me.picDatabaseGepopuleerd)
         Me.Controls.Add(Me.grpQueries)
         Me.Controls.Add(Me.lblDatabaseGepopuleerd)
-        Me.Controls.Add(Me.mnuConfig)
         Me.Controls.Add(Me.grpInstellingen)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.MaximizeBox = False
@@ -406,17 +475,17 @@ Partial Class frmNieuweDatabase
         Me.Name = "frmNieuweDatabase"
         Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "frmNieuweDatabase"
+        Me.Text = "Nieuwe Database Aanmaken"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.grpInstellingen.ResumeLayout(False)
         Me.grpInstellingen.PerformLayout()
         CType(Me.picSQLGeldig, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.mnuConfig.ResumeLayout(False)
-        Me.mnuConfig.PerformLayout()
         Me.grpQueries.ResumeLayout(False)
         Me.grpQueries.PerformLayout()
         CType(Me.picDataGevonden, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.picDatabaseGepopuleerd, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.mnuConfig.ResumeLayout(False)
+        Me.mnuConfig.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -434,26 +503,35 @@ Partial Class frmNieuweDatabase
     Friend WithEvents lblSQLDatabase As System.Windows.Forms.Label
     Friend WithEvents lblSQLServer As System.Windows.Forms.Label
     Friend WithEvents txtSQLServer As System.Windows.Forms.TextBox
-    Friend WithEvents mnuConfig As System.Windows.Forms.MenuStrip
     Friend WithEvents BeheerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents OpenConfigToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ConfigOpslaanToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents LegenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents NieuweDatabaseAanleggenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents AanleggenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents grpQueries As System.Windows.Forms.GroupBox
     Friend WithEvents btnDatabaseAanmaken As System.Windows.Forms.Button
     Friend WithEvents lblStoredProcedures As System.Windows.Forms.Label
-    Friend WithEvents txtStoredProcedures As System.Windows.Forms.TextBox
-    Friend WithEvents btnManeelStoredProcedures As System.Windows.Forms.Button
-    Friend WithEvents btnManueelStartData As System.Windows.Forms.Button
-    Friend WithEvents txtStartData As System.Windows.Forms.TextBox
-    Friend WithEvents lblStartData As System.Windows.Forms.Label
-    Friend WithEvents btnManueelExtraData As System.Windows.Forms.Button
-    Friend WithEvents txtExtraData As System.Windows.Forms.TextBox
+    Friend WithEvents btnStoredProcedureToevoegen As System.Windows.Forms.Button
+    Friend WithEvents btnDataToevoegen As System.Windows.Forms.Button
     Friend WithEvents lblExtraData As System.Windows.Forms.Label
     Friend WithEvents picDataGevonden As System.Windows.Forms.PictureBox
     Friend WithEvents lblDataGevonden As System.Windows.Forms.Label
     Friend WithEvents btnPopuleerDatabase As System.Windows.Forms.Button
     Friend WithEvents picDatabaseGepopuleerd As System.Windows.Forms.PictureBox
     Friend WithEvents lblDatabaseGepopuleerd As System.Windows.Forms.Label
+    Friend WithEvents prgDatabaseAanmaken As System.Windows.Forms.ProgressBar
+    Friend WithEvents lstData As System.Windows.Forms.ListBox
+    Friend WithEvents lstStoredProcedures As System.Windows.Forms.ListBox
+    Friend WithEvents btnStoredProcedureVerwijderen As System.Windows.Forms.Button
+    Friend WithEvents btnDataVerwijderen As System.Windows.Forms.Button
+    Friend WithEvents ConfigToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents OpenenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents OpslaanToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents LegenToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuConfig As System.Windows.Forms.MenuStrip
+    Friend WithEvents ConfigToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents OpenenToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents OpslaanToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents LegenToolStripMenuItem2 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents TerugNaarConfiguratieschermToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class

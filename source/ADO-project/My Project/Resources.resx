@@ -127,7 +127,46 @@
   <data name="startdata" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\startdata.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="stored_procedures" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\stored_procedures.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="STORED_PROCEDURE_datainlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_datainlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_nieuwedeelname" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_nieuwedeelname.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_nieuwesport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_nieuwesport.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_nieuwestudent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_nieuwestudent.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_nieuwniveau" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_nieuwniveau.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_tbldoetsportdatagrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_tbldoetsportdatagrid.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_tbldoetsportinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_tbldoetsportinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_tblniveauinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_tblniveauinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_tblsportinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_tblsportinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_tblstudentinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_tblstudentinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_updatesport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_updatesport.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_updatestudent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_updatestudent.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_verwijdersport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_verwijdersport.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="STORED_PROCEDURE_verwijderstudent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stored procedures\stored_procedure_verwijderstudent.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

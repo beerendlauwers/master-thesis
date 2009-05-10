@@ -789,7 +789,17 @@ Public Class clDataViaSql
     End Function
 #End Region
 
-    Public Function f_NieuweDatabase(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean) As Boolean
+#Region "Functions voor nieuwe database aan te maken"
+    Public Function f_NieuweDatabase(ByVal dbsettings As frmNieuweDatabase.DataBaseSettings) As Boolean
+        'Database-instellingen binnenkrijgen
+        Dim SQLServer As String = dbsettings.Server
+        Dim SQLDatabase As String = dbsettings.DataBase
+        Dim UsesIntegratedSecurity As Boolean = dbsettings.IntegratedSecurity
+        Dim SQLGebruiker As String = dbsettings.Gebruiker
+        Dim SQLPaswoord As String = dbsettings.Paswoord
+        Dim StoredProcedures As String = dbsettings.StoredProcedures(0)
+        Dim ExtraData As String = dbsettings.ExtraData(0)
+
         'Deze functie tracht een nieuwe database aan te maken.
 
         Dim connectiestring As String
@@ -827,7 +837,14 @@ Public Class clDataViaSql
         End Try
     End Function
 
-    Public Function f_TestDatabase(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean) As Boolean
+    Public Function f_TestDatabase(ByVal dbsettings As frmNieuweDatabase.DataBaseSettings) As Boolean
+        'Database-instellingen binnenkrijgen
+        Dim SQLServer As String = dbsettings.Server
+        Dim SQLDatabase As String = dbsettings.DataBase
+        Dim UsesIntegratedSecurity As Boolean = dbsettings.IntegratedSecurity
+        Dim SQLGebruiker As String = dbsettings.Gebruiker
+        Dim SQLPaswoord As String = dbsettings.Paswoord
+
         'Deze functie tracht een database te gebruiken om te zien of hij bestaat.
 
         Dim connectiestring As String
@@ -861,7 +878,16 @@ Public Class clDataViaSql
         End Try
     End Function
 
-    Public Function f_VulNieuweDatabase(ByVal SQLServer As String, ByVal SQLDatabase As String, ByVal SQLGebruiker As String, ByVal SQLPaswoord As String, ByVal UsesIntegratedSecurity As Boolean, ByVal StoredProcedures As String, ByVal StartData As String, ByVal ExtraData As String) As Boolean
+    Public Function f_VulNieuweDatabase(ByVal dbsettings As frmNieuweDatabase.DataBaseSettings) As Boolean
+        'Database-instellingen binnenkrijgen
+        Dim SQLServer As String = dbsettings.Server
+        Dim SQLDatabase As String = dbsettings.DataBase
+        Dim UsesIntegratedSecurity As Boolean = dbsettings.IntegratedSecurity
+        Dim SQLGebruiker As String = dbsettings.Gebruiker
+        Dim SQLPaswoord As String = dbsettings.Paswoord
+        Dim StoredProcedures() As String = dbsettings.StoredProcedures
+        Dim Data() As String = dbsettings.ExtraData
+
         Dim connectiestring As String
         'Connectiestring maken.
         connectiestring = String.Concat("Data Source=", SQLServer, ";Initial Catalog=", SQLDatabase)
@@ -870,35 +896,58 @@ Public Class clDataViaSql
         Else
             connectiestring = String.Concat(connectiestring, ";Persist Security Info=True;User ID=", SQLGebruiker, ";Password=", SQLPaswoord)
         End If
+
         'SQLConnection
         Dim SQLConnection As New SqlConnection(connectiestring)
 
         'De queries in SQLCommand-vorm gieten
-        'Eerst de startdata, die de tabellen en 1 insert bevat
-        'Dan de Stored Procedures
-        Dim SQLDBcmd1 As SqlCommand = New SqlCommand(String.Concat("USE ", SQLDatabase), SQLConnection)
-        Dim SQLDBcmd2 As SqlCommand = New SqlCommand(StartData, SQLConnection)
-        Dim SQLDBcmd3 As SqlCommand = New SqlCommand(StoredProcedures, SQLConnection)
-        Dim SQLDBcmd4 As SqlCommand = New SqlCommand(ExtraData, SQLConnection)
+        Dim SQLDBcmdCN As SqlCommand = New SqlCommand(String.Concat("USE ", SQLDatabase), SQLConnection)
+        Dim SQLDBcmdDT As SqlCommand = New SqlCommand()
+        Dim SQLDBcmdSP As SqlCommand = New SqlCommand()
+        SQLDBcmdSP.Connection = SQLConnection
+        SQLDBcmdDT.Connection = SQLConnection
 
         Try
             SQLConnection.Open()
-            'De queries uitvoeren
 
-            SQLDBcmd1.ExecuteNonQuery()
-            SQLDBcmd2.ExecuteNonQuery()
-            SQLDBcmd3.ExecuteNonQuery()
-            SQLDBcmd4.ExecuteNonQuery()
+            'De queries uitvoeren
+            SQLDBcmdCN.ExecuteNonQuery()
+
+            Dim i As Int16 = 0
+
+            'Eerst de Data
+            While (i < Data.Length() And Not Data(i) = String.Empty)
+                SQLDBcmdDT.CommandText = Data(i)
+                SQLDBcmdDT.ExecuteNonQuery()
+                i = i + 1
+            End While
+
+            'Dan de Stored Procedures
+            i = 0
+            While (i < StoredProcedures.Length() And Not StoredProcedures(i) = String.Empty)
+                SQLDBcmdSP.CommandText = StoredProcedures(i)
+                SQLDBcmdSP.ExecuteNonQuery()
+                i = i + 1
+            End While
 
             SQLConnection.Close()
+
+            SQLDBcmdCN.Dispose()
+            SQLDBcmdDT.Dispose()
+            SQLDBcmdSP.Dispose()
             SQLConnection.Dispose()
             Return True
 
         Catch ex As Exception
             MessageBox.Show("Er is een fout gebeurd tijdens het populeren van de database. Details: " & ex.Message)
             SQLConnection.Close()
+            SQLDBcmdCN.Dispose()
+            SQLDBcmdDT.Dispose()
+            SQLDBcmdSP.Dispose()
             SQLConnection.Dispose()
             Return False
         End Try
     End Function
+#End Region
+
 End Class

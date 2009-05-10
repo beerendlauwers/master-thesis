@@ -5,7 +5,7 @@
 
         'Tijdelijke Datatables waaruit we de e-mails gaan halen, opvullen
         Dim tblSQL As DataTable = frmHoofdMenu.mySQLConnection.p_dataset.Tables("tblStudent")
-        Dim tblAccess As DataTable = frmHoofdMenu.myAccessConnection.p_datatAccess
+        Dim tblAccess As DataTable = frmHoofdMenu.myAccessConnection.p_dataset.Tables(frmHoofdMenu.mLabels.AccessTabel)
 
         'Twee arrays van Strings voor de emails
         Dim EmailsVanAccess(tblAccess.Rows.Count()) As String
@@ -21,7 +21,7 @@
         If (tblAccess.Rows.Count() > 0) Then
             'De - 1 zorgt ervoor dat ge niet uit de array gaat (we beginnen immers van 0)
             For i = 0 To (tblAccess.Rows.Count() - 1)
-                EmailsVanAccess(i) = tblAccess.Rows(i).Item("Email").ToString()
+                EmailsVanAccess(i) = tblAccess.Rows(i).Item(frmHoofdMenu.mLabels.AccessKolom).ToString()
             Next i
         End If
 

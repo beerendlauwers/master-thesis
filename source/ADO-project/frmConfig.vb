@@ -1,4 +1,5 @@
 Imports System.IO
+Imports System.Text.RegularExpressions
 
 Public Class frmConfig
     'Dialoogvensters. Ze staan hier zodat ze onze geselecteerde folder onthouden
@@ -340,6 +341,16 @@ Public Class frmConfig
             Exit Sub
         End If
 
+        If (frmHoofdMenu.BlnSQLConnectieGelukt) Then
+            frmHoofdMenu.mySQLConnection.p_dataset.Clear()
+        End If
+
+        If (frmHoofdMenu.BlnAccessConnectieGelukt) Then
+            frmHoofdMenu.myAccessConnection.p_dataset.Clear()
+        End If
+
+        Call StuurLabelsNaarfrmHoofdmenu()
+
         'De SQL-connectiestring opmaken
         SQLConnectiestring = String.Concat("Data Source=", sqlserver, ";Initial Catalog=", sqldatabase)
         If (sqlintegratedsecurity) Then
@@ -370,8 +381,9 @@ Public Class frmConfig
         My.Computer.FileSystem.WriteAllText("config.cfg", data, False)
 
         If (frmHoofdMenu.BlnAccessConnectieGelukt And frmHoofdMenu.BlnSQLConnectieGelukt) Then
+
             'Toon het startscherm.
-            frmHoofdMenu.ToonStartScherm()
+            Call frmHoofdMenu.ToonStartScherm()
         End If
     End Sub
 
@@ -391,9 +403,32 @@ Public Class frmConfig
     End Sub
 
     Private Sub NieuweDatabaseAanleggenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NieuweDatabaseAanleggenToolStripMenuItem.Click
+        Dim sqlserver As String = Me.txtSQLServer.Text
         frmHoofdMenu.ClearOtherWindows()
         frmHoofdMenu.HuidigForm = New frmNieuweDatabase()
         frmHoofdMenu.HuidigForm.MdiParent = frmHoofdMenu
+        CType(frmHoofdMenu.HuidigForm, frmNieuweDatabase).txtSQLServer.Text = sqlserver
         frmHoofdMenu.HuidigForm.Show()
+    End Sub
+
+    Private Sub StuurLabelsNaarfrmHoofdmenu()
+        'Alle labels doorsturen naar de structure in frmhoofdmenu.
+        frmHoofdMenu.mLabels.SQLServer = Me.txtSQLServer.Text
+        frmHoofdMenu.mLabels.SQLDataBase = Me.txtSQLDatabase.Text
+        If (Me.chkIntegratedSecurity.Checked) Then
+            frmHoofdMenu.mLabels.SQLGebruiker = "Integrated Security"
+        Else
+            frmHoofdMenu.mLabels.SQLGebruiker = Me.txtSQLGebruiker.Text
+        End If
+
+        Dim filter As String = "[\]\w[ ]*\b.mdb\b$"
+        Dim match As Match = Regex.Match(Me.txtAccessBestand.Text, filter)
+        If (match.Success) Then
+            frmHoofdMenu.mLabels.AccessDataBase = match.ToString
+        Else
+            frmHoofdMenu.mLabels.AccessDataBase = Me.txtAccessBestand.Text
+        End If
+        frmHoofdMenu.mLabels.AccessTabel = Me.txtAccessTabel.Text
+        frmHoofdMenu.mLabels.AccessKolom = Me.txtAccessKolom.Text
     End Sub
 End Class

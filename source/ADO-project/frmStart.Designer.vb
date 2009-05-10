@@ -40,8 +40,23 @@ Partial Class frmStart
         Me.lblVergelijkMetAccess2 = New System.Windows.Forms.Label
         Me.lblVergelijkMetAccess1 = New System.Windows.Forms.Label
         Me.btnVergelijkMetAccess = New System.Windows.Forms.Button
+        Me.grpConfig = New System.Windows.Forms.GroupBox
+        Me.lblKolomAccessTekst = New System.Windows.Forms.Label
+        Me.lblTabelAccessTekst = New System.Windows.Forms.Label
+        Me.lblDatabaseAccessTekst = New System.Windows.Forms.Label
+        Me.lblSQLGebruikerTekst = New System.Windows.Forms.Label
+        Me.lblSQLDatabaseTekst = New System.Windows.Forms.Label
+        Me.lblSQLServerTekst = New System.Windows.Forms.Label
+        Me.btnConfigWijzigen = New System.Windows.Forms.Button
+        Me.lblKolomAccess = New System.Windows.Forms.Label
+        Me.lblTabelAccess = New System.Windows.Forms.Label
+        Me.lblDatabaseAccess = New System.Windows.Forms.Label
+        Me.lblSQLGebruiker = New System.Windows.Forms.Label
+        Me.lblSQLDatabase = New System.Windows.Forms.Label
+        Me.lblSQLServer = New System.Windows.Forms.Label
         Me.grpMenus.SuspendLayout()
         Me.grpProcessen.SuspendLayout()
+        Me.grpConfig.SuspendLayout()
         Me.SuspendLayout()
         '
         'grpMenus
@@ -231,12 +246,153 @@ Partial Class frmStart
         Me.btnVergelijkMetAccess.Text = "Vergelijk Met Access"
         Me.btnVergelijkMetAccess.UseVisualStyleBackColor = True
         '
+        'grpConfig
+        '
+        Me.grpConfig.Controls.Add(Me.lblKolomAccessTekst)
+        Me.grpConfig.Controls.Add(Me.lblTabelAccessTekst)
+        Me.grpConfig.Controls.Add(Me.lblDatabaseAccessTekst)
+        Me.grpConfig.Controls.Add(Me.lblSQLGebruikerTekst)
+        Me.grpConfig.Controls.Add(Me.lblSQLDatabaseTekst)
+        Me.grpConfig.Controls.Add(Me.lblSQLServerTekst)
+        Me.grpConfig.Controls.Add(Me.btnConfigWijzigen)
+        Me.grpConfig.Controls.Add(Me.lblKolomAccess)
+        Me.grpConfig.Controls.Add(Me.lblTabelAccess)
+        Me.grpConfig.Controls.Add(Me.lblDatabaseAccess)
+        Me.grpConfig.Controls.Add(Me.lblSQLGebruiker)
+        Me.grpConfig.Controls.Add(Me.lblSQLDatabase)
+        Me.grpConfig.Controls.Add(Me.lblSQLServer)
+        Me.grpConfig.Location = New System.Drawing.Point(17, 367)
+        Me.grpConfig.Name = "grpConfig"
+        Me.grpConfig.Size = New System.Drawing.Size(482, 148)
+        Me.grpConfig.TabIndex = 2
+        Me.grpConfig.TabStop = False
+        Me.grpConfig.Text = "Instellingen"
+        '
+        'lblKolomAccessTekst
+        '
+        Me.lblKolomAccessTekst.AutoSize = True
+        Me.lblKolomAccessTekst.Location = New System.Drawing.Point(114, 109)
+        Me.lblKolomAccessTekst.Name = "lblKolomAccessTekst"
+        Me.lblKolomAccessTekst.Size = New System.Drawing.Size(71, 13)
+        Me.lblKolomAccessTekst.TabIndex = 12
+        Me.lblKolomAccessTekst.Text = "AccessKolom"
+        '
+        'lblTabelAccessTekst
+        '
+        Me.lblTabelAccessTekst.AutoSize = True
+        Me.lblTabelAccessTekst.Location = New System.Drawing.Point(114, 94)
+        Me.lblTabelAccessTekst.Name = "lblTabelAccessTekst"
+        Me.lblTabelAccessTekst.Size = New System.Drawing.Size(69, 13)
+        Me.lblTabelAccessTekst.TabIndex = 11
+        Me.lblTabelAccessTekst.Text = "AccessTabel"
+        '
+        'lblDatabaseAccessTekst
+        '
+        Me.lblDatabaseAccessTekst.AutoSize = True
+        Me.lblDatabaseAccessTekst.Location = New System.Drawing.Point(114, 79)
+        Me.lblDatabaseAccessTekst.Name = "lblDatabaseAccessTekst"
+        Me.lblDatabaseAccessTekst.Size = New System.Drawing.Size(88, 13)
+        Me.lblDatabaseAccessTekst.TabIndex = 10
+        Me.lblDatabaseAccessTekst.Text = "AccessDatabase"
+        '
+        'lblSQLGebruikerTekst
+        '
+        Me.lblSQLGebruikerTekst.AutoSize = True
+        Me.lblSQLGebruikerTekst.Location = New System.Drawing.Point(114, 53)
+        Me.lblSQLGebruikerTekst.Name = "lblSQLGebruikerTekst"
+        Me.lblSQLGebruikerTekst.Size = New System.Drawing.Size(74, 13)
+        Me.lblSQLGebruikerTekst.TabIndex = 9
+        Me.lblSQLGebruikerTekst.Text = "SQLGebruiker"
+        '
+        'lblSQLDatabaseTekst
+        '
+        Me.lblSQLDatabaseTekst.AutoSize = True
+        Me.lblSQLDatabaseTekst.Location = New System.Drawing.Point(114, 36)
+        Me.lblSQLDatabaseTekst.Name = "lblSQLDatabaseTekst"
+        Me.lblSQLDatabaseTekst.Size = New System.Drawing.Size(74, 13)
+        Me.lblSQLDatabaseTekst.TabIndex = 8
+        Me.lblSQLDatabaseTekst.Text = "SQLDatabase"
+        '
+        'lblSQLServerTekst
+        '
+        Me.lblSQLServerTekst.AutoSize = True
+        Me.lblSQLServerTekst.Location = New System.Drawing.Point(114, 19)
+        Me.lblSQLServerTekst.Name = "lblSQLServerTekst"
+        Me.lblSQLServerTekst.Size = New System.Drawing.Size(59, 13)
+        Me.lblSQLServerTekst.TabIndex = 7
+        Me.lblSQLServerTekst.Text = "SQLServer"
+        '
+        'btnConfigWijzigen
+        '
+        Me.btnConfigWijzigen.Location = New System.Drawing.Point(360, 120)
+        Me.btnConfigWijzigen.Name = "btnConfigWijzigen"
+        Me.btnConfigWijzigen.Size = New System.Drawing.Size(116, 22)
+        Me.btnConfigWijzigen.TabIndex = 6
+        Me.btnConfigWijzigen.Text = "Wijzig Configuratie"
+        Me.btnConfigWijzigen.UseVisualStyleBackColor = True
+        '
+        'lblKolomAccess
+        '
+        Me.lblKolomAccess.AutoSize = True
+        Me.lblKolomAccess.Location = New System.Drawing.Point(17, 109)
+        Me.lblKolomAccess.Name = "lblKolomAccess"
+        Me.lblKolomAccess.Size = New System.Drawing.Size(77, 13)
+        Me.lblKolomAccess.TabIndex = 5
+        Me.lblKolomAccess.Text = "Access-Kolom:"
+        '
+        'lblTabelAccess
+        '
+        Me.lblTabelAccess.AutoSize = True
+        Me.lblTabelAccess.Location = New System.Drawing.Point(17, 94)
+        Me.lblTabelAccess.Name = "lblTabelAccess"
+        Me.lblTabelAccess.Size = New System.Drawing.Size(75, 13)
+        Me.lblTabelAccess.TabIndex = 4
+        Me.lblTabelAccess.Text = "Access-Tabel:"
+        '
+        'lblDatabaseAccess
+        '
+        Me.lblDatabaseAccess.AutoSize = True
+        Me.lblDatabaseAccess.Location = New System.Drawing.Point(17, 79)
+        Me.lblDatabaseAccess.Name = "lblDatabaseAccess"
+        Me.lblDatabaseAccess.Size = New System.Drawing.Size(94, 13)
+        Me.lblDatabaseAccess.TabIndex = 3
+        Me.lblDatabaseAccess.Text = "Access-Database:"
+        '
+        'lblSQLGebruiker
+        '
+        Me.lblSQLGebruiker.AutoSize = True
+        Me.lblSQLGebruiker.Location = New System.Drawing.Point(17, 53)
+        Me.lblSQLGebruiker.Name = "lblSQLGebruiker"
+        Me.lblSQLGebruiker.Size = New System.Drawing.Size(80, 13)
+        Me.lblSQLGebruiker.TabIndex = 2
+        Me.lblSQLGebruiker.Text = "SQL-Gebruiker:"
+        '
+        'lblSQLDatabase
+        '
+        Me.lblSQLDatabase.AutoSize = True
+        Me.lblSQLDatabase.Location = New System.Drawing.Point(17, 36)
+        Me.lblSQLDatabase.Name = "lblSQLDatabase"
+        Me.lblSQLDatabase.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblSQLDatabase.Size = New System.Drawing.Size(80, 13)
+        Me.lblSQLDatabase.TabIndex = 1
+        Me.lblSQLDatabase.Text = "SQL-Database:"
+        '
+        'lblSQLServer
+        '
+        Me.lblSQLServer.AutoSize = True
+        Me.lblSQLServer.Location = New System.Drawing.Point(17, 19)
+        Me.lblSQLServer.Name = "lblSQLServer"
+        Me.lblSQLServer.Size = New System.Drawing.Size(65, 13)
+        Me.lblSQLServer.TabIndex = 0
+        Me.lblSQLServer.Text = "SQL-Server:"
+        '
         'frmStart
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(514, 527)
         Me.ControlBox = False
+        Me.Controls.Add(Me.grpConfig)
         Me.Controls.Add(Me.grpProcessen)
         Me.Controls.Add(Me.grpMenus)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
@@ -251,6 +407,8 @@ Partial Class frmStart
         Me.grpMenus.PerformLayout()
         Me.grpProcessen.ResumeLayout(False)
         Me.grpProcessen.PerformLayout()
+        Me.grpConfig.ResumeLayout(False)
+        Me.grpConfig.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -272,4 +430,18 @@ Partial Class frmStart
     Friend WithEvents lblExporteerNaarXML As System.Windows.Forms.Label
     Friend WithEvents btnImporteerUitExcel As System.Windows.Forms.Button
     Friend WithEvents lblImporteerUitExcel As System.Windows.Forms.Label
+    Friend WithEvents grpConfig As System.Windows.Forms.GroupBox
+    Friend WithEvents lblSQLGebruiker As System.Windows.Forms.Label
+    Friend WithEvents lblSQLDatabase As System.Windows.Forms.Label
+    Friend WithEvents lblSQLServer As System.Windows.Forms.Label
+    Friend WithEvents lblDatabaseAccess As System.Windows.Forms.Label
+    Friend WithEvents lblKolomAccess As System.Windows.Forms.Label
+    Friend WithEvents lblTabelAccess As System.Windows.Forms.Label
+    Friend WithEvents btnConfigWijzigen As System.Windows.Forms.Button
+    Friend WithEvents lblKolomAccessTekst As System.Windows.Forms.Label
+    Friend WithEvents lblTabelAccessTekst As System.Windows.Forms.Label
+    Friend WithEvents lblDatabaseAccessTekst As System.Windows.Forms.Label
+    Friend WithEvents lblSQLGebruikerTekst As System.Windows.Forms.Label
+    Friend WithEvents lblSQLDatabaseTekst As System.Windows.Forms.Label
+    Friend WithEvents lblSQLServerTekst As System.Windows.Forms.Label
 End Class
