@@ -113,7 +113,7 @@ Public Class frmBeheerStudent
 #Region "Student Mailen Event"
     Private Sub btnStudentMail_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnStudentMail.Click
         If (EmailAddressCheck(Me.txtSchoolMail.Text)) Then
-            Process.Start("mailto:" & Me.txtSchoolMail.Text & "?subject=Vult zelf is iets in luierik!! &body=")
+            Process.Start(String.Concat("mailto:", " ", "?bcc=", Me.txtSchoolMail.Text, "&subject=Vult zelf is iets in luierik!! &body="))
         End If
     End Sub
 #End Region

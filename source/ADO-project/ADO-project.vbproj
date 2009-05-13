@@ -73,6 +73,7 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="clDataViaOracle.vb" />
     <Compile Include="frmBeheerSporttakken.Designer.vb">
       <DependentUpon>frmBeheerSporttakken.vb</DependentUpon>
     </Compile>

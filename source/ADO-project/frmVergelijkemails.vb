@@ -1,6 +1,5 @@
 ﻿Public Class frmVergelijkemails
 
-
     Private Sub frmListbox_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Try
