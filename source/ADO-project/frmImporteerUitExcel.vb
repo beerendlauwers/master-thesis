@@ -232,7 +232,7 @@
                 Me.btnDataOpslaan.Text = "Sla Data Op"
             End If
         Else
-            MsgBox("Kon de data niet ophalen.")
+            MessageBox.Show("Kon de data niet ophalen.")
             Me.pctSuccess.Image = My.Resources.remove
             Me.lblSuccess.Text = "Data Niet Opgehaald."
             Me.lblSuccess.ForeColor = Color.Firebrick

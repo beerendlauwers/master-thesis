@@ -25,7 +25,7 @@ Public Class frmExporteerNaarXML
             End If
 
         Catch ex As Exception
-            Throw ex
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het opslaan van het bestand. Details:", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
         'We halen de meest recente deelnamedata op van de SQL-server.
@@ -98,7 +98,7 @@ Public Class frmExporteerNaarXML
 
                 Catch ex As Exception
 
-                    MsgBox(ex.Message)
+                    MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het verwerken van de gegevens. Details:", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Me.picExported.Image = My.Resources.remove
                     Me.lblExported.Text = "Niet Geëxporteerd"
                     Me.lblExported.ForeColor = Color.Firebrick
@@ -106,10 +106,8 @@ Public Class frmExporteerNaarXML
                     Me.btnBestandOpenen.Enabled = False
                 End Try
             Else
-                MsgBox("Geen bestandslocatie geselecteerd.")
+                MessageBox.Show("Geen bestandslocatie geselecteerd.")
             End If
-        Else
-            MsgBox("Kon de data niet ophalen.")
         End If
     End Sub
 

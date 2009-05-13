@@ -35,12 +35,17 @@
     End Sub
 
     Private Sub btnVergelijkMetAccess_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnVergelijkMetAccess.Click
-        Dim VergelijkEmails As Form = New frmVergelijkemails()
-        VergelijkEmails.Show()
+        Call frmHoofdMenu.ClearOtherWindows()
+        frmHoofdMenu.HuidigForm = New frmVergelijkemails()
+        frmHoofdMenu.HuidigForm.MdiParent = frmHoofdMenu
+        frmHoofdMenu.HuidigForm.Show()
     End Sub
 
     Private Sub btnExporteerNaarOracle_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnExporteerNaarOracle.Click
-
+        Call frmHoofdMenu.ClearOtherWindows()
+        frmHoofdMenu.HuidigForm = New frmExporteerNaarOracle()
+        frmHoofdMenu.HuidigForm.MdiParent = frmHoofdMenu
+        frmHoofdMenu.HuidigForm.Show()
     End Sub
 
     Private Sub BtnExporteerNaarXML_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BtnExporteerNaarXML.Click

@@ -240,7 +240,7 @@ Public Class frmConfig
                 Me.txtAccessKolom.Text = ConfigArray(6)
             End If
         Catch ex As Exception
-            MessageBox.Show("Er is een fout gebeurd tijdens het laden van de configuratie.")
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het laden van de configuratie. Details:", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
     End Sub

@@ -43,7 +43,7 @@ Public Class frmNieuweDatabase
         'We nemen aan dat SQL standaard Integrated Security gebruikt
         Me.chkIntegratedSecurity.Checked = True
 
-
+        Me.btnDatabaseAanmaken.Enabled = False
 
         'We kijken na of we de standaardconfiguratie kunnen vinden.
         'Indien ja, dan laden we deze reeds in de listboxes.
@@ -171,7 +171,11 @@ Public Class frmNieuweDatabase
             Me.picSQLGeldig.Image = ADO_project.My.Resources.tick
             Me.chkSQLOpslaan.Checked = True
         Else
-            Me.btnDatabaseAanmaken.Enabled = True
+            If (Me.txtSQLDatabase.Text = String.Empty Or Me.txtSQLServer.Text = String.Empty) Then
+                Me.btnDatabaseAanmaken.Enabled = False
+            Else
+                Me.btnDatabaseAanmaken.Enabled = True
+            End If
             Me.btnDatabaseAanmaken.Text = "Database Aanmaken"
 
             Me.lblSQLGeldig.Text = "Ongeldig"
@@ -185,6 +189,12 @@ Public Class frmNieuweDatabase
     End Sub
 
     Private Sub txtSQLServer_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtSQLServer.TextChanged
+
+        If (Me.txtSQLDatabase.Text = String.Empty Or Me.txtSQLServer.Text = String.Empty) Then
+            Me.btnDatabaseAanmaken.Enabled = False
+        Else
+            Me.btnDatabaseAanmaken.Enabled = True
+        End If
 
         'Kijk na of er geen ongeldige tekens in onze connectiestring zit.
         If (Not CheckVoorSpecialeKarakters(Me.txtSQLServer.Text) And Me.txtSQLServer.Text.Length() > 0) Then
@@ -355,9 +365,9 @@ Public Class frmNieuweDatabase
             Me.picSQLGeldig.Image = ADO_project.My.Resources.remove
         End If
 
-            'Kijk na of alles klaar is. Indien ja, dan zullen we de "Populeer Database"-knop
-            'beschikbaar maken.
-            CheckDatabaseKlaar()
+        'Kijk na of alles klaar is. Indien ja, dan zullen we de "Populeer Database"-knop
+        'beschikbaar maken.
+        CheckDatabaseKlaar()
     End Sub
 
     Private Sub btnStoredProcedureToevoegen_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnStoredProcedureToevoegen.Click

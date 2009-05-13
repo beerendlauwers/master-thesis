@@ -56,14 +56,14 @@ Public Class frmBeheerSporttakken
             Call MenuEnab(1)
             Call ConEnab(False)
         Else
-            MsgBox("Er zijn één of meerdere velden niet ingevuld.")
+            MessageBox.Show("Er zijn één of meerdere velden niet ingevuld.", "Ongeldig formulier", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
     End Sub
 
     Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
         If (frmHoofdMenu.mySQLConnection.f_VerwijderSport(Me.cboSporttak.SelectedValue, Me.cboSporttak.SelectedIndex)) Then
             Call ConClear()
-            MsgBox("Sport verwijderd.")
+            MessageBox.Show("Sport verwijderd.","Sport Verwijderd",MessageBoxButtons.OK,MessageBoxIcon.Information)
         End If
     End Sub
 

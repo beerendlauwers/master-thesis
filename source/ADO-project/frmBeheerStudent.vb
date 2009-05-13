@@ -87,7 +87,7 @@ Public Class frmBeheerStudent
             Call MenuEnab(1)
             Call ConEnab(False)
         Else
-            MsgBox(fouten)
+            MessageBox.Show(fouten, "Ongeldig formulier", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
     End Sub
@@ -95,7 +95,7 @@ Public Class frmBeheerStudent
     Private Sub DeleteToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DeleteToolStripMenuItem.Click
         If (frmHoofdMenu.mySQLConnection.f_VerwijderStudent(Me.cboNaamData.SelectedValue, Me.cboNaamData.SelectedIndex)) Then
             Call ConClear()
-            MsgBox("Student verwijderd.")
+            MessageBox.Show("Student verwijderd.", "Student Verwijderd", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
     End Sub
 

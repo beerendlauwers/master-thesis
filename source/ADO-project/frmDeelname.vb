@@ -102,7 +102,7 @@ Public Class frmDeelname
             Call ConEnab(False)
             Call ConClear()
         Else
-            MsgBox("Er zijn één of meerdere velden niet ingevuld.")
+            MessageBox.Show("Er zijn één of meerdere velden niet ingevuld.", "Ongeldig formulier", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
     End Sub
 

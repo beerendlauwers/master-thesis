@@ -38,7 +38,7 @@ Public Class clDataViaAccess
             AccessConnection.Open()
 
         Catch ex As OleDbException
-            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database. Details: " & ex.Message)
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het verbinden met de database. Details: ", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             AccessConnection.Dispose()
             Return False
         End Try
@@ -54,7 +54,7 @@ Public Class clDataViaAccess
             Return True
 
         Catch ex As Exception
-            MessageBox.Show("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: " & ex.Message)
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: ", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             AccessConnection.Dispose()
             Return False
         End Try

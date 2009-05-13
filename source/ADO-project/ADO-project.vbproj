@@ -106,6 +106,12 @@
     <Compile Include="frmDeelnameOverzicht.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmExporteerNaarOracle.Designer.vb">
+      <DependentUpon>frmExporteerNaarOracle.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmExporteerNaarOracle.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmExporteerNaarXML.Designer.vb">
       <DependentUpon>frmExporteerNaarXML.vb</DependentUpon>
     </Compile>
@@ -242,6 +248,10 @@
     <None Include="Resources\stored procedures\STORED_PROCEDURE_updatestudent.sql" />
     <None Include="Resources\stored procedures\STORED_PROCEDURE_verwijdersport.sql" />
     <None Include="Resources\stored procedures\STORED_PROCEDURE_verwijderstudent.sql" />
+    <EmbeddedResource Include="frmExporteerNaarOracle.resx">
+      <DependentUpon>frmExporteerNaarOracle.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\startdata.sql" />
     <EmbeddedResource Include="Resources\remove.gif" />
   </ItemGroup>

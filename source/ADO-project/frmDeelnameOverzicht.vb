@@ -9,8 +9,6 @@
         If (blngeslaagd) Then
             dgrDoetSport.DataSource = frmHoofdMenu.mySQLConnection.p_dataset.Tables("tblDeelname")
             f_VulNaamFilter(frmHoofdMenu.mySQLConnection.p_dataset.Tables("tblDeelname"), "StudentNaam", "StudentNaam")
-        Else
-            MsgBox("Kon de data niet ophalen.")
         End If
 
     End Sub

@@ -78,7 +78,7 @@ Public Class clDataViaSql
         Try
             SQLConnection.Open()
         Catch ex As SqlException
-            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het verbinden met de database. Details:", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             SQLConnection.Dispose()
             Return False
         End Try
@@ -146,7 +146,7 @@ Public Class clDataViaSql
 
             Return True
         Catch ex As Exception
-            MsgBox("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: " & ex.Message)
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: ", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             SQLConnection.Dispose()
             Return False
         End Try
@@ -709,32 +709,40 @@ Public Class clDataViaSql
         Try
             SQLConnection.Open()
         Catch ex As SqlException
-            MessageBox.Show("Er is een fout gebeurd tijdens het verbinden met de database.")
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het verbinden met de database. Details:", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
             SQLConnection.Dispose()
             Return False
         End Try
 
-        If (mtblDeelnameIsInitialized) Then
-            If (mDataSet.Tables("tblDeelname").Rows.Count > 0) Then
-                mDataSet.Tables("tblDeelname").Clear()
+        Try
+            If (mtblDeelnameIsInitialized) Then
+                If (mDataSet.Tables("tblDeelname").Rows.Count > 0) Then
+                    mDataSet.Tables("tblDeelname").Clear()
+                End If
             End If
-        End If
 
-        Dim SQLdeelname As String = "STORED_PROCEDURE_tbldoetsportdatagrid"
-        Dim deelnameAdapter As SqlDataAdapter = New SqlDataAdapter()
-        deelnameAdapter.TableMappings.Add("Table", "tblDeelname")
-        Dim deelnameCmd As SqlCommand = New SqlCommand(SQLdeelname, SQLConnection)
-        deelnameCmd.CommandType = CommandType.StoredProcedure
-        deelnameAdapter.SelectCommand = deelnameCmd
-        deelnameAdapter.Fill(mDataSet, "tblDeelname")
-        SQLConnection.Close()
-        SQLConnection.Dispose()
-        deelnameAdapter.Dispose()
-        deelnameCmd.Dispose()
+            Dim SQLdeelname As String = "STORED_PROCEDURE_tbldoetsportdatagrid"
+            Dim deelnameAdapter As SqlDataAdapter = New SqlDataAdapter()
+            deelnameAdapter.TableMappings.Add("Table", "tblDeelname")
+            Dim deelnameCmd As SqlCommand = New SqlCommand(SQLdeelname, SQLConnection)
+            deelnameCmd.CommandType = CommandType.StoredProcedure
+            deelnameAdapter.SelectCommand = deelnameCmd
+            deelnameAdapter.Fill(mDataSet, "tblDeelname")
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            deelnameAdapter.Dispose()
+            deelnameCmd.Dispose()
 
-        mtblDeelnameIsInitialized = True
+            mtblDeelnameIsInitialized = True
 
-        Return True
+            Return True
+        Catch ex As SqlException
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details:", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            SQLConnection.Close()
+            SQLConnection.Dispose()
+            Return False
+        End Try
 
     End Function
 #End Region
@@ -830,7 +838,7 @@ Public Class clDataViaSql
             Return True
 
         Catch ex As Exception
-            MessageBox.Show("Er is een fout gebeurd tijdens het aanmaken van de database. Details: " & ex.Message)
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het aanmaken van de database. Details: ", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             SQLConnection.Close()
             SQLConnection.Dispose()
             Return False
@@ -939,7 +947,7 @@ Public Class clDataViaSql
             Return True
 
         Catch ex As Exception
-            MessageBox.Show("Er is een fout gebeurd tijdens het populeren van de database. Details: " & ex.Message)
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het aanmaken van de database. Details: ", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             SQLConnection.Close()
             SQLDBcmdCN.Dispose()
             SQLDBcmdDT.Dispose()
