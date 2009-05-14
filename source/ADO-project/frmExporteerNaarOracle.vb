@@ -40,7 +40,7 @@ Public Class frmExporteerNaarOracle
                 Dim x As Int16
                 Dim y As Int16
 
-                'Een offset is nodig omdat we niets uit de verschilllistbox verwijderen.
+                'Een offset is nodig omdat we iets uit de verschilllistbox verwijderen.
                 Dim offset As Int16 = 0
                 'Vergelijken
                 For x = 0 To (lstSQLData.Items.Count - 1)

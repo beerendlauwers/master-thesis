@@ -16,7 +16,14 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <ManifestCertificateThumbprint>A4BEAF139659F0B67C2CD025AAFE2DDC2AAF2F86</ManifestCertificateThumbprint>
+    <ManifestKeyFile>ADO-project_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>true</SignManifests>
+    <PublishUrl>C:\Users\frank\Pictures\Desktop\ADO is AF muwahahaha\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -26,13 +33,11 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <ApplicationIcon>
-    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -235,6 +240,7 @@
     <EmbeddedResource Include="Resources\tick.gif" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ADO-project_TemporaryKey.pfx" />
     <None Include="app.config" />
     <None Include="Resources\stored procedures\STORED_PROCEDURE_datainlezen.sql" />
     <None Include="Resources\stored procedures\STORED_PROCEDURE_nieuwedeelname.sql" />
