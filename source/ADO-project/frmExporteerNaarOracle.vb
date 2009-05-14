@@ -17,6 +17,31 @@ Public Class frmExporteerNaarOracle
         frmHoofdMenu.ToonStartScherm()
     End Sub
 
+    Private Sub txtOracleServer_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleServer.TextChanged
+        Call UpdateTekst()
+        Call TestDatabaseConnection()
+    End Sub
+
+    Private Sub txtOracleGebruiker_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleGebruiker.TextChanged
+        Call UpdateTekst()
+        Call TestDatabaseConnection()
+    End Sub
+
+    Private Sub txtOraclePaswoord_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOraclePaswoord.TextChanged
+        Call UpdateTekst()
+        Call TestDatabaseConnection()
+    End Sub
+
+    Private Sub txtOracleTabel_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleTabel.TextChanged
+        Call UpdateTekst()
+        Call TestDatabaseConnection()
+    End Sub
+
+    Private Sub txtOracleKolom_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleKolom.TextChanged
+        Call UpdateTekst()
+        Call TestDatabaseConnection()
+    End Sub
+
     Private Sub btnTestConnectie_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnHaalDataOp.Click
         If (Not Me.txtOracleServer.Text = String.Empty) Then
 
@@ -67,11 +92,11 @@ Public Class frmExporteerNaarOracle
     Private Sub btnImporteerOracle_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnImporteerOracle.Click
 
         'De insert queries opstellen.
-        Dim insertlist(lstVerschil.Items.Count()) As String
+        Dim insertlist(Me.lstVerschil.Items.Count()) As String
 
         Dim i As Int16
-        For i = 0 To lstVerschil.Items.Count() - 1
-            insertlist(i) = String.Concat("INSERT INTO ", Me.txtOracleTabel.Text, " (", Me.txtOracleKolom.Text, ") VALUES ('", lstVerschil.Items(i), "')")
+        For i = 0 To Me.lstVerschil.Items.Count() - 1
+            insertlist(i) = String.Concat("INSERT INTO ", Me.txtOracleTabel.Text, " (", Me.txtOracleKolom.Text, ") VALUES ('", Me.lstVerschil.Items(i), "')")
         Next i
 
         Dim geslaagd As Boolean = myOracleConnection.f_VulOracleMetNieuweSporten(insertlist)
@@ -86,49 +111,6 @@ Public Class frmExporteerNaarOracle
             Me.lblDataOpgehaald.Text = "Data Niet Geïmporteerd"
             Me.lblDataOpgehaald.ForeColor = Color.Firebrick
         End If
-    End Sub
-
-    Private Function CheckVoorSpecialeKarakters(ByVal tekst() As String) As Boolean
-        Dim tekens As String = String.Concat("[", ControlChars.Quote, "']")
-        Dim i As Int16
-        For i = 0 To tekst.Length() - 1
-            If (tekst(i).Length > 0) Then
-
-                Dim gevonden As Match = Regex.Match(tekst(i), tekens)
-                If (gevonden.Success) Then
-                    Return False
-                End If
-            Else
-                Return False
-            End If
-        Next
-        Return True
-
-    End Function
-
-    Private Sub txtOracleServer_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleServer.TextChanged
-        Call UpdateTekst()
-        Call TestDatabaseConnection()
-    End Sub
-
-    Private Sub txtOracleGebruiker_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleGebruiker.TextChanged
-        Call UpdateTekst()
-        Call TestDatabaseConnection()
-    End Sub
-
-    Private Sub txtOraclePaswoord_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOraclePaswoord.TextChanged
-        Call UpdateTekst()
-        Call TestDatabaseConnection()
-    End Sub
-
-    Private Sub txtOracleTabel_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleTabel.TextChanged
-        Call UpdateTekst()
-        Call TestDatabaseConnection()
-    End Sub
-
-    Private Sub txtOracleKolom_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtOracleKolom.TextChanged
-        Call UpdateTekst()
-        Call TestDatabaseConnection()
     End Sub
 
     Private Sub TestDatabaseConnection()
@@ -153,6 +135,24 @@ Public Class frmExporteerNaarOracle
             Me.btnHaalDataOp.Enabled = False
         End If
     End Sub
+
+    Private Function CheckVoorSpecialeKarakters(ByVal tekst() As String) As Boolean
+        Dim tekens As String = String.Concat("[", ControlChars.Quote, "']")
+        Dim i As Int16
+        For i = 0 To tekst.Length() - 1
+            If (tekst(i).Length > 0) Then
+
+                Dim gevonden As Match = Regex.Match(tekst(i), tekens)
+                If (gevonden.Success) Then
+                    Return False
+                End If
+            Else
+                Return False
+            End If
+        Next
+        Return True
+
+    End Function
 
     Private Sub UpdateTekst()
         mTekst(0) = Me.txtOracleServer.Text

@@ -60,6 +60,13 @@ Namespace My.Resources
             End Set
         End Property
         
+        Friend ReadOnly Property MySql_Data() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("MySql_Data", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
         Friend ReadOnly Property remove() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("remove", resourceCulture)

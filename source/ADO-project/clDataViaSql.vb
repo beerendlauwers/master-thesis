@@ -71,24 +71,6 @@ Public Class clDataViaSql
     End Property
 #End Region
 
-    'hiermee wordt een verbinding gestart met een externe database
-    Public Sub verbindingmysql()
-        Dim conn As MySqlConnection
-        conn = New MySqlConnection()
-        conn.ConnectionString = "Server=127.0.0.1;Uid=tester;Pwd=test;Database=sporttest;Connect Timeout=30;"
-
-        Try
-            conn.Open()
-            MessageBox.Show("Connectie naar de externe database is gelukt!")
-            conn.Close()
-        Catch myerror As MySqlException
-            MessageBox.Show("Fout tijdens het connecten: " & myerror.Message)
-        Finally
-            conn.Dispose()
-        End Try
-
-    End Sub
-
 #Region "Function: Data uit database ophalen"
     Public Function f_VerbindMetDatabase() As Boolean
 
@@ -977,4 +959,84 @@ Public Class clDataViaSql
     End Function
 #End Region
 
+    'Hiermee wordt een verbinding geprobeerd met een externe database
+    Public Function f_VerbindingMetMysql(ByVal connstring As String, ByVal dbsettings() As String) As Boolean
+        Dim temptabel As DataTable = New DataTable
+
+        Dim MySQLconnection As MySqlConnection
+        MySQLconnection = New MySqlConnection()
+        MySQLconnection.ConnectionString = connstring
+
+        Try
+            Dim MySQLCmdOphalen As MySqlCommand = New MySqlCommand(String.Concat("SELECT ", dbsettings(5), " FROM ", dbsettings(4), " LIMIT 1;"), MySQLconnection)
+            MySQLCmdOphalen.CommandType = CommandType.Text
+
+            Dim MysqlAdapter As MySqlDataAdapter = New MySqlDataAdapter()
+            MysqlAdapter.TableMappings.Add("Table", dbsettings(4))
+            MysqlAdapter.SelectCommand = MySQLCmdOphalen
+
+            MySQLconnection.Open()
+
+            MysqlAdapter.Fill(temptabel)
+
+            MySQLconnection.Close()
+            MySQLconnection.Dispose()
+
+            Return True
+        Catch myerror As MySqlException
+            MySQLconnection.Dispose()
+            Return False
+        End Try
+    End Function
+
+    'We vullen onze data in de database en halen deze dan op
+    Public Function f_VulInEnHaalOp(ByVal insertlist() As String, ByVal connstring As String, ByVal dbsettings() As String) As DataTable
+        Dim temptabel As DataTable = New DataTable
+        Dim MySQLconnection As MySqlConnection
+        MySQLconnection = New MySqlConnection()
+        MySQLconnection.ConnectionString = connstring
+
+        Try
+            MySQLconnection.Open()
+        Catch ex As SqlException
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het verbinden met de database. Details:", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MySQLconnection.Dispose()
+            Return temptabel
+        End Try
+
+        Try
+            Dim MySQLCmd As MySqlCommand = New MySqlCommand()
+            MySQLCmd.Connection = MySQLconnection
+
+            Dim i As Int16
+            'De testdate insteken
+            While (i < insertlist.Length() And Not insertlist(i) = String.Empty)
+                MySQLCmd.CommandText = insertlist(i)
+                MySQLCmd.CommandType = CommandType.Text
+                MySQLCmd.ExecuteNonQuery()
+                i = i + 1
+            End While
+
+            Dim MysqlAdapter As MySqlDataAdapter = New MySqlDataAdapter()
+            MysqlAdapter.TableMappings.Add("Table", dbsettings(4))
+
+            Dim MySQLCmdOphalen As MySqlCommand = New MySqlCommand(String.Concat("SELECT ", dbsettings(5), " FROM ", dbsettings(4), ";"), MySQLconnection)
+            MySQLCmdOphalen.CommandType = CommandType.Text
+
+            MysqlAdapter.SelectCommand = MySQLCmdOphalen
+            MysqlAdapter.Fill(temptabel)
+
+
+            MySQLconnection.Close()
+            MySQLconnection.Dispose()
+            MysqlAdapter.Dispose()
+            MySQLCmdOphalen.Dispose()
+            MySQLCmd.Dispose()
+            Return temptabel
+        Catch ex As Exception
+            MessageBox.Show(String.Concat("Er is een fout gebeurd tijdens het ophalen van de gegevens. Details: ", vbCrLf, ex.Message), "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MySQLconnection.Dispose()
+            Return temptabel
+        End Try
+    End Function
 End Class

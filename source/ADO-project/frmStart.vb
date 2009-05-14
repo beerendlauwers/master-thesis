@@ -71,6 +71,9 @@
     End Sub
 
     Private Sub btnVerbindMetMySQL_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnVerbindMetMySQL.Click
-        Call frmHoofdMenu.mySQLConnection.verbindingmysql()
+        Call frmHoofdMenu.ClearOtherWindows()
+        frmHoofdMenu.HuidigForm = New frmConnecteerMetMySQL()
+        frmHoofdMenu.HuidigForm.MdiParent = frmHoofdMenu
+        frmHoofdMenu.HuidigForm.Show()
     End Sub
 End Class

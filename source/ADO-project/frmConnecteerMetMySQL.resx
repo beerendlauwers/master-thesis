@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,59 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tick" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tick.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="remove" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\remove.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="startdata" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\startdata.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_datainlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_datainlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_nieuwedeelname" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_nieuwedeelname.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_nieuwesport" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_nieuwesport.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_nieuwestudent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_nieuwestudent.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_nieuwniveau" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_nieuwniveau.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_tbldoetsportdatagrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_tbldoetsportdatagrid.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_tbldoetsportinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_tbldoetsportinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_tblniveauinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_tblniveauinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_tblsportinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_tblsportinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_tblstudentinlezen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_tblstudentinlezen.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_updatesport" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_updatesport.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_updatestudent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_updatestudent.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_verwijdersport" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_verwijdersport.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="STORED_PROCEDURE_verwijderstudent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\stored procedures\stored_procedure_verwijderstudent.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="MySql_Data" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MySql.Data.dll;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
+  <metadata name="mnuMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
 </root>

@@ -39,14 +39,14 @@ Partial Class frmExporteerNaarOracle
         Me.lstSQLData = New System.Windows.Forms.ListBox
         Me.lstVerschil = New System.Windows.Forms.ListBox
         Me.btnImporteerOracle = New System.Windows.Forms.Button
-        Me.grpSport = New System.Windows.Forms.GroupBox
+        Me.grpOracle = New System.Windows.Forms.GroupBox
         Me.picDataOpgehaald = New System.Windows.Forms.PictureBox
         Me.lblDataOpgehaald = New System.Windows.Forms.Label
         Me.lblOracleData = New System.Windows.Forms.Label
         Me.lblSQLData = New System.Windows.Forms.Label
         Me.lblVerschil = New System.Windows.Forms.Label
         Me.mnuMenu.SuspendLayout()
-        Me.grpSport.SuspendLayout()
+        Me.grpOracle.SuspendLayout()
         CType(Me.picDataOpgehaald, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -190,25 +190,25 @@ Partial Class frmExporteerNaarOracle
         Me.btnImporteerOracle.Text = "Importeer In Oracle"
         Me.btnImporteerOracle.UseVisualStyleBackColor = True
         '
-        'grpSport
+        'grpOracle
         '
-        Me.grpSport.Controls.Add(Me.txtOracleServer)
-        Me.grpSport.Controls.Add(Me.lblOracleServer)
-        Me.grpSport.Controls.Add(Me.btnHaalDataOp)
-        Me.grpSport.Controls.Add(Me.lblOracleGebruiker)
-        Me.grpSport.Controls.Add(Me.lblOraclePaswoord)
-        Me.grpSport.Controls.Add(Me.txtOracleGebruiker)
-        Me.grpSport.Controls.Add(Me.txtOraclePaswoord)
-        Me.grpSport.Controls.Add(Me.txtOracleKolom)
-        Me.grpSport.Controls.Add(Me.lblOracleTabel)
-        Me.grpSport.Controls.Add(Me.txtOracleTabel)
-        Me.grpSport.Controls.Add(Me.lblOracleKolom)
-        Me.grpSport.Location = New System.Drawing.Point(12, 42)
-        Me.grpSport.Name = "grpSport"
-        Me.grpSport.Size = New System.Drawing.Size(482, 179)
-        Me.grpSport.TabIndex = 18
-        Me.grpSport.TabStop = False
-        Me.grpSport.Text = "Sportbeheer"
+        Me.grpOracle.Controls.Add(Me.txtOracleServer)
+        Me.grpOracle.Controls.Add(Me.lblOracleServer)
+        Me.grpOracle.Controls.Add(Me.btnHaalDataOp)
+        Me.grpOracle.Controls.Add(Me.lblOracleGebruiker)
+        Me.grpOracle.Controls.Add(Me.lblOraclePaswoord)
+        Me.grpOracle.Controls.Add(Me.txtOracleGebruiker)
+        Me.grpOracle.Controls.Add(Me.txtOraclePaswoord)
+        Me.grpOracle.Controls.Add(Me.txtOracleKolom)
+        Me.grpOracle.Controls.Add(Me.lblOracleTabel)
+        Me.grpOracle.Controls.Add(Me.txtOracleTabel)
+        Me.grpOracle.Controls.Add(Me.lblOracleKolom)
+        Me.grpOracle.Location = New System.Drawing.Point(12, 42)
+        Me.grpOracle.Name = "grpOracle"
+        Me.grpOracle.Size = New System.Drawing.Size(482, 179)
+        Me.grpOracle.TabIndex = 18
+        Me.grpOracle.TabStop = False
+        Me.grpOracle.Text = "Details Oracleconnectie"
         '
         'picDataOpgehaald
         '
@@ -266,7 +266,7 @@ Partial Class frmExporteerNaarOracle
         Me.Controls.Add(Me.lblSQLData)
         Me.Controls.Add(Me.lblOracleData)
         Me.Controls.Add(Me.picDataOpgehaald)
-        Me.Controls.Add(Me.grpSport)
+        Me.Controls.Add(Me.grpOracle)
         Me.Controls.Add(Me.lblDataOpgehaald)
         Me.Controls.Add(Me.btnImporteerOracle)
         Me.Controls.Add(Me.lstVerschil)
@@ -283,8 +283,8 @@ Partial Class frmExporteerNaarOracle
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.mnuMenu.ResumeLayout(False)
         Me.mnuMenu.PerformLayout()
-        Me.grpSport.ResumeLayout(False)
-        Me.grpSport.PerformLayout()
+        Me.grpOracle.ResumeLayout(False)
+        Me.grpOracle.PerformLayout()
         CType(Me.picDataOpgehaald, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -307,7 +307,7 @@ Partial Class frmExporteerNaarOracle
     Friend WithEvents lstSQLData As System.Windows.Forms.ListBox
     Friend WithEvents lstVerschil As System.Windows.Forms.ListBox
     Friend WithEvents btnImporteerOracle As System.Windows.Forms.Button
-    Friend WithEvents grpSport As System.Windows.Forms.GroupBox
+    Friend WithEvents grpOracle As System.Windows.Forms.GroupBox
     Friend WithEvents picDataOpgehaald As System.Windows.Forms.PictureBox
     Friend WithEvents lblDataOpgehaald As System.Windows.Forms.Label
     Friend WithEvents lblOracleData As System.Windows.Forms.Label
