@@ -1,4 +1,5 @@
 ﻿Imports System.Data.SqlClient
+Imports MySql.Data.MySqlClient
 
 Public Class clDataViaSql
 
@@ -69,6 +70,24 @@ Public Class clDataViaSql
         End Set
     End Property
 #End Region
+
+    'hiermee wordt een verbinding gestart met een externe database
+    Public Sub verbindingmysql()
+        Dim conn As MySqlConnection
+        conn = New MySqlConnection()
+        conn.ConnectionString = "Server=127.0.0.1;Uid=tester;Pwd=test;Database=sporttest;Connect Timeout=30;"
+
+        Try
+            conn.Open()
+            MessageBox.Show("Connectie naar de externe database is gelukt!")
+            conn.Close()
+        Catch myerror As MySqlException
+            MessageBox.Show("Fout tijdens het connecten: " & myerror.Message)
+        Finally
+            conn.Dispose()
+        End Try
+
+    End Sub
 
 #Region "Function: Data uit database ophalen"
     Public Function f_VerbindMetDatabase() As Boolean

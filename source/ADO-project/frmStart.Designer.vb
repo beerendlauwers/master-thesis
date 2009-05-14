@@ -54,6 +54,8 @@ Partial Class frmStart
         Me.lblSQLGebruiker = New System.Windows.Forms.Label
         Me.lblSQLDatabase = New System.Windows.Forms.Label
         Me.lblSQLServer = New System.Windows.Forms.Label
+        Me.btnVerbindMetMySQL = New System.Windows.Forms.Button
+        Me.lblVerbindMetMySQL = New System.Windows.Forms.Label
         Me.grpMenus.SuspendLayout()
         Me.grpProcessen.SuspendLayout()
         Me.grpConfig.SuspendLayout()
@@ -67,7 +69,7 @@ Partial Class frmStart
         Me.grpMenus.Controls.Add(Me.btnSportBeheer)
         Me.grpMenus.Controls.Add(Me.lblStudentenBeheer)
         Me.grpMenus.Controls.Add(Me.btlnStudentenBeheer)
-        Me.grpMenus.Location = New System.Drawing.Point(17, 51)
+        Me.grpMenus.Location = New System.Drawing.Point(17, 35)
         Me.grpMenus.Name = "grpMenus"
         Me.grpMenus.Size = New System.Drawing.Size(482, 129)
         Me.grpMenus.TabIndex = 0
@@ -133,6 +135,8 @@ Partial Class frmStart
         '
         'grpProcessen
         '
+        Me.grpProcessen.Controls.Add(Me.lblVerbindMetMySQL)
+        Me.grpProcessen.Controls.Add(Me.btnVerbindMetMySQL)
         Me.grpProcessen.Controls.Add(Me.lblImporteerUitExcel)
         Me.grpProcessen.Controls.Add(Me.btnImporteerUitExcel)
         Me.grpProcessen.Controls.Add(Me.lblExporteerNaarXML)
@@ -143,9 +147,9 @@ Partial Class frmStart
         Me.grpProcessen.Controls.Add(Me.lblVergelijkMetAccess2)
         Me.grpProcessen.Controls.Add(Me.lblVergelijkMetAccess1)
         Me.grpProcessen.Controls.Add(Me.btnVergelijkMetAccess)
-        Me.grpProcessen.Location = New System.Drawing.Point(17, 186)
+        Me.grpProcessen.Location = New System.Drawing.Point(17, 170)
         Me.grpProcessen.Name = "grpProcessen"
-        Me.grpProcessen.Size = New System.Drawing.Size(482, 172)
+        Me.grpProcessen.Size = New System.Drawing.Size(482, 190)
         Me.grpProcessen.TabIndex = 1
         Me.grpProcessen.TabStop = False
         Me.grpProcessen.Text = "Processen"
@@ -154,7 +158,7 @@ Partial Class frmStart
         '
         Me.lblImporteerUitExcel.AutoSize = True
         Me.lblImporteerUitExcel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblImporteerUitExcel.Location = New System.Drawing.Point(151, 136)
+        Me.lblImporteerUitExcel.Location = New System.Drawing.Point(151, 132)
         Me.lblImporteerUitExcel.Name = "lblImporteerUitExcel"
         Me.lblImporteerUitExcel.Size = New System.Drawing.Size(265, 15)
         Me.lblImporteerUitExcel.TabIndex = 9
@@ -162,7 +166,7 @@ Partial Class frmStart
         '
         'btnImporteerUitExcel
         '
-        Me.btnImporteerUitExcel.Location = New System.Drawing.Point(20, 133)
+        Me.btnImporteerUitExcel.Location = New System.Drawing.Point(20, 129)
         Me.btnImporteerUitExcel.Name = "btnImporteerUitExcel"
         Me.btnImporteerUitExcel.Size = New System.Drawing.Size(125, 23)
         Me.btnImporteerUitExcel.TabIndex = 8
@@ -173,7 +177,7 @@ Partial Class frmStart
         '
         Me.lblExporteerNaarXML.AutoSize = True
         Me.lblExporteerNaarXML.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblExporteerNaarXML.Location = New System.Drawing.Point(151, 102)
+        Me.lblExporteerNaarXML.Location = New System.Drawing.Point(151, 98)
         Me.lblExporteerNaarXML.Name = "lblExporteerNaarXML"
         Me.lblExporteerNaarXML.Size = New System.Drawing.Size(247, 15)
         Me.lblExporteerNaarXML.TabIndex = 7
@@ -181,7 +185,7 @@ Partial Class frmStart
         '
         'BtnExporteerNaarXML
         '
-        Me.BtnExporteerNaarXML.Location = New System.Drawing.Point(20, 99)
+        Me.BtnExporteerNaarXML.Location = New System.Drawing.Point(20, 95)
         Me.BtnExporteerNaarXML.Name = "BtnExporteerNaarXML"
         Me.BtnExporteerNaarXML.Size = New System.Drawing.Size(125, 23)
         Me.BtnExporteerNaarXML.TabIndex = 6
@@ -192,7 +196,7 @@ Partial Class frmStart
         '
         Me.lblExporteerNaarOracle2.AutoSize = True
         Me.lblExporteerNaarOracle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblExporteerNaarOracle2.Location = New System.Drawing.Point(151, 72)
+        Me.lblExporteerNaarOracle2.Location = New System.Drawing.Point(151, 70)
         Me.lblExporteerNaarOracle2.Name = "lblExporteerNaarOracle2"
         Me.lblExporteerNaarOracle2.Size = New System.Drawing.Size(134, 15)
         Me.lblExporteerNaarOracle2.TabIndex = 5
@@ -202,7 +206,7 @@ Partial Class frmStart
         '
         Me.lblExporteerNaarOracle1.AutoSize = True
         Me.lblExporteerNaarOracle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblExporteerNaarOracle1.Location = New System.Drawing.Point(151, 57)
+        Me.lblExporteerNaarOracle1.Location = New System.Drawing.Point(151, 55)
         Me.lblExporteerNaarOracle1.Name = "lblExporteerNaarOracle1"
         Me.lblExporteerNaarOracle1.Size = New System.Drawing.Size(296, 15)
         Me.lblExporteerNaarOracle1.TabIndex = 4
@@ -210,7 +214,7 @@ Partial Class frmStart
         '
         'btnExporteerNaarOracle
         '
-        Me.btnExporteerNaarOracle.Location = New System.Drawing.Point(20, 62)
+        Me.btnExporteerNaarOracle.Location = New System.Drawing.Point(20, 60)
         Me.btnExporteerNaarOracle.Name = "btnExporteerNaarOracle"
         Me.btnExporteerNaarOracle.Size = New System.Drawing.Size(125, 23)
         Me.btnExporteerNaarOracle.TabIndex = 3
@@ -261,7 +265,7 @@ Partial Class frmStart
         Me.grpConfig.Controls.Add(Me.lblSQLGebruiker)
         Me.grpConfig.Controls.Add(Me.lblSQLDatabase)
         Me.grpConfig.Controls.Add(Me.lblSQLServer)
-        Me.grpConfig.Location = New System.Drawing.Point(17, 367)
+        Me.grpConfig.Location = New System.Drawing.Point(17, 366)
         Me.grpConfig.Name = "grpConfig"
         Me.grpConfig.Size = New System.Drawing.Size(482, 148)
         Me.grpConfig.TabIndex = 2
@@ -386,6 +390,25 @@ Partial Class frmStart
         Me.lblSQLServer.TabIndex = 0
         Me.lblSQLServer.Text = "SQL-Server:"
         '
+        'btnVerbindMetMySQL
+        '
+        Me.btnVerbindMetMySQL.Location = New System.Drawing.Point(20, 161)
+        Me.btnVerbindMetMySQL.Name = "btnVerbindMetMySQL"
+        Me.btnVerbindMetMySQL.Size = New System.Drawing.Size(125, 23)
+        Me.btnVerbindMetMySQL.TabIndex = 10
+        Me.btnVerbindMetMySQL.Text = "Verbind Met MySQL"
+        Me.btnVerbindMetMySQL.UseVisualStyleBackColor = True
+        '
+        'lblVerbindMetMySQL
+        '
+        Me.lblVerbindMetMySQL.AutoSize = True
+        Me.lblVerbindMetMySQL.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblVerbindMetMySQL.Location = New System.Drawing.Point(151, 164)
+        Me.lblVerbindMetMySQL.Name = "lblVerbindMetMySQL"
+        Me.lblVerbindMetMySQL.Size = New System.Drawing.Size(200, 15)
+        Me.lblVerbindMetMySQL.TabIndex = 11
+        Me.lblVerbindMetMySQL.Text = "Verbind met een MySQL-Database."
+        '
         'frmStart
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -444,4 +467,6 @@ Partial Class frmStart
     Friend WithEvents lblSQLGebruikerTekst As System.Windows.Forms.Label
     Friend WithEvents lblSQLDatabaseTekst As System.Windows.Forms.Label
     Friend WithEvents lblSQLServerTekst As System.Windows.Forms.Label
+    Friend WithEvents btnVerbindMetMySQL As System.Windows.Forms.Button
+    Friend WithEvents lblVerbindMetMySQL As System.Windows.Forms.Label
 End Class
