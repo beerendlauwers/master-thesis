@@ -1,0 +1,28 @@
+c:\Users\frank\Desktop\school\programmeren\ADO-project\ADO-project\obj\Debug\ADO-project.exe
+c:\Users\frank\Desktop\school\programmeren\ADO-project\ADO-project\obj\Debug\ADO-project.xml
+c:\Users\frank\Desktop\school\programmeren\ADO-project\ADO-project\obj\Debug\ADO-project.pdb
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO-project.exe
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO-project.xml
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO-project.pdb
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\bin\Debug\ADO-project.exe
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\bin\Debug\ADO-project.pdb
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\bin\Debug\ADO-project.xml
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmHoofdMenu.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.Resources.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO-project.vbproj.GenerateResource.Cache
+C:\School\Progge 2\ADOPROJECT\source\ADO-project\obj\Debug\ADO-project.exe
+C:\School\Progge 2\ADOPROJECT\source\ADO-project\obj\Debug\ADO-project.xml
+C:\School\Progge 2\ADOPROJECT\source\ADO-project\obj\Debug\ADO-project.pdb
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmDeelnameOverzicht.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmBeheerSporttakken.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmBeheerStudent.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmConfig.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmDeelname.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmExporteerNaarXML.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmImporteerUitExcel.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmVergelijkemails.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmStart.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\bin\Debug\ADO-project.exe.config
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmNieuweDatabase.resources
+C:\Users\frank\Desktop\school\programmeren\ADO-project\adoproject\source\ADO-project\obj\Debug\ADO_project.frmExporteerNaarOracle.resources
