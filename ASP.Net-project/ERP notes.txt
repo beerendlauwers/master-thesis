@@ -1,0 +1,62 @@
+
+
+
+Fré:
+
+De ERD is voortgekomen uit mijn verwrongen brein dus hier volgt wa uitleg zoda ge mee kunt draaien in mijn hersenkronkels.
+
+
+-------------------------
+nullable ----------------
+-------------------------
+
+Enkel commentaar is nullable, laat de gebruikers maar alles invullen, we kunnen da makkelijk opvangen in de UI.
+Dat geeft dan later niks van problemen als we enkel volledige tabellen hebben.
+
+Probeert ook als ge dingen test zowa normale testgegevens te gebruiken ipv "Heil Hitler wonende op Siegheillaan 88"
+Van Beerend en Frank verwacht ik al een resem "negers" terug te vinden in't klantenbestand, en van yarric piemels, veel piemels...
+
+
+-------------------------
+Historische tabellen ----
+-------------------------
+
+tblHuurHistoriek staat los van tblReservatie om "lookups" sneller te doen verlopen.
+Dit is eveneens het geval met tblOndHistoriek en tblOnderhoud.
+
+doel -> historische data gescheiden houden van toekomstige reservaties
+
+Het zou dus het idee zijn om op dagelijkse basis alle gegevens van in het verleden weg te schrijven naar de historiek-tabellen.
+
+vb.-
+----
+
+if tblReservatie.ResEinddatum < now() then
+	historiekamaficeer()
+end if
+
+---------------------------
+Beschikbaarheid -----------
+---------------------------
+
+Er is geen specifieke tabel voor beschikbaarheid. Er zal dus een functie moeten gemaakt worden die in tblReservatie/tblOnderhoud kijkt wanneer iets al dan niet beschikbaar is.
+
+vb.-
+----
+
+dim t as integer = 0
+
+for each in tblReservatie
+
+
+	if tblReservatie.autoID = [auto] then
+		x = tblReservatie.ResEinddatum
+		y = tblReservatie.ResBegindatum
+
+		for t2 = x to y
+			ArrayListOnbeschikbaar[t] = t2
+			t++
+		next t2
+	end if
+
+next
