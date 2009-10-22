@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "cars", ".", "{2FBC3067-EFD2-453B-89F3-FC9F616EDC97}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFramework = "3.5"
+		Debug.AspNetCompiler.VirtualPath = "/cars"
+		Debug.AspNetCompiler.PhysicalPath = "..\..\..\..\..\..\School\3 IMS\ASP.Net-project\Project\cars\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\cars\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/cars"
+		Release.AspNetCompiler.PhysicalPath = "..\..\..\..\..\..\School\3 IMS\ASP.Net-project\Project\cars\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\cars\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "3498"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FBC3067-EFD2-453B-89F3-FC9F616EDC97}.Debug|.NET.ActiveCfg = Debug|.NET
+		{2FBC3067-EFD2-453B-89F3-FC9F616EDC97}.Debug|.NET.Build.0 = Debug|.NET
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
