@@ -26,13 +26,13 @@ Public Class Klant
     Private _aantalKilometerGereden As Double
 #End Region
 
-#Region "Publieke Methods"
+#Region "Getters & Setters"
 
-    Public Property ID() As String
+    Public Property ID() As Integer
         Get
             Return (_ID)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Integer)
             _ID = value
         End Set
     End Property
@@ -73,11 +73,11 @@ Public Class Klant
         End Set
     End Property
 
-    Public Property Geboortedatum() As String
+    Public Property Geboortedatum() As Date
         Get
             Return (_geboortedatum)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Date)
             _geboortedatum = value
         End Set
     End Property
@@ -136,61 +136,60 @@ Public Class Klant
         End Set
     End Property
 
-    Public Property IsProblematisch() As String
+    Public Property IsProblematisch() As Boolean
         Get
             Return (_isProblematisch)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Boolean)
             _isProblematisch = value
         End Set
     End Property
 
-    Public Property HeeftRechtOpKorting() As String
+    Public Property HeeftRechtOpKorting() As Boolean
         Get
             Return (_heeftRechtOpKorting)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Boolean)
             _heeftRechtOpKorting = value
         End Set
     End Property
 
-    Public Property KortingWaarde() As String
+    Public Property KortingWaarde() As Double
         Get
             Return (_kortingwaarde)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Double)
             _kortingwaarde = value
         End Set
     End Property
 
-    Public Property AantalDagenGehuurd() As String
+    Public Property AantalDagenGehuurd() As Integer
         Get
             Return (_aantalDagenGehuurd)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Integer)
             _aantalDagenGehuurd = value
         End Set
     End Property
 
-    Public Property AantalDagenGereserveerd() As String
+    Public Property AantalDagenGereserveerd() As Integer
         Get
             Return (_aantalDagenGereserveerd)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Integer)
             _aantalDagenGereserveerd = value
         End Set
     End Property
 
-    Public Property AantalKilometerGereden() As String
+    Public Property AantalKilometerGereden() As Double
         Get
             Return (_aantalKilometerGereden)
         End Get
-        Set(ByVal value As String)
+        Set(ByVal value As Double)
             _aantalKilometerGereden = value
         End Set
     End Property
 
 #End Region
-
 
 End Class
