@@ -4,3 +4,27 @@
 	background-color: #EEE;
 	color: #111;
 }
+
+#loginscreen
+{
+	float:right;
+	font-size:60%;
+	width:100%;
+}
+
+#placeholdermain
+{
+	clear:both;
+}
+
+#navigatie li
+{
+	display:inline;
+	padding:0px 3px 0px 3px;
+	border:dotted 1px black;
+}
+
+#username
+{
+	float:left;
+}

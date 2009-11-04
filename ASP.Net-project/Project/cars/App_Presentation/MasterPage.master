@@ -1,20 +1,60 @@
 ﻿<%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="App_Presentation_MasterPage" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+
     <script type="text/javascript" src="JS/jquery.js"></script>
-    <asp:ContentPlaceHolder id="head" runat="server">
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
     <link href="CSS/master.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <div>Headerke</div>
-    <div>
-        <asp:ContentPlaceHolder id="plcMain" runat="server">
-        
+        <form id="frmMain" runat="server">
+        <div id="loginscreen">
+            <asp:LoginView ID="loginView" runat="server">
+                <LoggedInTemplate>
+                    <ul id="navigatie">
+                        <li id="username">Je bent ingelogd als <asp:LoginName ID="loginNaam" runat="server" /></li>
+                        <li><asp:HyperLink NavigateUrl="~/App_Presentation/Webpaginas/GebruikersOnly/NieuweReservatieAanmaken.aspx" ID="linkNieuweReservatie" runat="server">Nieuwe Reservatie</asp:HyperLink></li>
+                        <li><asp:LoginStatus ID="LoginStatus" LogoutText="Uitloggen" runat="server" /></li>
+                    </ul>
+            </LoggedInTemplate>
+            <AnonymousTemplate>
+                    <asp:Login ID="loginGebruiker" runat="server">
+                        <LayoutTemplate>
+                        <table align="right">
+                        <tr>
+                        <td><asp:Label ID="UserNameLabel" runat="server" AssociatedControlID="UserName">Gebruikersnaam:</asp:Label></td>
+                        <td>
+                            <asp:TextBox ID="UserName" runat="server"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="UserNameRequired" runat="server" ControlToValidate="UserName" ErrorMessage="User Name is required." ToolTip="User Name is required." ValidationGroup="ctl00$ctl02$loginGebruiker">*</asp:RequiredFieldValidator>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td><asp:Label ID="PasswordLabel" runat="server" AssociatedControlID="Password">Paswoord:</asp:Label></td>
+                        <td>
+                            <asp:TextBox ID="Password" runat="server" TextMode="Password"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="PasswordRequired" runat="server" ControlToValidate="Password" ErrorMessage="Password is required." ToolTip="Password is required." ValidationGroup="ctl00$ctl02$loginGebruiker">*</asp:RequiredFieldValidator>
+                        </td>
+                        </tr>
+                        <tr><td><asp:CheckBox ID="RememberMe" runat="server" Text="Onthoud me" /></td></tr>
+                        <tr><td><asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal></td></tr>
+                        <tr>
+                        <td><asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Inloggen" ValidationGroup="ctl00$ctl02$loginGebruiker" /></td>
+                        </tr>
+                        </table>
+                        </LayoutTemplate>
+                    </asp:Login>
+                    </div>
+            </AnonymousTemplate>
+        </asp:LoginView>
+    </div>
+    <div id="placeholdermain" >
+        <asp:ContentPlaceHolder ID="plcMain" runat="server">
         </asp:ContentPlaceHolder>
+        </form>
     </div>
 </body>
 </html>
