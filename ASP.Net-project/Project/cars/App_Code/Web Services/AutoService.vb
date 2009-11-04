@@ -10,13 +10,13 @@ Imports AjaxControlToolkit
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
 Public Class AutoService
     Inherits System.Web.Services.WebService
+    Private _autoBLL As New AutoBLL
 
     <WebMethod()> _
     Public Function GeefMerken(ByVal knownCategoryValues As String, ByVal category As String) As CascadingDropDownNameValue()
-        ' Adapter om de merken op te halen klaarmaken.
-        Dim merkAdapter As Auto_sTableAdapters.tblMerkTableAdapter = New Auto_sTableAdapters.tblMerkTableAdapter()
-        ' Adapter gebruiken om een lijst van merken te verkrijgen.
-        Dim merken As Auto_s.tblMerkDataTable = merkAdapter.GetData()
+
+        ' BLL contacteren om een lijst van merken te verkrijgen.
+        Dim merken As Auto_s.tblMerkDataTable = _autoBLL.GetAllMerken()
 
         'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
         Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
@@ -54,11 +54,8 @@ Public Class AutoService
         'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
         Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
 
-        ' Adapter om de modellen op te halen klaarmaken.
-        Dim modelAdapter As Auto_sTableAdapters.tblModelTableAdapter = New Auto_sTableAdapters.tblModelTableAdapter()
-        ' Adapter gebruiken om een lijst van modellen te verkrijgen op basis van merkID.
-        Dim modellen As Auto_s.tblModelDataTable = modelAdapter.GetAllModelByMerk(merkID)
-
+        ' BLL contacteren om een lijst van modellen te verkrijgen.
+        Dim modellen As Auto_s.tblModelDataTable = _autoBLL.GetModelsByMerk(merkID)
 
         'Tijdelijke variabelen initialiseren
         Dim modelnaam As String = String.Empty
@@ -75,6 +72,78 @@ Public Class AutoService
             'Deze waarde toevoegen aan de dropdown
             dropdownwaardes.Add(waarde)
         Next
+
+        Return dropdownwaardes.ToArray()
+    End Function
+
+    <WebMethod()> _
+    Public Function GeefCategorien(ByVal knownCategoryValues As String, ByVal category As String) As CascadingDropDownNameValue()
+
+        ' BLL contacteren om een lijst van categoriën te verkrijgen.
+        Dim categorien As Auto_s.tblCategorieDataTable = _autoBLL.GetAllCategorien()
+
+        'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
+        Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
+
+        'Tijdelijke variabelen initialiseren
+        Dim categorienaam As String = String.Empty
+        Dim categorieID As Integer = 0
+        Dim waarde As CascadingDropDownNameValue
+
+        For Each dr As Auto_s.tblCategorieRow In categorien
+            'Waardes lezen uit row
+            categorienaam = CType(dr.categorieNaam, String)
+            categorieID = CType(dr.categorieID, Integer)
+
+            'Waardes opslaan in tijdelijke CascadingDropDownNameValue
+            waarde = New CascadingDropDownNameValue(categorienaam, categorieID)
+            'Deze waarde toevoegen aan de dropdown
+            dropdownwaardes.Add(waarde)
+        Next
+
+        Return dropdownwaardes.ToArray()
+    End Function
+
+    <WebMethod()> _
+Public Function GeefKleurPerCategorie(ByVal knownCategoryValues As String, ByVal category As String) As CascadingDropDownNameValue()
+
+        Dim keyvalues As StringDictionary = CascadingDropDown.ParseKnownCategoryValuesString(knownCategoryValues)
+        Dim categorieID As Integer
+
+        'Als we geen Categorie vinden of als de categorie geen waarde heeft, returnen we niks.
+        If (Not keyvalues.ContainsKey("Categorie") Or Not Int32.TryParse(keyvalues("Categorie"), categorieID)) Then
+            Return Nothing
+        End If
+
+        'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
+        Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
+
+        ' BLL contacteren om een lijst van kleuren te verkrijgen.
+        Dim kleuren As String() = _autoBLL.GetKleurenByCategorie(categorieID)
+
+        'Tijdelijke variabelen initialiseren
+        Dim kleurnaam As String = String.Empty
+        Dim kleurID As Integer = 0
+        Dim waarde As CascadingDropDownNameValue
+        Dim i As Integer = 0
+
+        While (i < kleuren.Length() - 1)
+
+            If kleuren(i) = String.Empty Then
+                i = i + 1
+                Continue While
+            End If
+
+            'Waardes invoeren
+            kleurnaam = kleuren(i)
+            kleurID = i
+            i = i + 1
+
+            'Waardes opslaan in tijdelijke CascadingDropDownNameValue
+            waarde = New CascadingDropDownNameValue(kleurnaam, kleurID)
+            'Deze waarde toevoegen aan de dropdown
+            dropdownwaardes.Add(waarde)
+        End While
 
         Return dropdownwaardes.ToArray()
     End Function

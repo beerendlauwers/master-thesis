@@ -3,12 +3,23 @@
 Partial Class App_Presentation_NieuweAutoAanmaken
     Inherits System.Web.UI.Page
 
-    Protected Sub frvNieuweAuto_ItemInserting(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.FormViewInsertEventArgs) Handles frvNieuweAuto.ItemInserting
-        'Hack omdat we een CascadingDropDown gebruiken
-        e.Values("modelID") = ddlModel.SelectedValue
+    Protected Sub InsertButton0_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        Dim autobll As New AutoBLL
 
-        'KMTotOlieVerversing = 0
-        e.Values("autoKMTotOlieVerversing") = 0
+        Dim auto As New Auto
+
+        'Alle waardes uit de controls in de formview lezen
+        auto.Categorie = CType(Me.frvNieuweAuto.FindControl("ddlCategorie"), DropDownList).SelectedValue
+        auto.Model = CType(Me.frvNieuweAuto.FindControl("ddlModel"), DropDownList).SelectedValue
+        auto.Kleur = CType(Me.frvNieuweAuto.FindControl("autoKleurTextBox0"), TextBox).Text
+        auto.Bouwjaar = CType(Me.frvNieuweAuto.FindControl("autoBouwjaarTextBox0"), TextBox).Text
+        auto.Brandstoftype = CType(Me.frvNieuweAuto.FindControl("ddlBrandstofType"), DropDownList).SelectedValue
+        auto.Kenteken = CType(Me.frvNieuweAuto.FindControl("autoKentekenTextBox0"), TextBox).Text
+        auto.Status = CType(Me.frvNieuweAuto.FindControl("ddlStatus"), DropDownList).SelectedValue
+        auto.Parkeerplaats = CType(Me.frvNieuweAuto.FindControl("autoParkeerplaatsTextBox0"), TextBox).Text
+        auto.Filiaal = CType(Me.frvNieuweAuto.FindControl("ddlFiliaal"), DropDownList).SelectedValue
+        auto.Dagtarief = CType(Me.frvNieuweAuto.FindControl("autoDagTariefTextBox0"), TextBox).Text
+        auto.KmTotOnderhoud = 0
 
         'Foto toevoegen
         Dim img As FileUpload = CType(frvNieuweAuto.FindControl("fupAutoFoto"), FileUpload)
@@ -26,6 +37,10 @@ Partial Class App_Presentation_NieuweAutoAanmaken
             img_byte = encoding.GetBytes("geen_foto")
         End If
 
-        e.Values("autoFoto") = img_byte
+        auto.Foto = img_byte
+
+        'Auto toevoegen.
+        autobll.AddAuto(auto)
+
     End Sub
 End Class

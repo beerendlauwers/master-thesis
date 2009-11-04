@@ -1,20 +1,14 @@
-﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweAutoAanmaken.aspx.vb" EnableEventValidation="false" Inherits="App_Presentation_NieuweAutoAanmaken" %>
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweAutoAanmaken.aspx.vb" EnableEventValidation="false" Inherits="App_Presentation_NieuweAutoAanmaken" MasterPageFile="~/App_Presentation/MasterPage.master" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>Untitled Page</title>
-</head>
-<body>
+<asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
     <form id="frmNieuweAuto" runat="server">
     <asp:ScriptManager ID="scmManager" runat="server"></asp:ScriptManager>
     <div>
     
         <asp:FormView ID="frvNieuweAuto" runat="server" DataKeyNames="autoID" 
-            DataSourceID="sqsDatabase" DefaultMode="Insert" Width="670px">
+            DataSourceID="odsAuto" DefaultMode="Insert" Width="670px">
             <EditItemTemplate>
                 autoID:
                 <asp:Label ID="autoIDLabel1" runat="server" Text='<%# Eval("autoID") %>' />
@@ -42,21 +36,25 @@
                 <asp:TextBox ID="autoKentekenTextBox" runat="server" 
                     Text='<%# Bind("autoKenteken") %>' />
                 <br />
+                autoDagTarief:
+                <asp:TextBox ID="autoDagTariefTextBox" runat="server" 
+                    Text='<%# Bind("autoDagTarief") %>' />
+                <br />
+                autoKMTotOlieVerversing:
+                <asp:TextBox ID="autoKMTotOlieVerversingTextBox" runat="server" 
+                    Text='<%# Bind("autoKMTotOlieVerversing") %>' />
+                <br />
                 statusID:
                 <asp:TextBox ID="statusIDTextBox" runat="server" 
                     Text='<%# Bind("statusID") %>' />
-                <br />
-                autoParkeerplaats:
-                <asp:TextBox ID="autoParkeerplaatsTextBox" runat="server" 
-                    Text='<%# Bind("autoParkeerplaats") %>' />
                 <br />
                 filiaalID:
                 <asp:TextBox ID="filiaalIDTextBox" runat="server" 
                     Text='<%# Bind("filiaalID") %>' />
                 <br />
-                autoDagTarief:
-                <asp:TextBox ID="autoDagTariefTextBox" runat="server" 
-                    Text='<%# Bind("autoDagTarief") %>' />
+                autoParkeerplaats:
+                <asp:TextBox ID="autoParkeerplaatsTextBox" runat="server" 
+                    Text='<%# Bind("autoParkeerplaats") %>' />
                 <br />
                 <asp:LinkButton ID="UpdateButton" runat="server" CausesValidation="True" 
                     CommandName="Update" Text="Update" />
@@ -66,34 +64,35 @@
             <InsertItemTemplate>
                 Categorie:
                 <asp:DropDownList ID="ddlCategorie" runat="server" 
-                    SelectedValue='<%# Bind("autoCategorie") %>'>
-                    <asp:ListItem>Klein/Middelmaat</asp:ListItem>
-                    <asp:ListItem>Groot</asp:ListItem>
-                    <asp:ListItem>Luxe</asp:ListItem>
+                    SelectedValue='<%# Bind("autoCategorie") %>' DataSourceID="odsCategorie" 
+                    DataTextField="categorieNaam" DataValueField="categorieID">
                 </asp:DropDownList>
                 <br />
                 Model:
                 <asp:UpdatePanel ID="updMerkModel" runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
-                     <asp:DropDownList ID="ddlMerk" runat="server"></asp:DropDownList>
-                     <asp:DropDownList ID="ddlModel" runat="server"
-                     DataTextField="modelNaam" DataValueField="modelID" SelectedValue='<%# Bind("modelID") %>' ></asp:DropDownList>
-                    
-                     <ajaxToolkit:CascadingDropDown ID="cddMerk" runat="server" Category="Merk" 
+                        <asp:DropDownList ID="ddlMerk" runat="server">
+                        </asp:DropDownList>
+                        <asp:DropDownList ID="ddlModel" runat="server" DataTextField="modelNaam" 
+                            DataValueField="modelID" SelectedValue='<%# Bind("modelID") %>'>
+                        </asp:DropDownList>
+                        <ajaxToolkit:CascadingDropDown ID="cddMerk" runat="server" Category="Merk" 
                             PromptText="Selecteer een merk" ServiceMethod="GeefMerken" 
-                            TargetControlID="ddlMerk" ServicePath="WebServices/AutoService.asmx"></ajaxToolkit:CascadingDropDown>
-                     <ajaxToolkit:CascadingDropDown ID="cddModel" runat="server" Category="Model" 
-                            PromptText="Selecteer een model" ParentControlID="ddlMerk" 
-                            ServiceMethod="GeefModellenVoorMerk" TargetControlID="ddlModel" 
-                            ServicePath="WebServices/AutoService.asmx"></ajaxToolkit:CascadingDropDown>
+                            ServicePath="WebServices/AutoService.asmx" TargetControlID="ddlMerk">
+                        </ajaxToolkit:CascadingDropDown>
+                        <ajaxToolkit:CascadingDropDown ID="cddModel" runat="server" Category="Model" 
+                            ParentControlID="ddlMerk" PromptText="Selecteer een model" 
+                            ServiceMethod="GeefModellenVoorMerk" ServicePath="WebServices/AutoService.asmx" 
+                            TargetControlID="ddlModel">
+                        </ajaxToolkit:CascadingDropDown>
                     </ContentTemplate>
                 </asp:UpdatePanel>
                 Kleur:
-                <asp:TextBox ID="autoKleurTextBox" runat="server" 
+                <asp:TextBox ID="autoKleurTextBox0" runat="server" 
                     Text='<%# Bind("autoKleur") %>' />
                 <br />
                 Bouwjaar:
-                <asp:TextBox ID="autoBouwjaarTextBox" runat="server" 
+                <asp:TextBox ID="autoBouwjaarTextBox0" runat="server" 
                     Text='<%# Bind("autoBouwjaar") %>' />
                 <br />
                 Type brandstof:
@@ -103,17 +102,17 @@
                 </asp:DropDownList>
                 <br />
                 Kenteken:
-                <asp:TextBox ID="autoKentekenTextBox" runat="server" 
+                <asp:TextBox ID="autoKentekenTextBox0" runat="server" 
                     Text='<%# Bind("autoKenteken") %>' />
                 <br />
                 Status
                 <asp:DropDownList ID="ddlStatus" runat="server" DataSourceID="odsAutoStatus" 
-                    DataTextField="autostatusNaam" DataValueField="autostatusID"
+                    DataTextField="autostatusNaam" DataValueField="autostatusID" 
                     SelectedValue='<%# Bind("statusID") %>'>
                 </asp:DropDownList>
                 <br />
                 Parkeerplaats:
-                <asp:TextBox ID="autoParkeerplaatsTextBox" runat="server" 
+                <asp:TextBox ID="autoParkeerplaatsTextBox0" runat="server" 
                     Text='<%# Bind("autoParkeerplaats") %>' />
                 <br />
                 Filiaal:
@@ -122,15 +121,15 @@
                     SelectedValue='<%# Bind("filiaalID") %>'>
                 </asp:DropDownList>
                 <br />
-                Dagtarief:&nbsp;<asp:TextBox ID="autoDagTariefTextBox" runat="server" 
+                Dagtarief:&nbsp;<asp:TextBox ID="autoDagTariefTextBox0" runat="server" 
                     Text='<%# Bind("autoDagTarief") %>' />
                 <br />
                 Foto:&nbsp;<asp:FileUpload ID="fupAutoFoto" runat="server" />
                 <br />
-                <asp:LinkButton ID="InsertButton" runat="server" CausesValidation="True" 
-                    CommandName="Insert" Text="Insert"/>
-                &nbsp;<asp:LinkButton ID="InsertCancelButton" runat="server" 
-                    CausesValidation="False" CommandName="Cancel" Text="Cancel" />
+                <asp:LinkButton ID="InsertButton0" runat="server" CausesValidation="True" 
+                    CommandName="Insert" onclick="InsertButton0_Click" Text="Auto Toevoegen" />
+                &nbsp;<asp:LinkButton ID="InsertCancelButton0" runat="server" 
+                    CausesValidation="False" CommandName="Cancel" Text="Annuleren" />
             </InsertItemTemplate>
             <ItemTemplate>
                 autoID:
@@ -158,23 +157,26 @@
                 <asp:Label ID="autoKentekenLabel" runat="server" 
                     Text='<%# Bind("autoKenteken") %>' />
                 <br />
+                autoDagTarief:
+                <asp:Label ID="autoDagTariefLabel" runat="server" 
+                    Text='<%# Bind("autoDagTarief") %>' />
+                <br />
+                autoKMTotOlieVerversing:
+                <asp:Label ID="autoKMTotOlieVerversingLabel" runat="server" 
+                    Text='<%# Bind("autoKMTotOlieVerversing") %>' />
+                <br />
                 statusID:
                 <asp:Label ID="statusIDLabel" runat="server" Text='<%# Bind("statusID") %>' />
+                <br />
+                filiaalID:
+                <asp:Label ID="filiaalIDLabel" runat="server" 
+                    Text='<%# Bind("filiaalID") %>' />
                 <br />
                 autoParkeerplaats:
                 <asp:Label ID="autoParkeerplaatsLabel" runat="server" 
                     Text='<%# Bind("autoParkeerplaats") %>' />
                 <br />
-                filiaalID:
-                <asp:Label ID="filiaalIDLabel" runat="server" Text='<%# Bind("filiaalID") %>' />
-                <br />
-                autoDagTarief:
-                <asp:Label ID="autoDagTariefLabel" runat="server" 
-                    Text='<%# Bind("autoDagTarief") %>' />
-                <br />
-                <asp:LinkButton ID="EditButton" runat="server" CausesValidation="False" 
-                    CommandName="Edit" Text="Edit" />
-                &nbsp;<asp:LinkButton ID="DeleteButton" runat="server" CausesValidation="False" 
+                <asp:LinkButton ID="DeleteButton" runat="server" CausesValidation="False" 
                     CommandName="Delete" Text="Delete" />
                 &nbsp;<asp:LinkButton ID="NewButton" runat="server" CausesValidation="False" 
                     CommandName="New" Text="New" />
@@ -182,65 +184,6 @@
         </asp:FormView>
     
     </div>
-    <asp:SqlDataSource ID="sqsDatabase" runat="server" 
-        ConflictDetection="CompareAllValues" 
-        ConnectionString="<%$ ConnectionStrings:ConnectToDatabase %>" 
-        DeleteCommand="DELETE FROM tblAuto WHERE (autoID = @original_autoID) AND (autoCategorie = @original_autoCategorie) AND (modelID = @original_modelID) AND (autoKleur = @original_autoKleur) AND (autoBouwjaar = @original_autoBouwjaar) AND (brandstofID = @original_brandstofID) AND (autoKenteken = @original_autoKenteken) AND (statusID = @original_statusID) AND (autoParkeerplaats = @original_autoParkeerplaats) AND (filiaalID = @original_filiaalID) AND (autoDagTarief = @original_autoDagTarief)" 
-        InsertCommand="INSERT INTO tblAuto(autoCategorie, modelID, autoKleur, autoBouwjaar, brandstofID, autoKenteken, statusID, autoParkeerplaats, filiaalID, autoDagTarief, autoFoto, autoKMTotOlieVerversing) VALUES (@autoCategorie, @modelID, @autoKleur, @autoBouwjaar, @brandstofID, @autoKenteken, @statusID, @autoParkeerplaats, @filiaalID, @autoDagTarief, @autoFoto, @autoKMTotOlieVerversing)" 
-        OldValuesParameterFormatString="original_{0}" 
-        SelectCommand="SELECT autoID, autoCategorie, modelID, autoKleur, autoBouwjaar, brandstofID, autoKenteken, statusID, autoParkeerplaats, filiaalID, autoDagTarief, autoFoto, autoKMTotOlieVerversing FROM tblAuto" 
-        
-        
-        UpdateCommand="UPDATE tblAuto SET autoCategorie = @autoCategorie, modelID = @modelID, autoKleur = @autoKleur, autoBouwjaar = @autoBouwjaar, brandstofID = @brandstofID, autoKenteken = @autoKenteken, statusID = @statusID, autoParkeerplaats = @autoParkeerplaats, filiaalID = @filiaalID, autoDagTarief = @autoDagTarief, autoFoto = @autoFoto, autoKMTotOlieVerversing = @autoKMTotOlieVerversing = WHERE (autoID = @original_autoID) AND (autoCategorie = @original_autoCategorie) AND (modelID = @original_modelID) AND (autoKleur = @original_autoKleur) AND (autoBouwjaar = @original_autoBouwjaar) AND (brandstofID = @original_brandstofID) AND (autoKenteken = @original_autoKenteken) AND (statusID = @original_statusID) AND (autoParkeerplaats = @original_autoParkeerplaats) AND (filiaalID = @original_filiaalID) AND (autoDagTarief = @original_autoDagTarief)">
-        <DeleteParameters>
-            <asp:Parameter Name="original_autoID" Type="Int32" />
-            <asp:Parameter Name="original_autoCategorie" Type="String" />
-            <asp:Parameter Name="original_modelID" Type="Int32" />
-            <asp:Parameter Name="original_autoKleur" Type="String" />
-            <asp:Parameter Name="original_autoBouwjaar" Type="Int32" />
-            <asp:Parameter Name="original_brandstofID" Type="Int32" />
-            <asp:Parameter Name="original_autoKenteken" Type="String" />
-            <asp:Parameter Name="original_statusID" Type="Int32" />
-            <asp:Parameter Name="original_autoParkeerplaats" Type="String" />
-            <asp:Parameter Name="original_filiaalID" Type="Int32" />
-            <asp:Parameter Name="original_autoDagTarief" Type="Double" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="autoCategorie" Type="String" />
-            <asp:Parameter Name="modelID" Type="Int32" />
-            <asp:Parameter Name="autoKleur" Type="String" />
-            <asp:Parameter Name="autoBouwjaar" Type="Int32" />
-            <asp:Parameter Name="brandstofID" Type="Int32" />
-            <asp:Parameter Name="autoKenteken" Type="String" />
-            <asp:Parameter Name="statusID" Type="Int32" />
-            <asp:Parameter Name="autoParkeerplaats" Type="String" />
-            <asp:Parameter Name="filiaalID" Type="Int32" />
-            <asp:Parameter Name="autoDagTarief" Type="Double" />
-            <asp:Parameter Name="original_autoID" Type="Int32" />
-            <asp:Parameter Name="original_autoCategorie" Type="String" />
-            <asp:Parameter Name="original_modelID" Type="Int32" />
-            <asp:Parameter Name="original_autoKleur" Type="String" />
-            <asp:Parameter Name="original_autoBouwjaar" Type="Int32" />
-            <asp:Parameter Name="original_brandstofID" Type="Int32" />
-            <asp:Parameter Name="original_autoKenteken" Type="String" />
-            <asp:Parameter Name="original_statusID" Type="Int32" />
-            <asp:Parameter Name="original_autoParkeerplaats" Type="String" />
-            <asp:Parameter Name="original_filiaalID" Type="Int32" />
-            <asp:Parameter Name="original_autoDagTarief" Type="Double" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="autoCategorie" Type="String" />
-            <asp:Parameter Name="modelID" Type="Int32" />
-            <asp:Parameter Name="autoKleur" Type="String" />
-            <asp:Parameter Name="autoBouwjaar" Type="Int32" />
-            <asp:Parameter Name="brandstofID" Type="Int32" />
-            <asp:Parameter Name="autoKenteken" Type="String" />
-            <asp:Parameter Name="statusID" Type="Int32" />
-            <asp:Parameter Name="autoParkeerplaats" Type="String" />
-            <asp:Parameter Name="filiaalID" Type="Int32" />
-            <asp:Parameter Name="autoDagTarief" Type="Double" />
-        </InsertParameters>
-    </asp:SqlDataSource>
     <asp:ObjectDataSource ID="odsBrandstofType" runat="server" 
         DeleteMethod="Delete" InsertMethod="Insert" 
         OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
@@ -271,6 +214,22 @@
         <InsertParameters>
             <asp:Parameter Name="autostatusNaam" Type="String" />
             <asp:Parameter Name="autostatusToewijsbaarBijMaken" Type="Boolean" />
+        </InsertParameters>
+    </asp:ObjectDataSource>
+    <asp:ObjectDataSource ID="odsCategorie" runat="server" 
+        TypeName="Auto_sTableAdapters.tblCategorieTableAdapter" 
+        DeleteMethod="Delete" InsertMethod="Insert" 
+        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
+        UpdateMethod="Update">
+        <DeleteParameters>
+            <asp:Parameter Name="Original_categorieID" Type="Int32" />
+        </DeleteParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="categorieNaam" Type="String" />
+            <asp:Parameter Name="Original_categorieID" Type="Int32" />
+        </UpdateParameters>
+        <InsertParameters>
+            <asp:Parameter Name="categorieNaam" Type="String" />
         </InsertParameters>
     </asp:ObjectDataSource>
     <asp:ObjectDataSource ID="odsFiliaal" runat="server" DeleteMethod="Delete" 
@@ -324,7 +283,13 @@
             <asp:Parameter Name="modelNaam" Type="String" />
         </InsertParameters>
     </asp:ObjectDataSource>
+    <asp:ObjectDataSource ID="odsAuto" runat="server" 
+        DataObjectTypeName="Auto&amp;" DeleteMethod="DeleteAuto" InsertMethod="AddAuto" 
+        SelectMethod="GetAllAutos" TypeName="AutoBLL">
+        <DeleteParameters>
+            <asp:Parameter Name="autoID" Type="Int32" />
+        </DeleteParameters>
+    </asp:ObjectDataSource>
     <br />
     </form>
-</body>
-</html>
+</asp:Content>

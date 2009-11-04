@@ -26,6 +26,21 @@ Public Class Klant
     Private _aantalKilometerGereden As Double
 #End Region
 
+    Sub New(ByVal id As Integer, ByVal gnaam As String, ByVal gpass As String, ByVal naam As String, _
+             ByVal vnaam As String, ByVal gebdat As Date, ByVal idkaartnr As String, _
+             ByVal rijbewijsnr As String, ByVal telefoon As String, ByVal email As String)
+        _ID = id
+        _gebruikersnaam = gnaam
+        _gebruikerspaswoord = gpass
+        _naam = naam
+        _voornaam = vnaam
+        _geboortedatum = gebdat
+        _identiteitskaartnummer = idkaartnr
+        _rijbewijsnummer = rijbewijsnr
+        _telefoon = telefoon
+        _email = email
+    End Sub
+
 #Region "Getters & Setters"
 
     Public Property ID() As Integer

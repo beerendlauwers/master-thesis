@@ -16,8 +16,49 @@ Public Class Auto
     Private _status As String
     Private _filiaal As String
     Private _parkeerplaats As String
+    Private _foto As Byte()
 
 #End Region
+
+#Region "Auto aanmaken met databankdata"
+    ''' <summary>
+    ''' Een Auto aanmaken met gegevens uit de databank. Foreign keys worden automatisch opgezocht en geconverteerd.
+    ''' </summary>
+    ''' <param name="id">ID in de databank</param>
+    ''' <param name="categorieID">categorieID van de databank</param>
+    ''' <param name="modelID">modelID van de databank</param>
+    ''' <param name="kleur">Kleur van de auto</param>
+    ''' <param name="bouwjaar">Bouwjaar van de auto</param>
+    ''' <param name="brandstofID">brandstofID van de databank</param>
+    ''' <param name="kenteken">Kenteken van de auto</param>
+    ''' <param name="dagtarief">Dagtarief van de auto</param>
+    ''' <param name="statusID">statusID van de databank</param>
+    ''' <param name="filiaalID">filiaalID van de databank</param>
+    ''' <param name="parkeerplaats">Parkeerplaats van de auto</param>
+    ''' <param name="foto">Foto van de auto</param>
+    Sub New(ByVal id As Integer, ByVal categorieID As Integer, ByVal modelID As Integer, ByVal kleur As String, _
+             ByVal bouwjaar As Integer, ByVal brandstofID As Integer, ByVal kenteken As String, _
+             ByVal dagtarief As Double, ByVal statusID As Integer, ByVal filiaalID As Integer, ByVal parkeerplaats As String, _
+             ByVal foto As Byte())
+        Dim autobll As New AutoBLL
+        _ID = id
+        _categorie = autobll.GetCategorieByCategorieID(categorieID)
+        _model = autobll.GetModelNameByModelID(modelID)
+        _kleur = kleur
+        _bouwjaar = bouwjaar
+        _brandstoftype = autobll.GetBrandstofTypeByBrandstofID(brandstofID)
+        _kenteken = kenteken
+        _dagtarief = dagtarief
+        _status = autobll.GetAutostatusByAutostatusID(statusID)
+        _filiaal = autobll.GetFiliaalByFiliaalID(filiaalID)
+        _parkeerplaats = parkeerplaats
+        _foto = foto
+
+    End Sub
+#End Region
+
+    Sub New()
+    End Sub
 
 #Region "Getters & Setters"
 
@@ -126,6 +167,15 @@ Public Class Auto
         End Get
         Set(ByVal value As String)
             _parkeerplaats = value
+        End Set
+    End Property
+
+    Public Property Foto() As Byte()
+        Get
+            Return (_foto)
+        End Get
+        Set(ByVal value As Byte())
+            _foto = value
         End Set
     End Property
 
