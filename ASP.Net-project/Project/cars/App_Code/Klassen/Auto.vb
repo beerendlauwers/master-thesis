@@ -36,7 +36,7 @@ Public Class Auto
     ''' <param name="filiaalID">filiaalID van de databank</param>
     ''' <param name="parkeerplaats">Parkeerplaats van de auto</param>
     ''' <param name="foto">Foto van de auto</param>
-    Sub New(ByVal id As Integer, ByVal categorieID As Integer, ByVal modelID As Integer, ByVal kleur As String, _
+    Public Sub New(ByVal id As Integer, ByVal categorieID As Integer, ByVal modelID As Integer, ByVal kleur As String, _
              ByVal bouwjaar As Integer, ByVal brandstofID As Integer, ByVal kenteken As String, _
              ByVal dagtarief As Double, ByVal statusID As Integer, ByVal filiaalID As Integer, ByVal parkeerplaats As String, _
              ByVal foto As Byte())
@@ -57,7 +57,7 @@ Public Class Auto
     End Sub
 #End Region
 
-    Sub New()
+    Public Sub New()
     End Sub
 
 #Region "Getters & Setters"

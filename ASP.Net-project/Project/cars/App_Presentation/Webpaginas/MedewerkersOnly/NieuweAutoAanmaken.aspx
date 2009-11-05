@@ -3,7 +3,6 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    <form id="frmNieuweAuto" runat="server">
     <asp:ScriptManager ID="scmManager" runat="server"></asp:ScriptManager>
     <div>
     
@@ -82,7 +81,7 @@
                         </ajaxToolkit:CascadingDropDown>
                         <ajaxToolkit:CascadingDropDown ID="cddModel" runat="server" Category="Model" 
                             ParentControlID="ddlMerk" PromptText="Selecteer een model" 
-                            ServiceMethod="GeefModellenVoorMerk" ServicePath="WebServices/AutoService.asmx" 
+                            ServiceMethod="GeefModellenVoorMerk" ServicePath="~/App_Presentation/WebServices/AutoService.asmx" 
                             TargetControlID="ddlModel">
                         </ajaxToolkit:CascadingDropDown>
                     </ContentTemplate>
@@ -291,5 +290,4 @@
         </DeleteParameters>
     </asp:ObjectDataSource>
     <br />
-    </form>
 </asp:Content>

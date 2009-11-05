@@ -40,7 +40,10 @@ Partial Class App_Presentation_NieuweAutoAanmaken
         auto.Foto = img_byte
 
         'Auto toevoegen.
-        autobll.AddAuto(auto)
-
+        If (autobll.AddAuto(auto)) Then
+            'juij, geslaagd
+        Else
+            'kut
+        End If
     End Sub
 End Class
