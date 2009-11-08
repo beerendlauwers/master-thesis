@@ -41,7 +41,7 @@ Partial Class App_Presentation_NieuweAutoAanmaken
 
         'Auto toevoegen.
         If (autobll.AddAuto(auto)) Then
-            'juij, geslaagd
+            'yeuy, geslaagd
         Else
             'kut
         End If

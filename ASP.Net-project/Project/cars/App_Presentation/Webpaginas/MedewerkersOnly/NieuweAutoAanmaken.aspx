@@ -10,54 +10,54 @@
             DataSourceID="odsAuto" DefaultMode="Insert" Width="670px">
             <EditItemTemplate>
                 autoID:
-                <asp:Label ID="autoIDLabel1" runat="server" Text='<%# Eval("autoID") %>' />
+                <asp:Label ID="lblAutoID" runat="server" Text='<%# Eval("autoID") %>' />
                 <br />
                 autoCategorie:
-                <asp:TextBox ID="autoCategorieTextBox" runat="server" 
+                <asp:TextBox ID="txtAutoCategorie" runat="server" 
                     Text='<%# Bind("autoCategorie") %>' />
                 <br />
                 modelID:
-                <asp:TextBox ID="modelIDTextBox" runat="server" Text='<%# Bind("modelID") %>' />
+                <asp:TextBox ID="txtModelID" runat="server" Text='<%# Bind("modelID") %>' />
                 <br />
                 autoKleur:
-                <asp:TextBox ID="autoKleurTextBox" runat="server" 
+                <asp:TextBox ID="txtAutoKleur" runat="server" 
                     Text='<%# Bind("autoKleur") %>' />
                 <br />
                 autoBouwjaar:
-                <asp:TextBox ID="autoBouwjaarTextBox" runat="server" 
+                <asp:TextBox ID="txtAutoBouwjaar" runat="server" 
                     Text='<%# Bind("autoBouwjaar") %>' />
                 <br />
                 brandstofID:
-                <asp:TextBox ID="brandstofIDTextBox" runat="server" 
+                <asp:TextBox ID="txtBrandstofID" runat="server" 
                     Text='<%# Bind("brandstofID") %>' />
                 <br />
                 autoKenteken:
-                <asp:TextBox ID="autoKentekenTextBox" runat="server" 
+                <asp:TextBox ID="txtAutoKenteken" runat="server" 
                     Text='<%# Bind("autoKenteken") %>' />
                 <br />
                 autoDagTarief:
-                <asp:TextBox ID="autoDagTariefTextBox" runat="server" 
+                <asp:TextBox ID="txtAutoDagTarief" runat="server" 
                     Text='<%# Bind("autoDagTarief") %>' />
                 <br />
                 autoKMTotOlieVerversing:
-                <asp:TextBox ID="autoKMTotOlieVerversingTextBox" runat="server" 
+                <asp:TextBox ID="txtAutoKMTotOlieVerversing" runat="server" 
                     Text='<%# Bind("autoKMTotOlieVerversing") %>' />
                 <br />
                 statusID:
-                <asp:TextBox ID="statusIDTextBox" runat="server" 
+                <asp:TextBox ID="txtStatusID" runat="server" 
                     Text='<%# Bind("statusID") %>' />
                 <br />
                 filiaalID:
-                <asp:TextBox ID="filiaalIDTextBox" runat="server" 
+                <asp:TextBox ID="txtFiliaalID" runat="server" 
                     Text='<%# Bind("filiaalID") %>' />
                 <br />
                 autoParkeerplaats:
-                <asp:TextBox ID="autoParkeerplaatsTextBox" runat="server" 
+                <asp:TextBox ID="txtAutoParkeerplaats" runat="server" 
                     Text='<%# Bind("autoParkeerplaats") %>' />
                 <br />
-                <asp:LinkButton ID="UpdateButton" runat="server" CausesValidation="True" 
+                <asp:LinkButton ID="btnUpdate" runat="server" CausesValidation="True" 
                     CommandName="Update" Text="Update" />
-                &nbsp;<asp:LinkButton ID="UpdateCancelButton" runat="server" 
+                &nbsp;<asp:LinkButton ID="btnUpdateCancel" runat="server" 
                     CausesValidation="False" CommandName="Cancel" Text="Cancel" />
             </EditItemTemplate>
             <InsertItemTemplate>
@@ -87,11 +87,11 @@
                     </ContentTemplate>
                 </asp:UpdatePanel>
                 Kleur:
-                <asp:TextBox ID="autoKleurTextBox0" runat="server" 
+                <asp:TextBox ID="txtAutoKleur" runat="server" 
                     Text='<%# Bind("autoKleur") %>' />
                 <br />
                 Bouwjaar:
-                <asp:TextBox ID="autoBouwjaarTextBox0" runat="server" 
+                <asp:TextBox ID="txtAutoBouwjaar" runat="server" 
                     Text='<%# Bind("autoBouwjaar") %>' />
                 <br />
                 Type brandstof:
@@ -101,7 +101,7 @@
                 </asp:DropDownList>
                 <br />
                 Kenteken:
-                <asp:TextBox ID="autoKentekenTextBox0" runat="server" 
+                <asp:TextBox ID="txtAutoKenteken" runat="server" 
                     Text='<%# Bind("autoKenteken") %>' />
                 <br />
                 Status
@@ -111,7 +111,7 @@
                 </asp:DropDownList>
                 <br />
                 Parkeerplaats:
-                <asp:TextBox ID="autoParkeerplaatsTextBox0" runat="server" 
+                <asp:TextBox ID="txtAutoParkeerplaats" runat="server" 
                     Text='<%# Bind("autoParkeerplaats") %>' />
                 <br />
                 Filiaal:
@@ -120,64 +120,64 @@
                     SelectedValue='<%# Bind("filiaalID") %>'>
                 </asp:DropDownList>
                 <br />
-                Dagtarief:&nbsp;<asp:TextBox ID="autoDagTariefTextBox0" runat="server" 
+                Dagtarief:&nbsp;<asp:TextBox ID="txtAutoDagTarief" runat="server" 
                     Text='<%# Bind("autoDagTarief") %>' />
                 <br />
                 Foto:&nbsp;<asp:FileUpload ID="fupAutoFoto" runat="server" />
                 <br />
-                <asp:LinkButton ID="InsertButton0" runat="server" CausesValidation="True" 
-                    CommandName="Insert" onclick="InsertButton0_Click" Text="Auto Toevoegen" />
-                &nbsp;<asp:LinkButton ID="InsertCancelButton0" runat="server" 
+                <asp:LinkButton ID="btnInsert" runat="server" CausesValidation="True" 
+                    CommandName="Insert" onclick="btnInsert_Click" Text="Auto Toevoegen" />
+                &nbsp;<asp:LinkButton ID="btnInsertCancel" runat="server" 
                     CausesValidation="False" CommandName="Cancel" Text="Annuleren" />
             </InsertItemTemplate>
             <ItemTemplate>
                 autoID:
-                <asp:Label ID="autoIDLabel" runat="server" Text='<%# Eval("autoID") %>' />
+                <asp:Label ID="lblAutoID" runat="server" Text='<%# Eval("autoID") %>' />
                 <br />
                 autoCategorie:
-                <asp:Label ID="autoCategorieLabel" runat="server" 
+                <asp:Label ID="lblAutoCategorie" runat="server" 
                     Text='<%# Bind("autoCategorie") %>' />
                 <br />
                 modelID:
-                <asp:Label ID="modelIDLabel" runat="server" Text='<%# Bind("modelID") %>' />
+                <asp:Label ID="lblModelID" runat="server" Text='<%# Bind("modelID") %>' />
                 <br />
                 autoKleur:
-                <asp:Label ID="autoKleurLabel" runat="server" Text='<%# Bind("autoKleur") %>' />
+                <asp:Label ID="lblAutoKleur" runat="server" Text='<%# Bind("autoKleur") %>' />
                 <br />
                 autoBouwjaar:
-                <asp:Label ID="autoBouwjaarLabel" runat="server" 
+                <asp:Label ID="lblAutoBouwjaar" runat="server" 
                     Text='<%# Bind("autoBouwjaar") %>' />
                 <br />
                 brandstofID:
-                <asp:Label ID="brandstofIDLabel" runat="server" 
+                <asp:Label ID="lblBrandstofID" runat="server" 
                     Text='<%# Bind("brandstofID") %>' />
                 <br />
                 autoKenteken:
-                <asp:Label ID="autoKentekenLabel" runat="server" 
+                <asp:Label ID="lblAutoKenteken" runat="server" 
                     Text='<%# Bind("autoKenteken") %>' />
                 <br />
                 autoDagTarief:
-                <asp:Label ID="autoDagTariefLabel" runat="server" 
+                <asp:Label ID="lblAutoDagTarief" runat="server" 
                     Text='<%# Bind("autoDagTarief") %>' />
                 <br />
                 autoKMTotOlieVerversing:
-                <asp:Label ID="autoKMTotOlieVerversingLabel" runat="server" 
+                <asp:Label ID="lblAutoKMTotOlieVerversing" runat="server" 
                     Text='<%# Bind("autoKMTotOlieVerversing") %>' />
                 <br />
                 statusID:
-                <asp:Label ID="statusIDLabel" runat="server" Text='<%# Bind("statusID") %>' />
+                <asp:Label ID="lblStatusID" runat="server" Text='<%# Bind("statusID") %>' />
                 <br />
                 filiaalID:
-                <asp:Label ID="filiaalIDLabel" runat="server" 
+                <asp:Label ID="lblFiliaalID" runat="server" 
                     Text='<%# Bind("filiaalID") %>' />
                 <br />
                 autoParkeerplaats:
-                <asp:Label ID="autoParkeerplaatsLabel" runat="server" 
+                <asp:Label ID="lblAutoParkeerplaats" runat="server" 
                     Text='<%# Bind("autoParkeerplaats") %>' />
                 <br />
-                <asp:LinkButton ID="DeleteButton" runat="server" CausesValidation="False" 
+                <asp:LinkButton ID="btnDelete" runat="server" CausesValidation="False" 
                     CommandName="Delete" Text="Delete" />
-                &nbsp;<asp:LinkButton ID="NewButton" runat="server" CausesValidation="False" 
+                &nbsp;<asp:LinkButton ID="btnNew" runat="server" CausesValidation="False" 
                     CommandName="New" Text="New" />
             </ItemTemplate>
         </asp:FormView>

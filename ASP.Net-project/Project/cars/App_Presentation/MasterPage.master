@@ -26,23 +26,28 @@
                         <LayoutTemplate>
                         <table align="right">
                         <tr>
-                        <td><asp:Label ID="UserNameLabel" runat="server" AssociatedControlID="UserName">Gebruikersnaam:</asp:Label></td>
+                        <td><asp:Label ID="lblUserName" runat="server" AssociatedControlID="UserName">Gebruikersnaam:</asp:Label></td>
                         <td>
-                            <asp:TextBox ID="UserName" runat="server"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="UserNameRequired" runat="server" ControlToValidate="UserName" ErrorMessage="User Name is required." ToolTip="User Name is required." ValidationGroup="ctl00$ctl02$loginGebruiker">*</asp:RequiredFieldValidator>
+                            <asp:TextBox ID="txtUserName" runat="server"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="valUserNameRequired" runat="server" 
+                                ControlToValidate="UserName" ErrorMessage="User Name is required." 
+                                ToolTip="User Name is required." ValidationGroup="ctl00$ctl02$loginGebruiker">*</asp:RequiredFieldValidator>
                         </td>
                         </tr>
                         <tr>
-                        <td><asp:Label ID="PasswordLabel" runat="server" AssociatedControlID="Password">Paswoord:</asp:Label></td>
+                        <td><asp:Label ID="lblPasswordLabel" runat="server" AssociatedControlID="Password">Paswoord:</asp:Label></td>
                         <td>
-                            <asp:TextBox ID="Password" runat="server" TextMode="Password"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="PasswordRequired" runat="server" ControlToValidate="Password" ErrorMessage="Password is required." ToolTip="Password is required." ValidationGroup="ctl00$ctl02$loginGebruiker">*</asp:RequiredFieldValidator>
+                            <asp:TextBox ID="txtPassword" runat="server" TextMode="Password"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="valPasswordRequired" runat="server" 
+                                ControlToValidate="Password" ErrorMessage="Password is required." 
+                                ToolTip="Password is required." ValidationGroup="ctl00$ctl02$loginGebruiker">*</asp:RequiredFieldValidator>
                         </td>
                         </tr>
-                        <tr><td><asp:CheckBox ID="RememberMe" runat="server" Text="Onthoud me" /></td></tr>
-                        <tr><td><asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal></td></tr>
+                        <tr><td><asp:CheckBox ID="cboRememberMe" runat="server" Text="Onthoud me" /></td></tr>
+                        <tr><td><asp:Literal ID="lblFailureText" runat="server" EnableViewState="False"></asp:Literal></td></tr>
                         <tr>
-                        <td><asp:Button ID="LoginButton" runat="server" CommandName="Login" Text="Inloggen" ValidationGroup="ctl00$ctl02$loginGebruiker" /></td>
+                        <td><asp:Button ID="btnLogin" runat="server" CommandName="Login" Text="Inloggen" 
+                                ValidationGroup="ctl00$ctl02$loginGebruiker" /></td>
                         </tr>
                         </table>
                         </LayoutTemplate>

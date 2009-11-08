@@ -13,8 +13,8 @@
                 Text='<%# Bind("klantGebruikersnaam") %>' />
             <asp:RequiredFieldValidator ID="valGebruikersnaam" runat="server" 
                 ControlToValidate="txtGebruikersnaam" 
-                ErrorMessage="U dient een gebruikersnaam op te geven."><img 
-                src="Images/remove.gif" /></asp:RequiredFieldValidator>
+                ErrorMessage="U dient een gebruikersnaam op te geven.">
+                <img src="../Images/remove.gif" alt='remove' /></asp:RequiredFieldValidator>
             <br />
             Paswoord:
             <asp:TextBox ID="txtPaswoord" runat="server" 
@@ -22,7 +22,7 @@
             <asp:CompareValidator ID="valPaswoord" runat="server" 
                 ControlToCompare="txtPaswoordOpnieuw" ControlToValidate="txtPaswoord" 
                 ErrorMessage="De paswoorden komen niet met elkaar overeen."><img 
-                src="Images/remove.gif" /></asp:CompareValidator>
+                src="../Images/remove.gif" alt='remove'/></asp:CompareValidator>
             <br />
             <asp:Label ID="lblPaswoordOpnieuw" runat="server" 
                 Text="Geef paswoord opnieuw in:"></asp:Label>
@@ -32,7 +32,7 @@
             <asp:TextBox ID="txtNaam" runat="server" Text='<%# Bind("klantNaam") %>' />
             <asp:RequiredFieldValidator ID="valNaam" runat="server" 
                 ControlToValidate="txtNaam" ErrorMessage="U dient een naam op te geven."><img 
-                src="Images/remove.gif" /></asp:RequiredFieldValidator>
+                src="../Images/remove.gif" alt='remove' /></asp:RequiredFieldValidator>
             <br />
             Voornaam:
             <asp:TextBox ID="txtVoornaam" runat="server" 
@@ -40,7 +40,7 @@
             <asp:RequiredFieldValidator ID="valVoornaam" runat="server" 
                 ControlToValidate="txtVoornaam" 
                 ErrorMessage="U dient een voornaam op te geven."><img 
-                src="Images/remove.gif" /></asp:RequiredFieldValidator>
+                src="../Images/remove.gif" alt='remove'/></asp:RequiredFieldValidator>
             <br />
             Geboortedatum:
             <asp:TextBox ID="txtGebdat" runat="server" Text='<%# Bind("klantGebdat") %>' />
@@ -48,7 +48,7 @@
                 ControlToValidate="txtGebdat" 
                 ErrorMessage="U dient een geldige datum op te geven." 
                 ValidationExpression="(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d"><img 
-                src="Images/remove.gif" /></asp:RegularExpressionValidator>
+                src="../Images/remove.gif" /></asp:RegularExpressionValidator>
             <br />
             Identiteitskaartnummer:
             <asp:TextBox ID="txtIdKaartNummer" runat="server" 
@@ -56,7 +56,7 @@
             <asp:RegularExpressionValidator ID="valIdentiteitskaartNR" runat="server" 
                 ControlToValidate="txtIdKaartNummer" 
                 ErrorMessage="U dient een geldig identiteitskaartnummer op te geven." 
-                ValidationExpression="\d{3}-\d{7}-\d{2}"><img src="Images/remove.gif" /></asp:RegularExpressionValidator>
+                ValidationExpression="\d{3}-\d{7}-\d{2}"><img src="../Images/remove.gif" alt='remove'/></asp:RegularExpressionValidator>
             <br />
             Rijbewijsnummer:
             <asp:TextBox ID="txtRijbewijs" runat="server" 
@@ -64,7 +64,7 @@
             <asp:RequiredFieldValidator ID="valRijbewijsnummer" runat="server" 
                 ControlToValidate="txtRijbewijs" 
                 ErrorMessage="U dient een geldig rijbewijsnummer op te geven."><img 
-                src="Images/remove.gif" /></asp:RequiredFieldValidator>
+                src="../Images/remove.gif" /></asp:RequiredFieldValidator>
             <br />
             Telefoon:
             <asp:TextBox ID="txtTelefoon" runat="server" 
@@ -72,7 +72,7 @@
             <asp:RequiredFieldValidator ID="valTelefoon" runat="server" 
                 ControlToValidate="txtTelefoon" 
                 ErrorMessage="U dient een geldig telefoonnummer op te geven."><img 
-                src="Images/remove.gif" /></asp:RequiredFieldValidator>
+                src="../Images/remove.gif" /></asp:RequiredFieldValidator>
             <br />
             E-mail adres:
             <asp:TextBox ID="txtEmail" runat="server" Text='<%# Bind("klantEmail") %>' />
@@ -80,7 +80,7 @@
                 ControlToValidate="txtEmail" 
                 ErrorMessage="U dient een geldig E-mail adres op te geven." 
                 ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"><img 
-                src="Images/remove.gif" /></asp:RegularExpressionValidator>
+                src="../Images/remove.gif" /></asp:RegularExpressionValidator>
             <br />
             BTW-nummer:
             <asp:TextBox ID="txtBTWnummer" runat="server" 
