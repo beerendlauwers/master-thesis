@@ -3,7 +3,7 @@
 Partial Class App_Presentation_NieuweAutoAanmaken
     Inherits System.Web.UI.Page
 
-    Protected Sub InsertButton0_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+    Protected Sub btnInsert_Click(ByVal sender As Object, ByVal e As System.EventArgs)
         Dim autobll As New AutoBLL
 
         Dim auto As New Auto
