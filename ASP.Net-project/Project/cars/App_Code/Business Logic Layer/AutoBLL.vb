@@ -30,12 +30,21 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Public Function AddAuto(ByRef a As Auto) As Boolean
+    Public Function UpdateAuto(ByRef autorow As Auto_s.tblAutoRow) As Boolean
         Try
-            If (_adapterAuto.Insert(a.Categorie, a.Model, a.Kleur, a.Bouwjaar, _
-                                    a.Foto, a.Brandstoftype, a.Kenteken, a.Dagtarief, _
-                                    a.KmTotOnderhoud, a.Status, a.Filiaal, _
-                                    a.Parkeerplaats)) Then
+            If (_adapterAuto.Update(autorow)) Then
+                Return True
+            Else
+                Return False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function AddAuto(ByRef a As Auto_s.tblAutoRow) As Boolean
+        Try
+            If (_adapterAuto.Insert(a.categorieID, a.modelID, a.autoKleur, a.autoBouwjaar, a.autoFoto, a.brandstofID, a.autoKenteken, a.autoDagTarief, a.autoKMTotOlieVerversing, a.statusID, a.filiaalID, a.autoParkeerplaats)) Then
                 Return True
             Else
                 Return False
