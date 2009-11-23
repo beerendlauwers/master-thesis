@@ -1,18 +1,116 @@
-﻿<%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="App_Presentation_MasterPage" %>
+<%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="App_Presentation_MasterPage" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-
-    <title>Nieuwe Gebruiker</title>
-    <script type="text/javascript" src="JS/jquery.js"></script>
-
+    
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
-    <link href="CSS/master.css" rel="stylesheet" type="text/css" />
+    <script src="JS/script.js" type="text/javascript"></script>
+    <link href="CSS/style.css" rel="stylesheet" type="text/css" />
+    
 </head>
+
 <body>
-        <form id="frmMain" runat="server">
+<div id="art-page-background-simple-gradient">
+    </div>
+    <div id="art-page-background-glare">
+      <div id="art-page-background-glare-image"></div>
+</div>
+    <div id="art-main">
+  <div class="art-Sheet">
+            <div class="art-Sheet-tc"></div>
+            <div class="art-Sheet-cl"></div>
+            <div class="art-Sheet-cr"></div>
+            <div class="art-Sheet-cc"></div>
+            <div class="art-Sheet-body">
+                <div class="art-nav">
+                	<div class="l"></div>
+                	<div class="r"></div>
+                	<ul class="art-menu">
+                		<li>
+                			<a href="#" class="{ActiveItem}"><span class="l"></span><span class="r"></span><span class="t">Home</span></a>
+                		</li>
+                		<li>
+						<a href="index_wagens.html"><span class="l"></span><span class="r"></span><span class="t">Verhuur auto's</span></a>
+                			<ul>
+                		   		<li><a href="personenwagens.html">Personenwagens</a>
+                					<ul>
+                						<li><a href="#">Compacte wagens</a></li>
+                						<li><a href="#">Middeklasse wagens</a></li>
+                						<li><a href="#">Topklasse wagens</a></li>
+                					</ul>
+                				</li>                                         						
+                   				<li><a href="exclusieve_wagens.html">Exclusieve wagens</a></li>
+                				<li><a href="verhuiswagens.html">Verhuiswagens</a></li>
+                          	</ul>
+                		</li>
+                		<li>
+                			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Uw gegevens</span></a>
+                			<ul>
+                				<li><a href="#">2008</a>
+                					<ul>
+                						<li><a href="#">January</a></li>
+                						<li><a href="#">February</a></li>
+                						<li><a href="#">March</a></li>
+                					</ul>
+                				</li>
+                				<li><a href="#">2007</a>
+                					<ul>
+                						<li><a href="#">January</a></li>
+                						<li><a href="#">February</a></li>
+                						<li><a href="#">March</a></li>
+                					</ul>
+                				</li>
+                				<li><a href="#">2006</a>
+                					<ul>
+                						<li><a href="#">January</a></li>
+                						<li><a href="#">February</a></li>
+                						<li><a href="#">March</a></li>
+                					</ul>
+                				</li>
+                			</ul>
+   					  </li>
+                		<li>
+                			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Contact</span></a>
+                		</li>
+                	</ul>
+                </div>
+                <div class="art-Header">
+                    <div class="art-Header-jpeg"></div>
+                    <div class="art-Logo">
+                        <h1 id="name-text" class="art-Logo-name"><a href="#">CARS</a></h1>
+                    </div>
+                </div>
+                <div class="art-contentLayout">
+                    <div class="art-content">
+                        <div class="art-Post">
+                            <div class="art-Post-tl"></div>
+                            <div class="art-Post-tr"></div>
+                            <div class="art-Post-bl"></div>
+                            <div class="art-Post-br"></div>
+                            <div class="art-Post-tc"></div>
+                            <div class="art-Post-bc"></div>
+                            <div class="art-Post-cl"></div>
+                            <div class="art-Post-cr"></div>
+                            <div class="art-Post-cc"></div>
+                            <div class="art-Post-body">
+                        <div class="art-Post-inner">
+                            <div class="art-PostMetadataHeader">
+                                <h2 class="art-PostHeaderIcon-wrapper">
+                                    <span class="art-PostHeader">Welkom</span>
+                                </h2>
+                            </div>
+                            
+                            
+                            <div class="art-PostContent">
+                 
+            
+            
+            
+                   
+                 
+                  <form id="frmMain" runat="server">
         <div id="loginscreen">
             <asp:LoginView ID="loginView" runat="server">
                 <LoggedInTemplate>
@@ -57,10 +155,35 @@
             </AnonymousTemplate>
         </asp:LoginView>
     </div>
-    <div id="placeholdermain" >
+    <div id="placeholdermain" />
         <asp:ContentPlaceHolder ID="plcMain" runat="server">
         </asp:ContentPlaceHolder>
         </form>
     </div>
+                       
+                       
+                       
+                       
+                       
+                                             </div>
+</div>
+                       
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             
+             
+             
+                <div class="art-Footer">
+                        <div class="art-Footer-text">
+                            <p>Copyright &copy; 2009 Yarric Van den broeck - Beerend Lauwers - 
+                                <br />
+                                Frank De Sterke - Frederik Van Den Hof. All Rights Reserved.</p>
+                        </div>
+                </div>
+            </div>
+      </div>  
+    
 </body>
 </html>
