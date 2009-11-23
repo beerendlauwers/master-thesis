@@ -70,4 +70,24 @@ Public Class AutoDAL
         Return kleuren
     End Function
 
+    Public Function getAutoID(ByVal autoKenteken As String) As Integer
+        myConnection.Open()
+
+        Dim myCommand As New SqlCommand("SELECT autoID FROM tblAuto WHERE autoKenteken=@autoKenteken")
+        myCommand.Parameters.Add("@autoKenteken", SqlDbType.NChar)
+        myCommand.Parameters("@autoKenteken").Value = autoKenteken
+        myCommand.Connection = myConnection
+
+        Dim myReader As SqlDataReader
+        myReader = myCommand.ExecuteReader
+
+        If (myReader.HasRows) Then
+            myReader.Read()
+            Return CType(myReader.Item("autoID"), Integer)
+        Else
+            Return -1
+        End If
+
+    End Function
+
 End Class
