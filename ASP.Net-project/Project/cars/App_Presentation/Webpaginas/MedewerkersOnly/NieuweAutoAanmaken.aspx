@@ -70,10 +70,11 @@
                 Model:
                 <asp:UpdatePanel ID="updMerkModel" runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
-                        <asp:DropDownList ID="ddlMerk" runat="server">
+                        <asp:DropDownList ID="ddlMerk" runat="server" DataSourceID="odsModel">
                         </asp:DropDownList>
                         <asp:DropDownList ID="ddlModel" runat="server" DataTextField="modelNaam" 
-                            DataValueField="modelID" SelectedValue='<%# Bind("modelID") %>'>
+                            DataValueField="modelID" SelectedValue='<%# Bind("modelID") %>' 
+                            DataSourceID="odsModel">
                         </asp:DropDownList>
                         <ajaxToolkit:CascadingDropDown ID="cddMerk" runat="server" Category="Merk" 
                             PromptText="Selecteer een merk" ServiceMethod="GeefMerken" 
@@ -86,11 +87,10 @@
                         </ajaxToolkit:CascadingDropDown>
                     </ContentTemplate>
                 </asp:UpdatePanel>
-                Kleur:
-                <asp:TextBox ID="txtAutoKleur" runat="server" 
+                Kleur:<asp:TextBox ID="txtAutoKleur" runat="server" 
                     Text='<%# Bind("autoKleur") %>' />
                 <br />
-                Bouwjaar:
+                Bouwjaar:&nbsp;
                 <asp:TextBox ID="txtAutoBouwjaar" runat="server" 
                     Text='<%# Bind("autoBouwjaar") %>' />
                 <br />
@@ -104,7 +104,7 @@
                 <asp:TextBox ID="txtAutoKenteken" runat="server" 
                     Text='<%# Bind("autoKenteken") %>' />
                 <br />
-                Status
+                Status:
                 <asp:DropDownList ID="ddlStatus" runat="server" DataSourceID="odsAutoStatus" 
                     DataTextField="autostatusNaam" DataValueField="autostatusID" 
                     SelectedValue='<%# Bind("statusID") %>'>
@@ -125,10 +125,40 @@
                 <br />
                 Foto:&nbsp;<asp:FileUpload ID="fupAutoFoto" runat="server" />
                 <br />
+                <br />                
+                <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                <ContentTemplate>
+                <div>
+                Optie:&nbsp;<asp:DropDownList ID="ddlOpties" runat="server" 
+                    DataSourceID="odsOptie" DataTextField="optieOmschrijving" 
+                    DataValueField="optieID" 
+                    >
+                </asp:DropDownList>
+                
+                &nbsp;<asp:Button ID="btnVoegtoe" runat="server" onclick="btnVoegtoe_Click" 
+                    Text="Voeg toe aan opties" />
+                &nbsp;&nbsp;&nbsp;
+                <asp:Button ID="btnNieuweOptie" runat="server" Text="Nieuwe Optie" 
+                    onclick="btnNieuweOptie_Click" />
+                
+                <br />
+                <asp:ListBox ID="lstOpties" runat="server" SelectionMode="Multiple"  
+                    ></asp:ListBox>
+                <asp:ListBox ID="lstVoegtoeID" runat="server" SelectionMode="Multiple"></asp:ListBox>
+                <asp:Button ID="btnVerwijderLijst" runat="server" 
+                    onclick="btnVerwijderLijst_Click" Text="Verwijder Optie" />
+                <asp:TextBox ID="txtOptieNaam" runat="server" Visible="False"></asp:TextBox>&nbsp;&nbsp;&nbsp;
+                <asp:TextBox ID="txtOptiePrijs" runat="server" Visible="False"></asp:TextBox>&nbsp;&nbsp;
+                <asp:Button ID="btnVoegoptietoe" runat="server" onclick="btnVoegoptietoe_Click" 
+                    Text="Insert" Visible="False" />
+                <br />
                 <asp:LinkButton ID="btnInsert" runat="server" CausesValidation="True" 
                     CommandName="Insert" onclick="btnInsert_Click" Text="Auto Toevoegen" />
                 &nbsp;<asp:LinkButton ID="btnInsertCancel" runat="server" 
                     CausesValidation="False" CommandName="Cancel" Text="Annuleren" />
+                </div>
+                </ContentTemplate>
+                </asp:UpdatePanel>
             </InsertItemTemplate>
             <ItemTemplate>
                 autoID:
@@ -180,8 +210,8 @@
                 &nbsp;<asp:LinkButton ID="btnNew" runat="server" CausesValidation="False" 
                     CommandName="New" Text="New" />
             </ItemTemplate>
-        </asp:FormView>
-    
+       </asp:FormView>
+
     </div>
     <asp:ObjectDataSource ID="odsBrandstofType" runat="server" 
         DeleteMethod="Delete" InsertMethod="Insert" 
@@ -283,8 +313,9 @@
         </InsertParameters>
     </asp:ObjectDataSource>
     <asp:ObjectDataSource ID="odsAuto" runat="server" 
-        DataObjectTypeName="Auto&amp;" DeleteMethod="DeleteAuto" InsertMethod="AddAuto" 
-        SelectMethod="GetAllAutos" TypeName="AutoBLL">
+        DataObjectTypeName="Auto_s+tblAutoRow&amp;" DeleteMethod="DeleteAuto" 
+        SelectMethod="GetAllAutos" TypeName="AutoBLL" 
+        OldValuesParameterFormatString="original_{0}" UpdateMethod="UpdateAuto">
         <DeleteParameters>
             <asp:Parameter Name="autoID" Type="Int32" />
         </DeleteParameters>

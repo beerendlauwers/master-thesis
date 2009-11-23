@@ -5,21 +5,28 @@ Partial Class App_Presentation_NieuweAutoAanmaken
 
     Protected Sub btnInsert_Click(ByVal sender As Object, ByVal e As System.EventArgs)
         Dim autobll As New AutoBLL
+        Dim autoOptiebll As New AutoOptieBLL
+        Dim auto As Auto_s.tblAutoRow
+        Dim autoOptie As New AutoOptie
+        Dim autodal As New AutoDAL
 
-        Dim auto As New Auto
+        'Row initialiseren
+        Dim temptable As New Auto_s.tblAutoDataTable
+        auto = temptable.NewRow
+        temptable = Nothing
 
         'Alle waardes uit de controls in de formview lezen
-        auto.Categorie = CType(Me.frvNieuweAuto.FindControl("ddlCategorie"), DropDownList).SelectedValue
-        auto.Model = CType(Me.frvNieuweAuto.FindControl("ddlModel"), DropDownList).SelectedValue
-        auto.Kleur = CType(Me.frvNieuweAuto.FindControl("autoKleurTextBox0"), TextBox).Text
-        auto.Bouwjaar = CType(Me.frvNieuweAuto.FindControl("autoBouwjaarTextBox0"), TextBox).Text
-        auto.Brandstoftype = CType(Me.frvNieuweAuto.FindControl("ddlBrandstofType"), DropDownList).SelectedValue
-        auto.Kenteken = CType(Me.frvNieuweAuto.FindControl("autoKentekenTextBox0"), TextBox).Text
-        auto.Status = CType(Me.frvNieuweAuto.FindControl("ddlStatus"), DropDownList).SelectedValue
-        auto.Parkeerplaats = CType(Me.frvNieuweAuto.FindControl("autoParkeerplaatsTextBox0"), TextBox).Text
-        auto.Filiaal = CType(Me.frvNieuweAuto.FindControl("ddlFiliaal"), DropDownList).SelectedValue
-        auto.Dagtarief = CType(Me.frvNieuweAuto.FindControl("autoDagTariefTextBox0"), TextBox).Text
-        auto.KmTotOnderhoud = 0
+        auto.categorieID = CType(Me.frvNieuweAuto.FindControl("ddlCategorie"), DropDownList).SelectedValue
+        auto.modelID = CType(Me.frvNieuweAuto.FindControl("ddlModel"), DropDownList).SelectedValue
+        auto.autoKleur = CType(Me.frvNieuweAuto.FindControl("txtAutoKleur"), TextBox).Text
+        auto.autoBouwjaar = CType(Me.frvNieuweAuto.FindControl("txtAutoBouwjaar"), TextBox).Text
+        auto.brandstofID = CType(Me.frvNieuweAuto.FindControl("ddlBrandstofType"), DropDownList).SelectedValue
+        auto.autoKenteken = CType(Me.frvNieuweAuto.FindControl("txtAutoKenteken"), TextBox).Text
+        auto.statusID = CType(Me.frvNieuweAuto.FindControl("ddlStatus"), DropDownList).SelectedValue
+        auto.autoParkeerplaats = CType(Me.frvNieuweAuto.FindControl("txtAutoParkeerplaats"), TextBox).Text
+        auto.filiaalID = CType(Me.frvNieuweAuto.FindControl("ddlFiliaal"), DropDownList).SelectedValue
+        auto.autoDagTarief = CType(Me.frvNieuweAuto.FindControl("txtAutoDagTarief"), TextBox).Text
+        auto.autoKMTotOlieVerversing = 0
 
         'Foto toevoegen
         Dim img As FileUpload = CType(frvNieuweAuto.FindControl("fupAutoFoto"), FileUpload)
@@ -37,13 +44,58 @@ Partial Class App_Presentation_NieuweAutoAanmaken
             img_byte = encoding.GetBytes("geen_foto")
         End If
 
-        auto.Foto = img_byte
+        auto.autoFoto = img_byte
 
         'Auto toevoegen.
         If (autobll.AddAuto(auto)) Then
             'yeuy, geslaagd
+            autoOptie.AutoID = autodal.getAutoID(auto.autoKenteken)
+            Dim i As Integer
+
+            For i = 0 To CType(frvNieuweAuto.FindControl("lstVoegtoeID"), ListBox).Items.Count - 1
+                autoOptie.OptieID = CType(frvNieuweAuto.FindControl("lstVoegtoeID"), ListBox).Items(i).Text
+                autoOptiebll.autoOptieAdd(autoOptie)
+            Next
         Else
-            'kut
+            'kut 
         End If
+        
+    End Sub
+
+    
+
+    ' Protected Sub btnToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+    '  CType(frvNieuweAuto.FindControl("lstOpties"), ListBox).Items.Add(CType(frvNieuweAuto.FindControl("ddlOpties"), DropDownList).SelectedValue)
+    ' End Sub
+
+    Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        CType(frvNieuweAuto.FindControl("lstOpties"), ListBox).Items.Add(CType(frvNieuweAuto.FindControl("ddlOpties"), DropDownList).SelectedItem)
+        CType(frvNieuweAuto.FindControl("lstVoegtoeID"), ListBox).Items.Add(CType(frvNieuweAuto.FindControl("ddlOpties"), DropDownList).SelectedValue)
+    End Sub
+
+    Protected Sub btnNieuweOptie_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        CType(frvNieuweAuto.FindControl("txtOptieNaam"), TextBox).Visible = True
+        CType(frvNieuweAuto.FindControl("txtOptiePrijs"), TextBox).Visible = True
+        CType(frvNieuweAuto.FindControl("btnVoegoptietoe"), Button).Visible = True
+    End Sub
+
+    Protected Sub btnVoegoptietoe_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        Dim pOptie As New Optie
+        Dim bllOptie As New OptieBLL
+
+        pOptie.Omschrijving = CType(frvNieuweAuto.FindControl("txtOptieNaam"), TextBox).Text
+        pOptie.Prijs = CType(frvNieuweAuto.FindControl("txtOptiePrijs"), TextBox).Text
+        bllOptie.AddOptie(pOptie)
+
+        DataBind()
+
+    End Sub
+
+    Protected Sub btnVerwijderLijst_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        CType(frvNieuweAuto.FindControl("lstOpties"), ListBox).Items.RemoveAt(CType(frvNieuweAuto.FindControl("lstOpties"), ListBox).SelectedIndex)
+    End Sub
+
+    Public Sub New()
+
     End Sub
 End Class
