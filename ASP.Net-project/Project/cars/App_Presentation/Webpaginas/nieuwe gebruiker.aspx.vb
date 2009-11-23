@@ -16,10 +16,11 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
         p.identiteitsnummer = CType(CreateUserWizard1.CreateUserStep.ContentTemplateContainer.FindControl("txtIdentiteitsNr"), TextBox).Text
         p.rijbewijsnummer = CType(CreateUserWizard1.CreateUserStep.ContentTemplateContainer.FindControl("txtRijbewijsNr"), TextBox).Text
         p.telefoon = CType(CreateUserWizard1.CreateUserStep.ContentTemplateContainer.FindControl("txtTelefoon"), TextBox).Text
-        p.Email = CType(CreateUserWizard1.CreateUserStep.ContentTemplateContainer.FindControl("txtEmail"), TextBox).Text
         p.BTWnummer = CType(CreateUserWizard1.CreateUserStep.ContentTemplateContainer.FindControl("txtBTW"), TextBox).Text
 
         ' save profile
 
     End Sub
+
+
 End Class

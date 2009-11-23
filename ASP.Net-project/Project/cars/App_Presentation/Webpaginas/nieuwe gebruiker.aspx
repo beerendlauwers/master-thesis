@@ -1,13 +1,10 @@
-﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="nieuwe gebruiker.aspx.vb" Inherits="App_Presentation_Webpaginas_nieuwe_gebruiker" %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="nieuwe gebruiker.aspx.vb" Inherits="App_Presentation_Webpaginas_nieuwe_gebruiker" MasterPageFile="~/App_Presentation/MasterPage.master" %>
+<asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
     <title>Untitled Page</title>
-</head>
 <body>
-    <form id="form1" runat="server">
     <div>
     
     </div>
@@ -18,12 +15,11 @@
                     <table border="0">
                         <tr>
                             <td align="center" colspan="2">
-                                Sign Up for Your New Account</td>
+                                Maak een nieuwe gebruiker aan.</td>
                         </tr>
                         <tr>
                             <td align="right">
-                                <asp:Label ID="UserNameLabel" runat="server" AssociatedControlID="UserName">User 
-                                Name:</asp:Label>
+                                <asp:Label ID="UserNameLabel" runat="server" AssociatedControlID="UserName">Gebruikersnaam:</asp:Label>
                             </td>
                             <td>
                                 <asp:TextBox ID="UserName" runat="server"></asp:TextBox>
@@ -34,7 +30,7 @@
                         </tr>
                         <tr>
                             <td align="right">
-                                <asp:Label ID="PasswordLabel" runat="server" AssociatedControlID="Password">Password:</asp:Label>
+                                <asp:Label ID="PasswordLabel" runat="server" AssociatedControlID="Password">Paswoord:</asp:Label>
                             </td>
                             <td>
                                 <asp:TextBox ID="Password" runat="server" TextMode="Password"></asp:TextBox>
@@ -46,7 +42,7 @@
                         <tr>
                             <td align="right">
                                 <asp:Label ID="ConfirmPasswordLabel" runat="server" 
-                                    AssociatedControlID="ConfirmPassword">Confirm Password:</asp:Label>
+                                    AssociatedControlID="ConfirmPassword">Bevestig Paswoord:</asp:Label>
                             </td>
                             <td>
                                 <asp:TextBox ID="ConfirmPassword" runat="server" TextMode="Password"></asp:TextBox>
@@ -69,8 +65,7 @@
                         </tr>
                         <tr>
                             <td align="right">
-                                <asp:Label ID="QuestionLabel" runat="server" AssociatedControlID="Question">Security 
-                                Question:</asp:Label>
+                                <asp:Label ID="QuestionLabel" runat="server" AssociatedControlID="Question">Beveiligingsvraag:</asp:Label>
                             </td>
                             <td>
                                 <asp:TextBox ID="Question" runat="server"></asp:TextBox>
@@ -81,8 +76,7 @@
                         </tr>
                         <tr>
                             <td align="right">
-                                <asp:Label ID="AnswerLabel" runat="server" AssociatedControlID="Answer">Security 
-                                Answer:</asp:Label>
+                                <asp:Label ID="AnswerLabel" runat="server" AssociatedControlID="Answer">Beveiligingsantwoord:</asp:Label>
                             </td>
                             <td>
                                 <asp:TextBox ID="Answer" runat="server"></asp:TextBox>
@@ -186,9 +180,29 @@
                     </table>
                 </ContentTemplate>
             </asp:CreateUserWizardStep>
-            <asp:CompleteWizardStep runat="server" />
+            <asp:CompleteWizardStep runat="server" >
+                <ContentTemplate>
+                    <table border="0">
+                        <tr>
+                            <td align="center" colspan="2">
+                                Complete</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Your account has been successfully created.</td>
+                        </tr>
+                        <tr>
+                            <td align="right" colspan="2">
+                                <asp:Button ID="ContinueButton" runat="server" CausesValidation="False" 
+                                    CommandName="Continue" Text="Continue" ValidationGroup="CreateUserWizard1" />
+                            </td>
+                        </tr>
+                    </table>
+                </ContentTemplate>
+            </asp:CompleteWizardStep>
         </WizardSteps>
     </asp:CreateUserWizard>
-    </form>
 </body>
 </html>
+</asp:Content>
+
