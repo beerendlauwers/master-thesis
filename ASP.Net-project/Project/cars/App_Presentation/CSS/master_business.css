@@ -515,7 +515,7 @@ div.art-Header-jpeg
 	left: 0;
 	width: 984px;
 	height: 200px;
-	background-image: url('../Images/Header_Business.jpg');
+	background-image: url('/../Images/Header_Business.jpg');
 	background-repeat: no-repeat;
 	background-position: center center;
 }

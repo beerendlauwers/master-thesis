@@ -3,19 +3,6 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-
-<script type='text/javascript'>
-    function onddlCategorieChangeHandler(dd){
-    	var dd2=$get('ddlKleur');
-        dd2.selectedIndex=0;
-        var cdd=$find('cddKleur');
-        if(cdd!=null){
-            cdd.set_SelectedValue('','');
-            cdd._onParentChange(null,false);
-        }
-    }
-</script>
-
     <asp:ScriptManager ID="scmManager" runat="server"></asp:ScriptManager>
     <div>
     <asp:UpdatePanel ID="updOverview" runat="server" UpdateMode="Conditional">
@@ -90,10 +77,12 @@
         <br />
         <asp:Repeater ID="repOverzicht" runat="server">
           <ItemTemplate>
-            <a href="Reserveer.aspx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>&begindat=<%# DataBinder.Eval(Container.DataItem, "begindat") %>&einddat=<%# DataBinder.Eval(Container.DataItem, "einddat") %>">
-            <%# DataBinder.Eval(Container.DataItem, "modelnaam") %>, <%#DataBinder.Eval(Container.DataItem, "autoKleur")%><br />
-            <%#DataBinder.Eval(Container.DataItem, "autoKenteken")%><br />
-            </a>
+            <div style="display:inline">
+            <a href="Reserveer.aspx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>&begindat=<%# DataBinder.Eval(Container.DataItem, "begindat") %>&einddat=<%# DataBinder.Eval(Container.DataItem, "einddat") %>&userID=<%# DataBinder.Eval(Container.DataItem, "klantID") %>">
+            <%# DataBinder.Eval(Container.DataItem, "modelnaam") %>, <%#DataBinder.Eval(Container.DataItem, "autoKleur")%></a>
+            <%#DataBinder.Eval(Container.DataItem, "autoKenteken")%>
+            </div>
+            <br />
           </ItemTemplate>
         </asp:Repeater>
             <asp:Label ID="lblGeenAutos" runat="server" Text="Label" Visible="false"></asp:Label>

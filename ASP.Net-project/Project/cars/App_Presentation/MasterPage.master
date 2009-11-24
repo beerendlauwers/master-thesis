@@ -66,9 +66,15 @@
                 				<li><a href="verhuiswagens.html">Verhuiswagens</a></li>
                           	</ul>
                 		</li>
-                		<li> 
-                		<a href="../Webpaginas/nieuwe gebruiker.aspx"><span class="l"></span><span class="r"></span><span class="t">Registreer</span></a>
-                		</li>
+                               <asp:LoginView ID="lgvRegistreren" runat="server">
+                               <LoggedInTemplate>
+                               </LoggedInTemplate>
+                               <AnonymousTemplate>
+                               <li>
+                                   <asp:HyperLink ID="lnkRegistraties" runat="server"><span class="l"></span><span class="r"></span><span class="t">Registreren</span></asp:HyperLink>
+                               </li>
+                               </AnonymousTemplate>
+                               </asp:LoginView>
                 		<li>
                 			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Uw gegevens</span></a>
                 			<ul>
@@ -95,6 +101,17 @@
                 				</li>
                 			</ul>
    					  </li>
+   					    
+                               <asp:LoginView ID="lgvMijnReservaties" runat="server">
+                               <LoggedInTemplate>
+                               <li>
+                                   <asp:HyperLink ID="lnkMijnReservaties" runat="server"><span class="l"></span><span class="r"></span><span class="t">Mijn Reservaties</span></asp:HyperLink>
+                               </li>
+                               </LoggedInTemplate>
+                               <AnonymousTemplate></AnonymousTemplate>
+                               </asp:LoginView>
+                			
+                		
                 		<li>
                 			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Contact</span></a>
                 		</li>

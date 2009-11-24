@@ -51,9 +51,11 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             overzichtdatatable.Columns.Add("fotoID", Type.GetType("System.Int32"))
             overzichtdatatable.Columns.Add("begindat", Type.GetType("System.DateTime"))
             overzichtdatatable.Columns.Add("einddat", Type.GetType("System.DateTime"))
+            overzichtdatatable.Columns.Add("klantID", Type.GetType("System.Int32"))
 
             'Data overzetten
             Dim autobll As New AutoBLL
+            Dim klantbll As New KlantBLL
             For i As Integer = 0 To datatable.Rows.Count - 1
                 overzichtrow = overzichtdatatable.NewRow()
 
@@ -64,6 +66,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
                 overzichtrow("modelnaam") = autobll.GetModelNameByModelID(datatable.Rows(i).Item("modelID"))
                 overzichtrow("begindat") = Date.Parse(Me.txtBegindatum.Text)
                 overzichtrow("einddat") = Date.Parse(Me.txtEinddatum.Text)
+                overzichtrow("klantID") = klantbll.GetKlantIDByKlantNaam(User.Identity.Name)
 
                 overzichtdatatable.Rows.Add(overzichtrow)
             Next
@@ -119,11 +122,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
                 'Haal datatable op met argumenten
                 Dim autobll As New AutoBLL
-<<<<<<< .mine
                 Dim datatable As Auto_s.tblAutoDataTable = autobll.GetBeschikbareAutosBy(begindatum, einddatum, filterOpties)
-=======
-                Dim datatable As Auto_s.tblAutoDataTable = AutoBLL.GetBeschikbareAutosBy(categorie, begindatum, einddatum, kleur)
->>>>>>> .r86
 
                 'Verwerk datatable tot overzichtsdatatable
                 Dim dt As Data.DataTable = MaakOverzichtsDataTable(datatable)

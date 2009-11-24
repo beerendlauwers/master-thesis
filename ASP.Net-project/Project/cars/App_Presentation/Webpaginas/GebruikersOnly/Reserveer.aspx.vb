@@ -10,10 +10,11 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_Reserveer
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Request.QueryString("autoID") IsNot Nothing And _
         Request.QueryString("begindat") IsNot Nothing And _
-        Request.QueryString("einddat") IsNot Nothing Then
+        Request.QueryString("einddat") IsNot Nothing And _
+        Request.QueryString("userID") IsNot Nothing Then
 
             Dim myCommand As New SqlCommand("INSERT INTO tblReservatie(klantID, autoID, reservatieBegindat, reservatieEinddat) VALUES( @klantID, @autoID, @begindat, @einddat)")
-            myCommand.Parameters.Add("@klantID", SqlDbType.Int).Value = 7
+            myCommand.Parameters.Add("@klantID", SqlDbType.Int).Value = Convert.ToInt32(Request.QueryString("userID"))
             myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = Convert.ToInt32(Request.QueryString("autoID"))
             myCommand.Parameters.Add("@begindat", SqlDbType.DateTime).Value = Date.Parse(Request.QueryString("begindat"))
             myCommand.Parameters.Add("@einddat", SqlDbType.DateTime).Value = Date.Parse(Request.QueryString("einddat"))

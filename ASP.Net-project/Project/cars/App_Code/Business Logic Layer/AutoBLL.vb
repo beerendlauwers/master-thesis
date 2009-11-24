@@ -55,6 +55,16 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function GetAutoNaamByAutoID(ByVal id As Integer) As String
+        Try
+            Dim autodal As New AutoDAL
+            Return autodal.GetAutoNaamByAutoID(id)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+
     Public Function GetAllBrandstofTypes() As Auto_s.tblBrandstofDataTable
         Try
             Return _adapterBrandstofType.GetData()

@@ -104,6 +104,26 @@ Public Class AutoDAL
         Return dt
     End Function
 
+    Public Function GetAutoNaamByAutoID(ByVal id As Integer) As String
+        myConnection.Open()
+
+        Dim myCommand As New SqlCommand("SELECT merknaam + ' ' + modelNaam AS naam FROM tblAuto A, tblModel MO, tblMerk ME WHERE autoID = @autoID AND A.modelID = MO.modelID AND MO.merkID = ME.merkID")
+        myCommand.Parameters.Add("@autoID", SqlDbType.Int)
+        myCommand.Parameters("@autoID").Value = id
+        myCommand.Connection = myConnection
+
+        Dim myReader As SqlDataReader
+        myReader = myCommand.ExecuteReader
+
+        If (myReader.HasRows) Then
+            myReader.Read()
+            Return myReader.GetValue(0).ToString
+        Else
+            Return "Fout tijdens ophalen van gegevens."
+        End If
+
+    End Function
+
     Public Function GetKleurenByCategorieID(ByVal categorieID As Integer) As String()
         myConnection.Open()
 

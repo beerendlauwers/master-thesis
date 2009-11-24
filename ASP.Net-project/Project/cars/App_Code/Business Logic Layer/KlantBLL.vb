@@ -11,6 +11,15 @@ Public Class KlantBLL
         End Try
     End Function
 
+    Public Function GetKlantIDByKlantNaam(ByVal naam As String) As Integer
+        Try
+            Dim klantdal As New KlantDAL
+            Return klantdal.getKlantIDByNaam(naam)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function DeleteKlant(ByVal klantID As Integer) As Boolean
         Try
             If (_adapterKlant.Delete(klantID)) Then
