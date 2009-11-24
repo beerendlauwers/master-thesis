@@ -123,7 +123,7 @@
                 Dagtarief:&nbsp;<asp:TextBox ID="txtAutoDagTarief" runat="server" 
                     Text='<%# Bind("autoDagTarief") %>' />
                 <br />
-                Foto:&nbsp;<asp:FileUpload ID="fupAutoFoto" runat="server" />
+                Foto:&nbsp;<asp:FileUpload ID="fupAutoFoto" runat="server"  UpdateMode="conditional" />
                 <br />
                 <br />                
                 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
@@ -131,8 +131,7 @@
                 <div>
                 Optie:&nbsp;<asp:DropDownList ID="ddlOpties" runat="server" 
                     DataSourceID="odsOptie" DataTextField="optieOmschrijving" 
-                    DataValueField="optieID" 
-                    >
+                    DataValueField="optieID">
                 </asp:DropDownList>
                 
                 &nbsp;<asp:Button ID="btnVoegtoe" runat="server" onclick="btnVoegtoe_Click" 

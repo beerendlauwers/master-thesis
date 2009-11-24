@@ -32,6 +32,8 @@ Partial Class App_Presentation_NieuweAutoAanmaken
         Dim img As FileUpload = CType(frvNieuweAuto.FindControl("fupAutoFoto"), FileUpload)
         Dim img_byte As Byte() = Nothing
 
+        Dim test As String = img.FileName
+
         If img.HasFile AndAlso Not img.PostedFile Is Nothing Then
             'foto in bestand steken
             Dim File As HttpPostedFile = img.PostedFile
@@ -49,13 +51,17 @@ Partial Class App_Presentation_NieuweAutoAanmaken
         'Auto toevoegen.
         If (autobll.AddAuto(auto)) Then
             'yeuy, geslaagd
-            autoOptie.AutoID = autodal.getAutoID(auto.autoKenteken)
+            Dim autoID As Integer = autodal.getAutoID(auto.autoKenteken)
+            autoOptie.AutoID = autoID
             Dim i As Integer
 
             For i = 0 To CType(frvNieuweAuto.FindControl("lstVoegtoeID"), ListBox).Items.Count - 1
                 autoOptie.OptieID = CType(frvNieuweAuto.FindControl("lstVoegtoeID"), ListBox).Items(i).Text
                 autoOptiebll.autoOptieAdd(autoOptie)
             Next
+
+            'Extra foto
+            autodal.InsertFoto(autoID, img.FileName, "image/jpeg", img_byte)
         Else
             'kut 
         End If

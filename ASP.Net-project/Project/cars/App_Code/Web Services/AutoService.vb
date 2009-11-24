@@ -41,6 +41,42 @@ Public Class AutoService
     End Function
 
     <WebMethod()> _
+    Public Function GeefMerkenVoorCategorie(ByVal knownCategoryValues As String, ByVal category As String) As CascadingDropDownNameValue()
+
+        Dim keyvalues As StringDictionary = CascadingDropDown.ParseKnownCategoryValuesString(knownCategoryValues)
+        Dim categorieID As Integer
+
+        'Als we geen Categorie vinden of als de categorie geen waarde heeft, returnen we niks.
+        If (Not keyvalues.ContainsKey("Categorie") Or Not Int32.TryParse(keyvalues("Categorie"), categorieID)) Then
+            Return Nothing
+        End If
+
+        ' BLL contacteren om een lijst van merken te verkrijgen.
+        Dim merken As Auto_s.tblMerkDataTable = _autoBLL.GetMerkenByCategorie(categorieID)
+
+        'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
+        Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
+
+        'Tijdelijke variabelen initialiseren
+        Dim merknaam As String = String.Empty
+        Dim merkID As Integer = 0
+        Dim waarde As CascadingDropDownNameValue
+
+        For Each dr As Auto_s.tblMerkRow In merken
+            'Waardes lezen uit row
+            merknaam = CType(dr.merkNaam, String)
+            merkID = CType(dr.merkID, Integer)
+
+            'Waardes opslaan in tijdelijke CascadingDropDownNameValue
+            waarde = New CascadingDropDownNameValue(merknaam, merkID)
+            'Deze waarde toevoegen aan de dropdown
+            dropdownwaardes.Add(waarde)
+        Next
+
+        Return dropdownwaardes.ToArray()
+    End Function
+
+    <WebMethod()> _
     Public Function GeefModellenVoorMerk(ByVal knownCategoryValues As String, ByVal category As String) As CascadingDropDownNameValue()
 
         Dim keyvalues As StringDictionary = CascadingDropDown.ParseKnownCategoryValuesString(knownCategoryValues)

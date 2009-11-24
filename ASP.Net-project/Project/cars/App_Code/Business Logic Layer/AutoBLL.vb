@@ -9,6 +9,7 @@ Public Class AutoBLL
     Private _adapterModel As New Auto_sTableAdapters.tblModelTableAdapter
     Private _adapterMerk As New Auto_sTableAdapters.tblMerkTableAdapter
     Private _adapterCategorie As New Auto_sTableAdapters.tblCategorieTableAdapter
+    Private _adapterFoto As New Auto_sTableAdapters.tblAutofotoTableAdapter
 
     Public Function GetAllAutos() As Auto_s.tblAutoDataTable
         Try
@@ -139,6 +140,14 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function GetMerkenByCategorie(ByVal categorieID As Integer) As Auto_s.tblMerkDataTable
+        Try
+            Return _adapterMerk.GetMerkenByCategorie(categorieID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllModels() As Auto_s.tblModelDataTable
         Try
             Return _adapterModel.GetData()
@@ -178,14 +187,12 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Public Function GetBeschikbareAutosBy(ByVal categorieID As Integer, ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, Optional ByVal kleur As String = "") As Auto_s.tblAutoDataTable
+    Public Function GetBeschikbareAutosBy(ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, ByVal filterOpties() As String) As Auto_s.tblAutoDataTable
         Try
 
-            If (kleur = "") Then
-                kleur = String.Empty
-            End If
             'Alle auto's van een bepaalde categorie opvragen.
-            Dim autodata As Auto_s.tblAutoDataTable = _adapterAuto.GetAllAutosBy(categorieID)
+            Dim myAutoDAL As New AutoDAL
+            Dim autodata As Auto_s.tblAutoDataTable = myAutoDAL.GetAutosBy(filterOpties)
 
             'Auto-variabelen.
             Dim returneddata As New Auto_s.tblAutoDataTable
@@ -273,6 +280,7 @@ Public Class AutoBLL
 
         Catch ex As Exception
             Throw ex
+            Return 0
         End Try
     End Function
 
@@ -285,5 +293,16 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function GetFotoIDByAutoID(ByVal autoID As Integer) As Integer
+        Try
+            If (_adapterFoto.GetFotoByID(autoID).Rows.Count > 0) Then
+                Return _adapterFoto.GetFotoByID(autoID).Rows(0).Item("autoFotoID")
+            Else
+                Return 0
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 
 End Class
