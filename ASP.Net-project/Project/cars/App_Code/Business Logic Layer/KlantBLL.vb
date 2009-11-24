@@ -27,7 +27,7 @@ Public Class KlantBLL
         Try
             If (_adapterKlant.Insert(k.Gebruikersnaam, k.Gebruikerspaswoord, k.Naam, _
                                      k.Voornaam, k.Geboortedatum, k.Identiteitskaartnummer, _
-                                     k.Rijbewijsnummer, k.Telefoon, k.Email, k.Commentaar, _
+                                     k.Rijbewijsnummer, k.Telefoon, k.BedrijfLocatie, k.Email, k.Commentaar, _
                                      k.BTWnummer, k.IsProblematisch, k.HeeftRechtOpKorting, _
                                      k.KortingWaarde, k.AantalDagenGehuurd, k.AantalDagenGereserveerd, _
                                      k.AantalKilometerGereden)) Then

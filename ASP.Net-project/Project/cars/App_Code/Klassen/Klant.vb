@@ -16,6 +16,7 @@ Public Class Klant
     Private _email As String
     Private _commentaar As String
     Private _btwnummer As String
+    Private _bedrijfLocatie As String
 
     'Klanteninformatie
     Private _isProblematisch As Boolean
@@ -25,7 +26,9 @@ Public Class Klant
     Private _aantalDagenGereserveerd As Integer
     Private _aantalKilometerGereden As Double
 #End Region
+    Sub New()
 
+    End Sub
     Sub New(ByVal id As Integer, ByVal gnaam As String, ByVal gpass As String, ByVal naam As String, _
              ByVal vnaam As String, ByVal gebdat As Date, ByVal idkaartnr As String, _
              ByVal rijbewijsnr As String, ByVal telefoon As String, ByVal email As String)
@@ -150,6 +153,16 @@ Public Class Klant
             _btwnummer = value
         End Set
     End Property
+
+    Public Property BedrijfLocatie() As String
+        Get
+            Return _bedrijfLocatie
+        End Get
+        Set(ByVal value As String)
+            _bedrijfLocatie = value
+        End Set
+    End Property
+
 
     Public Property IsProblematisch() As Boolean
         Get

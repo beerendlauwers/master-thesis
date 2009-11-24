@@ -85,14 +85,14 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             Try
                 'Haal datatable op met argumenten
                 Dim autobll As New AutoBLL
-                Dim datatable As Auto_s.tblAutoDataTable = autobll.GetBeschikbareAutosBy(categorie, begindatum, einddatum, kleur)
+                Dim datatable As Auto_s.tblAutoDataTable = AutoBLL.GetBeschikbareAutosBy(categorie, begindatum, einddatum, kleur)
 
                 'Verwerk datatable tot overzichtsdatatable
                 repOverzicht.DataSource = MaakOverzichtsDataTable(datatable)
             Catch ex As Exception
                 Throw ex
             End Try
-            
+
         Else
             repOverzicht.DataSource = Nothing
         End If

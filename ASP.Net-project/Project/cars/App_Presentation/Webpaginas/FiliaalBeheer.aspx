@@ -7,13 +7,10 @@
     <title>FiliaalBeheer</title>
 </head>
 <body>
+
     <table>
     <tr>
-    <td>
-    <div>
-        <asp:Label ID="Label2" runat="server" Text="Filiaal Toevoegen:"></asp:Label>
-    </div>
-    
+    <td>    
     <div>
         <asp:Label ID="lblFiliaalNaam" runat="server" Text="FiliaalNaam: "> </asp:Label><asp:TextBox ID="txtFiliaalNaam"
             runat="server"></asp:TextBox>
@@ -67,7 +64,7 @@
     </td>
     </tr>
     </table>
-    
+   
 </body>
 </html>
 </asp:Content>

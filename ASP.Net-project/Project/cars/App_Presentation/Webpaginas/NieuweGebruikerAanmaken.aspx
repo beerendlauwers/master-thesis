@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweGebruikerAanmaken.aspx.vb" Inherits="App_Presentation_NieuweGebruikerAanmaken" MasterPageFile="~/App_Presentation/MasterPage.master" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    <form id="frmNieuweGebruiker" runat="server">
+    
     <div>
     
     <asp:FormView ID="frvNieuweGebruiker" runat="server" DataKeyNames="klantID" 
@@ -48,7 +48,7 @@
                 ControlToValidate="txtGebdat" 
                 ErrorMessage="U dient een geldige datum op te geven." 
                 ValidationExpression="(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d"><img 
-                src="../Images/remove.gif" /></asp:RegularExpressionValidator>
+                src="../Images/remove.gif" alt="neger"/></asp:RegularExpressionValidator>
             <br />
             Identiteitskaartnummer:
             <asp:TextBox ID="txtIdKaartNummer" runat="server" 
@@ -56,7 +56,7 @@
             <asp:RegularExpressionValidator ID="valIdentiteitskaartNR" runat="server" 
                 ControlToValidate="txtIdKaartNummer" 
                 ErrorMessage="U dient een geldig identiteitskaartnummer op te geven." 
-                ValidationExpression="\d{3}-\d{7}-\d{2}"><img src="../Images/remove.gif" alt='remove'/></asp:RegularExpressionValidator>
+                ValidationExpression="\d{6}-\d{5}"><img src="../Images/remove.gif" alt='remove'/></asp:RegularExpressionValidator>
             <br />
             Rijbewijsnummer:
             <asp:TextBox ID="txtRijbewijs" runat="server" 
@@ -64,7 +64,7 @@
             <asp:RequiredFieldValidator ID="valRijbewijsnummer" runat="server" 
                 ControlToValidate="txtRijbewijs" 
                 ErrorMessage="U dient een geldig rijbewijsnummer op te geven."><img 
-                src="../Images/remove.gif" /></asp:RequiredFieldValidator>
+                src="../Images/remove.gif" alt="neger" /></asp:RequiredFieldValidator>
             <br />
             Telefoon:
             <asp:TextBox ID="txtTelefoon" runat="server" 
@@ -72,7 +72,7 @@
             <asp:RequiredFieldValidator ID="valTelefoon" runat="server" 
                 ControlToValidate="txtTelefoon" 
                 ErrorMessage="U dient een geldig telefoonnummer op te geven."><img 
-                src="../Images/remove.gif" /></asp:RequiredFieldValidator>
+                src="../Images/remove.gif" alt="neger" /></asp:RequiredFieldValidator>
             <br />
             E-mail adres:
             <asp:TextBox ID="txtEmail" runat="server" Text='<%# Bind("klantEmail") %>' />
@@ -80,14 +80,15 @@
                 ControlToValidate="txtEmail" 
                 ErrorMessage="U dient een geldig E-mail adres op te geven." 
                 ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"><img 
-                src="../Images/remove.gif" /></asp:RegularExpressionValidator>
+                src="../Images/remove.gif" alt="neger" /></asp:RegularExpressionValidator>
             <br />
             BTW-nummer:
             <asp:TextBox ID="txtBTWnummer" runat="server" 
                 Text='<%# Bind("klantBTWnummer") %>' />
             <br />
             <asp:LinkButton ID="InsertButton0" runat="server" CausesValidation="True" 
-                CommandName="Insert" Text="Maak gebruiker aan" />
+                CommandName="Insert" Text="Maak gebruiker aan" 
+                onclick="InsertButton0_Click" />
             &nbsp;<asp:LinkButton ID="InsertCancelButton0" runat="server" 
                 CausesValidation="False" CommandName="Cancel" Text="Annuleer" />
         </InsertItemTemplate>
@@ -105,5 +106,5 @@
             </DeleteParameters>
     </asp:ObjectDataSource>
     
-    </form>
+    
 </asp:Content>

@@ -8,6 +8,7 @@
     <div>
     
     </div>
+    <table><tr><td>
     <asp:CreateUserWizard ID="CreateUserWizard1" runat="server">
         <WizardSteps>
             <asp:CreateUserWizardStep runat="server">
@@ -164,6 +165,14 @@
                             </td>
                         </tr>
                         <tr>
+                        <td align="right">
+                                <asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf"></asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtBedrijf" runat="server"></asp:TextBox>
+                            </td>
+                        </tr>
+                        <tr>
                             <td align="center" colspan="2">
                                 <asp:CompareValidator ID="PasswordCompare" runat="server" 
                                     ControlToCompare="Password" ControlToValidate="ConfirmPassword" 
@@ -202,6 +211,25 @@
             </asp:CompleteWizardStep>
         </WizardSteps>
     </asp:CreateUserWizard>
+    </td>
+    <td align=>
+        <asp:Label ID="lblParticulier" runat="server" Text="Particulier"></asp:Label>
+        <asp:RadioButton ID="rdbParticulier" runat="server" GroupName="gebruiker" 
+            Checked="True" />
+        
+        
+        <br />
+        <asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf"></asp:Label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <asp:RadioButton ID="rdbBedrijf" runat="server" GroupName="gebruiker" 
+            AutoPostBack="True" />
+        <br />
+        
+        
+        <asp:LinkButton ID="lnbChauffeur" runat="server">Chauffeur</asp:LinkButton>
+        
+        
+    </tr></table>
 </body>
 </html>
 </asp:Content>

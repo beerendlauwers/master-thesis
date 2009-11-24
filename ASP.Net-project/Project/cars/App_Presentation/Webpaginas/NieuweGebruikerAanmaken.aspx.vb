@@ -8,4 +8,8 @@ Partial Class App_Presentation_NieuweGebruikerAanmaken
             e.Values.Item(1) = FormsAuthentication.HashPasswordForStoringInConfigFile(e.Values.Item(1), "MD5")
         End If
     End Sub
+
+    Protected Sub InsertButton0_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+
+    End Sub
 End Class

@@ -21,7 +21,7 @@
 
 
 <body>
-<form id="grmbl" runat="server">
+<form id="frankismegapissig" runat="server">
 <div id="art-page-background-simple-gradient">
 </div>
 <div id="art-main">
@@ -55,7 +55,7 @@
                 		<li>
 						<a href="index_wagens.html"><span class="l"></span><span class="r"></span><span class="t">Verhuur auto's</span></a>
                 			<ul>
-                		   		<li><a href="personenwagens.html">Personenwagens</a>
+                		   		<li><a href="../Webpaginas/GebruikersOnly/NieuweReservatieAanmaken.aspx">Personenwagens</a>
                 					<ul>
                 						<li><a href="#">Compacte wagens</a></li>
                 						<li><a href="#">Middeklasse wagens</a></li>
@@ -65,6 +65,9 @@
                    				<li><a href="exclusieve_wagens.html">Exclusieve wagens</a></li>
                 				<li><a href="verhuiswagens.html">Verhuiswagens</a></li>
                           	</ul>
+                		</li>
+                		<li> 
+                		<a href="../Webpaginas/nieuwe gebruiker.aspx"><span class="l"></span><span class="r"></span><span class="t">Registreer</span></a>
                 		</li>
                 		<li>
                 			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Uw gegevens</span></a>
@@ -133,8 +136,6 @@
                                 </h2>
                                 <div class="art-PostContent">
                                 </div>
-                                
-                                
                                   <form id="frmMain">
                                 <div id="loginscreen">
                                     <asp:loginview id="loginView" runat="server">
