@@ -1,110 +1,224 @@
-﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweGebruikerAanmaken.aspx.vb" Inherits="App_Presentation_NieuweGebruikerAanmaken" MasterPageFile="~/App_Presentation/MasterPage.master" %>
-
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweGebruikerAanmaken.aspx.vb" Inherits="App_Presentation_Webpaginas_nieuwe_gebruiker" MasterPageFile="~/App_Presentation/MasterPage.master" %>
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    
-    <div>
-    
-    <asp:FormView ID="frvNieuweGebruiker" runat="server" DataKeyNames="klantID" 
-        DataSourceID="odsKlanten" DefaultMode="Insert" style="margin-top: 0px" 
-            Height="280px" Width="428px">
-        <InsertItemTemplate>
-            Gebruikersnaam:
-            <asp:TextBox ID="txtGebruikersnaam" runat="server" 
-                Text='<%# Bind("klantGebruikersnaam") %>' />
-            <asp:RequiredFieldValidator ID="valGebruikersnaam" runat="server" 
-                ControlToValidate="txtGebruikersnaam" 
-                ErrorMessage="U dient een gebruikersnaam op te geven.">
-                <img src="../Images/remove.gif" alt='remove' /></asp:RequiredFieldValidator>
-            <br />
-            Paswoord:
-            <asp:TextBox ID="txtPaswoord" runat="server" 
-                Text='<%# Bind("klantPaswoord") %>' TextMode="Password" />
-            <asp:CompareValidator ID="valPaswoord" runat="server" 
-                ControlToCompare="txtPaswoordOpnieuw" ControlToValidate="txtPaswoord" 
-                ErrorMessage="De paswoorden komen niet met elkaar overeen."><img 
-                src="../Images/remove.gif" alt='remove'/></asp:CompareValidator>
-            <br />
-            <asp:Label ID="lblPaswoordOpnieuw" runat="server" 
-                Text="Geef paswoord opnieuw in:"></asp:Label>
-            <asp:TextBox ID="txtPaswoordOpnieuw" runat="server" TextMode="Password"></asp:TextBox>
-            <br />
-            Naam:
-            <asp:TextBox ID="txtNaam" runat="server" Text='<%# Bind("klantNaam") %>' />
-            <asp:RequiredFieldValidator ID="valNaam" runat="server" 
-                ControlToValidate="txtNaam" ErrorMessage="U dient een naam op te geven."><img 
-                src="../Images/remove.gif" alt='remove' /></asp:RequiredFieldValidator>
-            <br />
-            Voornaam:
-            <asp:TextBox ID="txtVoornaam" runat="server" 
-                Text='<%# Bind("klantVoornaam") %>' />
-            <asp:RequiredFieldValidator ID="valVoornaam" runat="server" 
-                ControlToValidate="txtVoornaam" 
-                ErrorMessage="U dient een voornaam op te geven."><img 
-                src="../Images/remove.gif" alt='remove'/></asp:RequiredFieldValidator>
-            <br />
-            Geboortedatum:
-            <asp:TextBox ID="txtGebdat" runat="server" Text='<%# Bind("klantGebdat") %>' />
-            <asp:RegularExpressionValidator ID="valGeboorteDatum" runat="server" 
-                ControlToValidate="txtGebdat" 
-                ErrorMessage="U dient een geldige datum op te geven." 
-                ValidationExpression="(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d"><img 
-                src="../Images/remove.gif" alt="neger"/></asp:RegularExpressionValidator>
-            <br />
-            Identiteitskaartnummer:
-            <asp:TextBox ID="txtIdKaartNummer" runat="server" 
-                Text='<%# Bind("klantIdKaartNummer") %>' />
-            <asp:RegularExpressionValidator ID="valIdentiteitskaartNR" runat="server" 
-                ControlToValidate="txtIdKaartNummer" 
-                ErrorMessage="U dient een geldig identiteitskaartnummer op te geven." 
-                ValidationExpression="\d{6}-\d{5}"><img src="../Images/remove.gif" alt='remove'/></asp:RegularExpressionValidator>
-            <br />
-            Rijbewijsnummer:
-            <asp:TextBox ID="txtRijbewijs" runat="server" 
-                Text='<%# Bind("klantRijbewijs") %>' />
-            <asp:RequiredFieldValidator ID="valRijbewijsnummer" runat="server" 
-                ControlToValidate="txtRijbewijs" 
-                ErrorMessage="U dient een geldig rijbewijsnummer op te geven."><img 
-                src="../Images/remove.gif" alt="neger" /></asp:RequiredFieldValidator>
-            <br />
-            Telefoon:
-            <asp:TextBox ID="txtTelefoon" runat="server" 
-                Text='<%# Bind("klantTelefoon") %>' />
-            <asp:RequiredFieldValidator ID="valTelefoon" runat="server" 
-                ControlToValidate="txtTelefoon" 
-                ErrorMessage="U dient een geldig telefoonnummer op te geven."><img 
-                src="../Images/remove.gif" alt="neger" /></asp:RequiredFieldValidator>
-            <br />
-            E-mail adres:
-            <asp:TextBox ID="txtEmail" runat="server" Text='<%# Bind("klantEmail") %>' />
-            <asp:RegularExpressionValidator ID="valEmail" runat="server" 
-                ControlToValidate="txtEmail" 
-                ErrorMessage="U dient een geldig E-mail adres op te geven." 
-                ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"><img 
-                src="../Images/remove.gif" alt="neger" /></asp:RegularExpressionValidator>
-            <br />
-            BTW-nummer:
-            <asp:TextBox ID="txtBTWnummer" runat="server" 
-                Text='<%# Bind("klantBTWnummer") %>' />
-            <br />
-            <asp:LinkButton ID="InsertButton0" runat="server" CausesValidation="True" 
-                CommandName="Insert" Text="Maak gebruiker aan" 
-                onclick="InsertButton0_Click" />
-            &nbsp;<asp:LinkButton ID="InsertCancelButton0" runat="server" 
-                CausesValidation="False" CommandName="Cancel" Text="Annuleer" />
-        </InsertItemTemplate>
-    </asp:FormView>
-    
-        <asp:ValidationSummary ID="vlsFoutenOverzicht" runat="server" />
-    
-    </div>
-    
-        <asp:ObjectDataSource ID="odsKlanten" runat="server" 
-        DataObjectTypeName="Klant&amp;" DeleteMethod="DeleteKlant" 
-        InsertMethod="AddKlant" SelectMethod="GetAllKlanten" TypeName="KlantBLL">
-            <DeleteParameters>
-                <asp:Parameter Name="klantID" Type="Int32" />
-            </DeleteParameters>
-    </asp:ObjectDataSource>
-    
-    
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <title>Untitled Page</title>
+<body>
+    <asp:ScriptManager ID="scmManager" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
+    <table><tr><td>
+    <asp:CreateUserWizard ID="wizard" runat="server">
+        <WizardSteps>
+            <asp:CreateUserWizardStep runat="server">
+                <ContentTemplate>
+                    <asp:UpdatePanel ID="updBedrijf" runat="server" UpdateMode="Conditional">
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID="chkIsBedrijf" />
+                        </Triggers>
+                        <ContentTemplate>
+                    <table border="0">
+                        <tr>
+                            <td align="center" colspan="2">
+                                Maak een nieuwe gebruiker aan.</td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <asp:Label ID="UserNameLabel" runat="server" AssociatedControlID="UserName">Gebruikersnaam:</asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="UserName" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="UserNameRequired" runat="server" 
+                                    ControlToValidate="UserName" ErrorMessage="User Name is required." 
+                                    ToolTip="User Name is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <asp:Label ID="PasswordLabel" runat="server" AssociatedControlID="Password">Paswoord:</asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="Password" runat="server" TextMode="Password"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="PasswordRequired" runat="server" 
+                                    ControlToValidate="Password" ErrorMessage="Password is required." 
+                                    ToolTip="Password is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <asp:Label ID="ConfirmPasswordLabel" runat="server" 
+                                    AssociatedControlID="ConfirmPassword">Bevestig Paswoord:</asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="ConfirmPassword" runat="server" TextMode="Password"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="ConfirmPasswordRequired" runat="server" 
+                                    ControlToValidate="ConfirmPassword" 
+                                    ErrorMessage="Confirm Password is required." 
+                                    ToolTip="Confirm Password is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <asp:Label ID="EmailLabel" runat="server" AssociatedControlID="Email">E-mail:</asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="Email" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="EmailRequired" runat="server" 
+                                    ControlToValidate="Email" ErrorMessage="E-mail is required." 
+                                    ToolTip="E-mail is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <asp:Label ID="QuestionLabel" runat="server" AssociatedControlID="Question">Beveiligingsvraag:</asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="Question" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="QuestionRequired" runat="server" 
+                                    ControlToValidate="Question" ErrorMessage="Security question is required." 
+                                    ToolTip="Security question is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <asp:Label ID="AnswerLabel" runat="server" AssociatedControlID="Answer">Beveiligingsantwoord:</asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="Answer" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="AnswerRequired" runat="server" 
+                                    ControlToValidate="Answer" ErrorMessage="Security answer is required." 
+                                    ToolTip="Security answer is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <asp:Label ID="lblVoornaam" runat="server" Text="Voornaam"></asp:Label>
+                            </td>
+                        <td>
+                            <asp:TextBox ID="txtVoornaam" runat="server"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="AnswerRequired0" runat="server" 
+                                ControlToValidate="txtVoornaam" ErrorMessage="Voornaam moet ingevuld zijn." 
+                                ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td align="right">
+                                <asp:Label ID="lblNaam" runat="server" Text="Naam"></asp:Label>
+                            </td>
+                            <td style="font-weight: 700">
+                                <asp:TextBox ID="txtNaam" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="AnswerRequired1" runat="server" 
+                                    ControlToValidate="txtNaam" ErrorMessage="Naam moet ingevuld zijn." 
+                                    ToolTip="Security answer is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td align="right">
+                                <asp:Label ID="lblGeboorte" runat="server" Text="Geboortedatum"></asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtGeboorte" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="AnswerRequired2" runat="server" 
+                                    ControlToValidate="txtGeboorte" 
+                                    ErrorMessage="Geboortedatum moet ingevuld zijn." 
+                                    ToolTip="Security answer is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td align="right">
+                                <asp:Label ID="lblIdentiteitsnr" runat="server" Text="Identiteitsnummer"></asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtIdentiteitsNr" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="AnswerRequired3" runat="server" 
+                                    ControlToValidate="txtIdentiteitsNr" 
+                                    ErrorMessage="Identiteitsnummer moet ingevuld zijn." 
+                                    ToolTip="Security answer is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td align="right">
+                                <asp:Label ID="lblRijbewijsnr" runat="server" Text="Rijbewijsnummer"></asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtRijbewijsNr" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="AnswerRequired4" runat="server" 
+                                    ControlToValidate="txtRijbewijsNr" 
+                                    ErrorMessage="Rijbewijsnummer moet ingevuld zijn." 
+                                    ToolTip="Security answer is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                                          
+                        <tr>
+                        <td align="right">
+                                <asp:Label ID="lblTelefoon" runat="server" Text="Telefoon"></asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtTelefoon" runat="server"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="AnswerRequired5" runat="server" 
+                                    ControlToValidate="txtTelefoon" ErrorMessage="Telefoon moet ingevuld zijn." 
+                                    ToolTip="Security answer is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td align="right">Bedrijf</td>
+                        <td><asp:CheckBox ID="chkIsBedrijf" runat="server" OnCheckedChanged="MaakBedrijfZichtbaar" AutoPostBack="true"/></td>
+                        </tr>
+                        <tr>
+                        <td align="right"><asp:Label ID="lblBedrijfnaam" runat="server" Text="Bedrijfsnaam" Visible="false"></asp:Label></td>
+                        <td><asp:TextBox ID="txtBedrijfnaam" runat="server" Visible="false"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                        <td align="right"><asp:Label ID="lblLocatie" runat="server" Text="Vestigingslocatie" Visible="false"></asp:Label></td>
+                        <td><asp:TextBox ID="txtLocatie" runat="server" Visible="false"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                        <td align="right"><asp:Label ID="lblBTW" runat="server" Text="BTW-nummer" Visible="false"></asp:Label></td>
+                        <td><asp:TextBox ID="txtBTW" runat="server" Visible="false"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                            <td align="center" colspan="2">
+                                <asp:CompareValidator ID="PasswordCompare" runat="server" 
+                                    ControlToCompare="Password" ControlToValidate="ConfirmPassword" 
+                                    Display="Dynamic" 
+                                    ErrorMessage="The Password and Confirmation Password must match." 
+                                    ValidationGroup="CreateUserWizard1"></asp:CompareValidator>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" colspan="2" style="color:Red;">
+                                <asp:Literal ID="ErrorMessage" runat="server" EnableViewState="False"></asp:Literal>
+                            </td>
+                        </tr>
+                    </table>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+                </ContentTemplate>
+            </asp:CreateUserWizardStep>
+            <asp:CompleteWizardStep runat="server" >
+                <ContentTemplate>
+                    <table border="0">
+                        <tr>
+                            <td align="center" colspan="2">
+                                Complete</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Your account has been successfully created.</td>
+                        </tr>
+                        <tr>
+                            <td align="right" colspan="2">
+                                <asp:Button ID="ContinueButton" runat="server" CausesValidation="False" 
+                                    CommandName="Continue" Text="Continue" ValidationGroup="CreateUserWizard1" />
+                            </td>
+                        </tr>
+                    </table>
+                </ContentTemplate>
+            </asp:CompleteWizardStep>
+        </WizardSteps>
+    </asp:CreateUserWizard>
+    </td>
+    </tr></table>
+</body>
+</html>
 </asp:Content>
+

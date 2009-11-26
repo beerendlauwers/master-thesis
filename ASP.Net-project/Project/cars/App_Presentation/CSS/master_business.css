@@ -281,7 +281,7 @@ table.position
 
 .art-menu ul
 {
-	background-image: url(''../Images/spacer.gif');
+	background-image: url('../Images/spacer.gif');
 	padding: 10px 30px 30px 30px;
 	margin: -10px 0 0 -30px;
 }
