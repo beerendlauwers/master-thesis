@@ -18,7 +18,7 @@ Public Class MerkDAL
 
     Public Function GetMerkByCategorie(ByVal categorieID As Integer) As Autos.tblMerkDataTable
 
-        Dim myCommand As New SqlCommand("SELECT * FROM tblMerk ME, tblModel MO, tblAuto A WHERE ME.merkID = MO.merkID AND MO.modelID = A.modelID AND A.categorieID = @categorieID")
+        Dim myCommand As New SqlCommand("SELECT ME.* FROM tblMerk ME, tblModel MO, tblAuto A WHERE ME.merkID = MO.merkID AND MO.modelID = A.modelID AND A.categorieID = @categorieID")
         myCommand.Parameters.Add("@categorieID", SqlDbType.Int).Value = categorieID
         myCommand.Connection = _myConnection
 

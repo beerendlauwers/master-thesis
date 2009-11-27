@@ -6,7 +6,7 @@ Public Class KlantBLL
 
     Public Function InsertUserProfiel(ByRef r As Klanten.tblUserProfielRow) As Boolean
         Try
-            If (_adapterUserProfiel.Insert(r.userID, r.userVoornaam, r.userNaam, r.userGeboortedatum, r.userIdentiteitskaartnr, r.userRijbewijsnr, r.userTelefoon, r.userEmail, r.userCommentaar, r.userIsProblematisch, r.userHeeftRechtOpKorting, r.userKortingWaarde, r.userAantalDagenGehuurd, r.userAantalDagenGereserveerd, r.userAantalKilometerGereden, r.userIsBedrijf, r.userBTWnummer, r.userBedrijfnaam, r.userBedrijfVestigingslocatie)) Then
+            If (_adapterUserProfiel.Insert(r.userID, r.userVoornaam, r.userNaam, r.userGeboortedatum, r.userIdentiteitskaartnr, r.userRijbewijsnr, r.userTelefoon, r.userCommentaar, r.userIsProblematisch, r.userHeeftRechtOpKorting, r.userKortingWaarde, r.userAantalDagenGehuurd, r.userAantalDagenGereserveerd, r.userAantalKilometerGereden, r.userIsBedrijf, r.userBTWnummer, r.userBedrijfnaam, r.userBedrijfVestigingslocatie)) Then
                 Return True
             Else
                 Return False

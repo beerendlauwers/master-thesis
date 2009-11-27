@@ -75,14 +75,27 @@ Partial Class App_Presentation_NieuweAutoAanmaken
     ' End Sub
 
     Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs)
-        CType(frvNieuweAuto.FindControl("lstOpties"), ListBox).Items.Add(CType(frvNieuweAuto.FindControl("ddlOpties"), DropDownList).SelectedItem)
-        CType(frvNieuweAuto.FindControl("lstVoegtoeID"), ListBox).Items.Add(CType(frvNieuweAuto.FindControl("ddlOpties"), DropDownList).SelectedValue)
+        'Waardes ophalen uit ddlOpties
+        Dim ddlOpties As DropDownList = CType(frvNieuweAuto.FindControl("ddlOpties"), DropDownList)
+        Dim text As String = ddlOpties.SelectedItem.Text
+        Dim value As Integer = ddlOpties.SelectedItem.Value
+
+        'Waardes in de optielijst steken
+        Dim lstOpties As ListBox = CType(frvNieuweAuto.FindControl("lstOpties"), ListBox)
+        lstOpties.Items.Add(New ListItem(text, value))
+    End Sub
+
+    Private Sub MaakNieuweOptieControlsZichtbaar(ByVal isZichtbaar As Boolean)
+        CType(frvNieuweAuto.FindControl("lblOptieNaam"), Label).Visible = isZichtbaar
+        CType(frvNieuweAuto.FindControl("txtOptieNaam"), TextBox).Visible = isZichtbaar
+        CType(frvNieuweAuto.FindControl("lblOptiePrijs"), Label).Visible = isZichtbaar
+        CType(frvNieuweAuto.FindControl("txtOptiePrijs"), TextBox).Visible = isZichtbaar
+        CType(frvNieuweAuto.FindControl("btnVoegoptietoe"), Button).Visible = isZichtbaar
+        CType(frvNieuweAuto.FindControl("btnNieuweOptie"), Button).Visible = Not isZichtbaar
     End Sub
 
     Protected Sub btnNieuweOptie_Click(ByVal sender As Object, ByVal e As System.EventArgs)
-        CType(frvNieuweAuto.FindControl("txtOptieNaam"), TextBox).Visible = True
-        CType(frvNieuweAuto.FindControl("txtOptiePrijs"), TextBox).Visible = True
-        CType(frvNieuweAuto.FindControl("btnVoegoptietoe"), Button).Visible = True
+        MaakNieuweOptieControlsZichtbaar(True)
     End Sub
 
     Protected Sub btnVoegoptietoe_Click(ByVal sender As Object, ByVal e As System.EventArgs)
@@ -101,6 +114,7 @@ Partial Class App_Presentation_NieuweAutoAanmaken
         CType(frvNieuweAuto.FindControl("lstOpties"), ListBox).Items.RemoveAt(CType(frvNieuweAuto.FindControl("lstOpties"), ListBox).SelectedIndex)
     End Sub
 
-    Public Sub New()
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        MaakNieuweOptieControlsZichtbaar(False)
     End Sub
 End Class

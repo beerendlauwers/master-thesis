@@ -19,7 +19,7 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
         Dim p As Klanten.tblUserProfielRow = dt.NewRow
 
         'UserID
-        p.userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+        p.userID = New Guid(Membership.GetUser(wizard.UserName).ProviderUserKey.ToString())
 
         ' Standaardinformatie
         p.userVoornaam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtVoornaam"), TextBox).Text

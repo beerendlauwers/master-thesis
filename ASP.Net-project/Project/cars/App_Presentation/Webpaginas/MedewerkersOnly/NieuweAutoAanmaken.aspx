@@ -61,97 +61,187 @@
                     CausesValidation="False" CommandName="Cancel" Text="Cancel" />
             </EditItemTemplate>
             <InsertItemTemplate>
-                Categorie:
-                <asp:DropDownList ID="ddlCategorie" runat="server" 
-                    SelectedValue='<%# Bind("autoCategorie") %>' DataSourceID="odsCategorie" 
-                    DataTextField="categorieNaam" DataValueField="categorieID">
-                </asp:DropDownList>
-                <br />
-                Model:
-                <asp:UpdatePanel ID="updMerkModel" runat="server" UpdateMode="Conditional">
+                <table>
+                    <tr>
+                        <td>
+                            Categorie:
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="ddlCategorie" runat="server" SelectedValue='<%# Bind("autoCategorie") %>'
+                                DataSourceID="odsCategorie" DataTextField="categorieNaam" DataValueField="categorieID">
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Model:
+                        </td>
+                        <td>
+                            <asp:UpdatePanel ID="updMerkModel" runat="server" UpdateMode="Conditional">
+                                <ContentTemplate>
+                                    <asp:DropDownList ID="ddlMerk" runat="server">
+                                    </asp:DropDownList>
+                                    <asp:DropDownList ID="ddlModel" runat="server" DataTextField="modelNaam" DataValueField="modelID"
+                                        SelectedValue='<%# Bind("modelID") %>' DataSourceID="odsModel">
+                                    </asp:DropDownList>
+                                    <ajaxToolkit:CascadingDropDown ID="cddMerk" runat="server" Category="Merk" PromptText="Selecteer een merk"
+                                        ServiceMethod="GeefMerken" ServicePath="~/App_Presentation/WebServices/AutoService.asmx"
+                                        TargetControlID="ddlMerk">
+                                    </ajaxToolkit:CascadingDropDown>
+                                    <ajaxToolkit:CascadingDropDown ID="cddModel" runat="server" Category="Model" ParentControlID="ddlMerk"
+                                        PromptText="Selecteer een model" ServiceMethod="GeefModellenVoorMerk" ServicePath="~/App_Presentation/WebServices/AutoService.asmx"
+                                        TargetControlID="ddlModel">
+                                    </ajaxToolkit:CascadingDropDown>
+                                </ContentTemplate>
+                            </asp:UpdatePanel>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Kleur:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtAutoKleur" runat="server" Text='<%# Bind("autoKleur") %>' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Bouwjaar:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtAutoBouwjaar" runat="server" Text='<%# Bind("autoBouwjaar") %>' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Brandstoftype:
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="ddlBrandstofType" runat="server" DataSourceID="odsBrandstofType"
+                                DataTextField="brandstofNaam" DataValueField="brandstofID" SelectedValue='<%# Bind("brandstofID") %>'>
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Kenteken:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtAutoKenteken" runat="server" Text='<%# Bind("autoKenteken") %>' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Status:
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="ddlStatus" runat="server" DataSourceID="odsAutoStatus" DataTextField="autostatusNaam"
+                                DataValueField="autostatusID" SelectedValue='<%# Bind("statusID") %>'>
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Parkeerplaats:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtAutoParkeerplaats" runat="server" Text='<%# Bind("autoParkeerplaats") %>' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Filiaal:
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="ddlFiliaal" runat="server" DataSourceID="odsFiliaal" DataTextField="filiaalNaam"
+                                DataValueField="filiaalID" SelectedValue='<%# Bind("filiaalID") %>'>
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Dagtarief:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtAutoDagTarief" runat="server" Text='<%# Bind("autoDagTarief") %>' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Foto:
+                        </td>
+                        <td>
+                            <asp:FileUpload ID="fupAutoFoto" runat="server" UpdateMode="conditional" />
+                        </td>
+                    </tr>
+                    <tr>
+                </table>
+                <asp:UpdatePanel ID="updOpties" runat="server">
                     <ContentTemplate>
-                        <asp:DropDownList ID="ddlMerk" runat="server">
-                        </asp:DropDownList>
-                        <asp:DropDownList ID="ddlModel" runat="server" DataTextField="modelNaam" 
-                            DataValueField="modelID" SelectedValue='<%# Bind("modelID") %>' 
-                            DataSourceID="odsModel">
-                        </asp:DropDownList>
-                        <ajaxToolkit:CascadingDropDown ID="cddMerk" runat="server" Category="Merk" 
-                            PromptText="Selecteer een merk" ServiceMethod="GeefMerken" 
-                            ServicePath="~/App_Presentation/WebServices/AutoService.asmx" TargetControlID="ddlMerk">
-                        </ajaxToolkit:CascadingDropDown>
-                        <ajaxToolkit:CascadingDropDown ID="cddModel" runat="server" Category="Model" 
-                            ParentControlID="ddlMerk" PromptText="Selecteer een model" 
-                            ServiceMethod="GeefModellenVoorMerk" ServicePath="~/App_Presentation/WebServices/AutoService.asmx" 
-                            TargetControlID="ddlModel">
-                        </ajaxToolkit:CascadingDropDown>
-                    </ContentTemplate>
-                </asp:UpdatePanel>
-                Kleur:<asp:TextBox ID="txtAutoKleur" runat="server" 
-                    Text='<%# Bind("autoKleur") %>' />
-                <br />
-                Bouwjaar:&nbsp;
-                <asp:TextBox ID="txtAutoBouwjaar" runat="server" 
-                    Text='<%# Bind("autoBouwjaar") %>' />
-                <br />
-                Type brandstof:
-                <asp:DropDownList ID="ddlBrandstofType" runat="server" 
-                    DataSourceID="odsBrandstofType" DataTextField="brandstofNaam" 
-                    DataValueField="brandstofID" SelectedValue='<%# Bind("brandstofID") %>'>
-                </asp:DropDownList>
-                <br />
-                Kenteken:
-                <asp:TextBox ID="txtAutoKenteken" runat="server" 
-                    Text='<%# Bind("autoKenteken") %>' />
-                <br />
-                Status:
-                <asp:DropDownList ID="ddlStatus" runat="server" DataSourceID="odsAutoStatus" 
-                    DataTextField="autostatusNaam" DataValueField="autostatusID" 
-                    SelectedValue='<%# Bind("statusID") %>'>
-                </asp:DropDownList>
-                <br />
-                Parkeerplaats:
-                <asp:TextBox ID="txtAutoParkeerplaats" runat="server" 
-                    Text='<%# Bind("autoParkeerplaats") %>' />
-                <br />
-                Filiaal:
-                <asp:DropDownList ID="ddlFiliaal" runat="server" DataSourceID="odsFiliaal" 
-                    DataTextField="filiaalNaam" DataValueField="filiaalID" 
-                    SelectedValue='<%# Bind("filiaalID") %>'>
-                </asp:DropDownList>
-                <br />
-                Dagtarief:&nbsp;<asp:TextBox ID="txtAutoDagTarief" runat="server" 
-                    Text='<%# Bind("autoDagTarief") %>' />
-                <br />
-                Foto:&nbsp;<asp:FileUpload ID="fupAutoFoto" runat="server"  UpdateMode="conditional" />
-                <br />
-                <br />                
-                <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-                <ContentTemplate>
-                <div>
-                Optie:&nbsp;<asp:DropDownList ID="ddlOpties" runat="server" 
-                    DataSourceID="odsOptie" DataTextField="optieOmschrijving" 
-                    DataValueField="optieID">
-                </asp:DropDownList>
-                
-                &nbsp;<asp:Button ID="btnVoegtoe" runat="server" onclick="btnVoegtoe_Click" 
-                    Text="Voeg toe aan opties" />
-                &nbsp;&nbsp;&nbsp;
-                <asp:Button ID="btnNieuweOptie" runat="server" Text="Nieuwe Optie" 
-                    onclick="btnNieuweOptie_Click" />
-                
-                <br />
-                <asp:ListBox ID="lstOpties" runat="server" SelectionMode="Multiple"  
-                    ></asp:ListBox>
-                <asp:ListBox ID="lstVoegtoeID" runat="server" SelectionMode="Multiple"></asp:ListBox>
-                <asp:Button ID="btnVerwijderLijst" runat="server" 
-                    onclick="btnVerwijderLijst_Click" Text="Verwijder Optie" />
-                <asp:TextBox ID="txtOptieNaam" runat="server" Visible="False"></asp:TextBox>&nbsp;&nbsp;&nbsp;
-                <asp:TextBox ID="txtOptiePrijs" runat="server" Visible="False"></asp:TextBox>&nbsp;&nbsp;
-                <asp:Button ID="btnVoegoptietoe" runat="server" onclick="btnVoegoptietoe_Click" 
-                    Text="Insert" Visible="False" />
-                <br />
-                <asp:LinkButton ID="btnInsert" runat="server" CausesValidation="True" 
+                        <table>
+                            <tr>
+                                <th colspan="2" align="center">
+                                    <br />
+                                    Optiebeheer
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Optie:
+                                </td>
+                                <td>
+                                    <asp:DropDownList ID="ddlOpties" runat="server" DataSourceID="odsOptie" DataTextField="optieOmschrijving"
+                                        DataValueField="optieID">
+                                    </asp:DropDownList>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="right">
+                                    <asp:Button ID="btnVoegtoe" runat="server" OnClick="btnVoegtoe_Click" Text="Optie Toevoegen" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="right">
+                                    <asp:Button ID="btnNieuweOptie" runat="server" Text="Nieuwe Optie Aanmaken" OnClick="btnNieuweOptie_Click" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <asp:Label ID="lblOptieNaam" runat="server" Text="Optienaam: "></asp:Label>
+                                </td>
+                                <td>
+                                    <asp:TextBox ID="txtOptieNaam" runat="server"></asp:TextBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <asp:Label ID="lblOptiePrijs" runat="server" Text="Optieprijs: "></asp:Label>
+                                </td>
+                                <td>
+                                    <asp:TextBox ID="txtOptiePrijs" runat="server"></asp:TextBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="right">
+                                    <asp:Button ID="btnVoegoptietoe" runat="server" OnClick="btnVoegoptietoe_Click" Text="Toevoegen" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <asp:ListBox ID="lstOpties" runat="server" SelectionMode="Multiple"></asp:ListBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <asp:Button ID="btnVerwijderLijst" runat="server" OnClick="btnVerwijderLijst_Click"
+                                        Text="Verwijder Optie" />
+                                </td>
+                            </tr>
+                        </table>
+                    
+                    <hr />
+
+                <asp:Button ID="btnInsert" runat="server" CausesValidation="True" 
                     CommandName="Insert" onclick="btnInsert_Click" Text="Auto Toevoegen" />
                 &nbsp;<asp:LinkButton ID="btnInsertCancel" runat="server" 
                     CausesValidation="False" CommandName="Cancel" Text="Annuleren" />
@@ -250,5 +340,4 @@
             <asp:Parameter Name="autoID" Type="Int32" />
         </DeleteParameters>
     </asp:ObjectDataSource>
-    <br />
 </asp:Content>
