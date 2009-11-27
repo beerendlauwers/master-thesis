@@ -1,11 +1,10 @@
 ﻿Imports Microsoft.VisualBasic
 
 Public Class FiliaalBLL
-    Private _filiaalAdapter As New Auto_sTableAdapters.tblFiliaalTableAdapter
+    Private _filiaalAdapter As New AutosTableAdapters.tblFiliaalTableAdapter
+    Private _filiaaldal As New FiliaalDAL
 
-
-
-    Public Function GetAllFilialen() As Auto_s.tblFiliaalDataTable
+    Public Function GetAllFilialen() As Autos.tblFiliaalDataTable
         Try
             Return _filiaalAdapter.GetData()
         Catch ex As Exception
@@ -13,9 +12,9 @@ Public Class FiliaalBLL
         End Try
     End Function
 
-    Public Function AddFiliaal(ByRef f As Filiaal) As Boolean
+    Public Function AddFiliaal(ByRef f As Autos.tblFiliaalRow) As Boolean
         Try
-            If (_filiaalAdapter.Insert(f.FiliaalLocatie, f.FiliaalNaam, f.FiliaalAdres)) Then
+            If (_filiaalAdapter.Insert(f.filiaalLocatie, f.filiaalNaam, f.parkingAantalRijen, f.parkingAantalKolommen)) Then
                 Return True
             Else
                 Return False
@@ -32,6 +31,21 @@ Public Class FiliaalBLL
             Else
                 Return False
             End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetFiliaalByFiliaalID(ByVal filiaalID As Integer) As String
+        Try
+
+            Dim dt As Autos.tblFiliaalDataTable = _filiaaldal.GetFiliaalByID(filiaalID)
+            If (dt.Rows.Count = 0) Then
+                Throw New Exception(String.Concat("Onbestaande filiaal met filiaalID: ", filiaalID))
+            Else
+                Return CType(dt.Rows(0), Autos.tblFiliaalRow).filiaalNaam
+            End If
+
         Catch ex As Exception
             Throw ex
         End Try

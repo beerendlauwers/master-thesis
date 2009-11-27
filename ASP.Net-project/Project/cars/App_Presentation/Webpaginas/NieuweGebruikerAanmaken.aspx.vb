@@ -14,39 +14,45 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
 
     Protected Sub CreateUserWizard1_CreatedUser(ByVal sender As Object, ByVal e As System.EventArgs) Handles wizard.CreatedUser
 
-        ' Leeg profiel aanmaken
-        Dim p As ProfileCommon = ProfileCommon.Create(wizard.UserName, True)
+        Dim klantbll As New KlantBLL
+        Dim dt As New Klanten.tblUserProfielDataTable
+        Dim p As Klanten.tblUserProfielRow = dt.NewRow
+
+        'UserID
+        p.userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
         ' Standaardinformatie
-        p.Voornaam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtVoornaam"), TextBox).Text
-        p.Naam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtNaam"), TextBox).Text
-        p.Geboortedatum = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtgeboorte"), TextBox).Text
-        p.Identiteitskaartnummer = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtIdentiteitsNr"), TextBox).Text
-        p.Rijbewijsnummer = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtRijbewijsNr"), TextBox).Text
-        p.Telefoon = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtTelefoon"), TextBox).Text
+        p.userVoornaam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtVoornaam"), TextBox).Text
+        p.userNaam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtNaam"), TextBox).Text
+        p.userGeboortedatum = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtgeboorte"), TextBox).Text
+        p.userIdentiteitskaartnr = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtIdentiteitsNr"), TextBox).Text
+        p.userRijbewijsnr = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtRijbewijsNr"), TextBox).Text
+        p.userTelefoon = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtTelefoon"), TextBox).Text
 
         ' Bedrijfsinformatie
         Dim isBedrijf As Boolean = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("chkIsBedrijf"), CheckBox).Checked
         If (isBedrijf) Then
-            p.IsBedrijf = 1
-            p.BTWnummer = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBTW"), TextBox).Text
-            p.BedrijfVestigingslocatie = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtLocatie"), TextBox).Text
-            p.Bedrijfnaam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBedrijfnaam"), TextBox).Text
+            Roles.AddUserToRole(wizard.UserName, "GebruikerBedrijf")
+            p.userIsBedrijf = 1
+            p.userBTWnummer = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBTW"), TextBox).Text
+            p.userBedrijfVestigingslocatie = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtLocatie"), TextBox).Text
+            p.userBedrijfnaam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBedrijfnaam"), TextBox).Text
         End If
 
         ' Extra beheerdersinformatie
-        p.AantalDagenGehuurd = 0
-        p.AantalDagenGereserveerd = 0
-        p.AantalKilometerGereden = 0
-        p.Commentaar = String.Empty
-        p.IsProblematisch = 0
-        p.HeeftRechtOpKorting = 0
-        p.KortingWaarde = 0
+        p.userAantalDagenGehuurd = 0
+        p.userAantalDagenGereserveerd = 0
+        p.userAantalKilometerGereden = 0
+        p.userCommentaar = String.Empty
+        p.userIsProblematisch = 0
+        p.userHeeftRechtOpKorting = 0
+        p.userKortingWaarde = 0
 
         ' Profiel opslaan
-        p.Save()
+        klantbll.InsertUserProfiel(p)
+        klantbll = Nothing
 
-        ' Profiel rol "Gebruiker" geven
+        ' Nieuwe user rol "Gebruiker" geven
         Roles.AddUserToRole(wizard.UserName, "Gebruiker")
     End Sub
 End Class

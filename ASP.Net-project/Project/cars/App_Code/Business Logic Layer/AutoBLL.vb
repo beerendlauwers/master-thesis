@@ -1,19 +1,28 @@
 ﻿Imports Microsoft.VisualBasic
 
 Public Class AutoBLL
-    Private _adapterAuto As New Auto_sTableAdapters.tblAutoTableAdapter
-    Private _adapterBrandstofType As New Auto_sTableAdapters.tblBrandstofTableAdapter
-    Private _adapterAutoStatus As New Auto_sTableAdapters.tblAutostatusTableAdapter
-    Private _adapterFiliaal As New Auto_sTableAdapters.tblFiliaalTableAdapter
-    Private _adapterOptie As New Auto_sTableAdapters.tblOptieTableAdapter
-    Private _adapterModel As New Auto_sTableAdapters.tblModelTableAdapter
-    Private _adapterMerk As New Auto_sTableAdapters.tblMerkTableAdapter
-    Private _adapterCategorie As New Auto_sTableAdapters.tblCategorieTableAdapter
-    Private _adapterFoto As New Auto_sTableAdapters.tblAutofotoTableAdapter
+    Private _adapterAuto As New AutosTableAdapters.tblAutoTableAdapter
+    Private _adapterBrandstofType As New AutosTableAdapters.tblBrandstofTableAdapter
+    Private _adapterAutoStatus As New AutosTableAdapters.tblAutostatusTableAdapter
+    Private _adapterFiliaal As New AutosTableAdapters.tblFiliaalTableAdapter
+    Private _adapterOptie As New AutosTableAdapters.tblOptieTableAdapter
+    Private _adapterModel As New AutosTableAdapters.tblModelTableAdapter
+    Private _adapterMerk As New AutosTableAdapters.tblMerkTableAdapter
+    Private _adapterCategorie As New AutosTableAdapters.tblCategorieTableAdapter
+    Private _adapterFoto As New AutosTableAdapters.tblAutofotoTableAdapter
+    Private _autodal As New AutoDAL
 
-    Public Function GetAllAutos() As Auto_s.tblAutoDataTable
+    Public Function GetAllAutos() As Autos.tblAutoDataTable
         Try
             Return _adapterAuto.GetData()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetAutoNaamByAutoID(ByVal id As Integer) As String
+        Try
+            Return _autodal.GetAutoNaamByAutoID(id)
         Catch ex As Exception
             Throw ex
         End Try
@@ -31,7 +40,7 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Public Function UpdateAuto(ByRef autorow As Auto_s.tblAutoRow) As Boolean
+    Public Function UpdateAuto(ByRef autorow As Autos.tblAutoRow) As Boolean
         Try
             If (_adapterAuto.Update(autorow)) Then
                 Return True
@@ -43,9 +52,9 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Public Function AddAuto(ByRef a As Auto_s.tblAutoRow) As Boolean
+    Public Function AddAuto(ByRef a As Autos.tblAutoRow) As Boolean
         Try
-            If (_adapterAuto.Insert(a.categorieID, a.modelID, a.autoKleur, a.autoBouwjaar, a.autoFoto, a.brandstofID, a.autoKenteken, a.autoDagTarief, a.autoKMTotOlieVerversing, a.statusID, a.filiaalID, a.autoParkeerplaats)) Then
+            If (_adapterAuto.Insert(a.categorieID, a.modelID, a.autoKleur, a.autoBouwjaar, a.brandstofID, a.autoKenteken, a.autoDagTarief, a.autoKMTotOlieVerversing, a.statusID, a.filiaalID, a.parkeerPlaatsID)) Then
                 Return True
             Else
                 Return False
@@ -55,158 +64,15 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Public Function GetAutoNaamByAutoID(ByVal id As Integer) As String
-        Try
-            Dim autodal As New AutoDAL
-            Return autodal.GetAutoNaamByAutoID(id)
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-
-    Public Function GetAllBrandstofTypes() As Auto_s.tblBrandstofDataTable
-        Try
-            Return _adapterBrandstofType.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetBrandstofTypeByBrandstofID(ByVal brandstofID As Integer) As String
-        Try
-
-            Dim dt As Auto_s.tblBrandstofDataTable = _adapterBrandstofType.GetBrandstofTypeByBrandstofID(brandstofID)
-            If (dt.Rows.Count = 0) Then
-                Throw New Exception(String.Concat("Onbestaande brandstof met brandstofID: ", brandstofID))
-            Else
-                Return CType(dt.Rows(0), Auto_s.tblBrandstofRow).brandstofNaam
-            End If
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetAllAutoStatus() As Auto_s.tblAutostatusDataTable
-        Try
-            Return _adapterAutoStatus.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetAutostatusByAutostatusID(ByVal autostatusID As Integer) As String
-        Try
-
-            Dim dt As Auto_s.tblAutostatusDataTable = _adapterAutoStatus.GetAutostatusByAutostatusID(autostatusID)
-            If (dt.Rows.Count = 0) Then
-                Throw New Exception(String.Concat("Onbestaande status met autostatusID: ", autostatusID))
-            Else
-                Return CType(dt.Rows(0), Auto_s.tblAutostatusRow).autostatusNaam
-            End If
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetAllFilialen() As Auto_s.tblFiliaalDataTable
-        Try
-            Return _adapterFiliaal.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetFiliaalByFiliaalID(ByVal filiaalID As Integer) As String
-        Try
-
-            Dim dt As Auto_s.tblFiliaalDataTable = _adapterFiliaal.GetFiliaalByFiliaalID(filiaalID)
-            If (dt.Rows.Count = 0) Then
-                Throw New Exception(String.Concat("Onbestaande filiaal met filiaalID: ", filiaalID))
-            Else
-                Return CType(dt.Rows(0), Auto_s.tblFiliaalRow).filiaalNaam
-            End If
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetAllOpties() As Auto_s.tblOptieDataTable
-        Try
-            Return _adapterOptie.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetAllMerken() As Auto_s.tblMerkDataTable
-        Try
-            Return _adapterMerk.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetMerkenByCategorie(ByVal categorieID As Integer) As Auto_s.tblMerkDataTable
-        Try
-            Return _adapterMerk.GetMerkenByCategorie(categorieID)
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetAllModels() As Auto_s.tblModelDataTable
-        Try
-            Return _adapterModel.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetModelsByMerk(ByVal MerkID As Integer) As Auto_s.tblModelDataTable
-        Try
-            Return _adapterModel.GetAllModelsByMerk(MerkID)
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetAllCategorien() As Auto_s.tblCategorieDataTable
-        Try
-            Return _adapterCategorie.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetCategorieByCategorieID(ByVal categorieID As Integer) As String
-        Try
-
-            Dim dt As Auto_s.tblCategorieDataTable = _adapterCategorie.GetCategorieByCategorieID(categorieID)
-            If (dt.Rows.Count = 0) Then
-                Throw New Exception(String.Concat("Onbestaande categorie met categorieID: ", categorieID))
-            Else
-                Return CType(dt.Rows(0), Auto_s.tblCategorieRow).categorieNaam
-            End If
-
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetBeschikbareAutosBy(ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, ByVal filterOpties() As String) As Auto_s.tblAutoDataTable
+    Public Function GetBeschikbareAutosBy(ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, ByVal filterOpties() As String) As Autos.tblAutoDataTable
         Try
 
             'Alle auto's van een bepaalde categorie opvragen.
-            Dim myAutoDAL As New AutoDAL
-            Dim autodata As Auto_s.tblAutoDataTable = myAutoDAL.GetAutosBy(filterOpties)
+            Dim autodata As Autos.tblAutoDataTable = _autodal.GetAutosBy(filterOpties)
 
             'Auto-variabelen.
-            Dim returneddata As New Auto_s.tblAutoDataTable
-            Dim dr As Auto_s.tblAutoRow
+            Dim returneddata As New Autos.tblAutoDataTable
+            Dim dr As Autos.tblAutoRow
             Dim autoID As Integer
 
             'Logica-variabelen.
@@ -236,7 +102,7 @@ Public Class AutoBLL
                 'Nu gaan we de reservaties nakijken.
 
                 'Reservatiedata voor deze auto ophalen.
-                reservatiedata = reservatiebll.GetAllReservatiesBy(autoID)
+                reservatiedata = reservatiebll.GetAllReservatiesByAutoID(autoID)
 
                 'Even nakijken of er wel reservaties voor deze auto zijn.
                 If reservatiedata.Rows.Count = 0 Then
@@ -278,38 +144,9 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Public Function GetModelNameByModelID(ByVal modelID As Integer) As String
-        Try
-
-            Dim dt As Auto_s.tblModelDataTable = _adapterModel.GetModelNameByModelID(modelID)
-            If (dt.Rows.Count = 0) Then
-                Throw New Exception(String.Concat("Onbestaand model met modelID: ", modelID))
-            Else
-                Return CType(dt.Rows(0), Auto_s.tblModelRow).modelNaam
-            End If
-
-        Catch ex As Exception
-            Throw ex
-            Return 0
-        End Try
-    End Function
-
     Public Function GetKleurenByCategorie(ByVal categorieID As Integer) As String()
         Try
-            Dim autodal As New AutoDAL
-            Return autodal.GetKleurenByCategorieID(categorieID)
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetFotoIDByAutoID(ByVal autoID As Integer) As Integer
-        Try
-            If (_adapterFoto.GetFotoByID(autoID).Rows.Count > 0) Then
-                Return _adapterFoto.GetFotoByID(autoID).Rows(0).Item("autoFotoID")
-            Else
-                Return 0
-            End If
+            Return _autodal.GetKleurenByCategorieID(categorieID)
         Catch ex As Exception
             Throw ex
         End Try

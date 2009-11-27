@@ -1,49 +1,27 @@
 ﻿Imports Microsoft.VisualBasic
 Imports System.Data
 Imports System.Data.SqlClient
+Imports System.Configuration.ConfigurationManager
 
 Public Class KlantDAL
-    Private conn As String = ConfigurationManager.ConnectionStrings("ConnectToDatabase").ConnectionString()
-    Private myConnection As New SqlConnection(conn)
+    Private conn As String = ConfigurationManager.ConnectionStrings("frankRemoteDB").ConnectionString()
+    Private _myConnection As New SqlConnection(conn)
+    Private _f As New DALFunctions
 
-    Public Function getKlantID(ByVal bedrijfNaam As String) As Integer
-        myConnection.Open()
+    Public Function GetUserProfielByUserID(ByVal userID As Guid) As Klanten.tblUserProfielDataTable
+        Try
+            Dim myCommand As New SqlCommand("SELECT * FROM tblUserProfiel WHERE userID = @userID")
+            myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
+            myCommand.Connection = _myConnection
 
-        Dim myCommand As New SqlCommand("SELECT KlantID FROM tblKlant WHERE klantBedrijfNaam=@KlantBedrijfNaam")
-        myCommand.Parameters.Add("@KlantBedrijfNaam", SqlDbType.NChar)
-        myCommand.Parameters("@KlantBedrijfNaam").Value = bedrijfNaam
-        myCommand.Connection = myConnection
+            Dim dt As New Klanten.tblUserProfielDataTable
+            Return CType(_f.ReadDataTable(myCommand, dt), Klanten.tblUserProfielDataTable)
 
-        Dim myReader As SqlDataReader
-        myReader = myCommand.ExecuteReader
-
-        If (myReader.HasRows) Then
-            myReader.Read()
-            Return CType(myReader.Item("KlantID"), Integer)
-        Else
-            Return -1
-        End If
-
-    End Function
-
-    Public Function getKlantIDByNaam(ByVal naam As String) As Integer
-        myConnection.Open()
-
-        Dim myCommand As New SqlCommand("SELECT KlantID FROM tblKlant WHERE klantGebruikersnaam=@naam")
-        myCommand.Parameters.Add("@naam", SqlDbType.NChar)
-        myCommand.Parameters("@naam").Value = naam
-        myCommand.Connection = myConnection
-
-        Dim myReader As SqlDataReader
-        myReader = myCommand.ExecuteReader
-
-        If (myReader.HasRows) Then
-            myReader.Read()
-            Return CType(myReader.Item("KlantID"), Integer)
-        Else
-            Return -1
-        End If
-
+        Catch ex As Exception
+            Throw ex
+        Finally
+            _myConnection.Close()
+        End Try
     End Function
 
 End Class

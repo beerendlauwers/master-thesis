@@ -4,17 +4,17 @@ Public Class ChauffeurBLL
     Private c As New Chauffeur
     Private _chauffeurAdapter As New KlantenTableAdapters.tblChauffeurTableAdapter
 
-    'Public Function GetAllChauffeurs() As 
-    'Try
-    '  Return _chauffeurAdapter.GetData()
-    ' Catch ex As Exception
-    '     Throw ex
-    ' End Try
-    ' End Function
-
-    Public Function AddChauffeur(ByRef c As Chauffeur) As Boolean
+    Public Function GetAllChauffeurs() As Klanten.tblChauffeurDataTable
         Try
-            If (_chauffeurAdapter.Insert(c.ChauffeurNaam, c.ChauffeurVoornaam, c.ChauffeurBedrijfID)) Then
+            Return _chauffeurAdapter.GetData()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function AddChauffeur(ByRef c As Klanten.tblChauffeurRow) As Boolean
+        Try
+            If (_chauffeurAdapter.Insert(c.chauffeurNaam, c.chauffeurVoornaam, c.chauffeurRijbewijs, c.userID)) Then
                 Return True
             Else
                 Return False
@@ -24,7 +24,7 @@ Public Class ChauffeurBLL
         End Try
     End Function
 
-    Public Function DeleteFiliaal(ByVal ChauffeurID As Integer) As Boolean
+    Public Function DeleteChauffeurByID(ByVal ChauffeurID As Integer) As Boolean
         Try
             If (_chauffeurAdapter.Delete(ChauffeurID)) Then
                 Return True

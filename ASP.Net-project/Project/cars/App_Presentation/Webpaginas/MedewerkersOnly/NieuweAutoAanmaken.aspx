@@ -70,7 +70,7 @@
                 Model:
                 <asp:UpdatePanel ID="updMerkModel" runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
-                        <asp:DropDownList ID="ddlMerk" runat="server" DataSourceID="odsModel">
+                        <asp:DropDownList ID="ddlMerk" runat="server">
                         </asp:DropDownList>
                         <asp:DropDownList ID="ddlModel" runat="server" DataTextField="modelNaam" 
                             DataValueField="modelID" SelectedValue='<%# Bind("modelID") %>' 
@@ -213,108 +213,39 @@
 
     </div>
     <asp:ObjectDataSource ID="odsBrandstofType" runat="server" 
-        DeleteMethod="Delete" InsertMethod="Insert" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
-        TypeName="Auto_sTableAdapters.tblBrandstofTableAdapter" UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_brandstofID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="brandstofNaam" Type="String" />
-            <asp:Parameter Name="Original_brandstofID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="brandstofNaam" Type="String" />
-        </InsertParameters>
+        OldValuesParameterFormatString="original_{0}" SelectMethod="GetAllBrandstofTypes" 
+        TypeName="BrandstofBLL">
     </asp:ObjectDataSource>
     <asp:ObjectDataSource ID="odsAutoStatus" runat="server" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetAutostatusBijAanmaken" 
-        TypeName="Auto_sTableAdapters.tblAutostatusTableAdapter" 
-        DeleteMethod="Delete" InsertMethod="Insert" UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_autostatusID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="autostatusNaam" Type="String" />
-            <asp:Parameter Name="autostatusToewijsbaarBijMaken" Type="Boolean" />
-            <asp:Parameter Name="Original_autostatusID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="autostatusNaam" Type="String" />
-            <asp:Parameter Name="autostatusToewijsbaarBijMaken" Type="Boolean" />
-        </InsertParameters>
+        OldValuesParameterFormatString="original_{0}" SelectMethod="GetAllAutoStatus" 
+        TypeName="AutoStatusBLL">
     </asp:ObjectDataSource>
     <asp:ObjectDataSource ID="odsCategorie" runat="server" 
-        TypeName="Auto_sTableAdapters.tblCategorieTableAdapter" 
-        DeleteMethod="Delete" InsertMethod="Insert" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_categorieID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="categorieNaam" Type="String" />
-            <asp:Parameter Name="Original_categorieID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="categorieNaam" Type="String" />
-        </InsertParameters>
+        TypeName="CategorieBLL" 
+        OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="GetAllCategorien">
     </asp:ObjectDataSource>
-    <asp:ObjectDataSource ID="odsFiliaal" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="Auto_sTableAdapters.tblFiliaalTableAdapter" 
-        UpdateMethod="Update">
+    <asp:ObjectDataSource ID="odsFiliaal" runat="server" DeleteMethod="DeleteFiliaal" 
+        InsertMethod="AddFiliaal" OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="GetAllFilialen" TypeName="FiliaalBLL" 
+        DataObjectTypeName="Autos+tblFiliaalRow&amp;">
         <DeleteParameters>
-            <asp:Parameter Name="Original_filiaalID" Type="Int32" />
+            <asp:Parameter Name="filiaalID" Type="Int32" />
         </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="filiaalLocatie" Type="String" />
-            <asp:Parameter Name="filiaalNaam" Type="Object" />
-            <asp:Parameter Name="Original_filiaalID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="filiaalLocatie" Type="String" />
-            <asp:Parameter Name="filiaalNaam" Type="Object" />
-        </InsertParameters>
     </asp:ObjectDataSource>
-    <asp:ObjectDataSource ID="odsOptie" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="Auto_sTableAdapters.tblOptieTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_optieID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="optieOmschrijving" Type="String" />
-            <asp:Parameter Name="optieKost" Type="Double" />
-            <asp:Parameter Name="Original_optieID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="optieOmschrijving" Type="String" />
-            <asp:Parameter Name="optieKost" Type="Double" />
-        </InsertParameters>
+    <asp:ObjectDataSource ID="odsOptie" runat="server" 
+        InsertMethod="AddOptie" OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="GetAllOpties" TypeName="OptieBLL" 
+        DataObjectTypeName="Optie&amp;">
     </asp:ObjectDataSource>
-    <asp:ObjectDataSource ID="odsModel" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="Auto_sTableAdapters.tblModelTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_modelID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="merkID" Type="Int32" />
-            <asp:Parameter Name="modelNaam" Type="String" />
-            <asp:Parameter Name="Original_modelID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="merkID" Type="Int32" />
-            <asp:Parameter Name="modelNaam" Type="String" />
-        </InsertParameters>
+    <asp:ObjectDataSource ID="odsModel" runat="server" OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="GetAllModels" TypeName="ModelBLL">
     </asp:ObjectDataSource>
     <asp:ObjectDataSource ID="odsAuto" runat="server" 
-        DataObjectTypeName="Auto_s+tblAutoRow&amp;" DeleteMethod="DeleteAuto" 
+        DataObjectTypeName="Autos+tblAutoRow&amp;" DeleteMethod="DeleteAuto" 
         SelectMethod="GetAllAutos" TypeName="AutoBLL" 
-        OldValuesParameterFormatString="original_{0}" UpdateMethod="UpdateAuto">
+        OldValuesParameterFormatString="original_{0}" UpdateMethod="UpdateAuto" 
+        InsertMethod="AddAuto">
         <DeleteParameters>
             <asp:Parameter Name="autoID" Type="Int32" />
         </DeleteParameters>

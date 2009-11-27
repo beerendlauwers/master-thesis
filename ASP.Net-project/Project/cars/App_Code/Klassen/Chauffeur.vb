@@ -4,6 +4,7 @@ Public Class Chauffeur
     Private _chauffeurID As Integer
     Private _chauffeurNaam As String
     Private _chauffeurVoornaam As String
+    Private _chauffeurRijbewijs As String
     Private _chauffeurBedrijfID As Integer
 
 
@@ -24,6 +25,16 @@ Public Class Chauffeur
         End Get
         Set(ByVal value As String)
             _chauffeurNaam = value
+        End Set
+    End Property
+
+
+    Public Property ChauffeurRijbewijs() As String
+        Get
+            Return _chauffeurRijbewijs
+        End Get
+        Set(ByVal value As String)
+            _chauffeurRijbewijs = value
         End Set
     End Property
 

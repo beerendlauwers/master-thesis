@@ -11,12 +11,15 @@ Imports AjaxControlToolkit
 Public Class AutoService
     Inherits System.Web.Services.WebService
     Private _autoBLL As New AutoBLL
+    Private _merkBLL As New MerkBLL
+    Private _modelBLL As New ModelBLL
+    Private _categorieBLL As New CategorieBLL
 
     <WebMethod()> _
     Public Function GeefMerken(ByVal knownCategoryValues As String, ByVal category As String) As CascadingDropDownNameValue()
 
         ' BLL contacteren om een lijst van merken te verkrijgen.
-        Dim merken As Auto_s.tblMerkDataTable = _autoBLL.GetAllMerken()
+        Dim merken As Autos.tblMerkDataTable = _merkBLL.GetAllMerken()
 
         'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
         Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
@@ -26,7 +29,7 @@ Public Class AutoService
         Dim merkID As Integer = 0
         Dim waarde As CascadingDropDownNameValue
 
-        For Each dr As Auto_s.tblMerkRow In merken
+        For Each dr As Autos.tblMerkRow In merken
             'Waardes lezen uit row
             merknaam = CType(dr.merkNaam, String)
             merkID = CType(dr.merkID, Integer)
@@ -52,7 +55,7 @@ Public Class AutoService
         End If
 
         ' BLL contacteren om een lijst van merken te verkrijgen.
-        Dim merken As Auto_s.tblMerkDataTable = _autoBLL.GetMerkenByCategorie(categorieID)
+        Dim merken As Autos.tblMerkDataTable = _merkBLL.GetMerkenByCategorie(categorieID)
 
         'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
         Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
@@ -62,7 +65,7 @@ Public Class AutoService
         Dim merkID As Integer = 0
         Dim waarde As CascadingDropDownNameValue
 
-        For Each dr As Auto_s.tblMerkRow In merken
+        For Each dr As Autos.tblMerkRow In merken
             'Waardes lezen uit row
             merknaam = CType(dr.merkNaam, String)
             merkID = CType(dr.merkID, Integer)
@@ -91,14 +94,14 @@ Public Class AutoService
         Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
 
         ' BLL contacteren om een lijst van modellen te verkrijgen.
-        Dim modellen As Auto_s.tblModelDataTable = _autoBLL.GetModelsByMerk(merkID)
+        Dim modellen As Autos.tblModelDataTable = _modelBLL.GetModelsByMerkID(merkID)
 
         'Tijdelijke variabelen initialiseren
         Dim modelnaam As String = String.Empty
         Dim modelID As Integer = 0
         Dim waarde As CascadingDropDownNameValue
 
-        For Each dr As Auto_s.tblModelRow In modellen
+        For Each dr As Autos.tblModelRow In modellen
             'Waardes lezen uit row
             modelnaam = CType(dr.modelNaam, String)
             modelID = CType(dr.modelID, Integer)
@@ -116,7 +119,7 @@ Public Class AutoService
     Public Function GeefCategorien(ByVal knownCategoryValues As String, ByVal category As String) As CascadingDropDownNameValue()
 
         ' BLL contacteren om een lijst van categoriën te verkrijgen.
-        Dim categorien As Auto_s.tblCategorieDataTable = _autoBLL.GetAllCategorien()
+        Dim categorien As Autos.tblCategorieDataTable = _categorieBLL.GetAllCategorien()
 
         'In deze lijst gaan we alle waardes steken die we gaan uitlezen.
         Dim dropdownwaardes As List(Of CascadingDropDownNameValue) = New List(Of CascadingDropDownNameValue)
@@ -126,7 +129,7 @@ Public Class AutoService
         Dim categorieID As Integer = 0
         Dim waarde As CascadingDropDownNameValue
 
-        For Each dr As Auto_s.tblCategorieRow In categorien
+        For Each dr As Autos.tblCategorieRow In categorien
             'Waardes lezen uit row
             categorienaam = CType(dr.categorieNaam, String)
             categorieID = CType(dr.categorieID, Integer)

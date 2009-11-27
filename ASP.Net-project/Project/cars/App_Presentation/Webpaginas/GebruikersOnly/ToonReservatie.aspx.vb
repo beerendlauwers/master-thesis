@@ -4,7 +4,7 @@ Imports System.Data.SqlClient
 
 Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
     Inherits System.Web.UI.Page
-    Private conn As String = ConfigurationManager.ConnectionStrings("ConnectToDatabase").ConnectionString()
+    Private conn As String = ConfigurationManager.ConnectionStrings("frankRemoteDB").ConnectionString()
     Private myConnection As New SqlConnection(conn)
 
     Private Function MaakOverzichtsDataTable(ByRef datatable As Data.DataTable) As Data.DataTable
@@ -48,60 +48,48 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Request.QueryString("userID") IsNot Nothing Then
 
+            If (Request.QueryString("userID") = String.Empty) Then
+                Me.lgvReservatie.Visible = False
+                lblGeenReservaties.Text = "Ongeldig ID."
+            End If
+
             Try
-                Convert.ToInt32(Request.QueryString("userID"))
+                Dim id As New Guid(Request.QueryString("userID").ToString)
+
+                If (Not Page.User.Identity.IsAuthenticated) Then
+                    Me.lgvReservatie.Visible = False
+                    lblGeenReservaties.Text = "Gelieve in te loggen."
+                    Return
+                Else
+                    Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+
+                    If (Not bezoekendeklant.ToString = id.ToString) Then
+                        Me.lgvReservatie.Visible = False
+                        lblGeenReservaties.Text = "U mag de reservaties van een andere klant niet beheren."
+                        Return
+                    End If
+
+                    Dim reservatiebll As New ReservatieBLL
+                    Dim dt As Data.DataTable = MaakOverzichtsDataTable(reservatiebll.GetAllReservatiesByUserID(id))
+                    reservatiebll = Nothing
+
+                    If (dt.Rows.Count > 0) Then
+                        lblGeenReservaties.Visible = False
+                        Me.lgvReservatie.Visible = True
+                        CType(Me.lgvReservatie.FindControl("repOverzicht"), Repeater).DataSource = dt
+                    Else
+                        lblGeenReservaties.Text = "Er zijn geen reservaties die aan uw zoekvoorwaarden voldoen."
+                        lblGeenReservaties.Visible = True
+                        Me.lgvReservatie.Visible = False
+                    End If
+
+                    CType(Me.lgvReservatie.FindControl("repOverzicht"), Repeater).DataBind()
+                End If
             Catch ex As Exception
                 Me.lgvReservatie.Visible = False
                 lblGeenReservaties.Text = "Ongeldig ID."
                 Return
             End Try
-
-            If (Not Roles.IsUserInRole(Page.User.Identity.Name, "Gebruiker") And _
-                Not Roles.IsUserInRole(Page.User.Identity.Name, "Developer")) Then
-                Me.lgvReservatie.Visible = False
-                lblGeenReservaties.Text = "Gelieve in te loggen."
-                Return
-            Else
-                Dim klantbll As New KlantBLL
-                Dim bezoekendeklant As Integer = klantbll.GetKlantIDByKlantNaam(Page.User.Identity.Name)
-                klantbll = Nothing
-
-                If (Not bezoekendeklant = Convert.ToInt32(Request.QueryString("userID"))) Then
-                    Me.lgvReservatie.Visible = False
-                    lblGeenReservaties.Text = "U mag de reservaties van een andere klant niet beheren."
-                    Return
-                End If
-            End If
-
-            myConnection.Open()
-
-            Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE klantID = @userID")
-            myCommand.Parameters.Add("@userID", SqlDbType.Int)
-            myCommand.Parameters("@userID").Value = Convert.ToInt32(Request.QueryString("userID"))
-            myCommand.Connection = myConnection
-
-            Dim myReader As SqlDataReader
-            myReader = myCommand.ExecuteReader
-
-            Dim temptable As New DataTable
-            temptable.Load(myReader)
-
-            myConnection.Close()
-
-            'Verwerk datatable tot overzichtsdatatable
-            Dim dt As Data.DataTable = MaakOverzichtsDataTable(temptable)
-
-            If (dt.Rows.Count > 0) Then
-                lblGeenReservaties.Visible = False
-                Me.lgvReservatie.Visible = True
-                CType(Me.lgvReservatie.FindControl("repOverzicht"), Repeater).DataSource = dt
-            Else
-                lblGeenReservaties.Text = "Er zijn geen reservaties die aan uw zoekvoorwaarden voldoen."
-                lblGeenReservaties.Visible = True
-                Me.lgvReservatie.Visible = False
-            End If
-
-            CType(Me.lgvReservatie.FindControl("repOverzicht"), Repeater).DataBind()
         Else
             Me.lgvReservatie.Visible = False
             lblGeenReservaties.Text = "Ongeldig ID."

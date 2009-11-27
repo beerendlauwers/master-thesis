@@ -6,12 +6,12 @@ Partial Class App_Presentation_NieuweAutoAanmaken
     Protected Sub btnInsert_Click(ByVal sender As Object, ByVal e As System.EventArgs)
         Dim autobll As New AutoBLL
         Dim autoOptiebll As New AutoOptieBLL
-        Dim auto As Auto_s.tblAutoRow
+        Dim auto As Autos.tblAutoRow
         Dim autoOptie As New AutoOptie
         Dim autodal As New AutoDAL
 
         'Row initialiseren
-        Dim temptable As New Auto_s.tblAutoDataTable
+        Dim temptable As New Autos.tblAutoDataTable
         auto = temptable.NewRow
         temptable = Nothing
 
@@ -23,7 +23,7 @@ Partial Class App_Presentation_NieuweAutoAanmaken
         auto.brandstofID = CType(Me.frvNieuweAuto.FindControl("ddlBrandstofType"), DropDownList).SelectedValue
         auto.autoKenteken = CType(Me.frvNieuweAuto.FindControl("txtAutoKenteken"), TextBox).Text
         auto.statusID = CType(Me.frvNieuweAuto.FindControl("ddlStatus"), DropDownList).SelectedValue
-        auto.autoParkeerplaats = CType(Me.frvNieuweAuto.FindControl("txtAutoParkeerplaats"), TextBox).Text
+        'auto.parkeerPlaatsID = Convert.ToInt32(CType(Me.frvNieuweAuto.FindControl("txtAutoParkeerplaats"), TextBox).Text)
         auto.filiaalID = CType(Me.frvNieuweAuto.FindControl("ddlFiliaal"), DropDownList).SelectedValue
         auto.autoDagTarief = CType(Me.frvNieuweAuto.FindControl("txtAutoDagTarief"), TextBox).Text
         auto.autoKMTotOlieVerversing = 0
@@ -46,12 +46,12 @@ Partial Class App_Presentation_NieuweAutoAanmaken
             img_byte = encoding.GetBytes("geen_foto")
         End If
 
-        auto.autoFoto = img_byte
+        'auto.autoFoto = img_byte
 
         'Auto toevoegen.
         If (autobll.AddAuto(auto)) Then
             'yeuy, geslaagd
-            Dim autoID As Integer = autodal.getAutoID(auto.autoKenteken)
+            Dim autoID As Integer = autodal.getAutoIDByKenteken(auto.autoKenteken)
             autoOptie.AutoID = autoID
             Dim i As Integer
 
@@ -102,6 +102,5 @@ Partial Class App_Presentation_NieuweAutoAanmaken
     End Sub
 
     Public Sub New()
-
     End Sub
 End Class

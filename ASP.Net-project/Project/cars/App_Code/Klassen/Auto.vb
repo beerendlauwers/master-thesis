@@ -40,17 +40,24 @@ Public Class Auto
              ByVal bouwjaar As Integer, ByVal brandstofID As Integer, ByVal kenteken As String, _
              ByVal dagtarief As Double, ByVal statusID As Integer, ByVal filiaalID As Integer, ByVal parkeerplaats As String, _
              ByVal foto As Byte())
+
+        Dim brandstofbll As New BrandstofBLL
         Dim autobll As New AutoBLL
+        Dim categoriebll As New CategorieBLL
+        Dim modelbll As New ModelBLL
+        Dim statusbll As New AutoStatusBLL
+        Dim filiaalbll As New FiliaalBLL
+
         _ID = id
-        _categorie = autobll.GetCategorieByCategorieID(categorieID)
-        _model = autobll.GetModelNameByModelID(modelID)
+        _categorie = categoriebll.GetCategorieByID(categorieID)
+        _model = modelbll.GetModelNaamByModelID(modelID)
         _kleur = kleur
         _bouwjaar = bouwjaar
-        _brandstoftype = autobll.GetBrandstofTypeByBrandstofID(brandstofID)
+        _brandstoftype = brandstofbll.GetBrandstofTypeByID(brandstofID)
         _kenteken = kenteken
         _dagtarief = dagtarief
-        _status = autobll.GetAutostatusByAutostatusID(statusID)
-        _filiaal = autobll.GetFiliaalByFiliaalID(filiaalID)
+        _status = statusbll.GetAutostatusNaamByAutostatusID(statusID)
+        _filiaal = filiaalbll.GetFiliaalByFiliaalID(filiaalID)
         _parkeerplaats = parkeerplaats
         _foto = foto
 

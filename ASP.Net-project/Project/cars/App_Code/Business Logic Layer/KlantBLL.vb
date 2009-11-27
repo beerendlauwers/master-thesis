@@ -1,28 +1,12 @@
 ﻿Imports Microsoft.VisualBasic
 
 Public Class KlantBLL
-    Private _adapterKlant As New KlantenTableAdapters.tblKlantTableAdapter
+    Private _klantdal As New KlantDAL
+    Private _adapterUserProfiel As New KlantenTableAdapters.tblUserProfielTableAdapter
 
-    Public Function GetAllKlanten() As Klanten.tblKlantDataTable
+    Public Function InsertUserProfiel(ByRef r As Klanten.tblUserProfielRow) As Boolean
         Try
-            Return _adapterKlant.GetData()
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function GetKlantIDByKlantNaam(ByVal naam As String) As Integer
-        Try
-            Dim klantdal As New KlantDAL
-            Return klantdal.getKlantIDByNaam(naam)
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
-    Public Function DeleteKlant(ByVal klantID As Integer) As Boolean
-        Try
-            If (_adapterKlant.Delete(klantID)) Then
+            If (_adapterUserProfiel.Insert(r.userID, r.userVoornaam, r.userNaam, r.userGeboortedatum, r.userIdentiteitskaartnr, r.userRijbewijsnr, r.userTelefoon, r.userEmail, r.userCommentaar, r.userIsProblematisch, r.userHeeftRechtOpKorting, r.userKortingWaarde, r.userAantalDagenGehuurd, r.userAantalDagenGereserveerd, r.userAantalKilometerGereden, r.userIsBedrijf, r.userBTWnummer, r.userBedrijfnaam, r.userBedrijfVestigingslocatie)) Then
                 Return True
             Else
                 Return False
@@ -32,37 +16,11 @@ Public Class KlantBLL
         End Try
     End Function
 
-    Public Function AddKlant(ByRef k As Klant) As Boolean
+    Public Function GetUserProfielByUserID(ByRef userID As Guid) As Klanten.tblUserProfielDataTable
         Try
-            If (_adapterKlant.Insert(k.Gebruikersnaam, k.Gebruikerspaswoord, k.Naam, _
-                                     k.Voornaam, k.Geboortedatum, k.Identiteitskaartnummer, _
-                                     k.Rijbewijsnummer, k.Telefoon, k.BedrijfLocatie, k.Email, k.Commentaar, _
-                                     k.BTWnummer, k.IsProblematisch, k.HeeftRechtOpKorting, _
-                                     k.KortingWaarde, k.AantalDagenGehuurd, k.AantalDagenGereserveerd, _
-                                     k.AantalKilometerGereden)) Then
-                Return True
-            Else
-                Return False
-            End If
+            Return _klantdal.GetUserProfielByUserID(userID)
         Catch ex As Exception
             Throw ex
         End Try
     End Function
-
-    'Public Function EditKlant(ByRef k As Klant) As Boolean
-    'Try
-    '  If (_adapterKlant.Update(k.Gebruikersnaam, k.Gebruikerspaswoord, k.Naam, _
-    '                          k.Voornaam, k.Geboortedatum, k.Identiteitskaartnummer, _
-    '                            k.Rijbewijsnummer, k.Telefoon, k.Email, k.Commentaar, _
-    '                             k.BTWnummer, k.IsProblematisch, k.HeeftRechtOpKorting, _
-    '                             k.KortingWaarde, k.AantalDagenGehuurd, k.AantalDagenGereserveerd, _
-    '                             k.AantalKilometerGereden)) Then
-    '         Return True
-    '      Else
-    '         Return False
-    '      End If
-    '    Catch ex As Exception
-    '      Throw ex
-    '    End Try
-    'End Function
 End Class

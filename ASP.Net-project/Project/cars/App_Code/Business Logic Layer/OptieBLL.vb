@@ -1,10 +1,12 @@
 ﻿Imports Microsoft.VisualBasic
 
 Public Class OptieBLL
-    Private _optieAdapter As New Auto_sTableAdapters.tblOptieTableAdapter
+    Private _adapterOptie As New AutosTableAdapters.tblOptieTableAdapter
+    Private _optiedal As New OptieDAL
+
     Public Function AddOptie(ByRef o As Optie) As Boolean
         Try
-            If (_optieAdapter.Insert(o.Omschrijving, o.Prijs)) Then
+            If (_adapterOptie.Insert(o.Omschrijving, o.Prijs)) Then
                 Return True
             Else
                 Return False
@@ -13,5 +15,13 @@ Public Class OptieBLL
             Throw ex
         End Try
     End Function
-    
+
+    Public Function GetAllOpties() As Autos.tblOptieDataTable
+        Try
+            Return _optiedal.GetAllOptie()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
 End Class

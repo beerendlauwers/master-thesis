@@ -4,12 +4,14 @@ Partial Class App_Presentation_Webpaginas_FiliaalBeheer
 
 
     Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVoegtoe.Click
-        Dim pfiliaal As New Filiaal
+        Dim dt As New Autos.tblFiliaalDataTable
+        Dim pfiliaal As Autos.tblFiliaalRow = dt.NewRow
         Dim bllFiliaal As New FiliaalBLL
 
-        pfiliaal.FiliaalLocatie = txtLocatie.Text
-        pfiliaal.FiliaalNaam = txtFiliaalNaam.Text
-        pfiliaal.FiliaalAdres = txtAdres.Text
+        pfiliaal.filiaalLocatie = String.Concat(txtLocatie.Text, ", ", txtAdres.Text)
+        pfiliaal.filiaalNaam = txtFiliaalNaam.Text
+        pfiliaal.parkingAantalKolommen = 0
+        pfiliaal.parkingAantalRijen = 0
 
         bllFiliaal.AddFiliaal(pfiliaal)
         ddlFiliaal.DataBind()

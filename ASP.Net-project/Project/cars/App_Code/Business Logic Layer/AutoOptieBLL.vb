@@ -1,8 +1,9 @@
 ﻿Imports Microsoft.VisualBasic
 
 Public Class AutoOptieBLL
-    Private _autoOptieAdapter As New Auto_sTableAdapters.tblAutoOptieTableAdapter
-    Private _autoOAdapter As New Auto_sTableAdapters.tblAutoTableAdapter
+    Private _autoOptieAdapter As New AutosTableAdapters.tblAutoOptieTableAdapter
+    Private _autoOAdapter As New AutosTableAdapters.tblAutoTableAdapter
+    Private _autooptiedal As New AutoOptieDAL
     Private pAutoID As Integer
 
     Public Function autoOptieAdd(ByRef a As AutoOptie) As Boolean
@@ -18,7 +19,11 @@ Public Class AutoOptieBLL
         End Try
     End Function
 
-
-
-
+    Public Function GetAllAutoOptie() As Autos.tblAutoOptieDataTable
+        Try
+            Return _autooptiedal.GetAllAutoOptie()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 End Class

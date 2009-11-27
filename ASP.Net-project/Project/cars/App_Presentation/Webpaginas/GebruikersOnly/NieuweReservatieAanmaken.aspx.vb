@@ -31,7 +31,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         'ChangeOverView()
     End Sub
 
-    Private Function MaakOverzichtsDataTable(ByRef datatable As Auto_s.tblAutoDataTable) As Data.DataTable
+    Private Function MaakOverzichtsDataTable(ByRef datatable As Autos.tblAutoDataTable) As Data.DataTable
         Try
             Dim overzichtdatatable As New Data.DataTable
             Dim overzichtcolumn As New Data.DataColumn
@@ -55,18 +55,19 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
             'Data overzetten
             Dim autobll As New AutoBLL
-            Dim klantbll As New KlantBLL
+            Dim modelbll As New ModelBLL
             For i As Integer = 0 To datatable.Rows.Count - 1
                 overzichtrow = overzichtdatatable.NewRow()
 
                 overzichtrow("autoID") = datatable.Rows(i).Item("autoID")
                 overzichtrow("autoKenteken") = datatable.Rows(i).Item("autoKenteken")
                 overzichtrow("autoKleur") = datatable.Rows(i).Item("autoKleur")
-                overzichtrow("fotoID") = autobll.GetFotoIDByAutoID(overzichtrow("autoID"))
-                overzichtrow("modelnaam") = autobll.GetModelNameByModelID(datatable.Rows(i).Item("modelID"))
+                'overzichtrow("fotoID") = autobll.GetFotoIDByAutoID(overzichtrow("autoID"))
+                overzichtrow("modelnaam") = modelbll.GetModelNaamByModelID(datatable.Rows(i).Item("modelID"))
                 overzichtrow("begindat") = Date.Parse(Me.txtBegindatum.Text)
                 overzichtrow("einddat") = Date.Parse(Me.txtEinddatum.Text)
-                overzichtrow("klantID") = klantbll.GetKlantIDByKlantNaam(User.Identity.Name)
+                overzichtrow("userID") = Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()
+
 
                 overzichtdatatable.Rows.Add(overzichtrow)
             Next
@@ -122,7 +123,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
                 'Haal datatable op met argumenten
                 Dim autobll As New AutoBLL
-                Dim datatable As Auto_s.tblAutoDataTable = autobll.GetBeschikbareAutosBy(begindatum, einddatum, filterOpties)
+                Dim datatable As Autos.tblAutoDataTable = autobll.GetBeschikbareAutosBy(begindatum, einddatum, filterOpties)
 
                 'Verwerk datatable tot overzichtsdatatable
                 Dim dt As Data.DataTable = MaakOverzichtsDataTable(datatable)

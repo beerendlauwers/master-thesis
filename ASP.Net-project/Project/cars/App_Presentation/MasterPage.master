@@ -205,7 +205,8 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td>
-                                                                        <asp:Button ID="btnLogin" runat="server" CommandName="Login" Text="Inloggen" ValidationGroup="ctl00$ctl02$loginGebruiker" />
+                                                                        <asp:Button ID="btnLogin" runat="server" CommandName="Login" Text="Inloggen" 
+                                                                            ValidationGroup="ctl00$ctl02$loginGebruiker" />
                                                                     </td>
                                                                 </tr>
                                                             </table>

@@ -4,7 +4,7 @@ Imports System.Data.SqlClient
 
 Partial Class App_Presentation_ViewImage
     Inherits System.Web.UI.Page
-    Private conn As String = ConfigurationManager.ConnectionStrings("ConnectToDatabase").ConnectionString()
+    Private conn As String = ConfigurationManager.ConnectionStrings("frankRemoteDB").ConnectionString()
     Private myConnection As New SqlConnection(conn)
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
