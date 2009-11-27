@@ -12,6 +12,18 @@ Public Class FiliaalBLL
         End Try
     End Function
 
+    Public Function UpdateFiliaal(ByRef f As Autos.tblFiliaalRow) As Boolean
+        Try
+            If (_filiaalAdapter.Update(f)) Then
+                Return True
+            Else
+                Return False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function AddFiliaal(ByRef f As Autos.tblFiliaalRow) As Boolean
         Try
             If (_filiaalAdapter.Insert(f.filiaalLocatie, f.filiaalNaam, f.parkingAantalRijen, f.parkingAantalKolommen)) Then
@@ -36,7 +48,7 @@ Public Class FiliaalBLL
         End Try
     End Function
 
-    Public Function GetFiliaalByFiliaalID(ByVal filiaalID As Integer) As String
+    Public Function GetFiliaalNaamByFiliaalID(ByVal filiaalID As Integer) As String
         Try
 
             Dim dt As Autos.tblFiliaalDataTable = _filiaaldal.GetFiliaalByID(filiaalID)
@@ -46,6 +58,14 @@ Public Class FiliaalBLL
                 Return CType(dt.Rows(0), Autos.tblFiliaalRow).filiaalNaam
             End If
 
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetFiliaalByFiliaalID(ByVal filiaalID As Integer) As Autos.tblFiliaalDataTable
+        Try
+            Return _filiaaldal.GetFiliaalByID(filiaalID)
         Catch ex As Exception
             Throw ex
         End Try

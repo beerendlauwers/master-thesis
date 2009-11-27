@@ -19,7 +19,7 @@ Public Class FiliaalDAL
 
     Public Function GetFiliaalByID(ByVal filiaalID As Integer) As Autos.tblFiliaalDataTable
 
-        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE filiaalID=@filiaalID")
+        Dim myCommand As New SqlCommand("SELECT * FROM tblFiliaal WHERE filiaalID=@filiaalID")
         myCommand.Parameters.Add("@filiaalID", SqlDbType.Int).Value = filiaalID
         myCommand.Connection = _myConnection
 

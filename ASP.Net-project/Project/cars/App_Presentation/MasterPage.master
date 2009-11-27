@@ -115,6 +115,17 @@
                 		<li>
                 			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Contact</span></a>
                 		</li>
+                		<li>
+                               <asp:LoginView ID="lgvBeheer" runat="server">
+                               <LoggedInTemplate>
+                               <li>
+                                   <asp:HyperLink ID="lnkBeheer" runat="server"><span class="l"></span><span class="r"></span><span class="t">Applicatiebeheer</span></asp:HyperLink>
+                               </li>
+                               </LoggedInTemplate>
+                               <AnonymousTemplate>
+                               </AnonymousTemplate>
+                               </asp:LoginView>
+                		</li>
                 	</ul>
                 </div>
             <div class="art-Header">
@@ -148,9 +159,6 @@
                         </div>
                         <div class="art-Post-body">
                             <div class="art-PostMetadataHeader">
-                                <h2 class="art-PostHeaderIcon-wrapper">
-                                    Login
-                                </h2>
                                 <div class="art-PostContent">
                                 </div>
                                   <form id="frmMain">
@@ -170,6 +178,9 @@
                                                     </ul>
                                                 </LoggedInTemplate>
                                                 <AnonymousTemplate>
+                                                    <h2 class="art-PostHeaderIcon-wrapper">
+                                                        Login
+                                                    </h2>
                                                     <asp:Login ID="loginGebruiker" runat="server">
                                                         <LayoutTemplate>
                                                             <table align="right">

@@ -21,6 +21,15 @@ Partial Class App_Presentation_MasterPage
             Dim link As String = "~/App_Presentation/Webpaginas/NieuweGebruikerAanmaken.aspx"
             CType(Me.lgvRegistreren.FindControl("lnkRegistraties"), HyperLink).NavigateUrl = link
         End If
+
+        'Applicatiebeheerlink
+        If (Roles.IsUserInRole(Page.User.Identity.Name, "Medewerker") Or _
+            Roles.IsUserInRole(Page.User.Identity.Name, "Developer") Or _
+            Roles.IsUserInRole(Page.User.Identity.Name, "Bedrijfsverantwoordelijke")) Then
+
+            Dim link As String = "~/App_Presentation/Webpaginas/Beheer/"
+            CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
+        End If
     End Sub
 End Class
 

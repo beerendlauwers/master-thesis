@@ -57,7 +57,7 @@ Public Class Auto
         _kenteken = kenteken
         _dagtarief = dagtarief
         _status = statusbll.GetAutostatusNaamByAutostatusID(statusID)
-        _filiaal = filiaalbll.GetFiliaalByFiliaalID(filiaalID)
+        _filiaal = filiaalbll.GetFiliaalNaamByFiliaalID(filiaalID)
         _parkeerplaats = parkeerplaats
         _foto = foto
 

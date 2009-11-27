@@ -4,13 +4,15 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    <asp:ScriptManager ID="scmFiliaal" runat="server"></asp:ScriptManager>
+    <asp:ScriptManager ID="scmFiliaal" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
     
-    <cc1:Accordion ID="FiliaalAccordion" runat="server" AutoSize="None" TransitionDuration="250">
+    <cc1:Accordion ID="FiliaalAccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
         <Panes>
             <cc1:AccordionPane ID="PaneToevoegen" runat="server">
                 <Header>Filiaal Toevoegen</Header>
                 <Content>
+                <asp:UpdatePanel runat="server" ID="updToevoegen" UpdateMode="Always">
+                <ContentTemplate>
                     <table>
                         <tr>
                             <td>
@@ -42,11 +44,71 @@
                             </td>
                         </tr>
                     </table>
+                                            </ContentTemplate>
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID="btnVoegtoe" />
+                        </Triggers>
+                    </asp:UpdatePanel>
+                </Content>
+            </cc1:AccordionPane>
+            <cc1:AccordionPane ID="PaneWijzigen" runat="server">
+                <Header>Filiaal Wijzigen</Header>
+                <Content>
+                    <asp:UpdatePanel runat="server" ID="updWijzigen" UpdateMode="Always">
+                        <ContentTemplate>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <asp:Label ID="lblSelecteerFiliaal" runat="server" Text="Selecteer Filiaal: "></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:DropDownList ID="ddlFilialen" runat="server" DataSourceID="objdFiliaalDelete"
+                                            DataTextField="filiaalNaam" DataValueField="filiaalID" AutoPostBack="true">
+                                        </asp:DropDownList>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:Label ID="lblFiliaalWijzigenNaam" runat="server" Text="Naam: "></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox ID="txtFiliaalWijzigenNaam" runat="server"></asp:TextBox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:Label ID="lblFiliaalWijzigenLocatie" runat="server" Text="Locatie: "></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox ID="txtFiliaalWijzigenLocatie" runat="server"></asp:TextBox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:Label ID="lblFiliaalWijzigenStraatNr" runat="server" Text="Straat + Nr: "></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox ID="txtFiliaalWijzigenStraatNr" runat="server"></asp:TextBox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" align="right">
+                                        <asp:Button ID="btnFiliaalWijzigen" runat="server" Text="Wijzig filiaal" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </ContentTemplate>
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID="ddlFilialen" />
+                        </Triggers>
+                    </asp:UpdatePanel>
                 </Content>
             </cc1:AccordionPane>
             <cc1:AccordionPane ID="PaneVerwijderen" runat="server">
                 <Header>Filiaal Verwijderen</Header>
-                <Content>
+                    <content>
+                <asp:UpdatePanel runat="server" ID="updVerwijderen" UpdateMode="Always">
+                    <ContentTemplate>
                     <table>
                     <tr>
                         <td>
@@ -64,6 +126,11 @@
                         </td>
                     </tr>
                 </table>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="btnDelete" />
+                    </Triggers>
+                </asp:UpdatePanel>
                 </Content>
             </cc1:AccordionPane>
         </Panes>
@@ -89,5 +156,4 @@
             <asp:Parameter Name="filiaalLatitude" Type="String" />
         </InsertParameters>
     </asp:ObjectDataSource>
-    </td> </tr> </table>
 </asp:Content>

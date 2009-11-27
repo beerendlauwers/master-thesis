@@ -55,4 +55,8 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
         ' Nieuwe user rol "Gebruiker" geven
         Roles.AddUserToRole(wizard.UserName, "Gebruiker")
     End Sub
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        CType(Master.FindControl("loginView"), LoginView).Visible = False
+    End Sub
 End Class

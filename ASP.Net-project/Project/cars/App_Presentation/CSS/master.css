@@ -676,6 +676,24 @@ h1.art-Logo-name, h1.art-Logo-name a, h1.art-Logo-name a:link, h1.art-Logo-name 
 /* end Box, Block */
 
 /* begin BlockHeader */
+.art-BlockHeaderStrong
+{
+	background-color: #649ECC;
+	color: #EEEEEE;
+	font-weight: 800;
+	position:relative;
+	z-index:0;
+	height: 30px;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	padding: 0 7px;
+}
+
+.art-BlockHeaderStrong a:hover
+{
+	text-decoration: underline;
+}
+
 .art-BlockHeader
 {
 	position:relative;
