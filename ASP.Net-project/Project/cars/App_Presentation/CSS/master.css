@@ -1300,6 +1300,12 @@ input, select
 	font-size: 13px;
 }
 
+.art-vakje-ParkingBeheer
+{
+	background-color: white;
+	border: none;
+}
+
 .art-button-wrapper.hover .art-button, .art-button:hover
 {
 	color: #EEF3F6 !important;
