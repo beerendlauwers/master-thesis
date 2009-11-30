@@ -510,17 +510,12 @@ div.art-Header
 div.art-right-pic
 {
 	position: absolute;
+	border-right: 2px;
 	width: 74px;
 	height: 64px;
 	background-image: url('../Images/belgium.gif');
 	background-repeat: no-repeat;
 }
-
-div.right-block
-{
-	background-color:#EFF3FB;
-}
-
 
 
 div.art-Header-jpeg
@@ -535,6 +530,17 @@ div.art-Header-jpeg
 	background-repeat: no-repeat;
 	background-position: center center;
 }
+
+div.art-personenwagens
+{
+	position: absolute;
+	width: 427px;
+	height: 738px;
+	background-image: url('../Images/frontpage.gif');
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
 /* end Header */
 
 /* begin Logo */
@@ -547,10 +553,56 @@ div.art-Header-jpeg
 	width: 856px;
 }
 
+.art-Logo-small1
+{
+	display : block;
+	position: absolute;
+	left:100px;
+	bottom: 50px;
+	width: 150px;
+}
+
+.art-Logo-small2
+{
+	display : block;
+	position: absolute;
+	left: 300px;
+	bottom: 50px;
+	width: 150px;
+}
+
+.art-Logo-small3
+{
+	display : block;
+	position: absolute;
+	left: 500px;
+	bottom: 50px;
+	width: 150px;
+}
+
 h1.art-Logo-name
 {
 	display: block;
 	text-align: left;
+}
+
+h2.art-Logo-name, h2.art-Logo-name a, h2.art-Logo-name a:link, h2.art-Logo-name a:visited, h2.art-Logo-name a:hover
+{
+	font-family:"Brush Script MT",Arial, Helvetica, Sans-Serif;
+	font-size: 54px;
+	text-decoration: none;
+	padding:0;
+	margin:0;
+	color: #DEE7ED !important;
+}
+
+h3.art-Logo-name, h3.art-Logo-name a, h3.art-Logo-name a:link, h3.art-Logo-name a:visited, h.art-Logo-name a:hover
+{
+	font-family: Arial;
+	font-size: 14px;
+	text-decoration: none;
+	color: #000000;
+	width: 150px;
 }
 
 h1.art-Logo-name, h1.art-Logo-name a, h1.art-Logo-name a:link, h1.art-Logo-name a:visited, h1.art-Logo-name a:hover
