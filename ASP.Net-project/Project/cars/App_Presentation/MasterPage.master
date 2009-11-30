@@ -211,6 +211,7 @@
                                                             BorderWidth="1px" Font-Names="Verdana" Font-Size="0.8em" ForeColor="#284E98" />
                                                         <LayoutTemplate>
                                                         Login
+                                                            <br />
                                                         <br />
                                                             <table align="left" style="width: 194px">
                                                                 <tr>
@@ -253,12 +254,61 @@
                                                         <TitleTextStyle BackColor="#507CD1" Font-Bold="True" Font-Size="0.9em" 
                                                             ForeColor="White" />
                                                     </asp:Login>
-                                </div>
+                             
                                 </AnonymousTemplate> </asp:loginview>
                             </div>
             </form>
+                     
+                                                
+                                                                            
+            <h3>Cars filialen</h3>
+            Kies een filiaal dicht bij u
+            <br />
+            <br />
+                    <asp:DropDownList ID="DropDownList1" runat="server" 
+        DataSourceID="ObjectDataSource1" DataTextField="filiaalNaam" 
+        DataValueField="filiaalNaam">
+                    </asp:DropDownList>
             
+            <div class="art-right-pic">
+                </div>
+           
+            
+                    <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" 
+        DeleteMethod="Delete" InsertMethod="Insert" 
+        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
+        TypeName="AutosTableAdapters.tblFiliaalTableAdapter" UpdateMethod="Update">
+                        <DeleteParameters>
+                            <asp:Parameter Name="Original_filiaalID" Type="Int32" />
+                        </DeleteParameters>
+                        <UpdateParameters>
+                            <asp:Parameter Name="filiaalLocatie" Type="String" />
+                            <asp:Parameter Name="filiaalNaam" Type="String" />
+                            <asp:Parameter Name="parkingAantalRijen" Type="Int32" />
+                            <asp:Parameter Name="parkingAantalKolommen" Type="Int32" />
+                            <asp:Parameter Name="Original_filiaalID" Type="Int32" />
+                        </UpdateParameters>
+                        <InsertParameters>
+                            <asp:Parameter Name="filiaalLocatie" Type="String" />
+                            <asp:Parameter Name="filiaalNaam" Type="String" />
+                            <asp:Parameter Name="parkingAantalRijen" Type="Int32" />
+                            <asp:Parameter Name="parkingAantalKolommen" Type="Int32" />
+                        </InsertParameters>
+    </asp:ObjectDataSource>
+                                  <br />
+            <br />                            
+                                                             
+                      </div>       
             </div>
+                
+                
+                
+                
+                
+                
+                
+                
+        <br />
                 
                 
                 
@@ -283,7 +333,7 @@
         </div>
     </div>
 </div>
-</div>
+
 <div class="cleared">
 </div>
 </form>

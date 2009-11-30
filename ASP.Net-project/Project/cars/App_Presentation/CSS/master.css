@@ -7,6 +7,7 @@ body
 	background-color: #ABCBE3;
 }
 
+
 #art-main
 {
 	position: relative;
@@ -505,6 +506,21 @@ div.art-Header
 	width: 984px;
 	height: 200px;
 }
+
+div.art-right-pic
+{
+	position: absolute;
+	width: 74px;
+	height: 64px;
+	background-image: url('../Images/belgium.gif');
+	background-repeat: no-repeat;
+}
+
+div.right-block
+{
+	background-color:#EFF3FB;
+}
+
 
 
 div.art-Header-jpeg
