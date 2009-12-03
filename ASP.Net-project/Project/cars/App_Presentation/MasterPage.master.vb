@@ -31,5 +31,17 @@ Partial Class App_Presentation_MasterPage
             CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
         End If
     End Sub
+
+    Protected Sub ddoFiliaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddoFiliaal.SelectedIndexChanged
+
+        Dim FiliaalCookie As HttpCookie = New HttpCookie("filcookie")
+
+        FiliaalCookie.Value = ddoFiliaal.SelectedValue
+        FiliaalCookie.Expires = DateTime.Now.AddDays(100)
+        Response.Cookies.Add(FiliaalCookie) ' cookie bewaren
+
+
+
+    End Sub
 End Class
 
