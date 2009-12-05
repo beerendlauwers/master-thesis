@@ -23,6 +23,18 @@ Public Class AutoDAL
 
         Dim dt As New Autos.tblAutoDataTable
         Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutoDataTable)
+
+    End Function
+
+    Public Function GetAutoByAutoID(ByVal autoID As Integer) As Autos.tblAutoDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblAuto WHERE autoID = @autoID")
+        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Autos.tblAutoDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutoDataTable)
+
     End Function
 
     Public Function GetAutosByKenteken(ByVal autoKenteken As String) As Autos.tblAutoDataTable
@@ -120,11 +132,11 @@ Public Class AutoDAL
 
     Public Function GetAutoNaamByAutoID(ByVal id As Integer) As String
 
-        Dim myCommand As New SqlCommand("SELECT merknaam + ' ' + modelNaam AS naam FROM tblAuto A, tblModel MO, tblMerk ME WHERE autoID = @autoID AND A.modelID = MO.modelID AND MO.merkID = ME.merkID")
+        Dim myCommand As New SqlCommand("SELECT merkNaam + ' ' + modelNaam AS naam FROM tblAuto A, tblModel MO, tblMerk ME WHERE autoID = @autoID AND A.modelID = MO.modelID AND MO.merkID = ME.merkID")
         myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = id
         myCommand.Connection = _myConnection
 
-        Return CType(_f.ReadSingleItem(myCommand, "merkNaam"), String)
+        Return CType(_f.ReadSingleItem(myCommand, "naam"), String)
 
     End Function
 
@@ -168,24 +180,4 @@ Public Class AutoDAL
 
     End Function
 
-    Public Function InsertFoto(ByVal autoID As Integer, ByVal naam As String, ByVal type As String, ByVal foto As Byte()) As Boolean
-        Dim myCommand As New SqlCommand("INSERT INTO tblAutoFoto(AutoID, autoFoto, autoFotoContentType, autoFotoNaam) VALUES( @autoID, @foto, @contentType, @naam)")
-        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
-        myCommand.Parameters.Add("@naam", SqlDbType.NChar).Value = naam
-        myCommand.Parameters.Add("@contentType", SqlDbType.NChar).Value = type
-        myCommand.Parameters.Add("@foto", SqlDbType.Binary).Value = foto
-        myCommand.Connection = _myConnection
-
-        Try
-            _myConnection.Open()
-            myCommand.ExecuteNonQuery()
-            Return True
-        Catch ex As Exception
-            Throw ex
-            Return False
-        Finally
-            _myConnection.Close()
-        End Try
-
-    End Function
 End Class

@@ -28,4 +28,15 @@ Public Class AutoFotoDAL
 
     End Function
 
+    Public Function GetReservatieAutoFotoByAutoID(ByVal autoID As Integer) As Autos.tblAutofotoDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblAutoFoto WHERE autoID = @autoID AND autoFotoVoorReservatie = 1")
+        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Autos.tblAutofotoDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutofotoDataTable)
+
+    End Function
+
 End Class

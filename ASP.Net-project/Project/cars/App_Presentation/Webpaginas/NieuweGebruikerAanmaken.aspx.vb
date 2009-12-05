@@ -37,6 +37,11 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
             p.userBTWnummer = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBTW"), TextBox).Text
             p.userBedrijfVestigingslocatie = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtLocatie"), TextBox).Text
             p.userBedrijfnaam = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBedrijfnaam"), TextBox).Text
+        Else
+            p.userIsBedrijf = 0
+            p.userBTWnummer = "0"
+            p.userBedrijfVestigingslocatie = "0"
+            p.userBedrijfnaam = "0"
         End If
 
         ' Extra beheerdersinformatie
@@ -54,9 +59,36 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
 
         ' Nieuwe user rol "Gebruiker" geven
         Roles.AddUserToRole(wizard.UserName, "Gebruiker")
+
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         CType(Master.FindControl("loginView"), LoginView).Visible = False
+
+        'Checken of deze anonieme persoon een reservatie wil doen
+        Dim tempCookie As HttpCookie = Request.Cookies("reservatieCookie")
+        If tempCookie IsNot Nothing Then
+            Me.lblAnoniemeReservatie.Text = "Vooraleer u kan verdergaan met uw reservatie dient u een gebruiker aan te maken. Vul onderstaande velden in en klik daarna op ""Gebruiker Aanmaken"" om verder te gaan."
+            Me.lblAnoniemeReservatie.Visible = True
+        End If
+
+    End Sub
+
+    Protected Sub ContinueButton_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+
+        'De persoon wil mogelijk nog een reservatie doen, stuur hem door!
+        Dim tempCookie As HttpCookie = Request.Cookies("reservatieCookie")
+        If tempCookie IsNot Nothing Then
+            Dim autoID As String = tempCookie("autoID")
+            Dim begindat As String = tempCookie("begindat")
+            Dim einddat As String = tempCookie("einddat")
+            tempCookie.Expires = DateTime.Now.AddDays(-14)
+            Response.Cookies.Add(tempCookie)
+
+            Dim userID As String = Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()
+            Response.Redirect(String.Concat("Reserveer.aspx?autoID=", autoID, "&begindat=", begindat, "&einddat=", einddat, "&userID=", userID))
+        End If
+
+        Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
     End Sub
 End Class

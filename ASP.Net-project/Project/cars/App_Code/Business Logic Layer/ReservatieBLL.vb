@@ -28,19 +28,21 @@ Public Class ReservatieBLL
         End Try
     End Function
 
-    'Public Function InsertReservatie(ByRef r As Reservatie) As Boolean
-    'Try
-    '   If (_adapterReservatie.Insert(r.KlantID, r.AutoID, r.GereserveerdDoorMedewerker, _
-    ' r.UitgechecktDoorMedewerker, r.IngechecktDoorMedewerker, _
-    ' r.Begindatum, r.Einddatum)) Then
-    '      Return True
-    ' Else
-    '    Return False
-    ' End If
-    'Catch ex As Exception
-    '  Throw ex
-    'End Try
-    'End Function
+    Public Function InsertReservatie(ByRef r As Reservaties.tblReservatieRow) As Boolean
+        Try
+            If (_adapterReservatie.Insert(r.userID, r.autoID, r.reservatieBegindat, _
+                                          r.reservatieEinddat, r.reservatieGereserveerdDoorMedewerker, _
+                                          r.reservatieUitgechecktDoorMedewerker, r.reservatieIngechecktDoorMedewerker, _
+                                          r.verkoopscontractIsOndertekend, r.verkoopscontractOpmerking, _
+                                          r.factuurBijschrift, r.factuurIsInWacht)) Then
+                Return True
+            Else
+                Return False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 
     Public Function DeleteReservatie(ByVal reservatieID As Integer) As Boolean
         Try

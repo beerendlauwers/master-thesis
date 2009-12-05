@@ -3,6 +3,7 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+
     <asp:ScriptManager ID="scmManager" runat="server"></asp:ScriptManager>
     <div>
     
@@ -109,7 +110,17 @@
                             Bouwjaar:
                         </td>
                         <td>
+                            <asp:UpdatePanel ID="updBouwjaar" runat="server" UpdateMode="Conditional">
+                            <ContentTemplate>
                             <asp:TextBox ID="txtAutoBouwjaar" runat="server" Text='<%# Bind("autoBouwjaar") %>' />
+                            <ajaxToolkit:MaskedEditExtender ID="mskAutoBouwjaar" runat="server" AutoComplete="False" MaskType="Number" Mask="9999" TargetControlID="txtAutoBouwjaar" ClearTextOnInvalid="True" PromptCharacter=".">
+                            </ajaxToolkit:MaskedEditExtender>
+                            <ajaxToolkit:MaskedEditValidator ID="valAutoBouwjaar" runat="server" ControlToValidate="txtAutoBouwjaar" InvalidValueMessage="Gelieve een geldig jaar in te vullen." IsValidEmpty="False" MinimumValue="1900" ControlExtender="mskAutoBouwjaar" EmptyValueMessage="Gelieve een geldig jaar in te vullen." InvalidValueBlurredMessage="Gelieve een geldig jaar in te vullen." MinimumValueBlurredText="Het minimumjaar is 1900." EmptyValueBlurredText="Gelieve een geldig jaar in te vullen.">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </ajaxToolkit:MaskedEditValidator>
+                            </ContentTemplate>
+                            <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID = "txtAutoBouwjaar" />
+                            </Triggers>
+                            </asp:UpdatePanel>
                         </td>
                     </tr>
                     <tr>
@@ -127,7 +138,20 @@
                             Kenteken:
                         </td>
                         <td>
-                            <asp:TextBox ID="txtAutoKenteken" runat="server" Text='<%# Bind("autoKenteken") %>' />
+                            <asp:UpdatePanel ID="updAutoKenteken" runat="server" UpdateMode="Conditional">
+                                <ContentTemplate>
+                                    <asp:TextBox ID="txtAutoKenteken" runat="server" AutoPostBack = "true" 
+                                        Text='<%# Bind("autoKenteken") %>' 
+                                        ontextchanged="txtAutoKenteken_TextChanged" />
+                                    <ajaxToolkit:MaskedEditExtender ID="mskAutoKenteken" runat="server" TargetControlID="txtAutoKenteken" AutoComplete="False" PromptCharacter="." Mask="LLL999" ClearTextOnInvalid="True" ></ajaxToolkit:MaskedEditExtender>
+                                    <ajaxToolkit:MaskedEditValidator ID="valAutoKenteken" runat="server" 
+                                        ControlExtender="mskAutoKenteken" ControlToValidate="txtAutoKenteken">&nbsp;&nbsp;&nbsp;&nbsp; </ajaxToolkit:MaskedEditValidator>
+                                        <asp:Label ID="lblAutoKentekenIncorrect" runat="server" Text="Dit kenteken is reeds in gebruik." Visible="false" ForeColor="red"></asp:Label>                                
+                                </ContentTemplate>
+                                <Triggers>
+                                    <asp:AsyncPostBackTrigger ControlID="txtAutoKenteken" />
+                                </Triggers>
+                            </asp:UpdatePanel>
                         </td>
                     </tr>
                     <tr>
@@ -142,20 +166,32 @@
                     </tr>
                     <tr>
                         <td>
-                            Parkeerplaats:
+                            Filiaal:
                         </td>
                         <td>
-                            <asp:TextBox ID="txtAutoParkeerplaats" runat="server" Text='<%# Bind("autoParkeerplaats") %>' />
+                            <asp:UpdatePanel ID="updFiliaal" runat="server" UpdateMode="Conditional">
+                                <ContentTemplate>
+                                    <asp:DropDownList ID="ddlFiliaal" runat="server" DataSourceID="odsFiliaal" DataTextField="filiaalNaam"
+                                        DataValueField="filiaalID" SelectedValue='<%# Bind("filiaalID") %>' OnSelectedIndexChanged="ddlFiliaal_SelectedIndexChanged"
+                                        AutoPostBack="true">
+                                    </asp:DropDownList>
+                                </ContentTemplate>
+                            </asp:UpdatePanel>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            Filiaal:
+                           Parkeerplaats:
                         </td>
                         <td>
-                            <asp:DropDownList ID="ddlFiliaal" runat="server" DataSourceID="odsFiliaal" DataTextField="filiaalNaam"
-                                DataValueField="filiaalID" SelectedValue='<%# Bind("filiaalID") %>'>
-                            </asp:DropDownList>
+                            <asp:UpdatePanel ID="updParkingOverzicht" runat="server" UpdateMode="Conditional">
+                                <ContentTemplate>
+                                    <asp:TextBox ID="txtAutoParkeerplaats" runat="server" Text='<%# Bind("autoParkeerplaats") %>'
+                                        Enabled="false" />
+                                    <asp:ImageButton ID="imgParkeerPlaats" runat="server" ImageUrl="~/App_Presentation/Images/kalender.png"
+                                        Visible="false" />
+                                </ContentTemplate>
+                            </asp:UpdatePanel>
                         </td>
                     </tr>
                     <tr>
@@ -164,6 +200,8 @@
                         </td>
                         <td>
                             <asp:TextBox ID="txtAutoDagTarief" runat="server" Text='<%# Bind("autoDagTarief") %>' />
+                            <ajaxToolkit:FilteredTextBoxExtender ID="fltAutoDagTarief" runat="server" TargetControlID="txtAutoDagTarief" FilterType="Custom, Numbers" ValidChars=",">
+                            </ajaxToolkit:FilteredTextBoxExtender>
                         </td>
                     </tr>
                     <tr>
@@ -171,10 +209,9 @@
                             Foto:
                         </td>
                         <td>
-                            <asp:FileUpload ID="fupAutoFoto" runat="server" UpdateMode="conditional" />
+                            <ajaxToolkit:AsyncFileUpload ID="uplFoto" runat="server" Width="250px" OnUploadedComplete="FotoGeupload" />
                         </td>
                     </tr>
-                    <tr>
                 </table>
                 <asp:UpdatePanel ID="updOpties" runat="server">
                     <ContentTemplate>
@@ -240,13 +277,17 @@
                         </table>
                     
                     <hr />
-
-                <asp:Button ID="btnInsert" runat="server" CausesValidation="True" 
-                    CommandName="Insert" onclick="btnInsert_Click" Text="Auto Toevoegen" />
-                &nbsp;<asp:LinkButton ID="btnInsertCancel" runat="server" 
-                    CausesValidation="False" CommandName="Cancel" Text="Annuleren" />
-                </div>
+               </div>
                 </ContentTemplate>
+                </asp:UpdatePanel>
+                <asp:UpdatePanel ID="updAutoToevoegen" runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <asp:Button ID="btnInsert" runat="server" CausesValidation="True" CommandName="Insert"
+                            OnClick="btnInsert_Click" Text="Auto Toevoegen" />
+                        &nbsp;<asp:LinkButton ID="btnInsertCancel" runat="server" CausesValidation="False"
+                            CommandName="Cancel" Text="Annuleren" />
+                        <asp:Label ID="lblTest" runat="server" Visible="false"></asp:Label>
+                    </ContentTemplate>
                 </asp:UpdatePanel>
             </InsertItemTemplate>
             <ItemTemplate>
@@ -307,7 +348,7 @@
         TypeName="BrandstofBLL">
     </asp:ObjectDataSource>
     <asp:ObjectDataSource ID="odsAutoStatus" runat="server" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetAllAutoStatus" 
+        OldValuesParameterFormatString="original_{0}" SelectMethod="GetAllAutoStatusToewijsbaarBijMaken" 
         TypeName="AutoStatusBLL">
     </asp:ObjectDataSource>
     <asp:ObjectDataSource ID="odsCategorie" runat="server" 

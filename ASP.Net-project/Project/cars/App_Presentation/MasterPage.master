@@ -47,20 +47,21 @@
                 	<div class="r"></div>
                 	<ul class="art-menu">
                 		<li>
-                			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Home</span></a>
+                			<a runat="server" id="homeButton"><span class="l"></span><span class="r"></span><span class="t">Home</span></a>
                 		</li>
                 		<li>
-						<a href="index_wagens.html"><span class="l"></span><span class="r"></span><span class="t">Verhuur auto's</span></a>
+						<a runat="server" id="autoReserveren"><span class="l"></span><span class="r"></span><span class="t">Auto Reserveren</span></a>
                 			<ul>
-                		   		<li><a href="../Webpaginas/GebruikersOnly/NieuweReservatieAanmaken.aspx">Personenwagens</a>
+                		   		<li><a runat="server" id="autoReserverenPersonenwagens">Personenwagens</a>
                 					<ul>
-                						<li><a href="#">Compacte wagens</a></li>
-                						<li><a href="#">Middeklasse wagens</a></li>
-                						<li><a href="#">Topklasse wagens</a></li>
+                						<li><a runat="server" id="autoReserverenPersonenwagens1">Klein / Middelmaat</a></li>
+                						<li><a runat="server" id="autoReserverenPersonenwagens2">Groot</a></li>
+                						<li><a runat="server" id="autoReserverenPersonenwagens3">Luxe</a></li>
                 					</ul>
                 				</li>                                         						
-                   				<li><a href="exclusieve_wagens.html">Exclusieve wagens</a></li>
+                   				<!-- <li><a href="exclusieve_wagens.html">Exclusieve wagens</a></li>
                 				<li><a href="verhuiswagens.html">Verhuiswagens</a></li>
+                				-->
                           	</ul>
                 		</li>
                                <asp:LoginView ID="lgvRegistreren" runat="server">
@@ -182,8 +183,8 @@
                                     <asp:loginview id="loginView" runat="server">
                                                 <LoggedInTemplate>
                                                     <ul id="navigatie">
-                                                        <li id="username">Je bent ingelogd als
-                                                            <asp:LoginName ID="loginNaam" runat="server" />
+                                                        <li id="username">Je bent ingelogd als<br />
+                                                            <strong><asp:LoginName ID="loginNaam" runat="server" /></strong>
                                                         </li>
                                                         <li>
                                                             <asp:HyperLink NavigateUrl="~/App_Presentation/Webpaginas/GebruikersOnly/NieuweReservatieAanmaken.aspx"

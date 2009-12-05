@@ -23,16 +23,21 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             Next
 
             'Eigen kolommen toevoegen
+            overzichtdatatable.Columns.Add("autoKenteken", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("autoNaam", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("begindat", Type.GetType("System.DateTime"))
             overzichtdatatable.Columns.Add("einddat", Type.GetType("System.DateTime"))
 
             'Data overzetten
             Dim autobll As New AutoBLL
+
             For i As Integer = 0 To datatable.Rows.Count - 1
                 overzichtrow = overzichtdatatable.NewRow()
 
-                overzichtrow("autoNaam") = autobll.GetAutoNaamByAutoID(datatable.Rows(i).Item("autoID"))
+                Dim row As Autos.tblAutoRow = autobll.GetAutoByAutoID(datatable.Rows(i).Item("autoID")).Rows(0)
+
+                overzichtrow("autoKenteken") = row.autoKenteken
+                overzichtrow("autoNaam") = autobll.GetAutoNaamByAutoID(row.autoID)
                 overzichtrow("begindat") = Date.Parse(datatable.Rows(i).Item("reservatieBegindat"))
                 overzichtrow("einddat") = Date.Parse(datatable.Rows(i).Item("reservatieEinddat"))
 

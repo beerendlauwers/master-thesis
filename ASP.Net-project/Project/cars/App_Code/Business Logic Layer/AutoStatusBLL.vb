@@ -11,6 +11,14 @@ Public Class AutoStatusBLL
         End Try
     End Function
 
+    Public Function GetAllAutoStatusToewijsbaarBijMaken() As Autos.tblAutostatusDataTable
+        Try
+            Return _autostatusdal.GetAutoStatusToewijsbaarBijMaken()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAutostatusNaamByAutostatusID(ByVal autostatusID As Integer) As String
         Try
             Dim dt As Autos.tblAutostatusDataTable = _autostatusdal.GetAutoStatusByID(autostatusID)

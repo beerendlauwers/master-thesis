@@ -3,11 +3,6 @@
 <%@ MasterType virtualpath="~/App_Presentation/MasterPage.master" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <title>Untitled Page</title>
-<body>
     <asp:ScriptManager ID="scmManager" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
     <table><tr><td>
     <asp:CreateUserWizard ID="wizard" runat="server">
@@ -19,10 +14,11 @@
                             <asp:AsyncPostBackTrigger ControlID="chkIsBedrijf" />
                         </Triggers>
                         <ContentTemplate>
+                        <asp:Label ID="lblAnoniemeReservatie" runat="server" Visible="false"></asp:Label>
                     <table border="0">
                         <tr>
-                            <td align="center" colspan="2">
-                                Maak een nieuwe gebruiker aan.</td>
+                            <th align="center" colspan="2">
+                            Nieuwe gebruiker aanmaken</td>
                         </tr>
                         <tr>
                             <td align="right">
@@ -211,7 +207,8 @@
                         <tr>
                             <td align="right" colspan="2">
                                 <asp:Button ID="ContinueButton" runat="server" CausesValidation="False" 
-                                    CommandName="Continue" Text="Continue" ValidationGroup="CreateUserWizard1" />
+                                    CommandName="Continue" Text="Doorgaan" ValidationGroup="CreateUserWizard1" 
+                                    onclick="ContinueButton_Click" />
                             </td>
                         </tr>
                     </table>
@@ -221,7 +218,5 @@
     </asp:CreateUserWizard>
     </td>
     </tr></table>
-</body>
-</html>
 </asp:Content>
 

@@ -6,10 +6,9 @@ Public Class AutoOptieBLL
     Private _autooptiedal As New AutoOptieDAL
     Private pAutoID As Integer
 
-    Public Function autoOptieAdd(ByRef a As AutoOptie) As Boolean
-
+    Public Function autoOptieAdd(ByRef r As Autos.tblAutoOptieRow) As Boolean
         Try
-            If (_autoOptieAdapter.Insert(a.OptieID, a.AutoID)) Then
+            If (_autoOptieAdapter.Insert(r.optieID, r.autoID)) Then
                 Return True
             Else
                 Return False

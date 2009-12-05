@@ -10,6 +10,9 @@
             <table>
                 <tr>
                     <td>
+                        Kenteken
+                    </td>
+                    <td>
                         Auto
                     </td>
                     <td>
@@ -22,6 +25,9 @@
                 <asp:Repeater ID="repOverzicht" runat="server">
                     <ItemTemplate>
                         <tr>
+                            <td>
+                                <%# DataBinder.Eval(Container.DataItem, "autoKenteken") %>
+                            </td>
                             <td>
                                 <%# DataBinder.Eval(Container.DataItem, "autoNaam") %>
                             </td>

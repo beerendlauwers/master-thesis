@@ -2,14 +2,6 @@
 
 Public Class AutoBLL
     Private _adapterAuto As New AutosTableAdapters.tblAutoTableAdapter
-    Private _adapterBrandstofType As New AutosTableAdapters.tblBrandstofTableAdapter
-    Private _adapterAutoStatus As New AutosTableAdapters.tblAutostatusTableAdapter
-    Private _adapterFiliaal As New AutosTableAdapters.tblFiliaalTableAdapter
-    Private _adapterOptie As New AutosTableAdapters.tblOptieTableAdapter
-    Private _adapterModel As New AutosTableAdapters.tblModelTableAdapter
-    Private _adapterMerk As New AutosTableAdapters.tblMerkTableAdapter
-    Private _adapterCategorie As New AutosTableAdapters.tblCategorieTableAdapter
-    Private _adapterFoto As New AutosTableAdapters.tblAutofotoTableAdapter
     Private _autodal As New AutoDAL
 
     Public Function GetAllAutos() As Autos.tblAutoDataTable
@@ -20,9 +12,29 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function GetAutoByAutoID(ByVal autoID As Integer) As Autos.tblAutoDataTable
+        Try
+            Return _autodal.GetAutoByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAutoNaamByAutoID(ByVal id As Integer) As String
         Try
             Return _autodal.GetAutoNaamByAutoID(id)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function CheckOfKentekenReedsBestaat(ByVal kenteken As String) As Boolean
+        Try
+            If (_autodal.getAutoIDByKenteken(kenteken) = 0) Then
+                Return False
+            Else
+                Return True
+            End If
         Catch ex As Exception
             Throw ex
         End Try
@@ -152,4 +164,12 @@ Public Class AutoBLL
         End Try
     End Function
 
+
+    Public Function getAutoIDByKenteken(ByVal autoKenteken As String) As Integer
+        Try
+            Return _autodal.getAutoIDByKenteken(autoKenteken)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 End Class

@@ -9,7 +9,7 @@ Public Class BrandstofDAL
 
     Public Function GetAllBrandstof() As Autos.tblBrandstofDataTable
 
-        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie")
+        Dim myCommand As New SqlCommand("SELECT * FROM tblBrandstof")
         myCommand.Connection = _myConnection
 
         Dim dt As New Autos.tblBrandstofDataTable

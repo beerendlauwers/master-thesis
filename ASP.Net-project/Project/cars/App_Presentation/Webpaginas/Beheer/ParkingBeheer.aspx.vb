@@ -73,8 +73,6 @@ Partial Class App_Presentation_Webpaginas_FiliaalBeheer
 
     Private Function MaakVakje(ByVal i As Integer, ByVal j As Integer) As HtmlGenericControl
         Dim tabledata As New HtmlGenericControl("td")
-        Dim checkbox As New CheckBox()
-
         Dim button As New Button()
 
         With button
@@ -178,6 +176,14 @@ Partial Class App_Presentation_Webpaginas_FiliaalBeheer
             i = i + 1
             j = 0
         End While
+
+        Dim filiaalbll As New FiliaalBLL
+        Dim f As Autos.tblFiliaalRow = filiaalbll.GetFiliaalByFiliaalID(Me.txtFiliaal.Text).Rows(0)
+
+        f.parkingAantalKolommen = aantalkolommen
+        f.parkingAantalRijen = aantalrijen
+
+        filiaalbll.UpdateFiliaal(f)
     End Sub
 
     Private Sub InsertInDatabase(ByRef button As Button, ByVal rij As Integer, ByVal kolom As Integer)
