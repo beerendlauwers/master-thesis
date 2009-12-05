@@ -68,8 +68,8 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
         'Checken of deze anonieme persoon een reservatie wil doen
         Dim tempCookie As HttpCookie = Request.Cookies("reservatieCookie")
         If tempCookie IsNot Nothing Then
-            Me.lblAnoniemeReservatie.Text = "Vooraleer u kan verdergaan met uw reservatie dient u een gebruiker aan te maken. Vul onderstaande velden in en klik daarna op ""Gebruiker Aanmaken"" om verder te gaan."
-            Me.lblAnoniemeReservatie.Visible = True
+            CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtVoornaam"), Label).Text = "Vooraleer u kan verdergaan met uw reservatie dient u een gebruiker aan te maken. Vul onderstaande velden in en klik daarna op ""Gebruiker Aanmaken"" om verder te gaan."
+            CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtVoornaam"), Label).Visible = True
         End If
 
     End Sub
