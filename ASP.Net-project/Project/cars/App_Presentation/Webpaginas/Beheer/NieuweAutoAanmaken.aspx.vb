@@ -23,7 +23,7 @@ Partial Class App_Presentation_NieuweAutoAanmaken
                 'Foto toevoegen
                 VoegFotoToeVanAuto(autoID)
 
-                Response.Redirect("~/App_Presentation/Webpaginas/MedewerkersOnly/NieuweAutoAanmaken.aspx")
+                Response.Redirect("~/App_Presentation/Webpaginas/Beheer/NieuweAutoAanmaken.aspx")
 
             Else
                 'kut 
