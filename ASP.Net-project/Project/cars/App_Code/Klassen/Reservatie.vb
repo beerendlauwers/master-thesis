@@ -1,17 +1,19 @@
 ﻿Imports Microsoft.VisualBasic
 
+<Serializable()> _
 Public Class Reservatie
 
 #Region "Private Variabelen"
     'Reservatiegegevens
     Private _ID As Integer
-    Private _klantID As Integer
+    Private _userID As Guid
     Private _autoID As Integer
-    Private _gereserveerdDoorMedewerker As Integer
-    Private _uitgechecktDoorMedewerker As Integer
-    Private _ingechecktDoorMedewerker As Integer
+    Private _gereserveerdDoorMedewerker As Guid
+    Private _uitgechecktDoorMedewerker As Guid
+    Private _ingechecktDoorMedewerker As Guid
     Private _begindatum As Date
     Private _einddatum As Date
+    Private _isBevestigd As Boolean
 #End Region
 
 #Region "Getters & Setters"
@@ -24,12 +26,12 @@ Public Class Reservatie
         End Set
     End Property
 
-    Public Property KlantID() As Integer
+    Public Property UserID() As Guid
         Get
-            Return (_klantID)
+            Return (_userID)
         End Get
-        Set(ByVal value As Integer)
-            _klantID = value
+        Set(ByVal value As Guid)
+            _userID = value
         End Set
     End Property
 
@@ -42,29 +44,29 @@ Public Class Reservatie
         End Set
     End Property
 
-    Public Property GereserveerdDoorMedewerker() As Integer
+    Public Property GereserveerdDoorMedewerker() As Guid
         Get
             Return (_gereserveerdDoorMedewerker)
         End Get
-        Set(ByVal value As Integer)
+        Set(ByVal value As Guid)
             _gereserveerdDoorMedewerker = value
         End Set
     End Property
 
-    Public Property UitgechecktDoorMedewerker() As Integer
+    Public Property UitgechecktDoorMedewerker() As Guid
         Get
             Return (_uitgechecktDoorMedewerker)
         End Get
-        Set(ByVal value As Integer)
+        Set(ByVal value As Guid)
             _uitgechecktDoorMedewerker = value
         End Set
     End Property
 
-    Public Property IngechecktDoorMedewerker() As Integer
+    Public Property IngechecktDoorMedewerker() As Guid
         Get
             Return (_ingechecktDoorMedewerker)
         End Get
-        Set(ByVal value As Integer)
+        Set(ByVal value As Guid)
             _ingechecktDoorMedewerker = value
         End Set
     End Property
@@ -84,6 +86,15 @@ Public Class Reservatie
         End Get
         Set(ByVal value As Date)
             _einddatum = value
+        End Set
+    End Property
+
+    Public Property IsBevestigd() As Boolean
+        Get
+            Return (_isBevestigd)
+        End Get
+        Set(ByVal value As Boolean)
+            _isBevestigd = value
         End Set
     End Property
 #End Region

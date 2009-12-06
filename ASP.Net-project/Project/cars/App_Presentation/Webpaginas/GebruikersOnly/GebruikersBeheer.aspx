@@ -15,7 +15,7 @@
 </tr>
 <tr>
     <td>
-    <asp:Label ID="Label1" runat="server" Text="Uw gebruikersnaam: "></asp:Label>
+    <asp:Label ID="lblUserNameUitleg" runat="server" Text="Uw gebruikersnaam: "></asp:Label>
     </td>
     <td>
     <asp:Label ID="lblUserName" runat="server" Text=""></asp:Label>
@@ -154,6 +154,11 @@
 </td>
 <td>
     <asp:TextBox ID="txtTelefoon" runat="server"></asp:TextBox>
+</td>
+</tr>
+<td colspan="2">
+<br />
+    <strong>Bedrijfsinformatie:</strong>
 </td>
 </tr>
 <tr>

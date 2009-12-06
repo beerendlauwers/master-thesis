@@ -24,4 +24,22 @@ Public Class OptieBLL
         End Try
     End Function
 
+    Public Function GetAllOptiesByAutoID(ByVal autoID As Integer) As Autos.tblOptieDataTable
+        Try
+            Return _optiedal.GetAllOptiesByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetOptieByNaam(ByVal naam As String) As Autos.tblOptieDataTable
+        Try
+            Return _optiedal.GetOptieByNaam(naam)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+
+
 End Class

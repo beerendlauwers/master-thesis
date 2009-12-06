@@ -11,8 +11,9 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
             gebruikerbll.GetUserProfielByUserID(gid)
 
             Dim dt As Klanten.tblUserProfielDataTable = gebruikerbll.GetUserProfielByUserID(gid)
+            Dim r As Klanten.tblUserProfielRow = dt.Rows(0)
 
-            If dt.Rows(0)("UserIsBedrijf") = 1 Then
+            If r.userIsBedrijf = 1 Then
                 txtBedrijfnaam.Visible = True
                 txtBTW.Visible = True
                 txtVestigingslocatie.Visible = True
@@ -22,15 +23,18 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
                 btnChauffeurs.Visible = True
             End If
 
-            txtNaam.Text = dt.Rows(0)("UserNaam").ToString
-            txtVoornaam.Text = dt.Rows(0)("UserVoornaam").ToString
-            txtGeboorte.Text = dt.Rows(0)("UserGeboorteDatum").ToString
-            txtIdentiteitsNr.Text = dt.Rows(0)("UserIdentiteitskaartnr").ToString
-            txtRijbewijsNr.Text = dt.Rows(0)("UserRijbewijsnr").ToString
-            txtBedrijfnaam.Text = dt.Rows(0)("UserBedrijfnaam").ToString
-            txtVestigingslocatie.Text = dt.Rows(0)("UserBedrijfVestigingslocatie").ToString
-            txtBTW.Text = dt.Rows(0)("UserBTWnummer").ToString
-            txtTelefoon.Text = dt.Rows(0)("UserTelefoon").ToString
+            'lblUserName.Text
+
+            txtNaam.Text = r.userNaam
+            txtVoornaam.Text = r.userVoornaam
+            txtGeboorte.Text = Format(r.userGeboortedatum, "dd/MM/yyy")
+            txtIdentiteitsNr.Text = r.userIdentiteitskaartnr
+            txtRijbewijsNr.Text = r.userRijbewijsnr
+            txtTelefoon.Text = r.userTelefoon
+
+            txtBedrijfnaam.Text = r.userBedrijfnaam
+            txtVestigingslocatie.Text = r.userBedrijfVestigingslocatie
+            txtBTW.Text = r.userBTWnummer
         End If
 
 

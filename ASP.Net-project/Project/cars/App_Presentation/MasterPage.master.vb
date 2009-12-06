@@ -42,13 +42,18 @@ Partial Class App_Presentation_MasterPage
         End If
 
         'Applicatiebeheerlink
-        If (Roles.IsUserInRole(Page.User.Identity.Name, "Medewerker") Or _
-            Roles.IsUserInRole(Page.User.Identity.Name, "Developer") Or _
-            Roles.IsUserInRole(Page.User.Identity.Name, "Bedrijfsverantwoordelijke")) Then
+        If (Page.User.Identity.IsAuthenticated) Then
+            If (Roles.IsUserInRole(Page.User.Identity.Name, "Medewerker") Or _
+                Roles.IsUserInRole(Page.User.Identity.Name, "Developer") Or _
+                Roles.IsUserInRole(Page.User.Identity.Name, "Bedrijfsverantwoordelijke")) Then
 
-            Dim link As String = "~/App_Presentation/Webpaginas/Beheer/"
-            CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
+                Dim link As String = "~/App_Presentation/Webpaginas/Beheer/"
+                CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
+            Else
+                CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).Visible = False
+            End If
         End If
+
     End Sub
 
     Protected Sub ddoFiliaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddoFiliaal.SelectedIndexChanged

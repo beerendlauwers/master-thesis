@@ -755,6 +755,7 @@ h1.art-Logo-name, h1.art-Logo-name a, h1.art-Logo-name a:link, h1.art-Logo-name 
 	margin-left: 5px;
 	margin-bottom: 5px;
 	padding: 0 7px;
+	padding-top: 10px;
 }
 
 .art-BlockHeaderStrong a:hover
@@ -1069,6 +1070,15 @@ a img
 	border-width: 1px;
 }
 /* end PostMetadata */
+
+/* begin HeaderIcon */
+.art-HeaderIcon
+{
+	padding: 2px 2px 2px 2px;
+	text-align: center;
+	vertical-align: middle;
+}
+/* end HeaderIcon */
 
 /* begin PostHeaderIcon */
 .art-PostHeaderIcon-wrapper

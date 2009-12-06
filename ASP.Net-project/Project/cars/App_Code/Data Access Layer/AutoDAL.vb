@@ -51,13 +51,15 @@ Public Class AutoDAL
     Public Function GetAutosBy(ByVal filterOpties() As String) As Autos.tblAutoDataTable
 
         'filterOpties expanden
-        Dim categorie, kleur, automerk, automodel, brandstoftype, bouwjaar As String
+        Dim categorie, kleur, automerk, automodel, brandstoftype, prijsmin, prijsmax As String
         categorie = filterOpties(0)
         kleur = filterOpties(1)
         automerk = filterOpties(2)
         automodel = filterOpties(3)
         brandstoftype = filterOpties(4)
-        bouwjaar = filterOpties(5)
+        prijsmin = filterOpties(5).Replace(",", ".")
+        prijsmax = filterOpties(6).Replace(",", ".")
+
 
         'query opbouwen
         Dim myCommand As New SqlCommand
@@ -68,11 +70,7 @@ Public Class AutoDAL
             querytext = String.Concat(querytext, ", tblModel M")
         End If
 
-        If (Not categorie = String.Empty Or Not kleur = String.Empty Or Not automerk = String.Empty _
-            Or Not automodel = String.Empty Or Not brandstoftype = String.Empty _
-            Or Not bouwjaar = String.Empty) Then
-            querytext = String.Concat(querytext, " WHERE ")
-        End If
+        querytext = String.Concat(querytext, " WHERE statusID = 1 AND ")
 
         If (Not categorie = String.Empty) Then
             If (filtercount > 0) Then querytext = String.Concat(querytext, " AND ")
@@ -114,11 +112,12 @@ Public Class AutoDAL
             filtercount = filtercount + 1
         End If
 
-        If (Not bouwjaar = String.Empty) Then
+        If (Not prijsmin = String.Empty And Not prijsmax = String.Empty) Then
             If (filtercount > 0) Then querytext = String.Concat(querytext, " AND ")
 
-            querytext = String.Concat(querytext, "autoBouwjaar = @bouwjaar")
-            myCommand.Parameters.Add("@bouwjaar", SqlDbType.Int).Value = bouwjaar
+            querytext = String.Concat(querytext, "autoDagTarief BETWEEN @prijsMin AND @prijsMax")
+            myCommand.Parameters.Add("@prijsMin", SqlDbType.Float).Value = prijsmin
+            myCommand.Parameters.Add("@prijsMax", SqlDbType.Float).Value = prijsmax
             filtercount = filtercount + 1
         End If
 

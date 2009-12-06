@@ -46,12 +46,31 @@
         </table>
         <asp:Label ID="lblDatumVerkeerd" runat="server"></asp:Label>
         <br /><br />
-        Extra opties:<br />
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2" align="center">
+                            Prijsklasse (per dag):
+                        </td>
+                    </tr>
+                    <tr>
+                    <td valign="middle">Tussen 
+                        <asp:TextBox ID="txtPrijsMin" runat="server"></asp:TextBox>&nbsp;en&nbsp;
+                        <asp:TextBox ID="txtPrijsMax" runat="server"></asp:TextBox>&nbsp;euro
+                        <cc1:FilteredTextBoxExtender ID="fltPrijsMin" runat="server" TargetControlID="txtPrijsMin" FilterType="Custom, Numbers" ValidChars=","></cc1:FilteredTextBoxExtender>
+                        <cc1:FilteredTextBoxExtender ID="fltPrijsMax" runat="server" TargetControlID="txtPrijsMax" FilterType="Custom, Numbers" ValidChars=","></cc1:FilteredTextBoxExtender>
+                        </td>
+                    </tr>
+                </tbody>
+        </table>
+        <br />
+        Filteren op:<br />
         <table>
         <tbody>
         <tr>
         <td>Kleur</td>
         <td>Merk</td>
+        <td>Extra Opties</td>
         </tr>
         <tr>
         <td>
@@ -70,6 +89,9 @@
                 ServicePath="~/App_Presentation/WebServices/AutoService.asmx" TargetControlID="ddlMerk">
         </cc1:CascadingDropDown>
         </td>
+        <td>
+            <asp:PlaceHolder ID="plcExtraOpties" runat="server"></asp:PlaceHolder>
+        </td>
         </tr>
         </tbody>
         </table>
@@ -86,7 +108,7 @@
                 <asp:Repeater ID="repOverzicht" runat="server">
                     <ItemTemplate>
                         <div style="display: inline">
-                            <a href="Reserveer.aspx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>&begindat=<%# DataBinder.Eval(Container.DataItem, "begindat") %>&einddat=<%# DataBinder.Eval(Container.DataItem, "einddat") %>&userID=<%# DataBinder.Eval(Container.DataItem, "userID") %>">
+                            <a href="ReservatieBevestigen.aspx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>&begindat=<%# DataBinder.Eval(Container.DataItem, "begindat") %>&einddat=<%# DataBinder.Eval(Container.DataItem, "einddat") %>">
                                 <%# DataBinder.Eval(Container.DataItem, "Naam") %>,
                                 <%#DataBinder.Eval(Container.DataItem, "Aantal")%></a>
                                 <img src="../AutoFoto.ashx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>" width="75" height="75" style="display:inline" />

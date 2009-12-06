@@ -59,7 +59,6 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         overzichtdatatable.Columns.Add("autoMerkModel", Type.GetType("System.String"))
         overzichtdatatable.Columns.Add("begindat", Type.GetType("System.DateTime"))
         overzichtdatatable.Columns.Add("einddat", Type.GetType("System.DateTime"))
-        overzichtdatatable.Columns.Add("userID", Type.GetType("System.Guid"))
 
         'Data overzetten
         Dim autobll As New AutoBLL
@@ -74,11 +73,6 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             overzichtrow("autoMerkModel") = autobll.GetAutoNaamByAutoID(dtrow.Item("autoID"))
             overzichtrow("begindat") = Date.Parse(Me.txtBegindatum.Text)
             overzichtrow("einddat") = Date.Parse(Me.txtEinddatum.Text)
-            If (User.Identity.IsAuthenticated) Then
-                overzichtrow("userID") = Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()
-            Else
-                overzichtrow("userID") = New Guid("00000000-0000-0000-0000-000000000000")
-            End If
 
             overzichtdatatable.Rows.Add(overzichtrow)
         Next
@@ -96,7 +90,6 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         sorteddt.Columns.Add("Aantal", Type.GetType("System.Int32"))
         sorteddt.Columns.Add("begindat", Type.GetType("System.DateTime"))
         sorteddt.Columns.Add("einddat", Type.GetType("System.DateTime"))
-        sorteddt.Columns.Add("userID", Type.GetType("System.Guid"))
 
         Dim sortedrow As Data.DataRow = sorteddt.NewRow
         sortedrow.Item("Aantal") = 0
@@ -154,7 +147,6 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             srow.Item("autoID") = vrow.Item("autoID")
             srow.Item("begindat") = vrow.Item("begindat")
             srow.Item("einddat") = vrow.Item("einddat")
-            srow.Item("userID") = vrow.Item("userID")
 
             srow.Item("Naam") = merk
 
@@ -171,6 +163,9 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         Dim einddatum As Date = Me.txtEinddatum.Text
         Dim kleur As String = Me.ddlKleur.SelectedItem.Text
         Dim merk As String = Me.ddlMerk.SelectedValue
+        Dim prijsmin As String = Me.txtPrijsMin.Text
+        Dim prijsmax As String = Me.txtPrijsMax.Text
+
 
         'ff valideren
         Dim geenfouteninpagina As Boolean = True
@@ -198,13 +193,25 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         If (geenfouteninpagina) Then
             Try
                 'Zet array met filteropties in elkaar
-                Dim filterOpties(10) As String
+                Dim filterOpties(50) As String
                 filterOpties(0) = categorie
                 filterOpties(1) = kleur
                 filterOpties(2) = merk
                 'automodel = filterOpties(3)
                 'brandstoftype = filterOpties(4)
-                'bouwjaar = filterOpties(5)
+                filterOpties(5) = prijsmin
+                filterOpties(6) = prijsmax
+
+                'Extra opties ophalen
+                For i As Integer = 20 To 39
+                    Dim controlnaam As String = String.Concat("ctl00$plcMain$chkOptie", i - 20)
+                    If (TryCast(Me.FindControl(controlnaam), CheckBox) IsNot Nothing) Then
+
+                        Dim control As CheckBox = CType(Me.FindControl(controlnaam), CheckBox)
+                        If control.Checked Then filterOpties(i) = control.Text
+
+                    End If
+                Next
 
                 'Haal datatable op met argumenten
                 Dim autobll As New AutoBLL
@@ -237,6 +244,8 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        MaakExtraOptieOverzicht()
+
         If (Not IsPostBack) Then
             If Request.QueryString("categorie") IsNot Nothing Then
                 Try
@@ -254,5 +263,40 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             'Me.calBegindatum.SelectedDate = Now
             'Me.calEinddatum.SelectedDate = DateAdd(DateInterval.Day, 2, Now)
         End If
+    End Sub
+
+    Private Sub MaakExtraOptieOverzicht()
+
+        Dim table As New HtmlGenericControl("table")
+        Dim i As Integer = 0
+        Dim checkboxaantal As Integer = 0
+
+        Dim optiebll As New OptieBLL
+        Dim dt As New Autos.tblOptieDataTable
+        Dim tr As New HtmlGenericControl("tr")
+        dt = optiebll.GetAllOpties()
+        For Each rij As Autos.tblOptieRow In dt
+
+            If (i > 1) Then
+                table.Controls.Add(tr)
+                i = 0
+                tr = New HtmlGenericControl("tr")
+            End If
+
+            Dim checkbox As New CheckBox
+            checkbox.Text = rij.optieOmschrijving
+            checkbox.ID = String.Concat("chkOptie", checkboxaantal.ToString)
+
+            Dim td As New HtmlGenericControl("td")
+
+            td.Controls.Add(checkbox)
+            tr.Controls.Add(td)
+
+            i = i + 1
+            checkboxaantal = checkboxaantal + 1
+        Next
+
+        table.Controls.Add(tr)
+        Me.plcExtraOpties.Controls.Add(table)
     End Sub
 End Class

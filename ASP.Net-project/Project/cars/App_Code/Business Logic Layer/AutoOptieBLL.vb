@@ -25,4 +25,12 @@ Public Class AutoOptieBLL
             Throw ex
         End Try
     End Function
+
+    Public Function GetAutoOptieByAutoID(ByVal autoID As Integer) As Autos.tblAutoOptieDataTable
+        Try
+            Return _autooptiedal.GetAutoOptieByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 End Class

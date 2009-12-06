@@ -10,7 +10,7 @@
         <cc1:Accordion ID="ChaffeurAccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
         <Panes>
         <cc1:AccordionPane ID="paneVoegtoe" runat="server">
-        <Header>Chauffeur toevoegen</Header>
+        <Header><asp:Image ID="imgToevoegen" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/add.png" /> Chauffeur toevoegen</Header>
                 <Content>
                     <asp:UpdatePanel runat="server" ID="updToevoegen" UpdateMode="Always">
                         <ContentTemplate>
@@ -41,14 +41,6 @@
             </tr>
             <tr>
                 <td align="right">
-                    <asp:Label ID="lblBedrijf" runat="server" Text="Chauffeur: "></asp:Label>
-                </td>
-                <td>
-                    <asp:TextBox ID="txtBedrijf" runat="server"></asp:TextBox>
-                </td>
-            </tr>
-            <tr>
-                <td align="right">
                     <asp:Button ID="btnInsert" runat="server" Text="Voeg toe" />
                 </td>
             </tr>
@@ -59,7 +51,7 @@
         </cc1:AccordionPane>
         
         <cc1:AccordionPane ID="PaneWijzig" runat="server">
-        <Header>Chauffeur Wijzigen</Header>
+        <Header><asp:Image ID="imgWijzigen" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/wrench.png" /> Chauffeur Wijzigen</Header>
                 <Content>
                     <asp:UpdatePanel runat="server" ID="updWijzigen" updateMode="Always" >
                         <ContentTemplate>
@@ -108,7 +100,7 @@
         </cc1:AccordionPane>
         
         <cc1:AccordionPane ID="PaneDelete" runat="server">
-        <Header>Chauffeur verwijderen</Header>
+        <Header><asp:Image ID="Image1" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/remove.png" /> Chauffeur verwijderen</Header>
                 <Content>
                     <asp:UpdatePanel runat="server" ID="updVerwijderen" UpdateMode="Always">
                         <ContentTemplate>
@@ -116,7 +108,7 @@
         
             <tr>
                 <td align="right">
-                    <asp:Label ID="Label8" runat="server" Text="Chauffeur: "></asp:Label>
+                    <asp:Label ID="lblChauffeur" runat="server" Text="Chauffeur: "></asp:Label>
                 </td>
                 <td>
                     <asp:DropDownList ID="ddlChauffeurdelete" runat="server" AutoPostBack="True"></asp:DropDownList>

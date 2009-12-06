@@ -14,32 +14,16 @@ Partial Class App_Presentation_Chauffeur
         Dim chauffeurbll As New ChauffeurBLL
         chauffeurbll.AddChauffeur(c)
 
+        UpdateChauffeurDropdowns()
 
+        ClearTextBoxes()
 
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-
-        Dim gebruikerbll As New KlantBLL
-        Dim chauffeurbll As New ChauffeurBLL
-        Dim gebruiker As New Klant
-        'Dim username As String
-        'Dim chauffeur As String
         If Not IsPostBack Then
 
-
-            Dim strID As String
-            strID = Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()
-            Dim UserID As New Guid(strID)
-            Dim dt As Klanten.tblChauffeurDataTable = chauffeurbll.GetChauffeurByUserID(UserID)
-            Dim list As New ListItem
-            ddlChauffeurWijzig.Items.Add(New ListItem("Kies chauffeur", "Kies chauffeur"))
-            ddlChauffeurdelete.Items.Add(New ListItem("Kies chauffeur", "Kies chauffeur"))
-            For i As Integer = 0 To dt.Rows.Count - 1
-                ddlChauffeurWijzig.Items.Add(New ListItem((dt.Rows(i)("chauffeurNaam")), (dt.Rows(i)("chauffeurID"))))
-                ddlChauffeurdelete.Items.Add(New ListItem((dt.Rows(i)("chauffeurNaam")), (dt.Rows(i)("chauffeurID"))))
-                ' list = New ListItem((dt.Rows(i)("chauffeurNaam")), (dt.Rows(i)("chauffeurID")))
-            Next
+            UpdateChauffeurDropdowns()
 
         End If
 
@@ -47,6 +31,7 @@ Partial Class App_Presentation_Chauffeur
 
     Protected Sub ddlChauffeurWijzig_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlChauffeurWijzig.SelectedIndexChanged
         Dim chauffeurid As Integer
+
         If Not ddlChauffeurWijzig.SelectedValue = "Kies chauffeur" Then
             chauffeurid = ddlChauffeurWijzig.SelectedValue
             Dim bllChauffeur As New ChauffeurBLL
@@ -56,6 +41,10 @@ Partial Class App_Presentation_Chauffeur
             txtNaamup.Text = dt.Rows(0)("chauffeurNaam")
             txtVoornaamup.Text = dt.Rows(0)("chauffeurVoornaam")
             txtRijbewijsup.Text = dt.Rows(0)("chauffeurRijbewijs")
+        Else
+            txtNaamup.Text = String.Empty
+            txtVoornaamup.Text = String.Empty
+            txtRijbewijsup.Text = String.Empty
         End If
 
     End Sub
@@ -74,10 +63,11 @@ Partial Class App_Presentation_Chauffeur
         dr.chauffeurID = ddlChauffeurWijzig.SelectedValue
 
         cbll.UpdateChauffeur(dr)
-        DataBind()
-        txtNaamup.Text = Nothing
-        txtVoornaamup.Text = Nothing
-        txtRijbewijsup.Text = Nothing
+
+        UpdateChauffeurDropdowns()
+
+        ClearTextBoxes()
+
         ddlChauffeurWijzig.SelectedValue = "Kies chauffeur"
     End Sub
 
@@ -86,5 +76,40 @@ Partial Class App_Presentation_Chauffeur
         Dim chauffeurid As New Integer
         chauffeurid = ddlChauffeurdelete.SelectedValue
         cbll.DeleteChauffeurByID(chauffeurid)
+
+        UpdateChauffeurDropdowns()
+
+        ClearTextBoxes()
+
+    End Sub
+
+    Private Sub UpdateChauffeurDropdowns()
+
+        ddlChauffeurWijzig.Items.Clear()
+        ddlChauffeurdelete.Items.Clear()
+
+        Dim chauffeurbll As New ChauffeurBLL
+
+        Dim strID As String
+        strID = Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()
+        Dim UserID As New Guid(strID)
+        Dim dt As Klanten.tblChauffeurDataTable = chauffeurbll.GetChauffeurByUserID(UserID)
+        Dim list As New ListItem
+        ddlChauffeurWijzig.Items.Add(New ListItem("Kies chauffeur", "Kies chauffeur"))
+        ddlChauffeurdelete.Items.Add(New ListItem("Kies chauffeur", "Kies chauffeur"))
+        For i As Integer = 0 To dt.Rows.Count - 1
+            ddlChauffeurWijzig.Items.Add(New ListItem((dt.Rows(i)("chauffeurNaam")), (dt.Rows(i)("chauffeurID"))))
+            ddlChauffeurdelete.Items.Add(New ListItem((dt.Rows(i)("chauffeurNaam")), (dt.Rows(i)("chauffeurID"))))
+        Next
+    End Sub
+
+    Private Sub ClearTextBoxes()
+        txtNaamup.Text = String.Empty
+        txtVoornaamup.Text = String.Empty
+        txtRijbewijsup.Text = String.Empty
+
+        txtNaam.Text = String.Empty
+        txtVoornaam.Text = String.Empty
+        txtRijbewijs.Text = String.Empty
     End Sub
 End Class
