@@ -113,7 +113,9 @@
         <asp:Label ID="Label4" runat="server" Text="Naam: "></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtNaam" runat="server"></asp:TextBox>
+        <asp:TextBox ID="txtNaam" runat="server" Enabled="False"></asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
+            ControlToValidate="txtNaam" ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr>
 <tr>
@@ -121,7 +123,9 @@
         <asp:Label ID="Label5" runat="server" Text="Voornaam: "></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtVoornaam" runat="server"></asp:TextBox>
+        <asp:TextBox ID="txtVoornaam" runat="server" Enabled="False"></asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" 
+            ControlToValidate="txtVoornaam" ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr>
 <tr>
@@ -129,7 +133,9 @@
         <asp:Label ID="Label2" runat="server" Text="Geboortedatum: "></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtGeboorte" runat="server"></asp:TextBox>
+        <asp:TextBox ID="txtGeboorte" runat="server" Enabled="False"></asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" 
+            ControlToValidate="txtGeboorte" ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr>
 <tr>
@@ -137,7 +143,10 @@
         <asp:Label ID="IdentiteitsNr" runat="server" Text="IdentiteitsNr: "></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtIdentiteitsNr" runat="server"></asp:TextBox>
+        <asp:TextBox ID="txtIdentiteitsNr" runat="server" Enabled="False">XXXXXX-XXXXX</asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" 
+            ControlToValidate="txtIdentiteitsNr" 
+            ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr>
 <tr>
@@ -145,7 +154,10 @@
         <asp:Label ID="Label3" runat="server" Text="RijbewijsNr: "></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtRijbewijsNr" runat="server"></asp:TextBox>
+        <asp:TextBox ID="txtRijbewijsNr" runat="server" Enabled="False">XXXXXXXXXX</asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" 
+            ControlToValidate="txtRijbewijsNr" 
+            ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr>
 <tr>
@@ -153,7 +165,9 @@
     <asp:Label ID="lblTelefoon" runat="server" Text="Telefoonnummer: "></asp:Label>
 </td>
 <td>
-    <asp:TextBox ID="txtTelefoon" runat="server"></asp:TextBox>
+    <asp:TextBox ID="txtTelefoon" runat="server" Enabled="False"></asp:TextBox>
+    <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" 
+        ControlToValidate="txtTelefoon" ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
 </td>
 </tr>
 <td colspan="2">
@@ -166,7 +180,10 @@
         <asp:Label ID="Label6" runat="server" Text="Bedrijfsnaam: " Visible="False"></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtBedrijfnaam" runat="server" Visible="False"></asp:TextBox>
+        <asp:TextBox ID="txtBedrijfnaam" runat="server" Visible="False" Enabled="False"></asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" 
+            ControlToValidate="txtBedrijfnaam" 
+            ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr>
 <tr>
@@ -175,22 +192,32 @@
             Visible="False"></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtVestigingslocatie" runat="server" Visible="False"></asp:TextBox>
+        <asp:TextBox ID="txtVestigingslocatie" runat="server" Visible="False" 
+            Enabled="False"></asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" 
+            ControlToValidate="txtVestigingslocatie" 
+            ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr><tr>
     <td>
         <asp:Label ID="Label8" runat="server" Text="BTWnummer: " Visible="False"></asp:Label>
     </td>
     <td>
-        <asp:TextBox ID="txtBTW" runat="server" Visible="False"></asp:TextBox>
+        <asp:TextBox ID="txtBTW" runat="server" Visible="False" Enabled="False">XXX-XXX-XXX</asp:TextBox>
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator9" runat="server" 
+            ControlToValidate="txtBTW" 
+            ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
     </td>
 </tr>
 
 <tr>
 <td>
-    <asp:Button ID="btnWijzig" runat="server" Text="Wijzig gegevens" 
+    <asp:Button ID="btnWeergave" runat="server" Text="Wijzig gegevens" 
         UseSubmitBehavior="False" />
-</td>    
+</td>   
+<td>
+    <asp:Button ID="btnWijzig" runat="server" Text="Wijzigingen opslaan" />
+</td> 
 </tr>
 
 </table>

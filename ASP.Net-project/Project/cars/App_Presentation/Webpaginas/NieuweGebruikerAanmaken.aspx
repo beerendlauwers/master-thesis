@@ -150,7 +150,7 @@
                                             </tr>
                                             <tr>
                                                 <td align="right">
-                                                    Ik ben een bedrijfsverantwoordelijke
+                                                    Ik ben een bedrijfsverantwoordelijke.
                                                 </td>
                                                 <td>
                                                     <asp:CheckBox ID="chkIsBedrijf" runat="server" OnCheckedChanged="MaakBedrijfZichtbaar"
@@ -208,12 +208,12 @@
                                         <table border="0">
                                             <tr>
                                                 <td align="center" colspan="2">
-                                                    Complete
+                                                    Voltooid
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    Your account has been successfully created.
+                                                    Uw account werd aangemaakt.
                                                 </td>
                                             </tr>
                                             <tr>

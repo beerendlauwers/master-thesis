@@ -2,6 +2,7 @@
 Partial Class App_Presentation_Webpaginas_GebruikersBeheer
     Inherits System.Web.UI.Page
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        lblUserName.Text = User.Identity.Name
         If Not IsPostBack Then
             Dim gebruikerbll As New KlantBLL
             Dim gebruiker As New Klant
@@ -67,4 +68,17 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
     Protected Sub btnChauffeurs_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnChauffeurs.Click
         Response.Redirect("~/App_Presentation/Webpaginas/GebruikersOnly/Chauffeur.aspx")
     End Sub
+
+    Protected Sub btnWeergave_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnWeergave.Click
+        txtNaam.Enabled = True
+        txtVoornaam.Enabled = True
+        txtGeboorte.Enabled = True
+        txtIdentiteitsNr.Enabled = True
+        txtRijbewijsNr.Enabled = True
+        txtTelefoon.Enabled = True
+        txtBedrijfnaam.Enabled = True
+        txtVestigingslocatie.Enabled = True
+        txtBTW.Enabled=True
+    End Sub
+
 End Class
