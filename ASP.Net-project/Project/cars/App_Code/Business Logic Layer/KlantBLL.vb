@@ -23,4 +23,18 @@ Public Class KlantBLL
             Throw ex
         End Try
     End Function
+
+    Public Function UpdateUserProfiel(ByRef r As Klanten.tblUserProfielRow) As Boolean
+
+        Try
+            If (_klantdal.UpdateUserByID(r)) Then
+                Return True
+            End If
+        Catch ex As Exception
+
+        End Try
+
+
+        Return 0
+    End Function
 End Class

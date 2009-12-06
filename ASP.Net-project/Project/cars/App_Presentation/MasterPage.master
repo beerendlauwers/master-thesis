@@ -73,32 +73,16 @@
                                </li>
                                </AnonymousTemplate>
                                </asp:LoginView>
-                		<li>
-                			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Uw gegevens</span></a>
-                			<ul>
-                				<li><a href="#">2008</a>
-                					<ul>
-                						<li><a href="#">January</a></li>
-                						<li><a href="#">February</a></li>
-                						<li><a href="#">March</a></li>
-                					</ul>
+                		
+                		<asp:loginView ID="lgvMijnGegevens" runat="server">
+                		<loggedInTemplate>		
+                				<li>
+                				    <asp:HyperLink ID="lnkBeheer" runat="server"><span class="l"></span><span class="r"></span><span class="t">Mijn Gegevens</span></asp:HyperLink>
                 				</li>
-                				<li><a href="#">2007</a>
-                					<ul>
-                						<li><a href="#">January</a></li>
-                						<li><a href="#">February</a></li>
-                						<li><a href="#">March</a></li>
-                					</ul>
-                				</li>
-                				<li><a href="#">2006</a>
-                					<ul>
-                						<li><a href="#">January</a></li>
-                						<li><a href="#">February</a></li>
-                						<li><a href="#">March</a></li>
-                					</ul>
-                				</li>
-                			</ul>
-   					  </li>
+                				</loggedInTemplate>
+                				<AnonymousTemplate></AnonymousTemplate>
+                		</asp:loginView>
+                			
    					    
                                <asp:LoginView ID="lgvMijnReservaties" runat="server">
                                <LoggedInTemplate>
@@ -187,7 +171,7 @@
                                                             <strong><asp:LoginName ID="loginNaam" runat="server" /></strong>
                                                         </li>
                                                         <li>
-                                                            <asp:HyperLink NavigateUrl="~/App_Presentation/Webpaginas/GebruikersOnly/NieuweReservatieAanmaken.aspx"
+                                                            <asp:HyperLink NavigateUrl="~/App_Presentation/Webpaginas/NieuweReservatieAanmaken.aspx"
                                                                 ID="linkNieuweReservatie" runat="server">Nieuwe Reservatie</asp:HyperLink></li>
                                                         <li>
                                                             <asp:LoginStatus ID="LoginStatus" LogoutText="Uitloggen" runat="server" />

@@ -29,6 +29,12 @@ Partial Class App_Presentation_MasterPage
 
         End If
 
+        'Beheerlink
+        If Page.User.Identity.IsAuthenticated Then
+            Dim link As String = "~/App_Presentation/Webpaginas/GebruikersOnly/GebruikersBeheer.aspx"
+            CType(Me.lgvMijngegevens.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
+        End If
+
         'Registratielink
         If Not Page.User.Identity.IsAuthenticated Then
             Dim link As String = "~/App_Presentation/Webpaginas/NieuweGebruikerAanmaken.aspx"
