@@ -20,8 +20,10 @@
                     <asp:Label ID="lblNaam" runat="server" Text="Naam chauffeur: "></asp:Label>
                 </td>
                 <td>
-                    <asp:TextBox ID="txtNaam" runat="server"></asp:TextBox><asp:RequiredFieldValidator
-                        ID="RequiredFieldValidator1" runat="server" ErrorMessage="RequiredFieldValidator"></asp:RequiredFieldValidator>
+                    <asp:TextBox ID="txtNaam" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:Label ID="lblNaamError" runat="server" Text=""></asp:Label>
                 </td>
             </tr>
             <tr>
@@ -29,8 +31,10 @@
                     <asp:Label ID="lblVoornaam" runat="server" Text="Voornaam chauffeur: "></asp:Label>
                 </td>
                 <td>
-                    <asp:TextBox ID="txtVoornaam" runat="server"></asp:TextBox><asp:RequiredFieldValidator
-                        ID="RequiredFieldValidator2" runat="server" ErrorMessage="RequiredFieldValidator"></asp:RequiredFieldValidator>
+                    <asp:TextBox ID="txtVoornaam" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:Label ID="lblVoornaamError" runat="server" Text=""></asp:Label>
                 </td>
             </tr>
             <tr>
@@ -38,12 +42,14 @@
                     <asp:Label ID="lblRijbewijs" runat="server" Text="Rijbewijs chauffeur: "></asp:Label>
                 </td>
                 <td>
-                    <asp:TextBox ID="txtRijbewijs" runat="server"></asp:TextBox><asp:RequiredFieldValidator
-                        ID="RequiredFieldValidator3" runat="server" ErrorMessage="RequiredFieldValidator"></asp:RequiredFieldValidator>
+                    <asp:TextBox ID="txtRijbewijs" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:Label ID="lblRijbewijsError" runat="server" Text=""></asp:Label>
                 </td>
             </tr>
             <tr>
-                <td align="right">
+                <td>
                     <asp:Button ID="btnInsert" runat="server" Text="Voeg toe" />
                 </td>
             </tr>
@@ -61,38 +67,45 @@
         <table>
         <tr>
                 <td align="right">
-                    <asp:Label ID="Label1" runat="server" Text="Naam chauffeur: "></asp:Label>
+                    <asp:Label ID="lblNaamup" runat="server" Text="Naam chauffeur: "></asp:Label>
                 </td>
                 <td>
-                    <asp:TextBox ID="txtNaamup" runat="server"></asp:TextBox><asp:RequiredFieldValidator
-                        ID="RequiredFieldValidator4" runat="server" ErrorMessage="RequiredFieldValidator"></asp:RequiredFieldValidator>
+                    <asp:TextBox ID="txtNaamup" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:Label ID="lblNaamupError" runat="server" Text=""></asp:Label>
                 </td>
             </tr>
             <tr>
                 <td align="right">
-                    <asp:Label ID="Label2" runat="server" Text="Voornaam chauffeur: "></asp:Label>
+                    <asp:Label ID="lblvoornaamup" runat="server" Text="Voornaam chauffeur: "></asp:Label>
                 </td>
                 <td>
-                    <asp:TextBox ID="txtVoornaamup" runat="server"></asp:TextBox><asp:RequiredFieldValidator
-                        ID="RequiredFieldValidator5" runat="server" ErrorMessage="RequiredFieldValidator"></asp:RequiredFieldValidator>
+                    <asp:TextBox ID="txtVoornaamup" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:Label ID="lblVoornaamupError" runat="server" Text=""></asp:Label>
                 </td>
             </tr>
             <tr>
                 <td align="right">
-                    <asp:Label ID="Label3" runat="server" Text="Rijbewijs chauffeur: "></asp:Label>
+                    <asp:Label ID="lblRijbewijsup" runat="server" Text="Rijbewijs chauffeur: "></asp:Label>
                 </td>
                 <td>
-                    <asp:TextBox ID="txtRijbewijsup" runat="server"></asp:TextBox><asp:RequiredFieldValidator
-                        ID="RequiredFieldValidator6" runat="server" ErrorMessage="RequiredFieldValidator"></asp:RequiredFieldValidator>
+                    <asp:TextBox ID="txtRijbewijsup" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                    <asp:Label ID="lblRijbweijsupError" runat="server" Text=""></asp:Label>
                 </td>
             </tr>
             <tr>
                 <td align="right">
-                    <asp:Label ID="Label4" runat="server" Text="Chauffeur: "></asp:Label>
+                    <asp:Label ID="lblChauffeurDelete" runat="server" Text="Chauffeur: "></asp:Label>
                 </td>
                 <td>
                     <asp:DropDownList ID="ddlChauffeurWijzig" runat="server" AutoPostBack="True"></asp:DropDownList>
                 </td>
+                
             </tr>
             <tr>
                 <td align="right">

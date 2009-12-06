@@ -1,5 +1,6 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweGebruikerAanmaken.aspx.vb"
     Inherits="App_Presentation_Webpaginas_nieuwe_gebruiker" MasterPageFile="~/App_Presentation/MasterPage.master" %>
+<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="cc1" %>
 
 <%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
@@ -184,6 +185,8 @@
                                                         </td>
                                                         <td>
                                                             <asp:TextBox ID="txtBTW" runat="server" Visible="false"></asp:TextBox>
+                                                            <cc1:MaskedEditExtender ID="MaskedEditExtender1" runat="server"  ClearMaskOnLostFocus="false" TargetControlID="txtBTW" Mask="999\-999\-999">
+        </cc1:MaskedEditExtender>
                                                         </td>
                                                     </tr>
                                                     <tr>

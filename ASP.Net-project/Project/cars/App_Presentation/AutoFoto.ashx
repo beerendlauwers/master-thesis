@@ -24,8 +24,9 @@ Public Class AutoFoto : Implements IHttpHandler
             
             Dim autofotobll As New AutoFotoBLL
             Dim dt As Autos.tblAutofotoDataTable = autofotobll.GetReservatieAutoFotoByAutoID(autoID)
+            If dt.Rows.Count > 0 then
             Dim row As Autos.tblAutofotoRow = dt.Rows(0)
-
+            
             context.Response.Buffer = True
             context.Response.Charset = ""
             context.Response.Cache.SetCacheability(HttpCacheability.NoCache)
@@ -34,6 +35,11 @@ Public Class AutoFoto : Implements IHttpHandler
             context.Response.BinaryWrite((DirectCast(row.autoFoto, Byte())))
             context.Response.Flush()
             HttpContext.Current.ApplicationInstance.CompleteRequest()
+            
+            Else return
+            End If
+
+            
 
         Catch ex As Exception
             Throw ex

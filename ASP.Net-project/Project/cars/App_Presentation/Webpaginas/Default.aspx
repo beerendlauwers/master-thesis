@@ -15,22 +15,22 @@
 
                <div class="art-Logo">
                <h2 id="name-text" class="art-Logo-name">
-               <a href="#">Personenwagens</a></h2>
+               <a href="">Personenwagens</a></h2>
                </div>
                 
                <div class="art-Logo-small1">
                <h3 id="name-text2" class="art-Logo-name">
-               <a href="#">Compacte wagens</a></h3>
+               <a href="NieuweReservatieAanmaken.aspx?categorie=1"><h5>Compacte wagens</h5></a></h3>
                </div>
                 
                 <div class="art-Logo-small2">
                 <h3 id="name-text3" class="art-Logo-name">
-                        <a href="#">Topklasse wagens</a></h3>
+                <a href="NieuweReservatieAanmaken.aspx?categorie=2"><h5>Grote wagens</h5></a></h3>
                 </div>
                 
                 <div class="art-Logo-small3">
                 <h3 id="name-text4" class="art-Logo-name">
-                        <a href="#">Luxe wagens</a></h3>
+                <a href="NieuweReservatieAanmaken.aspx?categorie=3"><h5>Luxe wagens</h5></a></h3>
                 </div>
                 
 </div>

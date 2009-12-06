@@ -1,18 +1,18 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="GebruikersBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersBeheer" title="Untitled Page" %>
 
+<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="cc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 
 
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
-    <table>
-<tr>
-<td>
-    <asp:Button ID="btnChauffeurs" runat="server" Text="Uw chauffeurs bewerken" />
-</td>
-<td>
-</td>
-</tr>
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+        </asp:ScriptManager>
+        <asp:UpdatePanel ID="updGegevens" runat="server" updateMode="Always">
+        <ContentTemplate>
+        <table>
+        
 <tr>
     <td>
     <asp:Label ID="lblUserNameUitleg" runat="server" Text="Uw gebruikersnaam: "></asp:Label>
@@ -110,7 +110,7 @@
 </tr>
 <tr>
     <td>
-        <asp:Label ID="Label4" runat="server" Text="Naam: "></asp:Label>
+        <asp:Label ID="lblNaam" runat="server" Text="Naam: "></asp:Label>
     </td>
     <td>
         <asp:TextBox ID="txtNaam" runat="server" Enabled="False"></asp:TextBox>
@@ -120,7 +120,7 @@
 </tr>
 <tr>
     <td>
-        <asp:Label ID="Label5" runat="server" Text="Voornaam: "></asp:Label>
+        <asp:Label ID="lblVoornaam" runat="server" Text="Voornaam: "></asp:Label>
     </td>
     <td>
         <asp:TextBox ID="txtVoornaam" runat="server" Enabled="False"></asp:TextBox>
@@ -130,7 +130,7 @@
 </tr>
 <tr>
     <td>
-        <asp:Label ID="Label2" runat="server" Text="Geboortedatum: "></asp:Label>
+        <asp:Label ID="lblGebDat" runat="server" Text="Geboortedatum: "></asp:Label>
     </td>
     <td>
         <asp:TextBox ID="txtGeboorte" runat="server" Enabled="False"></asp:TextBox>
@@ -151,7 +151,7 @@
 </tr>
 <tr>
     <td>
-        <asp:Label ID="Label3" runat="server" Text="RijbewijsNr: "></asp:Label>
+        <asp:Label ID="lblRijbewijsnr" runat="server" Text="RijbewijsNr: "></asp:Label>
     </td>
     <td>
         <asp:TextBox ID="txtRijbewijsNr" runat="server" Enabled="False">XXXXXXXXXX</asp:TextBox>
@@ -170,14 +170,10 @@
         ControlToValidate="txtTelefoon" ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
 </td>
 </tr>
-<td colspan="2">
-<br />
-    <strong>Bedrijfsinformatie:</strong>
-</td>
 </tr>
 <tr>
     <td>
-        <asp:Label ID="Label6" runat="server" Text="Bedrijfsnaam: " Visible="False"></asp:Label>
+        <asp:Label ID="lblBedrijfsnaam" runat="server" Text="Bedrijfsnaam: " Visible="False"></asp:Label>
     </td>
     <td>
         <asp:TextBox ID="txtBedrijfnaam" runat="server" Visible="False" Enabled="False"></asp:TextBox>
@@ -188,7 +184,7 @@
 </tr>
 <tr>
     <td>
-        <asp:Label ID="Label7" runat="server" Text="Vestigingslocatie: " 
+        <asp:Label ID="lblVestigingslocatie" runat="server" Text="Vestigingslocatie: " 
             Visible="False"></asp:Label>
     </td>
     <td>
@@ -200,13 +196,12 @@
     </td>
 </tr><tr>
     <td>
-        <asp:Label ID="Label8" runat="server" Text="BTWnummer: " Visible="False"></asp:Label>
+        <asp:Label ID="lblBTW" runat="server" Text="BTWnummer: " Visible="False"></asp:Label>
     </td>
     <td>
         <asp:TextBox ID="txtBTW" runat="server" Visible="False" Enabled="False">XXX-XXX-XXX</asp:TextBox>
-        <asp:RequiredFieldValidator ID="RequiredFieldValidator9" runat="server" 
-            ControlToValidate="txtBTW" 
-            ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
+        <cc1:MaskedEditExtender ID="MaskedEditExtender1" runat="server"  ClearMaskOnLostFocus="false" TargetControlID="txtBTW" Mask="999\-999\-999">
+        </cc1:MaskedEditExtender>
     </td>
 </tr>
 
@@ -219,7 +214,17 @@
     <asp:Button ID="btnWijzig" runat="server" Text="Wijzigingen opslaan" />
 </td> 
 </tr>
+<tr>
+<td>
+    <asp:Button ID="btnChauffeurs" runat="server" Text="Uw chauffeurs bewerken" />
+</td>
+<td>
+</td>
+</tr>
 
 </table>
+</ContentTemplate>
+</asp:UpdatePanel>
+
 </asp:Content>
 

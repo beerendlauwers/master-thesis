@@ -18,9 +18,9 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
                 txtBedrijfnaam.Visible = True
                 txtBTW.Visible = True
                 txtVestigingslocatie.Visible = True
-                Label6.Visible = True
-                Label7.Visible = True
-                Label8.Visible = True
+                lblBedrijfsnaam.Visible = True
+                lblVestigingslocatie.Visible = True
+                lblBTW.Visible = True
                 btnChauffeurs.Visible = True
             End If
 

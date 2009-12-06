@@ -2,24 +2,7 @@
 Partial Class App_Presentation_Chauffeur
     Inherits System.Web.UI.Page
 
-    Protected Sub btnInsert_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnInsert.Click
-
-        Dim dt As New Klanten.tblChauffeurDataTable
-        Dim c As Klanten.tblChauffeurRow = dt.NewRow
-        'Dim username As String
-        c.chauffeurNaam = txtNaam.Text
-        c.chauffeurVoornaam = txtVoornaam.Text
-        c.chauffeurRijbewijs = txtRijbewijs.Text
-        c.userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
-        Dim chauffeurbll As New ChauffeurBLL
-        chauffeurbll.AddChauffeur(c)
-
-        UpdateChauffeurDropdowns()
-
-        ClearTextBoxes()
-
-    End Sub
-
+    
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
 
@@ -56,19 +39,43 @@ Partial Class App_Presentation_Chauffeur
         Dim UserID As New Guid(strID)
         Dim dt As New Klanten.tblChauffeurDataTable
         Dim dr As Klanten.tblChauffeurRow = dt.NewRow
+        Dim check As Boolean = True
 
-        dr.chauffeurNaam = txtNaamup.Text
-        dr.chauffeurVoornaam = txtVoornaamup.Text
-        dr.chauffeurRijbewijs = txtRijbewijsup.Text
-        dr.chauffeurID = ddlChauffeurWijzig.SelectedValue
+        If txtNaamup.Text = String.Empty Then
+            check = False
 
-        cbll.UpdateChauffeur(dr)
+        End If
 
-        UpdateChauffeurDropdowns()
+        If txtVoornaamup.Text = String.Empty Then
+            check = False
 
-        ClearTextBoxes()
+        End If
 
-        ddlChauffeurWijzig.SelectedValue = "Kies chauffeur"
+        If txtRijbewijsup.Text = String.Empty Then
+            check = False
+
+        End If
+        If check = True Then
+            dr.chauffeurNaam = txtNaamup.Text
+            dr.chauffeurVoornaam = txtVoornaamup.Text
+            dr.chauffeurRijbewijs = txtRijbewijsup.Text
+            dr.chauffeurID = ddlChauffeurWijzig.SelectedValue
+
+            cbll.UpdateChauffeur(dr)
+
+            UpdateChauffeurDropdowns()
+
+            ClearTextBoxes()
+            lblNaamupError.Text = String.Empty
+            lblVoornaamupError.Text = String.Empty
+            lblRijbweijsupError.Text = String.Empty
+
+            ddlChauffeurWijzig.SelectedValue = "Kies chauffeur"
+        Else
+            lblNaamupError.Text = "Dit veld is verplicht."
+            lblVoornaamupError.Text = "Dit veld is verplicht."
+            lblRijbweijsupError.Text = "Dit veld is verplicht."
+        End If
     End Sub
 
     Protected Sub btnVerwijder_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVerwijder.Click
@@ -111,5 +118,44 @@ Partial Class App_Presentation_Chauffeur
         txtNaam.Text = String.Empty
         txtVoornaam.Text = String.Empty
         txtRijbewijs.Text = String.Empty
+    End Sub
+
+    Protected Sub btnInsert_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnInsert.Click
+        Dim dt As New Klanten.tblChauffeurDataTable
+        Dim c As Klanten.tblChauffeurRow = dt.NewRow
+        'Dim username As String
+        Dim check As Boolean = True
+
+        If txtNaam.Text = String.Empty Then
+            check = False
+
+        End If
+        If txtVoornaam.Text = String.Empty Then
+            check = False
+        End If
+        If txtRijbewijs.Text = String.Empty Then
+            check = False
+        End If
+        If check = True Then
+
+
+            c.chauffeurNaam = txtNaam.Text
+            c.chauffeurVoornaam = txtVoornaam.Text
+            c.chauffeurRijbewijs = txtRijbewijs.Text
+            c.userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+            Dim chauffeurbll As New ChauffeurBLL
+            chauffeurbll.AddChauffeur(c)
+
+            UpdateChauffeurDropdowns()
+
+            ClearTextBoxes()
+            lblNaamError.Text = String.Empty
+            lblVoornaamError.Text = String.Empty
+            lblRijbewijsError.Text = String.Empty
+        Else
+            lblNaamError.Text = "Dit veld is verplicht."
+            lblVoornaamError.Text = "Dit veld is verplicht."
+            lblRijbewijsError.Text = "Dit veld is verplicht."
+        End If
     End Sub
 End Class

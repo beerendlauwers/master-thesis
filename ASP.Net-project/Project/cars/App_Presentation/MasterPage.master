@@ -78,6 +78,12 @@
                 		<loggedInTemplate>		
                 				<li>
                 				    <asp:HyperLink ID="lnkBeheer" runat="server"><span class="l"></span><span class="r"></span><span class="t">Mijn Gegevens</span></asp:HyperLink>
+                				    <ul>
+                				    <li><a id="A1" runat="server" href="~/App_Presentation/Webpaginas/GebruikersOnly/GebruikersBeheer.aspx">Mijn Gebruikersgegevens</a></li>
+                				    <li><asp:HyperLink ID="lnkChauffeurs" runat="server" Visible="false"><span class="l"></span><span class="r"></span><span class="t">Mijn Chauffeurs</span></asp:HyperLink></li>
+                				    <li><asp:HyperLink ID="lnkMijnReservaties1" runat="server"><span class="l"></span><span class="r"></span><span class="t">Mijn Reservaties</span></asp:HyperLink></li>
+                					
+                				    </ul>
                 				</li>
                 				</loggedInTemplate>
                 				<AnonymousTemplate></AnonymousTemplate>

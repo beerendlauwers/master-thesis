@@ -23,16 +23,25 @@ Partial Class App_Presentation_MasterPage
             Dim link As String = String.Concat("~/App_Presentation/Webpaginas/GebruikersOnly/ToonReservatie.aspx?userID=", id.ToString)
             Try
                 CType(Me.lgvMijnReservaties.FindControl("lnkMijnReservaties"), HyperLink).NavigateUrl = link
+                CType(Me.lgvMijnGegevens.FindControl("lnkMijnReservaties1"), HyperLink).NavigateUrl = link
             Catch ex As Exception
                 Return
             End Try
 
         End If
 
-        'Beheerlink
+        'GebruikersBeheerlink
         If Page.User.Identity.IsAuthenticated Then
             Dim link As String = "~/App_Presentation/Webpaginas/GebruikersOnly/GebruikersBeheer.aspx"
-            CType(Me.lgvMijngegevens.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
+            CType(Me.lgvMijnGegevens.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
+            If (Roles.IsUserInRole(Page.User.Identity.Name, "GebruikerBedrijf") Or _
+                Roles.IsUserInRole(Page.User.Identity.Name, "Medewerker") Or _
+                Roles.IsUserInRole(Page.User.Identity.Name, "Developer") Or _
+                Roles.IsUserInRole(Page.User.Identity.Name, "Bedrijfsverantwoordelijke")) Then
+                CType(Me.lgvMijnGegevens.FindControl("lnkChauffeurs"), HyperLink).Visible = True
+                Dim linkchauffeur As String = "~/App_Presentation/Webpaginas/GebruikersOnly/Chauffeur.aspx"
+                CType(Me.lgvMijnGegevens.FindControl("lnkChauffeurs"), HyperLink).NavigateUrl = linkchauffeur
+            End If
         End If
 
         'Registratielink
