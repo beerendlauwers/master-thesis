@@ -16,18 +16,6 @@ Partial Class App_Presentation_MasterPage
         Me.autoReserverenPersonenwagens2.HRef = "~/App_Presentation/Webpaginas/NieuweReservatieAanmaken.aspx?categorie=2"
         Me.autoReserverenPersonenwagens3.HRef = "~/App_Presentation/Webpaginas/NieuweReservatieAanmaken.aspx?categorie=3"
 
-        'Mijn Reservaties link
-        If Page.User.Identity.IsAuthenticated Then
-            Dim link As String = String.Concat("~/App_Presentation/Webpaginas/GebruikersOnly/ReservatieBeheer.aspx")
-            Try
-                CType(Me.lgvMijnReservaties.FindControl("lnkMijnReservaties"), HyperLink).NavigateUrl = link
-                CType(Me.lgvMijnGegevens.FindControl("lnkMijnReservaties1"), HyperLink).NavigateUrl = link
-            Catch ex As Exception
-                Return
-            End Try
-
-        End If
-
         'GebruikersBeheerlink
         If Page.User.Identity.IsAuthenticated Then
             Dim link As String = "~/App_Presentation/Webpaginas/GebruikersOnly/GebruikersBeheer.aspx"
@@ -40,6 +28,8 @@ Partial Class App_Presentation_MasterPage
                 Dim linkchauffeur As String = "~/App_Presentation/Webpaginas/GebruikersOnly/Chauffeur.aspx"
                 CType(Me.lgvMijnGegevens.FindControl("lnkChauffeurs"), HyperLink).NavigateUrl = linkchauffeur
             End If
+            link = String.Concat("~/App_Presentation/Webpaginas/GebruikersOnly/ReservatieBeheer.aspx")
+            CType(Me.lgvMijnGegevens.FindControl("lnkMijnReservaties1"), HyperLink).NavigateUrl = link
         End If
 
         'Registratielink
@@ -61,10 +51,11 @@ Partial Class App_Presentation_MasterPage
             End If
         End If
 
-        'Filiaal ddo
-        Dim FiliaalCookie As HttpCookie
-        FiliaalCookie = Request.Cookies("filcookie")
-        ddoFiliaal.SelectedValue = FiliaalCookie.Value
+            'Filiaal ddo
+            Dim FiliaalCookie As HttpCookie
+            FiliaalCookie = Request.Cookies("filcookie")
+            ddoFiliaal.SelectedIndex = 0
+
 
     End Sub
 

@@ -88,18 +88,7 @@
                 				</loggedInTemplate>
                 				<AnonymousTemplate></AnonymousTemplate>
                 		</asp:loginView>
-                			
-   					    
-                               <asp:LoginView ID="lgvMijnReservaties" runat="server">
-                               <LoggedInTemplate>
-                               <li>
-                                   <asp:HyperLink ID="lnkMijnReservaties" runat="server"><span class="l"></span><span class="r"></span><span class="t">Mijn Reservaties</span></asp:HyperLink>
-                               </li>
-                               </LoggedInTemplate>
-                               <AnonymousTemplate></AnonymousTemplate>
-                               </asp:LoginView>
-                			
-                		
+
                 		<li>
                 			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Contact</span></a>
                 		</li>

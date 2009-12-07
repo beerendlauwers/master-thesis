@@ -26,7 +26,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
                 If (User.Identity.IsAuthenticated) Then
                     userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
                 Else
-                    'Dit is een dummy-gebruiker.
+                    'Dit is een anonieme gebruiker
                     userID = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
                 End If
 
@@ -41,15 +41,27 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
                 End With
 
                 'Nakijken of deze auto is bevestigd door een gebruiker.
+                'Zoja, dan flikkeren we de bezoeker eruit. Niets te doen hier.
                 If (KijkNaOfReservatieBevestigdIs(reservatie)) Then
                     Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
-                End If
 
-                'Nakijken of deze auto reeds is gereserveerd.
-                If (Not KijkNaOfAutoReedsIsGereserveerd(autoID)) Then
 
-                    'Dan nakijken of de bezoekende gebruiker dezelfde userID heeft als
-                    'dat we hebben binnengekregen.
+                    'Anders  gaan we nakijken of er reeds een (onbevestigde)
+                    'reservatie is voor deze auto.
+                ElseIf (TijdelijkeReservatieNakijken(reservatie)) Then
+
+                    'Deze reservatie bestaat, maar is onbevestigd.
+
+                    'Als de gebruiker anoniem is, moet hij maar eerst eens inloggen.
+                    If (Not User.Identity.IsAuthenticated) Then
+                        Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
+                    Else 'Als deze gebruiker ingelogd is, dan kan hij de reservatie
+                        'voor zich reserveren.
+                        MaakReservatieBevestigingsOverzicht(reservatie)
+                    End If
+
+
+                Else 'Er is nog geen enkele reservatie. REAP THE SPOILS OF WAR
 
                     'Als de gebruiker anoniem is, kan hij de auto tijdelijk reserveren,
                     'maar voor een permanente reservatie moet hij ingelogd zijn.
@@ -57,7 +69,8 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
                         'Tijdelijke reservatie toevoegen
                         TijdelijkeReservatieToevoegen(reservatie)
                         'Doorsturen naar NieuweGebruikerAanmaken.aspx
-                        KijkNaOfUserAnoniemIs(userID)
+                        AnoniemeGebruikerDoorsturen()
+                        Return
                     End If
 
                     'Als de gebruiker ingelogd is, kan hij de auto tijdelijk reserveren
@@ -68,34 +81,25 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
                         Return
                     End If
 
-                ElseIf (User.Identity.IsAuthenticated) Then
 
-                    'Nakijken of dit wel dezelfde user is die de auto heeft gereserveerd
-                    Dim reservatiebll As New ReservatieBLL
-                    Dim row As Reservaties.tblReservatieRow = reservatiebll.GetSpecificReservatieByDatumAndAutoID(reservatie)
-
-                    If (row.userID.ToString = reservatie.UserID.ToString Or _
-                        row.userID.ToString = "7a73f865-ec29-4efd-bf09-70a9f9493d21") Then
-                        MaakReservatieBevestigingsOverzicht(reservatie)
-                    Else
-                        Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
-                    End If
-
-                Else
-                    Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
                 End If
 
             Catch ex As Exception
                 Throw ex
-            End Try
+        End Try
         End If
     End Sub
 
-    Private Function KijkNaOfAutoReedsIsGereserveerd(ByVal autoID As Integer) As Boolean
-        Dim autobll As New AutoBLL
-        Dim r As Autos.tblAutoRow = autobll.GetAutoByAutoID(autoID).Rows(0)
-        autobll = Nothing
-        Return (r.statusID = 5)
+    Private Function TijdelijkeReservatieNakijken(ByRef res As Reservatie) As Boolean
+        Dim reservatiebll As New ReservatieBLL
+        Dim row As Reservaties.tblReservatieRow = reservatiebll.GetSpecificReservatieByDatumAndAutoID(res)
+
+        If (row IsNot Nothing) Then
+            Return True
+        Else
+            Return False
+        End If
+
     End Function
 
     Private Function TijdelijkeReservatieToevoegen(ByRef res As Reservatie) As Boolean
@@ -148,21 +152,19 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         End Try
     End Function
 
-    Private Sub KijkNaOfUserAnoniemIs(ByRef userID As Guid)
-        If (userID.ToString = "7a73f865-ec29-4efd-bf09-70a9f9493d21") Then
-            'Dit is een anonieme gebruiker. We sturen hem naar MaakNieuweGebruikerAan.aspx
+    Private Sub AnoniemeGebruikerDoorsturen()
 
-            'Alles opslaan in een cookie
-            Dim tempCookie As New HttpCookie("reservatieCookie")
-            tempCookie.Expires = DateTime.Now.AddDays(2)
-            tempCookie("autoID") = Request.QueryString("autoID")
-            tempCookie("begindat") = Request.QueryString("begindat")
-            tempCookie("einddat") = Request.QueryString("einddat")
-            Response.Cookies.Add(tempCookie)
+        'Alles opslaan in een cookie
+        Dim tempCookie As New HttpCookie("reservatieCookie")
+        tempCookie.Expires = DateTime.Now.AddDays(2)
+        tempCookie("autoID") = Request.QueryString("autoID")
+        tempCookie("begindat") = Request.QueryString("begindat")
+        tempCookie("einddat") = Request.QueryString("einddat")
+        Response.Cookies.Add(tempCookie)
 
-            'En wegsturen maar
-            Response.Redirect("~/App_Presentation/Webpaginas/NieuweGebruikerAanmaken.aspx")
-        End If
+        'En wegsturen maar
+        Response.Redirect("~/App_Presentation/Webpaginas/NieuweGebruikerAanmaken.aspx")
+
     End Sub
 
     Private Sub MaakReservatieBevestigingsOverzicht(ByRef r As Reservatie)

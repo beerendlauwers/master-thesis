@@ -119,7 +119,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
         Dim optiekosten As Double = 0
         For Each optie As Autos.tblOptieRow In dt
-            optiekosten = optie.optieKost
+            optiekosten = optiekosten + optie.optieKost
         Next
 
         optiebll = Nothing

@@ -8,7 +8,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
     Private Sub BezetGMAP()
 
         Dim filiaalnr As Int32 = 0
-        Dim autorow As Int32 = 0
+        Dim autorow As Integer = 0
         Dim blnadd As Boolean = False
 
         Dim Adres As String
@@ -29,8 +29,12 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
         DTFiliaal = BLLFiliaal.GetAllFilialen
 
-
         Dim row As Autos.tblFiliaalRow
+
+        'Hier houden we het aantal filiallen die ook auto's hebben, bij.
+        'Als dit op 0 staat na onderstaande geneste lus, dan verstoppen we
+        'de Gmap.
+        Dim aantalFiliallenMetAutos As Integer = 0
 
         ' geneste lus: filialen aflopen
         For Each row In DTFiliaal
@@ -50,20 +54,19 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             Dim htmlstring As String = "<html><body><h4>" + row.filiaalNaam + "</h4><hr /><br /><table style='width:100%'>"
             ' auto's vergelijken met filID en htmlstring opvullen
 
-
-
-
-
             For autorow = 0 To beschikbareautos.Rows.Count - 1
+                Dim reservatielink As String = String.Concat("ReservatieBevestigen.aspx?autoID=", beschikbareautos(autorow).Item("autoID"), "&begindat=", beschikbareautos(autorow).Item("begindat"), "&einddat=", beschikbareautos(autorow).Item("einddat"))
 
                 If Not beschikbareautos(autorow).Item("Naam") = String.Empty Then
-                    htmlstring = htmlstring + "<tr><td>" + beschikbareautos(autorow).Item("Naam") + "</td><td><a href='http://www.google.be'>Reserveren</a></td></tr>"
+                    htmlstring = htmlstring + "<tr><td>" + beschikbareautos(autorow).Item("Naam") + "</td><td><a href='" + reservatielink + "'>Reserveren</a></td></tr>"
                     blnadd = True
                 End If
 
             Next
 
             If blnadd = True Then 'indien row niet leeg
+
+                aantalFiliallenMetAutos = aantalFiliallenMetAutos + 1
 
                 htmlstring = htmlstring + "</table><br /></body></html>"
 
@@ -83,6 +86,11 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
         Next
 
+        If (aantalFiliallenMetAutos = 0) Then
+            Me.gmapdiv.Visible = False
+        Else
+            Me.gmapdiv.Visible = True
+        End If
 
 
 
@@ -271,9 +279,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             Throw ex
         End Try
 
-
-
-        repOverzicht.DataBind()
+        RepOverzicht.DataBind()
 
     End Sub
 
@@ -345,8 +351,6 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
                 'Verwerk datatable tot overzichtsdatatable
                 dt = MaakOverzichtsTabel(datatable)
 
-
-
             Catch ex As Exception
                 Throw ex
             End Try
@@ -397,11 +401,6 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
         'key inlezen vanuit web.conf <AppSettings/>
         Dim MapKey As String = ConfigurationManager.AppSettings("googlemaps.subgurim.net")
-
-
-        'instellen begindatum
-
-        txtBegindatum.Text = DateTime.Now.Date
 
     End Sub
 

@@ -52,6 +52,9 @@
                 <td>
                     <asp:Button ID="btnInsert" runat="server" Text="Voeg toe" />
                 </td>
+                <td colspan="2">
+                    <asp:Image ID="imgInsertResultaat" runat="server" Visible="false" />&nbsp;<asp:Label ID="lblInsertResultaat" runat="server"></asp:Label>
+                </td>
             </tr>
         </table>
         </ContentTemplate>
@@ -111,6 +114,9 @@
                 <td align="right">
                     <asp:Button ID="btnWijzig" runat="server" Text="Wijzig chauffeur" />
                 </td>
+                <td colspan="2">
+                    <asp:Image ID="imgWijzigResultaat" runat="server" Visible="false" />&nbsp;<asp:Label ID="lblWijzigResultaat" runat="server"></asp:Label>
+                </td>
             </tr>
         </table>
         </ContentTemplate>
@@ -136,6 +142,9 @@
             <tr>
                 <td align="right">
                     <asp:Button ID="btnVerwijder" runat="server" Text="Verwijder" />
+                </td>
+                <td colspan="2">
+                    <asp:Image ID="imgVerwijderResultaat" runat="server" Visible="false" />&nbsp;<asp:Label ID="lblVerwijderResultaat" runat="server"></asp:Label>
                 </td>
             </tr>
         </table>

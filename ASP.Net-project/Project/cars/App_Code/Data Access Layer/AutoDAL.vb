@@ -51,11 +51,11 @@ Public Class AutoDAL
     Public Function GetAutosBy(ByVal filterOpties() As String) As Autos.tblAutoDataTable
 
         'filterOpties expanden
-        Dim categorie, kleur, automerk, automodel, brandstoftype, prijsmin, prijsmax As String
+        Dim categorie, kleur, automerk, filiaal, brandstoftype, prijsmin, prijsmax As String
         categorie = filterOpties(0)
         kleur = filterOpties(1)
         automerk = filterOpties(2)
-        automodel = filterOpties(3)
+        filiaal = filterOpties(3)
         brandstoftype = filterOpties(4)
 
         If (Not filterOpties(5) = String.Empty And Not filterOpties(6) = String.Empty) Then
@@ -98,11 +98,11 @@ Public Class AutoDAL
             filtercount = filtercount + 1
         End If
 
-        If (Not automodel = String.Empty) Then
+        If (Not Filiaal = String.Empty) Then
             If (filtercount > 0) Then querytext = String.Concat(querytext, " AND ")
 
-            querytext = String.Concat(querytext, "A.modelID = @automodel")
-            myCommand.Parameters.Add("@automodel", SqlDbType.Int).Value = automodel
+            querytext = String.Concat(querytext, "A.filiaalID = @filiaal")
+            myCommand.Parameters.Add("@filiaal", SqlDbType.Int).Value = filiaal
             filtercount = filtercount + 1
         End If
 

@@ -5,7 +5,32 @@ Imports System.Data.SqlClient
 Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
     Inherits System.Web.UI.Page
 
-    Private Function MaakOverzichtsDataTable(ByRef datatable As Data.DataTable) As Data.DataTable
+    Private Function GeefOptieKosten(ByRef a As Autos.tblAutoRow, ByRef opties() As String) As Double()
+        Dim optiebll As New OptieBLL
+        Dim dt As Autos.tblOptieDataTable = optiebll.GetAllOptiesByAutoID(a.autoID)
+
+        If (dt.Rows.Count = 0) Then
+            Dim dummy() As Double = {0, 0}
+            Return dummy
+        End If
+
+        Dim optiekosten As Double = 0
+        For Each optie As Autos.tblOptieRow In dt
+
+            optiekosten = optiekosten + optie.optieKost
+
+        Next optie
+
+        optiebll = Nothing
+
+        Dim waardes(1) As Double
+        waardes(0) = dt.Rows.Count
+        waardes(1) = optiekosten
+
+        Return waardes
+    End Function
+
+    Private Function MaakOverzichtsDataTable(ByRef datatable As Data.DataTable, ByRef opties() As String) As Data.DataTable
         Try
             Dim overzichtdatatable As New Data.DataTable
             Dim overzichtcolumn As New Data.DataColumn
@@ -22,15 +47,10 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
             'Eigen kolommen toevoegen
 
-            overzichtdatatable.Columns.Add("btnID", Type.GetType("System.String"))
+            overzichtdatatable.Columns.Add("huidigeAuto", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("rijKleur", Type.GetType("System.String"))
 
-
             overzichtdatatable.Columns.Add("autoNaam", Type.GetType("System.String"))
-            overzichtdatatable.Columns.Add("autoKleur", Type.GetType("System.String"))
-            overzichtdatatable.Columns.Add("begindat", Type.GetType("System.DateTime"))
-            overzichtdatatable.Columns.Add("einddat", Type.GetType("System.DateTime"))
-            overzichtdatatable.Columns.Add("aantalDagen", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("totaalKost", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("aantalOpties", Type.GetType("System.String"))
 
@@ -42,27 +62,32 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
                 Dim row As Autos.tblAutoRow = autobll.GetAutoByAutoID(datatable.Rows(i).Item("autoID")).Rows(0)
 
-                If (i Mod 2) Then
+                If (Not i Mod 2) Then
                     overzichtrow("rijKleur") = "D4E0E8"
                 Else
                     overzichtrow("rijKleur") = "ACC3D2"
                 End If
 
+                'Toon aan welke auto de huidige auto is
+                If (row.autoID = ViewState("autoID")) Then
+                    overzichtrow("huidigeAuto") = "table-cell"
+                Else
+                    overzichtrow("huidigeAuto") = "none"
+                End If
 
                 overzichtrow("autoID") = row.autoID
                 overzichtrow("autoNaam") = autobll.GetAutoNaamByAutoID(row.autoID)
                 overzichtrow("autoKleur") = row.autoKleur
-                overzichtrow("begindat") = Format(Date.Parse(datatable.Rows(i).Item("reservatieBegindat")), "dd/MM/yyyy")
-                overzichtrow("einddat") = Format(Date.Parse(datatable.Rows(i).Item("reservatieEinddat")), "dd/MM/yyyy")
-                overzichtrow("aantalDagen") = (overzichtrow("einddat") - overzichtrow("begindat")).TotalDays.ToString
 
                 Dim huurprijs As Double
-                huurprijs = (overzichtrow("einddat") - overzichtrow("begindat")).TotalDays * row.autoDagTarief
+                Dim begindat As Date = Date.Parse(Me.txtBegindatum.Text)
+                Dim einddat As Date = Date.Parse(Me.txtEinddatum.Text)
+                huurprijs = (einddat - begindat).TotalDays * row.autoDagTarief
 
-                'Dim waardes() As Double = GeefOptieKosten(row)
-                'overzichtrow("aantalOpties") = waardes(0).ToString
+                Dim waardes() As Double = GeefOptieKosten(row, opties)
+                overzichtrow("aantalOpties") = waardes(0).ToString
 
-                'huurprijs = huurprijs + waardes(1)
+                huurprijs = huurprijs + waardes(1)
                 overzichtrow("totaalKost") = String.Concat(huurprijs.ToString, " €")
 
                 overzichtdatatable.Rows.Add(overzichtrow)
@@ -218,6 +243,15 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
                 Return
             End Try
 
+            If (CBool(Session("reservatieAangepast"))) Then
+                Me.lblReservatieAangepast.Visible = True
+                Me.imgReservatieAangepast.Visible = True
+                Session("reservatieAangepast") = False
+            Else
+                Me.lblReservatieAangepast.Visible = False
+                Me.imgReservatieAangepast.Visible = False
+            End If
+
         Else
 
             If (ViewState("resID") = 0 Or ViewState("autoID") = 0) Then
@@ -268,13 +302,19 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
 
 
+        Dim opties(20) As String
+
         'Extra opties ophalen
         For i As Integer = 20 To 39
             Dim controlnaam As String = String.Concat("ctl00$plcMain$PaneOpties_content$chkOptie", i - 20)
             If (TryCast(Me.FindControl(controlnaam), CheckBox) IsNot Nothing) Then
 
                 Dim control As CheckBox = CType(Me.FindControl(controlnaam), CheckBox)
-                If control.Checked Then filterOpties(i) = control.Text
+                If control.Checked Then
+                    filterOpties(i) = control.Text
+                    opties(i - 20) = control.Text
+                End If
+
 
             End If
         Next
@@ -306,16 +346,28 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
         If (beschikbareautosdt.Rows.Count = 0) Then
             Me.lblOngeldigID.Text = "Er konden geen beschikbare auto's gevonden worden die aan uw voorwaarden voldeden."
+            Me.lblOngeldigID.Visible = True
+            Me.pnlAutoAanbod.Visible = False
+            Return
         End If
 
         'Geef auto's weer in een repeater
-        'Toon aan welke auto de huidige auto is
+        Try
+            Me.lblResultaat.Text = String.Concat("Er werd(en) ", beschikbareautosdt.Rows.Count, " beschikbare auto's gevonden die aan uw voorwaarden voldeden. Gelieve een auto te selecteren.")
+            Me.lblGewenstePeriode.Text = String.Concat("Geselecteerde periode: ", Me.txtBegindatum.Text, " tot ", Me.txtEinddatum.Text)
+            Me.RepBeschikbareAutos.DataSource = MaakOverzichtsDataTable(beschikbareautosdt, opties)
+            Me.RepBeschikbareAutos.DataBind()
+            Me.pnlAutoAanbod.Visible = True
+            Me.lblOngeldigID.Visible = False
+        Catch ex As Exception
+            Throw ex
+        End Try
 
-        'Laat de gebruiker een auto selecteren
+
         'Insert de nieuwe reservatie
         'Als dat lukt, verwijder de oude reservatie
 
-        
+
     End Sub
 
     Private Sub MaakOverzicht()
@@ -348,6 +400,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             'Enkele belangrijke elementen in Viewstate opslaan
             ViewState("categorieID") = a.categorieID
             ViewState("modelID") = a.modelID
+            ViewState("reservatieID") = r.reservatieID
 
             'Algemene kenmerken vullen
             Me.lblMerkModel.Text = autobll.GetAutoNaamByAutoID(r.autoID)
@@ -369,5 +422,66 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             'paneOpties vullen
             VulOpties(a, r)
         End If
+    End Sub
+
+    Protected Sub RepBeschikbareAutos_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.RepeaterCommandEventArgs) Handles RepBeschikbareAutos.ItemCommand
+        Try
+            Dim oudeReservatieID As Integer = Convert.ToInt32(ViewState("reservatieID"))
+            Dim oudeAutoID As Integer = Convert.ToInt32(ViewState("autoID"))
+            Dim nieuweAutoID As Integer = Convert.ToInt32(e.CommandArgument)
+
+            Dim autobll As New AutoBLL
+            Dim reservatiebll As New ReservatieBLL
+
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(oudeReservatieID).Rows(0)
+
+            'Ff checken dat we geen bullshit hebben toegestuurd gekregen
+            If (r.autoID = oudeAutoID) Then
+                'Nieuwe reservatie invoeren. Als dat lukt, oude reservatie verwijderen
+
+                Dim dt As New Reservaties.tblReservatieDataTable
+                Dim newres As Reservaties.tblReservatieRow = dt.NewRow
+
+                newres.autoID = nieuweAutoID
+                newres.userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+                newres.reservatieBegindat = Date.Parse(Me.txtBegindatum.Text)
+                newres.reservatieEinddat = Date.Parse(Me.txtEinddatum.Text)
+                newres.reservatieIsBevestigd = 1
+
+                newres.reservatieGereserveerdDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+                newres.reservatieIngechecktDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+                newres.reservatieUitgechecktDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+
+                newres.verkoopscontractOpmerking = String.Empty
+                newres.verkoopscontractIsOndertekend = 0
+                newres.factuurBijschrift = String.Empty
+                newres.factuurIsInWacht = 0
+
+                If (reservatiebll.InsertReservatie(newres)) Then
+                    'Gelukt! Oude reservatie verwijderen.
+                    reservatiebll.DeleteReservatie(oudeReservatieID)
+
+                    'ID van de nieuwe reservatie ophalen.
+                    Dim tempres As New Reservatie
+                    tempres.AutoID = nieuweAutoID
+                    tempres.Begindatum = newres.reservatieBegindat
+                    tempres.Einddatum = newres.reservatieEinddat
+
+                    Dim resID As Integer = reservatiebll.GetSpecificReservatieByDatumAndAutoID(tempres).reservatieID
+
+                    Dim resData As String = String.Concat(resID, ",", nieuweAutoID)
+
+                    Session("reservatieAangepast") = True
+
+                    Response.Redirect(String.Concat("ReservatieWijzigen.aspx?resData=", resData))
+                End If
+
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+
     End Sub
 End Class

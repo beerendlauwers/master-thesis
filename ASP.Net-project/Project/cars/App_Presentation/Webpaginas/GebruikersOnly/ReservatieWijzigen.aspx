@@ -10,6 +10,8 @@
     </asp:ScriptManager>
     <asp:UpdatePanel ID="updReservatieWijzigen" runat="server" UpdateMode="Always">
         <ContentTemplate>
+            <asp:Image ID="imgReservatieAangepast" runat="server" ImageUrl="~/App_Presentation/Images/tick.gif" Visible="false" /><asp:Label ID="lblReservatieAangepast" runat="server" Visible="false" Text= "Uw reservatie werd aangepast."></asp:Label>
+            <br />
             <table>
                 <tr>
                     <th colspan="2">
@@ -100,11 +102,61 @@
             </table>
             <br />
             <div align="right">
-                <asp:Button ID="btnBevestigen" runat="server" Text="Reservatie Wijzigen" />
-                <asp:Image ID="imgResultaat" runat="server" />
-                <asp:Label ID="lblResultaat" runat="server" Visible="false"></asp:Label>
+                <asp:Button ID="btnBevestigen" runat="server" Text="Toon Aanbod" />
+
             </div>
+            
+            <asp:Panel ID="pnlAutoAanbod" runat="server" Visible="false">
+            
+            <asp:Image ID="imgResultaat" runat="server" />
+            <asp:Label ID="lblResultaat" runat="server"></asp:Label>
+            <asp:Label ID="lblGewenstePeriode" runat="server"></asp:Label>
+            <table>    
+            <tr>
+                    <th>
+                        Auto
+                    </th>
+                    <th>
+                        Kleur
+                    </th>
+                    <th>
+                        Totaalkost
+                    </th>
+                    <th>
+                        &nbsp;
+                    </th>
+                    <th>
+                        &nbsp;
+                    </th>
+                </tr>
+            <asp:Repeater ID="RepBeschikbareAutos" runat="server" OnItemCommand="RepBeschikbareAutos_ItemCommand">
+            <ItemTemplate >
+            <tr style="background-color:#<%# DataBinder.Eval(Container.DataItem, "rijKleur")%>" >
+            <td align="center">
+                                <%# DataBinder.Eval(Container.DataItem, "autoNaam") %>
+                            </td>
+                            <td align="center">
+                                <%#DataBinder.Eval(Container.DataItem, "autoKleur")%>
+                            </td>
+                            <td align="right">
+                                <%#DataBinder.Eval(Container.DataItem, "totaalKost")%>
+                            </td>
+                            <td align="center">
+                                <asp:Button ID="btnAutoKiezen" runat="server" Text="Deze auto kiezen" CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoID")%>' />
+                            </td>
+                            <td align="left">
+                                <div style="display:<%#DataBinder.Eval(Container.DataItem, "huidigeAuto")%>">
+                                <asp:Image ID="imgHuidigeAuto" runat="server" ImageUrl="~/App_Presentation/Images/pijllinks.png"  /> Dit is uw huidige auto.
+                                </div>
+                            </td>
+                            </tr>
+            </ItemTemplate>
+            </asp:Repeater>
+            </table>
+            </asp:Panel>
+            
+            <asp:Label ID="lblOngeldigID" runat="server"></asp:Label>
         </ContentTemplate>
     </asp:UpdatePanel>
-    <asp:Label ID="lblOngeldigID" runat="server"></asp:Label>
+    
 </asp:Content>

@@ -174,14 +174,6 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Public Function getFiliaalIDByAutoID(ByVal AutoID As Integer) As Integer
-        Try
-            Return _autodal.getFiliaalIDByAutoID(AutoID)
-        Catch ex As Exception
-            Throw ex
-        End Try
-    End Function
-
     Private Function FilterAutosByExtraOpties(ByRef autodata As Autos.tblAutoDataTable, ByRef filterOpties() As String) As Autos.tblAutoDataTable
 
         'Kijk na of er wel filters voor extra opties zijn.
@@ -243,7 +235,7 @@ Public Class AutoBLL
         For i As Integer = 20 To 39
             If (Not filterOpties(i) = String.Empty) Then
                 Dim optie As Autos.tblOptieRow = optiebll.GetOptieByNaam(filterOpties(i)).Rows(0)
-                optieFilter(i - 20) = optie.optieID
+                optieFilter(aantalItems) = optie.optieID
                 aantalItems = aantalItems + 1
             End If
         Next i
