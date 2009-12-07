@@ -77,7 +77,42 @@
               <Mapping SourceColumn="filiaalID" DataSetColumn="filiaalID" />
               <Mapping SourceColumn="parkeerPlaatsID" DataSetColumn="parkeerPlaatsID" />
             </Mappings>
-            <Sources />
+            <Sources>
+              <DbSource ConnectionRef="frankRemoteDB (Web.config)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="FillByGrid" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetDataForGrid" GeneratorSourceName="FillByGrid" GetMethodModifier="Public" GetMethodName="GetDataForGrid" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetDataForGrid" UserSourceName="FillByGrid">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT        tblAuto.autoID, tblAuto.categorieID, tblAuto.modelID, tblAuto.autoKleur, tblAuto.autoBouwjaar, tblAuto.brandstofID, tblAuto.autoKenteken, tblAuto.autoDagTarief, 
+                         tblAuto.autoKMTotOlieVerversing, tblAuto.statusID, tblAuto.filiaalID, tblAuto.parkeerPlaatsID, tblAutostatus.autostatusID, tblAutostatus.autostatusNaam, 
+                         tblFiliaal.filiaalID AS Expr1, tblFiliaal.filiaalNaam, tblMerk.merkID, tblMerk.merkNaam, tblModel.modelID AS Expr2, tblModel.merkID AS Expr3, 
+                         tblModel.modelNaam
+FROM            tblAuto INNER JOIN
+                         tblAutostatus ON tblAuto.statusID = tblAutostatus.autostatusID INNER JOIN
+                         tblFiliaal ON tblAuto.filiaalID = tblFiliaal.filiaalID INNER JOIN
+                         tblModel ON tblAuto.modelID = tblModel.modelID INNER JOIN
+                         tblMerk ON tblModel.merkID = tblMerk.merkID</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+              <DbSource ConnectionRef="frankRemoteDB (Web.config)" DbObjectName="ASPNETDB.dbo.tblAuto" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="FillDistinctJaar" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetDataDistinctJaar" GeneratorSourceName="FillDistinctJaar" GetMethodModifier="Public" GetMethodName="GetDataDistinctJaar" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetDataDistinctJaar" UserSourceName="FillDistinctJaar">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT DISTINCT autoBouwjaar
+FROM     tblAuto</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+              <DbSource ConnectionRef="frankRemoteDB (Web.config)" DbObjectName="ASPNETDB.dbo.tblAuto" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="FillDistinctKleur" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetDistinctKleur" GeneratorSourceName="FillDistinctKleur" GetMethodModifier="Public" GetMethodName="GetDistinctKleur" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetDistinctKleur" UserSourceName="FillDistinctKleur">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT DISTINCT autoKleur
+FROM     tblAuto</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </Sources>
           </TableAdapter>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="tblAutoOptieTableAdapter" GeneratorDataComponentClassName="tblAutoOptieTableAdapter" Name="tblAutoOptie" UserDataComponentName="tblAutoOptieTableAdapter">
             <MainSource>
@@ -715,7 +750,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="tblAutofoto" msprop:Generator_UserTableName="tblAutofoto" msprop:Generator_RowDeletedName="tblAutofotoRowDeleted" msprop:Generator_TableClassName="tblAutofotoDataTable" msprop:Generator_RowChangedName="tblAutofotoRowChanged" msprop:Generator_RowClassName="tblAutofotoRow" msprop:Generator_RowChangingName="tblAutofotoRowChanging" msprop:Generator_RowEvArgName="tblAutofotoRowChangeEvent" msprop:Generator_RowEvHandlerName="tblAutofotoRowChangeEventHandler" msprop:Generator_TablePropName="tblAutofoto" msprop:Generator_TableVarName="tabletblAutofoto" msprop:Generator_RowDeletingName="tblAutofotoRowDeleting">
+        <xs:element name="tblAutofoto" msprop:Generator_UserTableName="tblAutofoto" msprop:Generator_RowDeletedName="tblAutofotoRowDeleted" msprop:Generator_RowChangedName="tblAutofotoRowChanged" msprop:Generator_RowClassName="tblAutofotoRow" msprop:Generator_RowChangingName="tblAutofotoRowChanging" msprop:Generator_RowEvArgName="tblAutofotoRowChangeEvent" msprop:Generator_RowEvHandlerName="tblAutofotoRowChangeEventHandler" msprop:Generator_TableClassName="tblAutofotoDataTable" msprop:Generator_TableVarName="tabletblAutofoto" msprop:Generator_RowDeletingName="tblAutofotoRowDeleting" msprop:Generator_TablePropName="tblAutofoto">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="autofotoID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="autofotoID" msprop:Generator_ColumnPropNameInRow="autofotoID" msprop:Generator_ColumnVarNameInTable="columnautofotoID" msprop:Generator_ColumnPropNameInTable="autofotoIDColumn" type="xs:int" />

@@ -290,4 +290,24 @@ Public Class AutoBLL
 
         Return optieCheck
     End Function
+
+    Public Function getAutoGrid() As Data.DataTable
+        Dim dt As New Data.DataTable
+        dt = _autodal.getAutoGrid()
+        Return (dt)
+    End Function
+
+    Function getdistinctBouwjaar() As Data.DataTable
+        Dim dt As New Data.DataTable
+
+        dt = _autodal.GetDistinctBouwJaar
+        Return dt
+    End Function
+
+    Function getdistinctKleur() As Data.DataTable
+        Dim dt As New Data.DataTable
+
+        dt = _autodal.GetDistinctAutoKleur
+        Return dt
+    End Function
 End Class

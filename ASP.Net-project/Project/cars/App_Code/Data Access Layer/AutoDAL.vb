@@ -181,4 +181,41 @@ Public Class AutoDAL
 
     End Function
 
+    'Public Function getAutoGrid() As Autos.tblAutoDataTable
+    '    Dim myCommand As New SqlCommand("select a.autokenteken, a.autobouwjaar, a.autodagtarief,a.autokleur, f.filiaalnaam, p.parkeerplaatsKolom parkingKolom, p.parkeerplaatsRij parkingRij,st.autostatusnaam, m.merknaam, ml.modelnaam from tblAuto a, tblfiliaal f, tblParkeerplaats p, tblAutostatus st, tblMerk m, tblModel ml where a.filiaalID = f.filiaalID And p.parkeerplaatsID = a.parkeerplaatsID AND st.autostatusID=a.statusID AND a.modelID = ml.modelID AND m.merkID=ml.merkID;")
+    '    myCommand.Connection = _myConnection
+
+    '    Dim dt As New Autos.tblAutoDataTable
+    '    Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutoDataTable)
+    'End Function
+
+    Public Function getAutoGrid() As Data.DataTable
+        Dim dt As New Data.DataTable
+
+        Dim myCommand As New SqlCommand("SELECT tblAuto.autoID, tblAuto.categorieID, tblAuto.modelID, tblAuto.autoKleur, tblAuto.autoBouwjaar, tblAuto.brandstofID, tblAuto.autoKenteken, tblAuto.autoDagTarief, tblAuto.autoKMTotOlieVerversing, tblAuto.statusID, tblAuto.filiaalID, tblAuto.parkeerPlaatsID, tblAutostatus.autostatusID, tblAutostatus.autostatusNaam, tblFiliaal.filiaalID AS Expr1, tblFiliaal.filiaalNaam, tblMerk.merkID, tblMerk.merkNaam, tblModel.modelID AS Expr2, tblModel.merkID AS Expr3, tblModel.modelNaam FROM tblAuto INNER JOIN tblAutostatus ON tblAuto.statusID = tblAutostatus.autostatusID INNER JOIN tblFiliaal ON tblAuto.filiaalID = tblFiliaal.filiaalID INNER JOIN tblModel ON tblAuto.modelID = tblModel.modelID INNER JOIN tblMerk ON tblModel.merkID = tblMerk.merkID")
+        myCommand.Connection = _myConnection
+
+        Return CType(_f.ReadDataTable(myCommand, dt), Data.DataTable)
+    End Function
+
+    Public Function GetDistinctBouwJaar() As Data.DataTable
+        Dim myCommand As New SqlCommand("SELECT DISTINCT autoBouwjaar FROM tblAuto")
+
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Data.DataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Data.DataTable)
+
+    End Function
+
+    Public Function GetDistinctAutoKleur() As Data.DataTable
+        Dim myCommand As New SqlCommand("SELECT DISTINCT autoKleur FROM tblAuto")
+
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Data.DataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Data.DataTable)
+
+    End Function
+
 End Class
