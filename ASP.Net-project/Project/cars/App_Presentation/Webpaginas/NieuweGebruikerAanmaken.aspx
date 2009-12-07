@@ -19,7 +19,11 @@
                                         <table border="0">
                                             <tr>
                                                 <th align="center" colspan="2">
-                                                Nieuwe gebruiker aanmaken</td>
+                                                <br />
+                                                Nieuwe gebruiker aanmaken
+                                                </td>
+                                                    <br />
+                                                    <br />
                                             </tr>
                                             <tr>
                                                 <td align="right">

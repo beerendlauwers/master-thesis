@@ -508,6 +508,7 @@ div.art-Header
 div.art-right-pic
 {
 	position: absolute;
+	margin-left: 15px;
 	border-right: 2px;
 	width: 74px;
 	height: 64px;
@@ -553,7 +554,6 @@ div.art-LoggedIn
     border-color: #B5C7DE;
     border-style: solid;
     border-width: 1px;
-    padding: 4,4,4,4;   
 }
 
 
