@@ -117,8 +117,17 @@
                 	</ul>
                 </div>
             <div class="art-Header">
-                <div class="art-Header-jpeg">
-                </div>
+                    <asp:LoginView ID="lgvHeader" runat="server">
+                               <LoggedInTemplate>
+                                <div class="art-Header2-jpeg">
+                               </div>
+                               </LoggedInTemplate>
+                               <AnonymousTemplate>
+                               <div class="art-Header-jpeg">
+                               </div>
+                               </AnonymousTemplate>
+                    </asp:LoginView>
+                
                 <div class="art-Logo">
                     <h1 id="name-text" class="art-Logo-name">
                         <a href="#">CARS</a></h1>
@@ -171,7 +180,8 @@
                      <form id="frmMain">
                                 <div id="loginscreen">
                                     <asp:loginview id="loginView" runat="server">
-                                                <LoggedInTemplate>
+                                                <LoggedInTemplate>                                                                                        
+                                                    <div class="art-LoggedIn">
                                                     <ul id="navigatie">
                                                         <li id="username">Je bent ingelogd als<br />
                                                             <strong><asp:LoginName ID="loginNaam" runat="server" /></strong>
@@ -183,6 +193,7 @@
                                                             <asp:LoginStatus ID="LoginStatus" LogoutText="Uitloggen" runat="server" />
                                                         </li>
                                                     </ul>
+                                                    </div>
                                                 </LoggedInTemplate>
                                                 <AnonymousTemplate>
                                                         <asp:Login ID="loginGebruiker" runat="server" BackColor="#EFF3FB" 

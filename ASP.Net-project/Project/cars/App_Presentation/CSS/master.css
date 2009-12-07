@@ -40,8 +40,6 @@ html:first-child #art-page-background-glare
 }
 
 
-
-
 #art-page-background-simple-gradient
 {
 	position: absolute;
@@ -530,6 +528,34 @@ div.art-Header-jpeg
 	background-repeat: no-repeat;
 	background-position: center center;
 }
+
+div.art-Header2-jpeg
+{
+	position: absolute;
+	z-index:-1;
+	top: 0;
+	left: 0;
+	width: 984px;
+	height: 200px;
+	background-image: url('../Images/Header_Business.jpg');
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+div.art-Overzicht
+{
+	background-color: White;
+}
+
+div.art-LoggedIn
+{
+	background-color: #EFF3FB; 
+    border-color: #B5C7DE;
+    border-style: solid;
+    border-width: 1px;
+    padding: 4,4,4,4;   
+}
+
 
 div.art-personenwagens
 {

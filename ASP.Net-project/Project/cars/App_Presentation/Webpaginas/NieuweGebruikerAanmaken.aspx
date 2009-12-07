@@ -15,7 +15,7 @@
                             <WizardSteps>
                                 <asp:CreateUserWizardStep runat="server">
                                     <ContentTemplate>
-                                        <asp:Label ID="lblAnoniemeReservatie" runat="server" Visible="false"></asp:Label>
+                                        <asp:Label ID="lblAnoniemeReservatie" runat="server" Visible="False"></asp:Label> 
                                         <table border="0">
                                             <tr>
                                                 <th align="center" colspan="2">

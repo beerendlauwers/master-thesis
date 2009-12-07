@@ -101,17 +101,34 @@
         <br />
         <br />
                 
-        Overzicht:<br />
+        <h2>Overzicht:</h2><br />
         <asp:PlaceHolder ID="plcOverzicht" runat="server"></asp:PlaceHolder>
             <br />
-            <div runat="server" id="divRepOverzicht">
-                <asp:Repeater ID="repOverzicht" runat="server">
+            <div runat="server" class=" art-Overzicht" id="divRepOverzicht">               
+                <asp:Repeater ID="RepOverzicht" runat="server">
                     <ItemTemplate>
                         <div style="display: inline">
                             <a href="ReservatieBevestigen.aspx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>&begindat=<%# DataBinder.Eval(Container.DataItem, "begindat") %>&einddat=<%# DataBinder.Eval(Container.DataItem, "einddat") %>">
-                                <%# DataBinder.Eval(Container.DataItem, "Naam") %>,
-                                <%#DataBinder.Eval(Container.DataItem, "Aantal")%></a>
-                                <img src="../AutoFoto.ashx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>" width="75" height="75" style="display:inline" />
+                                                                
+                                <table border="0">
+                                <tr>
+                                    <td colspan="2"><h3><%#DataBinder.Eval(Container.DataItem, "Naam")%></h3></td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="4"><img src="../AutoFoto.ashx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>" alt="foto" width="200" height="150" style="display:inline" /></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Bouwjaar:</b> <%#DataBinder.Eval(Container.DataItem, "Naam")%></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Brandstof:</b> <%#DataBinder.Eval(Container.DataItem, "Naam")%></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Dagtarief:</b> <%#DataBinder.Eval(Container.DataItem, "Naam")%></td>
+                                </tr>
+                                <td><asp:Button ID="btnInformatie" runat="server" Text="Meer informatie" /></td>
+                                <td colspan="3" align=right><asp:Button ID="btnBestellen" runat="server" Text="Bestellen" /></td>
+                                </table>
                         </div>
                         <br />
                     </ItemTemplate>
