@@ -174,6 +174,14 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function getFiliaalIDByAutoID(ByVal AutoID As Integer) As Integer
+        Try
+            Return _autodal.getFiliaalIDByAutoID(AutoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Private Function FilterAutosByExtraOpties(ByRef autodata As Autos.tblAutoDataTable, ByRef filterOpties() As String) As Autos.tblAutoDataTable
 
         'Kijk na of er wel filters voor extra opties zijn.

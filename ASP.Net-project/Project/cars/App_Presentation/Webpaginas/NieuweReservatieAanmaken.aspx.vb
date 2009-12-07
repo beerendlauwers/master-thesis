@@ -1,7 +1,92 @@
 ﻿Imports System.Data
+Imports Subgurim.Controles
 
 Partial Class App_Presentation_NieuweReservatieAanmaken
     Inherits System.Web.UI.Page
+
+
+    Private Sub BezetGMAP()
+
+        Dim filiaalnr As Int32 = 0
+        Dim autorow As Int32 = 0
+        Dim blnadd As Boolean = False
+
+        Dim Adres As String
+
+        Dim BLLFiliaal As New FiliaalBLL
+        Dim DTFiliaal As New Autos.tblFiliaalDataTable
+
+        'gmap variabelen
+        Dim GeoCode As GeoCode
+        Dim MapKey As String = ConfigurationManager.AppSettings("googlemaps.subgurim.net")
+
+        Dim marker As GMarker
+        Dim markopts As GMarkerOptions
+
+        Dim window As GInfoWindow
+        Dim winopts As GInfoWindowOptions
+
+
+        DTFiliaal = BLLFiliaal.GetAllFilialen
+
+
+        Dim row As Autos.tblFiliaalRow
+
+        ' geneste lus: filialen aflopen
+        For Each row In DTFiliaal
+            Adres = row.filiaalLocatie
+
+            ' geocoding
+            GeoCode = GMap.geoCodeRequest(Adres, MapKey)
+
+            'marker plaatsen
+            markopts = New GMarkerOptions
+            markopts.title = Adres
+
+            marker = New GMarker(New GLatLng(GeoCode.Placemark.coordinates.lat, GeoCode.Placemark.coordinates.lng), markopts)
+            'GMap1.setCenter(marker.point)
+            Dim beschikbareautos As DataTable = GeefBeschikbareAutosOpFiliaal(row.filiaalID)
+
+            Dim htmlstring As String = "<html><body><h4>" + row.filiaalNaam + "</h4><hr /><br /><table style='width:100%'>"
+            ' auto's vergelijken met filID en htmlstring opvullen
+
+
+
+
+
+            For autorow = 0 To beschikbareautos.Rows.Count - 1
+
+                If Not beschikbareautos(autorow).Item("Naam") = String.Empty Then
+                    htmlstring = htmlstring + "<tr><td>" + beschikbareautos(autorow).Item("Naam") + "</td><td><a href='http://www.google.be'>Reserveren</a></td></tr>"
+                    blnadd = True
+                End If
+
+            Next
+
+            If blnadd = True Then 'indien row niet leeg
+
+                htmlstring = htmlstring + "</table><br /></body></html>"
+
+                'infowindow plaatsen (met htmlstring)
+                window = New GInfoWindow(marker, htmlstring, True)
+                winopts = New GInfoWindowOptions(Adres, htmlstring)
+                window.options = winopts
+
+                ' markers/windows toekennen
+                With Gmap1
+                    .addGMarker(marker)
+                    .addInfoWindow(window)
+                End With
+            End If
+
+            blnadd = False
+
+        Next
+
+
+
+
+    End Sub
 
     Private Function MaakOverzichtsTabel(ByRef datatable As Autos.tblAutoDataTable) As DataTable
         Try
@@ -14,6 +99,8 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
             'Alles overkopiëren en basisgegevens ophalen
             Dim basistabel As DataTable = PrepareerBasisTabel(datatable)
+
+            'MsgBox(basistabel.Rows.Item(0).ToString)
 
             'Alles ordenen op automerk en -model
             Dim dv As Data.DataView = basistabel.DefaultView
@@ -73,6 +160,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             overzichtrow("autoMerkModel") = autobll.GetAutoNaamByAutoID(dtrow.Item("autoID"))
             overzichtrow("begindat") = Date.Parse(Me.txtBegindatum.Text)
             overzichtrow("einddat") = Date.Parse(Me.txtEinddatum.Text)
+            overzichtrow("filiaalID") = dtrow.Item("filiaalID")
 
             overzichtdatatable.Rows.Add(overzichtrow)
         Next
@@ -157,8 +245,45 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
     End Function
 
     Private Sub ChangeOverView()
+
+        Try
+            Dim FiliaalCookie As HttpCookie
+            FiliaalCookie = Request.Cookies("filcookie")
+
+            Dim filiaal As String = String.Empty
+            If FiliaalCookie IsNot Nothing Then
+                filiaal = FiliaalCookie.Value
+            End If
+
+            Dim dt As DataTable = GeefBeschikbareAutosOpFiliaal(filiaal)
+
+            If (dt.Rows.Count > 0) Then
+                lblGeenAutos.Visible = False
+                repOverzicht.DataSource = dt
+                BezetGMAP()
+            Else
+                'BezetGMAP()
+                repOverzicht.DataSource = Nothing
+                lblGeenAutos.Text = "Er zijn geen auto's die aan uw zoekvoorwaarden voldoen."
+                lblGeenAutos.Visible = True
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+
+
+
+        repOverzicht.DataBind()
+
+    End Sub
+
+    Private Function GeefBeschikbareAutosOpFiliaal(ByVal filiaal As String) As DataTable
+
+        Dim dt As New Data.DataTable
+
         'Haal argumenten uit form
         Dim categorie As String = Me.ddlCategorie.SelectedValue
+
         Dim begindatum As Date = Me.txtBegindatum.Text
         Dim einddatum As Date = Me.txtEinddatum.Text
         Dim kleur As String = Me.ddlKleur.SelectedItem.Text
@@ -197,7 +322,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
                 filterOpties(0) = categorie
                 filterOpties(1) = kleur
                 filterOpties(2) = merk
-                'automodel = filterOpties(3)
+                filterOpties(3) = filiaal
                 'brandstoftype = filterOpties(4)
                 filterOpties(5) = prijsmin
                 filterOpties(6) = prijsmax
@@ -218,26 +343,18 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
                 Dim datatable As Autos.tblAutoDataTable = autobll.GetBeschikbareAutosBy(begindatum, einddatum, filterOpties)
 
                 'Verwerk datatable tot overzichtsdatatable
-                Dim dt As Data.DataTable = MaakOverzichtsTabel(datatable)
+                dt = MaakOverzichtsTabel(datatable)
 
-                If (dt.Rows.Count > 0) Then
-                    lblGeenAutos.Visible = False
-                    repOverzicht.DataSource = dt
-                Else
-                    lblGeenAutos.Text = "Er zijn geen auto's die aan uw zoekvoorwaarden voldoen."
-                    lblGeenAutos.Visible = True
-                End If
+
+
             Catch ex As Exception
                 Throw ex
             End Try
-
-        Else
-            repOverzicht.DataSource = Nothing
         End If
 
-        repOverzicht.DataBind()
+        Return dt
 
-    End Sub
+    End Function
 
     Protected Sub btnToonOverzicht_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnToonOverzicht.Click
         ChangeOverView()
@@ -262,7 +379,30 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
             'Me.calBegindatum.SelectedDate = Now
             'Me.calEinddatum.SelectedDate = DateAdd(DateInterval.Day, 2, Now)
+
         End If
+
+        'GMAP Instellingen
+        With GMap1
+
+            ' layout
+            .Height = 400
+            .Width = 700
+            .setCenter(New GLatLng(51, 4), 7)
+            .GZoom = 7
+            .addGMapUI(New GMapUI())
+            .enableHookMouseWheelToZoom = True
+
+        End With
+
+        'key inlezen vanuit web.conf <AppSettings/>
+        Dim MapKey As String = ConfigurationManager.AppSettings("googlemaps.subgurim.net")
+
+
+        'instellen begindatum
+
+        txtBegindatum.Text = DateTime.Now.Date
+
     End Sub
 
     Private Sub MaakExtraOptieOverzicht()
@@ -299,4 +439,6 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         table.Controls.Add(tr)
         Me.plcExtraOpties.Controls.Add(table)
     End Sub
+
+
 End Class

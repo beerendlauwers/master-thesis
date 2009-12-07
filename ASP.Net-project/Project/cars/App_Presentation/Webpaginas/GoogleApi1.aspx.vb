@@ -14,7 +14,7 @@ Partial Class App_Presentation_Webpaginas_Default2
 
             ' layout
             .Height = 750
-            .Width = 738
+            .Width = 1000
 
             .GZoom = 9
             .addGMapUI(New GMapUI())
@@ -90,11 +90,11 @@ Partial Class App_Presentation_Webpaginas_Default2
 
     End Sub
 
-    'Protected Sub ddlGmap_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlGmap.SelectedIndexChanged
-    '    Dim GeoCode As GeoCode
-    '    Dim MapKey As String = ConfigurationManager.AppSettings("googlemaps.subgurim.net")
+    Protected Sub ddlGmap_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlGmap.SelectedIndexChanged
+        Dim GeoCode As GeoCode
+        Dim MapKey As String = ConfigurationManager.AppSettings("googlemaps.subgurim.net")
 
-    '    GeoCode = GMap.geoCodeRequest(ddlGmap.SelectedItem.Text, MapKey)
-    '    GMap1.setCenter(New GLatLng(GeoCode.Placemark.coordinates.lat, GeoCode.Placemark.coordinates.lng), 18)
-    'End Sub
+        GeoCode = GMap.geoCodeRequest(ddlGmap.SelectedItem.Text, MapKey)
+        GMap1.setCenter(New GLatLng(GeoCode.Placemark.coordinates.lat, GeoCode.Placemark.coordinates.lng), 18)
+    End Sub
 End Class

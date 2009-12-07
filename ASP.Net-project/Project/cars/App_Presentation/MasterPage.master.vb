@@ -61,6 +61,11 @@ Partial Class App_Presentation_MasterPage
             End If
         End If
 
+        'Filiaal ddo
+        Dim FiliaalCookie As HttpCookie
+        FiliaalCookie = Request.Cookies("filcookie")
+        ddoFiliaal.SelectedValue = FiliaalCookie.Value
+
     End Sub
 
     Protected Sub ddoFiliaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddoFiliaal.SelectedIndexChanged

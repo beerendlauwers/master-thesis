@@ -2,7 +2,10 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
+<%@ Register assembly="GMaps" namespace="Subgurim.Controles" tagprefix="cc2" %>
+
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+    e
     <asp:ScriptManager ID="scmManager" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
     <div>
     <asp:UpdatePanel ID="updOverview" runat="server" UpdateMode="Conditional">
@@ -70,7 +73,6 @@
         <tr>
         <td>Kleur</td>
         <td>Merk</td>
-        <td>Brandstof</td>
         <td>Extra Opties</td>
         </tr>
         <tr>
@@ -88,14 +90,6 @@
                 ParentControlID="ddlCategorie" PromptText="Merk Kiezen..." 
                 ServiceMethod="GeefMerkenVoorCategorie" 
                 ServicePath="~/App_Presentation/WebServices/AutoService.asmx" TargetControlID="ddlMerk">
-        </cc1:CascadingDropDown>
-        </td>
-        <td>
-        <asp:DropDownList ID="ddlBrandstof" runat="server"></asp:DropDownList>
-        <cc1:CascadingDropDown ID="ccdBrandstof" runat="server" Category="Brandstof" 
-                ParentControlID="ddlCategorie" PromptText="Brandstof Kiezen..." 
-                ServiceMethod="GeefBrandstofPerCategorie" 
-                ServicePath="~/App_Presentation/WebServices/AutoService.asmx" TargetControlID="ddlBrandstof">
         </cc1:CascadingDropDown>
         </td>
         <td>
@@ -127,16 +121,12 @@
                                     <td rowspan="4"><img src="../AutoFoto.ashx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>" alt="foto" width="200" height="150" style="display:inline" /></td>
                                 </tr>
                                 <tr>
-                                    <td><b>Bouwjaar:</b> <%#DataBinder.Eval(Container.DataItem, "Naam")%></td>
+                                    <td><b>Aantal beschikbaar:</b> <%#DataBinder.Eval(Container.DataItem, "Aantal")%></td>
                                 </tr>
                                 <tr>
-                                    <td><b>Brandstof:</b> <%#DataBinder.Eval(Container.DataItem, "Naam")%></td>
+                                    <td colspan="3" align="right">
+                                        <a href="ReservatieBevestigen.aspx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>&begindat=<%# DataBinder.Eval(Container.DataItem, "begindat") %>&einddat=<%# DataBinder.Eval(Container.DataItem, "einddat") %>">Nu reserveren</a></td>
                                 </tr>
-                                <tr>
-                                    <td><b>Dagtarief:</b> <%#DataBinder.Eval(Container.DataItem, "Naam")%></td>
-                                </tr>
-                                <td><asp:Button ID="btnInformatie" runat="server" Text="Meer informatie" /></td>
-                                <td colspan="3" align=right><asp:Button ID="btnBestellen" runat="server" Text="Bestellen" /></td>
                                 </table>
                         </div>
                         <br />
@@ -145,6 +135,8 @@
             </div>
             <asp:Label ID="lblGeenAutos" runat="server" Text="Label" Visible="false"></asp:Label>
         <br />
+        
+        <cc2:GMap ID="Gmap1" runat="server" />
         </ContentTemplate>
         </asp:UpdatePanel>
         
@@ -160,4 +152,5 @@
         </DeleteParameters>
     </asp:ObjectDataSource>
     <br />
+
 </asp:Content>

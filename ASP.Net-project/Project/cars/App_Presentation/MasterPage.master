@@ -268,7 +268,7 @@
                  <br />
                     <asp:DropDownList ID="ddoFiliaal" runat="server" 
         DataSourceID="ObjectDataSource1" DataTextField="filiaalNaam" 
-        DataValueField="filiaalLocatie" AutoPostBack="true">
+        DataValueField="filiaalID" AutoPostBack="True">
                     </asp:DropDownList>
             
             
