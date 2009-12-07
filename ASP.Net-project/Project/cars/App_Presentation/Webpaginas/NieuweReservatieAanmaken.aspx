@@ -70,6 +70,7 @@
         <tr>
         <td>Kleur</td>
         <td>Merk</td>
+        <td>Brandstof</td>
         <td>Extra Opties</td>
         </tr>
         <tr>
@@ -87,6 +88,14 @@
                 ParentControlID="ddlCategorie" PromptText="Merk Kiezen..." 
                 ServiceMethod="GeefMerkenVoorCategorie" 
                 ServicePath="~/App_Presentation/WebServices/AutoService.asmx" TargetControlID="ddlMerk">
+        </cc1:CascadingDropDown>
+        </td>
+        <td>
+        <asp:DropDownList ID="ddlBrandstof" runat="server"></asp:DropDownList>
+        <cc1:CascadingDropDown ID="ccdBrandstof" runat="server" Category="Brandstof" 
+                ParentControlID="ddlCategorie" PromptText="Brandstof Kiezen..." 
+                ServiceMethod="GeefBrandstofPerCategorie" 
+                ServicePath="~/App_Presentation/WebServices/AutoService.asmx" TargetControlID="ddlBrandstof">
         </cc1:CascadingDropDown>
         </td>
         <td>
