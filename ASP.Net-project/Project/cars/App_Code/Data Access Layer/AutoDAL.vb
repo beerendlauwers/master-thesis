@@ -57,9 +57,11 @@ Public Class AutoDAL
         automerk = filterOpties(2)
         automodel = filterOpties(3)
         brandstoftype = filterOpties(4)
-        prijsmin = filterOpties(5).Replace(",", ".")
-        prijsmax = filterOpties(6).Replace(",", ".")
 
+        If (Not filterOpties(5) = String.Empty And Not filterOpties(6) = String.Empty) Then
+            prijsmin = filterOpties(5).Replace(",", ".")
+            prijsmax = filterOpties(6).Replace(",", ".")
+        End If
 
         'query opbouwen
         Dim myCommand As New SqlCommand
@@ -70,7 +72,7 @@ Public Class AutoDAL
             querytext = String.Concat(querytext, ", tblModel M")
         End If
 
-        querytext = String.Concat(querytext, " WHERE statusID = 1 AND ")
+        querytext = String.Concat(querytext, " WHERE ")
 
         If (Not categorie = String.Empty) Then
             If (filtercount > 0) Then querytext = String.Concat(querytext, " AND ")

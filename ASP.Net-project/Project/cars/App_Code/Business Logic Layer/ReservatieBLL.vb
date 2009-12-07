@@ -12,6 +12,14 @@ Public Class ReservatieBLL
         End Try
     End Function
 
+    Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetReservatieByReservatieID(reservatieID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
         Try
             Return _reservatiedal.GetAllReservatiesByAutoID(autoID)

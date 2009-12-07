@@ -38,7 +38,7 @@ Public Class MerkDAL
 
     Public Function GetMerkByModelID(ByVal modelID As Integer) As Autos.tblMerkDataTable
 
-        Dim myCommand As New SqlCommand("SELECT ME.* FROM tblMerk ME, tblModel MO WHERE ME.merkID = MO.modelID AND MO.modelID = @modelID;")
+        Dim myCommand As New SqlCommand("SELECT ME.* FROM tblMerk ME, tblModel MO WHERE ME.merkID = MO.merkID AND MO.modelID = @modelID;")
         myCommand.Parameters.Add("@modelID", SqlDbType.Int).Value = modelID
         myCommand.Connection = _myConnection
 

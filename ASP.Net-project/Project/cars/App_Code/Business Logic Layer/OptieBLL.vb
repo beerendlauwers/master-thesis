@@ -32,6 +32,14 @@ Public Class OptieBLL
         End Try
     End Function
 
+    Public Function GetBeschikbareOptiesBy(ByRef filterOpties() As String) As Autos.tblOptieDataTable
+        Try
+            Return _optiedal.GetBeschikbareOptiesBy(filterOpties)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetOptieByNaam(ByVal naam As String) As Autos.tblOptieDataTable
         Try
             Return _optiedal.GetOptieByNaam(naam)

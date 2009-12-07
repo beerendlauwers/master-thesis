@@ -18,9 +18,7 @@ Partial Class App_Presentation_MasterPage
 
         'Mijn Reservaties link
         If Page.User.Identity.IsAuthenticated Then
-            Dim id As New Guid(Membership.GetUser(Page.User.Identity.Name).ProviderUserKey.ToString())
-
-            Dim link As String = String.Concat("~/App_Presentation/Webpaginas/GebruikersOnly/ToonReservatie.aspx?userID=", id.ToString)
+            Dim link As String = String.Concat("~/App_Presentation/Webpaginas/GebruikersOnly/ReservatieBeheer.aspx")
             Try
                 CType(Me.lgvMijnReservaties.FindControl("lnkMijnReservaties"), HyperLink).NavigateUrl = link
                 CType(Me.lgvMijnGegevens.FindControl("lnkMijnReservaties1"), HyperLink).NavigateUrl = link
