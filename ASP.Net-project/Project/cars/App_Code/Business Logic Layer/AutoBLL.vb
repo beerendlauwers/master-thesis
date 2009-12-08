@@ -76,82 +76,27 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function GetSpecificAutoByPeriode(ByVal begindat As Date, ByVal einddat As Date, ByVal autoID As Integer) As Autos.tblAutoDataTable
+        Try
+            Dim auto As Autos.tblAutoDataTable = _autodal.GetAutoByAutoID(autoID)
+
+            Return GetGeldigeAutosVoorPeriode(begindat, einddat, auto)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetBeschikbareAutosBy(ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, ByVal filterOpties() As String) As Autos.tblAutoDataTable
         Try
 
-            'Alle auto's van een bepaalde categorie opvragen.
+            'Alle auto's volgens een bepaalde filter opvragen.
             Dim autodata As Autos.tblAutoDataTable = _autodal.GetAutosBy(filterOpties)
 
+            'Deze auto's verder filteren op extra opties.
             autodata = FilterAutosByExtraOpties(autodata, filterOpties)
 
-            'Auto-variabelen.
-            Dim returneddata As New Autos.tblAutoDataTable
-            Dim dr As Autos.tblAutoRow
-            Dim autoID As Integer
-
-            'Logica-variabelen.
-            Dim autonummer As Integer = 0
-            Dim autobeschikbaar As Boolean = True
-
-            'Variabelen om de reservatiereeksen op te vangen.
-            Dim reservatiedata As New Reservaties.tblReservatieDataTable
-            Dim reservatiebll As New ReservatieBLL
-            Dim reservatierow As Reservaties.tblReservatieRow
-
-            'We gaan voor elke auto binnen onze gewenste categorie
-            'de reeks reservaties ophalen en nakijken of de auto beschikbaar is.
-            For autonummer = 0 To autodata.Rows.Count
-
-                'Nakijken of er wel auto's zitten in onze selectie.
-                If (autodata.Rows.Count = 0 Or autonummer >= autodata.Rows.Count) Then
-                    Return returneddata
-                Else 'Indien er nog een volgende auto is,
-                    'lezen we een nieuwe rij uit de autodata.
-                    dr = autodata.Rows(autonummer)
-                    'We slaan het autoID uit deze rij op.
-                    autoID = dr.autoID
-                End If
-
-
-                'Nu gaan we de reservaties nakijken.
-
-                'Reservatiedata voor deze auto ophalen.
-                reservatiedata = reservatiebll.GetAllReservatiesByAutoID(autoID)
-
-                'Even nakijken of er wel reservaties voor deze auto zijn.
-                If reservatiedata.Rows.Count = 0 Then
-                    'Deze auto toevoegen aan de lijst van beschikbare auto's,
-                    'er zijn immers geen reservaties voor deze auto.
-                    returneddata.ImportRow(dr)
-
-                Else 'er zijn reservaties.
-
-                    'Voor elke reservatie gaan we checken of deze reservatie
-                    'de auto heeft gereserveerd voor onze gewenste datum
-                    For Each reservatierow In reservatiedata
-                        Dim rowBegindatum As Date = CType(reservatierow.reservatieBegindat, Date)
-                        Dim rowEinddatum As Date = CType(reservatierow.reservatieEinddat, Date)
-
-                        'Overlapt deze reservatie met onze gewenste reservatiedatum?
-                        If (rowBegindatum <= gewensteEinddatum And gewensteBegindatum <= rowEinddatum) Then
-
-                            'Dikke pech, deze auto kunnen we niet weergeven!
-                            autobeschikbaar = False
-                            Exit For
-                        End If
-                    Next
-
-                    'We hebben alle reservaties voor deze auto nagekeken. Is hij 
-                    'beschikbaar? Zoja, dan voegen we hem toe aan onze lijst.
-                    If (autobeschikbaar) Then
-                        returneddata.ImportRow(dr)
-                    End If
-
-                End If
-
-            Next autonummer
-
-            Return returneddata
+            'Dan deze auto's filteren of ze nog beschikbaar zijn voor die periode en terugsturen
+            Return GetGeldigeAutosVoorPeriode(gewensteBegindatum, gewensteEinddatum, autodata)
 
         Catch ex As Exception
             Throw ex
@@ -172,6 +117,78 @@ Public Class AutoBLL
         Catch ex As Exception
             Throw ex
         End Try
+    End Function
+
+    Private Function GetGeldigeAutosVoorPeriode(ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, ByRef autodata As Autos.tblAutoDataTable) As Autos.tblAutoDataTable
+
+        'Auto-variabelen.
+        Dim returneddata As New Autos.tblAutoDataTable
+        Dim dr As Autos.tblAutoRow
+        Dim autoID As Integer
+
+        'Logica-variabelen.
+        Dim autonummer As Integer = 0
+        Dim autobeschikbaar As Boolean = True
+
+        'Variabelen om de reservatiereeksen op te vangen.
+        Dim reservatiedata As New Reservaties.tblReservatieDataTable
+        Dim reservatiebll As New ReservatieBLL
+        Dim reservatierow As Reservaties.tblReservatieRow
+
+        'We gaan voor elke auto binnen onze gewenste categorie
+        'de reeks reservaties ophalen en nakijken of de auto beschikbaar is.
+        For autonummer = 0 To autodata.Rows.Count
+
+            'Nakijken of er wel auto's zitten in onze selectie.
+            If (autodata.Rows.Count = 0 Or autonummer >= autodata.Rows.Count) Then
+                Return returneddata
+            Else 'Indien er nog een volgende auto is,
+                'lezen we een nieuwe rij uit de autodata.
+                dr = autodata.Rows(autonummer)
+                'We slaan het autoID uit deze rij op.
+                autoID = dr.autoID
+            End If
+
+
+            'Nu gaan we de reservaties nakijken.
+
+            'Reservatiedata voor deze auto ophalen.
+            reservatiedata = reservatiebll.GetAllReservatiesByAutoID(autoID)
+
+            'Even nakijken of er wel reservaties voor deze auto zijn.
+            If reservatiedata.Rows.Count = 0 Then
+                'Deze auto toevoegen aan de lijst van beschikbare auto's,
+                'er zijn immers geen reservaties voor deze auto.
+                returneddata.ImportRow(dr)
+
+            Else 'er zijn reservaties.
+
+                'Voor elke reservatie gaan we checken of deze reservatie
+                'de auto heeft gereserveerd voor onze gewenste datum
+                For Each reservatierow In reservatiedata
+                    Dim rowBegindatum As Date = CType(reservatierow.reservatieBegindat, Date)
+                    Dim rowEinddatum As Date = CType(reservatierow.reservatieEinddat, Date)
+
+                    'Overlapt deze reservatie met onze gewenste reservatiedatum?
+                    If (rowBegindatum <= gewensteEinddatum And gewensteBegindatum <= rowEinddatum) Then
+
+                        'Dikke pech, deze auto kunnen we niet weergeven!
+                        autobeschikbaar = False
+                        Exit For
+                    End If
+                Next
+
+                'We hebben alle reservaties voor deze auto nagekeken. Is hij 
+                'beschikbaar? Zoja, dan voegen we hem toe aan onze lijst.
+                If (autobeschikbaar) Then
+                    returneddata.ImportRow(dr)
+                End If
+
+            End If
+
+        Next autonummer
+
+        Return returneddata
     End Function
 
     Private Function FilterAutosByExtraOpties(ByRef autodata As Autos.tblAutoDataTable, ByRef filterOpties() As String) As Autos.tblAutoDataTable

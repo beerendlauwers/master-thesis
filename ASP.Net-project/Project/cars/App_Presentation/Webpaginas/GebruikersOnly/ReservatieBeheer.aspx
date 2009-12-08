@@ -6,7 +6,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" runat="Server">
     <asp:Panel ID="pnlOverzicht" runat="server">
-            <table>
+               <table>
                 <tr>
                     <th>
                         Auto
@@ -59,7 +59,7 @@
                             </td>
                             <td align="center">
                                 <asp:ImageButton ID="imgButton" runat="server" ImageUrl="~/App_Presentation/Images/wrench.png"
-                                    CommandArgument='<%#DataBinder.Eval(Container.DataItem, "resData")%>' />
+                                    CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoWijzigen")%>' />
                             </td>
                         </tr>
                     </ItemTemplate>

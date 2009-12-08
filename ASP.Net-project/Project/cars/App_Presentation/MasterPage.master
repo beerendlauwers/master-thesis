@@ -1,8 +1,11 @@
 <%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="App_Presentation_MasterPage" %>
 
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 
@@ -19,6 +22,8 @@
 
 <body>
 <form id="frankismegapissig" runat="server">
+    <asp:ScriptManager runat="server" id="scmMasterScriptManager" EnablePartialRendering="true">
+    </asp:ScriptManager>
 <div id="art-page-background-simple-gradient">
 </div>
 <div id="art-main">
@@ -108,7 +113,7 @@
             <div class="art-Header">
                     <asp:LoginView ID="lgvHeader" runat="server">
                                <LoggedInTemplate>
-                                <div class="art-Header2-jpeg">
+                                <div runat="server" id="divHeader">
                                </div>
                                </LoggedInTemplate>
                                <AnonymousTemplate>
@@ -244,7 +249,7 @@
                                                 
                                                                             
             <h3>Cars filialen</h3>
-            Kies een filiaal dicht bij u
+            Kies een filiaal in uw buurt:
             <br />
             <br />
             
@@ -255,10 +260,14 @@
                 <br />
                  <br />
                  <br />
+                    <asp:UpdatePanel ID="updFiliaalRechts" runat="server">
+                    <ContentTemplate>
                     <asp:DropDownList ID="ddoFiliaal" runat="server" 
         DataSourceID="ObjectDataSource1" DataTextField="filiaalNaam" 
         DataValueField="filiaalID" AutoPostBack="True">
                     </asp:DropDownList>
+                    </ContentTemplate>
+                    </asp:UpdatePanel>
             
             
            

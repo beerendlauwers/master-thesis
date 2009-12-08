@@ -1,11 +1,12 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweGebruikerAanmaken.aspx.vb"
     Inherits="App_Presentation_Webpaginas_nieuwe_gebruiker" MasterPageFile="~/App_Presentation/MasterPage.master" %>
-<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="cc1" %>
+
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
 
 <%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    <asp:ScriptManager ID="scmManager" runat="server" EnablePartialRendering="true">
-    </asp:ScriptManager>
     <table>
         <tr>
             <td>
@@ -215,7 +216,7 @@
                                         <table border="0">
                                             <tr>
                                                 <td align="center" colspan="2">
-                                                    Voltooid
+                                                    <h2>Registratie voltooid.</h2>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -225,8 +226,12 @@
                                             </tr>
                                             <tr>
                                                 <td align="right" colspan="2">
-                                                    <asp:Button ID="ContinueButton" runat="server" CausesValidation="False" CommandName="Continue"
-                                                        Text="Doorgaan" ValidationGroup="CreateUserWizard1" OnClick="ContinueButton_Click" />
+                                                    <asp:UpdatePanel runat="server" ID="updDoorgaan" UpdateMode="Conditional">
+                                                        <ContentTemplate>
+                                                            <asp:Button ID="ContinueButton" runat="server" CausesValidation="False" CommandName="Continue"
+                                                                Text="Doorgaan" OnClick="ContinueButton_Click" />
+                                                        </ContentTemplate>
+                                                    </asp:UpdatePanel>
                                                 </td>
                                             </tr>
                                         </table>

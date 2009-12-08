@@ -72,6 +72,8 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
             CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("lblAnoniemeReservatie"), Label).Visible = True
         End If
 
+        CType(wizard.CompleteStep.ContentTemplateContainer.FindControl("updDoorgaan"), UpdatePanel).Update()
+
     End Sub
 
     Protected Sub ContinueButton_Click(ByVal sender As Object, ByVal e As System.EventArgs)

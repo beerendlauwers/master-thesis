@@ -1,12 +1,8 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweAutoAanmaken.aspx.vb" EnableEventValidation="false" Inherits="App_Presentation_NieuweAutoAanmaken" MasterPageFile="~/App_Presentation/MasterPage.master" %>
 
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-
-    <asp:ScriptManager ID="scmManager" runat="server"></asp:ScriptManager>
-    <div>
-    
         <asp:FormView ID="frvNieuweAuto" runat="server" DataKeyNames="autoID" 
             DataSourceID="odsAuto" DefaultMode="Insert" Width="670px">
             <EditItemTemplate>
@@ -85,14 +81,14 @@
                                     <asp:DropDownList ID="ddlModel" runat="server" DataTextField="modelNaam" DataValueField="modelID"
                                         SelectedValue='<%# Bind("modelID") %>' DataSourceID="odsModel">
                                     </asp:DropDownList>
-                                    <ajaxToolkit:CascadingDropDown ID="cddMerk" runat="server" Category="Merk" PromptText="Selecteer een merk"
+                                    <cc1:CascadingDropDown ID="cddMerk" runat="server" Category="Merk" PromptText="Selecteer een merk"
                                         ServiceMethod="GeefMerken" ServicePath="~/App_Presentation/WebServices/AutoService.asmx"
                                         TargetControlID="ddlMerk">
-                                    </ajaxToolkit:CascadingDropDown>
-                                    <ajaxToolkit:CascadingDropDown ID="cddModel" runat="server" Category="Model" ParentControlID="ddlMerk"
+                                    </cc1:CascadingDropDown>
+                                    <cc1:CascadingDropDown ID="cddModel" runat="server" Category="Model" ParentControlID="ddlMerk"
                                         PromptText="Selecteer een model" ServiceMethod="GeefModellenVoorMerk" ServicePath="~/App_Presentation/WebServices/AutoService.asmx"
                                         TargetControlID="ddlModel">
-                                    </ajaxToolkit:CascadingDropDown>
+                                    </cc1:CascadingDropDown>
                                 </ContentTemplate>
                             </asp:UpdatePanel>
                         </td>
@@ -113,9 +109,9 @@
                             <asp:UpdatePanel ID="updBouwjaar" runat="server" UpdateMode="Conditional">
                             <ContentTemplate>
                             <asp:TextBox ID="txtAutoBouwjaar" runat="server" Text='<%# Bind("autoBouwjaar") %>' />
-                            <ajaxToolkit:MaskedEditExtender ID="mskAutoBouwjaar" runat="server" AutoComplete="False" MaskType="Number" Mask="9999" TargetControlID="txtAutoBouwjaar" ClearTextOnInvalid="True" PromptCharacter=".">
-                            </ajaxToolkit:MaskedEditExtender>
-                            <ajaxToolkit:MaskedEditValidator ID="valAutoBouwjaar" runat="server" ControlToValidate="txtAutoBouwjaar" InvalidValueMessage="Gelieve een geldig jaar in te vullen." IsValidEmpty="False" MinimumValue="1900" ControlExtender="mskAutoBouwjaar" EmptyValueMessage="Gelieve een geldig jaar in te vullen." InvalidValueBlurredMessage="Gelieve een geldig jaar in te vullen." MinimumValueBlurredText="Het minimumjaar is 1900." EmptyValueBlurredText="Gelieve een geldig jaar in te vullen.">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </ajaxToolkit:MaskedEditValidator>
+                            <cc1:MaskedEditExtender ID="mskAutoBouwjaar" runat="server" AutoComplete="False" MaskType="Number" Mask="9999" TargetControlID="txtAutoBouwjaar" ClearTextOnInvalid="True" PromptCharacter=".">
+                            </cc1:MaskedEditExtender>
+                            <cc1:MaskedEditValidator ID="valAutoBouwjaar" runat="server" ControlToValidate="txtAutoBouwjaar" InvalidValueMessage="Gelieve een geldig jaar in te vullen." IsValidEmpty="False" MinimumValue="1900" ControlExtender="mskAutoBouwjaar" EmptyValueMessage="Gelieve een geldig jaar in te vullen." InvalidValueBlurredMessage="Gelieve een geldig jaar in te vullen." MinimumValueBlurredText="Het minimumjaar is 1900." EmptyValueBlurredText="Gelieve een geldig jaar in te vullen.">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </cc1:MaskedEditValidator>
                             </ContentTemplate>
                             <Triggers>
                             <asp:AsyncPostBackTrigger ControlID = "txtAutoBouwjaar" />
@@ -143,9 +139,9 @@
                                     <asp:TextBox ID="txtAutoKenteken" runat="server" AutoPostBack = "true" 
                                         Text='<%# Bind("autoKenteken") %>' 
                                         ontextchanged="txtAutoKenteken_TextChanged" />
-                                    <ajaxToolkit:MaskedEditExtender ID="mskAutoKenteken" runat="server" TargetControlID="txtAutoKenteken" AutoComplete="False" PromptCharacter="." Mask="LLL999" ClearTextOnInvalid="True" ></ajaxToolkit:MaskedEditExtender>
-                                    <ajaxToolkit:MaskedEditValidator ID="valAutoKenteken" runat="server" 
-                                        ControlExtender="mskAutoKenteken" ControlToValidate="txtAutoKenteken">&nbsp;&nbsp;&nbsp;&nbsp; </ajaxToolkit:MaskedEditValidator>
+                                    <cc1:MaskedEditExtender ID="mskAutoKenteken" runat="server" TargetControlID="txtAutoKenteken" AutoComplete="False" PromptCharacter="." Mask="LLL999" ClearTextOnInvalid="True" ></cc1:MaskedEditExtender>
+                                    <cc1:MaskedEditValidator ID="valAutoKenteken" runat="server" 
+                                        ControlExtender="mskAutoKenteken" ControlToValidate="txtAutoKenteken">&nbsp;&nbsp;&nbsp;&nbsp; </cc1:MaskedEditValidator>
                                         <asp:Label ID="lblAutoKentekenIncorrect" runat="server" Text="Dit kenteken is reeds in gebruik." Visible="false" ForeColor="red"></asp:Label>                                
                                 </ContentTemplate>
                                 <Triggers>
@@ -200,8 +196,8 @@
                         </td>
                         <td>
                             <asp:TextBox ID="txtAutoDagTarief" runat="server" Text='<%# Bind("autoDagTarief") %>' />
-                            <ajaxToolkit:FilteredTextBoxExtender ID="fltAutoDagTarief" runat="server" TargetControlID="txtAutoDagTarief" FilterType="Custom, Numbers" ValidChars=",">
-                            </ajaxToolkit:FilteredTextBoxExtender>
+                            <cc1:FilteredTextBoxExtender ID="fltAutoDagTarief" runat="server" TargetControlID="txtAutoDagTarief" FilterType="Custom, Numbers" ValidChars=",">
+                            </cc1:FilteredTextBoxExtender>
                         </td>
                     </tr>
                     <tr>
@@ -209,7 +205,7 @@
                             Foto:
                         </td>
                         <td>
-                            <ajaxToolkit:AsyncFileUpload ID="uplFoto" runat="server" Width="250px" OnUploadedComplete="FotoGeupload" />
+                            <cc1:AsyncFileUpload ID="uplFoto" runat="server" Width="250px" OnUploadedComplete="FotoGeupload" />
                         </td>
                     </tr>
                 </table>

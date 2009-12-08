@@ -1,14 +1,14 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="GebruikersBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersBeheer" title="Untitled Page" %>
 
-<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="cc1" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 
 
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
-    <asp:ScriptManager ID="ScriptManager1" runat="server">
-        </asp:ScriptManager>
         <asp:UpdatePanel ID="updGegevens" runat="server" updateMode="Always">
         <ContentTemplate>
         <table>

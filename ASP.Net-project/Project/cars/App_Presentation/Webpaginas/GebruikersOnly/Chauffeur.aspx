@@ -1,12 +1,12 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="Chauffeur.aspx.vb" Inherits="App_Presentation_Chauffeur"
     MasterPageFile="~/App_Presentation/MasterPage.master" %>
 
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
     <div>
-        <asp:ScriptManager ID="scmChauffeur" runat="server" EnablePartialRendering="true" >
-        </asp:ScriptManager>
         <cc1:Accordion ID="ChaffeurAccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
         <Panes>
         <cc1:AccordionPane ID="paneVoegtoe" runat="server">

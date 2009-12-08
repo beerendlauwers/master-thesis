@@ -14,9 +14,6 @@
 
     </script>
 
-
-    <asp:ScriptManager ID="scmFiliaal" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
-    
                     <asp:Label ID="Label1" runat="server" Text="FiliaalID (test): "></asp:Label>
             <asp:TextBox ID="txtFiliaal" runat="server"></asp:TextBox>
             <br />

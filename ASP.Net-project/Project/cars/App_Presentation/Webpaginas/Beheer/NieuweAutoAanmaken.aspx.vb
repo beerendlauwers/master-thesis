@@ -80,7 +80,6 @@ Partial Class App_Presentation_NieuweAutoAanmaken
             MaakNieuweOptieControlsZichtbaar(False)
         End If
 
-
         Me.valAutoBouwjaar.MaximumValue = Now.Year
         Dim waarschuwingstekst As String = String.Concat("Gelieve een jaar op te geven tussen 1900 en ", Now.Year, ".")
         Me.valAutoBouwjaar.MinimumValueMessage = waarschuwingstekst

@@ -1,11 +1,11 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="FiliaalBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_FiliaalBeheer"
     MasterPageFile="~/App_Presentation/MasterPage.master" %>
 
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
+
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    <asp:ScriptManager ID="scmFiliaal" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
-    
     <cc1:Accordion ID="FiliaalAccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
         <Panes>
             <cc1:AccordionPane ID="PaneToevoegen" runat="server">

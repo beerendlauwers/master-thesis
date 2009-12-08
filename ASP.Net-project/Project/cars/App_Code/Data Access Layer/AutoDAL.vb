@@ -98,7 +98,7 @@ Public Class AutoDAL
             filtercount = filtercount + 1
         End If
 
-        If (Not Filiaal = String.Empty) Then
+        If (Not filiaal = String.Empty) Then
             If (filtercount > 0) Then querytext = String.Concat(querytext, " AND ")
 
             querytext = String.Concat(querytext, "A.filiaalID = @filiaal")

@@ -266,14 +266,21 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             Dim dt As DataTable = GeefBeschikbareAutosOpFiliaal(filiaal)
 
             If (dt.Rows.Count > 0) Then
+                divOverzichtHeader.Visible = True
+
+                Dim filiaalbll As New FiliaalBLL
+                lblFiliaalNaam.Text = filiaalbll.GetFiliaalNaamByFiliaalID(filiaal)
+                filiaalbll = Nothing
+
                 lblGeenAutos.Visible = False
-                repOverzicht.DataSource = dt
+                RepOverzicht.DataSource = dt
                 BezetGMAP()
+                lblGmapFilialen.Text = "Niet gevonden wat u zocht? Klik op de icoontjes op deze kaart om te zien wat onze andere filialen aanbieden:"
             Else
-                'BezetGMAP()
-                repOverzicht.DataSource = Nothing
-                lblGeenAutos.Text = "Er zijn geen auto's die aan uw zoekvoorwaarden voldoen."
-                lblGeenAutos.Visible = True
+                divOverzichtHeader.Visible = False
+                BezetGMAP()
+                RepOverzicht.DataSource = Nothing
+                lblGmapFilialen.Text = "Er zijn geen auto's die aan uw zoekvoorwaarden voldoen. Klik op de icoontjes op deze kaart om te zien wat onze andere filialen aanbieden:"
             End If
         Catch ex As Exception
             Throw ex

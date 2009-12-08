@@ -447,6 +447,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
                 newres.reservatieBegindat = Date.Parse(Me.txtBegindatum.Text)
                 newres.reservatieEinddat = Date.Parse(Me.txtEinddatum.Text)
                 newres.reservatieIsBevestigd = 1
+                newres.reservatieLaatstBekeken = Now
 
                 newres.reservatieGereserveerdDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
                 newres.reservatieIngechecktDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")

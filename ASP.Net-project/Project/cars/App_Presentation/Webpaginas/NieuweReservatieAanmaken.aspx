@@ -5,7 +5,6 @@
 <%@ Register assembly="GMaps" namespace="Subgurim.Controles" tagprefix="cc2" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-    <asp:ScriptManager ID="scmManager" runat="server" EnablePartialRendering="true"></asp:ScriptManager>
     <div>
     <asp:UpdatePanel ID="updOverview" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
@@ -102,8 +101,10 @@
             <asp:Button ID="btnToonOverzicht" Text="Geef beschikbare auto's" runat="server"/>
         <br />
         <br />
-                
-        <h2>Overzicht:</h2><br />
+          
+          <div runat="server" id="divOverzichtHeader" visible="false">    
+        <h2>Beschikbare auto's in <asp:Label ID="lblFiliaalNaam" runat="server"></asp:Label>:</h2>
+        </div>  
         <asp:PlaceHolder ID="plcOverzicht" runat="server"></asp:PlaceHolder>
             <br />
             <div runat="server" class=" art-Overzicht" id="divRepOverzicht">               
@@ -136,7 +137,8 @@
         <br />
         
         <div runat="server" id="gmapdiv" visible="false">
-        <h4>Niet gevonden wat u zocht? Klik op de icoontjes op deze kaart om te zien wat onze andere filialen aanbieden:</h4>
+        <h4>
+            <asp:Label ID="lblGmapFilialen" runat="server" Text="Niet gevonden wat u zocht? Klik op de icoontjes op deze kaart om te zien wat onze andere filialen aanbieden:"></asp:Label></h4>
         <cc2:GMap ID="Gmap1" runat="server" />
         </div>
         </ContentTemplate>

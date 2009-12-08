@@ -9,6 +9,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
     Private Function MaakOverzichtsDataTable(ByRef datatable As Data.DataTable) As Data.DataTable
         Try
+
             Dim overzichtdatatable As New Data.DataTable
             Dim overzichtcolumn As New Data.DataColumn
             Dim overzichtrow As Data.DataRow
@@ -25,6 +26,8 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             'Eigen kolommen toevoegen
 
             overzichtdatatable.Columns.Add("resData", Type.GetType("System.String"))
+
+            overzichtdatatable.Columns.Add("autoWijzigen", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("rijKleur", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("autoNaam", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("autoKleur", Type.GetType("System.String"))
@@ -42,19 +45,27 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
                 Dim row As Autos.tblAutoRow = autobll.GetAutoByAutoID(datatable.Rows(i).Item("autoID")).Rows(0)
 
+                'Rijkleur
                 If (i Mod 2) Then
                     overzichtrow("rijKleur") = "D4E0E8"
                 Else
                     overzichtrow("rijKleur") = "ACC3D2"
                 End If
 
+                'Algemene informatie
                 overzichtrow("resData") = String.Concat(datatable.Rows(i).Item("reservatieID"), ",", row.autoID)
+
+                ' "Auto wijzigen"-knop
+                overzichtrow("autoWijzigen") = String.Concat("Wijzigen, ", overzichtrow("resData"))
+
+                ' Algemene informatie
                 overzichtrow("autoNaam") = autobll.GetAutoNaamByAutoID(row.autoID)
                 overzichtrow("autoKleur") = row.autoKleur
                 overzichtrow("begindat") = Format(Date.Parse(datatable.Rows(i).Item("reservatieBegindat")), "dd/MM/yyyy")
                 overzichtrow("einddat") = Format(Date.Parse(datatable.Rows(i).Item("reservatieEinddat")), "dd/MM/yyyy")
                 overzichtrow("aantalDagen") = (overzichtrow("einddat") - overzichtrow("begindat")).TotalDays.ToString
 
+                'Huurprijs
                 Dim huurprijs As Double
                 huurprijs = (overzichtrow("einddat") - overzichtrow("begindat")).TotalDays * row.autoDagTarief
 
@@ -64,6 +75,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
                 huurprijs = huurprijs + waardes(1)
                 overzichtrow("totaalKost") = String.Concat(huurprijs.ToString, " €")
 
+                'Auto toevoegen
                 overzichtdatatable.Rows.Add(overzichtrow)
             Next
 
@@ -80,9 +92,8 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
             If (Not IsPostBack) Then
 
-
                 Dim reservatiebll As New ReservatieBLL
-                Dim dt As Data.DataTable = MaakOverzichtsDataTable(reservatiebll.GetAllReservatiesByUserID(bezoekendeklant))
+                Dim dt As Data.DataTable = MaakOverzichtsDataTable(reservatiebll.GetAllBevestigdeReservatiesByUserID(bezoekendeklant))
                 reservatiebll = Nothing
 
                 If (dt.Rows.Count > 0) Then
@@ -98,12 +109,12 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
                 Me.repOverzicht.DataBind()
 
-            Else
-                Me.pnlOverzicht.Visible = False
-                lblGeenReservaties.Text = "Gelieve in te loggen."
-                Return
             End If
 
+        Else
+            Me.pnlOverzicht.Visible = False
+            lblGeenReservaties.Text = "Gelieve in te loggen."
+            Return
         End If
 
     End Sub
@@ -171,7 +182,22 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
     End Function
 
     Protected Sub repOverzicht_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.RepeaterCommandEventArgs) Handles repOverzicht.ItemCommand
-        Dim resData As String = e.CommandArgument.ToString
-        Response.Redirect(String.Concat("ReservatieWijzigen.aspx?resData=", resData))
+        Dim splitstring() As String = e.CommandArgument.ToString.Split(",")
+
+        Dim commando As String = splitstring(0)
+        Dim resID As Integer = Convert.ToInt32(splitstring(1))
+        Dim autoID As Integer = Convert.ToInt32(splitstring(2))
+
+        If (commando = "Verwijderen") Then
+            Dim reservatiebll As New ReservatieBLL
+            Dim row As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID).Rows(0)
+
+            Response.Redirect(String.Concat("../ReservatieBevestigen.aspx?resID=", resID))
+
+        ElseIf (commando = "Wijzigen") Then
+            Response.Redirect(String.Concat("ReservatieWijzigen.aspx?resData=", resID, ",", autoID))
+
+        End If
+
     End Sub
 End Class

@@ -3,13 +3,14 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
     Inherits System.Web.UI.Page
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        If (IsPostBack) Then
+            Return
+        End If
+
         If Request.QueryString("autoID") IsNot Nothing And _
         Request.QueryString("begindat") IsNot Nothing And _
         Request.QueryString("einddat") IsNot Nothing Then
-
-            If (IsPostBack) Then
-                Return
-            End If
 
             'We hebben een nieuwe geldige reservatie binnengekregen. Het eerste wat
             'we doen is hem opslaan in de database, maar hem nog niet bevestigen.
@@ -40,11 +41,13 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
                     .IsBevestigd = False
                 End With
 
-                'Nakijken of deze auto is bevestigd door een gebruiker.
-                'Zoja, dan flikkeren we de bezoeker eruit. Niets te doen hier.
-                If (KijkNaOfReservatieBevestigdIs(reservatie)) Then
-                    Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
 
+                'Nakijken of deze auto is bevestigd door een gebruiker.
+                If (KijkNaOfReservatieBevestigdIs(reservatie)) Then
+
+                    Me.divFoutmelding.Visible = True
+                    Me.lblFoutDetails.Text = "Deze auto werd reeds gereserveerd voor deze datum."
+                    Return
 
                     'Anders  gaan we nakijken of er reeds een (onbevestigde)
                     'reservatie is voor deze auto.
@@ -54,7 +57,10 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
 
                     'Als de gebruiker anoniem is, moet hij maar eerst eens inloggen.
                     If (Not User.Identity.IsAuthenticated) Then
-                        Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
+
+                        Me.updReservatieBevestigen.Visible = False
+                        Me.divInloggen.Visible = True
+
                     Else 'Als deze gebruiker ingelogd is, dan kan hij de reservatie
                         'voor zich reserveren.
                         MaakReservatieBevestigingsOverzicht(reservatie)
@@ -63,13 +69,22 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
 
                 Else 'Er is nog geen enkele reservatie. REAP THE SPOILS OF WAR
 
+                    'Maar enkel als deze reservatie niet conflicteert met een andere!
+                    If (Not AutoIsBeschikbaarVoorPeriode(begindat, einddat, autoID)) Then
+                        Me.divFoutmelding.Visible = True
+                        Me.lblFoutDetails.Text = "Deze auto werd reeds gereserveerd voor deze datum."
+                        Return
+                    End If
+
                     'Als de gebruiker anoniem is, kan hij de auto tijdelijk reserveren,
                     'maar voor een permanente reservatie moet hij ingelogd zijn.
                     If (Not User.Identity.IsAuthenticated) Then
                         'Tijdelijke reservatie toevoegen
                         TijdelijkeReservatieToevoegen(reservatie)
-                        'Doorsturen naar NieuweGebruikerAanmaken.aspx
-                        AnoniemeGebruikerDoorsturen()
+
+                        Me.updReservatieBevestigen.Visible = False
+                        Me.divInloggen.Visible = True
+
                         Return
                     End If
 
@@ -85,8 +100,14 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
                 End If
 
             Catch ex As Exception
-                Throw ex
-        End Try
+                Me.divFoutmelding.Visible = True
+                Me.lblFoutDetails.Text = "Een belangrijke parameter (auto, begindatum of einddatum) werd fout meegegeven."
+                Return
+            End Try
+
+        Else
+            Me.divFoutmelding.Visible = True
+            Me.lblFoutDetails.Text = "Een belangrijke parameter (auto, begindatum of einddatum) werd niet meegegeven."
         End If
     End Sub
 
@@ -119,6 +140,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
 
             'Deze reservatie is nog niet bevestigd.
             r.reservatieIsBevestigd = res.IsBevestigd
+            r.reservatieLaatstBekeken = Now
 
             'Deze eerste medewerker zou moeten worden ingevuld als een echte medewerker
             'als we de functionaliteit toevoegen dat een medewerker een reservatie voor een klant
@@ -152,7 +174,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         End Try
     End Function
 
-    Private Sub AnoniemeGebruikerDoorsturen()
+    Public Sub AnoniemeGebruikerDoorsturen()
 
         'Alles opslaan in een cookie
         Dim tempCookie As New HttpCookie("reservatieCookie")
@@ -166,6 +188,18 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         Response.Redirect("~/App_Presentation/Webpaginas/NieuweGebruikerAanmaken.aspx")
 
     End Sub
+
+    Private Function AutoIsBeschikbaarVoorPeriode(ByVal begindat As Date, ByVal einddat As Date, ByVal autoID As Integer) As Boolean
+        Dim autobll As New AutoBLL
+
+        Dim dt As Autos.tblAutoDataTable = autobll.GetSpecificAutoByPeriode(begindat, einddat, autoID)
+
+        If (dt.Rows.Count > 0) Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
 
     Private Sub MaakReservatieBevestigingsOverzicht(ByRef r As Reservatie)
 
@@ -209,6 +243,8 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         huurprijs = huurprijs + optiekosten
         Me.lblHuurPrijs.Text = String.Concat(huurprijs.ToString, " €")
 
+        Me.updReservatieBevestigen.Visible = True
+
     End Sub
 
     Private Function KijkNaOfReservatieBevestigdIs(ByRef r As Reservatie) As Boolean
@@ -228,16 +264,17 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         Dim reservatiebll As New ReservatieBLL
 
         Try
+            Dim res As New Reservatie
+
             Dim autoID As Integer = Convert.ToInt32(Request.QueryString("autoID"))
             Dim begindat As Date = Date.Parse(Request.QueryString("begindat"))
             Dim einddat As Date = Date.Parse(Request.QueryString("einddat"))
 
-            Dim reservatie As New Reservatie
-            reservatie.AutoID = autoID
-            reservatie.Begindatum = begindat
-            reservatie.Einddatum = einddat
+            res.AutoID = autoID
+            res.Begindatum = begindat
+            res.Einddatum = einddat
 
-            Dim row As Reservaties.tblReservatieRow = reservatiebll.GetSpecificReservatieByDatumAndAutoID(reservatie)
+            Dim row As Reservaties.tblReservatieRow = reservatiebll.GetSpecificReservatieByDatumAndAutoID(res)
 
             row.reservatieIsBevestigd = 1
 
@@ -245,13 +282,13 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
 
             Me.btnBevestigen.Visible = False
             Me.lblResultaat.Visible = True
-            Me.lblResultaat.Text = "Auto toegevoegd."
+            Me.lblResultaat.Text = "Auto bevestigd."
             Me.imgResultaat.ImageUrl = "~\App_Presentation\Images\tick.gif"
 
-
-        Catch ex As Exception
-            Me.lblResultaat.Text = "Er is een fout gebeurd. Gelieve de auto te wijzigen in uw reservatieoverzicht."
-            Me.imgResultaat.ImageUrl = "~\App_Presentation\Images\remove.gif"
+        Catch
+            Me.lblResultaat.Text = "Er is een fout gebeurd. Gelieve het opnieuw te proberen."
+            Me.lblResultaat.Visible = True
+            Me.imgResultaat.ImageUrl = "~\App_Presentation\Images\remove.png"
         Finally
             reservatiebll = Nothing
         End Try

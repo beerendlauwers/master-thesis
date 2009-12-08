@@ -5,9 +5,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" runat="Server">
-    <asp:ScriptManager ID="scmReservatieBevestigen" runat="server">
-    </asp:ScriptManager>
-    <asp:UpdatePanel ID="updReservatieBevestigen" runat="server">
+    <asp:UpdatePanel ID="updReservatieBevestigen" runat="server" Visible="false">
         <ContentTemplate>
             <table>
                 <tr>
@@ -68,4 +66,15 @@
             </table>
         </ContentTemplate>
     </asp:UpdatePanel>
+    <div runat="server" id="divFoutmelding" visible="false">
+    <h2>Er is een fout gebeurd.</h2>
+    <asp:Label ID="lblFoutDetails" runat="server"></asp:Label><br /><br />
+    <a href="Default.aspx">Terug naar hoofdmenu</a>
+    </div>
+    <div runat="server" id="divInloggen" visible="false">
+    <h2>U bent niet ingelogd.</h2>
+    Gelieve in te loggen via het formulier aan de rechterkant.<br />
+    Heeft u nog geen gebruikersaccount? Klik dan hier: 
+        <asp:LinkButton ID="lnbNieuweGebruiker" OnClick="AnoniemeGebruikerDoorsturen" runat="server">Nieuwe gebruiker aanmaken</asp:LinkButton>
+    </div>
 </asp:Content>

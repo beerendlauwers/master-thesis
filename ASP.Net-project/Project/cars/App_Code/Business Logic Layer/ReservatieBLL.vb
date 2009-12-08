@@ -12,6 +12,14 @@ Public Class ReservatieBLL
         End Try
     End Function
 
+    Public Function GetAllOnbevestigdeReservaties() As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllOnbevestigdeReservaties()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieDataTable
         Try
             Return _reservatiedal.GetReservatieByReservatieID(reservatieID)
@@ -23,6 +31,14 @@ Public Class ReservatieBLL
     Public Function GetAllReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
         Try
             Return _reservatiedal.GetAllReservatiesByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetAllBevestigdeReservatiesByUserID(ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllBevestigdeReservatiesByUserID(userID)
         Catch ex As Exception
             Throw ex
         End Try
@@ -47,7 +63,7 @@ Public Class ReservatieBLL
     Public Function InsertReservatie(ByRef r As Reservaties.tblReservatieRow) As Boolean
         Try
             If (_adapterReservatie.Insert(r.userID, r.autoID, r.reservatieBegindat, _
-                                          r.reservatieEinddat, r.reservatieIsBevestigd, r.reservatieGereserveerdDoorMedewerker, _
+                                          r.reservatieEinddat, r.reservatieIsBevestigd, r.reservatieLaatstBekeken, r.reservatieGereserveerdDoorMedewerker, _
                                           r.reservatieUitgechecktDoorMedewerker, r.reservatieIngechecktDoorMedewerker, _
                                           r.verkoopscontractIsOndertekend, r.verkoopscontractOpmerking, _
                                           r.factuurBijschrift, r.factuurIsInWacht)) Then

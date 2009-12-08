@@ -20,6 +20,19 @@ Public Class ReservatieDAL
         End Try
     End Function
 
+    Public Function GetAllOnbevestigdeReservaties() As Reservaties.tblReservatieDataTable
+        Try
+            Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieIsBevestigd = 0")
+            myCommand.Connection = _myConnection
+
+            Dim dt As New Reservaties.tblReservatieDataTable
+            Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieDataTable
         Try
             Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieID = @reservatieID")
@@ -65,6 +78,21 @@ Public Class ReservatieDAL
             Else
                 Return dt.Rows(0)
             End If
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetAllBevestigdeReservatiesByUserID(ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+        Try
+
+            Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID AND reservatieIsBevestigd = 1")
+            myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
+            myCommand.Connection = _myConnection
+
+            Dim dt As New Reservaties.tblReservatieDataTable
+            Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
 
         Catch ex As Exception
             Throw ex

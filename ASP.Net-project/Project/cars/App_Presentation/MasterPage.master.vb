@@ -4,7 +4,16 @@ Partial Class App_Presentation_MasterPage
     Inherits System.Web.UI.MasterPage
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        CheckCronJobs()
+
         'Header foto
+        If (Page.User.Identity.IsAuthenticated) Then
+            If (Page.User.IsInRole("GebruikerBedrijf")) Then
+                CType(Me.lgvHeader.FindControl("divHeader"), HtmlGenericControl).Attributes.Add("class", "art-Header2-jpeg")
+            Else
+                CType(Me.lgvHeader.FindControl("divHeader"), HtmlGenericControl).Attributes.Add("class", "art-Header-jpeg")
+            End If
+        End If
 
         'Home-knop
         Me.homeButton.HRef = "~/App_Presentation/Webpaginas/Default.aspx"
@@ -51,10 +60,9 @@ Partial Class App_Presentation_MasterPage
             End If
         End If
 
-            'Filiaal ddo
-            Dim FiliaalCookie As HttpCookie
-            FiliaalCookie = Request.Cookies("filcookie")
-            ddoFiliaal.SelectedIndex = 0
+        'Filiaal ddo
+        Dim FiliaalCookie As HttpCookie
+        FiliaalCookie = Request.Cookies("filcookie")
 
 
     End Sub
@@ -70,8 +78,41 @@ Partial Class App_Presentation_MasterPage
         FiliaalCookie.Expires = DateTime.Now.AddDays(100)
         Response.Cookies.Add(FiliaalCookie) ' cookie bewaren
 
+    End Sub
+
+    Private Sub CheckCronJobs()
+
+        Dim huidigetijd As Date = Now
+
+        'Check voor onbevestigde reservaties
+        If (Application("CronJobs_VerwijderOnbevestigdeReservaties_Timer") Is Nothing) Then
+            Application("CronJobs_VerwijderOnbevestigdeReservaties_Timer") = Now
+            VerwijderOnbevestigdeReservaties()
+        Else
+            Dim timer As Date = Application("CronJobs_VerwijderOnbevestigdeReservaties_Timer")
+
+            If (DateAdd(DateInterval.Minute, 3, timer) <= huidigetijd) Then
+                VerwijderOnbevestigdeReservaties()
+                Application("CronJobs_VerwijderOnbevestigdeReservaties_Timer") = Now
+            End If
+        End If
 
 
+    End Sub
+
+    Private Sub VerwijderOnbevestigdeReservaties()
+        Dim huidigetijd As Date = Now
+
+        Dim reservatiebll As New ReservatieBLL
+        Dim dt As Reservaties.tblReservatieDataTable = reservatiebll.GetAllOnbevestigdeReservaties()
+
+        For Each res As Reservaties.tblReservatieRow In dt
+            If (DateAdd(DateInterval.Minute, 10, res.reservatieLaatstBekeken) <= huidigetijd) Then
+                reservatiebll.DeleteReservatie(res.reservatieID)
+            End If
+        Next
+
+        reservatiebll = Nothing
     End Sub
 End Class
 
