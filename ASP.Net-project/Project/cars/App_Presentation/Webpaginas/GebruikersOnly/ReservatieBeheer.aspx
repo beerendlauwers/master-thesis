@@ -6,6 +6,16 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" runat="Server">
     <asp:Panel ID="pnlOverzicht" runat="server">
+              <asp:UpdateProgress ID="progress1" runat="server">
+        <ProgressTemplate>
+        
+            <div class="progress">
+                <img src="../../Images/ajax-loader.gif" />
+                Even wachten aub...
+            </div>
+        
+        </ProgressTemplate>
+    </asp:UpdateProgress>
                <table>
                 <tr>
                     <th>

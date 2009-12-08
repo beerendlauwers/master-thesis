@@ -44,7 +44,12 @@ Partial Class App_Presentation_MasterPage
         'Registratielink
         If Not Page.User.Identity.IsAuthenticated Then
             Dim link As String = "~/App_Presentation/Webpaginas/NieuweGebruikerAanmaken.aspx"
-            CType(Me.lgvRegistreren.FindControl("lnkRegistraties"), HyperLink).NavigateUrl = link
+            Try
+                CType(Me.lgvRegistreren.FindControl("lnkRegistraties"), HyperLink).NavigateUrl = link
+            Catch
+                'fuck off
+            End Try
+
         End If
 
         'Applicatiebeheerlink
@@ -74,6 +79,7 @@ Partial Class App_Presentation_MasterPage
         End If
 
         Dim FiliaalCookie As HttpCookie = New HttpCookie("filcookie")
+
         FiliaalCookie.Value = ddoFiliaal.SelectedValue
         FiliaalCookie.Expires = DateTime.Now.AddDays(100)
         Response.Cookies.Add(FiliaalCookie) ' cookie bewaren

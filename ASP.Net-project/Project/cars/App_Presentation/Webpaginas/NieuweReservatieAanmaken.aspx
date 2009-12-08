@@ -4,6 +4,8 @@
 
 <%@ Register assembly="GMaps" namespace="Subgurim.Controles" tagprefix="cc2" %>
 
+
+
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
     <div>
     <asp:UpdatePanel ID="updOverview" runat="server" UpdateMode="Conditional">
@@ -98,7 +100,7 @@
         </table>
 
         <br />
-            <asp:Button ID="btnToonOverzicht" Text="Geef beschikbare auto's" runat="server"/>
+            <asp:Button ID="btnToonOverzicht" Text="Geef beschikbare auto's" OnClientClick="GMap1.clearOverlays();" runat="server"/>
         <br />
         <br />
           
@@ -133,6 +135,16 @@
                     </ItemTemplate>
                 </asp:Repeater>
             </div>
+            <asp:UpdateProgress ID="progress1" runat="server">
+        <ProgressTemplate>
+        
+            <div class="progress">
+                <img src="../Images/ajax-loader.gif" /> 
+                Even wachten aub...
+            </div>
+        
+        </ProgressTemplate>
+    </asp:UpdateProgress>
             <asp:Label ID="lblGeenAutos" runat="server" Text="Label" Visible="false"></asp:Label>
         <br />
         

@@ -393,6 +393,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
         End If
 
+
         'GMAP Instellingen
         With GMap1
 
