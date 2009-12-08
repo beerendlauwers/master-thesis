@@ -7,6 +7,16 @@
 
 <%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+
+   <script type="text/javascript">
+        
+      function ContinuebuttonClick()
+      {
+        <%=PostBackString%>
+      }    
+
+    </script>
+
     <table>
         <tr>
             <td>
@@ -229,7 +239,7 @@
                                                     <asp:UpdatePanel runat="server" ID="updDoorgaan" UpdateMode="Conditional">
                                                         <ContentTemplate>
                                                             <asp:Button ID="ContinueButton" runat="server" CausesValidation="False" CommandName="Continue"
-                                                                Text="Doorgaan" OnClick="ContinueButton_Click" />
+                                                                Text="Doorgaan" OnClick="ContinueButton_Click" OnClientClick="ContinuebuttonClick" />
                                                         </ContentTemplate>
                                                     </asp:UpdatePanel>
                                                 </td>
