@@ -182,10 +182,24 @@
                         <td>
                             <asp:UpdatePanel ID="updParkingOverzicht" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
+                                    <asp:Label ID="lblAutoParkeerplaats" runat="server" Text="Geen parkeerplaats" ></asp:Label>
                                     <asp:TextBox ID="txtAutoParkeerplaats" runat="server" Text='<%# Bind("autoParkeerplaats") %>'
-                                        Enabled="false" />
+                                        Visible="false" />
                                     <asp:ImageButton ID="imgParkeerPlaats" runat="server" ImageUrl="~/App_Presentation/Images/kalender.png"
                                         Visible="false" />
+                                                    <asp:UpdateProgress ID="progress1" runat="server">
+        <ProgressTemplate>
+        
+            <div class="progress">
+                <img src="../../Images/ajax-loader.gif" />
+                Even wachten aub...
+            </div>
+        
+        </ProgressTemplate>
+    </asp:UpdateProgress>
+    <br />
+                                    <asp:Label ID="lblGeenOverzicht" runat="server" Visible="false"></asp:Label>
+                                    <asp:PlaceHolder ID="plcParkingLayout" runat="server"></asp:PlaceHolder>
                                 </ContentTemplate>
                             </asp:UpdatePanel>
                         </td>
@@ -338,7 +352,6 @@
             </ItemTemplate>
        </asp:FormView>
 
-    </div>
     <asp:ObjectDataSource ID="odsBrandstofType" runat="server" 
         OldValuesParameterFormatString="original_{0}" SelectMethod="GetAllBrandstofTypes" 
         TypeName="BrandstofBLL">

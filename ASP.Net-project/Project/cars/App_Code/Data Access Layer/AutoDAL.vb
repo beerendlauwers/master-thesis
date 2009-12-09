@@ -15,6 +15,16 @@ Public Class AutoDAL
         Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutoDataTable)
     End Function
 
+    Public Function GetAutoByParkeerplaatsID(ByVal parkeerplaatsID As Integer) As Autos.tblAutoDataTable
+        Dim myCommand As New SqlCommand("SELECT * FROM tblAuto WHERE parkeerPlaatsID = @parkeerplaatsID")
+        myCommand.Parameters.Add("@parkeerplaatsID", SqlDbType.Int).Value = parkeerplaatsID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Autos.tblAutoDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutoDataTable)
+
+    End Function
+
     Public Function GetAutosByCategorieID(ByVal categorieID As Integer) As Autos.tblAutoDataTable
 
         Dim myCommand As New SqlCommand("SELECT * FROM tblAuto WHERE categorieID = @categorieID")

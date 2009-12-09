@@ -40,6 +40,20 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function CheckOfParkeerPlaatsAutoBevat(ByVal parkeerplaatsID As Integer) As Boolean
+        Try
+            Dim dt As Autos.tblAutoDataTable = _autodal.GetAutoByParkeerplaatsID(parkeerplaatsID)
+
+            If (dt.Rows.Count > 0) Then
+                Return True
+            Else
+                Return False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function DeleteAuto(ByVal autoID As Integer) As Boolean
         Try
             If (_adapterAuto.Delete(autoID)) Then

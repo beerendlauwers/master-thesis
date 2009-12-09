@@ -261,6 +261,8 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
             Dim filiaal As String = String.Empty
             If FiliaalCookie IsNot Nothing Then
                 filiaal = FiliaalCookie.Value
+            Else
+                filiaal = 12
             End If
 
             Dim dt As DataTable = GeefBeschikbareAutosOpFiliaal(filiaal)

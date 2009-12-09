@@ -76,10 +76,44 @@ Partial Class App_Presentation_NieuweAutoAanmaken
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+        'Bij het laden van de pagina verstoppen we de controls om nieuwe opties aan te maken
         If (Not IsPostBack) Then
             MaakNieuweOptieControlsZichtbaar(False)
         End If
 
+        'BIj een postback gaan we kijken of deze van een parkeeroverzichtsknop komt.
+        If (IsPostBack) Then
+            For i As Integer = 1 To Page.Request.Form.Keys.Count - 1
+                Dim str As String = Page.Request.Form.Keys(i)
+
+                If str Is Nothing Then Continue For
+
+                If str.Contains("ctl00$plcMain$frvNieuweAuto$btn_") Then
+                    'Eerst de buttons terug maken
+                    UpdateParkeerOverzicht()
+
+                    Dim control As String = str.Remove(str.Length - 2)
+                    Dim button As ImageButton = Page.FindControl(control)
+                    control = button.ID.Remove(0, 4)
+                    Dim nummers() As String = control.Split("_")
+                    Dim rij As Integer = Convert.ToInt32(nummers(0))
+                    Dim kolom As Integer = Convert.ToInt32(nummers(1))
+
+                    Dim kolommen() As String = MaakKolommenAan()
+                    Me.lblAutoParkeerplaats.Text = String.Concat(kolommen(kolom), "-", rij + 1)
+
+                    Dim parkeerbll As New ParkeerBLL
+                    Dim p As Autos.tblParkeerPlaatsRow = parkeerbll.GetParkeerPlaatsByRijKolomFiliaalID(Me.ddlFiliaal.SelectedValue, rij, kolom)
+                    parkeerbll = Nothing
+                    Me.txtAutoParkeerplaats.Text = p.parkeerPlaatsID
+
+
+                    Return
+                End If
+            Next
+        End If
+
+        'Bouwjaarvelden instantiëren
         Me.valAutoBouwjaar.MaximumValue = Now.Year
         Dim waarschuwingstekst As String = String.Concat("Gelieve een jaar op te geven tussen 1900 en ", Now.Year, ".")
         Me.valAutoBouwjaar.MinimumValueMessage = waarschuwingstekst
@@ -181,21 +215,223 @@ Partial Class App_Presentation_NieuweAutoAanmaken
     End Sub
 
     Protected Sub ddlFiliaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-
-        If (CType(Me.frvNieuweAuto.FindControl("ddlFiliaal"), DropDownList).SelectedValue = 6) Then
-            'Dummy filiaal, terug verstoppen
-            CType(Me.frvNieuweAuto.FindControl("txtAutoParkeerplaats"), TextBox).Enabled = False
-            CType(Me.frvNieuweAuto.FindControl("imgParkeerPlaats"), ImageButton).Visible = False
-            CType(Me.frvNieuweAuto.FindControl("updParkingOverzicht"), UpdatePanel).Update()
-            Return
-        End If
-
-        If (CType(Me.frvNieuweAuto.FindControl("txtAutoParkeerplaats"), TextBox).Enabled) Then
-            Return
-        End If
-
-        CType(Me.frvNieuweAuto.FindControl("txtAutoParkeerplaats"), TextBox).Enabled = True
+        CType(Me.frvNieuweAuto.FindControl("lblAutoParkeerplaats"), Label).Visible = True
         CType(Me.frvNieuweAuto.FindControl("imgParkeerPlaats"), ImageButton).Visible = True
+        Me.lblAutoParkeerplaats.Text = "Geen parkeerplaats"
+        CType(Me.frvNieuweAuto.FindControl("updParkingOverzicht"), UpdatePanel).Update()
+
+    End Sub
+
+    Protected Sub ddlFiliaal_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlFiliaal.DataBound
+        CType(Me.frvNieuweAuto.FindControl("lblAutoParkeerplaats"), Label).Visible = True
+        CType(Me.frvNieuweAuto.FindControl("imgParkeerPlaats"), ImageButton).Visible = True
+        Me.lblAutoParkeerplaats.Text = "Geen parkeerplaats"
+        CType(Me.frvNieuweAuto.FindControl("updParkingOverzicht"), UpdatePanel).Update()
+
+    End Sub
+
+    Protected Sub imgParkeerPlaats_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgParkeerPlaats.Click
+        UpdateParkeerOverzicht()
+    End Sub
+
+    Private Sub UpdateParkeerOverzicht()
+        Dim filiaalID As Integer = Me.ddlFiliaal.SelectedValue
+
+        Dim filiaalbll As New FiliaalBLL
+        Dim f As Autos.tblFiliaalRow = filiaalbll.GetFiliaalByFiliaalID(Me.ddlFiliaal.SelectedValue).Rows(0)
+        filiaalbll = Nothing
+
+        Dim kolommen As Integer = f.parkingAantalKolommen
+        Dim rijen As Integer = f.parkingAantalRijen
+
+        If (f.parkingAantalKolommen = 0 And f.parkingAantalRijen = 0) Then
+            Me.lblGeenOverzicht.Text = "Deze filiaal heeft nog geen parkeeroverzicht."
+            Me.lblGeenOverzicht.Visible = True
+        Else
+            Me.lblGeenOverzicht.Visible = False
+
+            'Haal alles van DB binnen
+            Dim parkeermatrix(,) As Integer = HaalParkingOpVanFiliaal(f.filiaalID, kolommen, rijen)
+
+            'Maak Overzicht
+            MaakParkingLayoutOverzicht(parkeermatrix)
+        End If
+
         CType(Me.frvNieuweAuto.FindControl("updParkingOverzicht"), UpdatePanel).Update()
     End Sub
+
+    Private Function HaalParkingOpVanFiliaal(ByVal filiaalID As Integer, ByVal aantalKolommen As Integer, ByVal aantalRijen As Integer) As Integer(,)
+        Dim parkeerbll As New ParkeerBLL
+        Dim kolomdt As Data.DataTable = parkeerbll.GetParkeerPlaatsKolommenByFiliaalID(filiaalID)
+        Dim parkeerdt As Autos.tblParkeerPlaatsDataTable = parkeerbll.GetParkeerPlaatsenByFiliaalID(filiaalID)
+        Dim parkeermatrix(aantalKolommen, aantalRijen) As Integer
+
+        'Opsplitsen in kolommen en rijen
+        For kolom As Integer = 0 To aantalKolommen - 1
+            Dim filteredview As Data.DataView = parkeerdt.DefaultView
+            filteredview.RowFilter = String.Concat("parkeerPlaatsKolom = ", kolomdt.Rows(kolom).Item(0).ToString.Trim)
+
+            Dim filtereddt As Data.DataTable = filteredview.ToTable
+
+            For rij As Integer = 0 To aantalRijen - 1
+                parkeermatrix(kolomdt.Rows(kolom).Item(0), rij) = filtereddt.Rows(rij).Item("parkeerPlaatsType")
+            Next
+
+        Next
+
+        Return parkeermatrix
+
+    End Function
+
+#Region "Parkinglayout generatiecode"
+
+    Private Sub MaakParkingLayoutOverzicht(ByRef parkeermatrix(,) As Integer)
+
+        Dim kolommen() As String = MaakKolommenAan()
+
+        Dim aantalkolommen As Integer = parkeermatrix.GetUpperBound(0)
+        Dim aantalrijen As Integer = parkeermatrix.GetUpperBound(1)
+
+        Dim table As New HtmlGenericControl("table")
+
+        'Vul de kolomheaders in van de tabel.
+        table.Controls.Add(MaakKolomHeaders(kolommen, aantalkolommen))
+
+        'Eigenlijke vakken invullen.
+        Dim i As Integer = 0
+        Dim j As Integer = 0
+
+        While i < aantalrijen
+            Dim tablerow As New HtmlGenericControl("tr")
+
+            'Header van de rij toevoegen.
+            tablerow.Controls.Add(MaakRijHeader(i))
+
+            'Eigenlijke vakjes toevoegen.
+            While j < aantalkolommen
+
+                tablerow.Controls.Add(MaakVakje(i, j, parkeermatrix))
+                j = j + 1
+            End While
+
+            table.Controls.Add(tablerow)
+            i = i + 1
+            j = 0
+        End While
+
+        plcParkingLayout.Controls.Add(table)
+
+    End Sub
+
+    Private Function MaakVakje(ByVal i As Integer, ByVal j As Integer, ByRef parkeermatrix(,) As Integer) As HtmlGenericControl
+        Dim waarde As Integer = parkeermatrix(j, i)
+        Dim tabledata As New HtmlGenericControl("td")
+        Dim button As New ImageButton()
+
+        With button
+            .ID = String.Concat("btn_", i, "_", j)
+            .BackColor = Drawing.ColorTranslator.FromHtml("#D4E0E8")
+            .Height = 16
+            .Width = 16
+        End With
+
+        Dim autobll As New AutoBLL
+        Dim parkeerbll As New ParkeerBLL
+        Dim p As Autos.tblParkeerPlaatsRow = parkeerbll.GetParkeerPlaatsByRijKolomFiliaalID(Me.ddlFiliaal.SelectedValue, i, j)
+
+        If (autobll.CheckOfParkeerPlaatsAutoBevat(p.parkeerPlaatsID)) Then
+            button.ImageUrl = "~/App_Presentation/Images/car.png"
+            button.CssClass = "art-vakje-ParkingBeheer-GeenParking"
+            button.Enabled = False
+        Else
+            If waarde = 0 Then
+                button.ImageUrl = "~/App_Presentation/Images/parkeerplaats.png"
+                button.CssClass = "art-vakje-ParkingBeheer"
+                button.Enabled = True
+            ElseIf waarde = 1 Then
+                button.ImageUrl = "~/App_Presentation/Images/rijweg.png"
+                button.CssClass = "art-vakje-ParkingBeheer-GeenParking"
+                button.Enabled = False
+            ElseIf waarde = 2 Then
+                button.ImageUrl = "~/App_Presentation/Images/house.png"
+                button.CssClass = "art-vakje-ParkingBeheer-GeenParking"
+                button.Enabled = False
+            ElseIf waarde = 4 Then
+                button.ImageUrl = "~/App_Presentation/Images/spacer.gif"
+                button.CssClass = "art-vakje-ParkingBeheer-GeenParking"
+                button.Enabled = False
+            Else
+                button.ImageUrl = "~/App_Presentation/Images/spacer.gif"
+                button.CssClass = "art-vakje-ParkingBeheer-GeenParking"
+                button.Enabled = False
+            End If
+        End If
+
+
+        
+
+        tabledata.Controls.Add(button)
+        tabledata.Attributes.Add("align", "center")
+
+        'Met deze hoop viewstate-variabelen kunnen we het meest recente overzicht opslaan.
+        ViewState(button.ID) = waarde
+
+        Return tabledata
+    End Function
+
+    Private Function MaakRijHeader(ByVal i As Integer) As HtmlGenericControl
+
+        Dim rijheader As New HtmlGenericControl("th")
+        Dim headerlabel As New Label()
+
+        headerlabel.Text = i + 1
+        rijheader.Controls.Add(headerlabel)
+        rijheader.Attributes.Add("align", "center")
+
+        Return rijheader
+    End Function
+
+    Private Function MaakKolomHeaders(ByVal kolommen() As String, ByVal aantalkolommen As Integer) As HtmlGenericControl
+
+        Dim headerrow As New HtmlGenericControl("tr")
+
+        'Ongebruikt vakje linksboven
+        headerrow.Controls.Add(New HtmlGenericControl("th"))
+
+        '<th> tag toevoegen voor elke kolom
+        Dim i As Integer = 0
+        While i < aantalkolommen
+
+            Dim kolomheader As New HtmlGenericControl("th")
+            Dim headerlabel As New Label()
+
+            headerlabel.Text = kolommen(i)
+            kolomheader.Controls.Add(headerlabel)
+            kolomheader.Attributes.Add("align", "center")
+            headerrow.Controls.Add(kolomheader)
+
+            i = i + 1
+        End While
+
+        Return headerrow
+    End Function
+
+    Private Function MaakKolommenAan() As String()
+        Dim beginkolommen() As String = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+        Dim totaalkolommen(675) As String
+
+        Dim i As Integer = 0
+        For Each letter In beginkolommen
+            For Each tweedeletter In beginkolommen
+                totaalkolommen(i) = String.Concat(letter, tweedeletter)
+                i = i + 1
+            Next
+        Next
+
+        Return totaalkolommen
+    End Function
+
+#End Region
+
+
 End Class
