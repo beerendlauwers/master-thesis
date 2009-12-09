@@ -4,6 +4,19 @@ Imports System.Data.SqlClient
 
 Public Class DALFunctions
 
+    Public Function ExecuteNonQuery(ByRef command As SqlCommand) As Boolean
+        Try
+            command.Connection.Open()
+
+            Return command.ExecuteNonQuery()
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            command.Connection.Close()
+        End Try
+    End Function
+
     Public Function ReadSingleItem(ByRef command As SqlCommand, ByVal item As String) As Object
         Try
             Dim myReader As SqlDataReader
