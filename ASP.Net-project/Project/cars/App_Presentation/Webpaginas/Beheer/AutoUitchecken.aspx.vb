@@ -120,11 +120,10 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoUitchecken
         weergavetabel.Columns.Add("Einddatum", Type.GetType("System.DateTime"))
         weergavetabel.Columns.Add("Data", Type.GetType("System.String"))
 
-        'Alle beschikbare (reservatieStatus = 0) reservaties voor onze klant ophalen.
-
         'Maandfilter ophalen.
         Dim maand As Date = MaakDatumFilter()
 
+        'Alle beschikbare (reservatieStatus = 0) reservaties voor onze klant ophalen.
         Dim reservaties As Reservaties.tblReservatieDataTable = reservatiebll.GetAllBeschikbareReservatiesInMaandByUserID(userID, maand)
 
         For Each reservatie As Reservaties.tblReservatieRow In reservaties
@@ -287,17 +286,22 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoUitchecken
         If (Not aantalMaanden = 0) Then
 
             If (ViewState("maand") + aantalMaanden = 13) Then
+                'We willen naar januari van volgend jaar
                 ViewState("jaar") = ViewState("jaar") + 1
                 ViewState("maand") = 1
             ElseIf (ViewState("maand") + aantalMaanden = 0) Then
+                'We willen naar december van vorig jaar
                 ViewState("jaar") = ViewState("jaar") - 1
                 ViewState("maand") = 12
             Else
+                'We incrementeren / decrementeren de maand in de ViewState
+                ' en slaan die opnieuw op.
                 Dim tempmaand As Date = Date.Parse(String.Concat("01/", ViewState("maand"), "/", Now.Year))
                 ViewState("maand") = DateAdd(DateInterval.Month, aantalMaanden, tempmaand).Month
             End If
         End If
 
+        'De uiteindelijke maand aanmaken
         Dim maand As Date = Date.Parse(String.Concat("01/", ViewState("maand"), "/", ViewState("jaar")))
 
         'Maandfilter in het label gooien
