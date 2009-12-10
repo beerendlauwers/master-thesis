@@ -48,4 +48,12 @@ Public Class ParkeerBLL
             Throw ex
         End Try
     End Function
+
+    Public Function GetParkeerPlaatsByID(ByVal parkeerplaatsID As Integer) As Autos.tblParkeerPlaatsDataTable
+        Try
+            Return _parkeerdal.GetParkeerPlaatsByID(parkeerplaatsID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 End Class

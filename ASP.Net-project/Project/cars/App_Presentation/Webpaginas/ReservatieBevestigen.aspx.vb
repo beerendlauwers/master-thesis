@@ -135,6 +135,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
             'Basisreservatieinformatie.
             r.userID = res.UserID
             r.autoID = res.AutoID
+            r.reservatieStatus = 0
             r.reservatieBegindat = res.Begindatum
             r.reservatieEinddat = res.Einddatum
 

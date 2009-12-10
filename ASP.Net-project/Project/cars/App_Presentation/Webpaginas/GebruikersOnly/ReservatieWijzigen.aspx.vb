@@ -444,6 +444,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
                 newres.autoID = nieuweAutoID
                 newres.userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+                newres.reservatieStatus = 0
                 newres.reservatieBegindat = Date.Parse(Me.txtBegindatum.Text)
                 newres.reservatieEinddat = Date.Parse(Me.txtEinddatum.Text)
                 newres.reservatieIsBevestigd = 1

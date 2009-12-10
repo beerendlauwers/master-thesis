@@ -24,6 +24,30 @@ Public Class KlantBLL
         End Try
     End Function
 
+    Public Function GetUserProfielByNaamEnVoornaam(ByVal naam As String, ByVal voornaam As String) As Klanten.tblUserProfielDataTable
+        Try
+            Return _klantdal.GetUserProfielByNaamEnVoornaam(naam, voornaam)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetUserProfielByIdentiteitskaartNr(ByVal identiteitskaartnr As String) As Klanten.tblUserProfielDataTable
+        Try
+            Return _klantdal.GetUserProfielByIdentiteitskaartNr(identiteitskaartnr)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetUserProfielByRijbewijs(ByVal rijbewijs As String) As Klanten.tblUserProfielDataTable
+        Try
+            Return _klantdal.GetUserProfielByRijbewijs(rijbewijs)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function UpdateUserProfiel(ByRef r As Klanten.tblUserProfielRow) As Boolean
 
         Try

@@ -54,4 +54,14 @@ Public Class ParkeerDAL
 
     End Function
 
+    Public Function GetParkeerPlaatsByID(ByVal parkeerplaatsID As Integer) As Autos.tblParkeerPlaatsDataTable
+        Dim myCommand As New SqlCommand("SELECT * FROM tblParkeerPlaats WHERE parkeerPlaatsID = @parkeerplaatsID")
+        myCommand.Parameters.Add("@parkeerplaatsID", SqlDbType.Int).Value = parkeerplaatsID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Autos.tblParkeerPlaatsDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblParkeerPlaatsDataTable)
+
+    End Function
+
 End Class

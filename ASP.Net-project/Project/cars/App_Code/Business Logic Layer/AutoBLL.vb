@@ -4,6 +4,22 @@ Public Class AutoBLL
     Private _adapterAuto As New AutosTableAdapters.tblAutoTableAdapter
     Private _autodal As New AutoDAL
 
+    Public Function GetAllKentekens() As String()
+        Try
+            Dim dt As Autos.tblAutoDataTable = GetAllAutos()
+            Dim kentekens(dt.Rows.Count - 1) As String
+            Dim i As Integer = 0
+            For Each row As Autos.tblAutoRow In dt
+                kentekens(i) = row.autoKenteken
+                i = i + 1
+            Next
+
+            Return kentekens
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllAutos() As Autos.tblAutoDataTable
         Try
             Return _adapterAuto.GetData()

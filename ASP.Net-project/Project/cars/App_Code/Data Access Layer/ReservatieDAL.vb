@@ -99,11 +99,15 @@ Public Class ReservatieDAL
         End Try
     End Function
 
-    Public Function GetAllReservatiesByUserID(ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+    Public Function GetAllBeschikbareReservatiesInMaandByUserID(ByVal userID As Guid, ByVal maand As Date) As Reservaties.tblReservatieDataTable
         Try
 
-            Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID")
+            Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID and reservatieStatus = 0 AND reservatieBegindat BETWEEN @maandbegin AND @maandeinde AND reservatieEinddat >= @now")
             myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
+            myCommand.Parameters.Add("@maandbegin", SqlDbType.DateTime).Value = maand
+            Dim maandeinde As Date = DateAdd(DateInterval.Day, -1, DateAdd(DateInterval.Month, 1, maand))
+            myCommand.Parameters.Add("@maandeinde", SqlDbType.DateTime).Value = maandeinde
+            myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Now
             myCommand.Connection = _myConnection
 
             Dim dt As New Reservaties.tblReservatieDataTable

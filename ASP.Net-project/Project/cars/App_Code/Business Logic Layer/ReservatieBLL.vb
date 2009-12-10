@@ -44,9 +44,9 @@ Public Class ReservatieBLL
         End Try
     End Function
 
-    Public Function GetAllReservatiesByUserID(ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+    Public Function GetAllBeschikbareReservatiesInMaandByUserID(ByVal userID As Guid, ByVal maand As Date) As Reservaties.tblReservatieDataTable
         Try
-            Return _reservatiedal.GetAllReservatiesByUserID(userID)
+            Return _reservatiedal.GetAllBeschikbareReservatiesInMaandByUserID(userID, maand)
         Catch ex As Exception
             Throw ex
         End Try
@@ -62,7 +62,7 @@ Public Class ReservatieBLL
 
     Public Function InsertReservatie(ByRef r As Reservaties.tblReservatieRow) As Boolean
         Try
-            If (_adapterReservatie.Insert(r.userID, r.autoID, r.reservatieBegindat, _
+            If (_adapterReservatie.Insert(r.userID, r.autoID, r.reservatieStatus, r.reservatieBegindat, _
                                           r.reservatieEinddat, r.reservatieIsBevestigd, r.reservatieLaatstBekeken, r.reservatieGereserveerdDoorMedewerker, _
                                           r.reservatieUitgechecktDoorMedewerker, r.reservatieIngechecktDoorMedewerker, _
                                           r.verkoopscontractIsOndertekend, r.verkoopscontractOpmerking, _
