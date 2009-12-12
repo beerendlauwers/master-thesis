@@ -8,7 +8,7 @@ Partial Class App_Presentation_MasterPage
 
         'Header foto
         If (Page.User.Identity.IsAuthenticated) Then
-            If (Page.User.IsInRole("GebruikerBedrijf")) Then
+            If (Page.User.IsInRole("GebruikerBedrijf") Or Page.User.IsInRole("Developer")) Then 'wou ook een verschil laten zien als ge als developer inlogde
                 CType(Me.lgvHeader.FindControl("divHeader"), HtmlGenericControl).Attributes.Add("class", "art-Header2-jpeg")
             Else
                 CType(Me.lgvHeader.FindControl("divHeader"), HtmlGenericControl).Attributes.Add("class", "art-Header-jpeg")
