@@ -22,9 +22,9 @@
     <br />
     
 <%--    
-    een overzicht laten zien van de bestellingen van de gezochte auto via de ontvangen autoID van de queriestring => DOET IE OP HET MOMENT NOG NIET
+    een overzicht laten zien van de bestellingen van de gezochte auto via de ontvangen autoID van de queriestring
     deze reservaties zouden dan nog aangepast moeten kunnen worden (oa verwijderen)
-    die aanpassingen gebeuren in andere pagina zoals bij ReservatieWijzigen--%>
+    die aanpassingen gebeuren in andere pagina bij ReservatieWijzigen--%>
     
     
     <asp:Panel ID="pnlOverzicht1" runat="server">
@@ -50,6 +50,9 @@
                         Totaalkost
                     </th>
                     <th>
+                        &nbsp;
+                    </th>
+                       <th>
                         &nbsp;
                     </th>
                 </tr>
@@ -79,6 +82,11 @@
                                 <asp:ImageButton ID="imgButton" runat="server" ImageUrl="~/App_Presentation/Images/wrench.png"
                                     CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoWijzigen")%>' />
                             </td>
+                            <td align="center">
+                                <asp:ImageButton ID="imgDelete" runat="server" ImageUrl="~/App_Presentation/Images/remove.png"
+                                    CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoWijzigen")%>' /><%-- moet reservatieVerwijderen worden--%>
+                            </td>
+                             
                         </tr>
                     </ItemTemplate>
                 </asp:Repeater>
