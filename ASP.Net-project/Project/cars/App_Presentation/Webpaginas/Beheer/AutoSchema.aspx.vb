@@ -205,9 +205,26 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoSchema
 
 
 
-    Protected Sub calAutoSchema_SelectionChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles calAutoSchema.SelectionChanged
+    Protected Sub calAutoSchema_DayRender(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DayRenderEventArgs) Handles calAutoSchema.DayRender
 
+        Dim nextDate As DateTime
+
+        Try
+            'this part is the actual time off requests
+            If Not CType(Session("dsRequests"), DataSet) Is Nothing Then
+                For Each dr As DataRow In CType(Session("dsRequests"), DataSet).Tables(0).Rows
+                    nextDate = CType(dr("reservatieDag"), DateTime)
+                    If nextDate = e.Day.Date Then
+                        e.Cell.BackColor = System.Drawing.ColorTranslator.FromHtml(CType(dr("FF0000"), String)) 'int rood zetten
+                    End If
+                Next
+            End If
+
+        Catch ex As Exception
+            Response.Write("Errors occurred: No RuleID / Hire Date specified for user! " & "Additional errors include: " & ex.ToString())
+        End Try
     End Sub
+
 
 
 End Class
