@@ -96,9 +96,20 @@ Public Class ReservatieBLL
         End Try
     End Function
 
-    Public Function DeleteReservatie(ByVal reservatieID As Integer) As Boolean
+    Public Function DeleteReservatie(ByRef r As Reservaties.tblReservatieRow) As Integer
+
+        Dim seconde As Integer = 59
+        Dim minuut As Integer = 59
+        Dim uur As Integer = 23
+        Dim laatsteincheckmoment As Date = Date.Parse(String.Concat(Format(DateAdd(DateInterval.Day, -2, r.reservatieBegindat), "dd/MM/yyyy"), " ", uur, ":", minuut, ":", seconde))
+
+        If Now >= laatsteincheckmoment Then
+            Return -5
+        End If
+
+
         Try
-            If (_adapterReservatie.Delete(reservatieID)) Then
+            If (_adapterReservatie.Delete(r.reservatieID)) Then
                 Return True
             Else
                 Return False

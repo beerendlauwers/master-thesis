@@ -272,8 +272,6 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         Dim reservatiebll As New ReservatieBLL
         Dim merkbll As New MerkBLL
 
-
-
         Dim autoID, resID, categorieID, modelID As Integer
         resID = ViewState("resID")
         autoID = ViewState("autoID")
@@ -462,7 +460,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
                 If (reservatiebll.InsertReservatie(newres)) Then
                     'Gelukt! Oude reservatie verwijderen.
-                    reservatiebll.DeleteReservatie(oudeReservatieID)
+                    reservatiebll.DeleteReservatie(r)
 
                     'ID van de nieuwe reservatie ophalen.
                     Dim tempres As New Reservatie
@@ -481,7 +479,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
                     nazicht.controleEinddat = DateAdd(DateInterval.Day, 1, tempres.Einddatum)
 
                     'Nazicht updaten.
-                    controlebll.UpdateControle(nazicht)
+                    controlebll.UpdateNazicht(nazicht)
 
                     Dim resData As String = String.Concat(resID, ",", nieuweAutoID)
 

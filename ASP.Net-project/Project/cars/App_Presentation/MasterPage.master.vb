@@ -118,7 +118,7 @@ Partial Class App_Presentation_MasterPage
 
         For Each res As Reservaties.tblReservatieRow In dt
             If (DateAdd(DateInterval.Minute, 10, res.reservatieLaatstBekeken) <= huidigetijd) Then
-                reservatiebll.DeleteReservatie(res.reservatieID)
+                reservatiebll.DeleteReservatie(res)
             End If
         Next
 

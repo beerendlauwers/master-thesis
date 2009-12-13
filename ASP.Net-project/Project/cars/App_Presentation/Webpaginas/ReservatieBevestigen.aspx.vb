@@ -124,89 +124,96 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
     End Function
 
     Private Function TijdelijkeReservatieToevoegen(ByRef res As Reservatie) As Boolean
-        Dim reservatiebll As New ReservatieBLL
-        Dim autobll As New AutoBLL
-        Dim statusbll As New StatusBLL
-        Dim controlebll As New ControleBLL
-
         Try
-            Dim dt As New Reservaties.tblReservatieDataTable
-            Dim r As Reservaties.tblReservatieRow = dt.NewRow
+            'Reservatie toevoegen
+            Dim r As Reservaties.tblReservatieRow = ReservatieToevoegen(res)
 
-            'Basisreservatieinformatie.
-            r.userID = res.UserID
-            r.autoID = res.AutoID
-            r.reservatieStatus = 0
-            r.reservatieBegindat = res.Begindatum
-            r.reservatieEinddat = res.Einddatum
-
-            'Deze reservatie is nog niet bevestigd.
-            r.reservatieIsBevestigd = res.IsBevestigd
-            r.reservatieLaatstBekeken = Now
-
-            'Deze eerste medewerker zou moeten worden ingevuld als een echte medewerker
-            'als we de functionaliteit toevoegen dat een medewerker een reservatie voor een klant
-            'kan toevoegen. Niet erg moeilijk, maar niet vergeten.
-            r.reservatieGereserveerdDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
-
-            'De volgende twee medewerkers worden enkel aangepast bij een in- of uitcheckprocedure.
-            r.reservatieIngechecktDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
-            r.reservatieUitgechecktDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
-
-            r.verkoopscontractOpmerking = String.Empty
-            r.verkoopscontractIsOndertekend = 0
-
-            r.factuurBijschrift = String.Empty
-            r.factuurIsInWacht = 0
-
-            reservatiebll.InsertReservatie(r)
-
-
-            'Een nazicht van deze auto na deze reservatie registreren
-            Dim nazichtdt As New Onderhoud.tblControleDataTable
-            Dim nazichtrow As Onderhoud.tblControleRow = nazichtdt.NewRow
-
-            'Dit is een nazicht
-            nazichtrow.controleIsNazicht = True
-
-
-            'ReservatieID ophalen
-            Dim reservatie As New Reservatie
-            reservatie.AutoID = r.autoID
-            reservatie.Begindatum = r.reservatieBegindat
-            reservatie.Einddatum = r.reservatieEinddat
-            Dim reservatieID As Integer = reservatiebll.GetSpecificReservatieByDatumAndAutoID(reservatie).Item("reservatieID")
-
-            'ReservatieID in nazichtrow steken
-            nazichtrow.reservatieID = reservatieID
-
-            'Dummy-medewerker
-            nazichtrow.medewerkerID = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
-
-            'AutoID
-            nazichtrow.autoID = r.autoID
-
-            'Een nazicht is altijd onmiddellijk na de reservatie en duurt 1 dag
-            nazichtrow.controleBegindat = DateAdd(DateInterval.Day, 1, r.reservatieEinddat)
-            nazichtrow.controleEinddat = DateAdd(DateInterval.Day, 1, r.reservatieEinddat)
-
-            'Dummy-waardes
-            nazichtrow.controleKilometerstand = 0
-            nazichtrow.controleBrandstofkost = 0
-
-            'Controle toevoegen.
-            controlebll.InsertControle(nazichtrow)
+            'Nazicht toevoegen
+            NazichtToevoegenVoorReservatie(r)
 
         Catch ex As Exception
             Throw ex
             Return False
-        Finally
-            reservatiebll = Nothing
-            autobll = Nothing
-            statusbll = Nothing
-            controlebll = Nothing
         End Try
     End Function
+
+    Private Function ReservatieToevoegen(ByRef res As Reservatie) As Reservaties.tblReservatieRow
+        Dim dt As New Reservaties.tblReservatieDataTable
+        Dim r As Reservaties.tblReservatieRow = dt.NewRow
+
+        'Basisreservatieinformatie.
+        r.userID = res.UserID
+        r.autoID = res.AutoID
+        r.reservatieStatus = 0
+        r.reservatieBegindat = res.Begindatum
+        r.reservatieEinddat = res.Einddatum
+
+        'Deze reservatie is nog niet bevestigd.
+        r.reservatieIsBevestigd = res.IsBevestigd
+        r.reservatieLaatstBekeken = Now
+
+        'Deze eerste medewerker zou moeten worden ingevuld als een echte medewerker
+        'als we de functionaliteit toevoegen dat een medewerker een reservatie voor een klant
+        'kan toevoegen. Niet erg moeilijk, maar niet vergeten.
+        r.reservatieGereserveerdDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+
+        'De volgende twee medewerkers worden enkel aangepast bij een in- of uitcheckprocedure.
+        r.reservatieIngechecktDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+        r.reservatieUitgechecktDoorMedewerker = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+
+        r.verkoopscontractOpmerking = String.Empty
+        r.verkoopscontractIsOndertekend = 0
+
+        r.factuurBijschrift = String.Empty
+        r.factuurIsInWacht = 0
+
+        Dim reservatiebll As New ReservatieBLL
+        reservatiebll.InsertReservatie(r)
+        reservatiebll = Nothing
+
+        Return r
+    End Function
+
+    Private Sub NazichtToevoegenVoorReservatie(ByRef r As Reservaties.tblReservatieRow)
+        Dim controlebll As New ControleBLL
+        Dim reservatiebll As New ReservatieBLL
+
+        'Een nazicht van deze auto na deze reservatie registreren
+        Dim nazichtdt As New Onderhoud.tblControleDataTable
+        Dim nazichtrow As Onderhoud.tblControleRow = nazichtdt.NewRow
+
+        'Dit is een nazicht
+        nazichtrow.controleIsNazicht = True
+
+
+        'ReservatieID ophalen
+        Dim reservatie As New Reservatie
+        reservatie.AutoID = r.autoID
+        reservatie.Begindatum = r.reservatieBegindat
+        reservatie.Einddatum = r.reservatieEinddat
+        Dim reservatieID As Integer = reservatiebll.GetSpecificReservatieByDatumAndAutoID(reservatie).Item("reservatieID")
+
+        'ReservatieID in nazichtrow steken
+        nazichtrow.reservatieID = reservatieID
+
+        'Dummy-medewerker
+        nazichtrow.medewerkerID = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+
+        'AutoID
+        nazichtrow.autoID = r.autoID
+
+        'Een nazicht is altijd onmiddellijk na de reservatie en duurt 1 dag
+        nazichtrow.controleBegindat = DateAdd(DateInterval.Day, 1, r.reservatieEinddat)
+        nazichtrow.controleEinddat = DateAdd(DateInterval.Day, 1, r.reservatieEinddat)
+
+        'Dummy-waardes
+        nazichtrow.controleKilometerstand = 0
+        nazichtrow.controleBrandstofkost = 0
+
+        'Controle toevoegen.
+        ControleBLL.InsertNazicht(nazichtrow)
+
+    End Sub
 
     Public Sub AnoniemeGebruikerDoorsturen()
 

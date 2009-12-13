@@ -283,7 +283,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         Dim merkID = merkbll.GetMerkByModelID(modelID).Rows(0).Item("merkID")
 
         'Deze reservatie ophalen
-        Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID).Rows(0)
+        Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
 
         Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
@@ -379,7 +379,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             Dim reservatiebll As New ReservatieBLL
 
             'Deze reservatie ophalen
-            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID).Rows(0)
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
 
             Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
@@ -433,7 +433,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             Dim autobll As New AutoBLL
             Dim reservatiebll As New ReservatieBLL
 
-            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(oudeReservatieID).Rows(0)
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(oudeReservatieID)
 
             'Ff checken dat we geen bullshit hebben toegestuurd gekregen
             If (r.autoID = oudeAutoID) Then
@@ -461,7 +461,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
                 If (reservatiebll.InsertReservatie(newres)) Then
                     'Gelukt! Oude reservatie verwijderen.
-                    reservatiebll.DeleteReservatie(oudeReservatieID)
+                    reservatiebll.DeleteReservatie(r)
 
                     'ID van de nieuwe reservatie ophalen.
                     Dim tempres As New Reservatie

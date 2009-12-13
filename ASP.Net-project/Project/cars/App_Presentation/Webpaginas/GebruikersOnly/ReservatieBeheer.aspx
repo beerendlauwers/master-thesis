@@ -11,13 +11,17 @@
               <asp:UpdateProgress ID="progress1" runat="server">
         <ProgressTemplate>
         
-            <div class="progress">
+            <div class="progress" align="center">
+            <br />
                 <img src="../../Images/ajax-loader.gif" />
                 Even wachten aub...
+                <br /><br />
             </div>
         
         </ProgressTemplate>
     </asp:UpdateProgress>
+    <div align="center" runat="server" id="divFeedback" Visible="false">
+        <br /><asp:Image ID="imgFeedback" runat="server" />&nbsp;<asp:Label ID="lblFeedback" runat="server"></asp:Label><br /><br /></div>
                <table>
                 <tr>
                     <th>

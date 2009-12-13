@@ -92,6 +92,9 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         If (User.Identity.IsAuthenticated) Then
+
+            Me.divFeedback.Visible = False
+
             Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
             If (Not IsPostBack) Then
@@ -209,7 +212,13 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             If co IsNot Nothing Then controlebll.DeleteControle(co.controleID)
 
             'Dan de reservatie zelf
-            reservatiebll.DeleteReservatie(resID)
+            Dim resultaat As Integer = reservatiebll.DeleteReservatie(r)
+
+            If (resultaat = -5) Then
+                Me.lblFeedback.Text = "U kan een reservatie niet meer verwijderen 2 dagen voor de beginperiode."
+                Me.imgFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+                Me.divFeedback.Visible = True
+            End If
 
             reservatiebll = Nothing
             nodigonderhoudbll = Nothing
