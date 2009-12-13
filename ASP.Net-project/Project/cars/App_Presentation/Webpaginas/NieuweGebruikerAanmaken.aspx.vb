@@ -67,29 +67,31 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
         'Deze string wordt gebruikt in de ASPX-pagina om wat JavaScript code te genereren.
         PostBackString = Page.ClientScript.GetPostBackEventReference(Me, "ContinuebuttonClick")
 
-        'Doorheen alle postback-keys gaan en kijken of de continue-button tussenzit
-        'die in onze PlaceHolder zit. Indien ja, dan veranderen we de kleur.
-        For i As Integer = 1 To Page.Request.Form.Keys.Count - 1
-            Dim str As String = Page.Request.Form.Keys(i)
+        If (FormulierIsGeldig()) Then
 
-            If str = "ctl00$plcMain$wizard$CompleteStepContainer$ContinueButton" Then
-                Dim button As Button = Page.FindControl(str)
-                ContinueButton_Click(sender, e)
-                Return
+            'Doorheen alle postback-keys gaan en kijken of de continue-button tussenzit
+            'die in onze PlaceHolder zit. Indien ja, dan veranderen we de kleur.
+            For i As Integer = 1 To Page.Request.Form.Keys.Count - 1
+                Dim str As String = Page.Request.Form.Keys(i)
+
+                If str = "ctl00$plcMain$wizard$CompleteStepContainer$ContinueButton" Then
+                    Dim button As Button = Page.FindControl(str)
+                    ContinueButton_Click(sender, e)
+                    Return
+                End If
+            Next
+
+            CType(Master.FindControl("loginView"), LoginView).Visible = False
+
+            'Checken of deze anonieme persoon een reservatie wil doen
+            Dim tempCookie As HttpCookie = Request.Cookies("reservatieCookie")
+            If tempCookie IsNot Nothing Then
+                CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("lblAnoniemeReservatie"), Label).Text = "Vooraleer u kan verdergaan met uw reservatie dient u een gebruiker aan te maken. Vul onderstaande velden in en klik daarna op ""Gebruiker Aanmaken"" om verder te gaan."
+                CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("lblAnoniemeReservatie"), Label).Visible = True
             End If
-        Next
 
-        CType(Master.FindControl("loginView"), LoginView).Visible = False
-
-        'Checken of deze anonieme persoon een reservatie wil doen
-        Dim tempCookie As HttpCookie = Request.Cookies("reservatieCookie")
-        If tempCookie IsNot Nothing Then
-            CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("lblAnoniemeReservatie"), Label).Text = "Vooraleer u kan verdergaan met uw reservatie dient u een gebruiker aan te maken. Vul onderstaande velden in en klik daarna op ""Gebruiker Aanmaken"" om verder te gaan."
-            CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("lblAnoniemeReservatie"), Label).Visible = True
+            CType(wizard.CompleteStep.ContentTemplateContainer.FindControl("updDoorgaan"), UpdatePanel).Update()
         End If
-
-        CType(wizard.CompleteStep.ContentTemplateContainer.FindControl("updDoorgaan"), UpdatePanel).Update()
-
     End Sub
 
     Protected Sub ContinueButton_Click(ByVal sender As Object, ByVal e As System.EventArgs)
@@ -109,4 +111,38 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
 
         Response.Redirect("~/App_Presentation/Webpaginas/Default.aspx")
     End Sub
+
+    Private Function FormulierIsGeldig() As Boolean
+        If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtVoornaam"), TextBox).Text = String.Empty Then Return False
+        If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtNaam"), TextBox).Text = String.Empty Then Return False
+        Dim gebdat As TextBox = CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtgeboorte"), TextBox)
+        Try
+            Dim test As Date = Date.Parse(gebdat.Text)
+        Catch
+            Return False
+        End Try
+        If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtIdentiteitsNr"), TextBox).Text = String.Empty Then Return False
+        If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtRijbewijsNr"), TextBox).Text = String.Empty Then Return False
+        If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtTelefoon"), TextBox).Text = String.Empty Then Return False
+
+        If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("chkIsBedrijf"), CheckBox).Checked Then
+            If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBedrijfnaam"), TextBox).Text = String.Empty Then
+                Me.lblBedrijfsnaamFout.Visible = True
+            Else
+                Me.lblBedrijfsnaamFout.Visible = False
+            End If
+
+            If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtLocatie"), TextBox).Text = String.Empty Then
+                Me.lblLocatieFout.Visible = True
+            Else
+                Me.lblLocatieFout.Visible = False
+            End If
+
+            If CType(wizard.CreateUserStep.ContentTemplateContainer.FindControl("txtBTW"), TextBox).Text = String.Empty Then Return False
+
+        End If
+
+        Return True
+
+    End Function
 End Class

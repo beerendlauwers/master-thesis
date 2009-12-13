@@ -207,7 +207,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoUitchecken
             Dim autoID As Integer = waardes(1)
 
             Dim reservatiebll As New ReservatieBLL
-            Dim reservatie As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(reservatieID).Rows(0)
+            Dim reservatie As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(reservatieID)
 
             'Reservatiestatus 2 betekent: Uitgecheckt (maar nog niet teruggekomen!)
             reservatie.reservatieStatus = 2

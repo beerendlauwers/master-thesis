@@ -27,6 +27,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
             overzichtdatatable.Columns.Add("resData", Type.GetType("System.String"))
 
+            overzichtdatatable.Columns.Add("autoVerwijderen", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("autoWijzigen", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("rijKleur", Type.GetType("System.String"))
             overzichtdatatable.Columns.Add("autoNaam", Type.GetType("System.String"))
@@ -54,6 +55,9 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
                 'Algemene informatie
                 overzichtrow("resData") = String.Concat(datatable.Rows(i).Item("reservatieID"), ",", row.autoID)
+
+                ' "Auto verwijderen"-knop
+                overzichtrow("autoVerwijderen") = String.Concat("Verwijderen, ", overzichtrow("resData"))
 
                 ' "Auto wijzigen"-knop
                 overzichtrow("autoWijzigen") = String.Concat("Wijzigen, ", overzichtrow("resData"))
@@ -92,22 +96,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
             If (Not IsPostBack) Then
 
-                Dim reservatiebll As New ReservatieBLL
-                Dim dt As Data.DataTable = MaakOverzichtsDataTable(reservatiebll.GetAllBevestigdeReservatiesByUserID(bezoekendeklant))
-                reservatiebll = Nothing
-
-                If (dt.Rows.Count > 0) Then
-                    lblGeenReservaties.Visible = False
-                    Me.pnlOverzicht.Visible = True
-                    Me.repOverzicht.DataSource = dt
-                Else
-                    lblGeenReservaties.Text = "Er zijn geen reservaties die aan uw zoekvoorwaarden voldoen."
-                    lblGeenReservaties.Visible = True
-                    Me.pnlOverzicht.Visible = False
-
-                End If
-
-                Me.repOverzicht.DataBind()
+                VulReservatieOverzicht(bezoekendeklant)
 
             End If
 
@@ -117,6 +106,25 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             Return
         End If
 
+    End Sub
+
+    Private Sub VulReservatieOverzicht(ByRef bezoekendeklant As Guid)
+        Dim reservatiebll As New ReservatieBLL
+        Dim dt As Data.DataTable = MaakOverzichtsDataTable(reservatiebll.GetAllBevestigdeReservatiesByUserID(bezoekendeklant))
+        reservatiebll = Nothing
+
+        If (dt.Rows.Count > 0) Then
+            lblGeenReservaties.Visible = False
+            Me.pnlOverzicht.Visible = True
+            Me.repOverzicht.DataSource = dt
+        Else
+            lblGeenReservaties.Text = "Er zijn geen reservaties die aan uw zoekvoorwaarden voldoen."
+            lblGeenReservaties.Visible = True
+            Me.pnlOverzicht.Visible = False
+
+        End If
+
+        Me.repOverzicht.DataBind()
     End Sub
 
     Private Function GeefOptieKosten(ByRef a As Autos.tblAutoRow) As Double()
@@ -174,10 +182,6 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             table.Controls.Add(tr)
         Next optie
 
-        'Dim plcOpties As PlaceHolder = CType(Me.repOverzicht.FindControl("plcOpties"), PlaceHolder)
-        'plcOpties.Controls.Add(table)
-
-
         Return optiekosten
     End Function
 
@@ -190,14 +194,33 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
         If (commando = "Verwijderen") Then
             Dim reservatiebll As New ReservatieBLL
-            Dim row As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID).Rows(0)
+            Dim nodigonderhoudbll As New OnderhoudBLL
+            Dim controlebll As New ControleBLL
 
-            Response.Redirect(String.Concat("../ReservatieBevestigen.aspx?resID=", resID))
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
+            If r Is Nothing Then Return
+
+            'Eerst het nazicht van deze reservatie verwijderen in tblNodigOnderhoud
+            Dim o As Onderhoud.tblNodigOnderhoudRow = nodigonderhoudbll.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, r.reservatieEinddat), r.autoID)
+            If o IsNot Nothing Then nodigonderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+
+            'Dan het eigenlijke nazicht
+            Dim co As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(r.reservatieID)
+            If co IsNot Nothing Then controlebll.DeleteControle(co.controleID)
+
+            'Dan de reservatie zelf
+            reservatiebll.DeleteReservatie(resID)
+
+            reservatiebll = Nothing
+            nodigonderhoudbll = Nothing
+            controlebll = Nothing
 
         ElseIf (commando = "Wijzigen") Then
             Response.Redirect(String.Concat("ReservatieWijzigen.aspx?resData=", resID, ",", autoID))
-
         End If
+
+        Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+        VulReservatieOverzicht(bezoekendeklant)
 
     End Sub
 End Class

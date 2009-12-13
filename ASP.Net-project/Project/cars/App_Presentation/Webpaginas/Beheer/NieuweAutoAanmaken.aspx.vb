@@ -167,12 +167,14 @@ Partial Class App_Presentation_NieuweAutoAanmaken
         auto.autoKleur = CType(Me.frvNieuweAuto.FindControl("txtAutoKleur"), TextBox).Text
         auto.autoBouwjaar = CType(Me.frvNieuweAuto.FindControl("txtAutoBouwjaar"), TextBox).Text
         auto.brandstofID = CType(Me.frvNieuweAuto.FindControl("ddlBrandstofType"), DropDownList).SelectedValue
+        auto.autoTankInhoud = CType(Me.frvNieuweAuto.FindControl("txtTankInhoud"), TextBox).Text
+        auto.autoHuidigeKilometerstand = CType(Me.frvNieuweAuto.FindControl("txtHuidigeKilometerstand"), TextBox).Text
         auto.autoKenteken = CType(Me.frvNieuweAuto.FindControl("txtAutoKenteken"), TextBox).Text
         auto.statusID = CType(Me.frvNieuweAuto.FindControl("ddlStatus"), DropDownList).SelectedValue
         auto.parkeerPlaatsID = Convert.ToInt32(CType(Me.frvNieuweAuto.FindControl("txtAutoParkeerplaats"), TextBox).Text)
         auto.filiaalID = CType(Me.frvNieuweAuto.FindControl("ddlFiliaal"), DropDownList).SelectedValue
         auto.autoDagTarief = CType(Me.frvNieuweAuto.FindControl("txtAutoDagTarief"), TextBox).Text
-        auto.autoKMTotOlieVerversing = 0
+        auto.autoKMTotOlieVerversing = 20000
 
         Return autobll.AddAuto(auto)
 

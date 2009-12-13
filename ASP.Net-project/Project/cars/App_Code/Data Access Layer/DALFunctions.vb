@@ -4,6 +4,19 @@ Imports System.Data.SqlClient
 
 Public Class DALFunctions
 
+    Public Function ExecuteScalar(ByRef command As SqlCommand) As Object
+        Try
+            command.Connection.Open()
+
+            Return command.ExecuteScalar()
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            command.Connection.Close()
+        End Try
+    End Function
+
     Public Function ExecuteNonQuery(ByRef command As SqlCommand) As Boolean
         Try
             command.Connection.Open()

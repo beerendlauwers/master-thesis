@@ -96,7 +96,7 @@ Public Class AutoBLL
 
     Public Function AddAuto(ByRef a As Autos.tblAutoRow) As Boolean
         Try
-            If (_adapterAuto.Insert(a.categorieID, a.modelID, a.autoKleur, a.autoBouwjaar, a.brandstofID, a.autoKenteken, a.autoDagTarief, a.autoKMTotOlieVerversing, a.statusID, a.filiaalID, a.parkeerPlaatsID)) Then
+            If (_adapterAuto.Insert(a.categorieID, a.modelID, a.autoKleur, a.autoTankInhoud, a.autoHuidigeKilometerstand, a.autoBouwjaar, a.brandstofID, a.autoKenteken, a.autoDagTarief, a.autoKMTotOlieVerversing, a.statusID, a.filiaalID, a.parkeerPlaatsID)) Then
                 Return True
             Else
                 Return False
@@ -171,14 +171,13 @@ Public Class AutoBLL
 
             'Nakijken of er wel auto's zitten in onze selectie.
             If (autodata.Rows.Count = 0 Or autonummer >= autodata.Rows.Count) Then
-                Return returneddata
+                Exit For
             Else 'Indien er nog een volgende auto is,
                 'lezen we een nieuwe rij uit de autodata.
                 dr = autodata.Rows(autonummer)
                 'We slaan het autoID uit deze rij op.
                 autoID = dr.autoID
             End If
-
 
             'Nu gaan we de reservaties nakijken.
 
@@ -218,10 +217,77 @@ Public Class AutoBLL
 
         Next autonummer
 
-        Return returneddata
+        'Nu gaan we voor elke auto het toekomstig nodig onderhoud ophalen 
+        'om te voorkomen dat deze overlappen met de gewenste periode.
+
+        'Variabelen om de onderhoudsreeksen op te vangen.
+        Dim onderhoudsdata As New Onderhoud.tblNodigOnderhoudDataTable
+        Dim onderhoudbll As New onderhoudBLL
+        Dim onderhoudrow As Onderhoud.tblNodigOnderhoudRow
+
+        'Dit is de uiteindelijke gefilterde autoDataTable.
+        Dim fullyfiltereddata As New Autos.tblAutoDataTable
+
+        For autonummer = 0 To returneddata.Rows.Count
+
+            'Nakijken of er wel auto's zitten in onze selectie.
+            If (returneddata.Rows.Count = 0 Or autonummer >= returneddata.Rows.Count) Then
+                Return fullyfiltereddata
+            Else 'Indien er nog een volgende auto is,
+                'lezen we een nieuwe rij uit de autodata.
+                dr = returneddata.Rows(autonummer)
+                'We slaan het autoID uit deze rij op.
+                autoID = dr.autoID
+            End If
+
+            'Nu gaan we de onderhoudsdata nakijken.
+
+            'Onderhoudsdata voor deze auto ophalen.
+            onderhoudsdata = onderhoudbll.GetAllNodigOnderhoudByAutoID(autoID)
+
+            'Even nakijken of er wel onderhouden voor deze auto zijn.
+            If onderhoudsdata.Rows.Count = 0 Then
+                'Deze auto toevoegen aan de lijst van beschikbare auto's,
+                'er zijn immers geen onderhouden voor deze auto.
+                fullyfiltereddata.ImportRow(dr)
+
+            Else 'er zijn onderhouden.
+
+                'Voor elk onderhoud gaan we checken of dit onderhoud
+                'de auto heeft gereserveerd voor onze gewenste datum
+                For Each onderhoudrow In onderhoudsdata
+                    Dim rowBegindatum As Date = CType(onderhoudrow.nodigOnderhoudBegindat, Date)
+                    Dim rowEinddatum As Date = CType(onderhoudrow.nodigOnderhoudEinddat, Date)
+
+                    'Overlapt dit onderhoud met onze gewenste reservatiedatum?
+                    If (rowBegindatum <= gewensteEinddatum And gewensteBegindatum <= rowEinddatum) Then
+
+                        'Dikke pech, deze auto kunnen we niet weergeven!
+                        autobeschikbaar = False
+                        Exit For
+                    End If
+                Next onderhoudrow
+
+                'We hebben alle onderhouden voor deze auto nagekeken. Is hij 
+                'beschikbaar? Zoja, dan voegen we hem toe aan onze lijst.
+                If (autobeschikbaar) Then
+                    fullyfiltereddata.ImportRow(dr)
+                End If
+
+            End If
+
+        Next autonummer
+
+        Return fullyfiltereddata
     End Function
 
     Private Function FilterAutosByExtraOpties(ByRef autodata As Autos.tblAutoDataTable, ByRef filterOpties() As String) As Autos.tblAutoDataTable
+
+        Dim geenExtraOpties As Boolean = False
+        If (filterOpties(50) = "True") Then
+            'Geen enkele extra opties!
+            geenExtraOpties = True
+        End If
 
         'Kijk na of er wel filters voor extra opties zijn.
         Dim erZijnFilters As Boolean = CheckVoorFilters(filterOpties)
@@ -231,39 +297,54 @@ Public Class AutoBLL
             'Stel een int-array op van de filters.
             Dim optieFilter() As Integer = MaakFilterArray(filterOpties)
 
-            'Deze datatable gaat alle geldige waardes bevatten.
-            Dim returneddt As New Autos.tblAutoDataTable
+            'Verwerk de auto's en geef terug
+            Return VerwerkFilters(autodata, optieFilter)
 
-            'Voor elke auto in de ongefilterde data gaan we hierdoor gaan
-            For i = 0 To autodata.Rows.Count - 1
+        ElseIf (geenExtraOpties) Then
 
-                'Nieuwe auto ophalen
-                Dim a As Autos.tblAutoRow = autodata.Rows(i)
+            'De auto mag geen opties hebben
+            Dim optieFilter() As Integer = {0}
 
-                'Opties van de auto in een int-array steken
-                Dim aanwezigeOpties() As Integer = MaakAanwezigeOptiesArray(a)
+            'Verwerk de auto's en geef terug
+            Return VerwerkFilters(autodata, optieFilter)
 
-                'Vergelijk beide int-arrays en steek de resultaten in een bool-array
-                Dim optieCheck() As Boolean = VergelijkArrays(optieFilter, aanwezigeOpties)
-
-                'Nu gaan we nakijken of de auto alle gewenste opties heeft.
-                Dim heeftNietAlleOpties As Boolean = False
-                For Each val As Boolean In optieCheck
-                    If (val = False) Then
-                        heeftNietAlleOpties = True
-                        Exit For
-                    End If
-                Next val
-
-                If (Not heeftNietAlleOpties) Then returneddt.ImportRow(a)
-
-            Next
-
-            Return returneddt
         Else
             Return autodata
         End If
 
+    End Function
+
+    Private Function VerwerkFilters(ByRef autodata As Autos.tblAutoDataTable, ByRef optieFilter() As Integer) As Autos.tblAutoDataTable
+
+        'Deze datatable gaat alle geldige waardes bevatten.
+        Dim returneddt As New Autos.tblAutoDataTable
+
+        'Voor elke auto in de ongefilterde data gaan we hierdoor gaan
+        For i = 0 To autodata.Rows.Count - 1
+
+            'Nieuwe auto ophalen
+            Dim a As Autos.tblAutoRow = autodata.Rows(i)
+
+            'Opties van de auto in een int-array steken
+            Dim aanwezigeOpties() As Integer = MaakAanwezigeOptiesArray(a)
+
+            'Vergelijk beide int-arrays en steek de resultaten in een bool-array
+            Dim optieCheck() As Boolean = VergelijkArrays(optieFilter, aanwezigeOpties)
+
+            'Nu gaan we nakijken of de auto alle gewenste opties heeft.
+            Dim heeftNietAlleOpties As Boolean = False
+            For Each val As Boolean In optieCheck
+                If (val = False) Then
+                    heeftNietAlleOpties = True
+                    Exit For
+                End If
+            Next val
+
+            If (Not heeftNietAlleOpties) Then returneddt.ImportRow(a)
+
+        Next
+
+        Return returneddt
     End Function
 
     Private Function CheckVoorFilters(ByRef filterOpties() As String) As Boolean

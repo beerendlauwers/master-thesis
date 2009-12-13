@@ -8,15 +8,15 @@ Partial Class App_Presentation_Webpaginas_Default2
 
         ' vereist Imports Subgurim.Controles
 
-        GMap1.setCenter(New GLatLng(51, 4), 7)
+        GMap1.setCenter(New GLatLng(51, 4.5), 7)
 
         With GMap1
 
             ' layout
-            .Height = 750
-            .Width = 1000
+            .Height = 700
+            .Width = 700
 
-            .GZoom = 9
+            .GZoom = 8
             .addGMapUI(New GMapUI())
             .enableHookMouseWheelToZoom = True
 
@@ -33,7 +33,7 @@ Partial Class App_Presentation_Webpaginas_Default2
 
         Dim icon = New GIcon()
         With icon
-            .image = "images/gmapcar.png"
+            .image = "../Images/gmapcar.png"
 
             .iconSize = New GSize(32, 32)
 
@@ -43,7 +43,7 @@ Partial Class App_Presentation_Webpaginas_Default2
 
         Dim bllFiliaal As New FiliaalBLL
 
-        Dim tblFil As New DataTable
+        Dim tblFil As New Autos.tblFiliaalDataTable
 
         tblFil = bllFiliaal.GetAllFilialen()
 
@@ -57,13 +57,12 @@ Partial Class App_Presentation_Webpaginas_Default2
         Dim window As GInfoWindow
         Dim winopts As GInfoWindowOptions
 
-        Dim dr As DataRow
+        Dim dr As Autos.tblFiliaalRow
 
         For Each dr In tblFil.Rows
 
-            Adres = dr("filiaalLocatie")
+            Adres = dr.filiaalNaam
             GeoCode = GMap.geoCodeRequest(Adres, MapKey)
-
             ' marker
 
             markopts = New GMarkerOptions
@@ -76,9 +75,13 @@ Partial Class App_Presentation_Webpaginas_Default2
             marker = New GMarker(New GLatLng(GeoCode.Placemark.coordinates.lat, GeoCode.Placemark.coordinates.lng), markopts)
 
             ' window
+            Dim htmlstring As String = String.Empty
+            htmlstring = htmlstring + "Locatie: " + dr.filiaalLocatie + "<br/><br/>"
+            htmlstring = htmlstring + "Telefoon: " + dr.filiaalTelefoon + "<br/><br/>"
+            htmlstring = htmlstring + "Contact: <a href=mailto:" + dr.filiaalContact + ">Contacteer ons</a><br/><br/>"
 
-            winopts = New GInfoWindowOptions(Adres, "<h1>Lorem ipsum</h1> <hr /><br /><br />Dolor sit amet, consectetur adipiscing elit. In blandit, purus id elementum fermentum, tellus nibh eleifend ante, id lacinia erat turpis quis mauris. Donec gravida tellus sed erat porta at scelerisque justo feugiat. Aliquam sit amet feugiat purus. Nam facilisis sapien id tellus venenatis tincidunt. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum vitae varius odio. Pellentesque faucibus nunc non metus pharetra nec feugiat mi condimentum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vivamus mollis leo at sapien pulvinar pharetra. Sed imperdiet nulla vitae velit ullamcorper auctor tristique tellus hendrerit.Sed eget mi massa, eu feugiat libero. Integer rhoncus laoreet nulla, nec dignissim nisi placerat eu. Nam leo elit, porta sit amet convallis vitae, pretium quis sapien. Pellentesque gravida diam nec diam dapibus non faucibus neque fringilla. Fusce nec justo mi, ac molestie est. Suspendisse lacinia congue auctor. Ut condimentum scelerisque dapibus. Suspendisse vulputate dictum felis, non adipiscing arcu scelerisque ac. Pellentesque lacus nibh, commodo id elementum sit amet, eleifend ac magna. Praesent vulputate purus ac diam aliquam ac dapibus erat tristique. Maecenas lobortis ultricies est, id dictum ante vehicula nec. Aliquam mi tellus, commodo non egestas at, molestie et dolor. Quisque a turpis sit amet odio porttitor suscipit vel non ligula. Aliquam varius pretium tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce sed lacus justo, a elementum magna. Fusce sapien lorem, auctor vitae posuere vel, bibendum ut urna. ")
-            window = New GInfoWindow(marker, "<h3>" & Adres & "</h3> <hr /> <br /><br /> <hr /> <input type='button' value='Bepaal filiaal' onClick= & test() & />")
+            winopts = New GInfoWindowOptions("<h1>" + Adres + "</h1>", htmlstring)
+            window = New GInfoWindow(marker, "<h1>" + Adres + "</h1>" + htmlstring)
             window.options = winopts
 
             ' markers/windows toekennen

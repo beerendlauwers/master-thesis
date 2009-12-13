@@ -15,8 +15,12 @@ Partial Class App_Presentation_MasterPage
             End If
         End If
 
+        'Contact-knop
+        Me.lnkContact.HRef = "~/App_Presentation/Webpaginas/Contact.aspx"
+
         'Home-knop
         Me.homeButton.HRef = "~/App_Presentation/Webpaginas/Default.aspx"
+        Me.lnkHomeLink.HRef = "~/App_Presentation/Webpaginas/Default.aspx"
 
         'Auto Reserveren link
         Me.autoReserveren.HRef = "~/App_Presentation/Webpaginas/NieuweReservatieAanmaken.aspx"

@@ -26,5 +26,13 @@ Public Class BrandstofBLL
         End Try
     End Function
 
+    Public Function GetBrandstofByBrandstofID(ByVal brandstofID As Integer) As Autos.tblBrandstofRow
+        Try
+            Return _brandstofdal.GetBrandstofByBrandstofID(brandstofID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
 
 End Class

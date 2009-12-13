@@ -30,11 +30,9 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoInchecken
 
             ' Reservatie
             Dim BLLReservatie As New ReservatieBLL
-            Dim DTReservatie As Reservaties.tblReservatieDataTable
             Dim DRReservatie As Reservaties.tblReservatieRow
 
-            DTReservatie = BLLReservatie.GetReservatieByReservatieID(txtResID.Text)
-            DRReservatie = DTReservatie.Rows(0)
+            DRReservatie = BLLReservatie.GetReservatieByReservatieID(txtResID.Text)
 
             ' Auto
             Dim BLLAuto As New AutoBLL
@@ -116,11 +114,9 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoInchecken
 
 
         Dim BLLReservatie As New ReservatieBLL
-        Dim DTReservatie As Reservaties.tblReservatieDataTable
         Dim DRReservatie As Reservaties.tblReservatieRow
 
-        DTReservatie = BLLReservatie.GetReservatieByReservatieID(txtResID.Text)
-        DRReservatie = DTReservatie.Rows(0)
+        DRReservatie = BLLReservatie.GetReservatieByReservatieID(txtResID.Text)
 
         Dim BLLAuto As New AutoBLL
         Dim DTAuto As Autos.tblAutoDataTable

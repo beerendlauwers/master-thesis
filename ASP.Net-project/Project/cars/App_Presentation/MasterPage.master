@@ -95,7 +95,7 @@
                 		</asp:loginView>
 
                 		<li>
-                			<a href="#"><span class="l"></span><span class="r"></span><span class="t">Contact</span></a>
+                			<a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span><span class="t">Contact</span></a>
                 		</li>
                 		<li>
                                <asp:LoginView ID="lgvBeheer" runat="server">
@@ -124,7 +124,7 @@
                 
                 <div class="art-Logo">
                     <h1 id="name-text" class="art-Logo-name">
-                        <a href="#">CARS</a></h1>
+                        <a runat="server" id="lnkHomeLink">CARS</a></h1>
                 </div>
             </div>
             <div class="art-contentLayout">

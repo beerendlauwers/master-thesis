@@ -15,7 +15,7 @@
 
                <div class="art-Logo">
                <h2 id="name-text" class="art-Logo-name">
-               <a href="">Personenwagens</a></h2>
+               <a runat="server" id="lnkPersonenWagensImage">Personenwagens</a></h2>
                </div>
                 
                <div class="art-Logo-small1">

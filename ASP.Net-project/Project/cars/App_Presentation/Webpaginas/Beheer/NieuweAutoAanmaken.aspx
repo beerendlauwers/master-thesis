@@ -131,6 +131,22 @@
                     </tr>
                     <tr>
                         <td>
+                            Tankinhoud:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtTankInhoud" runat="server"></asp:TextBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Huidige kilometerstand:
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtHuidigeKilometerstand" runat="server"></asp:TextBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             Kenteken:
                         </td>
                         <td>

@@ -33,14 +33,20 @@ Public Class ReservatieDAL
         End Try
     End Function
 
-    Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieDataTable
+    Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieRow
         Try
             Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieID = @reservatieID")
             myCommand.Parameters.Add("@reservatieID", SqlDbType.Int).Value = reservatieID
             myCommand.Connection = _myConnection
 
             Dim dt As New Reservaties.tblReservatieDataTable
-            Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+            dt = CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+            If dt.Rows.Count = 0 Then
+                Return Nothing
+            Else
+                Return dt.Rows(0)
+            End If
 
         Catch ex As Exception
             Throw ex
@@ -56,6 +62,26 @@ Public Class ReservatieDAL
 
             Dim dt As New Reservaties.tblReservatieDataTable
             Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetMeestRecenteReservatieByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieRow
+        Try
+            Dim myCommand As New SqlCommand("SELECT TOP 1 * FROM tblReservatie WHERE autoID=@autoID")
+            myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+            myCommand.Connection = _myConnection
+
+            Dim dt As New Reservaties.tblReservatieDataTable
+            dt = CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+            If (dt.Rows.Count = 0) Then
+                Return Nothing
+            Else
+                Return dt.Rows(0)
+            End If
 
         Catch ex As Exception
             Throw ex

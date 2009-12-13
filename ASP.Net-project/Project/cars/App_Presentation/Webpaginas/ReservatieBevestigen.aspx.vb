@@ -127,6 +127,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         Dim reservatiebll As New ReservatieBLL
         Dim autobll As New AutoBLL
         Dim statusbll As New StatusBLL
+        Dim controlebll As New ControleBLL
 
         Try
             Dim dt As New Reservaties.tblReservatieDataTable
@@ -160,10 +161,41 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
 
             reservatiebll.InsertReservatie(r)
 
-            'Status veranderen van "Beschikbaar" naar "Gereserveerd"
-            Dim a As Autos.tblAutoRow = autobll.GetAutoByAutoID(res.AutoID).Rows(0)
-            a.statusID = statusbll.GetStatusByStatusNaam("Gereserveerd").Rows(0).Item("autostatusID")
-            autobll.UpdateAuto(a)
+
+            'Een nazicht van deze auto na deze reservatie registreren
+            Dim nazichtdt As New Onderhoud.tblControleDataTable
+            Dim nazichtrow As Onderhoud.tblControleRow = nazichtdt.NewRow
+
+            'Dit is een nazicht
+            nazichtrow.controleIsNazicht = True
+
+
+            'ReservatieID ophalen
+            Dim reservatie As New Reservatie
+            reservatie.AutoID = r.autoID
+            reservatie.Begindatum = r.reservatieBegindat
+            reservatie.Einddatum = r.reservatieEinddat
+            Dim reservatieID As Integer = reservatiebll.GetSpecificReservatieByDatumAndAutoID(reservatie).Item("reservatieID")
+
+            'ReservatieID in nazichtrow steken
+            nazichtrow.reservatieID = reservatieID
+
+            'Dummy-medewerker
+            nazichtrow.medewerkerID = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
+
+            'AutoID
+            nazichtrow.autoID = r.autoID
+
+            'Een nazicht is altijd onmiddellijk na de reservatie en duurt 1 dag
+            nazichtrow.controleBegindat = DateAdd(DateInterval.Day, 1, r.reservatieEinddat)
+            nazichtrow.controleEinddat = DateAdd(DateInterval.Day, 1, r.reservatieEinddat)
+
+            'Dummy-waardes
+            nazichtrow.controleKilometerstand = 0
+            nazichtrow.controleBrandstofkost = 0
+
+            'Controle toevoegen.
+            controlebll.InsertControle(nazichtrow)
 
         Catch ex As Exception
             Throw ex
@@ -172,6 +204,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
             reservatiebll = Nothing
             autobll = Nothing
             statusbll = Nothing
+            controlebll = Nothing
         End Try
     End Function
 
@@ -240,7 +273,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         Me.tdFoto.Attributes.Add("rowspan", 6 + dt.Count)
 
         Dim huurprijs As Double
-        huurprijs = (r.Einddatum - r.Begindatum).TotalDays * a.autoDagTarief
+        huurprijs = ((r.Einddatum - r.Begindatum).TotalDays + 1) * a.autoDagTarief
         huurprijs = huurprijs + optiekosten
         Me.lblHuurPrijs.Text = String.Concat(huurprijs.ToString, " €")
 
@@ -278,6 +311,8 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
             Dim row As Reservaties.tblReservatieRow = reservatiebll.GetSpecificReservatieByDatumAndAutoID(res)
 
             row.reservatieIsBevestigd = 1
+
+            row.userID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
             reservatiebll.UpdateReservatie(row)
 

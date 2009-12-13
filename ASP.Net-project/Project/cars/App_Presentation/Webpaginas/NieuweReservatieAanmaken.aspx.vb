@@ -255,15 +255,8 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
     Private Sub ChangeOverView()
 
         Try
-            Dim FiliaalCookie As HttpCookie
-            FiliaalCookie = Request.Cookies("filcookie")
 
-            Dim filiaal As String = String.Empty
-            If FiliaalCookie IsNot Nothing Then
-                filiaal = FiliaalCookie.Value
-            Else
-                filiaal = 12
-            End If
+            Dim filiaal As String = Me.ddlFiliaal.SelectedValue
 
             Dim dt As DataTable = GeefBeschikbareAutosOpFiliaal(filiaal)
 
@@ -353,6 +346,11 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
                     End If
                 Next
 
+                If (Me.chkGeenExtraOpties.Checked) Then
+                    filterOpties(50) = "True"
+                End If
+
+
                 'Haal datatable op met argumenten
                 Dim autobll As New AutoBLL
                 Dim datatable As Autos.tblAutoDataTable = autobll.GetBeschikbareAutosBy(begindatum, einddatum, filterOpties)
@@ -390,8 +388,11 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
             End If
 
-            'Me.calBegindatum.SelectedDate = Now
-            'Me.calEinddatum.SelectedDate = DateAdd(DateInterval.Day, 2, Now)
+            Dim filiaalbll As New FiliaalBLL
+            Me.ddlFiliaal.DataSource = filiaalbll.GetAllFilialen()
+            Me.ddlFiliaal.DataTextField = "filiaalNaam"
+            Me.ddlFiliaal.DataValueField = "filiaalID"
+            Me.ddlFiliaal.DataBind()
 
         End If
 
@@ -449,5 +450,10 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         Me.plcExtraOpties.Controls.Add(table)
     End Sub
 
+    Protected Sub chkGeenExtraOpties_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkGeenExtraOpties.CheckedChanged
+        Me.plcExtraOpties.Visible = Not Me.chkGeenExtraOpties.Checked
 
+        Me.gmapdiv.Visible = False
+        Me.lblGmapFilialen.Visible = False
+    End Sub
 End Class

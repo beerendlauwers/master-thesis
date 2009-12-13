@@ -26,7 +26,7 @@ Public Class FiliaalBLL
 
     Public Function AddFiliaal(ByRef f As Autos.tblFiliaalRow) As Boolean
         Try
-            If (_filiaalAdapter.Insert(f.filiaalLocatie, f.filiaalNaam, f.parkingAantalRijen, f.parkingAantalKolommen)) Then
+            If (_filiaalAdapter.Insert(f.filiaalLocatie, f.filiaalNaam, f.filiaalTelefoon, f.filiaalContact, f.parkingAantalRijen, f.parkingAantalKolommen)) Then
                 Return True
             Else
                 Return False

@@ -192,7 +192,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoSchema
 
         If (commando = "Verwijderen") Then
             Dim reservatiebll As New ReservatieBLL
-            Dim row As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID).Rows(0)
+            Dim row As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
 
             Response.Redirect(String.Concat("../ReservatieBevestigen.aspx?resID=", resID))
 

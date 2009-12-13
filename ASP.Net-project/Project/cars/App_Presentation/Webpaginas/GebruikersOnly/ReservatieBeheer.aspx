@@ -5,6 +5,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" runat="Server">
+    <asp:UpdatePanel ID="updReservatieBeheer" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
     <asp:Panel ID="pnlOverzicht" runat="server">
               <asp:UpdateProgress ID="progress1" runat="server">
         <ProgressTemplate>
@@ -42,6 +44,9 @@
                     <th>
                         &nbsp;
                     </th>
+                    <th>
+                        &nbsp;
+                    </th>
                 </tr>
                 <asp:Repeater ID="repOverzicht" runat="server" OnItemCommand="repOverzicht_ItemCommand">
                     <ItemTemplate>
@@ -71,10 +76,17 @@
                                 <asp:ImageButton ID="imgButton" runat="server" ImageUrl="~/App_Presentation/Images/wrench.png"
                                     CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoWijzigen")%>' />
                             </td>
+                            <td align="center">
+                                <asp:ImageButton ID="imgButtonVerwijderen" runat="server" ImageUrl="~/App_Presentation/Images/remove.png"
+                                    CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoVerwijderen")%>' />
+                            </td>
                         </tr>
                     </ItemTemplate>
                 </asp:Repeater>
             </table>
         </asp:Panel>
-    <asp:Label ID="lblGeenReservaties" runat="server" Text="Label"></asp:Label>
+            <asp:Label ID="lblGeenReservaties" runat="server" Text="Label"></asp:Label>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+
 </asp:Content>

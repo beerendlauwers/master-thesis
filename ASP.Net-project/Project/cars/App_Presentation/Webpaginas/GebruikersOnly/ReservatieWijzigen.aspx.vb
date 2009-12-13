@@ -82,7 +82,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
                 Dim huurprijs As Double
                 Dim begindat As Date = Date.Parse(Me.txtBegindatum.Text)
                 Dim einddat As Date = Date.Parse(Me.txtEinddatum.Text)
-                huurprijs = (einddat - begindat).TotalDays * row.autoDagTarief
+                huurprijs = ((einddat - begindat).TotalDays + 1) * row.autoDagTarief
 
                 Dim waardes() As Double = GeefOptieKosten(row, opties)
                 overzichtrow("aantalOpties") = waardes(0).ToString
@@ -283,7 +283,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         Dim merkID = merkbll.GetMerkByModelID(modelID).Rows(0).Item("merkID")
 
         'Deze reservatie ophalen
-        Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID).Rows(0)
+        Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
 
         Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
@@ -379,7 +379,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             Dim reservatiebll As New ReservatieBLL
 
             'Deze reservatie ophalen
-            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID).Rows(0)
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
 
             Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
@@ -432,8 +432,9 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
             Dim autobll As New AutoBLL
             Dim reservatiebll As New ReservatieBLL
+            Dim controlebll As New ControleBLL
 
-            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(oudeReservatieID).Rows(0)
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(oudeReservatieID)
 
             'Ff checken dat we geen bullshit hebben toegestuurd gekregen
             If (r.autoID = oudeAutoID) Then
@@ -470,6 +471,17 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
                     tempres.Einddatum = newres.reservatieEinddat
 
                     Dim resID As Integer = reservatiebll.GetSpecificReservatieByDatumAndAutoID(tempres).reservatieID
+
+                    'Nazicht van deze reservatie aanpassen.
+                    Dim nazicht As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(oudeReservatieID)
+
+                    'reservatieID en datums aanpassen.
+                    nazicht.reservatieID = resID
+                    nazicht.controleBegindat = DateAdd(DateInterval.Day, 1, tempres.Einddatum)
+                    nazicht.controleEinddat = DateAdd(DateInterval.Day, 1, tempres.Einddatum)
+
+                    'Nazicht updaten.
+                    controlebll.UpdateControle(nazicht)
 
                     Dim resData As String = String.Concat(resID, ",", nieuweAutoID)
 

@@ -17,15 +17,31 @@ Public Class BrandstofDAL
 
     End Function
 
-    Public Function GetBrandstofTypeByID(ByVal autoID As Integer) As Autos.tblBrandstofDataTable
+    Public Function GetBrandstofTypeByID(ByVal brandstofID As Integer) As Autos.tblBrandstofDataTable
 
-        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE autoID=@autoID")
-        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+        Dim myCommand As New SqlCommand("SELECT * FROM tblBrandstof WHERE brandstofID = @brandstofID")
+        myCommand.Parameters.Add("@brandstofID", SqlDbType.Int).Value = brandstofID
         myCommand.Connection = _myConnection
 
         Dim dt As New Autos.tblBrandstofDataTable
         Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblBrandstofDataTable)
 
+    End Function
+
+    Public Function GetBrandstofByBrandstofID(ByVal brandstofID As Integer) As Autos.tblBrandstofRow
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblBrandstof WHERE brandstofID = @brandstofID")
+        myCommand.Parameters.Add("@brandstofID", SqlDbType.Int).Value = brandstofID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Autos.tblBrandstofDataTable
+        dt = CType(_f.ReadDataTable(myCommand, dt), Autos.tblBrandstofDataTable)
+
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
     End Function
 
 End Class

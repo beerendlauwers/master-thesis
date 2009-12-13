@@ -20,7 +20,7 @@ Public Class ReservatieBLL
         End Try
     End Function
 
-    Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieDataTable
+    Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieRow
         Try
             Return _reservatiedal.GetReservatieByReservatieID(reservatieID)
         Catch ex As Exception
@@ -31,6 +31,14 @@ Public Class ReservatieBLL
     Public Function GetAllReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
         Try
             Return _reservatiedal.GetAllReservatiesByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetMeestRecenteReservatieByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieRow
+        Try
+            Return _reservatiedal.GetMeestRecenteReservatieByAutoID(autoID)
         Catch ex As Exception
             Throw ex
         End Try

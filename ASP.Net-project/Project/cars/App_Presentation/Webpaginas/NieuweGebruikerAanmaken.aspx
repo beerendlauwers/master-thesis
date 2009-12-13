@@ -43,7 +43,7 @@
                                                 <td>
                                                     <asp:TextBox ID="UserName" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="UserNameRequired" runat="server" ControlToValidate="UserName"
-                                                        ErrorMessage="User Name is required." ToolTip="User Name is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                                                        ErrorMessage="Gelieve een gebruikersnaam op te geven." ToolTip="Gelieve een gebruikersnaam op te geven." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -53,7 +53,7 @@
                                                 <td>
                                                     <asp:TextBox ID="Password" runat="server" TextMode="Password"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="PasswordRequired" runat="server" ControlToValidate="Password"
-                                                        ErrorMessage="Password is required." ToolTip="Password is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                                                        ErrorMessage="Gelieve een paswoord op te geven." ToolTip="Gelieve een paswoord op te geven." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -63,7 +63,7 @@
                                                 <td>
                                                     <asp:TextBox ID="ConfirmPassword" runat="server" TextMode="Password"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="ConfirmPasswordRequired" runat="server" ControlToValidate="ConfirmPassword"
-                                                        ErrorMessage="Confirm Password is required." ToolTip="Confirm Password is required."
+                                                        ErrorMessage="Gelieve een paswoord op te geven." ToolTip="Gelieve een paswoord op te geven."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
@@ -74,7 +74,7 @@
                                                 <td>
                                                     <asp:TextBox ID="Email" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="EmailRequired" runat="server" ControlToValidate="Email"
-                                                        ErrorMessage="E-mail is required." ToolTip="E-mail is required." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                                                        ErrorMessage="Gelieve een e-mail adres op te geven." ToolTip="Gelieve een e-mail adres op te geven." ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -84,7 +84,7 @@
                                                 <td>
                                                     <asp:TextBox ID="Question" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="QuestionRequired" runat="server" ControlToValidate="Question"
-                                                        ErrorMessage="Security question is required." ToolTip="Security question is required."
+                                                        ErrorMessage="Gelieve een veiligheidsvraag op te geven." ToolTip="Gelieve een veiligheidsvraag op te geven."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
@@ -95,7 +95,7 @@
                                                 <td>
                                                     <asp:TextBox ID="Answer" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired" runat="server" ControlToValidate="Answer"
-                                                        ErrorMessage="Security answer is required." ToolTip="Security answer is required."
+                                                        ErrorMessage="Gelieve een veiligheidsantwoord op te geven." ToolTip="Gelieve een veiligheidsantwoord op te geven."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
@@ -127,8 +127,10 @@
                                                 <td>
                                                     <asp:TextBox ID="txtGeboorte" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired2" runat="server" ControlToValidate="txtGeboorte"
-                                                        ErrorMessage="Geboortedatum moet ingevuld zijn." ToolTip="Security answer is required."
+                                                        ErrorMessage="Geboortedatum moet ingevuld zijn." ToolTip="Geboortedatum moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                                                    <cc1:MaskedEditExtender ID="mskGeboorte" runat="server" TargetControlID="txtGeboorte" Mask="99/99/9999" MaskType="Date" MessageValidatorTip="False" ClearMaskOnLostFocus="False" ClearTextOnInvalid="True" PromptCharacter=".">
+                                                    </cc1:MaskedEditExtender>    
                                                 </td>
                                             </tr>
                                             <tr>
@@ -138,7 +140,7 @@
                                                 <td>
                                                     <asp:TextBox ID="txtIdentiteitsNr" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired3" runat="server" ControlToValidate="txtIdentiteitsNr"
-                                                        ErrorMessage="Identiteitsnummer moet ingevuld zijn." ToolTip="Security answer is required."
+                                                        ErrorMessage="Identiteitsnummer moet ingevuld zijn." ToolTip="Identiteitsnummer moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
@@ -149,7 +151,7 @@
                                                 <td>
                                                     <asp:TextBox ID="txtRijbewijsNr" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired4" runat="server" ControlToValidate="txtRijbewijsNr"
-                                                        ErrorMessage="Rijbewijsnummer moet ingevuld zijn." ToolTip="Security answer is required."
+                                                        ErrorMessage="Rijbewijsnummer moet ingevuld zijn." ToolTip="Rijbewijsnummer moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
@@ -160,7 +162,7 @@
                                                 <td>
                                                     <asp:TextBox ID="txtTelefoon" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired5" runat="server" ControlToValidate="txtTelefoon"
-                                                        ErrorMessage="Telefoon moet ingevuld zijn." ToolTip="Security answer is required."
+                                                        ErrorMessage="Telefoon moet ingevuld zijn." ToolTip="Telefoon moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
@@ -184,6 +186,7 @@
                                                         </td>
                                                         <td>
                                                             <asp:TextBox ID="txtBedrijfnaam" runat="server" Visible="false"></asp:TextBox>
+                                                            <asp:Label ID="lblBedrijfsnaamFout" runat="server" Text="Gelieve een naam op te geven." Visible="false"></asp:Label>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -192,6 +195,7 @@
                                                         </td>
                                                         <td>
                                                             <asp:TextBox ID="txtLocatie" runat="server" Visible="false"></asp:TextBox>
+                                                            <asp:Label ID="lblLocatieFout" runat="server" Text="Gelieve een locatie op te geven." Visible="false"></asp:Label>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -200,8 +204,7 @@
                                                         </td>
                                                         <td>
                                                             <asp:TextBox ID="txtBTW" runat="server" Visible="false"></asp:TextBox>
-                                                            <cc1:MaskedEditExtender ID="MaskedEditExtender1" runat="server"  ClearMaskOnLostFocus="false" TargetControlID="txtBTW" Mask="999\-999\-999">
-        </cc1:MaskedEditExtender>
+                                                            <cc1:MaskedEditExtender ID="MaskedEditExtender1" runat="server"  ClearMaskOnLostFocus="false" TargetControlID="txtBTW" Mask="999\-999\-999" PromptCharacter="."></cc1:MaskedEditExtender>
                                                         </td>
                                                     </tr>
                                                     <tr>
