@@ -9,10 +9,10 @@ Partial Class App_Presentation_Webpaginas_Default2
 
         'Visibility van directions controls false
 
-        lblNaar.Visible = False
-        lblVan.Visible = False
-        tb_endPoint.Visible = False
-        tb_fromPoint.Visible = False
+        'lblNaar.Visible = False
+        'lblVan.Visible = False
+        'tb_endPoint.Visible = False
+        'tb_fromPoint.Visible = False
         'bt_Go.visible = False
 
 
@@ -109,11 +109,11 @@ Partial Class App_Presentation_Webpaginas_Default2
 
         If Not Context.Request.QueryString("fil") = "" Then
 
-            lblNaar.Visible = True
-            lblVan.Visible = True
-            tb_endPoint.Visible = True
-            tb_fromPoint.Visible = True
-            'bt_Go.Visible = True
+            'lblNaar.Visible = True
+            'lblVan.Visible = True
+            'tb_endPoint.Visible = True
+            'tb_fromPoint.Visible = True
+            ''bt_Go.Visible = True
 
 
             If Not IsPostBack Then

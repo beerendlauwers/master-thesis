@@ -40,9 +40,10 @@
     
   
         
-        <asp:Label ID="lblVan" runat="server" Text="Van: "></asp:Label><asp:TextBox ID="tb_fromPoint" runat="server"></asp:TextBox>
-        &nbsp;&nbsp;&nbsp;<asp:Label ID="lblNaar" runat="server" Text="Naar: "></asp:Label><asp:TextBox ID="tb_endPoint" runat="server"></asp:TextBox>
+        <asp:Label ID="lblVan" runat="server" Text="Van: "></asp:Label><asp:TextBox ID="tb_fromPoint" runat="server" Width="225px"></asp:TextBox>
+        &nbsp;&nbsp;&nbsp;<asp:Label ID="lblNaar" runat="server" Text="Naar: "></asp:Label><asp:TextBox ID="tb_endPoint" runat="server" Width="225px"></asp:TextBox>
         &nbsp;&nbsp;&nbsp;<input type="button" id="bt_Go" value="Bereken route" />
+        
         <br /><br />
         <cc1:GMap ID="GMap1" runat="server" enableServerEvents="true"/>
         <div id="div1"></div>   

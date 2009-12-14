@@ -91,6 +91,16 @@ Partial Class App_Presentation_MasterPage
         FiliaalCookie.Expires = DateTime.Now.AddDays(100)
         Response.Cookies.Add(FiliaalCookie) ' cookie bewaren
 
+        Dim BLLFiliaal As New FiliaalBLL
+        Dim DTFiliaal As New Autos.tblFiliaalDataTable
+        Dim DRFiliaal As Autos.tblFiliaalRow
+
+        DTFiliaal = BLLFiliaal.GetFiliaalByFiliaalID(ddoFiliaal.SelectedValue)
+        DRFiliaal = DTFiliaal.Rows(0)
+
+
+        Response.Redirect("Contact.aspx?fil=" + DRFiliaal.filiaalLocatie)
+
     End Sub
 
     Private Sub CheckCronJobs()
