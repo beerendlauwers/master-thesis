@@ -93,7 +93,8 @@
                                     <td align="right">
                                         <asp:Button ID="ChangePasswordPushButton" runat="server" 
                                             CommandName="ChangePassword" Text="Wijzig paswoord" 
-                                            ValidationGroup="ChangePassword1" />
+                                            ValidationGroup="ChangePassword1" 
+                                            onclick="ChangePasswordPushButton_Click" />
                                     </td>
                                     <td>
                                         <asp:Button ID="CancelPushButton" runat="server" CausesValidation="False" 
@@ -212,6 +213,8 @@
 </td>   
 <td>
     <asp:Button ID="btnWijzig" runat="server" Text="Wijzigingen opslaan" />
+    <asp:Image ID="imgResultaat" runat="server" />
+    <asp:Label ID="lblResultaat" runat="server"></asp:Label>
 </td> 
 </tr>
 <tr>

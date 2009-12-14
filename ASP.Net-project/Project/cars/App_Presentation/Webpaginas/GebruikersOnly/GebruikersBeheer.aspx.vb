@@ -60,8 +60,46 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
         dr.userBedrijfVestigingslocatie = txtVestigingslocatie.Text
         dr.userBTWnummer = txtBTW.Text
         dr.userID = gid
-        klantbll.UpdateUserProfiel(dr)
 
+        Try
+
+            klantbll.UpdateUserProfiel(dr)
+
+
+
+            lblResultaat.Visible = True
+            lblResultaat.Text = "De Gegegevens zijn succesvol aangepast"
+            imgResultaat.ImageUrl = "~\App_Presentation\Images\tick.gif"
+
+            'disablen en legen
+
+            txtNaam.Enabled = False
+            txtVoornaam.Enabled = False
+            txtGeboorte.Enabled = False
+            txtIdentiteitsNr.Enabled = False
+            txtRijbewijsNr.Enabled = False
+            txtTelefoon.Enabled = False
+            txtBedrijfnaam.Enabled = False
+            txtVestigingslocatie.Enabled = False
+            txtBTW.Enabled = False
+
+            'txtVoornaam.Text = String.Empty
+            'txtNaam.Text = String.Empty
+            'txtGeboorte.Text = String.Empty
+            'txtIdentiteitsNr.Text = String.Empty
+            'txtRijbewijsNr.Text = String.Empty
+            'txtTelefoon.Text = String.Empty
+            'txtBedrijfnaam.Text = String.Empty
+            'txtVestigingslocatie.Text = String.Empty
+            'txtBTW.Text = String.Empty
+
+        Catch
+
+            lblResultaat.Visible = True
+            imgResultaat.ImageUrl = "~\App_Presentation\Images\remove.png"
+            lblResultaat.Text = "Er heeft zich een fout voorgedaan, gelieve opnieuw te proberen"
+
+        End Try
     End Sub
 
 
@@ -78,7 +116,12 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
         txtTelefoon.Enabled = True
         txtBedrijfnaam.Enabled = True
         txtVestigingslocatie.Enabled = True
-        txtBTW.Enabled=True
+        txtBTW.Enabled = True
+
+        imgResultaat.ImageUrl = ""
+        lblResultaat.Text = ""
+        lblResultaat.Visible = False
+
     End Sub
 
 End Class
