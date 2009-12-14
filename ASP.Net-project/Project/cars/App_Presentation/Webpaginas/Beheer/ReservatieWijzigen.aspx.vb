@@ -268,105 +268,112 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
     End Sub
 
     Protected Sub btnBevestigen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnBevestigen.Click
-        Dim autobll As New AutoBLL
-        Dim reservatiebll As New ReservatieBLL
-        Dim merkbll As New MerkBLL
+        If txtBegindatum.Text < Date.Today Then
+            lblFeedback.Text = "Begindatum moet groter zijn dan de huidige datum."
+        ElseIf txtEinddatum.Text < Date.Today Then
+            lblFeedback.Text = "Einddatum moet groter zijn dan de huidige datum."
+        ElseIf txtEinddatum.Text < txtBegindatum.Text Then
+            lblFeedback.Text = "De begindatum moet voor de einddatum zijn."
+        Else
+            Dim autobll As New AutoBLL
+            Dim reservatiebll As New ReservatieBLL
+            Dim merkbll As New MerkBLL
 
 
 
-        Dim autoID, resID, categorieID, modelID As Integer
-        resID = ViewState("resID")
-        autoID = ViewState("autoID")
-        categorieID = ViewState("categorieID")
-        modelID = ViewState("modelID")
+            Dim autoID, resID, categorieID, modelID As Integer
+            resID = ViewState("resID")
+            autoID = ViewState("autoID")
+            categorieID = ViewState("categorieID")
+            modelID = ViewState("modelID")
 
-        Dim merkID = merkbll.GetMerkByModelID(modelID).Rows(0).Item("merkID")
+            Dim merkID = merkbll.GetMerkByModelID(modelID).Rows(0).Item("merkID")
 
-        'Deze reservatie ophalen
-        Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
+            'Deze reservatie ophalen
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
 
-        Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+            Dim bezoekendeklant As New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
 
-        'Even valideren of de querystring niet ongeldig is
-        If (Not r.autoID = autoID Or _
-            Not r.userID.ToString = bezoekendeklant.ToString) Then
-            Me.updReservatieWijzigen.Visible = False
-            Me.lblOngeldigID.Text = "Ongeldig ID."
-            Return
-        End If
-
-        Dim filterOpties(50) As String
-        filterOpties(0) = categorieID
-        filterOpties(1) = Me.ddlKleur.SelectedValue
-        filterOpties(2) = merkID
-
-
-
-        Dim opties(20) As String
-
-        'Extra opties ophalen
-        For i As Integer = 20 To 39
-            Dim controlnaam As String = String.Concat("ctl00$plcMain$PaneOpties_content$chkOptie", i - 20)
-            If (TryCast(Me.FindControl(controlnaam), CheckBox) IsNot Nothing) Then
-
-                Dim control As CheckBox = CType(Me.FindControl(controlnaam), CheckBox)
-                If control.Checked Then
-                    filterOpties(i) = control.Text
-                    opties(i - 20) = control.Text
-                End If
-
-
+            'Even valideren of de querystring niet ongeldig is
+            If (Not r.autoID = autoID Or _
+                Not r.userID.ToString = bezoekendeklant.ToString) Then
+                Me.updReservatieWijzigen.Visible = False
+                Me.lblOngeldigID.Text = "Ongeldig ID."
+                Return
             End If
-        Next
 
-        Dim begindat As Date = Date.Parse(Me.txtBegindatum.Text)
-        Dim einddat As Date = Date.Parse(Me.txtEinddatum.Text)
+            Dim filterOpties(50) As String
+            filterOpties(0) = categorieID
+            filterOpties(1) = Me.ddlKleur.SelectedValue
+            filterOpties(2) = merkID
 
 
-        'Haal de gegevens van alle beschikbare auto's op volgens de filteropties
-        Dim beschikbareautosdt As Autos.tblAutoDataTable = autobll.GetBeschikbareAutosBy(begindat, einddat, filterOpties)
 
-        'Kijk na of de gewenste datum in onze huidige datum ligt. Zoja, dan is de huidige auto ook een geldige optie.
-        Dim ligtTussenHuidigeReservatie = False
-        If begindat >= r.reservatieBegindat Then
-            If begindat <= r.reservatieEinddat Then
-                If einddat >= r.reservatieBegindat Then
-                    If einddat <= r.reservatieEinddat Then
-                        ligtTussenHuidigeReservatie = True
+            Dim opties(20) As String
+
+            'Extra opties ophalen
+            For i As Integer = 20 To 39
+                Dim controlnaam As String = String.Concat("ctl00$plcMain$PaneOpties_content$chkOptie", i - 20)
+                If (TryCast(Me.FindControl(controlnaam), CheckBox) IsNot Nothing) Then
+
+                    Dim control As CheckBox = CType(Me.FindControl(controlnaam), CheckBox)
+                    If control.Checked Then
+                        filterOpties(i) = control.Text
+                        opties(i - 20) = control.Text
+                    End If
+
+
+                End If
+            Next
+
+            Dim begindat As Date = Date.Parse(Me.txtBegindatum.Text)
+            Dim einddat As Date = Date.Parse(Me.txtEinddatum.Text)
+
+
+            'Haal de gegevens van alle beschikbare auto's op volgens de filteropties
+            Dim beschikbareautosdt As Autos.tblAutoDataTable = autobll.GetBeschikbareAutosBy(begindat, einddat, filterOpties)
+
+            'Kijk na of de gewenste datum in onze huidige datum ligt. Zoja, dan is de huidige auto ook een geldige optie.
+            Dim ligtTussenHuidigeReservatie = False
+            If begindat >= r.reservatieBegindat Then
+                If begindat <= r.reservatieEinddat Then
+                    If einddat >= r.reservatieBegindat Then
+                        If einddat <= r.reservatieEinddat Then
+                            ligtTussenHuidigeReservatie = True
+                        End If
                     End If
                 End If
             End If
+
+            If (ligtTussenHuidigeReservatie) Then
+                'Haal deze auto op en voeg hem toe
+                Dim dezeauto As Autos.tblAutoRow = autobll.GetAutoByAutoID(autoID).Rows(0)
+                beschikbareautosdt.ImportRow(dezeauto)
+            End If
+
+            If (beschikbareautosdt.Rows.Count = 0) Then
+                Me.lblOngeldigID.Text = "Er konden geen beschikbare auto's gevonden worden die aan uw voorwaarden voldeden."
+                Me.lblOngeldigID.Visible = True
+                Me.pnlAutoAanbod.Visible = False
+                Return
+            End If
+
+            'Geef auto's weer in een repeater
+            Try
+                Me.lblResultaat.Text = String.Concat("Er werd(en) ", beschikbareautosdt.Rows.Count, " beschikbare auto's gevonden die aan uw voorwaarden voldeden. Gelieve een auto te selecteren.")
+                Me.lblGewenstePeriode.Text = String.Concat("Geselecteerde periode: ", Me.txtBegindatum.Text, " tot ", Me.txtEinddatum.Text)
+                Me.RepBeschikbareAutos.DataSource = MaakOverzichtsDataTable(beschikbareautosdt, opties)
+                Me.RepBeschikbareAutos.DataBind()
+                Me.pnlAutoAanbod.Visible = True
+                Me.lblOngeldigID.Visible = False
+            Catch ex As Exception
+                Throw ex
+            End Try
+
+
+            'Insert de nieuwe reservatie
+            'Als dat lukt, verwijder de oude reservatie
         End If
-
-        If (ligtTussenHuidigeReservatie) Then
-            'Haal deze auto op en voeg hem toe
-            Dim dezeauto As Autos.tblAutoRow = autobll.GetAutoByAutoID(autoID).Rows(0)
-            beschikbareautosdt.ImportRow(dezeauto)
-        End If
-
-        If (beschikbareautosdt.Rows.Count = 0) Then
-            Me.lblOngeldigID.Text = "Er konden geen beschikbare auto's gevonden worden die aan uw voorwaarden voldeden."
-            Me.lblOngeldigID.Visible = True
-            Me.pnlAutoAanbod.Visible = False
-            Return
-        End If
-
-        'Geef auto's weer in een repeater
-        Try
-            Me.lblResultaat.Text = String.Concat("Er werd(en) ", beschikbareautosdt.Rows.Count, " beschikbare auto's gevonden die aan uw voorwaarden voldeden. Gelieve een auto te selecteren.")
-            Me.lblGewenstePeriode.Text = String.Concat("Geselecteerde periode: ", Me.txtBegindatum.Text, " tot ", Me.txtEinddatum.Text)
-            Me.RepBeschikbareAutos.DataSource = MaakOverzichtsDataTable(beschikbareautosdt, opties)
-            Me.RepBeschikbareAutos.DataBind()
-            Me.pnlAutoAanbod.Visible = True
-            Me.lblOngeldigID.Visible = False
-        Catch ex As Exception
-            Throw ex
-        End Try
-
-
-        'Insert de nieuwe reservatie
-        'Als dat lukt, verwijder de oude reservatie
-
 
     End Sub
 
@@ -485,5 +492,11 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             Throw ex
         End Try
 
+    End Sub
+
+    Protected Sub txtBegindatum_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtBegindatum.TextChanged
+        If txtBegindatum.Text < Date.Today Then
+            lblFeedback.Text = "De begindatum mag niet in het verleden liggen."
+        End If
     End Sub
 End Class

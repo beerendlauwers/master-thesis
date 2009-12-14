@@ -60,6 +60,8 @@
                                                     <asp:Image ImageAlign="AbsMiddle" ID="imgEindDatumKalender" runat="server" ImageUrl="~/App_Presentation/Images/kalender.png" />
                                                     <asp:RequiredFieldValidator ID="valEinddatum" runat="server" ControlToValidate="txtBegindatum"
                                                         ErrorMessage="Dit veld is verplicht."></asp:RequiredFieldValidator>
+                                                    <asp:Label ID="lblFeedback" runat="server" Text=""></asp:Label>
+                                                
                                                 </td>
                                             </tr>
                                         </table>
