@@ -1,6 +1,6 @@
 /* begin Page */
 
-/* Generated with Artisteer version 2.2.0.17376, file checksum is F3E49F6D. */
+
 
 var artEventHelper = {
 	'bind': function(obj, evt, fn) {
@@ -273,6 +273,13 @@ function artButtonsSetupJsHover(className) {
 	}
 }
 artLoadEvent.add(function() { artButtonsSetupJsHover("art-button"); });
+
+
+function CancelClick()
+    {
+        
+    }
+
 /* end Button */
 
 
