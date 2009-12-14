@@ -36,13 +36,18 @@ Public Class ControleBLL
 
     Public Function InsertNazicht(ByRef c As Onderhoud.tblControleRow) As Boolean
         Try
-            If (_controleAdapter.Insert(c.medewerkerID, c.autoID, c.reservatieID, c.controleBegindat, c.controleEinddat, c.controleIsNazicht, c.controleKilometerstand, c.controleBrandstofkost)) Then
-                Dim omschrijving As String = String.Concat("Nazicht voor de reservatie die eindigt op ", DateAdd(DateInterval.Day, -1, c.controleBegindat))
-                If (_onderhoudAdapter.Insert(c.autoID, c.controleBegindat, c.controleEinddat, omschrijving)) Then
+            Dim controleID As Integer = InsertNieuweControle(c)
+
+            If (controleID > 0) Then
+
+                Dim omschrijving As String = String.Concat("Nazicht voor de reservatie die eindigt op ", Format(DateAdd(DateInterval.Day, -1, c.controleBegindat), "dd/MM/yyyy"))
+
+                If (_onderhoudAdapter.Insert(c.autoID, controleID, c.controleBegindat, c.controleEinddat, omschrijving)) Then
                     Return True
                 Else
                     Return False
                 End If
+
             Else
                 Return False
             End If
@@ -68,12 +73,13 @@ Public Class ControleBLL
             If (_controleAdapter.Update(c)) Then
 
                 'Nu de rij in NodigOnderhoud updaten
-                Dim omschrijving As String = String.Concat("Nazicht voor de reservatie die eindigt op ", DateAdd(DateInterval.Day, -1, c.controleBegindat))
+                Dim omschrijving As String = String.Concat("Nazicht voor de reservatie die eindigt op ", Format(DateAdd(DateInterval.Day, -1, c.controleBegindat), "dd/MM/yyyy"))
                 Dim o As Onderhoud.tblNodigOnderhoudRow = _onderhoudbll.GetNazichtByDatumAndAutoID(c.controleBegindat, c.autoID)
                 o.nodigOnderhoudOmschrijving = omschrijving
                 o.nodigOnderhoudBegindat = c.controleBegindat
                 o.nodigOnderhoudEinddat = c.controleEinddat
                 o.autoID = c.autoID
+                o.controleID = c.controleID
 
                 If (_onderhoudAdapter.Update(o)) Then
                     Return True

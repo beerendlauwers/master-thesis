@@ -4,6 +4,14 @@ Public Class OnderhoudBLL
     Private _onderhoudAdapter As New OnderhoudTableAdapters.tblNodigOnderhoudTableAdapter
     Private _onderhouddal As New OnderhoudDAL
 
+    Public Function GetAllNodigOnderhoudVoorVandaag() As Onderhoud.tblNodigOnderhoudDataTable
+        Try
+            Return _onderhouddal.GetAllNodigOnderhoudVoorVandaag()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllNodigOnderhoudByAutoID(ByVal autoID As Integer) As Onderhoud.tblNodigOnderhoudDataTable
         Try
             Return _onderhouddal.GetAllNodigOnderhoudByAutoID(autoID)
@@ -22,7 +30,7 @@ Public Class OnderhoudBLL
 
     Public Function InsertNodigOnderhoud(ByRef o As Onderhoud.tblNodigOnderhoudRow) As Boolean
         Try
-            If (_onderhoudAdapter.Insert(o.autoID, o.nodigOnderhoudBegindat, o.nodigOnderhoudEinddat, o.nodigOnderhoudOmschrijving)) Then
+            If (_onderhoudAdapter.Insert(o.autoID, o.controleID, o.nodigOnderhoudBegindat, o.nodigOnderhoudEinddat, o.nodigOnderhoudOmschrijving)) Then
                 Return True
             Else
                 Return False

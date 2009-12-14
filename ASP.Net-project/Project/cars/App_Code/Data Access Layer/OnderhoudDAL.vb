@@ -22,6 +22,17 @@ Public Class OnderhoudDAL
         End Try
     End Function
 
+    Public Function GetAllNodigOnderhoudVoorVandaag() As Onderhoud.tblNodigOnderhoudDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblNodigOnderhoud WHERE @now BETWEEN nodigOnderhoudBegindat AND nodigOnderhoudEinddat")
+        myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Format(Now, "dd/MM/yyyy")
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Onderhoud.tblNodigOnderhoudDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Onderhoud.tblNodigOnderhoudDataTable)
+
+    End Function
+
     Public Function GetNazichtByDatumAndAutoID(ByVal datum As Date, ByVal autoID As Integer) As Onderhoud.tblNodigOnderhoudRow
         Try
             Dim myCommand As New SqlCommand("SELECT * FROM tblNodigOnderhoud WHERE autoID = @autoID AND nodigOnderhoudBegindat = @datum")
