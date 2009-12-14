@@ -97,19 +97,16 @@ Public Class AutoBLL
     End Function
 
     Public Function UpdateAuto(ByRef autorow As Autos.tblAutoRow) As Boolean
-        If _reservatiebll.GetAllReservatiesByAutoID(autorow.autoID).Rows.Count = 0 Then
-            Try
-                If (_adapterAuto.Update(autorow)) Then
-                    Return True
-                Else
-                    Return False
-                End If
-            Catch ex As Exception
-                Throw ex
-            End Try
-        Else
-            Return False
-        End If
+
+        Try
+            If (_adapterAuto.Update(autorow)) Then
+                Return True
+            Else
+                Return False
+            End If
+        Catch ex As Exception
+            Throw ex
+        End Try
 
     End Function
 
