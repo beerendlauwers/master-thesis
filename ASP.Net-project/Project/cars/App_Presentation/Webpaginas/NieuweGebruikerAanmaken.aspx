@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweGebruikerAanmaken.aspx.vb"
-    Inherits="App_Presentation_Webpaginas_nieuwe_gebruiker" MasterPageFile="~/App_Presentation/MasterPage.master" %>
+    Inherits="App_Presentation_Webpaginas_nieuwe_gebruiker" MasterPageFile="~/App_Presentation/MasterPage.master" Title="Nieuwe Gebruiker Aanmaken" %>
 
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
@@ -7,6 +7,7 @@
 
 <%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+<h1>Nieuwe gebruiker Aanmaken</h1>
 
    <script type="text/javascript">
         
@@ -138,7 +139,7 @@
                                                     <asp:Label ID="lblIdentiteitsnr" runat="server" Text="Identiteitsnummer"></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:TextBox ID="txtIdentiteitsNr" runat="server"></asp:TextBox>
+                                                    <asp:TextBox ID="txtIdentiteitsNr" runat="server">XXXXXX-XXXXX</asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired3" runat="server" ControlToValidate="txtIdentiteitsNr"
                                                         ErrorMessage="Identiteitsnummer moet ingevuld zijn." ToolTip="Identiteitsnummer moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
@@ -149,7 +150,7 @@
                                                     <asp:Label ID="lblRijbewijsnr" runat="server" Text="Rijbewijsnummer"></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:TextBox ID="txtRijbewijsNr" runat="server"></asp:TextBox>
+                                                    <asp:TextBox ID="txtRijbewijsNr" runat="server">XXXXXX</asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired4" runat="server" ControlToValidate="txtRijbewijsNr"
                                                         ErrorMessage="Rijbewijsnummer moet ingevuld zijn." ToolTip="Rijbewijsnummer moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>

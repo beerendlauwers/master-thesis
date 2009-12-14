@@ -25,7 +25,7 @@ Partial Class App_Presentation_Webpaginas_Default2
 
             ' layout
             .Height = 700
-            .Width = 700
+            .Width = 737
 
             .GZoom = 8
             .addGMapUI(New GMapUI())

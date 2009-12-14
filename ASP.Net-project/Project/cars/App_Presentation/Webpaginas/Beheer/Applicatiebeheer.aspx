@@ -1,4 +1,4 @@
-﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="Applicatiebeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_Default2" MasterPageFile="~/App_Presentation/MasterPage.master" %>
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="Applicatiebeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_Default2" MasterPageFile="~/App_Presentation/MasterPage.master" Title="Applicatiebeheer" %>
 
 <%@ Register assembly="GMaps" namespace="Subgurim.Controles" tagprefix="cc1" %>
 
@@ -6,14 +6,9 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>Applicatiebeheer</title>
-</head>
 <body>
 
-<h2>Applicatiebeheer</h2>
+<h1>Applicatiebeheer</h1>
 <br />
     <table>
     <tr>
@@ -37,7 +32,7 @@
     
     
     <tr>
-        <th>Auto's beheren</th>
+        <th align="left">Auto's beheren</th>
         <th></th>      
     </tr>
     <tr>
@@ -56,7 +51,7 @@
     
     
     <tr>
-        <th>Filiaalbeheer</th>
+        <th align="left">Filiaalbeheer</th>
         <th></th>      
     </tr>
       <tr>

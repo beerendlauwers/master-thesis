@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false"
     CodeFile="AutoInchecken.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoInchecken"
-    Title="Untitled Page" %>
+    Title="Auto Inchecken" %>
     
     <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 

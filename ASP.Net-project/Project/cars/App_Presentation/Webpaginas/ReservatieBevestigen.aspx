@@ -1,8 +1,9 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false"
     CodeFile="ReservatieBevestigen.aspx.vb" Inherits="App_Presentation_Webpaginas_ReservatieBevestigen"
-    Title="Untitled Page" %>
+    Title="Reservatie Bevestigen" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+<h1>Reservatie bevestigen</h1>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" runat="Server">
     <asp:UpdatePanel ID="updReservatieBevestigen" runat="server" Visible="false">

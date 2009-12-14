@@ -1,10 +1,11 @@
 ﻿<%@ Page Language="VB" enableEventValidation="false" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false"
     CodeFile="ReservatieBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie"
-    Title="Untitled Page" %>
+    Title="Reservatiebeheer" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" runat="Server">
+<h1>Reservatiebeheer</h1>
     <asp:UpdatePanel ID="updReservatieBeheer" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
     <asp:Panel ID="pnlOverzicht" runat="server">

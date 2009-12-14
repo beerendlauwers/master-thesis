@@ -38,6 +38,9 @@ Public Class FiliaalBLL
 
     Public Function DeleteFiliaal(ByVal filiaalID As Integer) As Boolean
         Try
+            'Zorg dat de FiliaalBLL bij DeleteFiliaal opzoekt of er rijen in tblParkeerPlaats zijn. Indien ja, geeft ge een integer terug (-5 ofzo). 
+            'Op de presentatiepagina vangt ge die integer op en toont ge een error
+
             If (_filiaalAdapter.Delete(filiaalID)) Then
                 Return True
             Else

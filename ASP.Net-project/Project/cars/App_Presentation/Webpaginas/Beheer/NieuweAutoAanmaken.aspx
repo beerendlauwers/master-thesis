@@ -1,8 +1,9 @@
-﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweAutoAanmaken.aspx.vb" EnableEventValidation="false" Inherits="App_Presentation_NieuweAutoAanmaken" MasterPageFile="~/App_Presentation/MasterPage.master" %>
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweAutoAanmaken.aspx.vb" EnableEventValidation="false" Inherits="App_Presentation_NieuweAutoAanmaken" MasterPageFile="~/App_Presentation/MasterPage.master" Title="Nieuwe Auto Aanmaken"%>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+<h1>Nieuwe auto aanmaken</h1>
         <asp:FormView ID="frvNieuweAuto" runat="server" DataKeyNames="autoID" 
             DataSourceID="odsAuto" DefaultMode="Insert" Width="670px">
             <EditItemTemplate>

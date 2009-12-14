@@ -1,7 +1,10 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AutoBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoBeheer" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AutoBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoBeheer" title="Autobeheer" %>
 
 
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
+
+
+<h1>Autobeheer</h1>
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
     

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweReservatieAanmaken.aspx.vb" Inherits="App_Presentation_NieuweReservatieAanmaken" EnableEventValidation="false" MasterPageFile="~/App_Presentation/MasterPage.master" %>
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="NieuweReservatieAanmaken.aspx.vb" Inherits="App_Presentation_NieuweReservatieAanmaken" EnableEventValidation="false" MasterPageFile="~/App_Presentation/MasterPage.master" Title="Nieuwe Reservatie Aanmaken" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
@@ -7,6 +7,7 @@
 
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+<h1>Nieuwe reservatie aanmaken</h1>
     <div>
     <asp:UpdatePanel ID="updOverview" runat="server" UpdateMode="Conditional">
         <ContentTemplate>

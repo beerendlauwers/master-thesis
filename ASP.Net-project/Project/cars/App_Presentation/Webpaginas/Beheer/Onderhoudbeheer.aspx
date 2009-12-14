@@ -1,4 +1,4 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="Onderhoudbeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_Onderhoudbeheer" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="Onderhoudbeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_Onderhoudbeheer" title="Onderhoudsbeheer" %>
 
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="GebruikersBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersBeheer" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="GebruikersBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersBeheer" title="Gebruikersbeheer" %>
 
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
@@ -9,6 +9,7 @@
 
 
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
+<h1>Gebruikersbeheer</h1>
         <asp:UpdatePanel ID="updGegevens" runat="server" updateMode="Always">
         <ContentTemplate>
         <table>

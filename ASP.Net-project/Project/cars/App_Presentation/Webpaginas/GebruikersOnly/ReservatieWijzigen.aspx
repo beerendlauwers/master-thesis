@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="VB" EnableEventValidation="false" MasterPageFile="~/App_Presentation/MasterPage.master"
     AutoEventWireup="false" CodeFile="ReservatieWijzigen.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie"
-    Title="Untitled Page" %>
+    Title="Reservatie Wijzigen" %>
 
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
@@ -9,6 +9,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" runat="Server">
+<h1>Reservatie wijzigen</h1>
     <asp:UpdatePanel ID="updReservatieWijzigen" runat="server" UpdateMode="Always">
         <ContentTemplate>
             <asp:Image ID="imgReservatieAangepast" runat="server" ImageUrl="~/App_Presentation/Images/tick.gif" Visible="false" /><asp:Label ID="lblReservatieAangepast" runat="server" Visible="false" Text= "Uw reservatie werd aangepast."></asp:Label>

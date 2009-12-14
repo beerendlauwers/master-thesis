@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AutoSchema.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoSchema"  title="Reservatieschema"%>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
-
+<h1>Reservatieschema</h1>
     <asp:UpdatePanel ID="updKalenderOverzicht" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
 

@@ -1,6 +1,7 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="Default.aspx.vb" Inherits="App_Presentation_Webpaginas_Default" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="Default.aspx.vb" Inherits="App_Presentation_Webpaginas_Default" title="Homepage" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
+<h1>Home</h1>
     <div class="art-BlockContent">
 <div class="art-PostContent">
 <h3>CARS verhuurt personenwagens van alle klassen,

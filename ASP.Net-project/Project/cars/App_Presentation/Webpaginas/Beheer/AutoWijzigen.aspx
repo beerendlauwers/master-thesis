@@ -1,9 +1,9 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AutoWijzigen.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoWijzigen" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AutoWijzigen.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoWijzigen" title="Auto wijzigen" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
-
+<h1>Auto wijzigen</h1>
 <table>
 <tr><th colspan="2" align="center">
 Algemeen Beheer

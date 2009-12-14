@@ -1,15 +1,16 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="FiliaalBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_FiliaalBeheer"
-    MasterPageFile="~/App_Presentation/MasterPage.master" %>
+    MasterPageFile="~/App_Presentation/MasterPage.master" Title="Filiaalbeheer" %>
 
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+<h1>Filiaalbeheer</h1>
     <cc1:Accordion ID="FiliaalAccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
         <Panes>
             <cc1:AccordionPane ID="PaneToevoegen" runat="server">
-                <Header>Filiaal Toevoegen</Header>
+                 <Header><asp:Image ID="imgToevoegen" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/add.png" />Filiaal Toevoegen</Header>
                 <Content>
                 <asp:UpdatePanel runat="server" ID="updToevoegen" UpdateMode="Always">
                 <ContentTemplate>
@@ -52,7 +53,7 @@
                 </Content>
             </cc1:AccordionPane>
             <cc1:AccordionPane ID="PaneWijzigen" runat="server">
-                <Header>Filiaal Wijzigen</Header>
+                <Header><asp:Image ID="imgWijzigen" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/wrench.png" /> Filiaal Wijzigen</Header>
                 <Content>
                     <asp:UpdatePanel runat="server" ID="updWijzigen" UpdateMode="Always">
                         <ContentTemplate>
@@ -105,7 +106,7 @@
                 </Content>
             </cc1:AccordionPane>
             <cc1:AccordionPane ID="PaneVerwijderen" runat="server">
-                <Header>Filiaal Verwijderen</Header>
+                <Header><asp:Image ID="Image1" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/remove.png" />Filiaal Verwijderen</Header>
                     <content>
                 <asp:UpdatePanel runat="server" ID="updVerwijderen" UpdateMode="Always">
                     <ContentTemplate>

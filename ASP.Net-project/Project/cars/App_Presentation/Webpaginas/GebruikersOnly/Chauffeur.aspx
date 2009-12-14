@@ -1,11 +1,13 @@
 ﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="Chauffeur.aspx.vb" Inherits="App_Presentation_Chauffeur"
-    MasterPageFile="~/App_Presentation/MasterPage.master" %>
+    MasterPageFile="~/App_Presentation/MasterPage.master"
+    title="Chauffeur Wijzigen" %>
 
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+    <h1>Chauffeur wijzigen</h1>
     <div>
         <cc1:Accordion ID="ChaffeurAccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
         <Panes>

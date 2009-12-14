@@ -1,4 +1,4 @@
-<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="NieuwOnderhoud.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_NieuwOnderhoud" title="Untitled Page" %>
+<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="NieuwOnderhoud.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_NieuwOnderhoud" title="Nieuw onderhoud" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
@@ -58,7 +58,7 @@ Onderhoudsdatum:&nbsp;<asp:TextBox ID="txtOnderhoudsdatum" runat="server"></asp:
 <cc1:Accordion ID="Beschadigingsaccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
         <Panes>
         <cc1:AccordionPane ID="PaneBeschadigingToevoegen" runat="server">
-                <Header>Beschadiging Toevoegen</Header>
+                <Header><asp:Image ID="imgToevoegen" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/add.png" /> Beschadiging Toevoegen</Header>
                     <content>
                 <asp:UpdatePanel runat="server" ID="updBeschadigingToevoegen" UpdateMode="Always">
                     <ContentTemplate>
@@ -129,7 +129,7 @@ Onderhoudsdatum:&nbsp;<asp:TextBox ID="txtOnderhoudsdatum" runat="server"></asp:
                 </Content>
             </cc1:AccordionPane>
         <cc1:AccordionPane ID="PaneBeschadigingWijzigen" runat="server">
-                <Header>Beschadiging Wijzigen</Header>
+                <Header><asp:Image ID="imgWijzigen" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/wrench.png" />Beschadiging Wijzigen</Header>
                 <Content>
                     <asp:UpdatePanel runat="server" ID="updBeschadigingWijzigen" UpdateMode="Always">
                         <ContentTemplate>
@@ -200,7 +200,7 @@ Onderhoudsdatum:&nbsp;<asp:TextBox ID="txtOnderhoudsdatum" runat="server"></asp:
                 </Content>
             </cc1:AccordionPane>
         <cc1:AccordionPane ID="PaneBeschadigingVerwijderen" runat="server">
-                <Header>Beschadiging Verwijderen</Header>
+                <Header><asp:Image ID="Image1" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/remove.png" />Beschadiging Verwijderen</Header>
                 <Content>
                     <asp:UpdatePanel ID="updBeschadigingVerwijderen" runat="server" UpdateMode="Always">
                     <ContentTemplate>

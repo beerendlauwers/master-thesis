@@ -1,9 +1,9 @@
 ﻿<%@ Page Language="VB" Debug="true" AutoEventWireup="false" CodeFile="ParkingBeheer.aspx.vb"
-    Inherits="App_Presentation_Webpaginas_FiliaalBeheer" MasterPageFile="~/App_Presentation/MasterPage.master" %>
+    Inherits="App_Presentation_Webpaginas_FiliaalBeheer" MasterPageFile="~/App_Presentation/MasterPage.master" title="Parkingbeheer"%>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
-
+<h1>Parkingbeheer</h1>
     <script type="text/javascript">
         
       function VeranderKleur()
