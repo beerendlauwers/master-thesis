@@ -61,10 +61,11 @@ Public Class KlantDAL
         myCommand.Connection = _myConnection
         Try
             _myConnection.Open()
-            myCommand.ExecuteNonQuery()
+            Return myCommand.ExecuteNonQuery()
 
         Catch ex As Exception
             Throw ex
+            Return 0
         Finally
             _myConnection.Close()
         End Try

@@ -16,7 +16,7 @@ Public Class AutoDAL
     End Function
 
     Public Function GetAutoByParkeerplaatsID(ByVal parkeerplaatsID As Integer) As Autos.tblAutoDataTable
-        Dim myCommand As New SqlCommand("SELECT * FROM tblAuto WHERE parkeerPlaatsID = @parkeerplaatsID")
+        Dim myCommand As New SqlCommand("SELECT * FROM tblAuto WHERE parkeerPlaatsID = @parkeerplaatsID AND statusID IN(1,2,5)")
         myCommand.Parameters.Add("@parkeerplaatsID", SqlDbType.Int).Value = parkeerplaatsID
         myCommand.Connection = _myConnection
 
@@ -47,14 +47,20 @@ Public Class AutoDAL
 
     End Function
 
-    Public Function GetAutosByKenteken(ByVal autoKenteken As String) As Autos.tblAutoDataTable
+    Public Function GetAutoByKenteken(ByVal autoKenteken As String) As Autos.tblAutoRow
 
         Dim myCommand As New SqlCommand("SELECT * FROM tblAuto WHERE autoKenteken = @autoKenteken")
         myCommand.Parameters.Add("@autoKenteken", SqlDbType.NChar).Value = autoKenteken
         myCommand.Connection = _myConnection
 
         Dim dt As New Autos.tblAutoDataTable
-        Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutoDataTable)
+        dt = CType(_f.ReadDataTable(myCommand, dt), Autos.tblAutoDataTable)
+
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
 
     End Function
 

@@ -9,21 +9,21 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Dim kenteken As String = Request.QueryString("autoKenteken")
-        Dim dt As New Data.DataTable
+        Dim dr As Autos.tblAutoRow
         Dim dtKleur As New Data.DataTable
         Dim dtAutoOptie As New Data.DataTable
         Dim dtOptie As New Autos.tblOptieDataTable
         Dim dtOptieByID As New Autos.tblOptieDataTable
 
 
-        dt = bllauto.GetAutosByKenteken(kenteken)
-        dtAutoOptie = autoOptiebll.GetAutoOptieByAutoID(dt.Rows(0)("autoID"))
+        dr = bllauto.GetAutoByKenteken(kenteken)
+        dtAutoOptie = autoOptiebll.GetAutoOptieByAutoID(dr.autoID)
         dtKleur = bllauto.getdistinctKleur
-        dtOptie = bllOptie.GetAllOptiesByAutoID(dt.Rows(0)("autoID"))
+        dtOptie = bllOptie.GetAllOptiesByAutoID(dr.autoID)
 
 
-        txtTarief.Text = dt.Rows(0)("autoDagtarief")
-        txtOlie.Text = dt.Rows(0)("autoKMTotOlieVerversing")
+        txtTarief.Text = dr.autoDagTarief
+        txtOlie.Text = dr.autoKMTotOlieVerversing
 
         If Not IsPostBack Then
             For i As Integer = 0 To dtAutoOptie.Rows.Count - 1
@@ -35,9 +35,9 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
             For i As Integer = 0 To dtKleur.Rows.Count - 1
                 ddlKleur.Items.Add(dtKleur.Rows(i)("autoKleur"))
             Next
-            ddlKleur.SelectedValue = dt.Rows(0)("autoKleur")
-            ddlFiliaal.SelectedValue = dt.Rows(0)("filiaalID")
-            ddlStatus.SelectedValue = dt.Rows(0)("statusID")
+            ddlKleur.SelectedValue = dr.autoKleur
+            ddlFiliaal.SelectedValue = dr.filiaalID
+            ddlStatus.SelectedValue = dr.statusID
         End If
 
         'If (IsPostBack) Then
@@ -88,9 +88,9 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
 
         Else
             Dim kenteken As String = Request.QueryString("autoKenteken")
-            Dim dt As New Data.DataTable
-            dt = bllauto.GetAutosByKenteken(kenteken)
-            Dim autoID As Integer = dt.Rows(0)("autoID")
+            Dim dr As Autos.tblAutoRow
+            dr = bllauto.GetAutoByKenteken(kenteken)
+            Dim autoID As Integer = dr.autoID
             Dim optieID As Integer = lstOpties.SelectedValue
             For i As Integer = 0 To lstOptiesAdd.Items.Count - 1
                 Dim index As Integer = lstOpties.SelectedIndex
@@ -139,9 +139,9 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
         Dim dt2 As New Autos.tblAutoOptieDataTable
         Dim r As Autos.tblAutoOptieRow = dt2.NewRow
         Dim kenteken As String = Request.QueryString("autoKenteken")
-        Dim dt As New Data.DataTable
-        dt = bllauto.GetAutosByKenteken(kenteken)
-        Dim autoID As Integer = dt.Rows(0)("autoID")
+        Dim dr As Autos.tblAutoRow
+        dr = bllauto.GetAutoByKenteken(kenteken)
+        Dim autoID As Integer = dr.autoID
         r.autoID = autoID
 
         For i As Integer = 0 To lstOptiesAdd.Items.Count - 1
@@ -157,9 +157,9 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
         Dim dt As New Autos.tblAutoDataTable
         Dim dr As Autos.tblAutoRow = dt.NewRow
         Dim kenteken As String = Request.QueryString("autoKenteken")
-        Dim dtid As New Data.DataTable
-        dtid = bllauto.GetAutosByKenteken(kenteken)
-        Dim autoID As Integer = dtid.Rows(0)("autoID")
+        Dim drid As Autos.tblAutoRow
+        drid = bllauto.GetAutoByKenteken(kenteken)
+        Dim autoID As Integer = drid.autoID
         dr.autoID = autoID
         dr.autoDagTarief = txtTarief.Text
         dr.autoKleur = ddlKleur.SelectedValue
@@ -379,14 +379,14 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
 
     Protected Sub btnVerwijderen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVerwijderen.Click
         Dim kenteken As String = Request.QueryString("autoKenteken")
-        Dim dt As New Data.DataTable
-        dt = bllauto.GetAutosByKenteken(kenteken)
-        Dim autoID As Integer = dt.Rows(0)("autoID")
+        Dim dr As Autos.tblAutoRow
+        dr = bllauto.GetAutoByKenteken(kenteken)
+        Dim autoID As Integer = dr.autoID
 
         If bllauto.DeleteAuto(autoID) = True Then
             lblVerwijder.Text = "Auto is verwijderd. (Daar gaat u spijt van krijgen)."
         Else
-            lblVerwijder.Text = "Auto kan niet verwijderd worden indien er nog reservaties voor lopen"
+            lblVerwijder.Text = "Auto kan niet verwijderd worden indien er nog reservaties voor lopen."
         End If
 
     End Sub

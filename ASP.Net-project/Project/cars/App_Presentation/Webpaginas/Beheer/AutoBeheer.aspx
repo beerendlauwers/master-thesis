@@ -70,6 +70,12 @@
 
             <asp:TemplateField Headertext="">
             <ItemTemplate >
+            <asp:HyperLink ID="HyperLink1" runat="server"  NavigateUrl='<%# DataBinder.Eval(Container.DataItem,"autoID","AutoSchema.aspx?autoID={0}") %>' Tooltip="Toon Kalenderoverzicht"><asp:Image ID="Image1" runat="server" ImageUrl="~/App_Presentation/images/kalender.png" /></asp:HyperLink>
+            </ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField Headertext="">
+            <ItemTemplate >
             <asp:HyperLink ID="HyperLink1" runat="server"  NavigateUrl='<%# DataBinder.Eval(Container.DataItem,"autoKenteken","AutoWijzigen.aspx?autoKenteken={0}") %>' Tooltip="details"><asp:Image ID="Image1" runat="server" ImageUrl="~/App_Presentation/images/wrench.png" /></asp:HyperLink>
             </ItemTemplate>
             </asp:TemplateField>
@@ -94,8 +100,8 @@
     </asp:UpdatePanel>
     <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
         ConnectionString="<%$ ConnectionStrings:frankRemoteDB %>" 
-          SelectCommand="SELECT tblAuto.autoKleur, tblAuto.autoKenteken, tblAuto.autoBouwjaar, tblAutostatus.autostatusNaam, tblMerk.merkNaam, tblParkeerPlaats.parkeerPlaatsKolom, tblParkeerPlaats.parkeerPlaatsRij, tblModel.modelNaam, tblBrandstof.brandstofNaam, tblFiliaal.filiaalNaam FROM tblAuto INNER JOIN tblAutostatus ON tblAuto.statusID = tblAutostatus.autostatusID INNER JOIN tblFiliaal ON tblAuto.filiaalID = tblFiliaal.filiaalID INNER JOIN tblBrandstof ON tblAuto.brandstofID = tblBrandstof.brandstofID INNER JOIN tblModel ON tblAuto.modelID = tblModel.modelID INNER JOIN tblMerk ON tblModel.merkID = tblMerk.merkID INNER JOIN tblParkeerPlaats ON tblAuto.parkeerPlaatsID = tblParkeerPlaats.parkeerPlaatsID  WHERE tblAuto.autoKleur LIKE @autoKleur AND tblMerk.merkNaam LIKE @autoMerk AND tblBrandstof.brandstofNaam LIKE @autoBrandstof AND tblAuto.autoBouwjaar LIKE @autoBouwjaar">
-    <SelectParameters>
+        SelectCommand="SELECT tblAuto.autoID, tblAuto.autoKleur, tblAuto.autoKenteken, tblAuto.autoBouwjaar, tblAutostatus.autostatusNaam, tblMerk.merkNaam, tblParkeerPlaats.parkeerPlaatsKolom, tblParkeerPlaats.parkeerPlaatsRij, tblModel.modelNaam, tblBrandstof.brandstofNaam, tblFiliaal.filiaalNaam FROM tblAuto INNER JOIN tblAutostatus ON tblAuto.statusID = tblAutostatus.autostatusID INNER JOIN tblFiliaal ON tblAuto.filiaalID = tblFiliaal.filiaalID INNER JOIN tblBrandstof ON tblAuto.brandstofID = tblBrandstof.brandstofID INNER JOIN tblModel ON tblAuto.modelID = tblModel.modelID INNER JOIN tblMerk ON tblModel.merkID = tblMerk.merkID INNER JOIN tblParkeerPlaats ON tblAuto.parkeerPlaatsID = tblParkeerPlaats.parkeerPlaatsID  WHERE tblAuto.autoKleur LIKE @autoKleur AND tblMerk.merkNaam LIKE @autoMerk AND tblBrandstof.brandstofNaam LIKE @autoBrandstof AND tblAuto.autoBouwjaar LIKE @autoBouwjaar">
+     <SelectParameters>
             <asp:ControlParameter ControlID="ddlKleur" Name="autoKleur" 
                 PropertyName="SelectedValue" Type="string" />
                 <asp:ControlParameter ControlID="ddlMerk" Name="autoMerk" 

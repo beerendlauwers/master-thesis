@@ -1,154 +1,17 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AutoSchema.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoSchema"  title="Reservatieschema"%>
 
-
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
-<%--deze pagina wordt opgemaakt adh een querystring die het autoID in zich draagt--%>
-<%--de gegevens van de auto van wie de gelinkte ID is worden opgehaald--%>
 
+    <asp:UpdatePanel ID="updKalenderOverzicht" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
 
-<asp:ObjectDataSource ID="odsAutoGegevens" runat="server" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="AutosTableAdapters.tblAutoTableAdapter">
-    </asp:ObjectDataSource>
-
-    <asp:ObjectDataSource ID="odsReservatieGegevens" runat="server" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
-        TypeName="ReservatiesTableAdapters.tblReservatieTableAdapter">
-    </asp:ObjectDataSource>
-    
-    <asp:ObjectDataSource ID="odsKlantGegevens" runat="server" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
-        TypeName="KlantenTableAdapters.tblUserProfielTableAdapter"></asp:ObjectDataSource>
-    
-    <br />
-    
-    	  <asp:Panel ID="pnlOverzicht" runat="server">
-	 <div runat="server" id="divOverzichtHeader" visible="false">    
- 
-        <asp:PlaceHolder ID="plcOverzicht" runat="server"></asp:PlaceHolder>
-            <br />
-            <div runat="server" class=" art-Overzicht" id="divRepOverzicht">                 
-                <asp:Repeater ID="RepOverzicht" runat="server">
-                    <ItemTemplate>
-                        <div style="display: inline">
-                            <a href="ReservatieBevestigen.aspx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>&begindat=<%# DataBinder.Eval(Container.DataItem, "begindat") %>&einddat=<%# DataBinder.Eval(Container.DataItem, "einddat") %>">
-                                                                
-                                <table border="0">
-                                <tr>
-                                    <td colspan="2"><h3><%#DataBinder.Eval(Container.DataItem, "Naam")%></h3></td>
-                                </tr>
-                                <tr>
-                                    <td rowspan="5"><img src="../AutoFoto.ashx?autoID=<%# DataBinder.Eval(Container.DataItem, "autoID") %>" alt="foto" width="200" height="150" style="display:inline" /></td>
-                                </tr>
-                                <tr>
-                                    <td><b>Nummerplaat:</b> <%#DataBinder.Eval(Container.DataItem, "autoKenteken")%></td>
-                                </tr>
-                                <tr>                         
-                                    <td><b>Kleur:</b> <%#DataBinder.Eval(Container.DataItem, "autoKleur")%></td>
-                                </tr>
-                                    <tr>
-                                    <td><b>Aantal kilometer tot olieverversing:</b> <%#DataBinder.Eval(Container.DataItem, "autoKMTotOlieVerversing")%></td>
-                                </tr>
-                                </table>
-                        </div>
-                        <br />
-                    </ItemTemplate>
-                </asp:Repeater>
-            </div>
-          </div>
-</asp:Panel>
-    
-    
-<%--    
-    een overzicht laten zien van de bestellingen van de gezochte auto via de ontvangen autoID van de queriestring
-    deze reservaties zouden dan nog aangepast moeten kunnen worden (oa verwijderen)
-    die aanpassingen gebeuren in andere pagina bij ReservatieWijzigen--%>
-    
-    <h3>Reservaties:</h3>
-
-    <asp:Panel ID="pnlOverzicht1" runat="server">
-
-               <table>
-                <tr>
-                    <th>
-                        Begindatum
-                    </th>
-                    <th>
-                        Einddatum
-                    </th>
-                    <th>
-                        # Dagen
-                    </th>
-                    <th>
-                        # Opties
-                    </th>
-                    <th>
-                        Totaalkost
-                    </th>
-                    <th>
-                        &nbsp;
-                    </th>
-                       <th>
-                        &nbsp;
-                    </th>
-                </tr>
-                <asp:Repeater ID="repOverzicht1" runat="server" OnItemCommand="repOverzicht1_ItemCommand">
-                    <ItemTemplate>
-                        <tr style="background-color:#<%# DataBinder.Eval(Container.DataItem, "rijKleur") %>">
-                            <td align="center">
-                                <%#(CType(Container.DataItem, System.Data.DataRowView)("begindat")).ToShortDateString()%> 
-                            </td>
-                            <td align="center">
-                                <%#(CType(Container.DataItem, System.Data.DataRowView)("einddat")).ToShortDateString()%> 
-                            </td>
-                            <td align="center">
-                                 <%#DataBinder.Eval(Container.DataItem, "aantalDagen")%>
-                            </td>
-                            <td align="center">
-                                <%#DataBinder.Eval(Container.DataItem, "aantalOpties")%>
-                            </td>
-                            <td align="right">
-                                <%#DataBinder.Eval(Container.DataItem, "totaalKost")%>
-                            </td>
-                            <td align="center">
-                                <asp:ImageButton ID="imgButton" runat="server" ImageUrl="~/App_Presentation/Images/wrench.png"
-                                    CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoWijzigen")%>' />
-                            </td>
-                            <td align="center">
-                                <asp:ImageButton ID="imgDelete" runat="server" ImageUrl="~/App_Presentation/Images/remove.png"
-                                    CommandArgument='<%#DataBinder.Eval(Container.DataItem, "autoWijzigen")%>' /><%-- moet reservatieVerwijderen worden--%>
-                            </td>
-                             
-                        </tr>
-                    </ItemTemplate>
-                </asp:Repeater>
-            </table>
-        </asp:Panel>
-    <asp:Label ID="lblGeenReservaties" runat="server" Text="Label"></asp:Label>
-
-    
-    <%--ophalen van de reservatie-info, begindatums & einddatums vooral; voor het aanpassen van de calender-kleuren => zie dayrenderer 
-    & http://weblogs.sqlteam.com/jhermiz/archive/2007/12/10/Cool-Tricks-With-The-ASP.net-Calendar.aspx
-    dag nadat reservatieStatus = 4 moet op paars of whatever komen te staan voor onderhoud--%>
-    
-    
-    <%--informatie van de auto met het gelinkte ID laten zien--%>
-     
+    <h2>Kalenderoverzicht van <asp:Label ID="lblAuto" runat="server"></asp:Label>:</h2>
 
         <br />
-        Filteren op klant:<br />
-          <br />
-
-        <asp:DropDownList ID="ddlKlant" runat="server" DataSourceID="odsKlantGegevens" 
-                DataTextField="userVoornaam" DataValueField="userID"></asp:DropDownList>
-                <%--achternaam moet hier nog achter komen te staan, anders niet uniek/of moet gebruik maken van gebruiksnaam of gebruikersID--%>
-   
-    <br />
-    <br />
-
-
-    Overzicht van den reservaties:
-    
-    <br />
+        Filteren op klant: 
+        <asp:DropDownList ID="ddlKlant" runat="server" 
+                DataTextField="userVoornaam" DataValueField="userID" AutoPostBack="true"></asp:DropDownList>
+       <br />
     <br />
     
     <asp:Calendar ID="calAutoSchema" runat="server" BackColor="White" 
@@ -163,14 +26,6 @@
         <TitleStyle BackColor="White" BorderColor="Black" BorderWidth="4px" 
             Font-Bold="True" Font-Size="12pt" ForeColor="#333399" />
     </asp:Calendar>
-    
-<%--    de gereserveerde dagen moeten in het rood (#FF0000) komen te staan
-    de dagen dat er onderhoud moet gedaan worden in het paars (#8080FF) of whatever
-    => wanneer wordt een dag paars voor onderhoud? => standaard=einddatum van reservering+1 OF wanneer het aantal km tot olieverversing op 0 komt te staan?)
-    de vrije dagen gewoon wit laten of groen?--%>
-    <%--
-    als ge klikt op nen dag die rood gekleurd is (gerserveerd dus), krijgt ge de pagina met de reservatiegegevens te zien
-    als ge klikt op nen dag die paars gekleurd is (onderhoud), dan krijgt ge de pagina te zien met de onderhoudsgegevens
-    manueel ook mogelijk om een onderhoudsdag toe te voegen door op een witte dag te klikken?--%>
-    
+    </ContentTemplate>
+    </asp:UpdatePanel>
     </asp:Content>

@@ -53,7 +53,6 @@ Public Class ReservatieDAL
         End Try
     End Function
 
-
     Public Function GetAllReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
         Try
             Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE autoID=@autoID")
@@ -125,6 +124,29 @@ Public Class ReservatieDAL
         End Try
     End Function
 
+    Public Function GetAllBevestigdeReservatiesByAutoIDAndUserID(ByVal autoID As Integer, ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID AND autoID = @autoID AND reservatieIsBevestigd = 1")
+        myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
+        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Reservaties.tblReservatieDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+    End Function
+
+    Public Function GetAllBevestigdeReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE autoID = @autoID AND reservatieIsBevestigd = 1")
+        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Reservaties.tblReservatieDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+    End Function
+
     Public Function GetAllBeschikbareReservatiesInMaandByUserID(ByVal userID As Guid, ByVal maand As Date) As Reservaties.tblReservatieDataTable
         Try
 
@@ -142,6 +164,31 @@ Public Class ReservatieDAL
         Catch ex As Exception
             Throw ex
         End Try
+    End Function
+
+    Public Function GetAllUitgecheckteReservatiesByAutoIDAndUserID(ByVal autoID As Integer, ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID and reservatieStatus = 2 AND autoID = @autoID AND @now >= reservatieBegindat AND @now >= reservatieEinddat")
+        myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
+        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+        myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Now
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Reservaties.tblReservatieDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+    End Function
+
+    Public Function GetAllUitgecheckteReservatiesByUserID(ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID and reservatieStatus = 2 AND @now >= reservatieBegindat AND @now >= reservatieEinddat")
+        myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
+        myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Now
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Reservaties.tblReservatieDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
     End Function
 
 End Class

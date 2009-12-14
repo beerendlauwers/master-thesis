@@ -37,6 +37,14 @@ Public Class AutoBLL
         End Try
     End Function
 
+    Public Function GetAutoByKenteken(ByVal kenteken As String) As Autos.tblAutoRow
+        Try
+            Return _autodal.GetAutoByKenteken(kenteken)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAutoNaamByAutoID(ByVal id As Integer) As String
         Try
             Return _autodal.GetAutoNaamByAutoID(id)
@@ -179,6 +187,7 @@ Public Class AutoBLL
         'We gaan voor elke auto binnen onze gewenste categorie
         'de reeks reservaties ophalen en nakijken of de auto beschikbaar is.
         For autonummer = 0 To autodata.Rows.Count
+            autobeschikbaar = True
 
             'Nakijken of er wel auto's zitten in onze selectie.
             If (autodata.Rows.Count = 0 Or autonummer >= autodata.Rows.Count) Then
@@ -240,6 +249,7 @@ Public Class AutoBLL
         Dim fullyfiltereddata As New Autos.tblAutoDataTable
 
         For autonummer = 0 To returneddata.Rows.Count
+            autobeschikbaar = True
 
             'Nakijken of er wel auto's zitten in onze selectie.
             If (returneddata.Rows.Count = 0 Or autonummer >= returneddata.Rows.Count) Then
@@ -447,15 +457,6 @@ Public Class AutoBLL
         Dim dt As New Data.DataTable
 
         dt = _autodal.GetDistinctAutoKleur
-        Return dt
-    End Function
-
-
-    Function GetAutosByKenteken(ByVal autokenteken As String) As Autos.tblAutoDataTable
-        Dim dt As New Autos.tblAutoDataTable
-
-        dt = _autodal.GetAutosByKenteken(autokenteken)
-
         Return dt
     End Function
 

@@ -114,10 +114,23 @@ Partial Class App_Presentation_MasterPage
         Dim huidigetijd As Date = Now
 
         Dim reservatiebll As New ReservatieBLL
+        Dim controlebll As New ControleBLL
+        Dim onderhoudbll As New OnderhoudBLL
+
         Dim dt As Reservaties.tblReservatieDataTable = reservatiebll.GetAllOnbevestigdeReservaties()
 
         For Each res As Reservaties.tblReservatieRow In dt
             If (DateAdd(DateInterval.Minute, 10, res.reservatieLaatstBekeken) <= huidigetijd) Then
+
+                'Nodig onderhoud verwijderen in tblNodigOnderhoud
+                Dim o As Onderhoud.tblNodigOnderhoudRow = onderhoudbll.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, res.reservatieEinddat), res.autoID)
+                If o IsNot Nothing Then onderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+
+                'Eigenlijke controle verwijderen
+                Dim c As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(res.reservatieID)
+                If c IsNot Nothing Then controlebll.DeleteControle(c.controleID)
+
+                'Eigenlijke reservatie verwijderen
                 reservatiebll.DeleteReservatie(res)
             End If
         Next

@@ -52,9 +52,42 @@ Public Class ReservatieBLL
         End Try
     End Function
 
+    Public Function GetAllBevestigdeReservatiesByAutoIDAndUserID(ByVal autoID As Integer, ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllBevestigdeReservatiesByAutoIDAndUserID(autoID, userID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetAllUitgecheckteReservatiesByUserID(ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllUitgecheckteReservatiesByUserID(userID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+
+    Public Function GetAllBevestigdeReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllBevestigdeReservatiesByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllBeschikbareReservatiesInMaandByUserID(ByVal userID As Guid, ByVal maand As Date) As Reservaties.tblReservatieDataTable
         Try
             Return _reservatiedal.GetAllBeschikbareReservatiesInMaandByUserID(userID, maand)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetAllUitgecheckteReservatiesByAutoIDAndUserID(ByVal autoID As Integer, ByVal userID As Guid) As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllUitgecheckteReservatiesByAutoIDAndUserID(autoID, userID)
         Catch ex As Exception
             Throw ex
         End Try

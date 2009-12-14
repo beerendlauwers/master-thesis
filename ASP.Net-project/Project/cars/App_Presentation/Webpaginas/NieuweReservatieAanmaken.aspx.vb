@@ -96,6 +96,8 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
     End Sub
 
+#Region "Code om overzichten te maken"
+
     Private Function MaakOverzichtsTabel(ByRef datatable As Autos.tblAutoDataTable) As DataTable
         Try
 
@@ -252,6 +254,8 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
         Return dt
     End Function
 
+#End Region
+
     Private Sub ChangeOverView()
 
         Try
@@ -398,7 +402,7 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
 
         'GMAP Instellingen
-        With GMap1
+        With Gmap1
 
             ' layout
             .Height = 400
