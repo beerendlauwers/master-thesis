@@ -17,19 +17,40 @@
     <ContentTemplate>
     <h1>Contact</h1>
     <div style="font-size:larger;">
-        <!--Om in te zoomen, kies een filiaal:<asp:DropDownList ID="ddlGmap" runat="server" 
-            DataSourceID="SqlDataSource1" DataTextField="filiaalLocatie" 
-            DataValueField="filiaalLocatie" AutoPostBack="true">
-        </asp:DropDownList>
-        <br /><br />-->
-        U kan op de autoicoontjes klikken om meer informatie te verkrijgen omtrent dat filiaal.
+
+       U kan op de autoicoontjes klikken om meer informatie te verkrijgen omtrent dat filiaal.
         <br /><br />
-        <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
-            ConnectionString="<%$ ConnectionStrings:frankRemoteDB %>" 
-            SelectCommand="SELECT [filiaalLocatie] FROM [tblFiliaal]">
-        </asp:SqlDataSource>
+        
+      <%--  <div id="directions">
+            Van: <asp:TextBox ID="txtVan" runat="server"></asp:TextBox>
+            Naar: <asp:TextBox ID="txtNaar" runat="server"></asp:TextBox>
+            <asp:Button ID="cmdGo" runat="server" Text="Go" />
+        
+               
+        </div>--%>
+        
+       
+
+
+ 
+
+
+ 
     </div>
-    <cc1:GMap ID="GMap1" runat="server" enableServerEvents="true"/>
+    
+  
+        
+        <asp:Label ID="lblVan" runat="server" Text="Van: "></asp:Label><asp:TextBox ID="tb_fromPoint" runat="server"></asp:TextBox>
+        &nbsp;&nbsp;&nbsp;<asp:Label ID="lblNaar" runat="server" Text="Naar: "></asp:Label><asp:TextBox ID="tb_endPoint" runat="server"></asp:TextBox>
+        &nbsp;&nbsp;&nbsp;<input type="button" id="bt_Go" value="Bereken route" />
+        <br /><br />
+        <cc1:GMap ID="GMap1" runat="server" enableServerEvents="true"/>
+        <div id="div1"></div>   
+        
+
+
+        
+        
     </ContentTemplate>
     </asp:UpdatePanel>
 </body>

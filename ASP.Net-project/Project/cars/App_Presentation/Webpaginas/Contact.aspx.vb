@@ -6,6 +6,17 @@ Partial Class App_Presentation_Webpaginas_Default2
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+
+        'Visibility van directions controls false
+
+        lblNaar.Visible = False
+        lblVan.Visible = False
+        tb_endPoint.Visible = False
+        tb_fromPoint.Visible = False
+        'bt_Go.visible = False
+
+
+
         ' vereist Imports Subgurim.Controles
 
         GMap1.setCenter(New GLatLng(51, 4.5), 7)
@@ -79,9 +90,10 @@ Partial Class App_Presentation_Webpaginas_Default2
             htmlstring = htmlstring + "Locatie: " + dr.filiaalLocatie + "<br/><br/>"
             htmlstring = htmlstring + "Telefoon: " + dr.filiaalTelefoon + "<br/><br/>"
             htmlstring = htmlstring + "Contact: <a href=mailto:" + dr.filiaalContact + ">Contacteer ons</a><br/><br/>"
+            htmlstring = htmlstring + "<hr/><a href= contact.aspx?fil=" + dr.filiaalLocatie + ">Hier naartoe</a><br/><br/>"
 
-            winopts = New GInfoWindowOptions("<h1>" + Adres + "</h1>", htmlstring)
-            window = New GInfoWindow(marker, "<h1>" + Adres + "</h1>" + htmlstring)
+            winopts = New GInfoWindowOptions("<h2>" + Adres + "</h2>", htmlstring)
+            window = New GInfoWindow(marker, "<h2>" + Adres + "</h2>" + htmlstring)
             window.options = winopts
 
             ' markers/windows toekennen
@@ -91,13 +103,58 @@ Partial Class App_Presentation_Webpaginas_Default2
             End With
         Next
 
+
+        ' Directions
+
+
+        If Not Context.Request.QueryString("fil") = "" Then
+
+            lblNaar.Visible = True
+            lblVan.Visible = True
+            tb_endPoint.Visible = True
+            tb_fromPoint.Visible = True
+            'bt_Go.Visible = True
+
+
+            If Not IsPostBack Then
+
+
+                Dim direction As New GDirection()
+                direction.autoGenerate = False
+                direction.buttonElementId = "bt_Go"
+                direction.fromElementId = tb_fromPoint.ClientID
+                direction.toElementId = tb_endPoint.ClientID
+                direction.divElementId = "div_directions"
+                direction.clearMap = True
+
+
+                '// Optional
+                '// direction.locale = "es-ES";
+
+                GMap1.Add(direction)
+
+            End If
+
+
+            tb_endPoint.Text = Context.Request.QueryString("fil")
+
+
+            'Fout met inlezen van UserID
+
+            'Dim BLLKlant As New KlantBLL
+            'Dim dtKlant As New Klanten.tblUserProfielDataTable
+            'Dim drKlant As Klanten.tblUserProfielRow
+
+            'dtKlant = BLLKlant.GetUserProfielByUserID(New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()))
+            'drKlant = dtKlant.Rows(0)
+
+            'tb_fromPoint.Text = drKlant.userBedrijfVestigingslocatie
+        End If
+
+
+
+
     End Sub
 
-    Protected Sub ddlGmap_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlGmap.SelectedIndexChanged
-        Dim GeoCode As GeoCode
-        Dim MapKey As String = ConfigurationManager.AppSettings("googlemaps.subgurim.net")
 
-        GeoCode = GMap.geoCodeRequest(ddlGmap.SelectedItem.Text, MapKey)
-        GMap1.setCenter(New GLatLng(GeoCode.Placemark.coordinates.lat, GeoCode.Placemark.coordinates.lng), 18)
-    End Sub
 End Class
