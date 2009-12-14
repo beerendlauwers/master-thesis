@@ -90,4 +90,15 @@ Public Class OptieDAL
         Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblOptieDataTable)
 
     End Function
+
+    Public Function getOptieByOptieID(ByVal OptieID As Integer) As Autos.tblOptieDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblOptie WHERE optieID = @optieID ")
+        myCommand.Parameters.Add("@optieID", SqlDbType.Int).Value = OptieID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Autos.tblOptieDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Autos.tblOptieDataTable)
+    End Function
+
 End Class

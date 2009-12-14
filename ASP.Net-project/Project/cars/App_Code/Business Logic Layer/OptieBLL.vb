@@ -48,6 +48,13 @@ Public Class OptieBLL
         End Try
     End Function
 
+    Public Function getOptieByOptieID(ByVal optieID As Integer) As Autos.tblOptieDataTable
+        Try
+            Return _optiedal.getOptieByOptieID(optieID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 
 
 End Class

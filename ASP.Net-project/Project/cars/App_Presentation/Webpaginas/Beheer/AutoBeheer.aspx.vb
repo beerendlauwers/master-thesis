@@ -36,7 +36,11 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoBeheer
 
 
         End If
+
+
     End Sub
 
-
+    Protected Sub btnNieuweAuto_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnNieuweAuto.Click
+        Response.Redirect("file:///C:\Documents and Settings\Eigenaar\Bureaublad\cars 8-12\Project\cars\App_Presentation\Webpaginas\Beheer\NieuweAutoAanmaken.aspx")
+    End Sub
 End Class

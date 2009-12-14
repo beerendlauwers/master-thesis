@@ -175,7 +175,6 @@ Partial Class App_Presentation_NieuweAutoAanmaken
         auto.filiaalID = CType(Me.frvNieuweAuto.FindControl("ddlFiliaal"), DropDownList).SelectedValue
         auto.autoDagTarief = CType(Me.frvNieuweAuto.FindControl("txtAutoDagTarief"), TextBox).Text
         auto.autoKMTotOlieVerversing = 20000
-
         Return autobll.AddAuto(auto)
 
     End Function

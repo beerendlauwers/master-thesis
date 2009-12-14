@@ -3,6 +3,7 @@
 Public Class AutoBLL
     Private _adapterAuto As New AutosTableAdapters.tblAutoTableAdapter
     Private _autodal As New AutoDAL
+    Private _reservatiebll As New ReservatieBLL
 
     Public Function GetAllKentekens() As String()
         Try
@@ -71,27 +72,37 @@ Public Class AutoBLL
     End Function
 
     Public Function DeleteAuto(ByVal autoID As Integer) As Boolean
-        Try
-            If (_adapterAuto.Delete(autoID)) Then
-                Return True
-            Else
-                Return False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If _reservatiebll.GetAllReservatiesByAutoID(autoID).Rows.Count = 0 Then
+            Try
+                If (_adapterAuto.Delete(autoID)) Then
+                    Return True
+                Else
+                    Return False
+                End If
+            Catch ex As Exception
+                Throw ex
+            End Try
+            Return True
+        Else
+            Return False
+        End If
     End Function
 
     Public Function UpdateAuto(ByRef autorow As Autos.tblAutoRow) As Boolean
-        Try
-            If (_adapterAuto.Update(autorow)) Then
-                Return True
-            Else
-                Return False
-            End If
-        Catch ex As Exception
-            Throw ex
-        End Try
+        If _reservatiebll.GetAllReservatiesByAutoID(autorow.autoID).Rows.Count = 0 Then
+            Try
+                If (_adapterAuto.Update(autorow)) Then
+                    Return True
+                Else
+                    Return False
+                End If
+            Catch ex As Exception
+                Throw ex
+            End Try
+        Else
+            Return False
+        End If
+
     End Function
 
     Public Function AddAuto(ByRef a As Autos.tblAutoRow) As Boolean
@@ -438,4 +449,24 @@ Public Class AutoBLL
         dt = _autodal.GetDistinctAutoKleur
         Return dt
     End Function
+
+
+    Function GetAutosByKenteken(ByVal autokenteken As String) As Autos.tblAutoDataTable
+        Dim dt As New Autos.tblAutoDataTable
+
+        dt = _autodal.GetAutosByKenteken(autokenteken)
+
+        Return dt
+    End Function
+
+    Public Function autoWijzigen(ByVal dr As Autos.tblAutoRow) As Boolean
+        If _reservatiebll.GetAllReservatiesByAutoID(dr.autoID).Rows.Count = 0 Then
+            If _autodal.autoWijzigen(dr) Then
+                Return True
+            End If
+        Else
+            Return False
+        End If
+    End Function
+
 End Class

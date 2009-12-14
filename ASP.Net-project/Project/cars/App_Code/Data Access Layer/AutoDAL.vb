@@ -228,4 +228,19 @@ Public Class AutoDAL
 
     End Function
 
+    Public Function autoWijzigen(ByVal dr As Autos.tblAutoRow) As Boolean
+        Dim myCommand As New SqlCommand("UPDATE tblAuto SET autoDagTarief = @autoDagTarief, autoKleur = @autoKleur, autoKMTotOlieVerversing = @autoKMTotOlieVerversing, filiaalID = @filiaalID, statusID = @statusID WHERE autoID = @autoID")
+        myCommand.Parameters.Add("@autoDagTarief", SqlDbType.Int).Value = dr.autoDagTarief
+        myCommand.Parameters.Add("@autoKleur", SqlDbType.NChar).Value = dr.autoKleur
+        myCommand.Parameters.Add("@autoKMTotOlieVerversing", SqlDbType.Int).Value = dr.autoKMTotOlieVerversing
+        myCommand.Parameters.Add("@filiaalID", SqlDbType.Int).Value = dr.filiaalID
+        myCommand.Parameters.Add("@statusID", SqlDbType.Int).Value = dr.statusID
+        myCommand.Parameters.Add("@autoID", SqlDbType.NChar).Value = dr.autoID
+
+        myCommand.Connection = _myConnection
+        Dim dt As New Data.DataTable
+        _f.ExecuteNonQuery(myCommand)
+        Return True
+    End Function
+
 End Class

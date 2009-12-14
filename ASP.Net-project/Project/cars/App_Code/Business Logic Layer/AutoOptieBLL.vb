@@ -33,4 +33,11 @@ Public Class AutoOptieBLL
             Throw ex
         End Try
     End Function
+
+    Public Function deleteAutoOptie(ByVal autoID As Integer, ByVal optieID As Integer) As Boolean
+
+        If _autooptiedal.deleteAutoOptie(autoID, optieID) Then
+            Return True
+        End If
+    End Function
 End Class
