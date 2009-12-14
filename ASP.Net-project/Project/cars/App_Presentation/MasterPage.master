@@ -98,11 +98,24 @@
                 			<a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span><span class="t">Contact</span></a>
                 		</li>
                 		<li>
-                               <asp:LoginView ID="lgvBeheer" runat="server">
+                                  <asp:LoginView ID="lgvBeheer" runat="server">
                                <LoggedInTemplate>
                                <li>
                                    <asp:HyperLink ID="lnkBeheer" runat="server"><span class="l"></span><span class="r"></span><span class="t">Applicatiebeheer</span></asp:HyperLink>
+                                    <ul>
+                                  
+                				  <li><a id="lnkAutoBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoBeheer.aspx">Autobeheer</a></li>
+                				  <li><a id="lnkAutoInchecken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoInchecken.aspx">Auto Inchecken</a></li>
+                				  <li><a id="lnkAutoUitchecken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoUitchecken.aspx">Auto Uitchecken</a></li>
+                				  <li><a id="lnkFiliaalBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/FiliaalBeheer.aspx">Filiaalbeheer</a></li>
+                				  <li><a id="lnkGebruikersBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/GebruikersBeheer.aspx">Gebruikersbeheer</a></li>
+                				  <li><a id="lnkNieuweAutoAanmaken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/NieuweAutoAanmaken.aspx">Nieuwe Auto Aanmaken</a></li>
+                				  <li><a id="lnkNieuwOnderhoud" runat="server" href="~/App_Presentation/Webpaginas/Beheer/NieuwOnderhoud.aspx">Nieuw Onderhoud</a></li>
+                				  <li><a id="lnkParkingBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/ParkingBeheer.aspx">Parkingbeheer</a></li>
+                			
+                					</ul>
                                </li>
+                               
                                </LoggedInTemplate>
                                <AnonymousTemplate>
                                </AnonymousTemplate>
@@ -320,9 +333,9 @@
             <div class="art-Footer-inner">
                 <div class="art-Footer-text">
                     <p>
-                        <a href="#">Yarric</a> | <a href="#">Beerend</a> | <a href="#">Frederik</a> | <a
+                        <a href="#">Yarric</a> | <a href="#">Beerend</a> | <a href="http://www.youtube.com/v/HOHriDR8F8o&hl=nl_NL&fs=1&#t=0m16s">Frederik</a> | <a
                             href="#">Frank</a><br />
-                        Copyright &copy; 2009 CARS. All Rights Reserved.</p>
+                       Copyright &copy; 2009 CARS. All Rights Reserved.</p>
                 </div>
             </div>
             <div class="art-Footer-background">
@@ -334,6 +347,5 @@
 <div class="cleared">
 </div>
 </form>
-<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/HOHriDR8F8o&hl=nl_NL&fs=1&#t=0m16s"></param><param name="allowFullScreen" value="true"></param></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/HOHriDR8F8o&hl=nl_NL&fs=1&autoplay=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
 </body>
 </html>

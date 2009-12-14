@@ -58,12 +58,15 @@ Partial Class App_Presentation_MasterPage
 
         'Applicatiebeheerlink
         If (Page.User.Identity.IsAuthenticated) Then
+            Dim link As String = "~/App_Presentation/Webpaginas/Beheer/AutoBeheer.aspx"
+            CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
             If (Roles.IsUserInRole(Page.User.Identity.Name, "Medewerker") Or _
                 Roles.IsUserInRole(Page.User.Identity.Name, "Developer") Or _
                 Roles.IsUserInRole(Page.User.Identity.Name, "Bedrijfsverantwoordelijke")) Then
 
-                Dim link As String = "~/App_Presentation/Webpaginas/Beheer/"
-                CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = link
+                Dim linkAutoBeheer As String = "~/App_Presentation/Webpaginas/Beheer/AutoBeheer.aspx"
+                CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = linkAutoBeheer
+
             Else
                 CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).Visible = False
             End If
