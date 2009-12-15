@@ -183,7 +183,6 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         'Dit is een nazicht
         nazichtrow.controleIsNazicht = True
 
-
         'ReservatieID ophalen
         Dim reservatie As New Reservatie
         reservatie.AutoID = r.autoID
@@ -207,6 +206,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         'Dummy-waardes
         nazichtrow.controleKilometerstand = 0
         nazichtrow.controleBrandstofkost = 0
+        nazichtrow.controleIsUitgevoerd = 0
 
         'Controle toevoegen.
         ControleBLL.InsertNazicht(nazichtrow)

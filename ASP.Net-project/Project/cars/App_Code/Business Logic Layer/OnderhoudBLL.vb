@@ -20,6 +20,14 @@ Public Class OnderhoudBLL
         End Try
     End Function
 
+    Public Function GetAllToekomstigNodigOnderhoudByAutoID(ByVal autoID As Integer) As Onderhoud.tblNodigOnderhoudDataTable
+        Try
+            Return _onderhouddal.GetAllToekomstigNodigOnderhoudByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetNazichtByDatumAndAutoID(ByVal datum As Date, ByVal autoID As Integer) As Onderhoud.tblNodigOnderhoudRow
         Try
             Return _onderhouddal.GetNazichtByDatumAndAutoID(datum, autoID)

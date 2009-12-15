@@ -8,23 +8,26 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
         Me.lblFoutiefID.Visible = False
         Me.divVolledigFormulier.Visible = True
 
-        If Request.QueryString("autoID") IsNot Nothing Or ViewState("autoID") IsNot Nothing Then
+        If Request.QueryString("controleID") IsNot Nothing Or ViewState("autoID") IsNot Nothing Then
 
             If (Not IsPostBack) Then
 
                 Try
-                    Dim autoID As Integer = Convert.ToInt32(Request.QueryString("autoID"))
-                    ViewState("autoID") = autoID
+                    Dim controleID As Integer = Convert.ToInt32(Request.QueryString("controleID"))
+
+                    Dim controlebll As New ControleBLL
+                    Dim c As Onderhoud.tblControleRow = controlebll.GetControleByControleID(controleID)
+                    controlebll = Nothing
+
+                    'AutoID opslaan in viewstate
+                    ViewState("autoID") = c.autoID
+                    ViewState("controleID") = controleID
+
+                    'Autogegevens ophalen
+                    HaalAutoGegevensOpEnSteekInViewstate()
 
                     'Onderhoudsdatum invullen
-                    Me.txtOnderhoudsdatum.Text = Format(Now, "dd/MM/yyyy")
-
-                    'Nieuw onderhoud aanmaken
-                    If ViewState("onderhoudAangemaakt") Is Nothing Then ViewState("onderhoudAangemaakt") = False
-                    If ViewState("onderhoudAangemaakt") = False Then
-                        MaakNieuwOnderhoudAan()
-                        ViewState("onderhoudAangemaakt") = True
-                    End If
+                    Me.lblOnderhoudsDatum.Text = Format(c.controleBegindat, "dd/MM/yyyy")
 
                     'Beschadigingsoverzicht vullen
                     VulBeschadigingsOverzicht()
@@ -37,6 +40,12 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
                     'Standaardonderhoudsacties vullen
                     VulddlPrefabOnderhoudsActies()
+
+                    'Kijken of dit onderhoud een nazicht is
+                    Me.chkIsNazicht.Checked = c.controleIsNazicht
+                    If Me.chkIsNazicht.Checked Then
+                        chkIsNazicht_CheckedChanged(sender, e)
+                    End If
 
                     Me.txtDatumOpmerkingNieuweBeschadiging.Text = Format(Now, "dd/MM/yyyy")
 
@@ -86,6 +95,20 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
         End If
     End Sub
 
+    Private Sub HaalAutoGegevensOpEnSteekInViewstate()
+        Dim autobll As New AutoBLL
+        Dim r As Autos.tblAutoRow = autobll.GetAutoByAutoID(ViewState("autoID")).Rows(0)
+
+        Dim brandstofbll As New BrandstofBLL
+        Dim b As Autos.tblBrandstofRow = brandstofbll.GetBrandstofByBrandstofID(r.brandstofID)
+
+        ViewState("brandstofKostPerLiter") = b.brandstofKostPerLiter
+        ViewState("filiaalID") = r.filiaalID
+        ViewState("autoTankInhoud") = r.autoTankInhoud
+        ViewState("autoHuidigeKilometerstand") = r.autoHuidigeKilometerstand
+        ViewState("autoKMTotOlieVerversing") = r.autoKMTotOlieVerversing
+    End Sub
+
 #Region "Methods voor overzichten en dropdownlists"
 
     Private Sub VulBeschadigingsOverzicht()
@@ -112,8 +135,12 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
             For Each b As Onderhoud.tblAutoBeschadigingRow In beschadigingdt
                 weergaverow.Item("BeschadigingID") = b.autoBeschadigingID
 
-                Dim profiel As Klanten.tblUserProfielRow = klantbll.GetUserProfielByUserID(b.beschadigingAangerichtDoorKlant).Rows(0)
-                weergaverow.Item("KlantNaamVoornaam") = String.Concat(profiel.userNaam, " ", profiel.userVoornaam)
+                If b.beschadigingAangerichtDoorKlant.ToString = "7a73f865-ec29-4efd-bf09-70a9f9493d21" Then
+                    weergaverow.Item("KlantNaamVoornaam") = "Niet door een klant aangericht"
+                Else
+                    Dim profiel As Klanten.tblUserProfielRow = klantbll.GetUserProfielByUserID(b.beschadigingAangerichtDoorKlant).Rows(0)
+                    weergaverow.Item("KlantNaamVoornaam") = String.Concat(profiel.userNaam, " ", profiel.userVoornaam)
+                End If
 
                 weergaverow.Item("DatumOpmerking") = b.beschadigingDatum
 
@@ -196,7 +223,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
             For Each row As Reservaties.tblReservatieRow In oudereservaties
 
-                If (Me.txtOnderhoudsdatum.Text > row.reservatieEinddat) Then
+                If (Me.lblOnderhoudsDatum.Text > row.reservatieEinddat) Then
 
                     'Klant van deze reservatie ophalen
                     Dim klant As Klanten.tblUserProfielRow = klantbll.GetUserProfielByUserID(row.userID).Rows(0)
@@ -242,11 +269,85 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
     End Sub
 
+    Private Sub VulOnderhoudsActieOverzicht()
+        Dim actiebll As New ActieBLL
+
+        Dim weergavetabel As Onderhoud.tblActieDataTable = actiebll.GetAllActiesByControleID(ViewState("controleID"))
+
+        If weergavetabel.Rows.Count = 0 Then
+            Me.divOnderhoudsActieOverzicht.Visible = False
+            Me.lblGeenOnderhoudsActies.Visible = True
+
+            Me.divOnderhoudsActieVerwijderen.Visible = False
+            Me.lblOnderhoudsActieVerwijderenKanNiet.Visible = True
+
+            Me.divOnderhoudsActieWijzigen.Visible = False
+            Me.lblOnderhoudsActiesWijzigenKanNiet.Visible = True
+
+        Else
+
+            VulddlOnderhoudsActieWijzigen(weergavetabel)
+
+            Me.divOnderhoudsActieOverzicht.Visible = True
+            Me.lblGeenOnderhoudsActies.Visible = False
+
+            Me.divOnderhoudsActieVerwijderen.Visible = True
+            Me.lblOnderhoudsActieVerwijderenKanNiet.Visible = False
+
+            Me.divOnderhoudsActieWijzigen.Visible = True
+            Me.lblOnderhoudsActiesWijzigenKanNiet.Visible = False
+
+            Me.RepOnderhoudsActies.DataSource = weergavetabel
+            Me.RepOnderhoudsActies.DataBind()
+        End If
+    End Sub
+
+    Private Sub VulddlPrefabOnderhoudsActies()
+        Me.ddlPrefabOnderhoudsActies.Items.Clear()
+        Me.ddlPrefabOnderhoudsActiesWijzigen.Items.Clear()
+
+        Dim actiebll As New ActieBLL
+        Dim dt As Onderhoud.tblActieDataTable = actiebll.GetAllStandaardActies()
+
+        Me.ddlPrefabOnderhoudsActies.DataSource = dt
+        Me.ddlPrefabOnderhoudsActies.DataBind()
+        PasKostAanActieToevoegen()
+
+        Me.ddlPrefabOnderhoudsActiesWijzigen.DataSource = dt
+        Me.ddlPrefabOnderhoudsActiesWijzigen.DataBind()
+        PasKostAanActieWijzigen()
+    End Sub
+
+    Private Sub VulddlOnderhoudsActieWijzigen(ByRef actiedt As Onderhoud.tblActieDataTable)
+        Me.ddlOnderhoudsActieWijzigen.Items.Clear()
+        Me.ddlOnderhoudsActiesVerwijderen.Items.Clear()
+
+        Dim autoID As Integer = Convert.ToInt32(ViewState("autoID"))
+
+        For Each a As Onderhoud.tblActieRow In actiedt
+            Dim item As New ListItem(String.Concat("#", a.actieID, " - ", a.actieOmschrijving), a.actieID)
+            Me.ddlOnderhoudsActieWijzigen.Items.Add(item)
+            Me.ddlOnderhoudsActiesVerwijderen.Items.Add(item)
+        Next a
+
+        Me.ddlOnderhoudsActieWijzigen.DataBind()
+        Me.ddlOnderhoudsActiesVerwijderen.DataBind()
+
+        If (actiedt.Rows.Count > 0) Then
+            VulActieWijzigen()
+        End If
+
+    End Sub
+
 #End Region
 
 #Region "Methods voor beschadiging toe te voegen"
 
     Protected Sub chkLaatsteKlantWasVerantwoordelijk_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkLaatsteKlantWasVerantwoordelijk.CheckedChanged
+
+        If Me.chkGeenKlant.Checked Then
+            Me.chkGeenKlant.Checked = False
+        End If
 
         Me.ddlKlantNieuweBeschadiging.Enabled = Not Me.chkLaatsteKlantWasVerantwoordelijk.Checked
         Me.ddlKlantNieuweBeschadiging.Visible = Not Me.chkLaatsteKlantWasVerantwoordelijk.Checked
@@ -284,6 +385,12 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
     End Sub
 
+    Protected Sub chkGeenKlant_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkGeenKlant.CheckedChanged
+        If Me.chkLaatsteKlantWasVerantwoordelijk.Checked Then
+            Me.chkLaatsteKlantWasVerantwoordelijk.Checked = False
+        End If
+    End Sub
+
     Protected Sub btnBeschadigingToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnBeschadigingToevoegen.Click
 
         Dim beschadigingsbll As New BeschadigingBLL
@@ -307,6 +414,8 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
         If (Me.chkLaatsteKlantWasVerantwoordelijk.Checked) Then
             b.beschadigingAangerichtDoorKlant = New Guid(ViewState("lblRecentsteKlantUserID").ToString)
+        ElseIf (Me.chkGeenKlant.Checked) Then
+            b.beschadigingAangerichtDoorKlant = New Guid("7a73f865-ec29-4efd-bf09-70a9f9493d21")
         Else
             b.beschadigingAangerichtDoorKlant = New Guid(Me.ddlKlantNieuweBeschadiging.SelectedValue)
         End If
@@ -363,13 +472,19 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
             Me.txtHerstellingskost.Text = b.beschadigingKost
         End If
 
-        For i As Integer = 0 To Me.ddlKlanten.Items.Count - 1
-            If (Me.ddlKlanten.Items(i).Value = b.beschadigingAangerichtDoorKlant.ToString()) Then
-                Me.ddlKlanten.Items(i).Selected = True
-            Else
-                Me.ddlKlanten.Items(i).Selected = False
-            End If
-        Next i
+        If b.beschadigingAangerichtDoorKlant.ToString = "7a73f865-ec29-4efd-bf09-70a9f9493d21" Then
+            Me.lblNietDoorKlantAangericht.Visible = True
+            Me.ddlKlanten.Visible = False
+        Else
+            Me.ddlKlanten.Visible = True
+            For i As Integer = 0 To Me.ddlKlanten.Items.Count - 1
+                If (Me.ddlKlanten.Items(i).Value = b.beschadigingAangerichtDoorKlant.ToString()) Then
+                    Me.ddlKlanten.Items(i).Selected = True
+                Else
+                    Me.ddlKlanten.Items(i).Selected = False
+                End If
+            Next i
+        End If
 
     End Sub
 
@@ -493,6 +608,251 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
 #End Region
 
+#Region "Methods voor onderhoudsactie toe te voegen"
+
+    Protected Sub btnOnderhoudsActieToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudsActieToevoegen.Click
+
+        Dim actieID As Integer = -1
+
+        'Als we bezig zijn met een non-standaard actie,
+        'slagen we hem eerst op
+        If Not Me.txtAndereOnderhoudsActie.Text = String.Empty And _
+            Not Me.txtKostOnderhoudsActie.Text = String.Empty And _
+            Me.rdbAndereActieToevoegen.Checked Then
+
+            Dim actiebll As New ActieBLL
+
+            Dim dt As New Onderhoud.tblActieDataTable
+            Dim a As Onderhoud.tblActieRow = dt.NewRow
+
+            a.actieIsStandaard = 0
+            a.actieKost = Me.txtKostOnderhoudsActie.Text
+            a.actieOmschrijving = Me.txtAndereOnderhoudsActie.Text
+
+            actieID = actiebll.InsertActie(a)
+
+        ElseIf (Me.rdbStandaardActieToevoegen.Checked) Then
+            actieID = Me.ddlPrefabOnderhoudsActies.SelectedValue
+        Else
+            Return
+        End If
+
+        'Controleactie toevoegen
+        Dim controleactiebll As New ControleActieBLL
+        Dim tempdt As New Onderhoud.tblControleActieDataTable
+        Dim r As Onderhoud.tblControleActieRow = tempdt.NewRow
+
+        r.actieID = actieID
+        r.controleID = ViewState("controleID")
+
+        controleactiebll.InsertControleactie(r)
+
+        VulOnderhoudsActieOverzicht()
+
+        ClearOnderhoudsActieToevoegen()
+
+    End Sub
+
+    Protected Sub ddlPrefabOnderhoudsActies_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlPrefabOnderhoudsActies.SelectedIndexChanged
+        PasKostAanActieToevoegen()
+    End Sub
+
+    Private Sub PasKostAanActieToevoegen()
+        Dim actiebll As New ActieBLL
+        Me.txtKostOnderhoudsActie.Text = actiebll.GetActieByActieID(Me.ddlPrefabOnderhoudsActies.SelectedValue).actieKost
+        actiebll = Nothing
+    End Sub
+
+    Private Sub ClearOnderhoudsActieToevoegen()
+        Me.txtAndereOnderhoudsActie.Text = String.Empty
+        Me.txtKostOnderhoudsActie.Text = String.Empty
+    End Sub
+
+    Protected Sub rdbStandaardActieToevoegen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbStandaardActieToevoegen.CheckedChanged
+
+        ClearOnderhoudsActieToevoegen()
+
+        If (Me.rdbStandaardActieToevoegen.Checked) Then
+            Me.txtAndereOnderhoudsActie.Enabled = False
+            Me.txtKostOnderhoudsActie.Enabled = False
+            Me.ddlPrefabOnderhoudsActies.Enabled = True
+            PasKostAanActieToevoegen()
+
+        ElseIf (Me.rdbAndereActieToevoegen.Checked) Then
+            Me.txtAndereOnderhoudsActie.Enabled = True
+            Me.txtKostOnderhoudsActie.Enabled = True
+            Me.ddlPrefabOnderhoudsActies.Enabled = False
+        End If
+    End Sub
+
+    Protected Sub rdbAndereActieToevoegen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbAndereActieToevoegen.CheckedChanged
+        ClearOnderhoudsActieToevoegen()
+
+        If (Me.rdbStandaardActieToevoegen.Checked) Then
+            Me.txtAndereOnderhoudsActie.Enabled = False
+            Me.txtKostOnderhoudsActie.Enabled = False
+            Me.ddlPrefabOnderhoudsActies.Enabled = True
+            PasKostAanActieToevoegen()
+
+        ElseIf (Me.rdbAndereActieToevoegen.Checked) Then
+            Me.txtAndereOnderhoudsActie.Enabled = True
+            Me.txtKostOnderhoudsActie.Enabled = True
+            Me.ddlPrefabOnderhoudsActies.Enabled = False
+        End If
+    End Sub
+
+
+#End Region
+
+#Region "Methods voor onderhoudsactie te wijzigen"
+
+    Private Sub VulActieWijzigen()
+        Dim actiebll As New ActieBLL
+        Dim a As Onderhoud.tblActieRow = actiebll.GetActieByActieID(Me.ddlOnderhoudsActieWijzigen.SelectedValue)
+
+        If (a.actieIsStandaard) Then
+
+            For i As Integer = 0 To Me.ddlPrefabOnderhoudsActiesWijzigen.Items.Count - 1
+                If (a.actieID = Me.ddlPrefabOnderhoudsActiesWijzigen.Items(i).Value) Then
+                    Me.ddlPrefabOnderhoudsActiesWijzigen.Items(i).Selected = True
+                Else
+                    Me.ddlPrefabOnderhoudsActiesWijzigen.Items(i).Selected = False
+                End If
+            Next i
+
+            Me.rdbStandaardActieWijzigen.Checked = True
+            Me.rdbAndereActieWijzigen.Checked = False
+
+        Else
+            Me.rdbStandaardActieWijzigen.Checked = False
+            Me.rdbAndereActieWijzigen.Checked = True
+
+            Me.txtAndereActieWijzigen.Text = a.actieOmschrijving
+        End If
+
+        Me.txtOnderhoudskostWijzigen.Text = a.actieKost
+
+        VeldenActieWijzigenAanpassen()
+    End Sub
+
+    Private Sub PasKostAanActieWijzigen()
+        Dim actiebll As New ActieBLL
+        Me.txtOnderhoudskostWijzigen.Text = actiebll.GetActieByActieID(Me.ddlPrefabOnderhoudsActies.SelectedValue).actieKost
+        actiebll = Nothing
+    End Sub
+
+    Protected Sub ddlPrefabOnderhoudsActiesWijzigen_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlPrefabOnderhoudsActiesWijzigen.SelectedIndexChanged
+        PasKostAanActieWijzigen()
+    End Sub
+
+    Protected Sub ddlOnderhoudsActieWijzigen_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlOnderhoudsActieWijzigen.SelectedIndexChanged
+        ClearVeldenActieWijzigen()
+        VulActieWijzigen()
+    End Sub
+
+    Private Sub VeldenActieWijzigenAanpassen()
+
+        If (Me.rdbStandaardActieWijzigen.Checked) Then
+            Me.txtAndereActieWijzigen.Enabled = False
+            Me.txtOnderhoudskostWijzigen.Enabled = False
+            Me.rdbAndereActieWijzigen.Checked = False
+            Me.rdbStandaardActieWijzigen.Checked = True
+            Me.ddlPrefabOnderhoudsActiesWijzigen.Enabled = True
+        ElseIf (Me.rdbAndereActieWijzigen.Checked) Then
+            Me.txtAndereActieWijzigen.Enabled = True
+            Me.txtOnderhoudskostWijzigen.Enabled = True
+            Me.rdbAndereActieWijzigen.Checked = True
+            Me.rdbStandaardActieWijzigen.Checked = False
+            Me.ddlPrefabOnderhoudsActiesWijzigen.Enabled = False
+        Else
+            Return
+        End If
+
+    End Sub
+
+    Private Sub ClearVeldenActieWijzigen()
+        Me.txtAndereActieWijzigen.Text = String.Empty
+        Me.txtOnderhoudskostWijzigen.Text = String.Empty
+    End Sub
+
+    Protected Sub rdbAndereActieWijzigen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbAndereActieWijzigen.CheckedChanged
+        ClearVeldenActieWijzigen()
+        VeldenActieWijzigenAanpassen()
+    End Sub
+
+    Protected Sub rdbStandaardActieWijzigen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbStandaardActieWijzigen.CheckedChanged
+        ClearVeldenActieWijzigen()
+        VeldenActieWijzigenAanpassen()
+    End Sub
+
+    Protected Sub btnOnderhoudsActieWijzigen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudsActieWijzigen.Click
+
+        Dim actieID As Integer = -1
+
+        If (Me.rdbAndereActieWijzigen.Checked) Then
+
+            Dim actiebll As New ActieBLL
+            Dim oudeactie As Onderhoud.tblActieRow = actiebll.GetActieByActieID(Me.ddlOnderhoudsActieWijzigen.SelectedValue)
+
+            If oudeactie.actieIsStandaard = 1 Then
+
+                'We zijn overgestapt van een standaardactie naar een niet-standaardactie
+                'Nieuwe actie toevoegen, dus (we kunnen de standaardacties niet overschrijven)
+
+                Dim dt As New Onderhoud.tblActieDataTable
+                Dim nieuweactie As Onderhoud.tblActieRow = dt.NewRow
+
+                nieuweactie.actieIsStandaard = 0
+                nieuweactie.actieKost = Me.txtOnderhoudskostWijzigen.Text
+                nieuweactie.actieOmschrijving = Me.txtAndereActieWijzigen.Text
+
+                'Nieuwe actie erin steken
+                actieID = actiebll.InsertActie(nieuweactie)
+            Else
+                'Gewoon de waarde gebruiken van de oude actie
+                actieID = Me.ddlOnderhoudsActieWijzigen.SelectedValue
+            End If
+
+        ElseIf (Me.rdbStandaardActieWijzigen.Checked) Then
+            'Waarde gebruiken uit de standaardacties-dropdown
+            actieID = Me.ddlPrefabOnderhoudsActiesWijzigen.SelectedValue
+        Else
+            Return
+        End If
+
+        'Controleactie wijzigen
+        Dim controleactiebll As New ControleActieBLL
+        Dim r As Onderhoud.tblControleActieRow = controleactiebll.GetControleActieByControleIDAndActieID(ViewState("controleID"), Me.ddlOnderhoudsActieWijzigen.SelectedValue)
+
+        'actieID updaten
+        r.actieID = actieID
+
+        controleactiebll.UpdateControleActie(r)
+
+        VulOnderhoudsActieOverzicht()
+
+        ClearVeldenActieWijzigen()
+    End Sub
+
+#End Region
+
+#Region "Methods voor onderhoudsactie te verwijderen"
+
+    Protected Sub btnOnderhoudsActieVerwijderen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudsActieVerwijderen.Click
+        Dim controleactiebll As New ControleActieBLL
+        Dim r As Onderhoud.tblControleActieRow = controleactiebll.GetControleActieByControleIDAndActieID(ViewState("controleID"), Me.ddlOnderhoudsActiesVerwijderen.SelectedValue)
+        controleactiebll.DeleteControleActie(r.ControleActieID)
+
+        VulOnderhoudsActieOverzicht()
+
+        ClearVeldenActieWijzigen()
+        ClearOnderhoudsActieToevoegen()
+    End Sub
+
+#End Region
+
+#Region "Parkinglayout generatiecode"
+
     Protected Sub imgParkeerPlaats_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgParkeerPlaats.Click
         UpdateParkeerOverzicht()
     End Sub
@@ -544,8 +904,6 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
         Return parkeermatrix
 
     End Function
-
-#Region "Parkinglayout generatiecode"
 
     Private Sub MaakParkingLayoutOverzicht(ByRef parkeermatrix(,) As Integer)
 
@@ -695,340 +1053,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
 #End Region
 
-    Private Sub MaakNieuwOnderhoudAan()
-        Dim controlebll As New ControleBLL
-
-        Dim dt As New Onderhoud.tblControleDataTable
-        Dim c As Onderhoud.tblControleRow = dt.NewRow
-
-        c.autoID = ViewState("autoID")
-        c.medewerkerID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
-        c.controleBegindat = Me.txtOnderhoudsdatum.Text
-        c.controleEinddat = Me.txtOnderhoudsdatum.Text
-        'Momenteel op 0 laten
-        c.controleIsNazicht = 0
-
-        Dim controleID As Integer = 0 'controlebll.InsertNieuweControle(c)
-
-        ViewState("controleID") = controleID
-
-        'Voor parkeerplaats
-        HaalAutoGegevensOpEnSteekInViewstate()
-    End Sub
-
-    Private Sub HaalAutoGegevensOpEnSteekInViewstate()
-        Dim autobll As New AutoBLL
-        Dim r As Autos.tblAutoRow = autobll.GetAutoByAutoID(ViewState("autoID")).Rows(0)
-
-        Dim brandstofbll As New BrandstofBLL
-        Dim b As Autos.tblBrandstofRow = brandstofbll.GetBrandstofByBrandstofID(r.brandstofID)
-
-        ViewState("brandstofKostPerLiter") = b.brandstofKostPerLiter
-        ViewState("filiaalID") = r.filiaalID
-        ViewState("autoTankInhoud") = r.autoTankInhoud
-        ViewState("autoHuidigeKilometerstand") = r.autoHuidigeKilometerstand
-        ViewState("autoKMTotOlieVerversing") = r.autoKMTotOlieVerversing
-    End Sub
-
-    Private Sub VulOnderhoudsActieOverzicht()
-        Dim actiebll As New ActieBLL
-
-        Dim weergavetabel As Onderhoud.tblActieDataTable = actiebll.GetAllActiesByControleID(ViewState("controleID"))
-
-        If weergavetabel.Rows.Count = 0 Then
-            Me.divOnderhoudsActieOverzicht.Visible = False
-            Me.lblGeenOnderhoudsActies.Visible = True
-
-            Me.divOnderhoudsActieVerwijderen.Visible = False
-            Me.lblOnderhoudsActieVerwijderenKanNiet.Visible = True
-
-            Me.divOnderhoudsActieWijzigen.Visible = False
-            Me.lblOnderhoudsActiesWijzigenKanNiet.Visible = True
-
-        Else
-
-            VulddlOnderhoudsActieWijzigen(weergavetabel)
-
-            Me.divOnderhoudsActieOverzicht.Visible = True
-            Me.lblGeenOnderhoudsActies.Visible = False
-
-            Me.divOnderhoudsActieVerwijderen.Visible = True
-            Me.lblOnderhoudsActieVerwijderenKanNiet.Visible = False
-
-            Me.divOnderhoudsActieWijzigen.Visible = True
-            Me.lblOnderhoudsActiesWijzigenKanNiet.Visible = False
-
-            Me.RepOnderhoudsActies.DataSource = weergavetabel
-            Me.RepOnderhoudsActies.DataBind()
-        End If
-    End Sub
-
-    Private Sub VulddlPrefabOnderhoudsActies()
-        Me.ddlPrefabOnderhoudsActies.Items.Clear()
-        Me.ddlPrefabOnderhoudsActiesWijzigen.Items.Clear()
-
-        Dim actiebll As New ActieBLL
-        Dim dt As Onderhoud.tblActieDataTable = actiebll.GetAllStandaardActies()
-
-        Me.ddlPrefabOnderhoudsActies.DataSource = dt
-        Me.ddlPrefabOnderhoudsActies.DataBind()
-        PasKostAanActieToevoegen()
-
-        Me.ddlPrefabOnderhoudsActiesWijzigen.DataSource = dt
-        Me.ddlPrefabOnderhoudsActiesWijzigen.DataBind()
-        PasKostAanActieWijzigen()
-    End Sub
-
-    Private Sub ClearOnderhoudsActieToevoegen()
-        Me.txtAndereOnderhoudsActie.Text = String.Empty
-        Me.txtKostOnderhoudsActie.Text = String.Empty
-    End Sub
-
-    Protected Sub btnOnderhoudsActieToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudsActieToevoegen.Click
-
-        Dim actieID As Integer = -1
-
-        'Als we bezig zijn met een non-standaard actie,
-        'slagen we hem eerst op
-        If Not Me.txtAndereOnderhoudsActie.Text = String.Empty And _
-            Not Me.txtKostOnderhoudsActie.Text = String.Empty And _
-            Me.rdbAndereActieToevoegen.Checked Then
-
-            Dim actiebll As New ActieBLL
-
-            Dim dt As New Onderhoud.tblActieDataTable
-            Dim a As Onderhoud.tblActieRow = dt.NewRow
-
-            a.actieIsStandaard = 0
-            a.actieKost = Me.txtKostOnderhoudsActie.Text
-            a.actieOmschrijving = Me.txtAndereOnderhoudsActie.Text
-
-            actieID = actiebll.InsertActie(a)
-
-        ElseIf (Me.rdbStandaardActieToevoegen.Checked) Then
-            actieID = Me.ddlPrefabOnderhoudsActies.SelectedValue
-        Else
-            Return
-        End If
-
-        'Controleactie toevoegen
-        Dim controleactiebll As New ControleActieBLL
-        Dim tempdt As New Onderhoud.tblControleActieDataTable
-        Dim r As Onderhoud.tblControleActieRow = tempdt.NewRow
-
-        r.actieID = actieID
-        r.controleID = ViewState("controleID")
-
-        controleactiebll.InsertControleactie(r)
-
-        VulOnderhoudsActieOverzicht()
-
-        ClearOnderhoudsActieToevoegen()
-
-    End Sub
-
-    Protected Sub ddlPrefabOnderhoudsActies_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlPrefabOnderhoudsActies.SelectedIndexChanged
-        PasKostAanActieToevoegen()
-    End Sub
-
-    Private Sub PasKostAanActieToevoegen()
-        Dim actiebll As New ActieBLL
-        Me.txtKostOnderhoudsActie.Text = actiebll.GetActieByActieID(Me.ddlPrefabOnderhoudsActies.SelectedValue).actieKost
-        actiebll = Nothing
-    End Sub
-
-    Private Sub PasKostAanActieWijzigen()
-        Dim actiebll As New ActieBLL
-        Me.txtOnderhoudskostWijzigen.Text = actiebll.GetActieByActieID(Me.ddlPrefabOnderhoudsActies.SelectedValue).actieKost
-        actiebll = Nothing
-    End Sub
-
-    Protected Sub ddlPrefabOnderhoudsActiesWijzigen_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlPrefabOnderhoudsActiesWijzigen.SelectedIndexChanged
-        PasKostAanActieWijzigen()
-    End Sub
-
-    Protected Sub rdbStandaardActieToevoegen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbStandaardActieToevoegen.CheckedChanged
-
-        ClearOnderhoudsActieToevoegen()
-
-        If (Me.rdbStandaardActieToevoegen.Checked) Then
-            Me.txtAndereOnderhoudsActie.Enabled = False
-            Me.txtKostOnderhoudsActie.Enabled = False
-            Me.ddlPrefabOnderhoudsActies.Enabled = True
-            PasKostAanActieToevoegen()
-
-        ElseIf (Me.rdbAndereActieToevoegen.Checked) Then
-            Me.txtAndereOnderhoudsActie.Enabled = True
-            Me.txtKostOnderhoudsActie.Enabled = True
-            Me.ddlPrefabOnderhoudsActies.Enabled = False
-        End If
-    End Sub
-
-    Protected Sub rdbAndereActieToevoegen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbAndereActieToevoegen.CheckedChanged
-        ClearOnderhoudsActieToevoegen()
-
-        If (Me.rdbStandaardActieToevoegen.Checked) Then
-            Me.txtAndereOnderhoudsActie.Enabled = False
-            Me.txtKostOnderhoudsActie.Enabled = False
-            Me.ddlPrefabOnderhoudsActies.Enabled = True
-            PasKostAanActieToevoegen()
-
-        ElseIf (Me.rdbAndereActieToevoegen.Checked) Then
-            Me.txtAndereOnderhoudsActie.Enabled = True
-            Me.txtKostOnderhoudsActie.Enabled = True
-            Me.ddlPrefabOnderhoudsActies.Enabled = False
-        End If
-    End Sub
-
-    Private Sub VulddlOnderhoudsActieWijzigen(ByRef actiedt As Onderhoud.tblActieDataTable)
-        Me.ddlOnderhoudsActieWijzigen.Items.Clear()
-        Me.ddlOnderhoudsActiesVerwijderen.Items.Clear()
-
-        Dim autoID As Integer = Convert.ToInt32(ViewState("autoID"))
-
-        For Each a As Onderhoud.tblActieRow In actiedt
-            Dim item As New ListItem(String.Concat("#", a.actieID, " - ", a.actieOmschrijving), a.actieID)
-            Me.ddlOnderhoudsActieWijzigen.Items.Add(item)
-            Me.ddlOnderhoudsActiesVerwijderen.Items.Add(item)
-        Next a
-
-        Me.ddlOnderhoudsActieWijzigen.DataBind()
-        Me.ddlOnderhoudsActiesVerwijderen.DataBind()
-
-        If (actiedt.Rows.Count > 0) Then
-            VulActieWijzigen()
-        End If
-
-    End Sub
-
-    Protected Sub ddlOnderhoudsActieWijzigen_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlOnderhoudsActieWijzigen.SelectedIndexChanged
-        ClearVeldenActieWijzigen()
-        VulActieWijzigen()
-    End Sub
-
-    Private Sub VulActieWijzigen()
-        Dim actiebll As New ActieBLL
-        Dim a As Onderhoud.tblActieRow = actiebll.GetActieByActieID(Me.ddlOnderhoudsActieWijzigen.SelectedValue)
-
-        If (a.actieIsStandaard) Then
-
-            For i As Integer = 0 To Me.ddlPrefabOnderhoudsActiesWijzigen.Items.Count - 1
-                If (a.actieID = Me.ddlPrefabOnderhoudsActiesWijzigen.Items(i).Value) Then
-                    Me.ddlPrefabOnderhoudsActiesWijzigen.Items(i).Selected = True
-                Else
-                    Me.ddlPrefabOnderhoudsActiesWijzigen.Items(i).Selected = False
-                End If
-            Next i
-
-            Me.rdbStandaardActieWijzigen.Checked = True
-            Me.rdbAndereActieWijzigen.Checked = False
-
-        Else
-            Me.rdbStandaardActieWijzigen.Checked = False
-            Me.rdbAndereActieWijzigen.Checked = True
-
-            Me.txtAndereActieWijzigen.Text = a.actieOmschrijving
-        End If
-
-        Me.txtOnderhoudskostWijzigen.Text = a.actieKost
-
-        VeldenActieWijzigenAanpassen()
-    End Sub
-
-    Private Sub VeldenActieWijzigenAanpassen()
-
-        If (Me.rdbStandaardActieWijzigen.Checked) Then
-            Me.txtAndereActieWijzigen.Enabled = False
-            Me.txtOnderhoudskostWijzigen.Enabled = False
-            Me.rdbAndereActieWijzigen.Checked = False
-            Me.rdbStandaardActieWijzigen.Checked = True
-            Me.ddlPrefabOnderhoudsActiesWijzigen.Enabled = True
-        ElseIf (Me.rdbAndereActieWijzigen.Checked) Then
-            Me.txtAndereActieWijzigen.Enabled = True
-            Me.txtOnderhoudskostWijzigen.Enabled = True
-            Me.rdbAndereActieWijzigen.Checked = True
-            Me.rdbStandaardActieWijzigen.Checked = False
-            Me.ddlPrefabOnderhoudsActiesWijzigen.Enabled = False
-        Else
-            Return
-        End If
-
-    End Sub
-
-    Private Sub ClearVeldenActieWijzigen()
-        Me.txtAndereActieWijzigen.Text = String.Empty
-        Me.txtOnderhoudskostWijzigen.Text = String.Empty
-    End Sub
-
-    Protected Sub rdbAndereActieWijzigen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbAndereActieWijzigen.CheckedChanged
-        ClearVeldenActieWijzigen()
-        VeldenActieWijzigenAanpassen()
-    End Sub
-
-    Protected Sub rdbStandaardActieWijzigen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbStandaardActieWijzigen.CheckedChanged
-        ClearVeldenActieWijzigen()
-        VeldenActieWijzigenAanpassen()
-    End Sub
-
-    Protected Sub btnOnderhoudsActieWijzigen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudsActieWijzigen.Click
-
-        Dim actieID As Integer = -1
-
-        If (Me.rdbAndereActieWijzigen.Checked) Then
-
-            Dim actiebll As New ActieBLL
-            Dim oudeactie As Onderhoud.tblActieRow = actiebll.GetActieByActieID(Me.ddlOnderhoudsActieWijzigen.SelectedValue)
-
-            If oudeactie.actieIsStandaard = 1 Then
-
-                'We zijn overgestapt van een standaardactie naar een niet-standaardactie
-                'Nieuwe actie toevoegen, dus (we kunnen de standaardacties niet overschrijven)
-
-                Dim dt As New Onderhoud.tblActieDataTable
-                Dim nieuweactie As Onderhoud.tblActieRow = dt.NewRow
-
-                nieuweactie.actieIsStandaard = 0
-                nieuweactie.actieKost = Me.txtOnderhoudskostWijzigen.Text
-                nieuweactie.actieOmschrijving = Me.txtAndereActieWijzigen.Text
-
-                'Nieuwe actie erin steken
-                actieID = actiebll.InsertActie(nieuweactie)
-            Else
-                'Gewoon de waarde gebruiken van de oude actie
-                actieID = Me.ddlOnderhoudsActieWijzigen.SelectedValue
-            End If
-
-        ElseIf (Me.rdbStandaardActieWijzigen.Checked) Then
-            'Waarde gebruiken uit de standaardacties-dropdown
-            actieID = Me.ddlPrefabOnderhoudsActiesWijzigen.SelectedValue
-        Else
-            Return
-        End If
-
-        'Controleactie wijzigen
-        Dim controleactiebll As New ControleActieBLL
-        Dim r As Onderhoud.tblControleActieRow = controleactiebll.GetControleActieByControleIDAndActieID(ViewState("controleID"), Me.ddlOnderhoudsActieWijzigen.SelectedValue)
-
-        'actieID updaten
-        r.actieID = actieID
-
-        controleactiebll.UpdateControleActie(r)
-
-        VulOnderhoudsActieOverzicht()
-
-        ClearVeldenActieWijzigen()
-    End Sub
-
-    Protected Sub btnOnderhoudsActieVerwijderen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudsActieVerwijderen.Click
-        Dim controleactiebll As New ControleActieBLL
-        Dim r As Onderhoud.tblControleActieRow = controleactiebll.GetControleActieByControleIDAndActieID(ViewState("controleID"), Me.ddlOnderhoudsActiesVerwijderen.SelectedValue)
-        controleactiebll.DeleteControleActie(r.ControleActieID)
-
-        VulOnderhoudsActieOverzicht()
-
-        ClearVeldenActieWijzigen()
-        ClearOnderhoudsActieToevoegen()
-    End Sub
+#Region "Methods voor nazicht"
 
     Protected Sub chkIsNazicht_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkIsNazicht.CheckedChanged
 
@@ -1064,5 +1089,20 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
         Catch
             Return
         End Try
+    End Sub
+
+#End Region
+
+    Protected Sub btnOnderhoudOpslaan_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudOpslaan.Click
+
+        Dim controlebll As New ControleBLL
+        Dim c As Onderhoud.tblControleRow = controlebll.GetControleByControleID(ViewState("controleID"))
+
+        c.controleIsNazicht = Me.chkIsNazicht.Checked
+        c.controleIsUitgevoerd = True
+        c.controleBrandstofkost = Double.Parse(Me.lblNazichtBerekendeBrandstofkost.Text.Remove("€"))
+        c.controleKilometerstand = Double.Parse(Me.txtNazichtHuidigeKilometerstand.Text)
+
+        controlebll.UpdateControle(c)
     End Sub
 End Class

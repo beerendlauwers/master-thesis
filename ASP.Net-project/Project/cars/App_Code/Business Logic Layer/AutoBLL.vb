@@ -165,7 +165,7 @@ Public Class AutoBLL
         End Try
     End Function
 
-    Private Function GetGeldigeAutosVoorPeriode(ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, ByRef autodata As Autos.tblAutoDataTable) As Autos.tblAutoDataTable
+    Public Function GetGeldigeAutosVoorPeriode(ByVal gewensteBegindatum As Date, ByVal gewensteEinddatum As Date, ByRef autodata As Autos.tblAutoDataTable) As Autos.tblAutoDataTable
 
         'Auto-variabelen.
         Dim returneddata As New Autos.tblAutoDataTable

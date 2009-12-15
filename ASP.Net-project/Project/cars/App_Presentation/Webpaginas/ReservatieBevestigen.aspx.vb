@@ -209,6 +209,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         'Dummy-waardes
         nazichtrow.controleKilometerstand = 0
         nazichtrow.controleBrandstofkost = 0
+        nazichtrow.controleIsUitgevoerd = 0
 
         'Controle toevoegen.
         ControleBLL.InsertNazicht(nazichtrow)

@@ -180,7 +180,7 @@ Public Class ReservatieDAL
 
     Public Function GetAllUitgecheckteReservatiesByAutoIDAndUserID(ByVal autoID As Integer, ByVal userID As Guid) As Reservaties.tblReservatieDataTable
 
-        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID and reservatieStatus = 2 AND autoID = @autoID AND @now >= reservatieBegindat AND @now >= reservatieEinddat")
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID and reservatieStatus = 2 AND autoID = @autoID AND @now >= reservatieBegindat")
         myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
         myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
         myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Now
@@ -193,7 +193,7 @@ Public Class ReservatieDAL
 
     Public Function GetAllUitgecheckteReservatiesByUserID(ByVal userID As Guid) As Reservaties.tblReservatieDataTable
 
-        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID and reservatieStatus = 2 AND @now >= reservatieBegindat AND @now >= reservatieEinddat")
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE userID = @userID and reservatieStatus = 2 AND @now >= reservatieBegindat")
         myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
         myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Now
         myCommand.Connection = _myConnection

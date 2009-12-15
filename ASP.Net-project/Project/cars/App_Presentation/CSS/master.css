@@ -849,6 +849,13 @@ h1.art-Logo-name, h1.art-Logo-name a, h1.art-Logo-name a:link, h1.art-Logo-name 
 
 /* end BlockHeader */
 
+.art-legende
+{
+	background-color:#D2D2D0;
+	padding: 5px 5px 5px 5px;
+}
+
+
 /* begin Box, BlockContent */
 .art-BlockContent
 {
