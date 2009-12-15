@@ -37,17 +37,17 @@
                             <table border="0" cellpadding="0">
                                 <tr>
                                     <td align="center" colspan="2">
-                                        Verander uw paswoord</td>
+                                        Wijzig Paswoord</td>
                                 </tr>
                                 <tr>
                                     <td align="right">
                                         <asp:Label ID="CurrentPasswordLabel" runat="server" 
-                                            AssociatedControlID="CurrentPassword">Huidig Paswoord:</asp:Label>
+                                            AssociatedControlID="CurrentPassword">Huidg paswoord:</asp:Label>
                                     </td>
                                     <td>
                                         <asp:TextBox ID="CurrentPassword" runat="server" TextMode="Password"></asp:TextBox>
                                         <asp:RequiredFieldValidator ID="CurrentPasswordRequired" runat="server" 
-                                            ControlToValidate="CurrentPassword" ErrorMessage="Invullen van het oude paswoord is vereist." 
+                                            ControlToValidate="CurrentPassword" ErrorMessage="Password is required." 
                                             ToolTip="Password is required." ValidationGroup="ChangePassword1">*</asp:RequiredFieldValidator>
                                     </td>
                                 </tr>
@@ -59,20 +59,20 @@
                                     <td>
                                         <asp:TextBox ID="NewPassword" runat="server" TextMode="Password"></asp:TextBox>
                                         <asp:RequiredFieldValidator ID="NewPasswordRequired" runat="server" 
-                                            ControlToValidate="NewPassword" ErrorMessage="Nieuw paswoord is vereist." 
+                                            ControlToValidate="NewPassword" ErrorMessage="nieuw paswoord is vereist." 
                                             ToolTip="New Password is required." ValidationGroup="ChangePassword1">*</asp:RequiredFieldValidator>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td align="right">
                                         <asp:Label ID="ConfirmNewPasswordLabel" runat="server" 
-                                            AssociatedControlID="ConfirmNewPassword">Bevestig nieuw paswoord:</asp:Label>
+                                            AssociatedControlID="ConfirmNewPassword">Bevestig nieuw Paswoord:</asp:Label>
                                     </td>
                                     <td>
                                         <asp:TextBox ID="ConfirmNewPassword" runat="server" TextMode="Password"></asp:TextBox>
                                         <asp:RequiredFieldValidator ID="ConfirmNewPasswordRequired" runat="server" 
                                             ControlToValidate="ConfirmNewPassword" 
-                                            ErrorMessage="Bevestiging van het nieuwe paswoord is vereist." 
+                                            ErrorMessage="bevestiging van paswoord is vereist." 
                                             ToolTip="Confirm New Password is required." ValidationGroup="ChangePassword1">*</asp:RequiredFieldValidator>
                                     </td>
                                 </tr>
@@ -81,7 +81,7 @@
                                         <asp:CompareValidator ID="NewPasswordCompare" runat="server" 
                                             ControlToCompare="NewPassword" ControlToValidate="ConfirmNewPassword" 
                                             Display="Dynamic" 
-                                            ErrorMessage="De bevestiging van het paswoord moet gelijk zijn aan het nieuwe paswoord." 
+                                            ErrorMessage="nieuw paswoord en bevestiging moeten overeenkomen." 
                                             ValidationGroup="ChangePassword1"></asp:CompareValidator>
                                     </td>
                                 </tr>
@@ -93,9 +93,8 @@
                                 <tr>
                                     <td align="right">
                                         <asp:Button ID="ChangePasswordPushButton" runat="server" 
-                                            CommandName="ChangePassword" Text="Wijzig paswoord" 
-                                            ValidationGroup="ChangePassword1" 
-                                            onclick="ChangePasswordPushButton_Click" />
+                                            CommandName="ChangePassword" Text="Change Password" 
+                                            ValidationGroup="ChangePassword1" />
                                     </td>
                                     <td>
                                         <asp:Button ID="CancelPushButton" runat="server" CausesValidation="False" 

@@ -218,6 +218,35 @@
     <asp:Button ID="btnChauffeurs" runat="server" Text="Uw chauffeurs bewerken" />
 </td>
 <td>
+    <asp:DropDownList ID="ddlRole" runat="server" 
+        DataSourceID="ObjectDataSource2" DataTextField="RoleName" 
+        DataValueField="RoleName">
+    </asp:DropDownList>
+    <asp:Button ID="btnRol" runat="server" Text="Ken rol toe" />
+    <asp:ObjectDataSource ID="ObjectDataSource2" runat="server" 
+        DeleteMethod="Delete" InsertMethod="Insert" 
+        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
+        TypeName="KlantenTableAdapters.aspnet_RolesTableAdapter" UpdateMethod="Update">
+        <DeleteParameters>
+            <asp:Parameter Name="Original_ApplicationId" Type="Object" />
+            <asp:Parameter Name="Original_LoweredRoleName" Type="String" />
+        </DeleteParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="RoleId" Type="Object" />
+            <asp:Parameter Name="RoleName" Type="String" />
+            <asp:Parameter Name="Description" Type="String" />
+            <asp:Parameter Name="Original_ApplicationId" Type="Object" />
+            <asp:Parameter Name="Original_LoweredRoleName" Type="String" />
+        </UpdateParameters>
+        <InsertParameters>
+            <asp:Parameter Name="ApplicationId" Type="Object" />
+            <asp:Parameter Name="RoleId" Type="Object" />
+            <asp:Parameter Name="RoleName" Type="String" />
+            <asp:Parameter Name="LoweredRoleName" Type="String" />
+            <asp:Parameter Name="Description" Type="String" />
+        </InsertParameters>
+    </asp:ObjectDataSource>
+    <asp:Label ID="lblUser" runat="server" Text="Label" Visible="False"></asp:Label>
 </td>
 </tr>
 

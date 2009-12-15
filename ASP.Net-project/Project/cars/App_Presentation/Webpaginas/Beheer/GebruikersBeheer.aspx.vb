@@ -98,11 +98,26 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
         txtBedrijfnaam.Text = r.userBedrijfnaam
         txtVestigingslocatie.Text = r.userBedrijfVestigingslocatie
         txtBTW.Text = r.userBTWnummer
+        lblUser.Text = r.userID.ToString
 
 
     End Function
 
     Protected Sub ddlGebruiker_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlGebruiker.SelectedIndexChanged
         vulgegevensIn(ddlGebruiker.SelectedValue)
+
+    End Sub
+
+
+    Protected Sub btnRol_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnRol.Click
+        Dim adapter As New KlantenTableAdapters.aspnet_UsersTableAdapter
+        Dim userid As New Guid(lblUser.Text)
+
+        Dim username = adapter.ScalarQueryusernamebyuserID(userid)
+
+        Roles.AddUserToRole(username, ddlRole.SelectedValue)
+
+        lblUser.Visible = True
+        lblUser.Text = "role updated"
     End Sub
 End Class
