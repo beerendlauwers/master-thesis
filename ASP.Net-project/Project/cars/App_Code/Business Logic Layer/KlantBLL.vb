@@ -61,4 +61,9 @@ Public Class KlantBLL
 
         Return 0
     End Function
+    Public Function getAllUserprofielen() As Klanten.tblUserProfielDataTable
+        Dim dt As Klanten.tblUserProfielDataTable = _klantdal.GetAllUserprofielen
+        Return dt
+    End Function
+
 End Class

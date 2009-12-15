@@ -32,6 +32,18 @@ Public Class ReservatieDAL
             Throw ex
         End Try
     End Function
+    Public Function GetAllbevestigdeReservaties() As Reservaties.tblReservatieDataTable
+        Try
+            Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieIsBevestigd = 1")
+            myCommand.Connection = _myConnection
+
+            Dim dt As New Reservaties.tblReservatieDataTable
+            Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
 
     Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieRow
         Try

@@ -83,11 +83,7 @@
             </ItemTemplate>
             </asp:TemplateField>
             
-            <asp:TemplateField Headertext="">
-            <ItemTemplate>
-            <asp:HyperLink ID="HyperLink1" runat="server"  NavigateUrl='<%# DataBinder.Eval(Container.DataItem,"autoKenteken","AutoWijzigen.aspx?autoKenteken={0}") %>' Tooltip="details"><asp:Image ID="Image1" runat="server" ImageUrl="~/App_Presentation/images/tick.gif" /></asp:HyperLink>
-            </ItemTemplate>
-            </asp:TemplateField>
+            
 
             </Columns>
     </asp:GridView>

@@ -24,6 +24,10 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
 
         txtTarief.Text = dr.autoDagTarief
         txtOlie.Text = dr.autoKMTotOlieVerversing
+        txtKilometerStand.Text = dr.autoHuidigeKilometerstand
+        txtTankinhoud.Text = dr.autoTankInhoud
+        txtKenteken.Text = dr.autoKenteken
+
 
         If Not IsPostBack Then
             For i As Integer = 0 To dtAutoOptie.Rows.Count - 1
@@ -166,6 +170,9 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
         dr.autoKMTotOlieVerversing = txtOlie.Text
         dr.filiaalID = ddlFiliaal.SelectedValue
         dr.statusID = ddlStatus.SelectedValue
+        dr.autoKenteken = txtKenteken.Text
+        dr.autoHuidigeKilometerstand = txtKilometerStand.Text
+        dr.autoTankInhoud = txtTankinhoud.Text
         If bllauto.autoWijzigen(dr) = True Then
             lblAlgemeengeslaagd.Text = "Wijziging uitgevoerd."
         Else
@@ -389,5 +396,19 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoWijzigen
             lblVerwijder.Text = "Auto kan niet verwijderd worden indien er nog reservaties voor lopen."
         End If
 
+    End Sub
+    Protected Sub cancelClick(ByVal sender As Object, ByVal e As System.EventArgs)
+        'do nothing
+    End Sub
+
+    Protected Sub btnKleur_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnKleur.Click
+        txtKleurAdd.Visible = True
+        btnkleuradd.Visible = True
+
+    End Sub
+
+    Protected Sub btnkleuradd_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnkleuradd.Click
+        ddlKleur.Items.Add(txtKleurAdd.Text)
+        txtKleurAdd.Text = Nothing
     End Sub
 End Class

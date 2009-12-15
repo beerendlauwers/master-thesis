@@ -44,6 +44,9 @@
                                 <asp:Button ID="btnVoegtoe" runat="server" Text="Voeg filiaal toe" />
                             </td>
                         </tr>
+                        <tr>
+                            <asp:Label ID="lblGeslaagd" runat="server" Text=""></asp:Label>
+                        </tr>
                     </table>
                                             </ContentTemplate>
                         <Triggers>
@@ -97,6 +100,9 @@
                                         <asp:Button ID="btnFiliaalWijzigen" runat="server" Text="Wijzig filiaal" />
                                     </td>
                                 </tr>
+                                <tr>
+                            <asp:Label ID="lblUpdate" runat="server" Text=""></asp:Label>
+                        </tr>
                             </table>
                         </ContentTemplate>
                         <Triggers>
@@ -126,6 +132,9 @@
                             <asp:Button ID="btnDelete" runat="server" Text="Verwijder" />
                         </td>
                     </tr>
+                    <tr>
+                            <asp:Label ID="lblDelete" runat="server" Text=""></asp:Label>
+                        </tr>
                 </table>
                     </ContentTemplate>
                     <Triggers>

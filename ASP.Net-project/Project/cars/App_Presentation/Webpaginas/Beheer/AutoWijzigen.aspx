@@ -4,6 +4,13 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
 <h1>Auto wijzigen</h1>
+<script language="javascript" type="text/javascript">
+    function CancelClick()
+    {
+        
+    }
+</script>
+
 <table>
 <tr><th colspan="2" align="center">
 Algemeen Beheer
@@ -17,7 +24,6 @@ Algemeen Beheer
     <asp:TextBox ID="txtTarief" runat="server"></asp:TextBox>
 </td>
 </tr>
-
 <tr>
 <td>
     <asp:Label ID="Label2" runat="server" Text="Km tot Olieverversing: "></asp:Label>
@@ -28,6 +34,29 @@ Algemeen Beheer
 </tr>
 
 <tr>
+<td>
+    <asp:Label ID="Label5" runat="server" Text="Kilometerstand: "></asp:Label>
+</td>
+<td>
+    <asp:TextBox ID="txtKilometerStand" runat="server"></asp:TextBox>
+</td>
+</tr>
+<tr>
+<td>
+    <asp:Label ID="Label6" runat="server" Text="Autokenteken: "></asp:Label>
+</td>
+<td>
+    <asp:TextBox ID="txtKenteken" runat="server"></asp:TextBox>
+</td>
+</tr>
+<tr>
+<td>
+    <asp:Label ID="Label7" runat="server" Text="Tankinhoud: "></asp:Label>
+</td>
+<td>
+    <asp:TextBox ID="txtTankinhoud" runat="server"></asp:TextBox>
+</td>
+</tr>
 <td>
     <asp:Label ID="Label3" runat="server" Text="status van de auto: "></asp:Label>
 </td>
@@ -45,9 +74,12 @@ Algemeen Beheer
 <td>
     <asp:DropDownList ID="ddlKleur" runat="server">
     </asp:DropDownList>
+    <asp:Button ID="btnKleur" runat="server" Text="nieuwe kleur" />
+    <asp:TextBox ID="txtKleurAdd" runat="server" Visible="False"></asp:TextBox>
+    <asp:Button ID="btnkleuradd" runat="server" Text="toevoegen" Visible="False" />
 </td>
 </tr>
-<tr><td>Filiaal:</td>
+<tr><td>Filiaal:liaal:</td>
 
 
                        

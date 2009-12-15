@@ -268,6 +268,13 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
     End Sub
 
     Protected Sub btnBevestigen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnBevestigen.Click
+        If txtBegindatum.Text < Date.Today Then
+            lblFeedback.Text = "Begindatum moet groter zijn dan de huidige datum."
+        ElseIf txtEinddatum.Text < Date.Today Then
+            lblFeedback.Text = "Einddatum moet groter zijn dan de huidige datum."
+        ElseIf txtEinddatum.Text < txtBegindatum.Text Then
+            lblFeedback.Text = "De begindatum moet voor de einddatum zijn."
+        Else
         Dim autobll As New AutoBLL
         Dim reservatiebll As New ReservatieBLL
         Dim merkbll As New MerkBLL
@@ -364,7 +371,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
 
         'Insert de nieuwe reservatie
         'Als dat lukt, verwijder de oude reservatie
-
+        End If
 
     End Sub
 
@@ -496,4 +503,5 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         End Try
 
     End Sub
+    
 End Class

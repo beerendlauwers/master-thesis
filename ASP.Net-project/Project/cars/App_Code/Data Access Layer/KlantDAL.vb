@@ -71,4 +71,14 @@ Public Class KlantDAL
         End Try
     End Function
 
+    Public Function GetAllUserprofielen() As Klanten.tblUserProfielDataTable
+        Dim myCommand As New SqlCommand("SELECT * FROM tblUserProfiel")
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Klanten.tblUserProfielDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Klanten.tblUserProfielDataTable)
+        Return dt
+    End Function
+
+
 End Class

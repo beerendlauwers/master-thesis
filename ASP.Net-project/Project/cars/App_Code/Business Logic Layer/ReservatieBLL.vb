@@ -20,6 +20,14 @@ Public Class ReservatieBLL
         End Try
     End Function
 
+    Public Function GetAllbevestigdeReservaties() As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllbevestigdeReservaties()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetReservatieByReservatieID(ByVal reservatieID As Integer) As Reservaties.tblReservatieRow
         Try
             Return _reservatiedal.GetReservatieByReservatieID(reservatieID)

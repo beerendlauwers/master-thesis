@@ -44,4 +44,12 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoBeheer
         Response.Redirect("NieuweAutoAanmaken.aspx")
     End Sub
 
+    'Public Function verwijderAuto() As Boolean
+    '    MsgBox(autokenteken)
+    '    Return True
+    'End Function
+
+    'Protected Sub btnVerwijder_Click(ByVal sender As Object, ByVal e As System.Web.UI.EventEntry)
+    '    Response.Write("In Clicked")
+    'End Sub
 End Class

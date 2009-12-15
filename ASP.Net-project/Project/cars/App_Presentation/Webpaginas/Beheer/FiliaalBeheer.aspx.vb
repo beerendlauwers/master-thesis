@@ -18,13 +18,17 @@ Partial Class App_Presentation_Webpaginas_FiliaalBeheer
         f.parkingAantalKolommen = 0
         f.parkingAantalRijen = 0
 
-        _filiaalbll.AddFiliaal(f)
-        ddlFiliaal.DataBind()
-        ddlFilialen.DataBind()
+        If _filiaalbll.AddFiliaal(f) Then
+            lblGeslaagd.Text = "Filiaal is toegevoegd."
+            ddlFiliaal.DataBind()
+            ddlFilialen.DataBind()
+            Me.txtAdres.Text = String.Empty
+            Me.txtLocatie.Text = String.Empty
+            Me.txtFiliaalNaam.Text = String.Empty
+        End If
 
-        Me.txtAdres.Text = String.Empty
-        Me.txtLocatie.Text = String.Empty
-        Me.txtFiliaalNaam.Text = String.Empty
+
+
 
 
     End Sub
@@ -33,11 +37,13 @@ Partial Class App_Presentation_Webpaginas_FiliaalBeheer
         Dim pfiliaalID As Integer
         pfiliaalID = Me.ddlFiliaal.SelectedValue
 
-        _filiaalbll.DeleteFiliaal(pfiliaalID)
-        ddlFiliaal.DataBind()
-        ddlFilialen.DataBind()
+        If _filiaalbll.DeleteFiliaal(pfiliaalID) Then
+            ddlFiliaal.DataBind()
+            ddlFilialen.DataBind()
+            lblDelete.Text = "filiaal verwijderd"
+            ClearWijzigTextBoxes()
+        End If
 
-        ClearWijzigTextBoxes()
     End Sub
 
     Protected Sub ddlFilialen_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlFilialen.SelectedIndexChanged
@@ -65,8 +71,9 @@ Partial Class App_Presentation_Webpaginas_FiliaalBeheer
         f.filiaalLocatie = String.Concat(Me.txtFiliaalWijzigenLocatie.Text, ", ", Me.txtFiliaalWijzigenStraatNr.Text)
         f.filiaalNaam = Me.txtFiliaalWijzigenNaam.Text
 
-        _filiaalbll.UpdateFiliaal(f)
-
-        ClearWijzigTextBoxes()
+        If _filiaalbll.UpdateFiliaal(f) Then
+            lblUpdate.Text = "wijziging uitgevoerd."
+            ClearWijzigTextBoxes()
+        End If
     End Sub
 End Class
