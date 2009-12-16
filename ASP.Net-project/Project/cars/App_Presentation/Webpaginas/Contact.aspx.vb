@@ -104,51 +104,50 @@ Partial Class App_Presentation_Webpaginas_Default2
         Next
 
 
-        ' Directions
 
+
+
+        'Inlezen van klantadres in textbox
+
+        Dim BLLKlant As New KlantBLL
+        Dim dtKlant As New Klanten.tblUserProfielDataTable
+        Dim drKlant As Klanten.tblUserProfielRow
+
+        dtKlant = BLLKlant.GetUserProfielByUserID(New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()))
+        drKlant = dtKlant.Rows(0)
+
+        txtVan.Text = drKlant.userBedrijfVestigingslocatie
+
+        ' Direction toevoegen
 
         If Not Context.Request.QueryString("fil") = "" Then
 
-            'lblNaar.Visible = True
-            'lblVan.Visible = True
-            'tb_endPoint.Visible = True
-            'tb_fromPoint.Visible = True
-            ''bt_Go.Visible = True
-
+            ' inlezen fil van querystring
+            txtNaar.Text = Context.Request.QueryString("fil")
 
             If Not IsPostBack Then
 
 
                 Dim direction As New GDirection()
                 direction.autoGenerate = False
-                direction.buttonElementId = "bt_Go"
-                direction.fromElementId = tb_fromPoint.ClientID
-                direction.toElementId = tb_endPoint.ClientID
+                direction.buttonElementId = "cmdGo"
+                direction.fromElementId = txtVan.ClientID
+                direction.toElementId = txtNaar.ClientID
                 direction.divElementId = "div_directions"
                 direction.clearMap = True
 
 
                 '// Optional
-                '// direction.locale = "es-ES";
+                '// direction.locale = "be-BE";
 
                 GMap1.Add(direction)
 
             End If
 
 
-            tb_endPoint.Text = Context.Request.QueryString("fil")
 
 
-            'Fout met inlezen van UserID
 
-            'Dim BLLKlant As New KlantBLL
-            'Dim dtKlant As New Klanten.tblUserProfielDataTable
-            'Dim drKlant As Klanten.tblUserProfielRow
-
-            'dtKlant = BLLKlant.GetUserProfielByUserID(New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()))
-            'drKlant = dtKlant.Rows(0)
-
-            'tb_fromPoint.Text = drKlant.userBedrijfVestigingslocatie
         End If
 
 
