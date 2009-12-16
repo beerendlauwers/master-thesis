@@ -275,9 +275,10 @@
                  <br />
                     <asp:UpdatePanel ID="updFiliaalRechts" runat="server">
                     <ContentTemplate>
-                    <asp:DropDownList ID="ddoFiliaal" runat="server" 
+                    <asp:DropDownList ID="ddlFiliaal" runat="server" 
         DataSourceID="ObjectDataSource1" DataTextField="filiaalNaam" 
         DataValueField="filiaalID" AutoPostBack="True">
+                        <asp:ListItem Selected="True">Filiaal kiezen...</asp:ListItem>
                     </asp:DropDownList>
                     </ContentTemplate>
                     </asp:UpdatePanel>
@@ -332,6 +333,8 @@
         <div class="art-Footer">
             <div class="art-Footer-inner">
                 <div class="art-Footer-text">
+                    <p>
+                        <a href="#">Yarric          <div class="art-Footer-text">
                     <p>
                         <a href="#">Yarric</a> | <a href="#">Beerend</a> | <a href="http://www.youtube.com/v/HOHriDR8F8o&hl=nl_NL&fs=1&#t=0m16s">Frederik</a> | <a
                             href="#">Frank</a><br />
