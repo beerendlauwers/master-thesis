@@ -107,16 +107,22 @@ Partial Class App_Presentation_Webpaginas_Default2
 
 
 
-        'Inlezen van klantadres in textbox
+        ' Inlezen van klantadres in textbox
+        ' enkel indien ingelogd!
+        If User.Identity.IsAuthenticated Then
+            Dim BLLKlant As New KlantBLL
+            Dim dtKlant As New Klanten.tblUserProfielDataTable
+            Dim drKlant As Klanten.tblUserProfielRow
 
-        Dim BLLKlant As New KlantBLL
-        Dim dtKlant As New Klanten.tblUserProfielDataTable
-        Dim drKlant As Klanten.tblUserProfielRow
+            dtKlant = BLLKlant.GetUserProfielByUserID(New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()))
+            drKlant = dtKlant.Rows(0)
 
-        dtKlant = BLLKlant.GetUserProfielByUserID(New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()))
-        drKlant = dtKlant.Rows(0)
+            txtVan.Text = drKlant.userBedrijfVestigingslocatie
+        End If
 
-        txtVan.Text = drKlant.userBedrijfVestigingslocatie
+        
+
+
 
         ' Direction toevoegen
 

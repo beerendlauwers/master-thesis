@@ -76,18 +76,28 @@ Partial Class App_Presentation_MasterPage
         Dim FiliaalCookie As HttpCookie
         FiliaalCookie = Request.Cookies("filcookie")
 
+        'Filiaal ddl invullen
+
+        Dim BLLFIliaal As New FiliaalBLL
+        Dim DTFiliaal As New Autos.tblFiliaalDataTable
+
+        ddlFiliaal.Items.Add(New ListItem(("Kies filiaal..."), ("%%")))
+        For i As Integer = 0 To dtFiliaal.Rows.Count - 1
+            ddlFiliaal.Items.Add(DTFiliaal.Rows(i)("filiaalLocatie"))
+        Next
+
 
     End Sub
 
-    Protected Sub ddoFiliaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddoFiliaal.SelectedIndexChanged
+    Protected Sub ddlFiliaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlFiliaal.SelectedIndexChanged
 
-        If (ddoFiliaal.SelectedValue = "Selecteer Filiaal...") Then 'Dummy filiaal!
+        If (ddlFiliaal.SelectedValue = "Selecteer Filiaal...") Then 'Dummy filiaal!
             Return
         End If
 
         Dim FiliaalCookie As HttpCookie = New HttpCookie("filcookie")
 
-        FiliaalCookie.Value = ddoFiliaal.SelectedValue
+        FiliaalCookie.Value = ddlFiliaal.SelectedValue
         FiliaalCookie.Expires = DateTime.Now.AddDays(100)
         Response.Cookies.Add(FiliaalCookie) ' cookie bewaren
 
@@ -95,7 +105,7 @@ Partial Class App_Presentation_MasterPage
         Dim DTFiliaal As New Autos.tblFiliaalDataTable
         Dim DRFiliaal As Autos.tblFiliaalRow
 
-        DTFiliaal = BLLFiliaal.GetFiliaalByFiliaalID(ddoFiliaal.SelectedValue)
+        DTFiliaal = BLLFiliaal.GetFiliaalByFiliaalID(ddlFiliaal.SelectedValue)
         DRFiliaal = DTFiliaal.Rows(0)
 
 
