@@ -86,11 +86,27 @@ Partial Class App_Presentation_Webpaginas_Default2
             marker = New GMarker(New GLatLng(GeoCode.Placemark.coordinates.lat, GeoCode.Placemark.coordinates.lng), markopts)
 
             ' window
+
+           
+            Dim strArray() As String = dr.filiaalLocatie.Split(" ")
+
+            
+
+
             Dim htmlstring As String = String.Empty
             htmlstring = htmlstring + "Locatie: " + dr.filiaalLocatie + "<br/><br/>"
             htmlstring = htmlstring + "Telefoon: " + dr.filiaalTelefoon + "<br/><br/>"
             htmlstring = htmlstring + "Contact: <a href=mailto:" + dr.filiaalContact + ">Contacteer ons</a><br/><br/>"
-            htmlstring = htmlstring + "<hr/><a href= contact.aspx?fil=" + dr.filiaalLocatie + ">Hier naartoe</a><br/><br/>"
+
+            htmlstring = htmlstring + "<hr/><a href= contact.aspx?fil="
+
+            For Each i In strArray
+                htmlstring = htmlstring + i + "%20"
+            Next
+
+            htmlstring = htmlstring + ">Hier naartoe</a><br/><br/>"
+
+
 
             winopts = New GInfoWindowOptions("<h2>" + Adres + "</h2>", htmlstring)
             window = New GInfoWindow(marker, "<h2>" + Adres + "</h2>" + htmlstring)
