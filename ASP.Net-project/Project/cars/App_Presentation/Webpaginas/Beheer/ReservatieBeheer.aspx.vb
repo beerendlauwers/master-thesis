@@ -83,6 +83,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
                 overzichtdatatable.Rows.Add(overzichtrow)
             Next
 
+
             Return overzichtdatatable
         Catch ex As Exception
             Throw ex
@@ -100,6 +101,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
             Me.ddlKlant.SelectedIndex = 0
             autodropdownvullen()
             VulReservatieOverzicht()
+            'maakreservetabel()
         End If
 
     End Sub
@@ -304,33 +306,37 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         Dim autoID As Integer = Convert.ToInt32(splitstring(2))
 
         If (commando = "Verwijderen") Then
-            Dim reservatiebll As New ReservatieBLL
-            Dim nodigonderhoudbll As New OnderhoudBLL
-            Dim controlebll As New ControleBLL
+            lblInfo.Text = String.Concat(resID, ",", autoID)
+            btnReserve.Visible = True
+            btnVerwijder.Visible = True
 
-            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
-            If r Is Nothing Then Return
+            'Dim reservatiebll As New ReservatieBLL
+            'Dim nodigonderhoudbll As New OnderhoudBLL
+            'Dim controlebll As New ControleBLL
 
-            'Eerst het nazicht van deze reservatie verwijderen in tblNodigOnderhoud
-            Dim o As Onderhoud.tblNodigOnderhoudRow = nodigonderhoudbll.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, r.reservatieEinddat), r.autoID)
-            If o IsNot Nothing Then nodigonderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+            'Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
+            'If r Is Nothing Then Return
 
-            'Dan het eigenlijke nazicht
-            Dim co As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(r.reservatieID)
-            If co IsNot Nothing Then controlebll.DeleteControle(co.controleID)
+            ''Eerst het nazicht van deze reservatie verwijderen in tblNodigOnderhoud
+            'Dim o As Onderhoud.tblNodigOnderhoudRow = nodigonderhoudbll.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, r.reservatieEinddat), r.autoID)
+            'If o IsNot Nothing Then nodigonderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
 
-            'Dan de reservatie zelf
-            Dim resultaat As Integer = reservatiebll.DeleteReservatie(r)
+            ''Dan het eigenlijke nazicht
+            'Dim co As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(r.reservatieID)
+            'If co IsNot Nothing Then controlebll.DeleteControle(co.controleID)
 
-            If (resultaat = -5) Then
-                Me.lblFeedback.Text = "U kan een reservatie niet meer verwijderen 2 dagen voor de beginperiode."
-                Me.imgFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
-                Me.divFeedback.Visible = True
-            End If
+            ''Dan de reservatie zelf
+            'Dim resultaat As Integer = reservatiebll.DeleteReservatie(r)
 
-            reservatiebll = Nothing
-            nodigonderhoudbll = Nothing
-            controlebll = Nothing
+            'If (resultaat = -5) Then
+            '    Me.lblFeedback.Text = "U kan een reservatie niet meer verwijderen 2 dagen voor de beginperiode."
+            '    Me.imgFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            '    Me.divFeedback.Visible = True
+            'End If
+
+            'reservatiebll = Nothing
+            'nodigonderhoudbll = Nothing
+            'controlebll = Nothing
 
         ElseIf (commando = "Wijzigen") Then
             Response.Redirect(String.Concat("../Beheer/ReservatieWijzigen.aspx?resData=", resID, ",", autoID))
@@ -339,4 +345,116 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         VulReservatieOverzicht()
 
     End Sub
+
+    Protected Sub btnVerwijder_Click() Handles btnVerwijder.Click
+        Dim splitstring() As String = lblInfo.ToString.Split(",")
+        Dim bllauto As New AutoBLL
+        Dim commando As String = splitstring(0)
+        Dim resID As Integer = Convert.ToInt32(splitstring(1))
+        Dim autoID As Integer = Convert.ToInt32(splitstring(2))
+        Dim reservatiebll As New ReservatieBLL
+        Dim nodigonderhoudbll As New OnderhoudBLL
+        Dim controlebll As New ControleBLL
+
+        Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
+        If r Is Nothing Then Return
+
+        Dim autonummer = r.autoID
+        Dim dt As New Autos.tblAutoDataTable
+        dt = bllauto.getReservAuto(autonummer)
+
+
+        'Eerst het nazicht van deze reservatie verwijderen in tblNodigOnderhoud
+        Dim o As Onderhoud.tblNodigOnderhoudRow = nodigonderhoudbll.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, r.reservatieEinddat), r.autoID)
+        If o IsNot Nothing Then nodigonderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+
+        'Dan het eigenlijke nazicht
+        Dim co As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(r.reservatieID)
+        If co IsNot Nothing Then controlebll.DeleteControle(co.controleID)
+
+        'Dan de reservatie zelf
+        Dim resultaat As Integer = reservatiebll.DeleteReservatie(r)
+
+        If (resultaat = -5) Then
+            Me.lblFeedback.Text = "U kan een reservatie niet meer verwijderen 2 dagen voor de beginperiode."
+            Me.imgFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.divFeedback.Visible = True
+        End If
+
+        reservatiebll = Nothing
+        nodigonderhoudbll = Nothing
+        controlebll = Nothing
+    End Sub
+
+
+    Protected Sub btnReserve_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnReserve.Click
+
+        lblInfo.Visible = True
+        Dim dt As New Data.DataTable
+        dt = maakreservetabel()
+        repReserve.DataSource = dt
+        repReserve.DataBind()
+
+    End Sub
+
+    Public Function maakreservetabel() As Data.DataTable
+
+        Try
+            Dim bllauto As New AutoBLL
+            Dim splitstring() As String = lblInfo.Text.Split(",")
+            Dim resID As Integer = Convert.ToInt32(splitstring(0))
+            Dim autoID As Integer = Convert.ToInt32(splitstring(1))
+            Dim rowreserveerde As Autos.tblAutoRow = bllauto.GetAutoByAutoID(autoID).Rows(0)
+
+            Dim waardereservatieauto() As Double = GeefOptieKosten(rowreserveerde)
+            Dim dagtariefreserveerde As Integer = rowreserveerde.autoDagTarief
+            Dim overzichtdatatable As New Data.DataTable
+
+
+            Dim overzichtcolumn As New Data.DataColumn
+            Dim overzichtrow As Data.DataRow
+            Dim datatable As Autos.tblAutoDataTable = bllauto.getReservAuto(autoID)
+
+            'Kolommen van originele tabel overkopiëren
+            Dim columnnaam As String = String.Empty
+            Dim columntype As System.Type
+            For i As Integer = 0 To datatable.Columns.Count - 1
+                columnnaam = datatable.Columns(i).ColumnName
+                columntype = datatable.Columns(i).DataType
+                overzichtdatatable.Columns.Add(columnnaam, columntype)
+            Next
+
+            overzichtdatatable.Columns.Add("rijKleur", Type.GetType("System.String"))
+            overzichtdatatable.Columns.Add("resData", Type.GetType("System.String"))
+            overzichtdatatable.Columns.Add("autoNaam", Type.GetType("System.String"))
+            overzichtdatatable.Columns.Add("autoKleur2", Type.GetType("System.String"))
+            overzichtdatatable.Columns.Add("autoKenteken2", Type.GetType("System.String"))
+            overzichtdatatable.Columns.Add("autoDagtarief2", Type.GetType("System.String"))
+
+
+            For i As Integer = 0 To datatable.Rows.Count - 1
+                overzichtrow = overzichtdatatable.NewRow()
+                Dim row As Autos.tblAutoRow = datatable.Rows(i)
+                Dim waarde = GeefOptieKosten(row)
+                If (i Mod 2) Then
+                    overzichtrow("rijKleur") = "D4E0E8"
+                Else
+                    overzichtrow("rijKleur") = "ACC3D2"
+                End If
+                If row.autoDagTarief + waarde(1) > (waardereservatieauto(1) + dagtariefreserveerde) - 50 And row.autoDagTarief + waarde(1) < (waardereservatieauto(1) + dagtariefreserveerde) + 50 Then
+                    overzichtrow("autoNaam") = bllauto.GetAutoNaamByAutoID(row.autoID)
+                    overzichtrow("autoKleur2") = row.autoKleur
+                    'overzichtrow("autoKenteken2") = row.autoKenteken
+                    overzichtrow("autoDagtarief2") = row.autoDagTarief
+                    overzichtdatatable.Rows.Add(overzichtrow)
+                End If
+            Next
+
+            
+            Return overzichtdatatable
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
 End Class

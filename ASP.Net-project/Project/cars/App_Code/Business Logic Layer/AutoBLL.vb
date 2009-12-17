@@ -467,4 +467,10 @@ Public Class AutoBLL
         End If
     End Function
 
+    Public Function getReservAuto(ByVal autoID As Integer) As Autos.tblAutoDataTable
+        Dim dt As New Autos.tblAutoDataTable
+        dt = _autodal.getReserveAuto(autoID)
+        Return dt
+    End Function
+
 End Class

@@ -1,4 +1,5 @@
-﻿<%@ Page Language="VB" enableEventValidation="false" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false"
+﻿
+<%@ Page Language="VB" enableEventValidation="false" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false"
     CodeFile="ReservatieBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie"
     Title="Untitled Page" %>
 
@@ -59,7 +60,7 @@ Filteren op klant:
                         &nbsp;
                     </th>
                 </tr>
-                <asp:Repeater ID="repOverzicht" runat="server">
+                <asp:Repeater ID="repOverzicht" runat="server" OnItemCommand="repOverzicht_ItemCommand">
                     <ItemTemplate>
                         <tr style="background-color:#<%# DataBinder.Eval(Container.DataItem, "rijKleur") %>">
                             <td align="center">
@@ -97,7 +98,32 @@ Filteren op klant:
             </table>
         </asp:Panel>
             <asp:Label ID="lblGeenReservaties" runat="server" Text="Label"></asp:Label>
-        </ContentTemplate>
-    </asp:UpdatePanel>
-
+        <br />
+        
+        
+      
+        
+<asp:Button ID="btnVerwijder" runat="server" Text="Verwijder" Visible="False" />
+        <asp:Button ID="btnReserve" runat="server" Text="Reserve" Visible="False" />
+        <asp:Label ID="lblInfo" runat="server" Visible="False"></asp:Label>
+    
+</ContentTemplate>
+    </asp:UpdatePanel><asp:Repeater ID="repReserve" runat="server">
+    <ItemTemplate>
+                        <tr style="background-color:#<%# DataBinder.Eval(Container.DataItem, "rijKleur") %>">
+                            <td align="center">
+                                <%# DataBinder.Eval(Container.DataItem, "autoNaam") %>
+                            </td>
+                            <td align="center">
+                                <%#DataBinder.Eval(Container.DataItem, "autoKleur2")%>
+                            </td>
+                           <%--<td align="center">
+                                <%#DataBinder.Eval(Container.DataItem, "autoKenteken2")%>
+                            </td>--%>
+                            <td align="center">
+                                <%#DataBinder.Eval(Container.DataItem, "autoDagtarief2")%>
+                            </td>
+                        </tr>
+                    </ItemTemplate>
+    </asp:Repeater>
 </asp:Content>

@@ -249,4 +249,15 @@ Public Class AutoDAL
         Return True
     End Function
 
+    Public Function getReserveAuto(ByVal autoId As Integer) As Autos.tblAutoDataTable
+        Dim dt As Autos.tblAutoDataTable = GetAutoByAutoID(autoId)
+        Dim dr As Autos.tblAutoRow = dt.Rows(0)
+        Dim mycommand As New SqlCommand("SELECT * FROM tblAuto WHERE categorieID = @categorieID AND modelID = @modelID AND statusID = 3")
+        mycommand.Parameters.Add("@categorieID", SqlDbType.Int).Value = dr.categorieID
+        mycommand.Parameters.Add("@modelID", SqlDbType.Int).Value = dr.modelID
+        mycommand.Parameters.Add("@autoDagtarief", SqlDbType.Int).Value = dr.autoDagTarief
+        mycommand.Connection = _myConnection
+        Dim datatable As New Autos.tblAutoDataTable
+        Return CType(_f.ReadDataTable(mycommand, datatable), Autos.tblAutoDataTable)
+    End Function
 End Class
