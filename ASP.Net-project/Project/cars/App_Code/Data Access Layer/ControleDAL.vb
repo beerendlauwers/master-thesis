@@ -69,6 +69,7 @@ Public Class ControleDAL
         myCommand.Parameters.Add("@controleBegindat", SqlDbType.DateTime).Value = c.controleBegindat
         myCommand.Parameters.Add("@controleEinddat", SqlDbType.DateTime).Value = c.controleEinddat
         myCommand.Parameters.Add("@controleIsNazicht", SqlDbType.Bit).Value = c.controleIsNazicht
+        myCommand.Parameters.Add("@controleIsUitgevoerd", SqlDbType.Int).Value = c.controleIsUitgevoerd
         myCommand.Parameters.Add("@controleKilometerstand", SqlDbType.Int).Value = c.controleKilometerstand
         myCommand.Parameters.Add("@controleBrandstofkost", SqlDbType.Int).Value = c.controleBrandstofkost
 
@@ -93,6 +94,7 @@ Public Class ControleDAL
         myCommand.Parameters.Add("@controleBegindat", SqlDbType.DateTime).Value = c.controleBegindat
         myCommand.Parameters.Add("@controleEinddat", SqlDbType.DateTime).Value = c.controleEinddat
         myCommand.Parameters.Add("@controleIsNazicht", SqlDbType.Bit).Value = c.controleIsNazicht
+        myCommand.Parameters.Add("@controleIsUitgevoerd", SqlDbType.Bit).Value = c.controleIsUitgevoerd
         myCommand.Parameters.Add("@controleKilometerstand", SqlDbType.Int).Value = c.controleKilometerstand
         myCommand.Parameters.Add("@controleBrandstofkost", SqlDbType.Int).Value = c.controleBrandstofkost
 
