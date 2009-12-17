@@ -113,6 +113,7 @@
                 				  <li><a id="lnkReservatiebeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/Reservatiebeheer.aspx">Reservatiebeheer</a></li>
                 				  <li><a id="lnkGebruikersBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/GebruikersBeheer.aspx">Gebruikersbeheer</a></li>
                 				  <li><a id="lnkFiliaalBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/FiliaalBeheer.aspx">Filiaalbeheer</a></li>
+                				  <li><a id="lnkFactuurBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/FactuurBeheer.aspx">Factuurbeheer</a></li>
                 				  <li><a id="lnkParkingBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/ParkingBeheer.aspx">Parkingbeheer</a></li>
                 			
                 					</ul>
