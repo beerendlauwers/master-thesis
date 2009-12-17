@@ -98,10 +98,9 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         If Not IsPostBack Then
             VulKlantDropdown(allereservaties)
             Me.ddlKlant.SelectedIndex = 0
+            autodropdownvullen()
+            VulReservatieOverzicht()
         End If
-        autodropdownvullen()
-
-        VulReservatieOverzicht()
 
     End Sub
 
@@ -221,49 +220,6 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         Return optiekosten
     End Function
 
-    Protected Sub repOverzicht_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.RepeaterCommandEventArgs) Handles repOverzicht.ItemCommand
-        Dim splitstring() As String = e.CommandArgument.ToString.Split(",")
-
-        Dim commando As String = splitstring(0)
-        Dim resID As Integer = Convert.ToInt32(splitstring(1))
-        Dim autoID As Integer = Convert.ToInt32(splitstring(2))
-
-        If (commando = "Verwijderen") Then
-            Dim reservatiebll As New ReservatieBLL
-            Dim nodigonderhoudbll As New OnderhoudBLL
-            Dim controlebll As New ControleBLL
-
-            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
-            If r Is Nothing Then Return
-
-            'Eerst het nazicht van deze reservatie verwijderen in tblNodigOnderhoud
-            Dim o As Onderhoud.tblNodigOnderhoudRow = nodigonderhoudbll.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, r.reservatieEinddat), r.autoID)
-            If o IsNot Nothing Then nodigonderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
-
-            'Dan het eigenlijke nazicht
-            Dim co As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(r.reservatieID)
-            If co IsNot Nothing Then controlebll.DeleteControle(co.controleID)
-
-            'Dan de reservatie zelf
-            Dim resultaat As Integer = reservatiebll.DeleteReservatie(r)
-
-            If (resultaat = -5) Then
-                Me.lblFeedback.Text = "U kan een reservatie niet meer verwijderen 2 dagen voor de beginperiode."
-                Me.imgFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
-                Me.divFeedback.Visible = True
-            End If
-
-            reservatiebll = Nothing
-            nodigonderhoudbll = Nothing
-            controlebll = Nothing
-
-        ElseIf (commando = "Wijzigen") Then
-            Response.Redirect(String.Concat("../Beheer/ReservatieWijzigen.aspx?resData=", resID, ",", autoID))
-        End If
-
-        VulReservatieOverzicht()
-
-    End Sub
     Private Sub VulKlantDropdown(ByRef reservaties As Reservaties.tblReservatieDataTable)
 
         'DDLKlant opvullen
@@ -337,5 +293,50 @@ Partial Class App_Presentation_Webpaginas_GebruikersOnly_ToonReservatie
         reservatiebll = Nothing
 
         Me.updReservatieBeheer.Update()
+    End Sub
+
+    Protected Sub repOverzicht_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.RepeaterCommandEventArgs) Handles repOverzicht.ItemCommand
+
+        Dim splitstring() As String = e.CommandArgument.ToString.Split(",")
+
+        Dim commando As String = splitstring(0)
+        Dim resID As Integer = Convert.ToInt32(splitstring(1))
+        Dim autoID As Integer = Convert.ToInt32(splitstring(2))
+
+        If (commando = "Verwijderen") Then
+            Dim reservatiebll As New ReservatieBLL
+            Dim nodigonderhoudbll As New OnderhoudBLL
+            Dim controlebll As New ControleBLL
+
+            Dim r As Reservaties.tblReservatieRow = reservatiebll.GetReservatieByReservatieID(resID)
+            If r Is Nothing Then Return
+
+            'Eerst het nazicht van deze reservatie verwijderen in tblNodigOnderhoud
+            Dim o As Onderhoud.tblNodigOnderhoudRow = nodigonderhoudbll.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, r.reservatieEinddat), r.autoID)
+            If o IsNot Nothing Then nodigonderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+
+            'Dan het eigenlijke nazicht
+            Dim co As Onderhoud.tblControleRow = controlebll.GetControleByReservatieID(r.reservatieID)
+            If co IsNot Nothing Then controlebll.DeleteControle(co.controleID)
+
+            'Dan de reservatie zelf
+            Dim resultaat As Integer = reservatiebll.DeleteReservatie(r)
+
+            If (resultaat = -5) Then
+                Me.lblFeedback.Text = "U kan een reservatie niet meer verwijderen 2 dagen voor de beginperiode."
+                Me.imgFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+                Me.divFeedback.Visible = True
+            End If
+
+            reservatiebll = Nothing
+            nodigonderhoudbll = Nothing
+            controlebll = Nothing
+
+        ElseIf (commando = "Wijzigen") Then
+            Response.Redirect(String.Concat("../Beheer/ReservatieWijzigen.aspx?resData=", resID, ",", autoID))
+        End If
+
+        VulReservatieOverzicht()
+
     End Sub
 End Class

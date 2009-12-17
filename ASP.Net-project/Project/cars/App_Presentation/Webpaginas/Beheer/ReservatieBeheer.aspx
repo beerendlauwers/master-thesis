@@ -59,7 +59,7 @@ Filteren op klant:
                         &nbsp;
                     </th>
                 </tr>
-                <asp:Repeater ID="repOverzicht" runat="server" OnItemCommand="repOverzicht_ItemCommand">
+                <asp:Repeater ID="repOverzicht" runat="server">
                     <ItemTemplate>
                         <tr style="background-color:#<%# DataBinder.Eval(Container.DataItem, "rijKleur") %>">
                             <td align="center">
