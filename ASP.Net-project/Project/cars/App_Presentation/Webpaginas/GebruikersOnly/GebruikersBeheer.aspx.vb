@@ -69,8 +69,8 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
 
             lblResultaat.Visible = True
             lblResultaat.Text = "De Gegegevens zijn succesvol aangepast"
-            imgResultaat.ImageUrl = "~\App_Presentation\Images\tick.gif"
-
+            'imgResultaat.ImageUrl = "..\cars\App_presentation\Images\tick.gif"
+            'imgResultaat.Visible = True
             'disablen en legen
 
             txtNaam.Enabled = False

@@ -137,6 +137,8 @@
         <asp:TextBox ID="txtGeboorte" runat="server" Enabled="False"></asp:TextBox>
         <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" 
             ControlToValidate="txtGeboorte" ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
+            <cc1:MaskedEditExtender ID="MaskedEditExtender4" runat="server"  ClearMaskOnLostFocus="false" TargetControlID="txtGeboorte" Mask="99\/99\/9999">
+        </cc1:MaskedEditExtender>
     </td>
 </tr>
 <tr>
@@ -148,6 +150,8 @@
         <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" 
             ControlToValidate="txtIdentiteitsNr" 
             ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
+              <cc1:MaskedEditExtender ID="MaskedEditExtender3" runat="server"  ClearMaskOnLostFocus="false" TargetControlID="txtIdentiteitsNr" Mask="999999\-99999">
+        </cc1:MaskedEditExtender>
     </td>
 </tr>
 <tr>
@@ -159,6 +163,8 @@
         <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" 
             ControlToValidate="txtRijbewijsNr" 
             ErrorMessage="Dit veld kan u niet leeg laten."></asp:RequiredFieldValidator>
+            <cc1:MaskedEditExtender ID="MaskedEditExtender2" runat="server"  ClearMaskOnLostFocus="false" TargetControlID="txtRijbewijsNr" Mask="999999">
+        </cc1:MaskedEditExtender>
     </td>
 </tr>
 <tr>
@@ -213,7 +219,7 @@
 </td>   
 <td>
     <asp:Button ID="btnWijzig" runat="server" Text="Wijzigingen opslaan" />
-    <asp:Image ID="imgResultaat" runat="server" />
+    <asp:Image ID="imgResultaat" runat="server" Visible="False" />
     <asp:Label ID="lblResultaat" runat="server"></asp:Label>
 </td> 
 </tr>
