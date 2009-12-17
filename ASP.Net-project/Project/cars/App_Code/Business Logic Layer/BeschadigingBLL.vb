@@ -12,6 +12,14 @@ Public Class BeschadigingBLL
         End Try
     End Function
 
+    Public Function GetAllBeschadigingByControleIDAndUserID(ByVal controleID As Integer, ByRef userID As Guid) As Onderhoud.tblAutoBeschadigingDataTable
+        Try
+            Return _beschadigingdal.GetAllBeschadigingByControleIDAndUserID(controleID, userID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllBeschadigingByControleID(ByVal controleID As Integer) As Onderhoud.tblAutoBeschadigingDataTable
         Try
             Return _beschadigingdal.GetAllBeschadigingByControleID(controleID)

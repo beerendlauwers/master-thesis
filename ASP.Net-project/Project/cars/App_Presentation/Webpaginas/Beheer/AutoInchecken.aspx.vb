@@ -73,6 +73,22 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoInchecken
 
                 If (BLLKlant.UpdateUserProfiel(p)) Then
                     'Gelukt!
+
+                    If Me.chkGeenBoeteGeven.Checked Then
+                        Dim factuurbll As New FactuurBLL
+                        Dim dt As New Reservaties.tblFactuurlijnDataTable
+                        Dim f As Reservaties.tblFactuurlijnRow = dt.NewRow
+                        f.factuurlijnKost = Me.lblBoete.Text
+                        f.factuurlijnTekst = String.Concat("Boete: ", (Date.Parse(Me.lblDatum.Text) - r.reservatieEinddat).TotalDays, " dag(en) te laat")
+                        f.factuurlijnCode = 16 'boete
+                        f.reservatieID = r.reservatieID
+                        factuurbll.InsertFactuurLijn(f)
+                        factuurbll = Nothing
+                    End If
+
+
+
+
                     lblResultaat.Text = "De auto werd succesvol ingecheckt."
                     Me.divIncheckFormulier.Visible = False
                 Else

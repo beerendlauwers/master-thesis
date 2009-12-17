@@ -20,6 +20,18 @@ Public Class ReservatieDAL
         End Try
     End Function
 
+    Public Function GetAllLateReservaties() As Reservaties.tblReservatieDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieStatus = 2 AND @now >= reservatieEinddat")
+        myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Now
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Reservaties.tblReservatieDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+
+    End Function
+
     Public Function GetAllOnbevestigdeReservaties() As Reservaties.tblReservatieDataTable
         Try
             Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieIsBevestigd = 0")
@@ -32,6 +44,22 @@ Public Class ReservatieDAL
             Throw ex
         End Try
     End Function
+
+    Public Function GetAllOnuitgecheckteBevestigdeReservaties() As Reservaties.tblReservatieDataTable
+        Try
+            Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieIsBevestigd = 1 AND reservatieStatus = 0 AND @now > reservatieEinddat")
+            myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Format(DateAdd(DateInterval.Day, 1, Now), "dd/MM/yyyy")
+
+            myCommand.Connection = _myConnection
+
+            Dim dt As New Reservaties.tblReservatieDataTable
+            Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllbevestigdeReservaties() As Reservaties.tblReservatieDataTable
         Try
             Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE reservatieIsBevestigd = 1")

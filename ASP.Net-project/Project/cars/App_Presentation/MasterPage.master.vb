@@ -143,7 +143,42 @@ Partial Class App_Presentation_MasterPage
             End If
         End If
 
+        'Check voor bevestigde reservaties die nooit zijn uitgecheckt geweest
+        If (Application("CronJobs_VerwijderOudeBevestigdeReservaties_Timer") Is Nothing) Then
+            Application("CronJobs_VerwijderOudeBevestigdeReservaties_Timer") = Now
+            VerwijderOudeBevestigdeReservaties()
+        Else
+            Dim timer As Date = Application("CronJobs_VerwijderOudeBevestigdeReservaties_Timer")
 
+            If (DateAdd(DateInterval.Day, 1, timer) <= huidigetijd) Then
+                VerwijderOudeBevestigdeReservaties()
+                Application("CronJobs_VerwijderOudeBevestigdeReservaties_Timer") = Now
+            End If
+        End If
+
+
+    End Sub
+
+    Private Sub VerwijderOudeBevestigdeReservaties()
+        Dim reservatiebll As New ReservatieBLL
+        Dim controlebll As New ControleBLL
+        Dim onderhoudbll As New OnderhoudBLL
+
+        Dim dt As Reservaties.tblReservatieDataTable = reservatiebll.GetAllOnuitgecheckteBevestigdeReservaties()
+
+        For Each res As Reservaties.tblReservatieRow In dt
+
+            'Nodig onderhoud verwijderen in tblNodigOnderhoud
+            Dim o As Onderhoud.tblNodigOnderhoudRow = OnderhoudBLL.GetNazichtByDatumAndAutoID(DateAdd(DateInterval.Day, 1, res.reservatieEinddat), res.autoID)
+            If o IsNot Nothing Then OnderhoudBLL.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+
+            'Eigenlijke controle verwijderen
+            Dim c As Onderhoud.tblControleRow = ControleBLL.GetControleByReservatieID(res.reservatieID)
+            If c IsNot Nothing Then ControleBLL.DeleteControle(c.controleID)
+
+            'Eigenlijke reservatie verwijderen
+            reservatiebll.HardeDeleteReservate(res.reservatieID)
+        Next
     End Sub
 
     Private Sub VerwijderOudeGeplandeOnderhouden()
@@ -189,7 +224,7 @@ Partial Class App_Presentation_MasterPage
                 If c IsNot Nothing Then controlebll.DeleteControle(c.controleID)
 
                 'Eigenlijke reservatie verwijderen
-                reservatiebll.DeleteReservatie(res)
+                reservatiebll.HardeDeleteReservate(res.reservatieID)
             End If
         Next
 

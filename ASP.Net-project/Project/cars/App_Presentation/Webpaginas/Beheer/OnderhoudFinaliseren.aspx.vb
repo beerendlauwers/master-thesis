@@ -309,15 +309,13 @@ Partial Class App_Presentation_Webpaginas_Beheer_OnderhoudFinaliseren
         'Controle verwijderen uit nodig onderhoud
         onderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
 
-
-
         'Alles wegschrijven naar factuurlijnen
 
         'reservatieID ophalen
         Dim r As Reservaties.tblReservatieRow
+        Dim reservatiebll As New ReservatieBLL
         If ViewState("reservatieID") IsNot Nothing Then
-            Dim reservatiebll As New ReservatieBLL
-            r = reservatiebll.GetReservatieByReservatieID(ViewState("reservatieID"))
+            r = ReservatieBLL.GetReservatieByReservatieID(ViewState("reservatieID"))
         End If
 
         Dim beschadigingsLijst As List(Of Beschadigingen) = ViewState("beschadigingsLijst")
@@ -326,6 +324,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_OnderhoudFinaliseren
 
         If r IsNot Nothing Then 'nazicht, we schrijven het weg op de reservatiefactuur
 
+            Dim nazichtBetaald As Boolean = False
             For Each lijst In beschadigingsLijst
 
                 If r.userID.ToString = lijst.userID Then
@@ -336,36 +335,23 @@ Partial Class App_Presentation_Webpaginas_Beheer_OnderhoudFinaliseren
                     Dim dt As New Reservaties.tblFactuurlijnDataTable
                     Dim f As Reservaties.tblFactuurlijnRow = dt.NewRow
 
-                    f.factuurlijnCode = 1 'Brandstofkost
-                    f.factuurlijnKost = c.controleBrandstofkost
-                    f.factuurlijnTekst = "Brandstofkost"
-                    f.reservatieID = r.reservatieID
+                    If Not nazichtBetaald Then
+                        f.factuurlijnCode = 1 'Brandstofkost
+                        f.factuurlijnKost = c.controleBrandstofkost
+                        f.factuurlijnTekst = "Brandstofkost"
+                        f.reservatieID = r.reservatieID
 
-                    'Brandstofkost
-                    factuurbll.InsertFactuurLijn(f)
+                        'Brandstofkost
+                        factuurbll.InsertFactuurLijn(f)
 
-                    'En nu alle beschadigingen toevoegen
+                        nazichtBetaald = True
+                    End If
 
-                    Try
 
-                        For i As Integer = 0 To lijst.beschadiging.Count - 1
-
-                            f = dt.NewRow
-
-                            f.factuurlijnCode = 8 'Beschadiging
-                            f.factuurlijnKost = lijst.beschadigingskost.Item(i)
-                            f.factuurlijnTekst = String.Concat("Beschadiging: ", lijst.beschadigingomschrijving.Item(i))
-                            f.reservatieID = r.reservatieID
-                            factuurbll.InsertFactuurLijn(f)
-
-                        Next i
-
-                    Catch ex As Exception
-                        Me.divFeedback.Visible = True
-                        Me.imgFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
-                        Me.lblFeedback.Text = "Er is iets verkeerd gegaan tijdens het opslaan van de gegevens. Gelieve het opnieuw te proberen."
-                        Return
-                    End Try
+                    If lijst.beschadiging.Count > 0 Then
+                        r.factuurIsInWacht = 1
+                        reservatiebll.UpdateReservatie(r)
+                    End If
 
                     Exit For
                 End If

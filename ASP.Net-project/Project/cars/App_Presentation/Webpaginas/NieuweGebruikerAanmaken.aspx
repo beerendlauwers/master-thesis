@@ -139,10 +139,12 @@
                                                     <asp:Label ID="lblIdentiteitsnr" runat="server" Text="Identiteitsnummer"></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:TextBox ID="txtIdentiteitsNr" runat="server">XXXXXX-XXXXX</asp:TextBox>
+                                                    <asp:TextBox ID="txtIdentiteitsNr" runat="server"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="AnswerRequired3" runat="server" ControlToValidate="txtIdentiteitsNr"
                                                         ErrorMessage="Identiteitsnummer moet ingevuld zijn." ToolTip="Identiteitsnummer moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                                                    <cc1:MaskedEditExtender ID="mskIdKaartNr" ClearMaskOnLostFocus="true" ClearTextOnInvalid="true" TargetControlID="txtIdentiteitsNr" runat="server" Mask="999999-99999" MaskType="Number" PromptCharacter="X">
+                                                    </cc1:MaskedEditExtender>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -154,6 +156,8 @@
                                                     <asp:RequiredFieldValidator ID="AnswerRequired4" runat="server" ControlToValidate="txtRijbewijsNr"
                                                         ErrorMessage="Rijbewijsnummer moet ingevuld zijn." ToolTip="Rijbewijsnummer moet ingevuld zijn."
                                                         ValidationGroup="CreateUserWizard1">*</asp:RequiredFieldValidator>
+                                                     <cc1:MaskedEditExtender ID="mskRijbewijsnr" ClearMaskOnLostFocus="true" ClearTextOnInvalid="true" TargetControlID="txtRijbewijsNr" runat="server" Mask="999999-99999" MaskType="Number" PromptCharacter="X">
+                                                    </cc1:MaskedEditExtender>
                                                 </td>
                                             </tr>
                                             <tr>

@@ -340,4 +340,23 @@ Partial Class App_Presentation_Webpaginas_Beheer_Onderhoudbeheer
         Return True
     End Function
 
+    Protected Sub repToekomstigOnderhoud_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.RepeaterCommandEventArgs) Handles repToekomstigOnderhoud.ItemCommand
+
+        Dim controleID As Integer = e.CommandArgument
+
+        Dim controlebll As New ControleBLL
+        Dim onderhoudbll As New OnderhoudBLL
+
+        Dim o As Onderhoud.tblNodigOnderhoudRow = onderhoudbll.GetNodigOnderhoudByControleID(controleID)
+        If o IsNot Nothing Then onderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+
+        controlebll.DeleteControle(controleID)
+
+        OnderhoudVanVandaagVullen()
+
+        OnderhoudshistoriekVullenByAuto(Me.ddlAutos.SelectedValue)
+        ToekomstigOnderhoudVullenByAuto(Me.ddlAutos.SelectedValue)
+        KalenderVullenByAuto(Me.ddlAutos.SelectedValue)
+    End Sub
+
 End Class

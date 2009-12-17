@@ -329,11 +329,11 @@ Partial Class App_Presentation_Webpaginas_FiliaalBeheer
         End If
 
         If (f.parkingAantalKolommen = 0 And f.parkingAantalRijen = 0) Then
-            Me.lblGeenData.Text = "Deze filiaal heeft nog geen parkeeroverzicht. Gebruik bovenstaande tekstvelden om een ruwe vorm van uw parking te benaderen. Hierna kan u op de icoontjes klikken om deze ruwe vorm verder aan te passen. Legende:"
+            Me.lblGeenData.Text = "Deze filiaal heeft nog geen parkeeroverzicht. Gebruik bovenstaande tekstvelden om een ruwe vorm van uw parking te benaderen. Hierna kan u op de icoontjes klikken om deze ruwe vorm verder aan te passen."
             Me.btnMaakLayout.Text = "Layout aanmaken"
 
         Else
-            Me.lblGeenData.Text = "Gebruik bovenstaande tekstvelden om een ruwe vorm van uw parking te benaderen. Hierna kan u op de icoontjes klikken om deze ruwe vorm verder aan te passen. Legende:"
+            Me.lblGeenData.Text = "Gebruik bovenstaande tekstvelden om een ruwe vorm van uw parking te benaderen. Hierna kan u op de icoontjes klikken om deze ruwe vorm verder aan te passen."
             Me.btnMaakLayout.Text = "Layout aanpassen"
 
             'Haal alles van DB binnen

@@ -2,8 +2,11 @@
     Inherits="App_Presentation_Webpaginas_FiliaalBeheer" MasterPageFile="~/App_Presentation/MasterPage.master" title="Parkingbeheer"%>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
 <asp:Content ID="Main" ContentPlaceHolderID="plcMain" runat="server">
+
 <h1>Parkingbeheer</h1>
+
     <script type="text/javascript">
         
       function VeranderKleur()
@@ -48,6 +51,15 @@
         <ContentTemplate>
             <br />
             <asp:Label ID="lblGeenData" runat="server"></asp:Label>
+            <br /><br />
+            <div style="background-color: #D2D2D0;padding: 5px 5px 5px 5px;border: dashed 1px black;">
+            <b>Legende:</b><br />
+            <img src="../../Images/parkeerplaats.png" /> - Parkeerplaats<br />
+            <img src="../../Images/rijweg.png" /> - Rijweg<br />
+            <img src="../../Images/house.png" /> - Gebouw<br />
+            <img src="../../Images/spacer.gif" height="20" width="20" /> - (leeg) Geen bedrijfsterrein<br />
+            </div>
+            <br />
             <div style="background-color: Gray; color: White;">
                 <asp:PlaceHolder ID="plcParkingLayout" runat="server"></asp:PlaceHolder>
             </div>

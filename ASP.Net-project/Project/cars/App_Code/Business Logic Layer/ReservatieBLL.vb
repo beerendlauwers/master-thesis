@@ -12,9 +12,45 @@ Public Class ReservatieBLL
         End Try
     End Function
 
+    Public Function GetAllLateReservaties() As Reservaties.tblReservatieDataTable
+        Try
+            Dim dt As Reservaties.tblReservatieDataTable = _reservatiedal.GetAllLateReservaties()
+
+            Dim returndt As New Reservaties.tblReservatieDataTable
+
+            For Each res As Reservaties.tblReservatieRow In dt
+
+                Dim uur As Integer = 9
+                Dim dag As Integer = DateAdd(DateInterval.Day, 1, res.reservatieEinddat).Day
+                Dim maand As Integer = DateAdd(DateInterval.Day, 1, res.reservatieEinddat).Month
+                Dim jaar As Integer = DateAdd(DateInterval.Day, 1, res.reservatieEinddat).Year
+
+                Dim datum As Date = Date.Parse(String.Concat(dag, "/", maand, "/", jaar, " ", uur, ":00:00"))
+
+                If Now > datum Then
+                    returndt.ImportRow(res)
+                End If
+
+            Next res
+
+            Return returndt
+
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetAllOnbevestigdeReservaties() As Reservaties.tblReservatieDataTable
         Try
             Return _reservatiedal.GetAllOnbevestigdeReservaties()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function GetAllOnuitgecheckteBevestigdeReservaties() As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllOnuitgecheckteBevestigdeReservaties()
         Catch ex As Exception
             Throw ex
         End Try
@@ -140,6 +176,14 @@ Public Class ReservatieBLL
             Else
                 Return False
             End If
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
+    Public Function HardeDeleteReservate(ByVal reservatieID As Integer) As Boolean
+        Try
+            Return _adapterReservatie.Delete(reservatieID)
         Catch ex As Exception
             Throw ex
         End Try

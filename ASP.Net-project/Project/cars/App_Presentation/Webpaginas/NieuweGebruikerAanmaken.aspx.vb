@@ -67,19 +67,21 @@ Partial Class App_Presentation_Webpaginas_nieuwe_gebruiker
         'Deze string wordt gebruikt in de ASPX-pagina om wat JavaScript code te genereren.
         PostBackString = Page.ClientScript.GetPostBackEventReference(Me, "ContinuebuttonClick")
 
+        'Doorheen alle postback-keys gaan en kijken of de continue-button tussenzit
+        'die in onze PlaceHolder zit. Indien ja, dan veranderen we de kleur.
+        For i As Integer = 1 To Page.Request.Form.Keys.Count - 1
+            Dim str As String = Page.Request.Form.Keys(i)
+
+            If str = "ctl00$plcMain$wizard$CompleteStepContainer$ContinueButton" Then
+                Dim button As Button = Page.FindControl(str)
+                ContinueButton_Click(sender, e)
+                Return
+            End If
+        Next
+
         If (FormulierIsGeldig()) Then
 
-            'Doorheen alle postback-keys gaan en kijken of de continue-button tussenzit
-            'die in onze PlaceHolder zit. Indien ja, dan veranderen we de kleur.
-            For i As Integer = 1 To Page.Request.Form.Keys.Count - 1
-                Dim str As String = Page.Request.Form.Keys(i)
 
-                If str = "ctl00$plcMain$wizard$CompleteStepContainer$ContinueButton" Then
-                    Dim button As Button = Page.FindControl(str)
-                    ContinueButton_Click(sender, e)
-                    Return
-                End If
-            Next
 
             CType(Master.FindControl("loginView"), LoginView).Visible = False
 

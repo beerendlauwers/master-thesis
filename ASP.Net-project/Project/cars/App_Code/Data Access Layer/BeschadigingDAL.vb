@@ -24,6 +24,17 @@ Public Class BeschadigingDAL
 
     End Function
 
+    Public Function GetAllBeschadigingByControleIDAndUserID(ByVal controleID As Integer, ByRef userID As Guid) As Onderhoud.tblAutoBeschadigingDataTable
+        Dim myCommand As New SqlCommand("SELECT * FROM tblAutoBeschadiging WHERE controleID = @controleID AND beschadigingAangerichtDoorKlant = @userID")
+        myCommand.Parameters.Add("@controleID", SqlDbType.Int).Value = controleID
+        myCommand.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Onderhoud.tblAutoBeschadigingDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Onderhoud.tblAutoBeschadigingDataTable)
+
+    End Function
+
     Public Function GetAllBeschadigingByControleID(ByVal controleID As Integer) As Onderhoud.tblAutoBeschadigingDataTable
         Dim myCommand As New SqlCommand("SELECT * FROM tblAutoBeschadiging WHERE controleID = @controleID")
         myCommand.Parameters.Add("@controleID", SqlDbType.Int).Value = controleID

@@ -212,6 +212,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoUitchecken
             'Reservatiestatus 2 betekent: Uitgecheckt (maar nog niet teruggekomen!)
             reservatie.reservatieStatus = 2
             reservatie.reservatieUitgechecktDoorMedewerker = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+            reservatie.verkoopscontractIsOndertekend = 1
 
             If (reservatiebll.UpdateReservatie(reservatie)) Then
                 'Gelukt!
@@ -222,6 +223,31 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoUitchecken
 
                 If (autobll.UpdateAuto(auto)) Then
                     'Gelukt!
+
+                    Dim optiebll As New OptieBLL
+                    Dim factuurbll As New FactuurBLL
+                    Dim opties As Autos.tblOptieDataTable = optiebll.GetAllOptiesByAutoID(auto.autoID)
+                    Dim dt As New Reservaties.tblFactuurlijnDataTable
+
+                    Dim f As Reservaties.tblFactuurlijnRow = dt.NewRow
+                    For Each optie As Autos.tblOptieRow In opties
+                        f.factuurlijnCode = 4 'optie
+                        f.factuurlijnKost = optie.optieKost
+                        f.factuurlijnTekst = String.Concat("Optie: ", optie.optieOmschrijving)
+                        f.reservatieID = reservatie.reservatieID
+                        factuurbll.InsertFactuurLijn(f)
+
+                        f = dt.NewRow
+                    Next
+
+                    f = dt.NewRow
+
+                    f.factuurlijnKost = ((reservatie.reservatieEinddat - reservatie.reservatieBegindat).TotalDays + 1) * auto.autoDagTarief
+                    f.factuurlijnCode = 2 'Basiskost
+                    f.factuurlijnTekst = String.Concat("Reservatie voor ", (reservatie.reservatieEinddat - reservatie.reservatieBegindat).TotalDays + 1, " dagen")
+                    f.reservatieID = reservatie.reservatieID
+                    factuurbll.InsertFactuurLijn(f)
+
                     Me.lblResultaat.Text = "De auto werd succesvol uitgecheckt."
                     Me.imgResultaat.ImageUrl = "~\App_Presentation\Images\tick.gif"
                     Me.divRepeater.Visible = False

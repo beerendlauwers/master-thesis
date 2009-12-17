@@ -110,6 +110,7 @@
                 				  <li><a id="lnkAutoInchecken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoInchecken.aspx">Auto Inchecken</a></li>
                 				  <li><a id="lnkAutoUitchecken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoUitchecken.aspx">Auto Uitchecken</a></li>
                 				  <li><a id="lnkOnderhoudbeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/Onderhoudbeheer.aspx">Onderhoudbeheer</a></li>
+                				  <li><a id="lnkReservatiebeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/Reservatiebeheer.aspx">Reservatiebeheer</a></li>
                 				  <li><a id="lnkGebruikersBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/GebruikersBeheer.aspx">Gebruikersbeheer</a></li>
                 				  <li><a id="lnkFiliaalBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/FiliaalBeheer.aspx">Filiaalbeheer</a></li>
                 				  <li><a id="lnkParkingBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/ParkingBeheer.aspx">Parkingbeheer</a></li>
