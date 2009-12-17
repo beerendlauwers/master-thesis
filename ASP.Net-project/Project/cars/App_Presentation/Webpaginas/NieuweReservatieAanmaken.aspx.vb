@@ -94,6 +94,50 @@ Partial Class App_Presentation_NieuweReservatieAanmaken
 
 
 
+        ' Locatie van gebruiker toevoegen
+        ' Indien ingelogd
+
+        If User.Identity.IsAuthenticated Then
+
+            Dim BLLKlant As New KlantBLL
+            Dim dtKlant As New Klanten.tblUserProfielDataTable
+            Dim drKlant As Klanten.tblUserProfielRow
+            Dim klantLocatie As String
+
+            dtKlant = BLLKlant.GetUserProfielByUserID(New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString()))
+            drKlant = dtKlant.Rows(0)
+
+            klantLocatie = drKlant.userBedrijfVestigingslocatie
+
+
+            'User icoon aanmaken
+            Dim usricon = New GIcon()
+            With usricon
+                .image = "../Images/Person_icon.png"
+
+                .iconSize = New GSize(30, 30)
+
+                .iconAnchor = New GPoint(16, 32)
+                .infoWindowAnchor = New GPoint(10, 12)
+            End With
+
+            'Marker opties aanmaken
+            markopts = New GMarkerOptions
+
+            With markopts
+                .title = klantLocatie
+                .icon = usricon
+            End With
+
+            GeoCode = GMap.geoCodeRequest(klantLocatie, MapKey)
+
+            marker = New GMarker(New GLatLng(GeoCode.Placemark.coordinates.lat, GeoCode.Placemark.coordinates.lng), markopts)
+            window = New GInfoWindow(marker, "<p>" + klantLocatie + "</p>" + "<h3>U bevindt zich hier!</h3> Klik op de andere iconen om meer informatie te bekomen of om een route uit te stippelen <br /> Klik op het printicoon om uw routeplan af te drukken", True)
+
+            Gmap1.addGMarker(marker)
+
+        End If
+
     End Sub
 
 #Region "Code om overzichten te maken"
