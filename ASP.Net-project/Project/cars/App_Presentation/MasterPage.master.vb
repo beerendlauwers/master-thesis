@@ -64,8 +64,8 @@ Partial Class App_Presentation_MasterPage
                 Roles.IsUserInRole(Page.User.Identity.Name, "Developer") Or _
                 Roles.IsUserInRole(Page.User.Identity.Name, "Bedrijfsverantwoordelijke")) Then
 
-                Dim linkAutoBeheer As String = "~/App_Presentation/Webpaginas/Beheer/AutoBeheer.aspx"
-                CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = linkAutoBeheer
+                Dim linkapplicatiebeheer As String = "~/App_Presentation/Webpaginas/Beheer/Applicatiebeheer.aspx"
+                CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).NavigateUrl = linkapplicatiebeheer
 
             Else
                 CType(Me.lgvBeheer.FindControl("lnkBeheer"), HyperLink).Visible = False

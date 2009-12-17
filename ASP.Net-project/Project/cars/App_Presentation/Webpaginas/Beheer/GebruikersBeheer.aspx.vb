@@ -22,11 +22,7 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
                 Dim item As New ListItem(naamvoornaam, dr.userID.ToString)
                 Me.ddlGebruiker.Items.Add(item)
             Next
-
-
             btnChauffeurs.Enabled = False
-
-
         End If
 
     End Sub
@@ -34,9 +30,8 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
 
     Protected Sub btnWijzig_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnWijzig.Click
         Dim klantbll As New KlantBLL
-        Dim username As String
-        username = Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString
-        Dim gid As New Guid(username)
+        Dim gid As New Guid
+        gid = New Guid(ddlGebruiker.SelectedValue)
         Dim dt As New Klanten.tblUserProfielDataTable
         Dim dr As Klanten.tblUserProfielRow = dt.NewRow
 
