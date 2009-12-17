@@ -11,7 +11,6 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
 
             Me.ddlGebruiker.Items.Add(New ListItem(("Kies gebruikersnaam"), -1))
 
-
             For i As Integer = 0 To dt.Rows.Count - 1
                 'Klant ophalen
                 dr = dt.Rows(i)
@@ -23,6 +22,11 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
                 Dim item As New ListItem(naamvoornaam, dr.userID.ToString)
                 Me.ddlGebruiker.Items.Add(item)
             Next
+
+
+            btnChauffeurs.Enabled = False
+
+
         End If
 
     End Sub
@@ -105,6 +109,19 @@ Partial Class App_Presentation_Webpaginas_GebruikersBeheer
 
     Protected Sub ddlGebruiker_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlGebruiker.SelectedIndexChanged
         vulgegevensIn(ddlGebruiker.SelectedValue)
+
+        Dim DDLKlant As New KlantBLL
+        Dim DTKlant As New Klanten.tblUserProfielDataTable
+        Dim DTRow As Klanten.tblUserProfielRow
+
+        DTKlant = DDLKlant.GetUserProfielByUserID(New Guid(ddlGebruiker.SelectedValue))
+        DTRow = DTKlant.Rows(0)
+
+        If Not DTRow.userIsBedrijf = 0 Then
+            btnChauffeurs.Enabled = True
+        Else
+            btnChauffeurs.Enabled = False
+        End If
 
     End Sub
 

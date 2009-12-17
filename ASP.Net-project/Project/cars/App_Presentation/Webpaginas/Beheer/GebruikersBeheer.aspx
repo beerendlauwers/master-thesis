@@ -1,5 +1,8 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="GebruikersBeheer.aspx.vb" Inherits="App_Presentation_Webpaginas_GebruikersBeheer" title="Untitled Page" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
+
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 
@@ -9,16 +12,23 @@
     <asp:DropDownList
         ID="ddlGebruiker" runat="server" AutoPostBack="True">
     </asp:DropDownList>
- <asp:UpdatePanel ID="updGegevens" runat="server" updateMode="Always">
-        <ContentTemplate>
-        <table>     
-<tr>
-    <td>
-        &nbsp;</td>
-    <td>
-        &nbsp;</td>    
-</tr>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <asp:Button ID="btnChauffeurs" runat="server" Text="Uw chauffeurs bewerken" />
 
+<br />
+<br />
+        
+        
+
+<cc1:Accordion ID="GebBeheerAccordion" runat="server" AutoSize="None" TransitionDuration="250" headercssclass="art-BlockHeaderStrong">
+    <Panes>
+        <cc1:AccordionPane ID="paneWijzigWachtwoord" runat="server">
+        <Header><asp:Image ID="imgWijzigWachtwoord" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/page_white_edit.png" /> Wachtwoord wijzigen</Header>
+        <Content>
+        <asp:UpdatePanel runat="server" ID="updToevoegen" UpdateMode="Always">
+        <ContentTemplate>
+                        
+<table>
 <tr>
     <td>
     <asp:Label ID="lblPaswoordNieuw" runat="server" Text="Paswoord: "></asp:Label>
@@ -105,14 +115,21 @@
         </asp:ChangePassword>
     </td>
 </tr>
+</table>
 
+</ContentTemplate>
+</asp:UpdatePanel>
+</content>
+</cc1:AccordionPane>
 
-<tr>
-<td>
-</td>
-<td>
-    &nbsp;</td>
-</tr>
+<cc1:AccordionPane ID="PaneWijzigGeg" runat="server">
+<Header><asp:Image ID="imgWijzigGeg" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/wrench.png" /> Gegevens wijzigen</Header>
+<Content>
+<asp:UpdatePanel runat="server" ID="updWijzigen" updateMode="Always" >
+ <ContentTemplate>
+
+<table>
+
 <tr>
     <td>
         <asp:Label ID="lblNaam" runat="server" Text="Naam: "></asp:Label>
@@ -213,10 +230,23 @@
     <asp:Button ID="btnWijzig" runat="server" Text="Wijzigingen opslaan" />
 </td> 
 </tr>
+</table>
+
+</ContentTemplate>
+</asp:UpdatePanel>
+</content>
+</cc1:AccordionPane>
+
+<cc1:AccordionPane ID="PaneRol" runat="server">
+<Header><asp:Image ID="ImageRol" runat="server" ImageAlign="Top" ImageUrl="~/App_Presentation/Images/award_star_gold.png" /> Rollen toekennen</Header>
+<Content>
+<asp:UpdatePanel runat="server" ID="updVerwijderen" UpdateMode="Always">
+<ContentTemplate>
+
+
+<table>
 <tr>
-<td>
-    <asp:Button ID="btnChauffeurs" runat="server" Text="Uw chauffeurs bewerken" />
-</td>
+
 <td>
     <asp:DropDownList ID="ddlRole" runat="server" 
         DataSourceID="ObjectDataSource2" DataTextField="RoleName" 
@@ -249,9 +279,19 @@
     <asp:Label ID="lblUser" runat="server" Text="Label" Visible="False"></asp:Label>
 </td>
 </tr>
-
 </table>
+
 </ContentTemplate>
 </asp:UpdatePanel>
+</content>
+</cc1:AccordionPane>
+</Panes>
+
+</cc1:Accordion>
+
+
+
+  
+
 </asp:Content>
 
