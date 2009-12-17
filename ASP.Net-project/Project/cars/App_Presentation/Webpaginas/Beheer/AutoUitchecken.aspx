@@ -1,4 +1,6 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AutoUitchecken.aspx.vb" Inherits="App_Presentation_Webpaginas_Beheer_AutoUitchecken" title="Untitled Page" %>
+  <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -16,7 +18,18 @@
 <tr>
 <td>Naam en voornaam</td>
 <td>
-<asp:TextBox ID="txtNaam" runat="server"></asp:TextBox> <asp:TextBox ID="txtVoornaam" runat="server"></asp:TextBox>
+<asp:TextBox ID="txtNaam" runat="server"></asp:TextBox>
+<cc1:AutoCompleteExtender ID="txtNaam_AutoCompleteExtender" runat="server" 
+        DelimiterCharacters="" Enabled="True" ServicePath="../../WebServices/AutoCompleteNaam.asmx" ServiceMethod="GetCompletionList" TargetControlID="txtNaam" MinimumPrefixLength="3" CompletionSetCount="12">
+    </cc1:AutoCompleteExtender>
+ 
+ 
+ 
+<asp:TextBox ID="txtVoornaam" runat="server"></asp:TextBox>
+<cc1:AutoCompleteExtender ID="txtVoornaam_AutoCompleteExtender" runat="server" 
+        DelimiterCharacters="" Enabled="True" ServicePath="../../WebServices/AutoCompleteVoorNaam.asmx" ServiceMethod="GetCompletionList" TargetControlID="txtVoornaam" MinimumPrefixLength="3" CompletionSetCount="12">
+    </cc1:AutoCompleteExtender>
+
 </td>
 </tr>
 <tr>

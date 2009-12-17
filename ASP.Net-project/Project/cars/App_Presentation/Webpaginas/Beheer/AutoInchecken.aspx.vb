@@ -299,4 +299,6 @@ Partial Class App_Presentation_Webpaginas_Beheer_AutoInchecken
     Protected Sub chkProblematisch_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkProblematisch.CheckedChanged
         Me.divCommentaarVak.Visible = Me.chkProblematisch.Checked
     End Sub
+
+
 End Class
