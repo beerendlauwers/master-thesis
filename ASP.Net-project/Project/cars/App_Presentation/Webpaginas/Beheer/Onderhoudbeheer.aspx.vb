@@ -24,6 +24,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_Onderhoudbeheer
 
         Dim onderhoudbll As New OnderhoudBLL
         Dim autobll As New AutoBLL
+        Dim controlebll As New ControleBLL
         Dim onderhouden As Onderhoud.tblNodigOnderhoudDataTable = onderhoudbll.GetAllToekomstigNodigOnderhoudByAutoID(autoID)
 
         Dim auto As Autos.tblAutoRow = autobll.GetAutoByAutoID(autoID).Rows(0)
@@ -40,16 +41,32 @@ Partial Class App_Presentation_Webpaginas_Beheer_Onderhoudbeheer
         weergavetabel.Columns.Add("Begindatum", Type.GetType("System.String"))
         weergavetabel.Columns.Add("Einddatum", Type.GetType("System.String"))
         weergavetabel.Columns.Add("Omschrijving", Type.GetType("System.String"))
+        weergavetabel.Columns.Add("IsUitgevoerd", Type.GetType("System.String"))
         weergavetabel.Columns.Add("controleID", Type.GetType("System.Int32"))
+        weergavetabel.Columns.Add("FinaliserenZichtbaar", Type.GetType("System.String"))
+
 
         For Each onderhoud As Onderhoud.tblNodigOnderhoudRow In onderhouden
             'Nieuwe overzichtsrij
             Dim overzichtrij As Data.DataRow = weergavetabel.NewRow
 
+            'Controle ophalen
+            Dim controle As Onderhoud.tblControleRow = controlebll.GetControleByControleID(onderhoud.controleID)
+
+
             'Alle data invullen
             overzichtrij.Item("Begindatum") = Format(onderhoud.nodigOnderhoudBegindat, "dd/MM/yyyy")
             overzichtrij.Item("Einddatum") = Format(onderhoud.nodigOnderhoudEinddat, "dd/MM/yyyy")
             overzichtrij.Item("Omschrijving") = onderhoud.nodigOnderhoudOmschrijving
+
+            If controle.controleIsUitgevoerd Then
+                overzichtrij.Item("IsUitgevoerd") = "Ja"
+                overzichtrij.Item("FinaliserenZichtbaar") = "span"
+            Else
+                overzichtrij.Item("IsUitgevoerd") = "Nee"
+                overzichtrij.Item("FinaliserenZichtbaar") = "none"
+            End If
+
             overzichtrij.Item("controleID") = onderhoud.controleID
 
             'Rij toevoegen
@@ -80,18 +97,24 @@ Partial Class App_Presentation_Webpaginas_Beheer_Onderhoudbeheer
 
         Dim onderhoudbll As New OnderhoudBLL
         Dim autobll As New AutoBLL
+        Dim controlebll As New ControleBLL
         Dim onderhouden As Onderhoud.tblNodigOnderhoudDataTable = onderhoudbll.GetAllNodigOnderhoudVoorVandaag()
 
         'Dit is onze weergavetabel.
         Dim weergavetabel As New Data.DataTable
         weergavetabel.Columns.Add("Kenteken", Type.GetType("System.String"))
-        weergavetabel.Columns.Add("Begindatum", Type.GetType("System.String"))
-        weergavetabel.Columns.Add("Einddatum", Type.GetType("System.String"))
         weergavetabel.Columns.Add("MerkModel", Type.GetType("System.String"))
         weergavetabel.Columns.Add("Omschrijving", Type.GetType("System.String"))
         weergavetabel.Columns.Add("controleID", Type.GetType("System.Int32"))
 
         For Each onderhoud As Onderhoud.tblNodigOnderhoudRow In onderhouden
+
+            'Controle ophalen
+            Dim controle As Onderhoud.tblControleRow = controlebll.GetControleByControleID(onderhoud.controleID)
+
+            'ff checken of deze controle reeds is uitgevoerd
+            If controle.controleIsUitgevoerd Then Continue For
+
             'Auto ophalen
             Dim auto As Autos.tblAutoRow = autobll.GetAutoByAutoID(onderhoud.autoID).Rows(0)
 
@@ -101,8 +124,6 @@ Partial Class App_Presentation_Webpaginas_Beheer_Onderhoudbeheer
             'Alle data invullen
             overzichtrij.Item("Kenteken") = auto.autoKenteken
             overzichtrij.Item("MerkModel") = autobll.GetAutoNaamByAutoID(auto.autoID)
-            overzichtrij.Item("Begindatum") = Format(onderhoud.nodigOnderhoudBegindat, "dd/MM/yyyy")
-            overzichtrij.Item("Einddatum") = Format(onderhoud.nodigOnderhoudEinddat, "dd/MM/yyyy")
             overzichtrij.Item("Omschrijving") = onderhoud.nodigOnderhoudOmschrijving
             overzichtrij.Item("controleID") = onderhoud.controleID
 
@@ -120,6 +141,10 @@ Partial Class App_Presentation_Webpaginas_Beheer_Onderhoudbeheer
             Me.divOnderhoudVandaag.Visible = True
             Me.lblGeenOnderhoudVandaag.Visible = False
         End If
+
+        onderhoudbll = Nothing
+        controlebll = Nothing
+        autobll = Nothing
 
     End Sub
 

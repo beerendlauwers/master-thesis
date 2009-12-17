@@ -30,6 +30,14 @@ Public Class ControleBLL
         End Try
     End Function
 
+    Public Function GetAllOudeControles() As Onderhoud.tblControleDataTable
+        Try
+            Return _controledal.GetAllOudeControles()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function InsertControle(ByRef c As Onderhoud.tblControleRow) As Boolean
         Try
             If (_controleAdapter.Insert(c.medewerkerID, c.autoID, c.reservatieID, c.controleBegindat, c.controleEinddat, c.controleIsNazicht, c.controleKilometerstand, c.controleBrandstofkost, c.controleIsUitgevoerd)) Then

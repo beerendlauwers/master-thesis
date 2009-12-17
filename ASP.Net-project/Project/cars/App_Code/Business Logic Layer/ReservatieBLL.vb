@@ -76,6 +76,14 @@ Public Class ReservatieBLL
         End Try
     End Function
 
+    Public Function GetAllIngecheckteReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
+        Try
+            Return _reservatiedal.GetAllIngecheckteReservatiesByAutoID(autoID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
 
     Public Function GetAllBevestigdeReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
         Try

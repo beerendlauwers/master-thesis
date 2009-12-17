@@ -28,6 +28,14 @@ Public Class OnderhoudBLL
         End Try
     End Function
 
+    Public Function GetNodigOnderhoudByControleID(ByVal controleID As Integer) As Onderhoud.tblNodigOnderhoudRow
+        Try
+            Return _onderhouddal.GetNodigOnderhoudByControleID(controleID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetNazichtByDatumAndAutoID(ByVal datum As Date, ByVal autoID As Integer) As Onderhoud.tblNodigOnderhoudRow
         Try
             Return _onderhouddal.GetNazichtByDatumAndAutoID(datum, autoID)

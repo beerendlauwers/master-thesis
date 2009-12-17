@@ -65,6 +65,22 @@ Public Class OnderhoudDAL
         End Try
     End Function
 
+    Public Function GetNodigOnderhoudByControleID(ByVal controleID As Integer) As Onderhoud.tblNodigOnderhoudRow
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblNodigOnderhoud WHERE controleID = @controleID")
+        myCommand.Parameters.Add("@controleID", SqlDbType.Int).Value = controleID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Onderhoud.tblNodigOnderhoudDataTable
+        dt = CType(_f.ReadDataTable(myCommand, dt), Onderhoud.tblNodigOnderhoudDataTable)
+
+        If (dt.Rows.Count = 0) Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
+    End Function
+
     Public Function GetControleByReservatieID(ByVal reservatieID As Integer) As Onderhoud.tblControleRow
         Try
             Dim myCommand As New SqlCommand("SELECT * FROM tblControle WHERE reservatieID = @reservatieID")

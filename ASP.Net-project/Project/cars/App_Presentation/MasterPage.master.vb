@@ -130,7 +130,42 @@ Partial Class App_Presentation_MasterPage
             End If
         End If
 
+        'Check voor oude geplande onderhouden (= ouder dan 3 dagen) die nooit zijn uitgevoerd geweest
+        If (Application("CronJobs_VerwijderOudeGeplandeOnderhouden_Timer") Is Nothing) Then
+            Application("CronJobs_VerwijderOudeGeplandeOnderhouden_Timer") = Now
+            VerwijderOudeGeplandeOnderhouden()
+        Else
+            Dim timer As Date = Application("CronJobs_VerwijderOudeGeplandeOnderhouden_Timer")
 
+            If (DateAdd(DateInterval.Day, 1, timer) <= huidigetijd) Then
+                VerwijderOudeGeplandeOnderhouden()
+                Application("CronJobs_VerwijderOudeGeplandeOnderhouden_Timer") = Now
+            End If
+        End If
+
+
+    End Sub
+
+    Private Sub VerwijderOudeGeplandeOnderhouden()
+
+        Dim controlebll As New ControleBLL
+        Dim onderhoudbll As New OnderhoudBLL
+
+        Dim dt As Onderhoud.tblControleDataTable = controlebll.GetAllOudeControles()
+
+        For Each c As Onderhoud.tblControleRow In dt
+
+            'Nodig onderhoud verwijderen in tblNodigOnderhoud
+            Dim o As Onderhoud.tblNodigOnderhoudRow = onderhoudbll.GetNodigOnderhoudByControleID(c.controleID)
+            If o IsNot Nothing Then onderhoudbll.VerwijderNodigOnderhoud(o.nodigOnderhoudID)
+
+            'Eigenlijke controle verwijderen
+            controlebll.DeleteControle(c.controleID)
+
+        Next
+
+        controlebll = Nothing
+        onderhoudbll = Nothing
     End Sub
 
     Private Sub VerwijderOnbevestigdeReservaties()
@@ -159,6 +194,8 @@ Partial Class App_Presentation_MasterPage
         Next
 
         reservatiebll = Nothing
+        controlebll = Nothing
+        onderhoudbll = Nothing
     End Sub
 End Class
 

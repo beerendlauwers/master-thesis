@@ -6,7 +6,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="plcMain" Runat="Server">
 
-<h1>Onderhoud uitvoeren</h1>
+<h1><asp:Label ID="lblHoofdTitel" runat="server"></asp:Label></h1>
 
     <asp:UpdatePanel ID="updVolledigFormulier" runat="server">
     <ContentTemplate>
@@ -78,10 +78,21 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
                                 </tr>
                                 <tr>
                                     <td>
-                                        Datum van<br />opmerking
+                                        Datum van<br />
+                                        opmerking
                                     </td>
                                     <td>
-                                        <asp:TextBox ID="txtDatumOpmerkingNieuweBeschadiging" runat="server"></asp:TextBox>
+                                        <asp:TextBox ID="txtDatumOpmerkingNieuweBeschadiging" runat="server" CausesValidation="True"></asp:TextBox>
+                                        <cc1:CalendarExtender ID="calBegindatum" runat="server" TargetControlID="txtDatumOpmerkingNieuweBeschadiging"
+                                            Format="d/MM/yyyy" FirstDayOfWeek="Monday" TodaysDateFormat="d MMMM, yyyy" PopupButtonID="imgBeginDatumKalender">
+                                        </cc1:CalendarExtender>
+                                        <asp:Image ImageAlign="AbsMiddle" ID="imgBeginDatumKalender" runat="server" ImageUrl="~/App_Presentation/Images/kalender.png" />
+                                        <asp:RequiredFieldValidator ID="valBegindatum" runat="server" ControlToValidate="txtDatumOpmerkingNieuweBeschadiging"
+                                            ErrorMessage="Dit veld is verplicht."></asp:RequiredFieldValidator>
+                                        <cc1:MaskedEditExtender ID="mskBeginDatum" runat="server" TargetControlID="txtDatumOpmerkingNieuweBeschadiging"
+                                            Mask="99/99/9999" MaskType="Date" MessageValidatorTip="False" PromptCharacter="."
+                                            ClearMaskOnLostFocus="False" ClearTextOnInvalid="True">
+                                        </cc1:MaskedEditExtender>
                                     </td>
                                 </tr>
                                 <tr>
@@ -116,12 +127,15 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
                                         <asp:textbox ID="txtKostNieuweBeschadiging" runat="server" Visible="false"></asp:textbox>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td colspan="2" align="right">
-                                        <asp:Button ID="btnBeschadigingToevoegen" runat="server" Text="Beschadiging Toevoegen" />
-                                    </td>
-                                </tr>
                             </table>
+                            <div align="center">
+                            <asp:Button ID="btnBeschadigingToevoegen" runat="server" Text="Beschadiging Toevoegen" />
+                            </div>
+                            <div align="center" runat="server" id="divBeschToevoegenFeedback" visible="false">
+                            <br />
+                                <asp:Image ID="imgBeschToevoegenFeedback" runat="server" />&nbsp;<asp:Label ID="lblBeschToevoegenFeedback" runat="server" ></asp:Label>
+                                <br /><br />
+                            </div>
                     </ContentTemplate>
                     <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="btnBeschadigingToevoegen" />
@@ -151,8 +165,9 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
                                       beschadiging toebracht  
                                     </td>
                                     <td>
+                                        <asp:CheckBox ID="chkNietDoorKlantAangericht" runat="server" Text="Niet door een klant aangericht" AutoPostBack="true" /><br />
                                         <asp:DropDownList ID="ddlKlanten" runat="server"></asp:DropDownList>
-                                        <asp:Label ID="lblNietDoorKlantAangericht" runat="server" Visible="false" Text="Niet door een klant aangericht"></asp:Label>
+                                        <asp:Label Visible="false" ID="lblWijzigBeschGeenKlantenTeKiezen" runat="server" Text="Op de datum van dit onderhoud heeft nog geen enkele klant deze auto ingecheckt."></asp:Label>
                                     </td>
                                 </tr>
                                 <tr>
@@ -160,7 +175,17 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
                                         Datum van<br />opmerking
                                     </td>
                                     <td>
-                                        <asp:TextBox ID="txtDatumVanOpmerking" runat="server"></asp:TextBox>
+                                        <asp:TextBox ID="txtDatumVanOpmerking" runat="server" CausesValidation="True"></asp:TextBox>
+                                        <cc1:CalendarExtender ID="calDatumVanOpmerking" runat="server" TargetControlID="txtDatumVanOpmerking"
+                                            Format="d/MM/yyyy" FirstDayOfWeek="Monday" TodaysDateFormat="d MMMM, yyyy" PopupButtonID="imgBeginDatumKalender">
+                                        </cc1:CalendarExtender>
+                                        <asp:Image ImageAlign="AbsMiddle" ID="imgDatumVanOpmerking" runat="server" ImageUrl="~/App_Presentation/Images/kalender.png" />
+                                        <asp:RequiredFieldValidator ID="valDatumVanOpmerking" runat="server" ControlToValidate="txtDatumVanOpmerking"
+                                            ErrorMessage="Dit veld is verplicht."></asp:RequiredFieldValidator>
+                                        <cc1:MaskedEditExtender ID="mskDatumVanOpmerking" runat="server" TargetControlID="txtDatumVanOpmerking"
+                                            Mask="99/99/9999" MaskType="Date" MessageValidatorTip="False" PromptCharacter="."
+                                            ClearMaskOnLostFocus="False" ClearTextOnInvalid="True">
+                                        </cc1:MaskedEditExtender>
                                     </td>
                                 </tr>
                                 <tr>
@@ -187,12 +212,15 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
                                         <asp:textbox ID="txtHerstellingskost" runat="server"></asp:textbox>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td colspan="2" align="right">
-                                        <asp:Button ID="btnBeschadigingWijzigen" runat="server" Text="Wijzig Beschadiging" />
-                                    </td>
-                                </tr>
                             </table>
+                            <div align="center">
+                             <asp:Button ID="btnBeschadigingWijzigen" runat="server" Text="Wijzig Beschadiging" />
+                            </div>
+                            <div align="center" runat="server" id="divBeschWijzigenFeedback" visible="false">
+                            <br />
+                                <asp:Image ID="imgBeschWijzigenFeedback" runat="server" />&nbsp;<asp:Label ID="lblBeschWijzigenFeedback" runat="server" ></asp:Label>
+                                <br /><br />
+                            </div>
                         </div>
                         </ContentTemplate>
                         <Triggers>
@@ -213,11 +241,15 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
                     <td>Selecteer beschadiging:</td>
                     <td><asp:DropDownList ID="ddlBeschadigingenVerwijderen" runat="server"></asp:DropDownList></td>
                     </tr>
-                    <tr>
-                    <td colspan="2" align="right">
-                        <asp:Button ID="btnBeschadigingVerwijderen" runat="server" Text="Beschadiging Verwijderen" /></td>
-                    </tr>
                     </table>
+                    <div align="center">
+                    <asp:Button ID="btnBeschadigingVerwijderen" runat="server" Text="Beschadiging Verwijderen" />
+                    </div>
+                    <div align="center" runat="server" id="divBeschVerwijderenFeedback" visible="false">
+                            <br />
+                                <asp:Image ID="imgBeschVerwijderenFeedback" runat="server" />&nbsp;<asp:Label ID="lblBeschVerwijderenFeedback" runat="server" ></asp:Label>
+                                <br /><br />
+                            </div>
                     </div>
                     </ContentTemplate>
                     </asp:UpdatePanel>
@@ -342,7 +374,7 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
                     </tr>
                     <tr>
                     <td colspan="2" align="right">
-                        <asp:Button ID="btnOnderhoudsActieVerwijderen" runat="server" Text="OnderhoudsActie Verwijderen" /></td>
+                        <asp:Button ID="btnOnderhoudsActieVerwijderen" runat="server" Text="Onderhoudsactie Verwijderen" /></td>
                     </tr>
                     </table>
                     </div>
@@ -356,11 +388,13 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
 <h2>Nazicht</h2>               
     <asp:UpdatePanel ID="updNazicht" runat="server">
     <ContentTemplate>
+    
         <asp:CheckBox runat="server" id="chkIsNazicht" autopostback="true" Text="Dit is een nazicht."></asp:CheckBox>
-        
+        <asp:Label ID="lblNazichtIsOnmogelijk" runat="server" visible="false"></asp:Label>
         <div runat="server" id="divNazichtOpties" visible="false">
         
         <table>
+        <asp:PlaceHolder runat="server" ID="plcGeenReservatieID"></asp:PlaceHolder>
         <tr>
         <td>Parkeerplaats</td>
         <td>
@@ -433,9 +467,22 @@ Onderhoudsdatum:&nbsp;<asp:Label ID="lblOnderhoudsDatum" runat="server"></asp:La
     </asp:UpdatePanel>
     <br /><br />
     <asp:UpdatePanel ID="updOnderhoudOpslaan" runat="server">
-    <ContentTemplate>
-        <asp:Button ID="btnOnderhoudOpslaan" runat="server" Text="Onderhoud Opslaan" />
-    </ContentTemplate>
+        <ContentTemplate>
+                <div align="center">
+                <asp:Button ID="btnOnderhoudOpslaan" runat="server" Text="Onderhoud Opslaan" />
+                </div>
+                <div align="center" runat="server" id="divOnderhoudOpslaanFeedback" visible="false">
+                <br /><asp:Image ID="imgOlieNietVerversd" runat="server" Visible="false" ImageUrl="~\App_Presentation\Images\warning.png" />&nbsp;<asp:Label ID="lblOlieNietVerversd" runat="server" Text="De olie van deze auto werd niet vervangen." Visible="false"></asp:Label>
+                <br />
+                <asp:Image ID="imgOnderhoudOpslaanFeedback" runat="server" />&nbsp;<asp:Label ID="lblOnderhoudOpslaanFeedback" runat="server"></asp:Label>
+                <br />
+                <br />
+            </div>
+            <div align="center">
+            <asp:LinkButton ID="lnkTerugNaarOnderhoudsbeheer" runat="server" PostBackUrl="~/App_Presentation/Webpaginas/Beheer/Onderhoudbeheer.aspx">Terug Naar Onderhoudsbeheer</asp:LinkButton>
+            </div>
+            </div>
+        </ContentTemplate>
     </asp:UpdatePanel> 
 
 </div>

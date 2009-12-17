@@ -24,6 +24,16 @@ Public Class BeschadigingDAL
 
     End Function
 
+    Public Function GetAllBeschadigingByControleID(ByVal controleID As Integer) As Onderhoud.tblAutoBeschadigingDataTable
+        Dim myCommand As New SqlCommand("SELECT * FROM tblAutoBeschadiging WHERE controleID = @controleID")
+        myCommand.Parameters.Add("@controleID", SqlDbType.Int).Value = controleID
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Onderhoud.tblAutoBeschadigingDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Onderhoud.tblAutoBeschadigingDataTable)
+
+    End Function
+
     Public Function GetAllBeschadigingByAutoID(ByVal autoID As Integer) As Onderhoud.tblAutoBeschadigingDataTable
 
         Dim myCommand As New SqlCommand("SELECT * FROM tblAutoBeschadiging WHERE autoID = @autoID")
@@ -36,25 +46,29 @@ Public Class BeschadigingDAL
     End Function
 
     Public Function InsertBeschadiging(ByRef b As Onderhoud.tblAutoBeschadigingRow) As Integer
-        Dim myCommand As New SqlCommand("cars_InsertBeschadiging")
-        myCommand.CommandType = CommandType.StoredProcedure
+        Try
+            Dim myCommand As New SqlCommand("cars_InsertBeschadiging")
+            myCommand.CommandType = CommandType.StoredProcedure
 
-        myCommand.Parameters.Add("@id", SqlDbType.Int).Direction = ParameterDirection.Output
-        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = b.autoID
-        myCommand.Parameters.Add("@beschadigingAangerichtDoorKlant", SqlDbType.UniqueIdentifier).Value = b.beschadigingAangerichtDoorKlant
-        myCommand.Parameters.Add("@beschadigingDatum", SqlDbType.DateTime).Value = b.beschadigingDatum
-        myCommand.Parameters.Add("@beschadigingKost", SqlDbType.Float).Value = b.beschadigingKost
-        myCommand.Parameters.Add("@beschadigingIsHersteld", SqlDbType.Int).Value = b.beschadigingIsHersteld
-        myCommand.Parameters.Add("@beschadigingIsDoorverrekend", SqlDbType.Int).Value = b.beschadigingIsDoorverrekend
-        myCommand.Parameters.Add("@beschadigingOmschrijving", SqlDbType.Text).Value = b.beschadigingOmschrijving
-        myCommand.Parameters.Add("@controleID", SqlDbType.Int).Value = b.controleID
-        myCommand.Connection = _myConnection
+            myCommand.Parameters.Add("@id", SqlDbType.Int).Direction = ParameterDirection.Output
+            myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = b.autoID
+            myCommand.Parameters.Add("@beschadigingAangerichtDoorKlant", SqlDbType.UniqueIdentifier).Value = b.beschadigingAangerichtDoorKlant
+            myCommand.Parameters.Add("@beschadigingDatum", SqlDbType.DateTime).Value = b.beschadigingDatum
+            myCommand.Parameters.Add("@beschadigingKost", SqlDbType.Float).Value = b.beschadigingKost
+            myCommand.Parameters.Add("@beschadigingIsHersteld", SqlDbType.Int).Value = b.beschadigingIsHersteld
+            myCommand.Parameters.Add("@beschadigingIsDoorverrekend", SqlDbType.Int).Value = b.beschadigingIsDoorverrekend
+            myCommand.Parameters.Add("@beschadigingOmschrijving", SqlDbType.Text).Value = b.beschadigingOmschrijving
+            myCommand.Parameters.Add("@controleID", SqlDbType.Int).Value = b.controleID
+            myCommand.Connection = _myConnection
 
-        myCommand.Connection.Open()
-        myCommand.ExecuteNonQuery()
-        myCommand.Connection.Close()
+            myCommand.Connection.Open()
+            myCommand.ExecuteNonQuery()
+            myCommand.Connection.Close()
 
-        Return myCommand.Parameters(0).Value
+            Return myCommand.Parameters(0).Value
+        Catch ex As Exception
+            Return -10
+        End Try
 
     End Function
 End Class

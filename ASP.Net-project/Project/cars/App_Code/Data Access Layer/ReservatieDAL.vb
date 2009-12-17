@@ -203,5 +203,17 @@ Public Class ReservatieDAL
 
     End Function
 
+    Public Function GetAllIngecheckteReservatiesByAutoID(ByVal autoID As Integer) As Reservaties.tblReservatieDataTable
+
+        Dim myCommand As New SqlCommand("SELECT * FROM tblReservatie WHERE autoID = @autoID and reservatieStatus = 4 AND @now >= reservatieBegindat")
+        myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
+        myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Now
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Reservaties.tblReservatieDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Reservaties.tblReservatieDataTable)
+
+    End Function
+
 End Class
 

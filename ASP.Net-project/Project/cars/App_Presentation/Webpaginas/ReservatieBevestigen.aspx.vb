@@ -212,7 +212,7 @@ Partial Class App_Presentation_Webpaginas_ReservatieBevestigen
         nazichtrow.controleIsUitgevoerd = 0
 
         'Controle toevoegen.
-        ControleBLL.InsertNazicht(nazichtrow)
+        controlebll.InsertNazicht(nazichtrow)
 
     End Sub
 

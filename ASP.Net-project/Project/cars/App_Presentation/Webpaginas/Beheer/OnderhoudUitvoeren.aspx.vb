@@ -19,6 +19,14 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
                     Dim c As Onderhoud.tblControleRow = controlebll.GetControleByControleID(controleID)
                     controlebll = Nothing
 
+                    If (c.controleIsUitgevoerd = True) Then
+                        ViewState("controleIsUitgevoerd") = True
+                        Me.lblHoofdTitel.Text = "Onderhoud Wijzigen"
+                    Else
+                        ViewState("controleIsUitgevoerd") = False
+                        Me.lblHoofdTitel.Text = "Onderhoud Uitvoeren"
+                    End If
+
                     'AutoID opslaan in viewstate
                     ViewState("autoID") = c.autoID
                     ViewState("controleID") = controleID
@@ -45,6 +53,60 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
                     Me.chkIsNazicht.Checked = c.controleIsNazicht
                     If Me.chkIsNazicht.Checked Then
                         chkIsNazicht_CheckedChanged(sender, e)
+
+                        'Checken of dit nazicht al een reservatie heeft
+                        Dim reservatiebll As New ReservatieBLL
+                        Dim klantbll As New KlantBLL
+
+                        If DBNull.Value.Equals(c.Item("reservatieID")) Then
+                            'nope, nog geen reservatie. We zullen aardig zijn en een 
+                            'dropdownlist met reservaties van deze auto aanmaken
+                            Dim tr As New HtmlGenericControl("tr")
+                            Dim tekst As New HtmlGenericControl("td")
+                            Dim ddl As New HtmlGenericControl("td")
+
+                            tekst.InnerText = "Selecteer reservatie:"
+                            Dim ddlReservaties As New DropDownList
+                            ddlReservaties.ID = "ddlReservaties"
+
+                            Dim reservaties As Reservaties.tblReservatieDataTable = reservatiebll.GetAllIngecheckteReservatiesByAutoID(c.autoID)
+
+                            For Each res As Reservaties.tblReservatieRow In reservaties
+
+                                Dim p As Klanten.tblUserProfielRow = klantbll.GetUserProfielByUserID(res.userID).Rows(0)
+
+                                Dim weergave As String = String.Concat(p.userNaam, " ", p.userVoornaam, " (", Format(res.reservatieBegindat, "dd/MM/yyyy"), " - ", Format(res.reservatieEinddat, "dd/MM/yyyy"))
+
+                                Dim item As New ListItem(weergave, res.reservatieID)
+                                ddlReservaties.Items.Add(item)
+
+                            Next res
+
+                            If reservaties.Rows.Count = 0 Then
+                                'Dit onderhoud kan geen nazicht zijn,
+                                'want er nog niet eens reservaties voor deze auto
+                                Me.chkIsNazicht.Visible = False
+                                Me.chkIsNazicht.Checked = False
+                                chkIsNazicht_CheckedChanged(sender, e)
+                                Dim lbl As New HtmlGenericControl("td")
+                                lbl.InnerText = "Dit onderhoud kan geen nazicht zijn, want deze auto is nog nooit gereserveerd geweest."
+                                lbl.Attributes.Add("colspan", "2")
+                                tr.Controls.Add(lbl)
+
+                                Me.lblNazichtIsOnmogelijk.Text = "Dit onderhoud kan geen nazicht zijn, want deze auto is nog nooit gereserveerd geweest."
+                                Me.lblNazichtIsOnmogelijk.Visible = True
+                            Else
+                                Me.lblNazichtIsOnmogelijk.Visible = False
+                                ddlReservaties.DataBind()
+                                ddl.Controls.Add(ddlReservaties)
+                                tr.Controls.Add(tekst)
+                                tr.Controls.Add(ddl)
+                            End If
+
+                            Me.plcGeenReservatieID.Controls.Add(tr)
+
+                        End If
+
                     End If
 
                     Me.txtDatumOpmerkingNieuweBeschadiging.Text = Format(Now, "dd/MM/yyyy")
@@ -220,18 +282,35 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
             'Alle reservaties ophalen van deze auto
             Dim oudereservaties As Reservaties.tblReservatieDataTable = reservatiebll.GetAllReservatiesByAutoID(autoID)
+            Dim dubbels(oudereservaties.Rows.Count - 1) As String
+            Dim i As Integer = 0
 
             For Each row As Reservaties.tblReservatieRow In oudereservaties
 
                 If (Me.lblOnderhoudsDatum.Text > row.reservatieEinddat) Then
 
-                    'Klant van deze reservatie ophalen
-                    Dim klant As Klanten.tblUserProfielRow = klantbll.GetUserProfielByUserID(row.userID).Rows(0)
+                    'Klant ophalen
+                    Dim dt As Klanten.tblUserProfielDataTable = klantbll.GetUserProfielByUserID(row.userID)
 
-                    'Toevoegen aan DDL
-                    Dim item As New ListItem(String.Concat(klant.userNaam, " ", klant.userVoornaam), klant.userID.ToString)
-                    Me.ddlKlantNieuweBeschadiging.Items.Add(item)
-                    Me.ddlKlanten.Items.Add(item)
+                    If dt.Rows.Count = 0 Then Continue For
+                    Dim p As Klanten.tblUserProfielRow = dt.Rows(0)
+
+                    'Even nakijken of deze klant al in de dropdown zit.
+                    Dim isDubbel As Boolean = False
+                    Dim naamvoornaam As String = String.Concat(p.userNaam, " ", p.userVoornaam)
+                    For Each naam In dubbels
+                        If (naamvoornaam = naam) Then
+                            isDubbel = True
+                        End If
+                    Next naam
+
+                    If (Not isDubbel) Then
+                        Dim item As New ListItem(naamvoornaam, p.userID.ToString)
+                        Me.ddlKlantNieuweBeschadiging.Items.Add(item)
+                        Me.ddlKlanten.Items.Add(item)
+                        dubbels(i) = naamvoornaam
+                        i = i + 1
+                    End If
 
                 End If
             Next
@@ -343,6 +422,54 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
 #Region "Methods voor beschadiging toe te voegen"
 
+    Private Function ToevoegFormulierBeschadigingIsGeldig() As Boolean
+
+        Me.divBeschToevoegenFeedback.Visible = False
+
+        If Me.ddlKlantNieuweBeschadiging.SelectedValue = String.Empty And _
+            Me.chkLaatsteKlantWasVerantwoordelijk.Checked = False And _
+            Me.chkGeenKlant.Checked = False Then
+            Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschToevoegenFeedback.Text = "Gelieve een optie te kiezen bij ""Klant die de beschadiging toebracht""."
+            Me.divBeschToevoegenFeedback.Visible = True
+            Return False
+        End If
+
+        Try
+            Dim datum As Date = Date.Parse(Me.txtDatumOpmerkingNieuweBeschadiging.Text)
+
+            If datum > Now Then
+                Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+                Me.lblBeschToevoegenFeedback.Text = "Een beschadiging kan niet in de toekomst worden opgemerkt."
+                Me.divBeschToevoegenFeedback.Visible = True
+                Return False
+            End If
+
+        Catch
+            Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschToevoegenFeedback.Text = "Gelieve de datum van opmerking correct in te vullen."
+            Me.divBeschToevoegenFeedback.Visible = True
+            Return False
+        End Try
+
+        If Me.txtOmschrijvingNieuweBeschadiging.InnerText = String.Empty Then
+            Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschToevoegenFeedback.Text = "Gelieve de omschrijving van de beschadiging in te vullen."
+            Me.divBeschToevoegenFeedback.Visible = True
+            Return False
+        End If
+
+        If Session("beschadigingFoto") Is Nothing Or Session("beschadigingFotoType") Is Nothing Then
+            Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschToevoegenFeedback.Text = "Gelieve een foto van de beschadiging toe te voegen."
+            Me.divBeschToevoegenFeedback.Visible = True
+            Return False
+        End If
+
+        Return True
+
+    End Function
+
     Protected Sub chkLaatsteKlantWasVerantwoordelijk_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkLaatsteKlantWasVerantwoordelijk.CheckedChanged
 
         If Me.chkGeenKlant.Checked Then
@@ -389,9 +516,15 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
         If Me.chkLaatsteKlantWasVerantwoordelijk.Checked Then
             Me.chkLaatsteKlantWasVerantwoordelijk.Checked = False
         End If
+
+        Me.ddlKlantNieuweBeschadiging.Visible = True
+        Me.lblRecentsteKlant.Visible = False
+        Me.ddlKlantNieuweBeschadiging.Enabled = Not Me.chkGeenKlant.Checked
     End Sub
 
     Protected Sub btnBeschadigingToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnBeschadigingToevoegen.Click
+
+        If (Not ToevoegFormulierBeschadigingIsGeldig()) Then Return
 
         Dim beschadigingsbll As New BeschadigingBLL
 
@@ -424,6 +557,13 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
         Dim beschadigingID As Integer = beschadigingsbll.InsertBeschadiging(b)
 
+        If (beschadigingID = -10) Then
+            Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschToevoegenFeedback.Text = "Er is een fout gebeurd tijdens het opslaan van de beschadiging. Gelieve het opnieuw te proberen."
+            Me.divBeschToevoegenFeedback.Visible = True
+            Return
+        End If
+
         'Opslaan in viewstate
         If ViewState("BeschadigingenVanDitOnderhoud") Is Nothing Then ViewState("BeschadigingenVanDitOnderhoud") = String.Empty
         ViewState("BeschadigingenVanDitOnderhoud") = String.Concat(ViewState("BeschadigingenVanDitOnderhoud"), beschadigingID, ";")
@@ -434,6 +574,10 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
         ClearBeschadigingToevoegen()
 
+        Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\tick.gif"
+        Me.lblBeschToevoegenFeedback.Text = "Beschadiging toegevoegd."
+        Me.divBeschToevoegenFeedback.Visible = True
+
     End Sub
 
     Private Sub ClearBeschadigingToevoegen()
@@ -441,11 +585,62 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
         Me.txtOmschrijvingNieuweBeschadiging.InnerText = String.Empty
         Me.chkIsHersteldNieuweBeschadiging.Checked = False
         Me.txtKostNieuweBeschadiging.Text = String.Empty
+        Session("beschadigingFoto") = Nothing
+        Session("beschadigingFotoType") = Nothing
     End Sub
 
 #End Region
 
 #Region "Methods voor beschadiging te wijzigen"
+
+    Private Function WijzigFormulierBeschadigingIsGeldig() As Boolean
+
+        Me.divBeschWijzigenFeedback.Visible = False
+
+        If Me.ddlKlanten.SelectedValue = String.Empty And _
+            Me.chkNietDoorKlantAangericht.Checked = False Then
+            Me.imgBeschWijzigenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschWijzigenFeedback.Text = "Gelieve een optie te kiezen bij ""Klant die de beschadiging toebracht""."
+            Me.divBeschWijzigenFeedback.Visible = True
+            Return False
+        End If
+
+        Try
+            Dim datum As Date = Date.Parse(Me.txtDatumVanOpmerking.Text)
+
+            If datum > Now Then
+                Me.imgBeschWijzigenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+                Me.lblBeschWijzigenFeedback.Text = "Een beschadiging kan niet in de toekomst worden opgemerkt."
+                Me.divBeschWijzigenFeedback.Visible = True
+            End If
+        Catch
+            Me.imgBeschWijzigenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschWijzigenFeedback.Text = "Gelieve de datum van opmerking correct in te vullen."
+            Me.divBeschWijzigenFeedback.Visible = True
+            Return False
+        End Try
+
+        If Me.txtOmschrijving.InnerText = String.Empty Then
+            Me.imgBeschWijzigenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschWijzigenFeedback.Text = "Gelieve de omschrijving van de beschadiging in te vullen."
+            Me.divBeschWijzigenFeedback.Visible = True
+            Return False
+        End If
+
+        If Me.chkIsHersteld.Checked Then
+            Try
+                Double.Parse(Me.txtHerstellingskost.Text)
+            Catch
+                Me.imgBeschWijzigenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+                Me.lblBeschWijzigenFeedback.Text = "Gelieve de herstellingskost correct in te vullen."
+                Me.divBeschWijzigenFeedback.Visible = True
+                Return False
+            End Try
+        End If
+
+        Return True
+
+    End Function
 
     Protected Sub ddlBeschadigingen_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBeschadigingen.SelectedIndexChanged
         VulBeschadigingWijzigen()
@@ -470,13 +665,24 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
         If (b.beschadigingIsHersteld) Then
             Me.txtHerstellingskost.Text = b.beschadigingKost
+        Else
+            Me.txtHerstellingskost.Text = String.Empty
         End If
 
         If b.beschadigingAangerichtDoorKlant.ToString = "7a73f865-ec29-4efd-bf09-70a9f9493d21" Then
-            Me.lblNietDoorKlantAangericht.Visible = True
+            Me.chkNietDoorKlantAangericht.Checked = True
             Me.ddlKlanten.Visible = False
         Else
             Me.ddlKlanten.Visible = True
+
+            If ddlKlanten.Items.Count = 0 Then
+                Me.lblWijzigBeschGeenKlantenTeKiezen.Visible = True
+                Me.ddlKlanten.Visible = False
+            Else
+                Me.lblWijzigBeschGeenKlantenTeKiezen.Visible = False
+                Me.ddlKlanten.Visible = True
+            End If
+
             For i As Integer = 0 To Me.ddlKlanten.Items.Count - 1
                 If (Me.ddlKlanten.Items(i).Value = b.beschadigingAangerichtDoorKlant.ToString()) Then
                     Me.ddlKlanten.Items(i).Selected = True
@@ -484,6 +690,26 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
                     Me.ddlKlanten.Items(i).Selected = False
                 End If
             Next i
+
+
+        End If
+
+    End Sub
+
+    Protected Sub chkNietDoorKlantAangericht_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkNietDoorKlantAangericht.CheckedChanged
+        Me.ddlKlanten.Visible = Not Me.chkNietDoorKlantAangericht.Checked
+
+        If ddlKlanten.Items.Count = 0 Then
+            Me.lblWijzigBeschGeenKlantenTeKiezen.Visible = True
+            Me.ddlKlanten.Visible = False
+        Else
+            Me.lblWijzigBeschGeenKlantenTeKiezen.Visible = False
+            Me.ddlKlanten.Visible = True
+        End If
+
+        If Me.chkNietDoorKlantAangericht.Checked Then
+            Me.lblWijzigBeschGeenKlantenTeKiezen.Visible = False
+            Me.ddlKlanten.Visible = False
         End If
 
     End Sub
@@ -493,9 +719,16 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
         Me.lblHerstellingskost.Visible = Me.chkIsHersteld.Checked()
         Me.txtHerstellingskost.Visible = Me.chkIsHersteld.Checked()
 
+        If Not Me.chkIsHersteld.Checked Then
+            Me.txtHerstellingskost.Text = String.Empty
+        End If
+
     End Sub
 
     Protected Sub btnBeschadigingWijzigen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnBeschadigingWijzigen.Click
+
+        If Not WijzigFormulierBeschadigingIsGeldig() Then Return
+
         Dim beschadigingbll As New BeschadigingBLL
 
         Dim b As Onderhoud.tblAutoBeschadigingRow = beschadigingbll.GetBeschadigingByBeschadigingID(Me.ddlBeschadigingen.SelectedValue)
@@ -514,9 +747,18 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
             b.beschadigingAangerichtDoorKlant = New Guid(Me.ddlKlanten.SelectedValue)
         End If
 
-        beschadigingbll.UpdateBeschadiging(b)
+        If Not beschadigingbll.UpdateBeschadiging(b) Then
+            Me.imgBeschWijzigenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschWijzigenFeedback.Text = "Er is een fout gebeurd tijdens het opslaan van de wijzigen. Gelieve het opnieuw te proberen."
+            Me.divBeschWijzigenFeedback.Visible = True
+            Return
+        End If
 
         VulBeschadigingsOverzicht()
+
+        Me.imgBeschWijzigenFeedback.ImageUrl = "~\App_Presentation\Images\tick.gif"
+        Me.lblBeschWijzigenFeedback.Text = "Beschadiging gewijzigd."
+        Me.divBeschWijzigenFeedback.Visible = True
     End Sub
 
     Private Sub ClearBeschadigingWijzigen()
@@ -581,7 +823,12 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
         r.beschadigingID = beschadigingID
 
-        fotobll.InsertBeschadigingAutoFoto(r)
+        If (fotobll.InsertBeschadigingAutoFoto(r) = False) Then
+            'Fout tijdens toevoegen foto
+            Me.imgBeschToevoegenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschToevoegenFeedback.Text = "Er is een fout gebeurd tijdens het opslaan van de foto. Mogelijk is de foto niet zichtbaar."
+            Me.divBeschToevoegenFeedback.Visible = True
+        End If
 
         fotobll = Nothing
         dt = Nothing
@@ -664,6 +911,7 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
     End Sub
 
     Private Sub ClearOnderhoudsActieToevoegen()
+        Me.divBeschToevoegenFeedback.Visible = False
         Me.txtAndereOnderhoudsActie.Text = String.Empty
         Me.txtKostOnderhoudsActie.Text = String.Empty
     End Sub
@@ -841,7 +1089,17 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
     Protected Sub btnOnderhoudsActieVerwijderen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudsActieVerwijderen.Click
         Dim controleactiebll As New ControleActieBLL
         Dim r As Onderhoud.tblControleActieRow = controleactiebll.GetControleActieByControleIDAndActieID(ViewState("controleID"), Me.ddlOnderhoudsActiesVerwijderen.SelectedValue)
-        controleactiebll.DeleteControleActie(r.ControleActieID)
+
+        If Not controleactiebll.DeleteControleActie(r.ControleActieID) Then
+            Me.imgBeschVerwijderenFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblBeschVerwijderenFeedback.Text = "Er is een fout gebeurd bij het verwijderen van de beschadgiging. Gelieve het opnieuw te proberen."
+            Me.divBeschVerwijderenFeedback.Visible = True
+            Return
+        End If
+
+        Me.imgBeschVerwijderenFeedback.ImageUrl = "~\App_Presentation\Images\tick.gif"
+        Me.lblBeschVerwijderenFeedback.Text = "Beschadiging verwijderd."
+        Me.divBeschVerwijderenFeedback.Visible = True
 
         VulOnderhoudsActieOverzicht()
 
@@ -1055,6 +1313,40 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
 #Region "Methods voor nazicht"
 
+    Private Function OnderhoudFormulierIsGeldig() As Boolean
+
+        Me.divOnderhoudOpslaanFeedback.Visible = False
+
+        Try
+            Dim tekst As String = Me.lblNazichtBerekendeBrandstofkost.Text.Replace("€", String.Empty).Trim
+            Dim kost As Double = Double.Parse(tekst)
+        Catch
+            Me.divOnderhoudOpslaanFeedback.Visible = True
+            Me.imgOnderhoudOpslaanFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblOnderhoudOpslaanFeedback.Text = "Gelieve een geldige brandstofkost te bepalen."
+            Return False
+        End Try
+
+        Try
+            Dim km As Double = Double.Parse(Me.txtNazichtHuidigeKilometerstand.Text)
+
+            If Me.lblNazichtVorigKilometerstand.Text > km Then
+                Me.divOnderhoudOpslaanFeedback.Visible = True
+                Me.imgOnderhoudOpslaanFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+                Me.lblOnderhoudOpslaanFeedback.Text = "De huidige kilometerstand kan niet kleiner zijn dan de vorige kilometerstand."
+                Return False
+            End If
+        Catch
+            Me.divOnderhoudOpslaanFeedback.Visible = True
+            Me.imgOnderhoudOpslaanFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblOnderhoudOpslaanFeedback.Text = "Gelieve een geldige kilometerstand in te vullen."
+            Return False
+        End Try
+
+        Return True
+
+    End Function
+
     Protected Sub chkIsNazicht_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkIsNazicht.CheckedChanged
 
         Me.divNazichtOpties.Visible = Me.chkIsNazicht.Checked
@@ -1082,11 +1374,28 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
     Protected Sub btnBerekenBrandstofKost_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnBerekenBrandstofKost.Click
         Try
+
             Dim aantalLiters As Double = Convert.ToDouble(Me.txtNazichtTankNaInchecken.Text)
+
+            If aantalLiters < 0 Then
+                Me.lblNazichtBerekendeBrandstofkost.Text = String.Empty
+                Return
+            End If
+
+            If aantalLiters > ViewState("autoTankInhoud") Then
+                Me.lblNazichtBerekendeBrandstofkost.Text = String.Empty
+                Return
+            End If
+
+            If ViewState("autoTankInhoud") - aantalLiters < 0 Then
+                Me.lblNazichtBerekendeBrandstofkost.Text = "0 €"
+                Return
+            End If
 
             Dim totaalkost As Double = (ViewState("autoTankInhoud") - aantalLiters) * ViewState("brandstofKostPerLiter")
             Me.lblNazichtBerekendeBrandstofkost.Text = String.Concat(totaalkost, " €")
         Catch
+            Me.lblNazichtBerekendeBrandstofkost.Text = String.Empty
             Return
         End Try
     End Sub
@@ -1095,14 +1404,89 @@ Partial Class App_Presentation_Webpaginas_Beheer_NieuwOnderhoud
 
     Protected Sub btnOnderhoudOpslaan_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOnderhoudOpslaan.Click
 
+        'Indien dit een nazicht is, die velden nakijken
+        If Me.chkIsNazicht.Checked Then
+            If Not OnderhoudFormulierIsGeldig() Then Return
+        End If
+
+        'Controle wegschrijven
+
         Dim controlebll As New ControleBLL
         Dim c As Onderhoud.tblControleRow = controlebll.GetControleByControleID(ViewState("controleID"))
 
         c.controleIsNazicht = Me.chkIsNazicht.Checked
-        c.controleIsUitgevoerd = True
-        c.controleBrandstofkost = Double.Parse(Me.lblNazichtBerekendeBrandstofkost.Text.Remove("€"))
-        c.controleKilometerstand = Double.Parse(Me.txtNazichtHuidigeKilometerstand.Text)
 
-        controlebll.UpdateControle(c)
+        'Medewerker die de controle heeft uitgevoerd
+        c.medewerkerID = New Guid(Membership.GetUser(User.Identity.Name).ProviderUserKey.ToString())
+
+        'Deze controle werd uitgevoerd.
+        c.controleIsUitgevoerd = True
+
+        If Me.chkIsNazicht.Checked Then
+
+            'Brandstofkost van de controle wegschrijven
+            c.controleBrandstofkost = Double.Parse(Me.lblNazichtBerekendeBrandstofkost.Text.Replace("€", String.Empty).Trim)
+
+            'Kilometerstand van de controle wegschrijven
+            c.controleKilometerstand = Double.Parse(Me.txtNazichtHuidigeKilometerstand.Text)
+
+            'Auto updaten.
+
+            Dim autobll As New AutoBLL
+            Dim a As Autos.tblAutoRow = autobll.GetAutoByAutoID(ViewState("autoID")).Rows(0)
+
+            'Kilometerstand updaten
+            a.autoHuidigeKilometerstand = Me.txtNazichtHuidigeKilometerstand.Text
+
+            'Kilometer tot olieverversing updaten indien nodig
+            If Me.txtNazichtHuidigeKilometerstand.Text > ViewState("autoKMTotOlieVerversing") Then
+                For i As Integer = 0 To Me.ddlPrefabOnderhoudsActiesWijzigen.Items.Count - 1
+
+                    If Me.ddlPrefabOnderhoudsActiesWijzigen.Items(i).Text.Contains("Olie vervangen") Then
+                        a.autoKMTotOlieVerversing = a.autoHuidigeKilometerstand + 10000
+                        Me.imgOlieNietVerversd.Visible = False
+                        Me.lblOlieNietVerversd.Visible = False
+                    Else
+                        Me.imgOlieNietVerversd.Visible = True
+                        Me.lblOlieNietVerversd.Visible = True
+                    End If
+                Next
+            Else
+                Me.imgOlieNietVerversd.Visible = False
+                Me.lblOlieNietVerversd.Visible = False
+            End If
+
+            'Parkeerplaats updaten indien nodig
+            If Not Me.txtAutoParkeerplaats.Text = String.Empty Then
+                a.parkeerPlaatsID = Me.txtAutoParkeerplaats.Text
+            End If
+
+            'Auto updaten
+            If Not autobll.UpdateAuto(a) Then
+                Me.divOnderhoudOpslaanFeedback.Visible = True
+                Me.imgOnderhoudOpslaanFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+                Me.lblOnderhoudOpslaanFeedback.Text = "Er is iets misgelopen tijdens het opslaan van de autogegevens. Gelieve het opnieuw te proberen."
+            End If
+
+            autobll = Nothing
+
+        End If
+
+        'Alles is in orde, wegschrijven
+        If controlebll.UpdateControle(c) Then
+            Me.divOnderhoudOpslaanFeedback.Visible = True
+            Me.imgOnderhoudOpslaanFeedback.ImageUrl = "~\App_Presentation\Images\tick.gif"
+            Me.lblOnderhoudOpslaanFeedback.Text = "Onderhoud opgeslagen."
+            Me.btnOnderhoudOpslaan.Visible = False
+
+        Else
+            Me.divOnderhoudOpslaanFeedback.Visible = True
+            Me.imgOnderhoudOpslaanFeedback.ImageUrl = "~\App_Presentation\Images\remove.png"
+            Me.lblOnderhoudOpslaanFeedback.Text = "Er is iets misgelopen tijdens het opslaan van het onderhoud. Gelieve het opnieuw te proberen."
+        End If
+
+        controlebll = Nothing
+
     End Sub
+
 End Class

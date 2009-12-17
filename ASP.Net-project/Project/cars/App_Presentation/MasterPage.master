@@ -109,10 +109,9 @@
                 				  <li><a id="lnkAutoBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoBeheer.aspx">Autobeheer</a></li>
                 				  <li><a id="lnkAutoInchecken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoInchecken.aspx">Auto Inchecken</a></li>
                 				  <li><a id="lnkAutoUitchecken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/AutoUitchecken.aspx">Auto Uitchecken</a></li>
-                				  <li><a id="lnkFiliaalBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/FiliaalBeheer.aspx">Filiaalbeheer</a></li>
+                				  <li><a id="lnkOnderhoudbeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/Onderhoudbeheer.aspx">Onderhoudbeheer</a></li>
                 				  <li><a id="lnkGebruikersBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/GebruikersBeheer.aspx">Gebruikersbeheer</a></li>
-                				  <li><a id="lnkNieuweAutoAanmaken" runat="server" href="~/App_Presentation/Webpaginas/Beheer/NieuweAutoAanmaken.aspx">Nieuwe Auto Aanmaken</a></li>
-                				  <li><a id="lnkNieuwOnderhoud" runat="server" href="~/App_Presentation/Webpaginas/Beheer/NieuwOnderhoud.aspx">Nieuw Onderhoud</a></li>
+                				  <li><a id="lnkFiliaalBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/FiliaalBeheer.aspx">Filiaalbeheer</a></li>
                 				  <li><a id="lnkParkingBeheer" runat="server" href="~/App_Presentation/Webpaginas/Beheer/ParkingBeheer.aspx">Parkingbeheer</a></li>
                 			
                 					</ul>

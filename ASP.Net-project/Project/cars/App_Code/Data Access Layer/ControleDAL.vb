@@ -49,9 +49,19 @@ Public Class ControleDAL
     End Function
 
     Public Function GetAllOudeControlesByAutoID(ByVal autoID As Integer) As Onderhoud.tblControleDataTable
-        Dim myCommand As New SqlCommand("SELECT * FROM tblControle WHERE autoID = @autoID AND @now > controleEinddat")
+        Dim myCommand As New SqlCommand("SELECT * FROM tblControle WHERE autoID = @autoID AND controleIsUitgevoerd = 1")
         myCommand.Parameters.Add("@autoID", SqlDbType.Int).Value = autoID
         myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Format(Now, "dd/MM/yyyy")
+        myCommand.Connection = _myConnection
+
+        Dim dt As New Onderhoud.tblControleDataTable
+        Return CType(_f.ReadDataTable(myCommand, dt), Onderhoud.tblControleDataTable)
+
+    End Function
+
+    Public Function GetAllOudeControles() As Onderhoud.tblControleDataTable
+        Dim myCommand As New SqlCommand("SELECT * FROM tblControle WHERE @now >= controleEinddat AND controleIsUitgevoerd = 0")
+        myCommand.Parameters.Add("@now", SqlDbType.DateTime).Value = Format(DateAdd(DateInterval.Day, -3, Now), "dd/MM/yyyy")
         myCommand.Connection = _myConnection
 
         Dim dt As New Onderhoud.tblControleDataTable

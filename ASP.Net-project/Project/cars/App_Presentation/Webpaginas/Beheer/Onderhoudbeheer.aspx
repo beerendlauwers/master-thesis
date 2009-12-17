@@ -51,8 +51,8 @@
                                                 <%#DataBinder.Eval(Container.DataItem, "Omschrijving")%>
                                             </td>
                                             <td>
-                                                <a href="NieuwOnderhoud.aspx?=<%# DataBinder.Eval(Container.DataItem, "controleID") %>">
-                                                    Ga naar onderhoud</a>
+                                                <a href="OnderhoudUitvoeren.aspx?controleID=<%# DataBinder.Eval(Container.DataItem, "controleID") %>">
+                                                    Onderhoud Uitvoeren</a>
                                             </td>
                                         </tr>
                                     </ItemTemplate>
@@ -164,6 +164,7 @@
                         <div class="art-legende">
                         <b>Legende:</b><br />
                         <img src="../../Images/wrench.png" /> - Onderhoud uitvoeren / wijzigen<br />
+                        <img src="../../Images/papier.png" /> - Onderhoud Finaliseren<br />
                         <img src="../../Images/remove.png" /> - Onderhoud verwijderen<br />
                         </div>
                             <table>
@@ -176,6 +177,12 @@
                                     </th>
                                     <th>
                                         Omschrijving
+                                    </th>
+                                    <th>
+                                        Is Uitgevoerd
+                                    </th>
+                                    <th>
+                                        &nbsp;
                                     </th>
                                     <th>
                                         &nbsp;
@@ -196,9 +203,16 @@
                                             <td>
                                                 <%#DataBinder.Eval(Container.DataItem, "Omschrijving")%>
                                             </td>
+                                            <td align="center">
+                                                <%#DataBinder.Eval(Container.DataItem, "IsUitgevoerd")%>
+                                            </td>
                                             <td>
-                                                <a href="NieuwOnderhoud.aspx?=<%# DataBinder.Eval(Container.DataItem, "controleID") %>">
+                                                <a href="OnderhoudUitvoeren.aspx?controleID=<%# DataBinder.Eval(Container.DataItem, "controleID") %>">
                                                     <img src="../../Images/wrench.png" border="0" /></a>
+                                            </td>
+                                            <td style="display:<%#DataBinder.Eval(Container.DataItem, "FinaliserenZichtbaar")%>">
+                                                <a href="OnderhoudFinaliseren.aspx?controleID=<%# DataBinder.Eval(Container.DataItem, "controleID") %>">
+                                                    <img src="../../Images/papier.png" border="0" /></a>
                                             </td>
                                             <td>
                                                 <asp:ImageButton ID="btnVerwijder" runat="server" ImageUrl="~/App_Presentation/Images/remove.png" CommandArgument='<%# DataBinder.Eval(Container.DataItem, "controleID") %>' />
@@ -246,7 +260,7 @@
                                                 <%#DataBinder.Eval(Container.DataItem, "IsNazicht")%>
                                             </td>
                                             <td>
-                                                <a href="NieuwOnderhoud.aspx?=<%# DataBinder.Eval(Container.DataItem, "controleID") %>">
+                                                <a href="OnderhoudDetails.aspx?controleID=<%# DataBinder.Eval(Container.DataItem, "controleID") %>">
                                                     Toon Details</a>
                                             </td>
                                         </tr>

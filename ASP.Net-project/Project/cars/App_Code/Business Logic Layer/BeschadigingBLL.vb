@@ -12,6 +12,14 @@ Public Class BeschadigingBLL
         End Try
     End Function
 
+    Public Function GetAllBeschadigingByControleID(ByVal controleID As Integer) As Onderhoud.tblAutoBeschadigingDataTable
+        Try
+            Return _beschadigingdal.GetAllBeschadigingByControleID(controleID)
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Function
+
     Public Function GetBeschadigingByBeschadigingID(ByVal beschadigingID As Integer) As Onderhoud.tblAutoBeschadigingRow
         Try
             Return _beschadigingdal.GetBeschadigingByBeschadigingID(beschadigingID)
@@ -39,11 +47,8 @@ Public Class BeschadigingBLL
     Public Function DeleteBeschadiging(ByVal beschadigingID As Integer) As Boolean
         Try
             Dim autofotobll As New AutoFotoBLL
-            If (autofotobll.DeleteAutoFotoVanBeschadiging(beschadigingID)) Then
-                Return _beschadigingAdapter.Delete(beschadigingID)
-            Else
-                Return False
-            End If
+            autofotobll.DeleteAutoFotoVanBeschadiging(beschadigingID)
+            Return _beschadigingAdapter.Delete(beschadigingID)
 
         Catch ex As Exception
             Throw ex

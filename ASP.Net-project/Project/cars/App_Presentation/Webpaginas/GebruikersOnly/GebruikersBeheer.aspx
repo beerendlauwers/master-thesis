@@ -219,7 +219,7 @@
 </tr>
 <tr>
 <td>
-    <asp:Button ID="btnChauffeurs" runat="server" Text="Uw chauffeurs bewerken" />
+    <asp:Button ID="btnChauffeurs" runat="server" Text="Uw chauffeurs beheren" />
 </td>
 <td>
 </td>
