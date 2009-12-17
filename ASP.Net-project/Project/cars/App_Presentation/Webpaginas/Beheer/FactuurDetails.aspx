@@ -64,7 +64,9 @@
                 </asp:Repeater>
             </table>
             
+            <div runat="server" id="divOpenstaandeBesch">
             <h3>Openstaande beschadigingen</h3>
+
                 <table>
                 <tr>
                     <th>
@@ -78,6 +80,9 @@
                     </th>
                     <th>
                         Is Doorverrekend
+                    </th>
+                    <th>
+                    &nbsp;
                     </th>
 
                 </tr>
@@ -96,11 +101,26 @@
                             <td align="center">
                                 <%#DataBinder.Eval(Container.DataItem, "IsDoorverrekend")%>
                             </td>
+                            <td style="display:<%#DataBinder.Eval(Container.DataItem, "IsZichtbaar")%>">
+                                <asp:LinkButton ID="lnkButton" runat="server" CommandArgument='<%#DataBinder.Eval(Container.DataItem, "beschadigingID")%>'>Deze beschadiging doorverreken</asp:LinkButton>
+                            </td>
                         </tr>
                     </ItemTemplate>
                 </asp:Repeater>
             </table>
-    
+            </div>
+            <br /><br/>
+            <div align="center">
+                <asp:Button ID="btnAfsluiten" runat="server" Text="Factuur Afsluiten" Enabled="false" />
+                <asp:Label ID="lblAfsluitenNietMogelijk" runat="server" Text="Er zijn nog openstaande beschadigingen. Afsluiten is niet mogelijk." Visible="true"></asp:Label>
+            </div>
+            <div align="center" runat="server" id="divFeedback" visible="false">
+                <asp:Image ID="imgFeedback" runat="server" /><asp:Label ID="lblFeedback" runat="server"></asp:Label>
+            </div>
+            
+            <br /><br/>
+            <a href="Factuurbeheer.aspx">Terug naar Factuurbeheer</a>
+    <br /><br/>
     </ContentTemplate>
     </asp:UpdatePanel>
 
