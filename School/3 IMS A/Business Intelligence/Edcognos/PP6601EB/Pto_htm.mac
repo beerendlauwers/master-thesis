@@ -1,0 +1,46 @@
+Rem *******************************
+Rem Save to HTML and Then Run Browser
+Rem *******************************
+Rem Mark Alder June 1997
+Rem *******************************
+Rem This caputures existing report and Publishes It to HTML and 
+Rem Finds you default Browser and shows Report
+Rem *******************************
+
+Dim PPrep as Object
+
+dim x as integer
+dim topages as integer
+Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+
+Sub Main()
+
+  ON ERROR GOTO Error_Handler
+  
+  Set ppRep = GetObject(, "PowerPlay.Report")
+  'ppRep.Publish "c:\temp\"
+  ppRep.Publish "c:\edcognos\pp6601eb\html"
+
+
+'x= ShellExecute (0, "open", (ppRep.name + ".htm"), "", "c:\temp\", 1)
+x= ShellExecute (0, "open", (ppRep.name + ".htm"), "", "c:\edcognos\pp6601eb\html", 1)
+
+
+
+
+Goto Main_End
+Error_Handler:
+
+  If Err = 91 or Err = 429 Then
+   Msgbox "You must open the source report from which to create a web output."
+   Resume Main_End
+  Else
+   Msgbox Cstr(Err) + " " + Error$  
+   Resume Main_End
+  End If
+  
+Main_End:
+
+End Sub
+
+

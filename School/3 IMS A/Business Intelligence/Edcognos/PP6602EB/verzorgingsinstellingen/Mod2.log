@@ -1,0 +1,78 @@
+PowerPlay Transformer(6.61.436.0 )  Fri Jun 07 14:19:38 2002
+
+LogFileDirectory=c:\edcognos\pp6602eb\verzorgingsinstellingen
+ModelSaveDirectory=\edcognos\pp6602eb\verzorgingsinstellingen\
+DataSourceDirectory=\edcognos\pp6602eb\verzorgingsinstellingen\
+CubeSaveDirectory=\edcognos\pp6602eb\verzorgingsinstellingen\
+DataWorkDirectory=c:\edcognos\pp6602eb\verzorgingsinstellingen\
+ModelWorkDirectory=\edcognos\pp6602eb\verzorgingsinstellingen\
+MaxTransactionNum=500000
+ReadCacheSize=4096
+WriteCacheSize=16384
+TEMPFILEDIRS=c:\edcognos\pp6602eb\verzorgingsinstellingen
+
+07/06/2002 14:21:31	2	00000000	(TR0613) Column Sale Date is referenced by name in one or more dimensions, levels, measures or currency tables. Deleting or modifying the column name can cause these associations to be lost. Do you want to continue? [->Yes]
+07/06/2002 14:21:52	4	00000000	Start category generation.
+07/06/2002 14:21:53	4	00000000	Initializing categories.
+07/06/2002 14:21:53	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:00
+07/06/2002 14:21:53	4	00000000	Start processing data source 'c:\edcognos\pp6602eb\mod2.xls'.
+07/06/2002 14:21:53	4	00000000	Reading source data.
+07/06/2002 14:21:53	4	00000000	Timing, OPEN DATA SOURCE,00:00:00
+07/06/2002 14:21:54	4	00000000	End processing 1110 records from data source 'c:\edcognos\pp6602eb\mod2.xls'.
+07/06/2002 14:21:54	4	00000000	Timing, READ DATA SOURCE,00:00:01
+07/06/2002 14:21:54	4	00000000	Marking categories used.
+07/06/2002 14:21:54	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+07/06/2002 14:21:54	4	00000000	Initializing categories.
+07/06/2002 14:21:54	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:00
+07/06/2002 14:21:54	4	00000000	Start processing data source 'c:\edcognos\pp6602eb\budget.xls'.
+07/06/2002 14:21:54	4	00000000	Reading source data.
+07/06/2002 14:21:54	4	00000000	Timing, OPEN DATA SOURCE,00:00:00
+07/06/2002 14:21:54	4	00000000	End processing 2 records from data source 'c:\edcognos\pp6602eb\budget.xls'.
+07/06/2002 14:21:54	4	00000000	Timing, READ DATA SOURCE,00:00:00
+07/06/2002 14:21:54	4	00000000	Marking categories used.
+07/06/2002 14:21:55	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+07/06/2002 14:21:55	4	00000000	Cleaning up.
+07/06/2002 14:21:55	4	00000000	End category generation.
+07/06/2002 14:21:55	4	00000000	Timing, POPULATE,00:00:03
+07/06/2002 14:23:20	4	00000000	Start cube update.
+07/06/2002 14:23:20	4	00000000	Initializing categories.
+07/06/2002 14:23:20	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:00
+07/06/2002 14:23:20	4	00000000	Start processing data source 'c:\edcognos\pp6602eb\mod2.xls'.
+07/06/2002 14:23:20	4	00000000	Reading source data.
+07/06/2002 14:23:20	4	00000000	Timing, OPEN DATA SOURCE,00:00:00
+07/06/2002 14:23:21	4	00000000	End processing 1110 records from data source 'c:\edcognos\pp6602eb\mod2.xls'.
+07/06/2002 14:23:21	4	00000000	Timing, READ DATA SOURCE,00:00:01
+07/06/2002 14:23:21	4	00000000	Marking categories used.
+07/06/2002 14:23:21	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+07/06/2002 14:23:21	4	00000000	Initializing categories.
+07/06/2002 14:23:21	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:00
+07/06/2002 14:23:21	4	00000000	Start processing data source 'c:\edcognos\pp6602eb\budget.xls'.
+07/06/2002 14:23:21	4	00000000	Reading source data.
+07/06/2002 14:23:21	4	00000000	Timing, OPEN DATA SOURCE,00:00:00
+07/06/2002 14:23:21	4	00000000	End processing 2 records from data source 'c:\edcognos\pp6602eb\budget.xls'.
+07/06/2002 14:23:21	4	00000000	Timing, READ DATA SOURCE,00:00:00
+07/06/2002 14:23:22	4	00000000	Marking categories used.
+07/06/2002 14:23:22	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+07/06/2002 14:23:22	4	00000000	Updating category status.
+07/06/2002 14:23:22	4	00000000	Processing the work file.
+07/06/2002 14:23:22	4	000000E3	Processing cube 'Mod2' at location c:\edcognos\pp6602eb\verzorgingsinstellingen\Mod2.mdc
+07/06/2002 14:23:22	4	00000000	Timing, UPDATE CATEGORY AND PROCESS WORK FILE,00:00:00
+07/06/2002 14:23:22	4	000000E3	Start metadata update of cube 'Mod2'.
+07/06/2002 14:23:22	4	00000000	Marking categories needed.
+07/06/2002 14:23:22	4	00000000	Updating the PowerCube metadata.
+07/06/2002 14:23:23	4	00000000	Updating the PowerCube with currency data.
+07/06/2002 14:23:23	4	000000E3	End metadata update of cube 'Mod2'.  189 categories were added to the cube.
+07/06/2002 14:23:23	4	00000000	Timing, METADATA,00:00:01
+07/06/2002 14:23:23	4	000000E3	Start update of cube 'Mod2'.
+07/06/2002 14:23:23	4	000000E3	--- Performing Pass 0 with 1112 rows and 189 categories remaining.
+07/06/2002 14:23:23	4	000000E3	Start Write leaving 189 categories remaining.
+07/06/2002 14:23:23	4	00000000	Updating the PowerCube data.
+07/06/2002 14:23:23	4	00000000	Updating the PowerCube data.
+07/06/2002 14:23:24	4	00000000	Performing DataBase Commit at record number 1113.
+07/06/2002 14:23:24	4	000000E3	End Write leaving 189 categories remaining..
+07/06/2002 14:23:24	4	00000000	Timing, CUBE UPDATE,00:00:01
+07/06/2002 14:23:24	4	00000000	Committing PowerCube(s).
+07/06/2002 14:23:24	4	00000000	Timing, CUBE COMMIT,00:00:00
+07/06/2002 14:23:24	4	00000000	End cube update.
+07/06/2002 14:23:24	4	00000000	Timing, TOTAL TIME (CREATE CUBE),00:00:04
+PowerPlay Transformer  Fri Jun 07 14:25:23 2002

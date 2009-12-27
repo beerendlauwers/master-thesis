@@ -1,0 +1,28 @@
+COGNOS QUERY
+STRUCTURE,1,1
+DATABASE,PP6602EB
+DATASOURCENAME,C:\Edcognos\PP6602eb\Revenue_Cost_Qty.imr
+TITLE,Revenue_Cost_Qty.imr
+BEGIN SQL
+select T1."ORDER_DT" as c1,
+	   T1."REP_NO" as c2,
+	   T1."CUST_NO" as c3,
+	   T2."PROD_NO" as c4,
+	   T2."QTY" as c5,
+	   T2."PRICE" as c6,
+	   T3."PROD_COST" as c7
+from "ORDRDETL" T2,
+	"Order" T1,
+	"Product" T3
+where (T2."ORDER_NO" = T1."ORDER_NO") and (T3."PROD_NO" = T2."PROD_NO")
+order by c1 asc,c2 asc,c3 asc,c4 asc
+
+END SQL
+COLUMN,0,Order Date
+COLUMN,1,SalesRep Number
+COLUMN,2,Customer Number
+COLUMN,3,Product Number
+COLUMN,4,Order Quantity
+COLUMN,5,Unit Price
+COLUMN,6,Unit Cost
+

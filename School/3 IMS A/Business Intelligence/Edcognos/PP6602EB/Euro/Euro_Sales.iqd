@@ -1,0 +1,36 @@
+COGNOS QUERY
+STRUCTURE,1,1
+DATABASE,Euro
+DATASOURCENAME,C:\Edcognos\PP6502EB\Euro\Euro_Sales.imr
+TITLE,Euro_Sales.imr
+BEGIN SQL
+select T1."ALL_YEARS" as c1,
+	   T1."PROD_LINE" as c2,
+	   T1."PROD_TYPE" as c3,
+	   T1."PRODUCT" as c4,
+	   T1."ALL_SALES" as c5,
+	   T1."COUNTRY" as c6,
+	   T1."BRANCH" as c7,
+	   T1."SALES_REP" as c8,
+	   T1."CUSTOMER_T" as c9,
+	   T1."MARGIN_RAN" as c10,
+	   T1."REVENUE" as c11,
+	   T1."QTY" as c12,
+	   T1."COST" as c13
+from "Trans" T1
+
+END SQL
+COLUMN,0,Sale Date
+COLUMN,1,Product Line
+COLUMN,2,Product Type
+COLUMN,3,Product
+COLUMN,4,Region
+COLUMN,5,Country
+COLUMN,6,Branch
+COLUMN,7,Sales Rep
+COLUMN,8,Customer Type
+COLUMN,9,Margin Range
+COLUMN,10,Revenue
+COLUMN,11,Qty
+COLUMN,12,Cost
+

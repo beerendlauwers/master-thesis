@@ -1,0 +1,14 @@
+PowerPlay Transformer(1.0.1.0 - Not For Resale)  Mon Nov 22 09:45:34 1999
+
+LogFileDirectory=
+ModelSaveDirectory=\Program Files\Cognos\cer1beta\
+DataSourceDirectory=\Program Files\Cognos\cer1beta\
+CubeSaveDirectory=\Program Files\Cognos\cer1beta\
+DataWorkDirectory=c:\temp\
+ModelWorkDirectory=\TEMP\
+MaxTransactionNum=500000
+ReadCacheSize=4096
+WriteCacheSize=16384
+TEMPFILEDIRS=c:\temp
+
+PowerPlay Transformer  Mon Nov 22 09:45:44 1999

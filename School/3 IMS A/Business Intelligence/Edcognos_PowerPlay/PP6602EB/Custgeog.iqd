@@ -1,0 +1,20 @@
+COGNOS QUERY
+STRUCTURE,1,1
+DATABASE,PP6602EB
+DATASOURCENAME,C:\Edcognos\PP6602eb\Custgeog.imr
+TITLE,Custgeog.imr
+BEGIN SQL
+select T1."COUNTRY" as c1,
+	   T2."PROV_STATE" as c2,
+	   T2."CITY" as c3,
+	   T2."CUST_NO" as c4
+from "COUNTRY" T1,
+	"CUSTSITE" T2
+where (T1."COUNTRY_CD" = T2."COUNTRY_CD")
+
+END SQL
+COLUMN,0,Country
+COLUMN,1,Province/State
+COLUMN,2,City
+COLUMN,3,Customer No.
+

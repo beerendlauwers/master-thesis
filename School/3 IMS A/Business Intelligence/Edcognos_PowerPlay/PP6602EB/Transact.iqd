@@ -1,0 +1,53 @@
+COGNOS QUERY
+STRUCTURE,1,1
+DATABASE,PP6602EB
+DATASOURCENAME,C:\edcognos\Pp6602eb\Trans.imr
+TITLE,Trans.imr
+BEGIN SQL
+select c28 as c1,
+	   c27 as c2,
+	   c26 as c3,
+	   c25 as c4,
+	   c24 as c5,
+	   c23 as c6,
+	   c22 as c7,
+	   c21 as c8,
+	   c20 as c9,
+	   c19 as c10,
+	   c18 as c11,
+	   RSUM(c18) as c12,
+	   c17 as c13,
+	   c16 as c14
+from 
+(select T1."COST" as c16,
+	   T1."QTY" as c17,
+	   T1."REVENUE" as c18,
+	   T1."MARGIN_RAN" as c19,
+	   T1."CUSTOMER_T" as c20,
+	   T1."SALES_REP" as c21,
+	   T1."BRANCH" as c22,
+	   T1."COUNTRY" as c23,
+	   T1."ALL_SALES" as c24,
+	   T1."PRODUCT" as c25,
+	   T1."PROD_TYPE" as c26,
+	   T1."PROD_LINE" as c27,
+	   T1."ALL_YEARS" as c28
+from "Trans" T1
+) D1
+
+END SQL
+COLUMN,0,All Years
+COLUMN,1,Prod Line
+COLUMN,2,Prod Type
+COLUMN,3,Product
+COLUMN,4,All Sales
+COLUMN,5,Country
+COLUMN,6,Branch
+COLUMN,7,Sales Rep
+COLUMN,8,Customer T
+COLUMN,9,Margin Ran
+COLUMN,10,Revenue
+COLUMN,11,Total  (Revenue) No.1
+COLUMN,12,Qty
+COLUMN,13,Cost
+

@@ -1,0 +1,82 @@
+
+Name "Locations" AutoAccess False Synchronize False SynchroCycle 0 SynchroStamp 0 
+UpdateCycle 1 ModelStamp 905266700 ClientStamp 905266700 ServerStamp 0 
+Generation 0 RootUser 0 Version "6.6.225.2 - Not For Resale" AccessManager False 
+UserClasses False 
+
+DataSource 103 "newlocation" Separator "," SourceType FlatFile_ColNames 
+CharacterSet Ansi DecimalSep "." Thousandsep "," Columns True Timing PopYesCreateDefault 
+Source "c:\edcognos\pp6602eb\newlocation.csv" Speed False SetCurrent True 
+ServerSource False Presummarized False EnableMultiProcess False 
+
+OrgName 105 "Region" Origin Generated Offset 0 Column "Region" Storage Default 
+Scale 0 Size 1 Decimals 0 InputScale 0 TimeArray Off 
+
+OrgName 107 "Country" Origin Generated Offset 1 Column "Country" Storage Default 
+Scale 0 Size 1 Decimals 0 InputScale 0 TimeArray Off 
+
+OrgName 109 "Branch Name" Origin Generated Offset 2 Column "Branch Name" 
+Storage Default Scale 0 Size 1 Decimals 0 InputScale 0 TimeArray Off 
+
+OrgName 111 "Branch Code" Origin Generated Offset 3 Column "Branch Code" 
+Storage Default Scale 0 Size 1 Decimals 0 InputScale 0 TimeArray Off 
+
+OrgName 113 "Sales Rep Name" Origin Generated Offset 4 Column "Sales Rep Name" 
+Storage Default Scale 0 Size 1 Decimals 0 InputScale 0 TimeArray Off 
+
+OrgName 115 "Sales Rep Id" Origin Generated Offset 5 Column "Sales Rep Id" 
+Storage Default Scale 0 Size 1 Decimals 0 InputScale 0 TimeArray Off 
+
+Dimension 117 "Region" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 119 "Region" Inclusion Generate Lastuse 19980908 Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+Drill 121 "By Region" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 127 "Region" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 151 "Region" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Region" 
+
+
+
+Levels 129 "Country" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 153 "Country" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Country" 
+
+
+
+Levels 131 "Branch Code" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 155 "Branch Code" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Branch Code" 
+
+Associations 157 "Branch Name" AssociationType Type_Query AssociationRole Role_Label 
+AssociationReferenced "Branch Name" 
+
+
+Levels 147 "Sales Rep Name" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 159 "Sales Rep Name" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Sales Rep Name" 
+
+
+
+Levels 133 "Sales Rep Id" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 161 "Sales Rep Id" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Sales Rep Id" 
+
+
+
+
+MapDrills 
+MapDrill 121 
+
+ViewName 123 "All Categories" Type All ViewUserClass 0 
+ViewName 125 "Omit Dimension" Type Omit ViewUserClass 0 
+
+

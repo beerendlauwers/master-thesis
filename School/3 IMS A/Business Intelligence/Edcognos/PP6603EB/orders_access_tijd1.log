@@ -1,0 +1,54 @@
+PowerPlay Transformer(7.0.173.0 )  Sat Jan 17 22:11:38 2004
+
+LogFileDirectory=h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb
+ModelSaveDirectory=h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\
+DataSourceDirectory=h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\
+CubeSaveDirectory=h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\
+DataWorkDirectory=h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\
+ModelWorkDirectory=h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\
+MaxTransactionNum=500000
+ReadCacheSize=4096
+WriteCacheSize=8192
+Temporary UDA directory=E:\DOCUME~1\Analyser\LOCALS~1\Temp
+
+17/01/2004 22:12:12	4	00000000	Start category generation.
+17/01/2004 22:12:19	2	00000000	(TR3608) Cannot open the .MDB database C:\Edcognos\PP6602EB\Database\orders_access.mdb. [->OK]
+17/01/2004 22:12:38	4	00000000	Start category generation.
+17/01/2004 22:12:42	2	00000000	(TR3608) Cannot open the .MDB database C:\Edcognos\PP6602EB\Database\orders_access.mdb. [->OK]
+17/01/2004 22:12:54	2	00000000	(TR3608) Cannot open the .MDB database c:\edcognos\pp6602eb\database\orders_access.mdb. [->OK]
+17/01/2004 22:13:12	2	00000000	( TR3430 )Please specify a named range for a spreadsheet database. [->OK]
+17/01/2004 22:15:01	4	00000000	Start category generation.
+17/01/2004 22:15:07	2	00000000	(TR3608) Cannot open the .MDB database C:\Edcognos\PP6602EB\Database\orders_access.mdb. [->OK]
+17/01/2004 22:15:55	4	00000000	Start cube update.
+17/01/2004 22:15:55	4	00000000	Initializing categories.
+17/01/2004 22:15:56	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:01
+17/01/2004 22:15:56	4	00000000	Start processing data source 'h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\orders_access.mdb'.
+17/01/2004 22:15:56	4	00000000	Reading source data.
+17/01/2004 22:15:56	4	00000000	Timing, OPEN DATA SOURCE,00:00:00
+17/01/2004 22:15:56	4	00000000	End processing 1110 records from data source 'h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\orders_access.mdb'.
+17/01/2004 22:15:56	4	00000000	Timing, READ DATA SOURCE,00:00:00
+17/01/2004 22:15:56	4	00000000	Marking categories used.
+17/01/2004 22:15:56	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+17/01/2004 22:15:57	4	00000000	Updating category status.
+17/01/2004 22:15:57	4	00000000	Processing the work file.
+17/01/2004 22:15:57	4	000003C9	Processing cube 'orders_access' at location h:\busint\lessen 02-03\basisgegevens busint 02-03\pp6603eb\orders_access.mdc
+17/01/2004 22:15:57	4	00000000	Timing, UPDATE CATEGORY AND PROCESS WORK FILE,00:00:00
+17/01/2004 22:15:57	4	000003C9	Start metadata update of cube 'orders_access'.
+17/01/2004 22:15:57	4	00000000	Marking categories needed.
+17/01/2004 22:15:57	4	00000000	Updating the PowerCube metadata.
+17/01/2004 22:15:57	4	00000000	Updating the PowerCube with currency data.
+17/01/2004 22:15:57	4	000003C9	End metadata update of cube 'orders_access'.  304 categories were added to the cube.
+17/01/2004 22:15:57	4	00000000	Timing, METADATA,00:00:00
+17/01/2004 22:15:57	4	000003C9	Start update of cube 'orders_access'.
+17/01/2004 22:15:57	4	000003C9	--- Performing Pass 0 with 1110 rows and 305 categories remaining.
+17/01/2004 22:15:57	4	000003C9	Start Write leaving 305 categories remaining.
+17/01/2004 22:15:58	4	00000000	Updating the PowerCube data.
+17/01/2004 22:15:58	4	00000000	Updating the PowerCube data.
+17/01/2004 22:15:58	4	00000000	Performing DataBase Commit at record number 1111.
+17/01/2004 22:15:58	4	000003C9	End Write leaving 305 categories remaining..
+17/01/2004 22:15:58	4	00000000	Timing, CUBE UPDATE,00:00:01
+17/01/2004 22:15:58	4	00000000	Committing PowerCube(s).
+17/01/2004 22:15:58	4	00000000	Timing, CUBE COMMIT,00:00:00
+17/01/2004 22:15:58	4	00000000	End cube update.
+17/01/2004 22:15:58	4	00000000	Timing, TOTAL TIME (CREATE CUBE),00:00:03
+PowerPlay Transformer  Sat Jan 17 22:19:50 2004

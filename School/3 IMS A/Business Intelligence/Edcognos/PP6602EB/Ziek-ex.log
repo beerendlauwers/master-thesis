@@ -1,0 +1,35 @@
+PowerPlay Transformer(6.61.436.0 )  Fri Jun 07 14:12:27 2002
+
+LogFileDirectory=c:\edcognos\pp6602eb
+ModelSaveDirectory=\edcognos\pp6602eb\
+DataSourceDirectory=\edcognos\pp6602eb\
+CubeSaveDirectory=\edcognos\pp6602eb\
+DataWorkDirectory=c:\edcognos\pp6602eb\
+ModelWorkDirectory=\edcognos\pp6602eb\
+MaxTransactionNum=500000
+ReadCacheSize=4096
+WriteCacheSize=16384
+TEMPFILEDIRS=c:\edcognos\pp6602eb
+
+07/06/2002 14:12:32	4	00000000	Start category generation.
+07/06/2002 14:13:07	2	00000000	DMS-I-OPERCANCEL, Operation attach database has been cancelled.
+07/06/2002 14:13:07	2	00000000	
+07/06/2002 14:13:10	2	00000000	(TR0118) Transformer can't read the database [ziek_ex] defined in c:\edcognos\pp6602eb\verzorgingsinstellingen\alle_geg_ziek.iqd.  [->Cancel]
+07/06/2002 14:13:51	4	00000000	Start category generation.
+07/06/2002 14:13:53	2	00000000	DMS-I-OPERCANCEL, Operation attach database has been cancelled.
+07/06/2002 14:13:54	2	00000000	
+07/06/2002 14:13:55	2	00000000	(TR0118) Transformer can't read the database [ziek_ex] defined in c:\edcognos\pp6602eb\verzorgingsinstellingen\alle_geg_ziek.iqd.  [->OK]
+07/06/2002 14:15:05	4	00000000	Start category generation.
+07/06/2002 14:15:06	4	00000000	Initializing categories.
+07/06/2002 14:15:06	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:00
+07/06/2002 14:15:06	4	00000000	Start processing data source 'c:\edcognos\pp6602eb\verzorgingsinstellingen\alle_geg_ziek.iqd'.
+07/06/2002 14:15:06	4	00000000	Reading source data.
+07/06/2002 14:15:06	4	00000000	Timing, OPEN DATA SOURCE,00:00:00
+07/06/2002 14:15:10	4	00000000	End processing 3410 records from data source 'c:\edcognos\pp6602eb\verzorgingsinstellingen\alle_geg_ziek.iqd'.
+07/06/2002 14:15:10	4	00000000	Timing, READ DATA SOURCE,00:00:04
+07/06/2002 14:15:10	4	00000000	Marking categories used.
+07/06/2002 14:15:10	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+07/06/2002 14:15:10	4	00000000	Cleaning up.
+07/06/2002 14:15:10	4	00000000	End category generation.
+07/06/2002 14:15:10	4	00000000	Timing, POPULATE,00:00:05
+PowerPlay Transformer  Fri Jun 07 14:17:35 2002

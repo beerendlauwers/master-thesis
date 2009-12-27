@@ -1,0 +1,1828 @@
+
+Name "Drill Through" AutoAccess False Synchronize False SynchroCycle 0 
+SynchroStamp 0 UpdateCycle 56 ModelStamp 870984221 ClientStamp 870984221 
+ServerStamp 0 Generation 0 RootUser 0 Version "6.6.327.0 - Not For Resale" 
+AccessManager False AccessManagerUserClass False 
+
+DataSource 103 "custgeog" Separator " " SourceType DataSource CharacterSet Default 
+DecimalSep " " Thousandsep " " Columns True Timing PopYesCreateDefault 
+Source "c:\edcognos\pp6602eb\custgeog.iqd" SQL 'select T1."COUNTRY" as c1,
+	   T2."PROV_STATE" as c2,
+	   T2."CITY" as ' 
+'c3,
+	   T2."CUST_NO" as c4
+from "COUNTRY" T1,
+	"CUSTSITE" T2
+where (T1.' 
+'"COUNTRY_CD" = T2."COUNTRY_CD")
+' Isolation 0 UserEditable False SourceSignonList 1925 
+EndList ImrName "C:\Edcognos\PP6602eb\Custgeog.imr" Stamp 954875890 Speed False 
+SetCurrent True ServerSource False Presummarized False EnableMultiProcess False 
+
+
+OrgName 107 "Country" Origin Source Offset 0 Column "Country" Storage Text 
+Scale 0 Size 15 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+
+OrgName 109 "Province/State" Origin Source Offset 1 Column "Province/State" 
+Storage Text Scale 0 Size 20 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 111 "City" Origin Source Offset 2 Column "City" Storage Text Scale 0 
+Size 20 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+OrgName 113 "Customer No." Origin Source Offset 3 Column "Customer No." 
+Storage Default Scale 0 Size 3 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+DataSource 985 "Measures" Separator " " SourceType DataSource CharacterSet Default 
+DecimalSep " " Thousandsep " " Columns True Timing PopYesCreateDefault 
+Source "c:\edcognos\pp6602eb\measures.iqd" SQL 'select T1."ORDER_DT" as c1,
+	   T1."ORDER_NO" as c2,
+	   T2."CUST_NO" a' 
+'s c3,
+	   T3."PRICE" as c4,
+	   T3."QTY" as c5,
+	   T4."REP_NAME" as c6' 
+',
+	   T3."PRICE" * T3."QTY" as c7
+from "Order" T1,
+	"CUSTSITE" T2,
+	"OR' 
+'DRDETL" T3,
+	"REP" T4
+where ((T1."CUST_NO" = T2."CUST_NO") and (T1."SIT' 
+'E_NO" = T2."SITE_NO")) and (T3."ORDER_NO" = T1."ORDER_NO") and (T4."REP' 
+'_NO" = T1."REP_NO")
+' Isolation 0 UserEditable False SourceSignonList 1925 
+EndList ImrName "C:\Edcognos\PP6602eb\Measures.imr" Stamp 954874976 Speed False 
+SetCurrent True ServerSource False Presummarized False EnableMultiProcess False 
+
+
+OrgName 987 "Order Date" Origin Source Offset 0 Column "All Years" Storage Default 
+Scale 0 Size 4 Decimals 0 Class Date InputScale 0 TimeArray Off 
+
+OrgName 989 "Order No." Origin Source Offset 1 Column "Order No." Storage Default 
+Scale 0 Size 3 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+OrgName 991 "Customer No." Origin Source Offset 2 Column "Customer No." 
+Storage Default Scale 0 Size 3 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 993 "Order Price" Origin Source Offset 3 Column "Order Price" Storage Default 
+Scale 0 Size 5 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+OrgName 995 "Qty" Origin Source Offset 4 Column "Qty" Storage Default Scale 0 
+Size 3 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+OrgName 999 "Sales Rep. Name" Origin Source Offset 5 Column "Sales Rep. Name" 
+Storage Text Scale 0 Size 25 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 1927 "Revenue" Origin Source Offset 6 Column "Revenue" Storage Default 
+Scale 0 Size 1 Decimals 0 InputScale 0 TimeArray Off 
+
+Dimension 1025 "All Years" DimType Date EarliestDate 19000101 LatestDate 99991231 
+ManualPeriods False DaysInWeek 127 NewCatsLock False ExcludeAutoPartitioning False 
+Associations 1893 "All Years" AssociationType Type_Query AssociationRole Role_Source 
+AssociationReferenced "All Years" 
+
+
+Categories 
+Root 1027 "All Years" Inclusion Generate Lastuse 20000404 Date 0 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 1029 "By All Years" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True YearBegins 19970101 PartialWeek Split ExtraWeek None 
+WeekBegins Sunday 
+Levels 1035 "Year" Blanks "( blank )" Inclusion Generate DateFunction Year 
+Generate Need RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat "YYYY" Timerank 10 UniqueCategories True 
+UniqueMove False Associations 1895 "All Years" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "All Years" 
+Associations 1897 "All Years" AssociationContext 1029 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "All Years" SortOrder Default 
+SortAs Ascending 
+
+
+Levels 1037 "Quarter" Blanks "( blank )" Inclusion Generate DateFunction Quarter 
+Generate All RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat 'YYYY "Q" Q' Timerank 20 UniqueCategories True 
+UniqueMove False Associations 1899 "All Years" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "All Years" 
+Associations 1901 "All Years" AssociationContext 1029 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "All Years" SortOrder Default 
+SortAs Ascending 
+
+
+Levels 1039 "Month" Blanks "( blank )" Inclusion Generate DateFunction Month 
+Generate All RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat "YYYY/MMM" Timerank 30 UniqueCategories True 
+UniqueMove False Associations 1903 "All Years" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "All Years" 
+Associations 1905 "All Years" AssociationContext 1029 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "All Years" SortOrder Default 
+SortAs Ascending 
+
+
+Category 1821 "19970101-19971231" Parent 1029 Levels 1035 OrderBy Drill 1029 
+Value "1997" Label "1997" Lastuse 20000404 SourceValue "1997" Date 19970101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+Category 1823 "19970101-19970331" Parent 1821 Levels 1037 OrderBy Drill 1029 
+Value "19970101" Label "1997 Q 1" Lastuse 20000404 SourceValue "19970101" 
+Date 19970101 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1825 "19970101-19970131" Parent 1823 Levels 1039 OrderBy Drill 1029 
+Value "199701" Label "1997/Jan" Lastuse 20000404 SourceValue "199701" Date 19970101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1827 "19970201-19970228" Parent 1823 Levels 1039 OrderBy Drill 1029 
+Value "199702" Label "1997/Feb" Lastuse 20000404 SourceValue "199702" Date 19970201 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1829 "19970301-19970331" Parent 1823 Levels 1039 OrderBy Drill 1029 
+Value "199703" Label "1997/Mar" Lastuse 20000404 SourceValue "199703" Date 19970301 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1831 "19970401-19970630" Parent 1821 Levels 1037 OrderBy Drill 1029 
+Value "19970401" Label "1997 Q 2" Lastuse 20000404 SourceValue "19970401" 
+Date 19970401 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1833 "19970401-19970430" Parent 1831 Levels 1039 OrderBy Drill 1029 
+Value "199704" Label "1997/Apr" Lastuse 20000404 SourceValue "199704" Date 19970401 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1835 "19970501-19970531" Parent 1831 Levels 1039 OrderBy Drill 1029 
+Value "199705" Label "1997/May" Lastuse 20000404 SourceValue "199705" Date 19970501 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1837 "19970601-19970630" Parent 1831 Levels 1039 OrderBy Drill 1029 
+Value "199706" Label "1997/Jun" Lastuse 20000404 SourceValue "199706" Date 19970601 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1839 "19970701-19970930" Parent 1821 Levels 1037 OrderBy Drill 1029 
+Value "19970701" Label "1997 Q 3" Lastuse 20000404 SourceValue "19970701" 
+Date 19970701 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1841 "19970701-19970731" Parent 1839 Levels 1039 OrderBy Drill 1029 
+Value "199707" Label "1997/Jul" Lastuse 20000404 SourceValue "199707" Date 19970701 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1843 "19970801-19970831" Parent 1839 Levels 1039 OrderBy Drill 1029 
+Value "199708" Label "1997/Aug" Lastuse 20000404 SourceValue "199708" Date 19970801 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1845 "19970901-19970930" Parent 1839 Levels 1039 OrderBy Drill 1029 
+Value "199709" Label "1997/Sep" Lastuse 20000404 SourceValue "199709" Date 19970901 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1847 "19971001-19971231" Parent 1821 Levels 1037 OrderBy Drill 1029 
+Value "19971001" Label "1997 Q 4" Lastuse 20000404 SourceValue "19971001" 
+Date 19971001 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1849 "19971001-19971031" Parent 1847 Levels 1039 OrderBy Drill 1029 
+Value "199710" Label "1997/Oct" Lastuse 20000404 SourceValue "199710" Date 19971001 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1851 "19971101-19971130" Parent 1847 Levels 1039 OrderBy Drill 1029 
+Value "199711" Label "1997/Nov" Lastuse 20000404 SourceValue "199711" Date 19971101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1853 "19971201-19971231" Parent 1847 Levels 1039 OrderBy Drill 1029 
+Value "199712" Label "1997/Dec" Lastuse 20000404 SourceValue "199712" Date 19971201 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1855 "19980101-19981231" Parent 1029 Levels 1035 OrderBy Drill 1029 
+Value "1998" Label "1998" Lastuse 20000404 SourceValue "1998" Date 19980101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+Category 1857 "19980101-19980331" Parent 1855 Levels 1037 OrderBy Drill 1029 
+Value "19980101" Label "1998 Q 1" Lastuse 20000404 SourceValue "19980101" 
+Date 19980101 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1859 "19980101-19980131" Parent 1857 Levels 1039 OrderBy Drill 1029 
+Value "199801" Label "1998/Jan" Lastuse 20000404 SourceValue "199801" Date 19980101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1861 "19980201-19980228" Parent 1857 Levels 1039 OrderBy Drill 1029 
+Value "199802" Label "1998/Feb" Lastuse 20000404 SourceValue "199802" Date 19980201 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1863 "19980301-19980331" Parent 1857 Levels 1039 OrderBy Drill 1029 
+Value "199803" Label "1998/Mar" Lastuse 20000404 SourceValue "199803" Date 19980301 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1865 "19980401-19980630" Parent 1855 Levels 1037 OrderBy Drill 1029 
+Value "19980401" Label "1998 Q 2" Lastuse 20000404 SourceValue "19980401" 
+Date 19980401 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1867 "19980401-19980430" Parent 1865 Levels 1039 OrderBy Drill 1029 
+Value "199804" Label "1998/Apr" Lastuse 20000404 SourceValue "199804" Date 19980401 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1869 "19980501-19980531" Parent 1865 Levels 1039 OrderBy Drill 1029 
+Value "199805" Label "1998/May" Lastuse 20000404 SourceValue "199805" Date 19980501 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1871 "19980601-19980630" Parent 1865 Levels 1039 OrderBy Drill 1029 
+Value "199806" Label "1998/Jun" Lastuse 20000404 SourceValue "199806" Date 19980601 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1873 "19980701-19980930" Parent 1855 Levels 1037 OrderBy Drill 1029 
+Value "19980701" Label "1998 Q 3" Lastuse 20000404 SourceValue "19980701" 
+Date 19980701 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1875 "19980701-19980731" Parent 1873 Levels 1039 OrderBy Drill 1029 
+Value "199807" Label "1998/Jul" Lastuse 20000404 SourceValue "199807" Date 19980701 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1877 "19980801-19980831" Parent 1873 Levels 1039 OrderBy Drill 1029 
+Value "199808" Label "1998/Aug" Lastuse 20000404 SourceValue "199808" Date 19980801 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1879 "19980901-19980930" Parent 1873 Levels 1039 OrderBy Drill 1029 
+Value "199809" Label "1998/Sep" Lastuse 20000404 SourceValue "199809" Date 19980901 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1881 "19981001-19981231" Parent 1855 Levels 1037 OrderBy Drill 1029 
+Value "19981001" Label "1998 Q 4" Lastuse 20000404 SourceValue "19981001" 
+Date 19981001 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 1883 "19981001-19981031" Parent 1881 Levels 1039 OrderBy Drill 1029 
+Value "199810" Label "1998/Oct" Lastuse 20000404 SourceValue "199810" Date 19981001 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1885 "19981101-19981130" Parent 1881 Levels 1039 OrderBy Drill 1029 
+Value "199811" Label "1998/Nov" Lastuse 20000404 SourceValue "199811" Date 19981101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1887 "19981201-19981231" Parent 1881 Levels 1039 OrderBy Drill 1029 
+Value "199812" Label "1998/Dec" Lastuse 20000404 SourceValue "199812" Date 19981201 
+Current Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+
+
+
+MapDrills 
+MapDrill 1029 
+
+ViewName 1031 "All Categories" Type All ViewUserClass 0 
+ViewName 1033 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 145 "Country" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 147 "Country" Inclusion Generate Lastuse 20000404 Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+Drill 149 "By Country" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 155 "Country" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 1907 "Country" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Country" 
+
+
+
+Levels 203 "Province/State" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 1909 "Province/State" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Province/State" 
+
+
+
+Levels 205 "City" Blanks "( blank )" DateFunction None Generate Need RefreshLabel False 
+RefreshDescription False RefreshShortName False NewCatsLock False Timerank 0 
+UniqueCategories False UniqueMove False Associations 1911 "City" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "City" 
+
+
+Levels 207 "Customer No." Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories True UniqueMove False Associations 1913 "Customer No." 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Customer No." 
+
+
+
+Category 1053 "Australia" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Australia" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1055 "NSW" Parent 1053 Levels 203 Lastuse 20000404 SourceValue "NSW" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1057 "Sydney" Parent 1055 Levels 205 Lastuse 20000404 SourceValue "Sydney" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1059 "1007" Parent 1057 Levels 207 Lastuse 20000404 SourceValue "1007" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1071 "1055" Parent 1057 Levels 207 Lastuse 20000404 SourceValue "1055" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1061 "Syndey" Parent 1055 Levels 205 Lastuse 20000404 SourceValue "Syndey" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1063 "1023" Parent 1061 Levels 207 Lastuse 20000404 SourceValue "1023" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1065 "VIC" Parent 1053 Levels 203 Lastuse 20000404 SourceValue "VIC" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1067 "Melbourne" Parent 1065 Levels 205 Lastuse 20000404 SourceValue "Melbourne" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1069 "1039" Parent 1067 Levels 207 Lastuse 20000404 SourceValue "1039" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1073 "QLD" Parent 1053 Levels 203 Lastuse 20000404 SourceValue "QLD" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1075 "Brisbane" Parent 1073 Levels 205 Lastuse 20000404 SourceValue "Brisbane" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1077 "1056" Parent 1075 Levels 207 Lastuse 20000404 SourceValue "1056" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1091 "1060" Parent 1075 Levels 207 Lastuse 20000404 SourceValue "1060" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1079 "WA" Parent 1053 Levels 203 Lastuse 20000404 SourceValue "WA" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1081 "Perth" Parent 1079 Levels 205 Lastuse 20000404 SourceValue "Perth" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1083 "1057" Parent 1081 Levels 207 Lastuse 20000404 SourceValue "1057" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1085 "( blank )" Parent 1053 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1087 "Sydney~23" Parent 1085 Levels 205 Lastuse 20000404 SourceValue "Sydney" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1089 "1058" Parent 1087 Levels 207 Lastuse 20000404 SourceValue "1058" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1093 "Belgium" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Belgium" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1095 "( blank )~24" Parent 1093 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1097 "Antwerpen" Parent 1095 Levels 205 Lastuse 20000404 SourceValue "Antwerpen" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1099 "1040" Parent 1097 Levels 207 Lastuse 20000404 SourceValue "1040" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1101 "Brussels" Parent 1095 Levels 205 Lastuse 20000404 SourceValue "Brussels" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1103 "1066" Parent 1101 Levels 207 Lastuse 20000404 SourceValue "1066" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1105 "1090" Parent 1101 Levels 207 Lastuse 20000404 SourceValue "1090" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1107 "1113" Parent 1101 Levels 207 Lastuse 20000404 SourceValue "1113" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1109 "Canada" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Canada" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1111 "Quebec" Parent 1109 Levels 203 Lastuse 20000404 SourceValue "Quebec" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1113 "Montreal" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Montreal" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1115 "1001" Parent 1113 Levels 207 Lastuse 20000404 SourceValue "1001" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1141 "1033" Parent 1113 Levels 207 Lastuse 20000404 SourceValue "1033" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1227 "1132" Parent 1113 Levels 207 Lastuse 20000404 SourceValue "1132" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1133 "Sept-Iles" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Sept-Iles" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1135 "1024" Parent 1133 Levels 207 Lastuse 20000404 SourceValue "1024" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1149 "Quebec City" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Quebec City" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1151 "1050" Parent 1149 Levels 207 Lastuse 20000404 SourceValue "1050" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1207 "Shawville" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Shawville" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1209 "1118" Parent 1207 Levels 207 Lastuse 20000404 SourceValue "1118" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1211 "Sherbrooke" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Sherbrooke" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1213 "1123" Parent 1211 Levels 207 Lastuse 20000404 SourceValue "1123" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1215 "Granby" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Granby" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1217 "1124" Parent 1215 Levels 207 Lastuse 20000404 SourceValue "1124" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1219 "Aylmer" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Aylmer" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1221 "1125" Parent 1219 Levels 207 Lastuse 20000404 SourceValue "1125" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1223 "Hull" Parent 1111 Levels 205 Lastuse 20000404 SourceValue "Hull" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1225 "1126" Parent 1223 Levels 207 Lastuse 20000404 SourceValue "1126" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1117 "British Columbia" Parent 1109 Levels 203 Lastuse 20000404 
+SourceValue "British Columbia" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 1119 "Burnaby" Parent 1117 Levels 205 Lastuse 20000404 SourceValue "Burnaby" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1121 "1003" Parent 1119 Levels 207 Lastuse 20000404 SourceValue "1003" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1123 "Kelowna" Parent 1117 Levels 205 Lastuse 20000404 SourceValue "Kelowna" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1125 "1010" Parent 1123 Levels 207 Lastuse 20000404 SourceValue "1010" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1143 "Vancouver" Parent 1117 Levels 205 Lastuse 20000404 SourceValue "Vancouver" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1145 "1042" Parent 1143 Levels 207 Lastuse 20000404 SourceValue "1042" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1171 "Kamploops" Parent 1117 Levels 205 Lastuse 20000404 SourceValue "Kamploops" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1173 "1069" Parent 1171 Levels 207 Lastuse 20000404 SourceValue "1069" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1175 "Victoria" Parent 1117 Levels 205 Lastuse 20000404 SourceValue "Victoria" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1177 "1070" Parent 1175 Levels 207 Lastuse 20000404 SourceValue "1070" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1127 "Ontario" Parent 1109 Levels 203 Lastuse 20000404 SourceValue "Ontario" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1129 "Toronto" Parent 1127 Levels 205 Lastuse 20000404 SourceValue "Toronto" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1131 "1013" Parent 1129 Levels 207 Lastuse 20000404 SourceValue "1013" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1147 "1048" Parent 1129 Levels 207 Lastuse 20000404 SourceValue "1048" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1189 "1093" Parent 1129 Levels 207 Lastuse 20000404 SourceValue "1093" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1137 "Ottawa" Parent 1127 Levels 205 Lastuse 20000404 SourceValue "Ottawa" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1139 "1031" Parent 1137 Levels 207 Lastuse 20000404 SourceValue "1031" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1195 "Hamilton" Parent 1127 Levels 205 Lastuse 20000404 SourceValue "Hamilton" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1197 "1108" Parent 1195 Levels 207 Lastuse 20000404 SourceValue "1108" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1199 "Trenton" Parent 1127 Levels 205 Lastuse 20000404 SourceValue "Trenton" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1201 "1116" Parent 1199 Levels 207 Lastuse 20000404 SourceValue "1116" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1203 "Guelph" Parent 1127 Levels 205 Lastuse 20000404 SourceValue "Guelph" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1205 "1117" Parent 1203 Levels 207 Lastuse 20000404 SourceValue "1117" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1229 "Timmins" Parent 1127 Levels 205 Lastuse 20000404 SourceValue "Timmins" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1231 "1133" Parent 1229 Levels 207 Lastuse 20000404 SourceValue "1133" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1153 "New Brunswick" Parent 1109 Levels 203 Lastuse 20000404 SourceValue "New Brunswick" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1155 "Moncton" Parent 1153 Levels 205 Lastuse 20000404 SourceValue "Moncton" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1157 "1061" Parent 1155 Levels 207 Lastuse 20000404 SourceValue "1061" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1191 "St. John" Parent 1153 Levels 205 Lastuse 20000404 SourceValue "St. John" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1193 "1094" Parent 1191 Levels 207 Lastuse 20000404 SourceValue "1094" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1159 "Manitoba" Parent 1109 Levels 203 Lastuse 20000404 SourceValue "Manitoba" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1161 "Winnipeg" Parent 1159 Levels 205 Lastuse 20000404 SourceValue "Winnipeg" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1163 "1067" Parent 1161 Levels 207 Lastuse 20000404 SourceValue "1067" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1165 "Alberta" Parent 1109 Levels 203 Lastuse 20000404 SourceValue "Alberta" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1167 "Calgary" Parent 1165 Levels 205 Lastuse 20000404 SourceValue "Calgary" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1169 "1068" Parent 1167 Levels 207 Lastuse 20000404 SourceValue "1068" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1179 "Nova Scotia" Parent 1109 Levels 203 Lastuse 20000404 SourceValue "Nova Scotia" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1181 "Sydney~25" Parent 1179 Levels 205 Lastuse 20000404 SourceValue "Sydney" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1183 "1091" Parent 1181 Levels 207 Lastuse 20000404 SourceValue "1091" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1185 "Halifax" Parent 1179 Levels 205 Lastuse 20000404 SourceValue "Halifax" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1187 "1092" Parent 1185 Levels 207 Lastuse 20000404 SourceValue "1092" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1233 "France" Parent 149 Levels 155 Lastuse 20000404 SourceValue "France" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1235 "( blank )~26" Parent 1233 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1237 "Paris" Parent 1235 Levels 205 Lastuse 20000404 SourceValue "Paris" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1239 "1041" Parent 1237 Levels 207 Lastuse 20000404 SourceValue "1041" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1241 "1098" Parent 1237 Levels 207 Lastuse 20000404 SourceValue "1098" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1243 "1130" Parent 1237 Levels 207 Lastuse 20000404 SourceValue "1130" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1245 "Germany" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Germany" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1247 "( blank )~27" Parent 1245 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1249 "Frankfurt" Parent 1247 Levels 205 Lastuse 20000404 SourceValue "Frankfurt" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1251 "1006" Parent 1249 Levels 207 Lastuse 20000404 SourceValue "1006" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1253 "1037" Parent 1249 Levels 207 Lastuse 20000404 SourceValue "1037" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1267 "1054" Parent 1249 Levels 207 Lastuse 20000404 SourceValue "1054" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1269 "1119" Parent 1249 Levels 207 Lastuse 20000404 SourceValue "1119" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1255 "Munich" Parent 1247 Levels 205 Lastuse 20000404 SourceValue "Munich" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1257 "1051" Parent 1255 Levels 207 Lastuse 20000404 SourceValue "1051" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1259 "Hamburg" Parent 1247 Levels 205 Lastuse 20000404 SourceValue "Hamburg" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1261 "1052" Parent 1259 Levels 207 Lastuse 20000404 SourceValue "1052" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1263 "Bonn" Parent 1247 Levels 205 Lastuse 20000404 SourceValue "Bonn" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1265 "1053" Parent 1263 Levels 207 Lastuse 20000404 SourceValue "1053" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1271 "Hong Kong" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Hong Kong" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1273 "( blank )~28" Parent 1271 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1275 "Wanchai" Parent 1273 Levels 205 Lastuse 20000404 SourceValue "Wanchai" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1277 "1022" Parent 1275 Levels 207 Lastuse 20000404 SourceValue "1022" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1279 "Hong Kong~29" Parent 1273 Levels 205 Lastuse 20000404 SourceValue "Hong Kong" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1281 "1036" Parent 1279 Levels 207 Lastuse 20000404 SourceValue "1036" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1283 "Japan" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Japan" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1285 "( blank )~30" Parent 1283 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1287 "Tokyo" Parent 1285 Levels 205 Lastuse 20000404 SourceValue "Tokyo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1289 "1008" Parent 1287 Levels 207 Lastuse 20000404 SourceValue "1008" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1291 "Sapporo" Parent 1285 Levels 205 Lastuse 20000404 SourceValue "Sapporo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1293 "1059" Parent 1291 Levels 207 Lastuse 20000404 SourceValue "1059" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1295 "Mexico" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Mexico" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1297 "( blank )~31" Parent 1295 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1299 "Monterey" Parent 1297 Levels 205 Lastuse 20000404 SourceValue "Monterey" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1301 "1030" Parent 1299 Levels 207 Lastuse 20000404 SourceValue "1030" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1303 "Puerto Vallarta" Parent 1297 Levels 205 Lastuse 20000404 
+SourceValue "Puerto Vallarta" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 1305 "1083" Parent 1303 Levels 207 Lastuse 20000404 SourceValue "1083" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1307 "Cancun" Parent 1297 Levels 205 Lastuse 20000404 SourceValue "Cancun" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1309 "1147" Parent 1307 Levels 207 Lastuse 20000404 SourceValue "1147" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1311 "Guadalajara" Parent 1297 Levels 205 Lastuse 20000404 SourceValue "Guadalajara" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1313 "1148" Parent 1311 Levels 207 Lastuse 20000404 SourceValue "1148" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1315 "Singapore" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Singapore" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1317 "( blank )~32" Parent 1315 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1319 "Singapore~33" Parent 1317 Levels 205 Lastuse 20000404 SourceValue "Singapore" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1321 "1011" Parent 1319 Levels 207 Lastuse 20000404 SourceValue "1011" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1323 "1062" Parent 1319 Levels 207 Lastuse 20000404 SourceValue "1062" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1325 "Spain" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Spain" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1327 "( blank )~34" Parent 1325 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1329 "Madrid" Parent 1327 Levels 205 Lastuse 20000404 SourceValue "Madrid" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1331 "1019" Parent 1329 Levels 207 Lastuse 20000404 SourceValue "1019" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1333 "Barcelona" Parent 1327 Levels 205 Lastuse 20000404 SourceValue "Barcelona" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1335 "1035" Parent 1333 Levels 207 Lastuse 20000404 SourceValue "1035" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1345 "1097" Parent 1333 Levels 207 Lastuse 20000404 SourceValue "1097" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1337 "Sevilla" Parent 1327 Levels 205 Lastuse 20000404 SourceValue "Sevilla" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1339 "1095" Parent 1337 Levels 207 Lastuse 20000404 SourceValue "1095" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1341 "Zaragoza" Parent 1327 Levels 205 Lastuse 20000404 SourceValue "Zaragoza" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1343 "1096" Parent 1341 Levels 207 Lastuse 20000404 SourceValue "1096" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1347 "Sweden" Parent 149 Levels 155 Lastuse 20000404 SourceValue "Sweden" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1349 "( blank )~35" Parent 1347 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1351 "Stockholm" Parent 1349 Levels 205 Lastuse 20000404 SourceValue "Stockholm" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1353 "1009" Parent 1351 Levels 207 Lastuse 20000404 SourceValue "1009" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1359 "1063" Parent 1351 Levels 207 Lastuse 20000404 SourceValue "1063" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1365 "1085" Parent 1351 Levels 207 Lastuse 20000404 SourceValue "1085" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1355 "Kista" Parent 1349 Levels 205 Lastuse 20000404 SourceValue "Kista" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1357 "1016" Parent 1355 Levels 207 Lastuse 20000404 SourceValue "1016" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1361 "Goteburg" Parent 1349 Levels 205 Lastuse 20000404 SourceValue "Goteburg" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1363 "1064" Parent 1361 Levels 207 Lastuse 20000404 SourceValue "1064" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1367 "United Kingdom" Parent 149 Levels 155 Lastuse 20000404 SourceValue "United Kingdom" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1369 "West Sussex" Parent 1367 Levels 203 Lastuse 20000404 SourceValue "West Sussex" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1371 "Chichester" Parent 1369 Levels 205 Lastuse 20000404 SourceValue "Chichester" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1373 "1025" Parent 1371 Levels 207 Lastuse 20000404 SourceValue "1025" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1375 "Berkshire" Parent 1367 Levels 203 Lastuse 20000404 SourceValue "Berkshire" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1377 "Bracknell" Parent 1375 Levels 205 Lastuse 20000404 SourceValue "Bracknell" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1379 "1026" Parent 1377 Levels 207 Lastuse 20000404 SourceValue "1026" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1381 "( blank )~36" Parent 1367 Levels 203 Lastuse 20000404 SourceValue "( blank )" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks True 
+Category 1383 "London" Parent 1381 Levels 205 Lastuse 20000404 SourceValue "London" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1385 "1065" Parent 1383 Levels 207 Lastuse 20000404 SourceValue "1065" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1401 "1120" Parent 1383 Levels 207 Lastuse 20000404 SourceValue "1120" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1393 "Galway" Parent 1381 Levels 205 Lastuse 20000404 SourceValue "Galway" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1395 "1111" Parent 1393 Levels 207 Lastuse 20000404 SourceValue "1111" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1397 "Cork" Parent 1381 Levels 205 Lastuse 20000404 SourceValue "Cork" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1399 "1112" Parent 1397 Levels 207 Lastuse 20000404 SourceValue "1112" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1403 "Manchester" Parent 1381 Levels 205 Lastuse 20000404 SourceValue "Manchester" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1405 "1121" Parent 1403 Levels 207 Lastuse 20000404 SourceValue "1121" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1419 "1134" Parent 1403 Levels 207 Lastuse 20000404 SourceValue "1134" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1407 "Brighton" Parent 1381 Levels 205 Lastuse 20000404 SourceValue "Brighton" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1409 "1127" Parent 1407 Levels 207 Lastuse 20000404 SourceValue "1127" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1411 "Coventry" Parent 1381 Levels 205 Lastuse 20000404 SourceValue "Coventry" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1413 "1128" Parent 1411 Levels 207 Lastuse 20000404 SourceValue "1128" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1415 "Bristol" Parent 1381 Levels 205 Lastuse 20000404 SourceValue "Bristol" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1417 "1129" Parent 1415 Levels 207 Lastuse 20000404 SourceValue "1129" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1387 "Wales" Parent 1367 Levels 203 Lastuse 20000404 SourceValue "Wales" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1389 "Milford Haven" Parent 1387 Levels 205 Lastuse 20000404 SourceValue "Milford Haven" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1391 "1089" Parent 1389 Levels 207 Lastuse 20000404 SourceValue "1089" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+Category 1421 "United States" Parent 149 Levels 155 Lastuse 20000404 SourceValue "United States" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1423 "Massachusetts" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Massachusetts" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1425 "Boston" Parent 1423 Levels 205 Lastuse 20000404 SourceValue "Boston" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1427 "1002" Parent 1425 Levels 207 Lastuse 20000404 SourceValue "1002" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1435 "1005" Parent 1425 Levels 207 Lastuse 20000404 SourceValue "1005" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1629 "1115" Parent 1425 Levels 207 Lastuse 20000404 SourceValue "1115" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1429 "California" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "California" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1431 "San Francisco" Parent 1429 Levels 205 Lastuse 20000404 SourceValue "San Francisco" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1433 "1004" Parent 1431 Levels 207 Lastuse 20000404 SourceValue "1004" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1465 "1020" Parent 1431 Levels 207 Lastuse 20000404 SourceValue "1020" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1449 "Anaheim" Parent 1429 Levels 205 Lastuse 20000404 SourceValue "Anaheim" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1451 "1015" Parent 1449 Levels 207 Lastuse 20000404 SourceValue "1015" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1519 "San Diego" Parent 1429 Levels 205 Lastuse 20000404 SourceValue "San Diego" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1521 "1071" Parent 1519 Levels 207 Lastuse 20000404 SourceValue "1071" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1593 "1102" Parent 1519 Levels 207 Lastuse 20000404 SourceValue "1102" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1533 "Oakland" Parent 1429 Levels 205 Lastuse 20000404 SourceValue "Oakland" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1535 "1075" Parent 1533 Levels 207 Lastuse 20000404 SourceValue "1075" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1583 "Santa Monica" Parent 1429 Levels 205 Lastuse 20000404 SourceValue "Santa Monica" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1585 "1099" Parent 1583 Levels 207 Lastuse 20000404 SourceValue "1099" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1591 "1101" Parent 1583 Levels 207 Lastuse 20000404 SourceValue "1101" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1587 "Pasadena" Parent 1429 Levels 205 Lastuse 20000404 SourceValue "Pasadena" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1589 "1100" Parent 1587 Levels 207 Lastuse 20000404 SourceValue "1100" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1651 "Sacramento" Parent 1429 Levels 205 Lastuse 20000404 SourceValue "Sacramento" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1653 "1139" Parent 1651 Levels 207 Lastuse 20000404 SourceValue "1139" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1655 "San Bernardino" Parent 1429 Levels 205 Lastuse 20000404 
+SourceValue "San Bernardino" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 1657 "1140" Parent 1655 Levels 207 Lastuse 20000404 SourceValue "1140" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1437 "Michigan" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Michigan" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1439 "Martinsville" Parent 1437 Levels 205 Lastuse 20000404 SourceValue "Martinsville" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1441 "1012" Parent 1439 Levels 207 Lastuse 20000404 SourceValue "1012" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1503 "Detroit" Parent 1437 Levels 205 Lastuse 20000404 SourceValue "Detroit" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1505 "1045" Parent 1503 Levels 207 Lastuse 20000404 SourceValue "1045" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1551 "Battle Creek" Parent 1437 Levels 205 Lastuse 20000404 SourceValue "Battle Creek" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1553 "1079" Parent 1551 Levels 207 Lastuse 20000404 SourceValue "1079" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1443 "New York" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "New York" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1445 "New York~37" Parent 1443 Levels 205 Lastuse 20000404 SourceValue "New York" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1447 "1014" Parent 1445 Levels 207 Lastuse 20000404 SourceValue "1014" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1467 "1021" Parent 1445 Levels 207 Lastuse 20000404 SourceValue "1021" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1469 "1027" Parent 1445 Levels 207 Lastuse 20000404 SourceValue "1027" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1571 "1086" Parent 1445 Levels 207 Lastuse 20000404 SourceValue "1086" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1631 "1122" Parent 1445 Levels 207 Lastuse 20000404 SourceValue "1122" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1511 "Albany" Parent 1443 Levels 205 Lastuse 20000404 SourceValue "Albany" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1513 "1047" Parent 1511 Levels 207 Lastuse 20000404 SourceValue "1047" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1515 "Buffalo" Parent 1443 Levels 205 Lastuse 20000404 SourceValue "Buffalo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1517 "1049" Parent 1515 Levels 207 Lastuse 20000404 SourceValue "1049" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1605 "Queens" Parent 1443 Levels 205 Lastuse 20000404 SourceValue "Queens" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1607 "1105" Parent 1605 Levels 207 Lastuse 20000404 SourceValue "1105" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1615 "New Rochelle" Parent 1443 Levels 205 Lastuse 20000404 SourceValue "New Rochelle" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1617 "1107" Parent 1615 Levels 207 Lastuse 20000404 SourceValue "1107" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1625 "Huntington" Parent 1443 Levels 205 Lastuse 20000404 SourceValue "Huntington" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1627 "1114" Parent 1625 Levels 207 Lastuse 20000404 SourceValue "1114" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1453 "Colorado" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Colorado" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1455 "Boulder" Parent 1453 Levels 205 Lastuse 20000404 SourceValue "Boulder" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1457 "1017" Parent 1455 Levels 207 Lastuse 20000404 SourceValue "1017" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1635 "1135" Parent 1455 Levels 207 Lastuse 20000404 SourceValue "1135" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1523 "Denver" Parent 1453 Levels 205 Lastuse 20000404 SourceValue "Denver" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1525 "1072" Parent 1523 Levels 207 Lastuse 20000404 SourceValue "1072" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1683 "1149" Parent 1523 Levels 207 Lastuse 20000404 SourceValue "1149" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1637 "Colorado Springs" Parent 1453 Levels 205 Lastuse 20000404 
+SourceValue "Colorado Springs" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 1639 "1136" Parent 1637 Levels 207 Lastuse 20000404 SourceValue "1136" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1459 "Washington" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Washington" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1461 "Bellevue" Parent 1459 Levels 205 Lastuse 20000404 SourceValue "Bellevue" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1463 "1018" Parent 1461 Levels 207 Lastuse 20000404 SourceValue "1018" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1483 "Seattle" Parent 1459 Levels 205 Lastuse 20000404 SourceValue "Seattle" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1485 "1032" Parent 1483 Levels 207 Lastuse 20000404 SourceValue "1032" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1531 "1074" Parent 1483 Levels 207 Lastuse 20000404 SourceValue "1074" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1633 "1131" Parent 1483 Levels 207 Lastuse 20000404 SourceValue "1131" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1471 "Texas" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Texas" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1473 "Dallas" Parent 1471 Levels 205 Lastuse 20000404 SourceValue "Dallas" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1475 "1028" Parent 1473 Levels 207 Lastuse 20000404 SourceValue "1028" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1493 "1038" Parent 1473 Levels 207 Lastuse 20000404 SourceValue "1038" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1685 "1150" Parent 1473 Levels 207 Lastuse 20000404 SourceValue "1150" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1527 "Irving" Parent 1471 Levels 205 Lastuse 20000404 SourceValue "Irving" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1529 "1073" Parent 1527 Levels 207 Lastuse 20000404 SourceValue "1073" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1555 "Austin" Parent 1471 Levels 205 Lastuse 20000404 SourceValue "Austin" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1557 "1080" Parent 1555 Levels 207 Lastuse 20000404 SourceValue "1080" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1559 "Forth Worth" Parent 1471 Levels 205 Lastuse 20000404 SourceValue "Forth Worth" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1561 "1081" Parent 1559 Levels 207 Lastuse 20000404 SourceValue "1081" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1659 "San Antonio" Parent 1471 Levels 205 Lastuse 20000404 SourceValue "San Antonio" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1661 "1141" Parent 1659 Levels 207 Lastuse 20000404 SourceValue "1141" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1663 "Beaumont" Parent 1471 Levels 205 Lastuse 20000404 SourceValue "Beaumont" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1665 "1142" Parent 1663 Levels 207 Lastuse 20000404 SourceValue "1142" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1477 "Illinois" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Illinois" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1479 "Chicago" Parent 1477 Levels 205 Lastuse 20000404 SourceValue "Chicago" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1481 "1029" Parent 1479 Levels 207 Lastuse 20000404 SourceValue "1029" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1501 "1044" Parent 1479 Levels 207 Lastuse 20000404 SourceValue "1044" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1569 "1084" Parent 1479 Levels 207 Lastuse 20000404 SourceValue "1084" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1507 "Aurora" Parent 1477 Levels 205 Lastuse 20000404 SourceValue "Aurora" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1509 "1046" Parent 1507 Levels 207 Lastuse 20000404 SourceValue "1046" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1537 "Moline" Parent 1477 Levels 205 Lastuse 20000404 SourceValue "Moline" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1539 "1076" Parent 1537 Levels 207 Lastuse 20000404 SourceValue "1076" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1487 "Florida" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Florida" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1489 "Miami" Parent 1487 Levels 205 Lastuse 20000404 SourceValue "Miami" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1491 "1034" Parent 1489 Levels 207 Lastuse 20000404 SourceValue "1034" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 1619 "1109" Parent 1489 Levels 207 Lastuse 20000404 SourceValue "1109" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1621 "Sarasota" Parent 1487 Levels 205 Lastuse 20000404 SourceValue "Sarasota" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1623 "1110" Parent 1621 Levels 207 Lastuse 20000404 SourceValue "1110" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1667 "Jacksonville" Parent 1487 Levels 205 Lastuse 20000404 SourceValue "Jacksonville" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1669 "1143" Parent 1667 Levels 207 Lastuse 20000404 SourceValue "1143" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1671 "Tampa" Parent 1487 Levels 205 Lastuse 20000404 SourceValue "Tampa" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1673 "1144" Parent 1671 Levels 207 Lastuse 20000404 SourceValue "1144" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1675 "Key Largo" Parent 1487 Levels 205 Lastuse 20000404 SourceValue "Key Largo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1677 "1145" Parent 1675 Levels 207 Lastuse 20000404 SourceValue "1145" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1679 "Loxahatche" Parent 1487 Levels 205 Lastuse 20000404 SourceValue "Loxahatche" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1681 "1146" Parent 1679 Levels 207 Lastuse 20000404 SourceValue "1146" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1495 "Missouri" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Missouri" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1497 "St. Louis" Parent 1495 Levels 205 Lastuse 20000404 SourceValue "St. Louis" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1499 "1043" Parent 1497 Levels 207 Lastuse 20000404 SourceValue "1043" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1541 "Lancaster" Parent 1495 Levels 205 Lastuse 20000404 SourceValue "Lancaster" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1543 "1077" Parent 1541 Levels 207 Lastuse 20000404 SourceValue "1077" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1573 "Springfield" Parent 1495 Levels 205 Lastuse 20000404 SourceValue "Springfield" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1575 "1087" Parent 1573 Levels 207 Lastuse 20000404 SourceValue "1087" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1545 "Indiana" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Indiana" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1547 "Bloomington" Parent 1545 Levels 205 Lastuse 20000404 SourceValue "Bloomington" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1549 "1078" Parent 1547 Levels 207 Lastuse 20000404 SourceValue "1078" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1563 "Pennsylvania" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Pennsylvania" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1565 "Altoona" Parent 1563 Levels 205 Lastuse 20000404 SourceValue "Altoona" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1567 "1082" Parent 1565 Levels 207 Lastuse 20000404 SourceValue "1082" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1577 "Ohio" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Ohio" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1579 "Toledo" Parent 1577 Levels 205 Lastuse 20000404 SourceValue "Toledo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1581 "1088" Parent 1579 Levels 207 Lastuse 20000404 SourceValue "1088" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1595 "New Jersey" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "New Jersey" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1597 "Atlantic City" Parent 1595 Levels 205 Lastuse 20000404 SourceValue "Atlantic City" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1599 "1103" Parent 1597 Levels 207 Lastuse 20000404 SourceValue "1103" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1601 "New Brunswick~38" Parent 1595 Levels 205 Lastuse 20000404 
+SourceValue "New Brunswick" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 1603 "1104" Parent 1601 Levels 207 Lastuse 20000404 SourceValue "1104" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1609 "Maryland" Parent 1421 Levels 203 Lastuse 20000404 SourceValue "Maryland" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1611 "Baltimore" Parent 1609 Levels 205 Lastuse 20000404 SourceValue "Baltimore" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1613 "1106" Parent 1611 Levels 207 Lastuse 20000404 SourceValue "1106" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 1641 "North Carolina" Parent 1421 Levels 203 Lastuse 20000404 
+SourceValue "North Carolina" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 1643 "Raleigh" Parent 1641 Levels 205 Lastuse 20000404 SourceValue "Raleigh" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1645 "1137" Parent 1643 Levels 207 Lastuse 20000404 SourceValue "1137" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 1647 "Charlotte" Parent 1641 Levels 205 Lastuse 20000404 SourceValue "Charlotte" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 1649 "1138" Parent 1647 Levels 207 Lastuse 20000404 SourceValue "1138" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+
+
+MapDrills 
+MapDrill 149 
+
+ViewName 151 "All Categories" Type All ViewUserClass 0 
+ViewName 153 "Omit Dimension" Type Omit ViewUserClass 0 
+ViewName 215 "Summary" ViewUserClass 0 Apex 147 Summary 1053 Summary 1093 
+Summary 1109 Summary 1233 Summary 1245 Summary 1271 Summary 1283 Summary 1295 
+Summary 1315 Summary 1325 Summary 1347 Summary 1367 Summary 1421 
+ViewName 217 "US Details" ViewUserClass 0 Apex 147 Filter 1053 Filter 1093 
+Filter 1109 Filter 1233 Filter 1245 Filter 1271 Filter 1283 Filter 1295 
+Filter 1315 Filter 1325 Filter 1347 Filter 1367 
+Dimension 1007 "Sales Rep. Name" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 1009 "Sales Rep. Name" Inclusion Generate Lastuse 20000404 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 1011 "By Sales Rep. Name" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 1017 "Sales Rep. Name" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 1915 "Sales Rep. Name" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Sales Rep. Name" 
+
+
+
+Category 1721 "Henri LeDuc" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Henri LeDuc" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1757 "Greg Torson" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Greg Torson" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1759 "Dave Mustaine" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Dave Mustaine" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1761 "Tony Armarillo" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Tony Armarillo" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1763 "Kurt Gruber" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Kurt Gruber" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1765 "Kaley Gregson" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Kaley Gregson" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1767 "Hari Krain" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Hari Krain" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1769 "Bjorn Flertjan" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Bjorn Flertjan" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1771 "Charles Loo Nam" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Charles Loo Nam" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1773 "Henry Harvey" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Henry Harvey" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1775 "Chris Cornel" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Chris Cornel" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1777 "Miguel Sanchez" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Miguel Sanchez" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1779 "Lee Chan" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Lee Chan" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1781 "Sally Strandherst" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Sally Strandherst" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1783 "Lyn Jacobs" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Lyn Jacobs" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1785 "Bill Gibbons" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Bill Gibbons" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1787 "Carlos Rodriguez" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Carlos Rodriguez" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1789 "Inigo Montoya" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Inigo Montoya" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1791 "Torey Wandiko" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Torey Wandiko" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1793 "Conrad Bergsteige" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Conrad Bergsteige" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1795 "Gilles Turcotte" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Gilles Turcotte" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1797 "Francoise LeBlanc" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Francoise LeBlanc" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1799 "Marthe Whiteduck" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Marthe Whiteduck" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1801 "Bill Smertal" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Bill Smertal" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1803 "Jane Litrand" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Jane Litrand" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1805 "Lisa Testorok" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Lisa Testorok" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1807 "Malcom Young" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Malcom Young" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1809 "Thomas Brigade" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Thomas Brigade" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1811 "Ingrid Termede" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Ingrid Termede" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 1813 "Matt Casgot" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Matt Casgot" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1815 "Gus Grovlin" Parent 1011 Levels 1017 Lastuse 20000404 SourceValue "Gus Grovlin" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 1817 "Dan Chancevente" Parent 1011 Levels 1017 Lastuse 20000404 
+SourceValue "Dan Chancevente" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+MapDrills 
+MapDrill 1011 
+
+ViewName 1013 "All Categories" Type All ViewUserClass 0 
+ViewName 1015 "Omit Dimension" Type Omit ViewUserClass 0 
+Measure 1019 "Order Price" Label "Order Price" Storage Default OutPutScale 0 
+Decimals 0 ReverseSign False IsCurrency False DrillThrough True "C:\Edcognos\PP6002eb\measures.imr" 
+"Default Report" EndList Associations 1917 "Order Price" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Order Price" 
+
+
+Measure 1021 "Qty" Label "Qty" Storage Default OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True EndList Associations 1919 
+"Qty" AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Qty" 
+
+
+
+Measure 1929 "Revenue" Label "Revenue" Storage Default OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough False EndList Associations 1931 
+"Revenue" AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Revenue" 
+
+
+
+
+Signon 1925 "PP6602EB" 
+FullDb "DDBBC55C2EE9970EC5E11FC538FCB142194D2F4F480D1D1B49E38A47782197F490F16EB" 
+"B2B1EBFD338BC2E1F86D28A02CA4C44E9E035F358DC2E1F065938BC2E8B3D9A8147B0A1" 
+"91FA545EA48930551368AE637EBF66FD020C681C9E40383817FAC459001BFD5D7E89B0B" 
+"4F68D3F75119B37BA0441DD1F47A1F00583A70328D8A083DA77C82A78FFA57049F4872D" 
+"B45C8F0399707BD0A0DBC56B25ACEE5FC6FD22017B978A46D33B420619DBAFCA1354E7B" 
+"3386C49094EADA37E11D0DFE6E561FB77AA548ABBED711BE9257D2139774380B055235F" 
+"F6AC5EFB974A50D205AC0576A016DAB459008533FCE92325A1AA487EAFC64880CC2E329" 
+"D039A8C1E4FC62" DbType "DB" PromptForPassword False 
+Cube 209 "Master" MdcFile "Master.mdc" Status OK CubeCreation On Optimize Categories 
+Compress False DatabaseInfo "Local;;" IncrementalUpdate False ServerCube False 
+CubeStamp 954876676 CubeCycle 53 Caching False DrillThrough False EndList 
+DimensionView 1025 "All Categories" DimensionView 145 "All Categories" 
+DimensionView 1007 "All Categories" 
+MeasureInclude 1019 Yes MeasureInclude 1021 Yes MeasureInclude 1929 Yes 
+
+
+
+Cube 211 "Summary" MdcFile "Summary.mdc" Status OK CubeCreation On Optimize Categories 
+Compress False DatabaseInfo "Local;;" IncrementalUpdate False ServerCube False 
+CubeStamp 954876677 CubeCycle 54 Caching False DrillThrough False "" "" 
+EndList 
+DimensionView 1025 "All Categories" DimensionView 145 "Summary" DimensionView 1007 
+"All Categories" 
+MeasureInclude 1019 Yes MeasureInclude 1021 Yes MeasureInclude 1929 Yes 
+
+
+
+Cube 213 "US Cube" MdcFile "Us_cube.mdc" Status OK CubeCreation On Optimize Categories 
+Compress False DatabaseInfo "Local;;" IncrementalUpdate False ServerCube False 
+CubeStamp 954876679 CubeCycle 55 Caching False DrillThrough False EndList 
+DimensionView 1025 "All Categories" DimensionView 145 "US Details" DimensionView 1007 
+"All Categories" 
+MeasureInclude 1019 Yes MeasureInclude 1021 Yes MeasureInclude 1929 Yes 
+
+
+
+AllocationAdd Measure 1019 Type Default 
+AllocationAdd Measure 1021 Type Default 
+AllocationAdd Measure 1929 Type Default 
+

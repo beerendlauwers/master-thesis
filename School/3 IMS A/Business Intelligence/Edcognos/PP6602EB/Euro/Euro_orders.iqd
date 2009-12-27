@@ -1,0 +1,44 @@
+COGNOS QUERY
+STRUCTURE,1,1
+DATABASE,Euro
+DATASOURCENAME,C:\EDCOGNOS\PP6502EB\EURO\EURO_O~1.IMR
+TITLE,Euro_o~1.imr
+BEGIN SQL
+select T1."ORDER_DT" as c1,
+	   T2."PROD_TYPE" as c2,
+	   T2."PROD_LINE" as c3,
+	   T2."PRODUCT" as c4,
+	   T3."TYPE" as c5,
+	   T3."CUSTOMER" as c6,
+	   T4."COUNTRY" as c7,
+	   T5."CITY" as c8,
+	   T6."PRICE" as c9,
+	   T6."PRICE" * T6."QTY" as c10,
+	   T6."QTY" as c11,
+	   CASE WHEN (T6."QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END as c12,
+	   ((CASE WHEN (T6."QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END) / (T6."PRICE" * T6."QTY") * T6."QTY") as c13,
+	   CASE WHEN ((((CASE WHEN (T6."QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END) / (T6."PRICE" * T6."QTY")) * 100) < 10) THEN ('GOOD') WHEN ((((CASE WHEN (T6."QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END) / (T6."PRICE" * T6."QTY")) * 100) BETWEEN 10 AND 20) THEN ('AVERAGE') ELSE ('POOR') END as c14
+from "ORDRDETL" T6,
+	"Order" T1,
+	"Product" T2,
+	"CUSTSITE" T5,
+	"CUSTOMER" T3,
+	"COUNTRY" T4
+where (T6."ORDER_NO" = T1."ORDER_NO") and (T2."PROD_NO" = T6."PROD_NO") and ((T1."CUST_NO" = T5."CUST_NO") and (T1."SITE_NO" = T5."SITE_NO")) and (T3."CUST_NO" = T5."CUST_NO") and (T4."COUNTRY_CD" = T5."COUNTRY_CD")
+
+END SQL
+COLUMN,0,Order Date
+COLUMN,1,Product Type
+COLUMN,2,Product Line
+COLUMN,3,Product
+COLUMN,4,Customer Type
+COLUMN,5,Customer Name
+COLUMN,6,Country
+COLUMN,7,City
+COLUMN,8,Order Price
+COLUMN,9,Shipment Revenue
+COLUMN,10,Total Units Shipped
+COLUMN,11,Late Shipment Revenue
+COLUMN,12,Total Units Shipped Late
+COLUMN,13,% Late Shipment Ranges
+

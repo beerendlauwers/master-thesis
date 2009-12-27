@@ -1,0 +1,1609 @@
+
+Name "OrdersNew" AutoAccess False Synchronize False SynchroCycle 0 SynchroStamp 0 
+UpdateCycle 7 ModelStamp 908888761 ClientStamp 908888761 ServerStamp 0 
+Generation 0 RootUser 0 Version "6.6.327.0 - Not For Resale" AccessManager False 
+AccessManagerUserClass False 
+
+DataSource 103 "orders" Separator " " SourceType DataSource CharacterSet Ansi 
+DecimalSep " " Thousandsep " " Columns True Timing PopYesCreateDefault 
+Source "c:\edcognos\pp6602eb\orders.iqd" SQL 'select T1."ORDER_DT" as c1,
+	   T2."PROD_TYPE" as c2,
+	   T2."PROD_LINE' 
+'" as c3,
+	   T2."PRODUCT" as c4,
+	   T3."TYPE" as c5,
+	   T3."CUSTOMER"' 
+' as c6,
+	   T4."COUNTRY" as c7,
+	   T5."CITY" as c8,
+	   T6."PRICE" as ' 
+'c9,
+	   T6."PRICE" * T6."QTY" as c10,
+	   T6."QTY" as c11,
+	   CASE WHE' 
+'N (T6."QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRIC' 
+'E" * T6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= ' 
+'1086)) THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY' 
+'") * .3) END as c12,
+	   ((CASE WHEN (T6."QTY" <= 10) THEN (0) WHEN (T3' 
+'."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09) WHEN ((T3."CUS' 
+'T_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRICE" * T6."QTY")' 
+' * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END) / (T6."PRICE" * T6."QT' 
+'Y") * T6."QTY") as c13,
+	   CASE WHEN ((((CASE WHEN (T6."QTY" <= 10) TH' 
+'EN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09)' 
+' WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRI' 
+'CE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END) / (T6."' 
+'PRICE" * T6."QTY")) * 100) < 10) THEN (' "'GOOD') WHEN ((((CASE WHEN (T6." 
+'"QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T' 
+'6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086))' 
+' THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .' 
+'3) END) / (T6."PRICE" * T6."QTY")) * 100) BETWEEN 10 AND 20) THEN (' "'AVERAGE') ELSE ('POOR') END as c14
+from " 
+'"ORDRDETL" T6,
+	"Order" T1,
+	"Product" T2,
+	"CUSTSITE" T5,
+	"CUSTOMER" ' 
+'T3,
+	"COUNTRY" T4
+where (T6."ORDER_NO" = T1."ORDER_NO") and (T2."PROD_N' 
+'O" = T6."PROD_NO") and ((T1."CUST_NO" = T5."CUST_NO") and (T1."SITE_NO"' 
+' = T5."SITE_NO")) and (T3."CUST_NO" = T5."CUST_NO") and (T4."COUNTRY_CD' 
+'" = T5."COUNTRY_CD")
+' Isolation 0 UserEditable False SourceSignonList 869 
+EndList ImrName "C:\EDCOGNOS\PP6602EB\orders.imr" Stamp 945193874 Speed False 
+SetCurrent True ServerSource False Presummarized False EnableMultiProcess False 
+
+
+OrgName 107 "Order Date" Origin Source Offset 0 Column "Order Date" Storage Int32 
+Scale 0 Size 4 Decimals 0 Class Date InputScale 0 TimeArray Off 
+
+OrgName 109 "Product Type" Origin Source Offset 1 Column "Product Type" 
+Storage Text Scale 0 Size 20 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 111 "Product Line" Origin Source Offset 2 Column "Product Line" 
+Storage Text Scale 0 Size 20 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 113 "Product" Origin Source Offset 3 Column "Product" Storage Text 
+Scale 0 Size 30 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+
+OrgName 115 "Customer Type" Origin Source Offset 4 Column "Customer Type" 
+Storage Text Scale 0 Size 15 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 117 "Customer Name" Origin Source Offset 5 Column "Customer Name" 
+Storage Text Scale 0 Size 30 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 119 "Country" Origin Source Offset 6 Column "Country" Storage Text 
+Scale 0 Size 15 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+
+OrgName 121 "City" Origin Source Offset 7 Column "City" Storage Text Scale 0 
+Size 20 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+OrgName 123 "Order Price" Origin Source Offset 8 Column "Order Price" Storage Default 
+Scale 0 Size 5 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+OrgName 125 "Shipment Revenue" Origin Source Offset 9 Column "Shipment Revenue" 
+Storage Default Scale 0 Size 8 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 127 "Total Units Shipped" Origin Source Offset 10 Column "Total Units Shipped" 
+Storage Default Scale 0 Size 3 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 129 "Late Shipment Revenue" Origin Source Offset 11 Column "Late Shipment Revenue" 
+Storage Float64 Scale 0 Size 8 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 131 "Total Units Shipped Late" Origin Source Offset 12 Column "Total Units Shipped Late" 
+Storage Float64 Scale 0 Size 8 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 133 "% Late Shipment Ranges" Origin Source Offset 13 Column "% Late Shipment Ranges" 
+Storage Text Scale 0 Size 7 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+
+Dimension 145 "Order Date" DimType Date EarliestDate 19000101 LatestDate 99991231 
+ManualPeriods False DaysInWeek 127 NewCatsLock False ExcludeAutoPartitioning False 
+Associations 829 "Order Date" AssociationType Type_Query AssociationRole Role_Source 
+AssociationReferenced "Order Date" 
+
+
+Categories 
+Root 147 "Order Date" Inclusion Generate Lastuse 19991203 Date 0 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 149 "By Order Date" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True YearBegins 19980101 PartialWeek Split ExtraWeek None 
+WeekBegins Sunday 
+Levels 155 "Year" Blanks "( blank )" Inclusion Generate DateFunction Year 
+Generate Need RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat "YYYY" Timerank 10 UniqueCategories True 
+UniqueMove False Associations 831 "Order Date" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Order Date" 
+Associations 833 "Order Date" AssociationContext 149 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "Order Date" SortOrder Default 
+SortAs Ascending 
+
+
+Levels 157 "Quarter" Blanks "( blank )" Inclusion Generate DateFunction Quarter 
+Generate All RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat 'YYYY "Q" Q' Timerank 20 UniqueCategories True 
+UniqueMove False Associations 835 "Order Date" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Order Date" 
+Associations 837 "Order Date" AssociationContext 149 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "Order Date" SortOrder Default 
+SortAs Ascending 
+
+
+Levels 159 "Month" Blanks "( blank )" Inclusion Generate DateFunction Month 
+Generate All RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat "YYYY/MMM" Timerank 30 UniqueCategories True 
+UniqueMove False Associations 839 "Order Date" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Order Date" 
+Associations 841 "Order Date" AssociationContext 149 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "Order Date" SortOrder Default 
+SortAs Ascending 
+
+
+Category 237 "19970101-19971231" Parent 149 Levels 155 OrderBy Drill 149 
+Value "1997" Label "1997" Lastuse 19991203 SourceValue "1997" Date 19970101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+Category 239 "19970101-19970331" Parent 237 Levels 157 OrderBy Drill 149 
+Value "19970101" Label "1997 Q 1" Lastuse 19991203 SourceValue "19970101" 
+Date 19970101 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 241 "19970101-19970131" Parent 239 Levels 159 OrderBy Drill 149 
+Value "199701" Label "1997/Jan" Lastuse 19991203 SourceValue "199701" Date 19970101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 243 "19970201-19970228" Parent 239 Levels 159 OrderBy Drill 149 
+Value "199702" Label "1997/Feb" Lastuse 19991203 SourceValue "199702" Date 19970201 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 245 "19970301-19970331" Parent 239 Levels 159 OrderBy Drill 149 
+Value "199703" Label "1997/Mar" Lastuse 19991203 SourceValue "199703" Date 19970301 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 247 "19970401-19970630" Parent 237 Levels 157 OrderBy Drill 149 
+Value "19970401" Label "1997 Q 2" Lastuse 19991203 SourceValue "19970401" 
+Date 19970401 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 249 "19970401-19970430" Parent 247 Levels 159 OrderBy Drill 149 
+Value "199704" Label "1997/Apr" Lastuse 19991203 SourceValue "199704" Date 19970401 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 251 "19970501-19970531" Parent 247 Levels 159 OrderBy Drill 149 
+Value "199705" Label "1997/May" Lastuse 19991203 SourceValue "199705" Date 19970501 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 253 "19970601-19970630" Parent 247 Levels 159 OrderBy Drill 149 
+Value "199706" Label "1997/Jun" Lastuse 19991203 SourceValue "199706" Date 19970601 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 255 "19970701-19970930" Parent 237 Levels 157 OrderBy Drill 149 
+Value "19970701" Label "1997 Q 3" Lastuse 19991203 SourceValue "19970701" 
+Date 19970701 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 257 "19970701-19970731" Parent 255 Levels 159 OrderBy Drill 149 
+Value "199707" Label "1997/Jul" Lastuse 19991203 SourceValue "199707" Date 19970701 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 259 "19970801-19970831" Parent 255 Levels 159 OrderBy Drill 149 
+Value "199708" Label "1997/Aug" Lastuse 19991203 SourceValue "199708" Date 19970801 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 261 "19970901-19970930" Parent 255 Levels 159 OrderBy Drill 149 
+Value "199709" Label "1997/Sep" Lastuse 19991203 SourceValue "199709" Date 19970901 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 263 "19971001-19971231" Parent 237 Levels 157 OrderBy Drill 149 
+Value "19971001" Label "1997 Q 4" Lastuse 19991203 SourceValue "19971001" 
+Date 19971001 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 265 "19971001-19971031" Parent 263 Levels 159 OrderBy Drill 149 
+Value "199710" Label "1997/Oct" Lastuse 19991203 SourceValue "199710" Date 19971001 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 267 "19971101-19971130" Parent 263 Levels 159 OrderBy Drill 149 
+Value "199711" Label "1997/Nov" Lastuse 19991203 SourceValue "199711" Date 19971101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 269 "19971201-19971231" Parent 263 Levels 159 OrderBy Drill 149 
+Value "199712" Label "1997/Dec" Lastuse 19991203 SourceValue "199712" Date 19971201 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+
+Category 323 "19980101-19981231" Parent 149 Levels 155 OrderBy Drill 149 
+Value "1998" Label "1998" Lastuse 19991203 SourceValue "1998" Date 19980101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+Category 325 "19980101-19980331" Parent 323 Levels 157 OrderBy Drill 149 
+Value "19980101" Label "1998 Q 1" Lastuse 19991203 SourceValue "19980101" 
+Date 19980101 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 327 "19980101-19980131" Parent 325 Levels 159 OrderBy Drill 149 
+Value "199801" Label "1998/Jan" Lastuse 19991203 SourceValue "199801" Date 19980101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 329 "19980201-19980228" Parent 325 Levels 159 OrderBy Drill 149 
+Value "199802" Label "1998/Feb" Lastuse 19991203 SourceValue "199802" Date 19980201 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 331 "19980301-19980331" Parent 325 Levels 159 OrderBy Drill 149 
+Value "199803" Label "1998/Mar" Lastuse 19991203 SourceValue "199803" Date 19980301 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 333 "19980401-19980630" Parent 323 Levels 157 OrderBy Drill 149 
+Value "19980401" Label "1998 Q 2" Lastuse 19991203 SourceValue "19980401" 
+Date 19980401 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 335 "19980401-19980430" Parent 333 Levels 159 OrderBy Drill 149 
+Value "199804" Label "1998/Apr" Lastuse 19991203 SourceValue "199804" Date 19980401 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 337 "19980501-19980531" Parent 333 Levels 159 OrderBy Drill 149 
+Value "199805" Label "1998/May" Lastuse 19991203 SourceValue "199805" Date 19980501 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 339 "19980601-19980630" Parent 333 Levels 159 OrderBy Drill 149 
+Value "199806" Label "1998/Jun" Lastuse 19991203 SourceValue "199806" Date 19980601 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 341 "19980701-19980930" Parent 323 Levels 157 OrderBy Drill 149 
+Value "19980701" Label "1998 Q 3" Lastuse 19991203 SourceValue "19980701" 
+Date 19980701 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 343 "19980701-19980731" Parent 341 Levels 159 OrderBy Drill 149 
+Value "199807" Label "1998/Jul" Lastuse 19991203 SourceValue "199807" Date 19980701 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 345 "19980801-19980831" Parent 341 Levels 159 OrderBy Drill 149 
+Value "199808" Label "1998/Aug" Lastuse 19991203 SourceValue "199808" Date 19980801 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 347 "19980901-19980930" Parent 341 Levels 159 OrderBy Drill 149 
+Value "199809" Label "1998/Sep" Lastuse 19991203 SourceValue "199809" Date 19980901 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+Category 349 "19981001-19981231" Parent 323 Levels 157 OrderBy Drill 149 
+Value "19981001" Label "1998 Q 4" Lastuse 19991203 SourceValue "19981001" 
+Date 19981001 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+Category 351 "19981001-19981031" Parent 349 Levels 159 OrderBy Drill 149 
+Value "199810" Label "1998/Oct" Lastuse 19991203 SourceValue "199810" Date 19981001 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 353 "19981101-19981130" Parent 349 Levels 159 OrderBy Drill 149 
+Value "199811" Label "1998/Nov" Lastuse 19991203 SourceValue "199811" Date 19981101 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 355 "19981201-19981231" Parent 349 Levels 159 OrderBy Drill 149 
+Value "199812" Label "1998/Dec" Lastuse 19991203 SourceValue "199812" Date 19981201 
+Current Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+
+
+
+SpecialCategory 161 "Current Month" Parent 147 Levels 0 Lastuse 19991203 
+Rollup True TimeAggregate Single RunningPeriods 0 TargetOffset 0 TargetLevel "Month" 
+ContextOffset 0 DateDrill 149 Primary 355 Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 163 "Last Month" Parent 147 Levels 0 Lastuse 19991203 Rollup True 
+TimeAggregate Single RunningPeriods 0 TargetOffset -1 TargetLevel "Month" 
+ContextOffset 0 DateDrill 149 Primary 353 Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 165 "QTD" Parent 147 Levels 0 Lastuse 19991203 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Quarter" TargetOffset 0 
+TargetLevel "Month" ContextOffset 0 DateDrill 149 Primary 349 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+
+SpecialCategory 167 "Prior QTD" Parent 147 Levels 0 Lastuse 19991203 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Quarter" TargetOffset 0 
+TargetLevel "Month" ContextOffset -1 ContextLevel "Quarter" DateDrill 149 
+Primary 341 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+SpecialCategory 169 "QTD Grouped" Parent 147 Levels 0 Lastuse 19991203 
+Rollup True TimeAggregate ToDate_Grp RunningPeriods 0 ToDateLevel "Quarter" 
+TargetOffset 0 TargetLevel "Month" ContextOffset -1 ContextLevel "Quarter" 
+DateDrill 149 Primary 811 Primary 809 Primary 813 Primary 815 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 811 "QTD Grouped~Prior QTD" Parent 169 Levels 0 Label "Prior QTD" 
+Lastuse 19991203 Rollup False TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Quarter" 
+TargetOffset 0 TargetLevel "Month" ContextOffset -1 ContextLevel "Quarter" 
+DateDrill 149 Primary 341 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+SpecialCategory 809 "QTD Grouped~QTD" Parent 169 Levels 0 Label "QTD" Lastuse 19991203 
+Rollup False TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Quarter" 
+TargetOffset 0 TargetLevel "Month" ContextOffset 0 DateDrill 149 Primary 349 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+SpecialCategory 813 'QTD Grouped~change ( "Prior QTD" , "QTD" )' Parent 169 
+Levels 0 Label "QTD Change" Lastuse 19991203 Rollup False RunningPeriods 0 
+TargetOffset 0 ContextOffset 0 DateDrill 0 Calc change ( "QTD Grouped~Prior QTD@811" , "QTD Grouped~QTD@809" )  Format "0~" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+SpecialCategory 815 'QTD Grouped~percent-growth ( "Prior QTD" , "QTD" )' 
+Parent 169 Levels 0 Label "QTD Growth" Lastuse 19991203 Rollup False RunningPeriods 0 
+TargetOffset 0 ContextOffset 0 DateDrill 0 Calc percent-growth ( "QTD Grouped~Prior QTD@811" , "QTD Grouped~QTD@809" )  Format "0%~2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+SpecialCategory 171 "YTD" Parent 147 Levels 0 Lastuse 19991203 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Year" TargetOffset 0 
+TargetLevel "Month" ContextOffset 0 DateDrill 149 Primary 323 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+
+SpecialCategory 173 "Prior YTD" Parent 147 Levels 0 Lastuse 19991203 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Year" TargetOffset 0 
+TargetLevel "Month" ContextOffset -1 ContextLevel "Year" DateDrill 149 
+Primary 237 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+SpecialCategory 175 "YTD Grouped" Parent 147 Levels 0 Lastuse 19991203 
+Rollup True TimeAggregate ToDate_Grp RunningPeriods 0 ToDateLevel "Year" 
+TargetOffset 0 TargetLevel "Month" ContextOffset -1 ContextLevel "Year" 
+DateDrill 149 Primary 819 Primary 817 Primary 821 Primary 823 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 819 "YTD Grouped~Prior YTD" Parent 175 Levels 0 Label "Prior YTD" 
+Lastuse 19991203 Rollup False TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Year" 
+TargetOffset 0 TargetLevel "Month" ContextOffset -1 ContextLevel "Year" 
+DateDrill 149 Primary 237 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+SpecialCategory 817 "YTD Grouped~YTD" Parent 175 Levels 0 Label "YTD" Lastuse 19991203 
+Rollup False TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Year" TargetOffset 0 
+TargetLevel "Month" ContextOffset 0 DateDrill 149 Primary 323 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+
+SpecialCategory 821 'YTD Grouped~change ( "Prior YTD" , "YTD" )' Parent 175 
+Levels 0 Label "YTD Change" Lastuse 19991203 Rollup False RunningPeriods 0 
+TargetOffset 0 ContextOffset 0 DateDrill 0 Calc change ( "YTD Grouped~Prior YTD@819" , "YTD Grouped~YTD@817" )  Format "0~" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+SpecialCategory 823 'YTD Grouped~percent-growth ( "Prior YTD" , "YTD" )' 
+Parent 175 Levels 0 Label "YTD Growth" Lastuse 19991203 Rollup False RunningPeriods 0 
+TargetOffset 0 ContextOffset 0 DateDrill 0 Calc percent-growth ( "YTD Grouped~Prior YTD@819" , "YTD Grouped~YTD@817" )  Format "0%~2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+
+MapDrills 
+MapDrill 149 
+
+ViewName 151 "All Categories" Type All ViewUserClass 0 
+ViewName 153 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 177 "Product Line" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 179 "Product Line" Inclusion Generate Lastuse 19991203 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 181 "By Product Line" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 187 "Product Line" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 843 "Product Line" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Product Line" 
+
+
+
+Levels 189 "Product Type" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 845 "Product Type" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Product Type" 
+
+
+
+Levels 191 "Product" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 847 "Product" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Product" 
+
+
+
+Category 271 "Outdoor Products" Parent 181 Levels 187 Lastuse 19991203 
+SourceValue "Outdoor Products" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 273 "Tents" Parent 271 Levels 189 Lastuse 19991203 SourceValue "Tents" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 275 "Star Gazer-2" Parent 273 Levels 191 Lastuse 19991203 SourceValue "Star Gazer-2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 375 "Star Lite" Parent 273 Levels 191 Lastuse 19991203 SourceValue "Star Lite" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 405 "StarDome" Parent 273 Levels 191 Lastuse 19991203 SourceValue "StarDome" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 433 "Star Gazer-3" Parent 273 Levels 191 Lastuse 19991203 SourceValue "Star Gazer-3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 287 "Cooking Equipment" Parent 271 Levels 189 Lastuse 19991203 
+SourceValue "Cooking Equipment" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 289 "Dover-2" Parent 287 Levels 191 Lastuse 19991203 SourceValue "Dover-2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 291 "GO Cookset" Parent 287 Levels 191 Lastuse 19991203 SourceValue "GO Cookset" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 365 "GO Camp Kettle" Parent 287 Levels 191 Lastuse 19991203 SourceValue "GO Camp Kettle" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 447 "Dover-1" Parent 287 Levels 191 Lastuse 19991203 SourceValue "Dover-1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 309 "Back Packs" Parent 271 Levels 189 Lastuse 19991203 SourceValue "Back Packs" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 311 "GO Small Waist Pack" Parent 309 Levels 191 Lastuse 19991203 
+SourceValue "GO Small Waist Pack" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 381 "GO Large Waist Pack" Parent 309 Levels 191 Lastuse 19991203 
+SourceValue "GO Large Waist Pack" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 393 "Pack n' Hike" Parent 309 Levels 191 Lastuse 19991203 SourceValue "Pack n' Hike" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 445 "Day Tripper" Parent 309 Levels 191 Lastuse 19991203 SourceValue "Day Tripper" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 389 "Sleeping Bags" Parent 271 Levels 189 Lastuse 19991203 SourceValue "Sleeping Bags" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 391 "MoonBeam" Parent 389 Levels 191 Lastuse 19991203 SourceValue "MoonBeam" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 399 "MoonGlow" Parent 389 Levels 191 Lastuse 19991203 SourceValue "MoonGlow" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 479 "MoonLite" Parent 389 Levels 191 Lastuse 19991203 SourceValue "MoonLite" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 293 "GO Sport Line" Parent 181 Levels 187 Lastuse 19991203 SourceValue "GO Sport Line" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 295 "Carry-Bags" Parent 293 Levels 189 Lastuse 19991203 SourceValue "Carry-Bags" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 297 "GO Sport  Bag" Parent 295 Levels 191 Lastuse 19991203 SourceValue "GO Sport  Bag" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 435 "GO Ski Gear Bag" Parent 295 Levels 191 Lastuse 19991203 SourceValue "GO Ski Gear Bag" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 437 "GO Duffel Bag" Parent 295 Levels 191 Lastuse 19991203 SourceValue "GO Duffel Bag" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 313 "Sport Wear" Parent 293 Levels 189 Lastuse 19991203 SourceValue "Sport Wear" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 315 "GO Water Bottle" Parent 313 Levels 191 Lastuse 19991203 SourceValue "GO Water Bottle" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 403 "GO Wristband" Parent 313 Levels 191 Lastuse 19991203 SourceValue "GO Wristband" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 417 "GO Headband" Parent 313 Levels 191 Lastuse 19991203 SourceValue "GO Headband" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 299 "Environmental Line" Parent 181 Levels 187 Lastuse 19991203 
+SourceValue "Environmental Line" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 301 "Recycled Products" Parent 299 Levels 189 Lastuse 19991203 
+SourceValue "Recycled Products" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 303 "EnviroSak" Parent 301 Levels 191 Lastuse 19991203 SourceValue "EnviroSak" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 317 "Enviro-T" Parent 301 Levels 191 Lastuse 19991203 SourceValue "Enviro-T" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 371 "Enviro-Kit" Parent 301 Levels 191 Lastuse 19991203 SourceValue "Enviro-Kit" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 305 "Bio-Friendly Soaps" Parent 299 Levels 189 Lastuse 19991203 
+SourceValue "Bio-Friendly Soaps" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 307 "RiverKind Soap" Parent 305 Levels 191 Lastuse 19991203 SourceValue "RiverKind Soap" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 373 "RiverKind Shampoo" Parent 305 Levels 191 Lastuse 19991203 
+SourceValue "RiverKind Shampoo" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 425 "RiverKind Detergent" Parent 305 Levels 191 Lastuse 19991203 
+SourceValue "RiverKind Detergent" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 319 "Water Purifiers" Parent 299 Levels 189 Lastuse 19991203 SourceValue "Water Purifiers" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 321 "Pocket Water Filter" Parent 319 Levels 191 Lastuse 19991203 
+SourceValue "Pocket Water Filter" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 407 "Pro-Lite Water Filter" Parent 319 Levels 191 Lastuse 19991203 
+SourceValue "Pro-Lite Water Filter" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 367 "Alert Devices" Parent 299 Levels 189 Lastuse 19991203 SourceValue "Alert Devices" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 369 "Pocket U.V. Alerter" Parent 367 Levels 191 Lastuse 19991203 
+SourceValue "Pocket U.V. Alerter" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 383 "Microwave Detective" Parent 367 Levels 191 Lastuse 19991203 
+SourceValue "Microwave Detective" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 395 "Pocket Radon Alerter" Parent 367 Levels 191 Lastuse 19991203 
+SourceValue "Pocket Radon Alerter" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 385 "Sunblock" Parent 299 Levels 189 Lastuse 19991203 SourceValue "Sunblock" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 387 "Sun Shelter-30" Parent 385 Levels 191 Lastuse 19991203 SourceValue "Sun Shelter-30" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 397 "Sun Shelter-15" Parent 385 Levels 191 Lastuse 19991203 SourceValue "Sun Shelter-15" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 459 "Sun Shelter-8" Parent 385 Levels 191 Lastuse 19991203 SourceValue "Sun Shelter-8" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+
+MapDrills 
+MapDrill 181 
+
+ViewName 183 "All Categories" Type All ViewUserClass 0 
+ViewName 185 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 193 "Customer Locations" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 195 "Customer Type" Inclusion Generate Lastuse 19991203 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 197 "By Customer Type" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 205 "Country" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 849 "Country" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Country" 
+
+
+
+Levels 207 "City" Blanks "( blank )" DateFunction None Generate Need RefreshLabel False 
+RefreshDescription False RefreshShortName False NewCatsLock False Timerank 0 
+UniqueCategories False UniqueMove False Associations 851 "City" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "City" 
+
+
+Levels 209 "Customer Name" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 853 "Customer Name" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Customer Name" 
+
+
+
+Category 277 "Canada" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Canada" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 279 "Montreal" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Montreal" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 281 "GO Outlet Montreal" Parent 279 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Montreal" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 517 "Supras Camping Suplies 3" Parent 279 Levels 209 Lastuse 19991203 
+SourceValue "Supras Camping Suplies 3" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 769 "Excellence en Montagne" Parent 279 Levels 209 Lastuse 19991203 
+SourceValue "Excellence en Montagne" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 487 "Sept-Iles" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Sept-Iles" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 489 "Laperier Sportifs 5" Parent 487 Levels 209 Lastuse 19991203 
+SourceValue "Laperier Sportifs 5" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 547 "Vancouver" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Vancouver" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 549 "Vacation Central 4" Parent 547 Levels 209 Lastuse 19991203 
+SourceValue "Vacation Central 4" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 563 "Toronto" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Toronto" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 565 "Supras Camping Supplies 5" Parent 563 Levels 209 Lastuse 19991203 
+SourceValue "Supras Camping Supplies 5" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 683 "Clear Valley Waters 3" Parent 563 Levels 209 Lastuse 19991203 
+SourceValue "Clear Valley Waters 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 615 "Winnipeg" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Winnipeg" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 617 "Andes Camping Supplies 1" Parent 615 Levels 209 Lastuse 19991203 
+SourceValue "Andes Camping Supplies 1" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 619 "Kamploops" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Kamploops" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 621 "Andes Camping Supplies 3" Parent 619 Levels 209 Lastuse 19991203 
+SourceValue "Andes Camping Supplies 3" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 679 "Halifax" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Halifax" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 681 "Clear Valley Waters 2" Parent 679 Levels 209 Lastuse 19991203 
+SourceValue "Clear Valley Waters 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 719 "Hamilton" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Hamilton" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 721 "New Wave Wilderness 2" Parent 719 Levels 209 Lastuse 19991203 
+SourceValue "New Wave Wilderness 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 737 "Shawville" Parent 277 Levels 207 Lastuse 19991203 SourceValue "Shawville" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 739 "Kay Mart 4" Parent 737 Levels 209 Lastuse 19991203 SourceValue "Kay Mart 4" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 357 "United States" Parent 197 Levels 205 Lastuse 19991203 SourceValue "United States" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 359 "Boston" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Boston" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 361 "Ultra Sports 5" Parent 359 Levels 209 Lastuse 19991203 SourceValue "Ultra Sports 5" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 401 "GO Outlet Boston" Parent 359 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Boston" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 377 "San Francisco" Parent 357 Levels 207 Lastuse 19991203 SourceValue "San Francisco" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 379 "Mountain Madness 5" Parent 377 Levels 209 Lastuse 19991203 
+SourceValue "Mountain Madness 5" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 477 "Pro Form Supplies 5" Parent 377 Levels 209 Lastuse 19991203 
+SourceValue "Pro Form Supplies 5" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 455 "Martinsville" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Martinsville" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 457 "Act'N'Up Fitness 5" Parent 455 Levels 209 Lastuse 19991203 
+SourceValue "Act'N'Up Fitness 5" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 461 "Anaheim" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Anaheim" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 463 "Desert Duds & Tees 8" Parent 461 Levels 209 Lastuse 19991203 
+SourceValue "Desert Duds & Tees 8" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 467 "Bellevue" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Bellevue" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 469 "Clear Valley Waters 5" Parent 467 Levels 209 Lastuse 19991203 
+SourceValue "Clear Valley Waters 5" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 503 "Dallas" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Dallas" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 505 "Fredies Sport Whse 5" Parent 503 Levels 209 Lastuse 19991203 
+SourceValue "Fredies Sport Whse 5" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 529 "Ultra Sports 4" Parent 503 Levels 209 Lastuse 19991203 SourceValue "Ultra Sports 4" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 513 "Seattle" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Seattle" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 515 "Supras Camping Suplies 2" Parent 513 Levels 209 Lastuse 19991203 
+SourceValue "Supras Camping Suplies 2" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 635 "GO Outlet Seattle" Parent 513 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Seattle" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 767 "GO Outlet Washington" Parent 513 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Washington" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 551 "St. Louis" Parent 357 Levels 207 Lastuse 19991203 SourceValue "St. Louis" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 553 "Mountain Madness 1" Parent 551 Levels 209 Lastuse 19991203 
+SourceValue "Mountain Madness 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 555 "Chicago" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Chicago" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 557 "Mountain Madness 2" Parent 555 Levels 209 Lastuse 19991203 
+SourceValue "Mountain Madness 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 559 "Detroit" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Detroit" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 561 "Mountain Madness 3" Parent 559 Levels 209 Lastuse 19991203 
+SourceValue "Mountain Madness 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 623 "San Diego" Parent 357 Levels 207 Lastuse 19991203 SourceValue "San Diego" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 625 "Lookout Below Ltd" Parent 623 Levels 209 Lastuse 19991203 
+SourceValue "Lookout Below Ltd" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 701 "Pro Form Supplies 4" Parent 623 Levels 209 Lastuse 19991203 
+SourceValue "Pro Form Supplies 4" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 627 "Denver" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Denver" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 629 "Advanced Climbing Ltd" Parent 627 Levels 209 Lastuse 19991203 
+SourceValue "Advanced Climbing Ltd" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 807 "GO Outlet Denver" Parent 627 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Denver" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 631 "Irving" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Irving" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 633 "GO Outlet Irving" Parent 631 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Irving" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 637 "Oakland" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Oakland" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 639 "Act'N'Up Fitness 1" Parent 637 Levels 209 Lastuse 19991203 
+SourceValue "Act'N'Up Fitness 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 641 "Moline" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Moline" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 643 "Act'N'Up Fitness 2" Parent 641 Levels 209 Lastuse 19991203 
+SourceValue "Act'N'Up Fitness 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 645 "Lancaster" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Lancaster" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 647 "Act'N'Up Fitness 3" Parent 645 Levels 209 Lastuse 19991203 
+SourceValue "Act'N'Up Fitness 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 649 "Bloomington" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Bloomington" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 651 "Act'N'Up Fitness 4" Parent 649 Levels 209 Lastuse 19991203 
+SourceValue "Act'N'Up Fitness 4" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 653 "Austin" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Austin" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 655 "Desert Duds & Tees 2" Parent 653 Levels 209 Lastuse 19991203 
+SourceValue "Desert Duds & Tees 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 657 "Forth Worth" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Forth Worth" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 659 "Desert Duds & Tees 3" Parent 657 Levels 209 Lastuse 19991203 
+SourceValue "Desert Duds & Tees 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 667 "Springfield" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Springfield" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 669 "Rock Steady 1" Parent 667 Levels 209 Lastuse 19991203 SourceValue "Rock Steady 1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 697 "Santa Monica" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Santa Monica" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 699 "Pro Form Supplies 3" Parent 697 Levels 209 Lastuse 19991203 
+SourceValue "Pro Form Supplies 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 703 "New Brunswick" Parent 357 Levels 207 Lastuse 19991203 SourceValue "New Brunswick" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 705 "Up and Up Co. 2" Parent 703 Levels 209 Lastuse 19991203 SourceValue "Up and Up Co. 2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 707 "Queens" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Queens" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 709 "Up and Up Co. 3" Parent 707 Levels 209 Lastuse 19991203 SourceValue "Up and Up Co. 3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 711 "Baltimore" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Baltimore" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 713 "Up and Up Co. 4" Parent 711 Levels 209 Lastuse 19991203 SourceValue "Up and Up Co. 4" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 715 "New Rochelle" Parent 357 Levels 207 Lastuse 19991203 SourceValue "New Rochelle" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 717 "New Wave Wilderness 1" Parent 715 Levels 209 Lastuse 19991203 
+SourceValue "New Wave Wilderness 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 723 "Miami" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Miami" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 725 "GO Outlet Miami" Parent 723 Levels 209 Lastuse 19991203 SourceValue "GO Outlet Miami" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 749 "New York" Parent 357 Levels 207 Lastuse 19991203 SourceValue "New York" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 751 "GO Outlet New York" Parent 749 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet New York" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 771 "Boulder" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Boulder" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 773 "Hill Street Sports 1" Parent 771 Levels 209 Lastuse 19991203 
+SourceValue "Hill Street Sports 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 775 "Colorado Springs" Parent 357 Levels 207 Lastuse 19991203 
+SourceValue "Colorado Springs" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+Category 777 "Hill Street Sports 2" Parent 775 Levels 209 Lastuse 19991203 
+SourceValue "Hill Street Sports 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 779 "Raleigh" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Raleigh" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 781 "Hill Street Sports 3" Parent 779 Levels 209 Lastuse 19991203 
+SourceValue "Hill Street Sports 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 783 "Charlotte" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Charlotte" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 785 "Hill Street Sports 4" Parent 783 Levels 209 Lastuse 19991203 
+SourceValue "Hill Street Sports 4" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 787 "Sacramento" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Sacramento" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 789 "Fredies Sport Whse 1" Parent 787 Levels 209 Lastuse 19991203 
+SourceValue "Fredies Sport Whse 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 791 "Tampa" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Tampa" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 793 "Florida Sun Sports 2" Parent 791 Levels 209 Lastuse 19991203 
+SourceValue "Florida Sun Sports 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 795 "Key Largo" Parent 357 Levels 207 Lastuse 19991203 SourceValue "Key Largo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 797 "Florida Sun Sports 3" Parent 795 Levels 209 Lastuse 19991203 
+SourceValue "Florida Sun Sports 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+
+Category 409 "Germany" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Germany" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 411 "Frankfurt" Parent 409 Levels 207 Lastuse 19991203 SourceValue "Frankfurt" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 413 "Bergsteiger G.m.b.H." Parent 411 Levels 209 Lastuse 19991203 
+SourceValue "Bergsteiger G.m.b.H." Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 527 "Ultra Sports 3" Parent 411 Levels 209 Lastuse 19991203 SourceValue "Ultra Sports 3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 579 "Supras Camping Supplies 8" Parent 411 Levels 209 Lastuse 19991203 
+SourceValue "Supras Camping Supplies 8" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 741 "GO Outlet Frankfurt" Parent 411 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Frankfurt" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 567 "Munich" Parent 409 Levels 207 Lastuse 19991203 SourceValue "Munich" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 569 "Sportwaren G.m.b.H. 1" Parent 567 Levels 209 Lastuse 19991203 
+SourceValue "Sportwaren G.m.b.H. 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 571 "Hamburg" Parent 409 Levels 207 Lastuse 19991203 SourceValue "Hamburg" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 573 "Sportwaren G.m.b.H. 2" Parent 571 Levels 209 Lastuse 19991203 
+SourceValue "Sportwaren G.m.b.H. 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 575 "Bonn" Parent 409 Levels 207 Lastuse 19991203 SourceValue "Bonn" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 577 "Sportwaren G.m.b.H. 3" Parent 575 Levels 209 Lastuse 19991203 
+SourceValue "Sportwaren G.m.b.H. 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+
+Category 419 "Australia" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Australia" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 421 "Sydney" Parent 419 Levels 207 Lastuse 19991203 SourceValue "Sydney" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 423 "Backwoods Equipment Pty" Parent 421 Levels 209 Lastuse 19991203 
+SourceValue "Backwoods Equipment Pty" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 581 "OutBack Pty 1" Parent 421 Levels 209 Lastuse 19991203 SourceValue "OutBack Pty 1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 591 "OutBack Pty 4" Parent 421 Levels 209 Lastuse 19991203 SourceValue "OutBack Pty 4" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 531 "Melbourne" Parent 419 Levels 207 Lastuse 19991203 SourceValue "Melbourne" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 533 "Vacation Central 1" Parent 531 Levels 209 Lastuse 19991203 
+SourceValue "Vacation Central 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 583 "Brisbane" Parent 419 Levels 207 Lastuse 19991203 SourceValue "Brisbane" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 585 "OutBack Pty 2" Parent 583 Levels 209 Lastuse 19991203 SourceValue "OutBack Pty 2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 587 "Perth" Parent 419 Levels 207 Lastuse 19991203 SourceValue "Perth" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 589 "OutBack Pty 3" Parent 587 Levels 209 Lastuse 19991203 SourceValue "OutBack Pty 3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 427 "Japan" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Japan" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 429 "Tokyo" Parent 427 Levels 207 Lastuse 19991203 SourceValue "Tokyo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 431 "Botanechi K.K." Parent 429 Levels 209 Lastuse 19991203 SourceValue "Botanechi K.K." 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 593 "Sapporo" Parent 427 Levels 207 Lastuse 19991203 SourceValue "Sapporo" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 595 "Botanechi K.K. 1" Parent 593 Levels 209 Lastuse 19991203 
+SourceValue "Botanechi K.K. 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+
+Category 439 "Sweden" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Sweden" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 441 "Stockholm" Parent 439 Levels 207 Lastuse 19991203 SourceValue "Stockholm" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 443 "GO Outlet Kista AB" Parent 441 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Kista AB" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 599 "Tregoran AB 1" Parent 441 Levels 209 Lastuse 19991203 SourceValue "Tregoran AB 1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 665 "Over the Top Cycles 3 AB" Parent 441 Levels 209 Lastuse 19991203 
+SourceValue "Over the Top Cycles 3 AB" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 603 "Goteburg" Parent 439 Levels 207 Lastuse 19991203 SourceValue "Goteburg" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 605 "Tregoran AB 2" Parent 603 Levels 209 Lastuse 19991203 SourceValue "Tregoran AB 2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 449 "Singapore" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Singapore" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 451 "Singapore~2" Parent 449 Levels 207 Lastuse 19991203 SourceValue "Singapore" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 453 "GO Outlet Singapore" Parent 451 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Singapore" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 597 "123 Fitness PTE Ltd" Parent 451 Levels 209 Lastuse 19991203 
+SourceValue "123 Fitness PTE Ltd" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+
+Category 471 "Spain" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Spain" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 473 "Madrid" Parent 471 Levels 207 Lastuse 19991203 SourceValue "Madrid" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 475 "Supremas Montagna 5" Parent 473 Levels 209 Lastuse 19991203 
+SourceValue "Supremas Montagna 5" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 519 "Barcelona" Parent 471 Levels 207 Lastuse 19991203 SourceValue "Barcelona" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 521 "Ultra Sports 1" Parent 519 Levels 209 Lastuse 19991203 SourceValue "Ultra Sports 1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 693 "Supremas Montagna 3" Parent 519 Levels 209 Lastuse 19991203 
+SourceValue "Supremas Montagna 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 685 "Sevilla" Parent 471 Levels 207 Lastuse 19991203 SourceValue "Sevilla" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 687 "Supremas Montagna 1" Parent 685 Levels 209 Lastuse 19991203 
+SourceValue "Supremas Montagna 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 689 "Zaragoza" Parent 471 Levels 207 Lastuse 19991203 SourceValue "Zaragoza" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 691 "Supremas Montagna 2" Parent 689 Levels 209 Lastuse 19991203 
+SourceValue "Supremas Montagna 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+
+Category 481 "Hong Kong" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Hong Kong" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 483 "Wanchai" Parent 481 Levels 207 Lastuse 19991203 SourceValue "Wanchai" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 485 "Kay Mart 5" Parent 483 Levels 209 Lastuse 19991203 SourceValue "Kay Mart 5" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 523 "Hong Kong~3" Parent 481 Levels 207 Lastuse 19991203 SourceValue "Hong Kong" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 525 "Ultra Sports 2" Parent 523 Levels 209 Lastuse 19991203 SourceValue "Ultra Sports 2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 493 "United Kingdom" Parent 197 Levels 205 Lastuse 19991203 SourceValue "United Kingdom" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 495 "Chichester" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Chichester" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 497 "Fresh Air Co 5" Parent 495 Levels 209 Lastuse 19991203 SourceValue "Fresh Air Co 5" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 499 "Bracknell" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Bracknell" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 501 "GO Outlet London" Parent 499 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet London" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 607 "London" Parent 493 Levels 207 Lastuse 19991203 SourceValue "London" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 609 "Trees to Seas Ltd" Parent 607 Levels 209 Lastuse 19991203 
+SourceValue "Trees to Seas Ltd" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 743 "GO Outlet London~4" Parent 607 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet London" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 673 "Milford Haven" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Milford Haven" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 675 "Rock Steady 3" Parent 673 Levels 209 Lastuse 19991203 SourceValue "Rock Steady 3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 727 "Galway" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Galway" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 729 "Wally Mart 1" Parent 727 Levels 209 Lastuse 19991203 SourceValue "Wally Mart 1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 731 "Cork" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Cork" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 733 "Wally Mart 2" Parent 731 Levels 209 Lastuse 19991203 SourceValue "Wally Mart 2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 745 "Manchester" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Manchester" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 747 "GO Outlet Manchester" Parent 745 Levels 209 Lastuse 19991203 
+SourceValue "GO Outlet Manchester" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 753 "Brighton" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Brighton" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 755 "Fresh Air Co 1" Parent 753 Levels 209 Lastuse 19991203 SourceValue "Fresh Air Co 1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 757 "Coventry" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Coventry" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 759 "Fresh Air Co 2" Parent 757 Levels 209 Lastuse 19991203 SourceValue "Fresh Air Co 2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 761 "Bristol" Parent 493 Levels 207 Lastuse 19991203 SourceValue "Bristol" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 763 "Fresh Air Co 3" Parent 761 Levels 209 Lastuse 19991203 SourceValue "Fresh Air Co 3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 507 "Mexico" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Mexico" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 509 "Monterey" Parent 507 Levels 207 Lastuse 19991203 SourceValue "Monterey" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 511 "Juan's Sports 3" Parent 509 Levels 209 Lastuse 19991203 SourceValue "Juan's Sports 3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 661 "Puerto Vallarta" Parent 507 Levels 207 Lastuse 19991203 SourceValue "Puerto Vallarta" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 663 "Over the Top Cycles 1" Parent 661 Levels 209 Lastuse 19991203 
+SourceValue "Over the Top Cycles 1" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 799 "Cancun" Parent 507 Levels 207 Lastuse 19991203 SourceValue "Cancun" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 801 "Juan's Sports 1" Parent 799 Levels 209 Lastuse 19991203 SourceValue "Juan's Sports 1" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+Category 803 "Guadalajara" Parent 507 Levels 207 Lastuse 19991203 SourceValue "Guadalajara" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 805 "Juan's Sports 2" Parent 803 Levels 209 Lastuse 19991203 SourceValue "Juan's Sports 2" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 535 "Belgium" Parent 197 Levels 205 Lastuse 19991203 SourceValue "Belgium" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 537 "Antwerpen" Parent 535 Levels 207 Lastuse 19991203 SourceValue "Antwerpen" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 539 "Vacation Central 2" Parent 537 Levels 209 Lastuse 19991203 
+SourceValue "Vacation Central 2" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+
+Category 611 "Brussels" Parent 535 Levels 207 Lastuse 19991203 SourceValue "Brussels" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 613 "Wilderness Wonderment Ltd" Parent 611 Levels 209 Lastuse 19991203 
+SourceValue "Wilderness Wonderment Ltd" Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 677 "Rock Steady 4" Parent 611 Levels 209 Lastuse 19991203 SourceValue "Rock Steady 4" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 735 "Wally Mart 3" Parent 611 Levels 209 Lastuse 19991203 SourceValue "Wally Mart 3" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+Category 541 "France" Parent 197 Levels 205 Lastuse 19991203 SourceValue "France" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 543 "Paris" Parent 541 Levels 207 Lastuse 19991203 SourceValue "Paris" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+Category 545 "Vacation Central 3" Parent 543 Levels 209 Lastuse 19991203 
+SourceValue "Vacation Central 3" Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated True Blanks False 
+
+Category 695 "GO Outlet Paris" Parent 543 Levels 209 Lastuse 19991203 SourceValue "GO Outlet Paris" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 765 "Fresh Air Lte 4" Parent 543 Levels 209 Lastuse 19991203 SourceValue "Fresh Air Lte 4" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+
+
+MapDrills 
+MapDrill 197 
+
+ViewName 199 "All Categories" Type All ViewUserClass 0 
+ViewName 201 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 223 "Customer Type" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 225 "Customer Type~1" Inclusion Generate Lastuse 19991203 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 227 "By Customer Type~1" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 233 "Customer Type" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 855 "Customer Type" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Customer Type" 
+
+
+
+Category 283 "GO Outlet" Parent 227 Levels 233 Lastuse 19991203 SourceValue "GO Outlet" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 363 "Mass Marketer" Parent 227 Levels 233 Lastuse 19991203 SourceValue "Mass Marketer" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 415 "Independent" Parent 227 Levels 233 Lastuse 19991203 SourceValue "Independent" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 465 "Camping Chain" Parent 227 Levels 233 Lastuse 19991203 SourceValue "Camping Chain" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 491 "Sports Chain" Parent 227 Levels 233 Lastuse 19991203 SourceValue "Sports Chain" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+MapDrills 
+MapDrill 227 
+
+ViewName 229 "All Categories" Type All ViewUserClass 0 
+ViewName 231 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 211 "% Late Shipment Ranges" DimType Regular NewCatsLock False 
+ExcludeAutoPartitioning False 
+
+Categories 
+Root 213 "% Late Shipment Ranges" Inclusion Generate Lastuse 19991203 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 215 "By % Late Shipment Ranges" Inclusion Suppress Filtered False 
+Suppressed True PrimaryDrill True 
+Levels 221 "% Late Shipment Ranges" Blanks "( blank )" DateFunction None 
+Generate Need RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False Timerank 0 UniqueCategories False UniqueMove False Associations 857 
+"% Late Shipment Ranges" AssociationType Type_Query AssociationRole Role_Source 
+AssociationReferenced "% Late Shipment Ranges" 
+
+
+Category 285 "GOOD" Parent 215 Levels 221 Lastuse 19991203 SourceValue "GOOD" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+Category 601 "AVERAGE" Parent 215 Levels 221 Lastuse 19991203 SourceValue "AVERAGE" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+Category 671 "POOR" Parent 215 Levels 221 Lastuse 19991203 SourceValue "POOR" 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated True 
+Blanks False 
+
+
+MapDrills 
+MapDrill 215 
+
+ViewName 217 "All Categories" Type All ViewUserClass 0 
+ViewName 219 "Omit Dimension" Type Omit ViewUserClass 0 
+Measure 135 "Order Price" Storage Default OutPutScale 0 Decimals 0 ReverseSign False 
+IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6003EB\orders.imr" "Default Report" 
+EndList Associations 859 "Order Price" AssociationType Type_Query AssociationRole Role_Source 
+AssociationReferenced "Order Price" 
+
+
+Measure 137 "Shipment Revenue" Storage Default OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6003EB\orders.imr" 
+"Default Report" EndList Associations 861 "Shipment Revenue" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Shipment Revenue" 
+
+
+Measure 139 "Total Units Shipped" Storage Default OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6003EB\orders.imr" 
+"Default Report" EndList Associations 863 "Total Units Shipped" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Total Units Shipped" 
+
+
+
+Measure 141 "Late Shipment Revenue" Storage Float64 OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6003EB\orders.imr" 
+"Default Report" EndList Associations 865 "Late Shipment Revenue" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Late Shipment Revenue" 
+
+
+
+Measure 143 "Total Units Shipped Late" Storage Float64 OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6003EB\orders.imr" 
+"Default Report" EndList Associations 867 "Total Units Shipped Late" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Total Units Shipped Late" 
+
+
+
+
+Signon 869 "PP6602EB" 
+FullDb "46C1951F7E7D15BA2583E018288E6F7A4C4463F3F4A86DB248DA599273D9C5208315AAE" 
+"76022040B07F3852734A1B97A877A11C4FF094748C09809BF317AAE3FF60DCAE604F592" 
+"6599009FC9F67C93BE0423CFE2B65EC3454408015EF6D5A3D770D2E24DEFE24D59B8092" 
+"7D59BF90DAAFDE4E9F4E20EC6D4D6C3560B95F880F7321B0CAE26560F97935C7DC0153D" 
+"A2E6AC8BD440CB4C266EEC7E9DEC7606F3A50E449F29AD3E53B827FB451AAFFEF52CDCF" 
+"620C11A10CF06AAFDE45C9F1D6E667097015240DCFE4F0722BE4DD22603C04DBE873955" 
+"C2EE520F4C0EAFBD0B14659E86CB7C79217B94DFCC53023EDECCF048956AAB67503D258" 
+"17134C1597A21F" DbType "DB" PromptForPassword False 
+Cube 235 "Orders" MdcFile "Orders.mdc" Status OK CubeCreation On Optimize Default 
+ConsolidatedRecords 10000000 PartitionSize 500000 PassesNumber 5 Compress False 
+DatabaseInfo "Local;;" IncrementalUpdate False ServerCube False CubeStamp 920658115 
+CubeCycle 6 Caching False DrillThrough False EndList 
+DimensionView 145 "All Categories" DimensionView 177 "All Categories" DimensionView 193 
+"All Categories" DimensionView 223 "All Categories" DimensionView 211 "All Categories" 
+
+MeasureInclude 135 Yes MeasureInclude 137 Yes MeasureInclude 139 Yes MeasureInclude 141 
+Yes MeasureInclude 143 Yes 
+
+
+AllocationAdd Measure 135 Type Default 
+AllocationAdd Measure 137 Type Default 
+AllocationAdd Measure 139 Type Default 
+AllocationAdd Measure 141 Type Default 
+AllocationAdd Measure 143 Type Default 
+

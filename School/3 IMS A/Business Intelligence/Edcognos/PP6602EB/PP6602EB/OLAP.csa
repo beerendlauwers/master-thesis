@@ -1,0 +1,17 @@
+[General]
+NumberOfDirectoryServers=0
+DefaultDirectoryServer=-1
+NumberOfLAEFiles=1
+DefaultLAEFile=-1
+NumberOfAUTFiles=0
+DefaultAUTFile=-1
+DefaultSecurityDataSource=UNK
+MessageErrorFile=
+ErrorLogEnabled=
+ErrorLogFile=
+ErrorLogMaxSize=
+
+[LAEFile1]
+ConfigurationName=GOsecurity
+Path=C:\Edcognos\PP6602eb\GOsecurity.lae
+

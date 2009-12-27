@@ -1,0 +1,28 @@
+COGNOS QUERY
+STRUCTURE,1,1
+DATABASE,PP6602EB
+DATASOURCENAME,C:\Edcognos\PP6602eb\Measures.imr
+TITLE,Measures.imr
+BEGIN SQL
+select T1."ORDER_DT" as c1,
+	   T1."ORDER_NO" as c2,
+	   T2."CUST_NO" as c3,
+	   T3."PRICE" as c4,
+	   T3."QTY" as c5,
+	   T4."REP_NAME" as c6,
+	   T3."PRICE" * T3."QTY" as c7
+from "Order" T1,
+	"CUSTSITE" T2,
+	"ORDRDETL" T3,
+	"REP" T4
+where ((T1."CUST_NO" = T2."CUST_NO") and (T1."SITE_NO" = T2."SITE_NO")) and (T3."ORDER_NO" = T1."ORDER_NO") and (T4."REP_NO" = T1."REP_NO")
+
+END SQL
+COLUMN,0,Order Date
+COLUMN,1,Order No.
+COLUMN,2,Customer No.
+COLUMN,3,Order Price
+COLUMN,4,Qty
+COLUMN,5,Sales Rep. Name
+COLUMN,6,Revenue
+

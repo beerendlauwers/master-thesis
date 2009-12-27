@@ -1,0 +1,238 @@
+'Dave Ruskin, Cognos Bracknell, KickOff FY98
+'run this macro when a GO cube is loaded - assumes time first dimension,
+' products second and countries third.
+'
+'12 MONTHLY Report
+'includes option to select start month and dynamically builds a 
+'report showing product total, 12 month total and average values per country,
+'sales channel or margin band.
+'
+'Option is provided to provide running (i.e. Jan, Jan+Feb, Jan+Feb+March, etc)
+'total of monthly column data or to produce a moving 
+'(i.e. total Jan95 to Dec 95, total Feb 95 to Jan 96, total March 95 to Feb 96, etc.)
+'annual total.
+
+Sub Main
+
+   Dim PPReport  As Object
+   Dim CatList   As Object
+   Dim PPApp     As Object
+  
+   Dim Category  As Variant 
+   
+   Dim ColStart  As Integer
+   Dim ColEnd    As Integer
+   Dim ColSelect As Integer
+   Dim MaxCol    As Integer
+   Dim CatToAdd  As String
+   Dim Counter   As Integer
+   Dim StartCol  As Integer
+   Dim EndCol    As Integer   
+   Dim MonthsAvailable() As String
+   Dim MonthCount As Integer
+
+On Error Goto GotError
+     
+   Set PPApp = GetObject(,"PowerPlay.Application")
+'   PPApp.Visible = 1
+'   PPApp.Maximize
+
+   Set PPReport = PPApp.Reports.Item( 1 )
+   PPReport.Visible = 0
+   PPReport.ExplorerMode = False
+   PPReport.Columns.Select
+   PPReport.Columns.Remove
+   PPReport.Rows.Select
+   PPReport.Rows.Remove
+   PPReport.Layers.Select
+   PPReport.Layers.Remove
+
+   
+'  Add categories to it using first dimension, three levels down
+'  this gives us the months in the cube.
+   Set Catlist = PPReport.CategoryList()
+   Catlist.Each = True
+   Catlist.Add 3, 1
+
+'  Add the categories as Columns then load into an array for display in a dialog
+
+   PPReport.Columns.Add Catlist
+
+   Redim Preserve MonthsAvailable(Catlist.Count -1)
+   MaxCol = Catlist.Count
+   
+   For MonthCount = 1 to Catlist.Count
+      Set PPCol = PPReport.Columns(MonthCount)
+      PPReport.Columns.Item(MonthCount).Activate
+      MonthsAvailable(MonthCount -1) = PPReport.Columns.Item(MonthCount).Name 
+   Next MonthCount 
+
+   
+   Begin Dialog SelMonths 92, 38, 251, 260, "Select 12 Month Start Period And Report Options"
+      OkButton  135, 240, 50, 14
+      CancelButton  190, 240, 50, 14
+      ListBox  15, 10, 110, 225, MonthsAvailable(), .ListBox1
+      OptionGroup .OptionGroup1
+         OptionButton  140, 20, 97, 12, "By Country", .OptionButton1
+         OptionButton  140, 35, 97, 12, "By Sales Channel", .OptionButton2
+         OptionButton  140, 50, 97, 12, "By Margin", .OptionButton3
+      GroupBox  135, 10, 105, 60, "Choose Layers", .layerchoice
+      GroupBox  135, 75, 105, 60, "Choose Row Details", .rowdetails
+      OptionGroup .OptionGroup2
+         OptionButton  140, 86, 97, 12, "Product Line", .OptionButton4
+         OptionButton  140, 100, 97, 12, "Product Type", .OptionButton5
+         OptionButton  140, 115, 97, 12, "Product", .OptionButton6
+      OptionGroup .OptionGroup3
+         OptionButton  140, 190, 95, 10, "Running Monthly Totals?", .OptionButton7
+         OptionButton  140, 205, 95, 10, "Total And Average?", .OptionButton8
+         OptionButton  140, 220, 90, 10, "Moving Annual Total?", .OptionButton9
+      GroupBox  135, 140, 105, 35, "Rank Options", .rankoptions
+      CheckBox  140, 155, 97, 12, "Rank By Total Column?", .CheckBox1
+      GroupBox  135, 180, 105, 55, "Totalling"
+   End Dialog
+    
+   Dim SelectMonths as SelMonths
+   Dialog SelectMonths
+   
+   
+'  The selected start month is taken from the listbox choice.
+   
+   ColStart = (SelectMonths.ListBox1)
+
+
+'  Now remove unwanted columns at the start of the report
+
+
+   For ColSelect = 1 To ColStart
+      PPReport.Columns.Item(1).Select
+      PPReport.Columns.Item(1).Remove
+   Next ColSelect
+
+'  Now create 12 month MAT values if required by adding up 12 monthly chunks of data
+
+   If SelectMonths.OptionGroup3 = 2 Then         'Total & Average Selected
+      For ColSelect = 1 to 12
+          PPReport.Columns.Item(PPReport.Columns.Count).Activate
+          PPReport.Columns.Item(PPReport.Columns.Count).Select   
+          PPReport.Columns.Subset(ColSelect, ColSelect + 11).Addition
+          PPReport.Columns.Item(PPReport.Columns.Count).Name _
+                           "Moving Annual Total From " & PPReport.Columns.Item(ColSelect).Name
+   '                             "MAT From " & PPReport.Columns.Item(ColSelect).Name
+                                 
+      Next ColSelect
+   End If
+
+'   Remove unwanted columns at the end of the report, if MAT is chosen,
+'   then only the last twelve calculated columns are of interest  
+'   
+    If SelectMonths.OptionGroup3 = 2 Then 
+       For ColSelect = 13 To PPReport.Columns.Count - 12
+          PPReport.Columns.Item(13).Select
+          PPReport.Columns.Item(13).Remove
+       Next ColSelect
+       For ColSelect = 1 To PPReport.Columns.Count - 12
+          PPReport.Columns.Item(1).Select
+          PPReport.Columns.Item(1).Remove
+       Next ColSelect
+       
+'   When MAT is not chosen, only the first twelve columns are of interest
+    Else   
+       For ColSelect = 13 To PPReport.Columns.Count
+          PPReport.Columns.Item(13).Select
+          PPReport.Columns.Item(13).Remove
+       Next ColSelect
+    End If
+   
+   PPReport.Columns.Unselect
+   
+
+'  Clear the list and start a new one for the rows
+   Catlist.Remove
+    
+    
+'  Clear the catlist and create a new catlist
+'  adding optiongroup1 choice as layers and optiongroup2 choice as rows
+
+   Catlist.Remove
+   Catlist.Each = True
+   Catlist.Add 1, (SelectMonths.OptionGroup1 + 3), 
+   PPReport.Layers.Add Catlist
+    
+   Catlist.Remove
+   Catlist.Each = True
+   Catlist.Add (SelectMonths.OptionGroup2 + 1), 2,
+   Catlist.Sum = True
+   PPReport.Rows.Add Catlist
+   
+   
+'  Now let's change the last row's label    
+   PPReport.Rows.Item(PPReport.Rows.Count).Activate
+   PPReport.Rows.Item(PPReport.Rows.Count).Name "Overall Total"
+    
+   Catlist.Remove
+  
+
+'  When a straight total and average is required, we need to add the appropriate columns
+  
+   If SelectMonths.OptionGroup3 = 1 Then
+      PPReport.Columns.Average
+   
+'  Change the last column's label    
+      PPReport.Columns.Item(PPReport.Columns.Count).Activate
+      PPReport.Columns.Item(PPReport.Columns.Count).Name "Average Of Months"
+
+'  Now we have to create a Total, without the average column being included.
+
+      PPReport.Columns.Addition
+      Set Category = PPReport.Columns.Item((PPReport.Columns.Count)-1)
+      PPReport.Columns.Item(PPReport.Columns.Count).Subtraction(Category)
+      PPReport.Columns.Item(PPReport.Columns.Count).Select
+      PPReport.Columns.Item(PPReport.Columns.Count).Remove
+   
+'  Change the last column's label.    
+      PPReport.Columns.Item(PPReport.Columns.Count).Activate
+      PPReport.Columns.Item(PPReport.Columns.Count).Name "Total Of Months"
+      
+   ElseIf SelectMonths.OptionGroup3 = 0 Then
+
+'  Add columns together to give running total of months if running total was requested
+
+      For Counter = 2 to 12
+          PPReport.Columns.Item(PPReport.Columns.Count).Activate
+          PPReport.Columns.Item(PPReport.Columns.Count).Select   
+          EndCol   = PPReport.Columns.Item(Counter).Index
+          PPReport.Columns.Subset(1, EndCol).Addition
+          PPReport.Columns.Item(PPReport.Columns.Count).Name _
+                              PPReport.Columns.Item(1).Name & " - " & _
+                              PPReport.Columns.Item(EndCol).Name
+      Next Counter
+   
+      For Counter = 1 to 11
+          PPReport.Columns.Item(2).Remove
+      Next Counter
+   End If
+      
+   If SelectMonths.CheckBox1 = 1 Then
+      PPReport.Columns.Item(PPReport.Columns.Count).Rank PPReport.Rows.Count,0,0,0
+   End If
+
+   
+   PPReport.Visible = True
+   PPReport.Columns.UnSelect
+   PPReport.Application.UserControl = True
+   PPReport.Maximize
+   PPReport.Application.Activate
+   PPReport.Application.Maximize
+Goto NoERROR
+
+GotError:
+   PPReport.Visible = True
+   MSGBOX "Something went oops! " + error
+   
+NoERROR:
+
+   Set PPReport = nothing
+   Set CatList  = nothing
+   Set PPApp    = nothing     
+     
+End Sub

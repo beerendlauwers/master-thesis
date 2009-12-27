@@ -1,0 +1,87 @@
+COGNOS QUERY
+STRUCTURE,1,1
+DATABASE,ziek_ex
+DATASOURCENAME,C:\Edcognos\PP6602EB\verzorgingsinstellingen\alle_geg_ziek.imr
+TITLE,alle_geg_ziek
+BEGIN SQL
+select T1."AANTAL" as c1,
+	   T2."AFTAND_ID" as c2,
+	   T2."AFSTAND_INFO" as c3,
+	   T3."DIENST_ID" as c4,
+	   T3."DIENST_INFO" as c5,
+	   T3."DIENST_CATEGORIE" as c6,
+	   T3."GEWOON_BIJZONDER" as c7,
+	   T4."INST_NAAM" as c8,
+	   T4."ROEPNAAM" as c9,
+	   T4."SOORT_INSTELLING" as c10,
+	   T5."LOC_ID" as c11,
+	   T5."LOCATIE_INFO" as c12,
+	   T5."OMSCHRIJVING" as c13,
+	   T6."PERS_ID" as c14,
+	   T6."NAAM" as c15,
+	   T6."VOORNAAM" as c16,
+	   T6."GEBOORTEDATUM" as c17,
+	   T7."DATUM" as c18,
+	   T7."JJJJJMM" as c19,
+	   T7."JAAR" as c20,
+	   T7."MAAND" as c21,
+	   T7."MM" as c22,
+	   T7."DAG" as c23,
+	   T7."DD" as c24,
+	   T7."WERKDAG" as c25,
+	   T7."WEEKENDDAG" as c26,
+	   T7."VAKANTIEDAG" as c27,
+	   T7."SCHOOLDAG" as c28,
+	   T7."FEESTDAG" as c29,
+	   T7."SEIZOEN" as c30,
+	   T7."werkdagtekst" as c31,
+	   T7."weekenddagtekst" as c32,
+	   T7."vakantiedagtekst" as c33,
+	   T7."schooldagtekst" as c34,
+	   T7."feestdagtekst" as c35
+from "ACTIVITEITEN" T1,
+	"DIM_AFSTANDEN" T2,
+	"DIM_DIENSTEN" T3,
+	"DIM_INSTELLINGEN" T4,
+	"DIM_LOCATIES" T5,
+	"DIM_PERSONEN" T6,
+	"DIM_TIJD" T7
+where (T1."AFSTAND_ID" = T2."AFTAND_ID") and (T1."DIENST_ID" = T3."DIENST_ID") and (T1."INST_ID" = T4."INST_ID") and (T1."LOC_ID" = T5."LOC_ID") and (T1."PERS_ID" = T6."PERS_ID") and (T1."DATUM" = T7."DATUM")
+
+END SQL
+COLUMN,0,Aantal
+COLUMN,1,Aftand Id
+COLUMN,2,Afstand Info
+COLUMN,3,Dienst Id
+COLUMN,4,Dienst Info
+COLUMN,5,Dienst Categorie
+COLUMN,6,Gewoon Bijzonder
+COLUMN,7,Inst Naam
+COLUMN,8,Roepnaam
+COLUMN,9,Soort Instelling
+COLUMN,10,Loc Id
+COLUMN,11,Locatie Info
+COLUMN,12,Omschrijving
+COLUMN,13,Pers Id
+COLUMN,14,Naam
+COLUMN,15,Voornaam
+COLUMN,16,Geboortedatum
+COLUMN,17,Datum
+COLUMN,18,Jjjjjmm
+COLUMN,19,Jaar
+COLUMN,20,Maand
+COLUMN,21,Mm
+COLUMN,22,Dag
+COLUMN,23,Dd
+COLUMN,24,Werkdag
+COLUMN,25,Weekenddag
+COLUMN,26,Vakantiedag
+COLUMN,27,Schooldag
+COLUMN,28,Feestdag
+COLUMN,29,Seizoen
+COLUMN,30,Werkdagtekst
+COLUMN,31,Weekenddagtekst
+COLUMN,32,Vakantiedagtekst
+COLUMN,33,Schooldagtekst
+COLUMN,34,Feestdagtekst
+

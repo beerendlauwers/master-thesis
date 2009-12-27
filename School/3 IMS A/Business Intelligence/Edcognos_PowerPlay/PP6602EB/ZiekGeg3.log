@@ -1,0 +1,14 @@
+PowerPlay Transformer(6.61.436.0 )  Thu May 30 22:09:58 2002
+
+LogFileDirectory=c:\edcognos\pp6602eb
+ModelSaveDirectory=\edcognos\pp6602eb\
+DataSourceDirectory=\edcognos\pp6602eb\
+CubeSaveDirectory=\edcognos\pp6602eb\
+DataWorkDirectory=c:\edcognos\pp6602eb\
+ModelWorkDirectory=\edcognos\pp6602eb\
+MaxTransactionNum=500000
+ReadCacheSize=4096
+WriteCacheSize=16384
+TEMPFILEDIRS=c:\edcognos\pp6602eb
+
+PowerPlay Transformer  Thu May 30 22:20:38 2002

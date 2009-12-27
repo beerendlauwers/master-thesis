@@ -1,0 +1,338 @@
+
+Name "New Model" AutoAccess False Synchronize False SynchroCycle 0 SynchroStamp 0 
+UpdateCycle 1 ModelStamp 909497499 ClientStamp 909497499 ServerStamp 0 
+Generation 0 RootUser 0 Version "6.6.225.2 - Not For Resale" AccessManager False 
+UserClasses False 
+
+DataSource 103 "orders" Separator " " SourceType DataSource DecimalSep " " 
+Thousandsep " " Columns True Timing PopYesCreateDefault Source "c:\edcognos\pp6602eb\orders.iqd" 
+SQL 'select T1."ORDER_DT" as c1, 	   T2."PROD_TYPE" as c2, 	   T2."PROD_LINE' 
+'" as c3, 	   T2."PRODUCT" as c4, 	   T3."TYPE" as c5, 	   T3."CUSTOMER"' 
+' as c6, 	   T4."COUNTRY" as c7, 	   T5."CITY" as c8, 	   T6."PRICE" as ' 
+'c9, 	   T6."PRICE" * T6."QTY" as c10, 	   T6."QTY" as c11, 	   CASE WHE' 
+'N (T6."QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRIC' 
+'E" * T6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= ' 
+'1086)) THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY' 
+'") * .3) END as c12, 	   ((CASE WHEN (T6."QTY" <= 10) THEN (0) WHEN (T3' 
+'."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09) WHEN ((T3."CUS' 
+'T_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRICE" * T6."QTY")' 
+' * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END) / (T6."PRICE" * T6."QT' 
+'Y") * T6."QTY") as c13, 	   CASE WHEN ((((CASE WHEN (T6."QTY" <= 10) TH' 
+'EN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T6."QTY") * .09)' 
+' WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086)) THEN ((T6."PRI' 
+'CE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .3) END) / (T6."' 
+'PRICE" * T6."QTY")) * 100) < 10) THEN (' "'GOOD') WHEN ((((CASE WHEN (T6." 
+'"QTY" <= 10) THEN (0) WHEN (T3."CUST_NO" <= 1062) THEN ((T6."PRICE" * T' 
+'6."QTY") * .09) WHEN ((T3."CUST_NO" > 1062) and (T3."CUST_NO" <= 1086))' 
+' THEN ((T6."PRICE" * T6."QTY") * .19) ELSE ((T6."PRICE" * T6."QTY") * .' 
+'3) END) / (T6."PRICE" * T6."QTY")) * 100) BETWEEN 10 AND 20) THEN (' "'AVERAGE') ELSE ('POOR') END as c14 from " 
+'"ORDRDETL" T6, 	"Order" T1, 	"Product" T2, 	"CUSTSITE" T5, 	"CUSTOMER" ' 
+'T3, 	"COUNTRY" T4 where (T6."ORDER_NO" = T1."ORDER_NO") and (T2."PROD_N' 
+'O" = T6."PROD_NO") and ((T1."CUST_NO" = T5."CUST_NO") and (T1."SITE_NO"' 
+' = T5."SITE_NO")) and (T3."CUST_NO" = T5."CUST_NO") and (T4."COUNTRY_CD' 
+'" = T5."COUNTRY_CD") ' Isolation 0 SourceSignonList 265 EndList ImrName "C:\edcognos\Pp6602eb\orders.imr" 
+Stamp 943042398 Speed False SetCurrent True ServerSource False Presummarized False 
+EnableMultiProcess False 
+
+OrgName 107 "Order Date" Origin Source Offset 0 Column "Order Date" Storage Int32 
+Scale 0 Size 4 Decimals 0 Class Date InputScale 0 TimeArray Off 
+
+OrgName 109 "Product Type" Origin Source Offset 1 Column "Product Type" 
+Storage Text Scale 0 Size 20 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 111 "Product Line" Origin Source Offset 2 Column "Product Line" 
+Storage Text Scale 0 Size 20 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 113 "Product" Origin Source Offset 3 Column "Product" Storage Text 
+Scale 0 Size 30 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+
+OrgName 115 "Customer Type" Origin Source Offset 4 Column "Customer Type" 
+Storage Text Scale 0 Size 15 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 117 "Customer Name" Origin Source Offset 5 Column "Customer Name" 
+Storage Text Scale 0 Size 30 Decimals 0 Class Description InputScale 0 
+TimeArray Off 
+
+OrgName 119 "Country" Origin Source Offset 6 Column "Country" Storage Text 
+Scale 0 Size 15 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+
+OrgName 121 "City" Origin Source Offset 7 Column "City" Storage Text Scale 0 
+Size 20 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+OrgName 123 "Order Price" Origin Source Offset 8 Column "Order Price" Storage Default 
+Scale 0 Size 5 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+OrgName 125 "Shipment Revenue" Origin Source Offset 9 Column "Shipment Revenue" 
+Storage Default Scale 0 Size 8 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 127 "Total Units Shipped" Origin Source Offset 10 Column "Total Units Shipped" 
+Storage Default Scale 0 Size 3 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 129 "Late Shipment Revenue" Origin Source Offset 11 Column "Late Shipment Revenue" 
+Storage Float64 Scale 0 Size 8 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 131 "Total Units Shipped Late" Origin Source Offset 12 Column "Total Units Shipped Late" 
+Storage Float64 Scale 0 Size 8 Decimals 0 Class Quantity InputScale 0 TimeArray Off 
+
+
+OrgName 133 "% Late Shipment Ranges" Origin Source Offset 13 Column "% Late Shipment Ranges" 
+Storage Text Scale 0 Size 7 Decimals 0 Class Description InputScale 0 TimeArray Off 
+
+
+Dimension 145 "Order Date" DimType Date EarliestDate 19000101 LatestDate 99991231 
+ManualPeriods False DaysInWeek 127 NewCatsLock False ExcludeAutoPartitioning False 
+Associations 225 "Order Date" AssociationType Type_Query AssociationRole Role_Source 
+AssociationReferenced "Order Date" 
+
+
+Categories 
+Root 147 "Order Date" Inclusion Generate Lastuse 19981027 Date 0 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 149 "By Order Date" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True YearBegins 19980101 PartialWeek Split ExtraWeek None 
+WeekBegins Sunday 
+Levels 155 "Year" Blanks "( blank )" Inclusion Generate DateFunction Year 
+Generate Need RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat "YYYY" Timerank 10 UniqueCategories True 
+UniqueMove False Associations 227 "Order Date" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Order Date" 
+Associations 229 "Order Date" AssociationContext 149 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "Order Date" SortOrder Default 
+SortAs Ascending 
+
+
+Levels 157 "Quarter" Blanks "( blank )" Inclusion Generate DateFunction Quarter 
+Generate All RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat 'YYYY "Q" Q' Timerank 20 UniqueCategories True 
+UniqueMove False Associations 231 "Order Date" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Order Date" 
+Associations 233 "Order Date" AssociationContext 149 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "Order Date" SortOrder Default 
+SortAs Ascending 
+
+
+Levels 159 "Month" Blanks "( blank )" Inclusion Generate DateFunction Month 
+Generate All RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False CatLabFormat "YYYY/MMM" Timerank 30 UniqueCategories True 
+UniqueMove False Associations 235 "Order Date" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Order Date" 
+Associations 237 "Order Date" AssociationContext 149 AssociationType Type_Query 
+AssociationRole Role_OrderBy AssociationReferenced "Order Date" SortOrder Default 
+SortAs Ascending 
+
+
+
+SpecialCategory 161 "Current Month" Parent 147 Levels 0 Lastuse 19981027 
+Rollup True TimeAggregate Single RunningPeriods 0 TargetOffset 0 TargetLevel "Month" 
+ContextOffset 0 DateDrill 149 Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 163 "Last Month" Parent 147 Levels 0 Lastuse 19981027 Rollup True 
+TimeAggregate Single RunningPeriods 0 TargetOffset -1 TargetLevel "Month" 
+ContextOffset 0 DateDrill 149 Filtered False Suppressed False Sign False 
+IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 165 "QTD" Parent 147 Levels 0 Lastuse 19981027 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Quarter" TargetOffset 0 
+TargetLevel "Month" ContextOffset 0 DateDrill 149 Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 167 "Prior QTD" Parent 147 Levels 0 Lastuse 19981027 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Quarter" TargetOffset 0 
+TargetLevel "Month" ContextOffset -1 ContextLevel "Quarter" DateDrill 149 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+SpecialCategory 169 "QTD Grouped" Parent 147 Levels 0 Lastuse 19981027 
+Rollup True TimeAggregate ToDate_Grp RunningPeriods 0 ToDateLevel "Quarter" 
+TargetOffset 0 TargetLevel "Month" ContextOffset -1 ContextLevel "Quarter" 
+DateDrill 149 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+SpecialCategory 171 "YTD" Parent 147 Levels 0 Lastuse 19981027 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Year" TargetOffset 0 
+TargetLevel "Month" ContextOffset 0 DateDrill 149 Filtered False Suppressed False 
+Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+SpecialCategory 173 "Prior YTD" Parent 147 Levels 0 Lastuse 19981027 Rollup True 
+TimeAggregate ToDate RunningPeriods 0 ToDateLevel "Year" TargetOffset 0 
+TargetLevel "Month" ContextOffset -1 ContextLevel "Year" DateDrill 149 
+Filtered False Suppressed False Sign False IsKeyOrphanage False IsTruncated False 
+Blanks False 
+
+SpecialCategory 175 "YTD Grouped" Parent 147 Levels 0 Lastuse 19981027 
+Rollup True TimeAggregate ToDate_Grp RunningPeriods 0 ToDateLevel "Year" 
+TargetOffset 0 TargetLevel "Month" ContextOffset -1 ContextLevel "Year" 
+DateDrill 149 Filtered False Suppressed False Sign False IsKeyOrphanage False 
+IsTruncated False Blanks False 
+
+MapDrills 
+MapDrill 149 
+
+ViewName 151 "All Categories" Type All ViewUserClass 0 
+ViewName 153 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 177 "Product Line" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 179 "Product Line" Inclusion Generate Lastuse 19981027 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 181 "By Product Line" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 187 "Product Line" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 239 "Product Line" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Product Line" 
+
+
+
+Levels 189 "Product Type" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 241 "Product Type" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Product Type" 
+
+
+
+Levels 191 "Product" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 243 "Product" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Product" 
+
+
+
+
+MapDrills 
+MapDrill 181 
+
+ViewName 183 "All Categories" Type All ViewUserClass 0 
+ViewName 185 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 193 "Customer Type" DimType Regular NewCatsLock False ExcludeAutoPartitioning False 
+
+
+Categories 
+Root 195 "Customer Type" Inclusion Generate Lastuse 19981027 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 197 "By Customer Type" Inclusion Suppress Filtered False Suppressed True 
+PrimaryDrill True 
+Levels 203 "Customer Type" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 245 "Customer Type" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Customer Type" 
+
+
+
+Levels 205 "Country" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 247 "Country" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Country" 
+
+
+
+Levels 207 "City" Blanks "( blank )" DateFunction None Generate Need RefreshLabel False 
+RefreshDescription False RefreshShortName False NewCatsLock False Timerank 0 
+UniqueCategories False UniqueMove False Associations 249 "City" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "City" 
+
+
+Levels 209 "Customer Name" Blanks "( blank )" DateFunction None Generate Need 
+RefreshLabel False RefreshDescription False RefreshShortName False NewCatsLock False 
+Timerank 0 UniqueCategories False UniqueMove False Associations 251 "Customer Name" 
+AssociationType Type_Query AssociationRole Role_Source AssociationReferenced "Customer Name" 
+
+
+
+
+MapDrills 
+MapDrill 197 
+
+ViewName 199 "All Categories" Type All ViewUserClass 0 
+ViewName 201 "Omit Dimension" Type Omit ViewUserClass 0 
+Dimension 211 "% Late Shipment Ranges" DimType Regular NewCatsLock False 
+ExcludeAutoPartitioning False 
+
+Categories 
+Root 213 "% Late Shipment Ranges" Inclusion Generate Lastuse 19981027 Filtered False 
+Suppressed False Sign False IsKeyOrphanage False IsTruncated False Blanks False 
+
+Drill 215 "By % Late Shipment Ranges" Inclusion Suppress Filtered False 
+Suppressed True PrimaryDrill True 
+Levels 221 "% Late Shipment Ranges" Blanks "( blank )" DateFunction None 
+Generate Need RefreshLabel False RefreshDescription False RefreshShortName False 
+NewCatsLock False Timerank 0 UniqueCategories False UniqueMove False Associations 253 
+"% Late Shipment Ranges" AssociationType Type_Query AssociationRole Role_Source 
+AssociationReferenced "% Late Shipment Ranges" 
+
+
+
+MapDrills 
+MapDrill 215 
+
+ViewName 217 "All Categories" Type All ViewUserClass 0 
+ViewName 219 "Omit Dimension" Type Omit ViewUserClass 0 
+Measure 135 "Order Price" Storage Default OutPutScale 0 Decimals 0 ReverseSign False 
+IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6002EB\ORDERS.IMR" "Default Report" 
+EndList Associations 255 "Order Price" AssociationType Type_Query AssociationRole Role_Source 
+AssociationReferenced "Order Price" 
+
+
+Measure 137 "Shipment Revenue" Storage Default OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6002EB\ORDERS.IMR" 
+"Default Report" EndList Associations 257 "Shipment Revenue" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Shipment Revenue" 
+
+
+Measure 139 "Total Units Shipped" Storage Default OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6002EB\ORDERS.IMR" 
+"Default Report" EndList Associations 259 "Total Units Shipped" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Total Units Shipped" 
+
+
+
+Measure 141 "Late Shipment Revenue" Storage Float64 OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6002EB\ORDERS.IMR" 
+"Default Report" EndList Associations 261 "Late Shipment Revenue" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Late Shipment Revenue" 
+
+
+
+Measure 143 "Total Units Shipped Late" Storage Float64 OutPutScale 0 Decimals 0 
+ReverseSign False IsCurrency False DrillThrough True "C:\EDCOGNOS\PP6002EB\ORDERS.IMR" 
+"Default Report" EndList Associations 263 "Total Units Shipped Late" AssociationType Type_Query 
+AssociationRole Role_Source AssociationReferenced "Total Units Shipped Late" 
+
+
+
+
+Signon 265 "PP6602EB" 
+FullDb "37F54ABB0B84B8436171730AC6252CC14471BA03BB4AC84E012CCA470E0233A977AF30A" 
+"438CC4C11E753AB962ACFA28D8EDDBC35C6D8FD2C1EEF54A739407369EE4C0800C14D76" 
+"D733C5BB4B7D6681B422BEAAD8F02F1EEAB14D709CE15AC8B1592E1F1758AA9D4CF9AA2" 
+"E34C6DCAA2A1FED58A2B3EBA14AB4771A48C0309B238869164983F8B52469998EDF61C9" 
+"296ECC1FE5B9F61626CE4987BF44980D35124C2C7C97F3C12BFE02316419AF96437E34B" 
+"7AB25B1FDE69F8FB601386BBF9954D35154066B56185691E04DB3013EC6D5F4B305318E" 
+"143E4B53A29C477B6783B00B36C1D2FEC104361E715D57FF946F87E5955768A5012263B" 
+"20A274B749FF83" DbType "DB" PromptForPassword False EncryptedPW "00000000000000000000000000000000000000000000000000000000000000000000000" 
+"00000000000000000000000000000000000000000000000000000000000000000000000" 
+"00000000000000000000000000000000000000000000000000000000000000000000000" 
+"00000000000000000000000000000000000000000000000000000000000000000000000" 
+"00000000000000000000000000000000000000000000000000000000000000000000000" 
+"00000000000000000000000000000000000000000000000000000000000000000000000" 
+"00000000000000000000000000000000000000000000000000000000000000000000000" 
+"0000000000000" 
+AllocationAdd Measure 135 Type Default 
+AllocationAdd Measure 137 Type Default 
+AllocationAdd Measure 139 Type Default 
+AllocationAdd Measure 141 Type Default 
+AllocationAdd Measure 143 Type Default 
+

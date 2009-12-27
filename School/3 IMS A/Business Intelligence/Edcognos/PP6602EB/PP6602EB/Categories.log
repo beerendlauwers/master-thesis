@@ -1,0 +1,82 @@
+PowerPlay Transformer(6.61.436.0 )  Thu May 30 19:30:05 2002
+
+LogFileDirectory=c:\edcognos\pp6602eb
+ModelSaveDirectory=\edcognos\pp6602eb\
+DataSourceDirectory=\edcognos\pp6602eb\
+CubeSaveDirectory=\edcognos\pp6602eb\
+DataWorkDirectory=c:\edcognos\pp6602eb\
+ModelWorkDirectory=\edcognos\pp6602eb\
+MaxTransactionNum=500000
+ReadCacheSize=4096
+WriteCacheSize=16384
+TEMPFILEDIRS=c:\edcognos\pp6602eb\alternatieve bestanden voor orders
+
+30/05/2002 19:30:13	2	00000000	(TR2700) The columns in formulated data source orders don't match the original source columns. [->OK]
+30/05/2002 19:31:15	4	00000000	Start category generation.
+30/05/2002 19:31:17	2	00000000	(TR2700) The columns in formulated data source orders don't match the original source columns. [->OK]
+30/05/2002 19:31:43	2	00000000	(TR0613) Column Order Date is referenced by name in one or more dimensions, levels, measures or currency tables. Deleting or modifying the column name can cause these associations to be lost. Do you want to continue? [->Yes]
+30/05/2002 19:32:05	4	00000000	Start cube update.
+30/05/2002 19:32:05	4	00000000	Initializing categories.
+30/05/2002 19:32:05	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:00
+30/05/2002 19:32:05	4	00000000	Start processing data source 'c:\edcognos\pp6602eb\orders.iqd'.
+30/05/2002 19:32:05	4	00000000	Reading source data.
+30/05/2002 19:32:06	4	00000000	Timing, OPEN DATA SOURCE,00:00:01
+30/05/2002 19:32:07	4	00000000	End processing 1122 records from data source 'c:\edcognos\pp6602eb\orders.iqd'.
+30/05/2002 19:32:07	4	00000000	Timing, READ DATA SOURCE,00:00:02
+30/05/2002 19:32:07	4	00000000	Marking categories used.
+30/05/2002 19:32:07	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+30/05/2002 19:32:07	4	00000000	Updating category status.
+30/05/2002 19:32:08	4	00000000	Processing the work file.
+30/05/2002 19:32:08	4	000000EB	Processing cube 'Orders' at location c:\edcognos\pp6602eb\Orders.mdc
+30/05/2002 19:32:08	4	00000000	Timing, UPDATE CATEGORY AND PROCESS WORK FILE,00:00:01
+30/05/2002 19:32:08	4	000000EB	Start metadata update of cube 'Orders'.
+30/05/2002 19:32:08	4	00000000	Marking categories needed.
+30/05/2002 19:32:08	4	00000000	Updating the PowerCube metadata.
+30/05/2002 19:32:08	4	00000000	Updating the PowerCube with currency data.
+30/05/2002 19:32:09	4	000000EB	End metadata update of cube 'Orders'.  300 categories were added to the cube.
+30/05/2002 19:32:09	4	00000000	Timing, METADATA,00:00:01
+30/05/2002 19:32:09	4	000000EB	Start update of cube 'Orders'.
+30/05/2002 19:32:09	4	000000EB	--- Performing Pass 0 with 1122 rows and 299 categories remaining.
+30/05/2002 19:32:09	4	000000EB	Start Write leaving 299 categories remaining.
+30/05/2002 19:32:09	4	00000000	Updating the PowerCube data.
+30/05/2002 19:32:09	4	00000000	Updating the PowerCube data.
+30/05/2002 19:32:09	4	00000000	Performing DataBase Commit at record number 1123.
+30/05/2002 19:32:09	4	000000EB	End Write leaving 299 categories remaining..
+30/05/2002 19:32:10	4	00000000	Timing, CUBE UPDATE,00:00:00
+30/05/2002 19:32:10	4	00000000	Committing PowerCube(s).
+30/05/2002 19:32:10	4	00000000	Timing, CUBE COMMIT,00:00:00
+30/05/2002 19:32:10	4	00000000	End cube update.
+30/05/2002 19:32:10	4	00000000	Timing, TOTAL TIME (CREATE CUBE),00:00:05
+30/05/2002 19:32:21	4	00000000	Start cube update.
+30/05/2002 19:32:21	4	00000000	Initializing categories.
+30/05/2002 19:32:21	4	00000000	Timing, INITIALIZING CATEGORIES,00:00:00
+30/05/2002 19:32:21	4	00000000	Start processing data source 'c:\edcognos\pp6602eb\orders.iqd'.
+30/05/2002 19:32:21	4	00000000	Reading source data.
+30/05/2002 19:32:22	4	00000000	Timing, OPEN DATA SOURCE,00:00:01
+30/05/2002 19:32:23	4	00000000	End processing 1122 records from data source 'c:\edcognos\pp6602eb\orders.iqd'.
+30/05/2002 19:32:23	4	00000000	Timing, READ DATA SOURCE,00:00:02
+30/05/2002 19:32:23	4	00000000	Marking categories used.
+30/05/2002 19:32:23	4	00000000	Timing, MARKING CATEGORIES USED,00:00:00
+30/05/2002 19:32:24	4	00000000	Updating category status.
+30/05/2002 19:32:24	4	00000000	Processing the work file.
+30/05/2002 19:32:24	4	000000EB	Processing cube 'Orders' at location c:\edcognos\pp6602eb\Orders.mdc
+30/05/2002 19:32:24	4	00000000	Timing, UPDATE CATEGORY AND PROCESS WORK FILE,00:00:00
+30/05/2002 19:32:24	4	000000EB	Start metadata update of cube 'Orders'.
+30/05/2002 19:32:24	4	00000000	Marking categories needed.
+30/05/2002 19:32:24	4	00000000	Updating the PowerCube metadata.
+30/05/2002 19:32:24	4	00000000	Updating the PowerCube with currency data.
+30/05/2002 19:32:25	4	000000EB	End metadata update of cube 'Orders'.  300 categories were added to the cube.
+30/05/2002 19:32:25	4	00000000	Timing, METADATA,00:00:01
+30/05/2002 19:32:25	4	000000EB	Start update of cube 'Orders'.
+30/05/2002 19:32:25	4	000000EB	--- Performing Pass 0 with 1122 rows and 299 categories remaining.
+30/05/2002 19:32:25	4	000000EB	Start Write leaving 299 categories remaining.
+30/05/2002 19:32:25	4	00000000	Updating the PowerCube data.
+30/05/2002 19:32:25	4	00000000	Updating the PowerCube data.
+30/05/2002 19:32:25	4	00000000	Performing DataBase Commit at record number 1123.
+30/05/2002 19:32:25	4	000000EB	End Write leaving 299 categories remaining..
+30/05/2002 19:32:26	4	00000000	Timing, CUBE UPDATE,00:00:00
+30/05/2002 19:32:26	4	00000000	Committing PowerCube(s).
+30/05/2002 19:32:26	4	00000000	Timing, CUBE COMMIT,00:00:00
+30/05/2002 19:32:26	4	00000000	End cube update.
+30/05/2002 19:32:26	4	00000000	Timing, TOTAL TIME (CREATE CUBE),00:00:05
+PowerPlay Transformer  Thu May 30 19:32:47 2002
