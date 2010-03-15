@@ -1,4 +1,5 @@
-﻿
+﻿Imports Manual
+
 Partial Class App_Presentation_invoerenTest
     Inherits System.Web.UI.Page
 
@@ -31,9 +32,24 @@ Partial Class App_Presentation_invoerenTest
 
         res = adapter.Insert(titel, FK_categorie, FK_taal, FK_Bedrijf, FK_versie, tekst, tag, finaal)
         If res = True Then
-            lblresultaat.Text = "Gelukt."
+
+            'Nu gaan we we de boomstructuur in het geheugen updaten.
+
+            'We halen de tree op waar dit artikel in werd opgeslagen
+            Dim tree As Tree = tree.GetTree(FK_taal, FK_versie, FK_Bedrijf)
+
+            'We proberen het artikel toe te voegen.
+            Dim boodschap As String = tree.VoegArtikelToeAanCategorie(tag, FK_categorie)
+
+            'Boodschap nakijken voor een foutboodschap
+            If boodschap = "OK" Then
+                lblresultaat.Text = "Gelukt."
+            Else
+                lblresultaat.Text = String.Concat("Toevoegen mislukt: ", boodschap)
+            End If
+
         Else
-            lblresultaat.Text = "Toevoegen mislukt."
+            lblresultaat.Text = "Toevoegen mislukt: Kon het artikel niet toevoegen."
         End If
 
     End Sub

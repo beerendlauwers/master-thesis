@@ -202,4 +202,30 @@ Public Class Tree
 
         Return htmlcode
     End Function
+
+    ''' <summary>
+    ''' Voegt een artikel toe aan een categorie. Geeft de string "OK" terug indien gelukt, foutboodschap bij een fout.
+    ''' </summary>
+    Public Function VoegArtikelToeAanCategorie(ByVal tag As String, ByRef categorieID As Integer) As String
+
+        Dim categorie As Node = DoorzoekTreeVoorNode(categorieID, ContentType.Categorie)
+
+        'Even checken of deze categorie wel bestaat
+        If (categorie Is Nothing) Then
+            Return String.Concat("De categorie met nummer """, categorieID, """ bestaat niet in de boomstructuur """, Me._naam, """")
+        End If
+
+        'Artikel ophalen uit de database
+        Dim dt As tblArtikelDataTable = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByTag(tag)
+
+        If dt.Rows.Count > 0 Then
+            'Artikel toevoegen aan de categorie
+            Dim artikel As New Artikel(dt.Rows(0))
+            categorie.AddChild(New Node(artikel))
+        Else
+            Return String.Concat("Het artikel met de tag """, tag, """ werd niet gevonden in de database.")
+        End If
+
+        Return "OK"
+    End Function
 End Class

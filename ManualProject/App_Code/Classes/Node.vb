@@ -18,6 +18,13 @@ Public Class Node
         _children = New List(Of Node)
     End Sub
 
+    Public Sub New(ByRef artikel As Artikel)
+        _ID = artikel.ID
+        _type = ContentType.Artikel
+        _titel = artikel.Titel
+        _children = New List(Of Node)
+    End Sub
+
     Public Property ID() As Integer
         Get
             Return _ID
@@ -46,6 +53,13 @@ Public Class Node
     End Property
 
     ''' <summary>
+    ''' Haal de kinderen op van deze node.
+    ''' </summary>
+    Public Function GetChildren() As List(Of Node)
+        Return _children
+    End Function
+
+    ''' <summary>
     ''' Voeg een kind aan deze node toe.
     ''' </summary>
     Public Sub AddChild(ByRef node As Node)
@@ -57,10 +71,6 @@ Public Class Node
     ''' </summary>
     Public Function GetChildCount() As Integer
         Return _children.Count
-    End Function
-
-    Public Function GetChildren() As List(Of Node)
-        Return _children
     End Function
 
     ''' <summary>

@@ -34,6 +34,27 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
+    Public Function GetArtikelByTag(ByVal tag As String) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
+
+        Dim c As New SqlCommand("Manual_GetArtikelByTag")
+        c.CommandType = CommandType.Text
+        c.Connection = _myConnection
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch
+
+        End Try
+
+        Return dt
+    End Function
+
     Public Function GetArtikelsByTitel(ByVal titel As String) As tblArtikelDataTable
         Dim dt As New tblArtikelDataTable
 
