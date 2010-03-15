@@ -10,6 +10,9 @@ Public Class ArtikelDAL
     Private _tblArtikelAdapter As New tblArtikelTableAdapter
     Private _myConnection As New SqlConnection(conn)
 
+    ''' <summary>
+    ''' Haal alle artikels op die onder een bepaalde categorie staan.
+    ''' </summary>
     Public Function GetArtikelsByParent(ByVal categorieID As Integer) As tblArtikelDataTable
         Dim dt As New tblArtikelDataTable
 
