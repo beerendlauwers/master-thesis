@@ -58,8 +58,8 @@ Public Class ArtikelDAL
     Public Function GetArtikelsByTitel(ByVal titel As String) As tblArtikelDataTable
         Dim dt As New tblArtikelDataTable
 
-        Dim c As New SqlCommand("")
-        c.CommandType = CommandType.Text
+        Dim c As New SqlCommand("Manual_getArtikelsByTitel")
+        c.CommandType = CommandType.StoredProcedure
         c.Connection = _myConnection
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
         Try
@@ -75,4 +75,42 @@ Public Class ArtikelDAL
 
         Return dt
     End Function
+
+    Public Function GetArtikelsByTekst(ByVal tekst As String) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
+
+        Dim c As New SqlCommand("Manual_getArtikelByTekst")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@tekst", SqlDbType.VarChar).Value = tekst
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch
+
+        End Try
+
+        Return dt
+    End Function
+
+    Public Function verwijderArtikel(ByVal artikelID As Integer) As Boolean
+
+        Dim c As New SqlCommand("Manual_deleteArtikelbyID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@artikelID", SqlDbType.Int).Value = artikelID
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+        Catch
+
+        End Try
+    End Function
+
 End Class

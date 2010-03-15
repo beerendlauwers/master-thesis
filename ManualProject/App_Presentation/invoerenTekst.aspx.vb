@@ -4,7 +4,7 @@ Partial Class App_Presentation_invoerenTest
     Inherits System.Web.UI.Page
 
     Private artikel As Manual.tblArtikelRow
-    Private adapter As New ManualTableAdapters.tblArtikelTableAdapter
+    Private adap As New ManualTableAdapters.tblArtikelTableAdapter
 
     Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVoegtoe.Click
         Dim titel As String
@@ -30,7 +30,7 @@ Partial Class App_Presentation_invoerenTest
         End If
 
 
-        res = adapter.Insert(titel, FK_categorie, FK_taal, FK_Bedrijf, FK_versie, tekst, tag, finaal)
+        res = adap.Insert(titel, FK_categorie, FK_taal, FK_Bedrijf, FK_versie, tekst, tag, finaal)
         If res = True Then
 
             'Nu gaan we we de boomstructuur in het geheugen updaten.
