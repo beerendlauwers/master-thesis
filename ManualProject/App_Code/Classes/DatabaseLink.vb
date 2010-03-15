@@ -7,17 +7,14 @@ Imports ManualTableAdapters
 Public Class DatabaseLink
     Private Shared FInstance As DatabaseLink = Nothing
 
+    Private _tblArtikelDAL As ArtikelDAL
     Private _tblCategorieDAL As CategorieDAL
     Private _tblTaalDAL As TaalDAL
     Private _tblVersieDAL As VersieDAL
     Private _tblBedrijfDAL As BedrijfDAL
 
-    Private _tblArtikelAdapter As tblArtikelTableAdapter
-
-
     Private Sub New()
-        _tblArtikelAdapter = New tblArtikelTableAdapter
-
+        _tblArtikelDAL = New ArtikelDAL
         _tblCategorieDAL = New CategorieDAL
         _tblTaalDAL = New TaalDAL
         _tblVersieDAL = New VersieDAL
@@ -64,5 +61,12 @@ Public Class DatabaseLink
     ''' </summary>
     Public Function GetBedrijfFuncties() As BedrijfDAL
         Return _tblBedrijfDAL
+    End Function
+
+    ''' <summary>
+    ''' Haal de databasefuncties op voor de tabel 'Artikel'.
+    ''' </summary>
+    Public Function GetArtikelFuncties() As ArtikelDAL
+        Return _tblArtikelDAL
     End Function
 End Class

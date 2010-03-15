@@ -8,14 +8,12 @@ End Enum
 Public Class Node
     Private _ID As Integer
     Private _type As ContentType
-    Private _tekst As String
     Private _titel As String
     Private _children As List(Of Node)
 
-    Public Sub New(ByVal id As Integer, ByVal type As ContentType, ByVal tekst As String, ByVal titel As String)
+    Public Sub New(ByVal id As Integer, ByVal type As ContentType, ByVal titel As String)
         _ID = id
         _type = type
-        _tekst = tekst
         _titel = titel
         _children = New List(Of Node)
     End Sub
@@ -38,6 +36,15 @@ Public Class Node
         End Set
     End Property
 
+    Public Property Titel() As String
+        Get
+            Return _titel
+        End Get
+        Set(ByVal value As String)
+            _titel = value
+        End Set
+    End Property
+
     ''' <summary>
     ''' Voeg een kind aan deze node toe.
     ''' </summary>
@@ -50,6 +57,10 @@ Public Class Node
     ''' </summary>
     Public Function GetChildCount() As Integer
         Return _children.Count
+    End Function
+
+    Public Function GetChildren() As List(Of Node)
+        Return _children
     End Function
 
     ''' <summary>

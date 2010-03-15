@@ -1,5 +1,6 @@
 ﻿Imports Microsoft.VisualBasic
 Imports Manual
+Imports ContentType
 
 Public Class Tree
     Private _naam As String
@@ -43,6 +44,10 @@ Public Class Tree
     ''' Haal een tree op op basis van de unieke combinatie van taal, versie en het bedrijf.
     ''' </summary>
     Public Shared Function GetTree(ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer) As Tree
+
+        If FTrees Is Nothing Then
+            BouwTrees()
+        End If
 
         For Each t As Tree In FTrees
             If (t._taal = taal And t._versie = versie And t._bedrijf = bedrijf) Then
@@ -88,20 +93,31 @@ Public Class Tree
         Return FTrees
     End Function
 
+    ''' <summary>
+    ''' (Her)bouw de volledige treeverzameling. Dit is zeer intensief voor de server, dus gebruik dit zo weinig mogelijk.
+    ''' </summary>
     Public Shared Sub BouwTrees()
-        'Trees opbouwen
+
+        'Als er reeds een verzameling van trees is, maken we deze terug leeg
+        If FTrees IsNot Nothing Then
+            FTrees = Nothing
+        End If
+
+        'Databasefuncties ophalen
         Dim dblink As DatabaseLink = DatabaseLink.GetInstance
 
         Dim dbcategorie As CategorieDAL = dblink.GetCategorieFuncties
         Dim dbtaal As TaalDAL = dblink.GetTaalFuncties
         Dim dbbedrijf As BedrijfDAL = dblink.GetBedrijfFuncties
         Dim dbversie As VersieDAL = dblink.GetVersieFuncties
+        Dim dbartikel As ArtikelDAL = dblink.GetArtikelFuncties
 
-        'Alle talen ophalen
+        'Alle tabellen ophalen
         Dim taaldt As tblTaalDataTable = dbtaal.GetAllTaal
         Dim bedrijfdt As tblBedrijfDataTable = dbbedrijf.GetAllBedrijf
         Dim versiedt As tblVersieDataTable = dbversie.GetAllVersie
         Dim categoriedt As tblCategorieDataTable
+        Dim artikeldt As tblArtikelDataTable
 
         For Each taal As tblTaalRow In taaldt
             For Each bedrijf As tblBedrijfRow In bedrijfdt
@@ -113,7 +129,7 @@ Public Class Tree
                     Dim rootnode As Node
                     Dim rootnoderij As tblCategorieRow = categoriedt.Rows(0)
                     If rootnoderij.Categorie = "root_node" Then
-                        rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, String.Empty, bedrijf.Naam)
+                        rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam)
                     Else
                         MsgBox("Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De basis (of root node) van de boomstructuur bestaat niet.")
                         Return
@@ -138,10 +154,20 @@ Public Class Tree
                         End If
 
                         'Maak een kind aan
-                        Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, "", categorie.Categorie)
+                        Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie)
 
                         'Plaats het kind onder de parent
                         huidigeParent.AddChild(kind)
+
+                        'En nu alle artikels die onder deze categorie staan ophalen
+                        artikeldt = dbartikel.GetArtikelsByParent(categorie.CategorieID)
+
+                        'De huidige parent is nu het kind
+                        huidigeParent = kind
+                        For Each artikel As tblArtikelRow In artikeldt
+                            Dim art As New Node(artikel.ArtikelID, ContentType.Artikel, artikel.Titel)
+                            huidigeParent.AddChild(art)
+                        Next artikel
 
                     Next categorie
 
@@ -151,4 +177,29 @@ Public Class Tree
             Next bedrijf
         Next taal
     End Sub
+
+    ''' <summary>
+    ''' Deze functie leest een volledige tree uit en geeft alles weer in unordered list formaat.
+    ''' </summary>
+    Public Function BeginNieuweLijst(ByVal htmlcode As String, ByVal parent As Node) As String
+
+        If Not parent.GetChildCount = 0 Then
+            htmlcode = String.Concat(htmlcode, "<ul>")
+        End If
+
+        For Each kind As Node In parent.GetChildren
+            htmlcode = String.Concat(htmlcode, "<li>", kind.Titel, "</li>")
+
+            If kind.Type = Categorie Then
+                htmlcode = BeginNieuweLijst(htmlcode, kind)
+            End If
+
+        Next kind
+
+        If Not parent.GetChildCount = 0 Then
+            htmlcode = String.Concat(htmlcode, "</ul>")
+        End If
+
+        Return htmlcode
+    End Function
 End Class
