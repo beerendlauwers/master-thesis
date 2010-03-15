@@ -41,7 +41,7 @@ Public Class ArtikelDAL
         Dim dt As New tblArtikelDataTable
 
         Dim c As New SqlCommand("Manual_GetArtikelByTag")
-        c.CommandType = CommandType.Text
+        c.CommandType = CommandType.StoredProcedure
         c.Connection = _myConnection
         c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
         Try
@@ -51,8 +51,10 @@ Public Class ArtikelDAL
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
 
-        Catch
-
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
         End Try
 
         Return dt
@@ -72,8 +74,10 @@ Public Class ArtikelDAL
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
 
-        Catch
-
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
         End Try
 
         Return dt
@@ -93,8 +97,10 @@ Public Class ArtikelDAL
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
 
-        Catch
-
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
         End Try
 
         Return dt
@@ -111,8 +117,10 @@ Public Class ArtikelDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-        Catch
-
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
         End Try
     End Function
 
