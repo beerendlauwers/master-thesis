@@ -213,13 +213,13 @@ Public Class Tree
                 htmlcode = String.Concat(htmlcode, "&nbsp;&nbsp;")
             Next i
 
-            If kind.Type = Categorie Then
+            If kind.Type = ContentType.Categorie Then
                 htmlcode = String.Concat(htmlcode, "<a href=""#"" onclick=""Effect.toggle('parent_", kind.ID, "', 'slide', { duration: 0.5 }); veranderDropdown('imgtab_", kind.ID, "'); return false;""><img src=""CSS/images/add.png"" border=""0"" id=""imgtab_", kind.ID, """> ", kind.Titel, "</a><br/>")
             Else
                 htmlcode = String.Concat(htmlcode, "<a href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
             End If
 
-            If kind.Type = Categorie Then
+            If kind.Type = ContentType.Categorie Then
                 htmlcode = BeginNieuweLijst(htmlcode, kind, huidigediepte)
             End If
 

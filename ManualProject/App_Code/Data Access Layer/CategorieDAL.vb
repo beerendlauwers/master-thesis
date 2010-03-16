@@ -9,6 +9,7 @@ Public Class CategorieDAL
     Private conn As String = ConfigurationManager.ConnectionStrings("Reference_manualConnectionString").ConnectionString()
     Private _tblCategorieAdapter As New tblCategorieTableAdapter
     Private _myConnection As New SqlConnection(conn)
+    Private categorie As Categorie
 
     Public Function StdAdapter() As tblCategorieTableAdapter
         Return _tblCategorieAdapter
@@ -43,5 +44,86 @@ Public Class CategorieDAL
         End Try
 
         Return dt
+    End Function
+
+    Public Function getHoogte(ByVal categorieID As Integer) As Data.DataTable
+        Dim dt As New Data.DataTable
+
+
+
+        Dim c As New SqlCommand("Manual_getHoogte")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@categorieID", SqlDbType.Int).Value = categorieID
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+
+    End Function
+
+    Public Function updateHoogte(ByVal hoogte As Integer, ByVal FK_Parent As Integer) As Boolean
+        Dim bool As Boolean
+        Dim c As New SqlCommand("Manual_updateHoogte")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@FK_parent", SqlDbType.Int).Value = FK_Parent
+        c.Parameters.Add("@Hoogte", SqlDbType.Int).Value = hoogte
+        Try
+            c.Connection.Open()
+
+            bool = c.ExecuteNonQuery()
+        Catch ex As Exception
+            Throw ex
+        End Try
+        Return bool
+    End Function
+
+    Public Function getCategorieByID(ByVal categorieID As Integer) As Data.DataTable
+
+        Dim dt As New Data.DataTable
+
+
+
+        Dim c As New SqlCommand("Manual_getCategorieByID")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@categorieID", SqlDbType.Int).Value = categorieID
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+        Return dt
+
     End Function
 End Class
