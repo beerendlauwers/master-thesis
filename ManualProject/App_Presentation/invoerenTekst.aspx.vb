@@ -53,9 +53,4 @@ Partial Class App_Presentation_invoerenTest
         End If
 
     End Sub
-
-    'Protected Sub btnTest_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTest.Click
-    '   lblTest.Text = Editor1.Content
-
-    'End Sub
 End Class

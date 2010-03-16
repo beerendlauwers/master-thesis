@@ -356,3 +356,98 @@ padding: 10px 0px 0px;
 font-size:7pt;   
 }
 
+
+/* begin BlockHeader */
+.art-BlockHeaderStrong
+{
+	background-color: #649ECC;
+	color: #EEEEEE;
+	font-weight: 800;
+	position:relative;
+	z-index:0;
+	height: 30px;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	padding: 0 7px;
+	padding-top: 10px;
+}
+
+.art-BlockHeaderStrong a:hover
+{
+	text-decoration: underline;
+}
+
+.art-BlockHeader
+{
+	position:relative;
+	z-index:0;
+	height: 30px;
+	padding: 0 7px;
+	margin-bottom: 15px;
+}
+
+.art-BlockHeader .t
+{
+	height: 30px;
+	color: #000000;
+	font-family: Georgia, "Times New Roman", Times, Serif;
+	font-size: 13px;
+	white-space : nowrap;
+	padding: 0 7px;
+	line-height: 30px;
+}
+
+.art-BlockHeader .l, .art-BlockHeader .r
+{
+	display:block;
+	position:absolute;
+	z-index:-1;
+	height: 30px;
+	background-image: url('../Images/BlockHeader.png');
+}
+
+.art-BlockHeader .l
+{
+	left:0;
+	right:6px;
+}
+
+.art-BlockHeader .r
+{ 
+	width:988px;
+	right:0;
+	clip: rect(auto, auto, auto, 982px);
+}
+
+
+
+
+
+.art-header-tag-icon
+{
+	display:inline-block;
+	background-position:left top;
+	background-image: url('../Images/BlockHeaderIcon.png');
+	padding:0 0 0 5px;
+	background-repeat: no-repeat;
+	min-height: 10px;
+	margin: 0 0 0 5px;
+}
+
+
+/* end BlockHeader */
+
+.art-legende
+{
+	background-color:#D2D2D0;
+	padding: 5px 5px 5px 5px;
+}
+
+
+/*begin art-content*/
+
+.art-content
+{
+    padding-top:5px;
+    padding-bottom:5px;
+}

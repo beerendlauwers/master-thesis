@@ -53,8 +53,6 @@
 
 
     <cc1:Editor ID="Editor1" runat="server" height="300px" Width="450px"/>
-
-    <asp:Button ID="btnTest" runat="server" Text="btnTest" />
 <asp:Label ID="lblresultaat" runat="server"></asp:Label>
 <br />
 <br />

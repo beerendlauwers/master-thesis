@@ -124,4 +124,33 @@ Public Class ArtikelDAL
         End Try
     End Function
 
+    Public Function updateArtikel(ByVal artikel As Artikel) As Boolean
+        Dim bool As Boolean
+        Dim c As New SqlCommand("Manual_updateArtikel")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@artikelID", SqlDbType.Int).Value = artikel.ID
+        c.Parameters.Add("@Titel", SqlDbType.VarChar).Value = artikel.Titel
+        c.Parameters.Add("@FK_Categorie", SqlDbType.Int).Value = artikel.Categorie
+        c.Parameters.Add("@FK_Taal", SqlDbType.Int).Value = artikel.taal
+        c.Parameters.Add("@FK_Bedrijf", SqlDbType.Int).Value = artikel.Bedrijf
+        c.Parameters.Add("@FK_Versie", SqlDbType.Int).Value = artikel.Versie
+        c.Parameters.Add("@Tekst", SqlDbType.NVarChar).Value = artikel.Tekst
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = artikel.Tag
+        c.Parameters.Add("@Is_final", SqlDbType.Int).Value = artikel.IsFinal
+
+        Try
+            c.Connection.Open()
+
+            bool = c.ExecuteNonQuery()
+
+
+        Catch ex As Exception
+            Throw ex
+
+        End Try
+        Return Bool
+
+    End Function
+
 End Class

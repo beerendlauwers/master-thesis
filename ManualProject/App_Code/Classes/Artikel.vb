@@ -5,6 +5,7 @@ Public Class Artikel
     Private _titel As String
     Private _categorie As Integer
     Private _versie As Integer
+    Private _taal As Integer
     Private _bedrijf As Integer
     Private _tekst As String
     Private _tag As String
@@ -81,6 +82,18 @@ Public Class Artikel
             _isfinal = value
         End Set
     End Property
+    Public Property Taal() As Integer
+        Get
+            Return _taal
+        End Get
+        Set(ByVal value As Integer)
+            _taal = value
+        End Set
+    End Property
+
+    Public Sub New()
+
+    End Sub
 
     Public Sub New(ByVal id As Integer, ByVal titel As String, ByVal categorie As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByVal tekst As String, ByVal tag As String, ByVal isfinal As Integer)
         _ID = id
@@ -91,6 +104,7 @@ Public Class Artikel
         _tekst = tekst
         _tag = tag
         _isfinal = isfinal
+        _taal = Taal
     End Sub
 
     Public Sub New(ByRef row As Manual.tblArtikelRow)

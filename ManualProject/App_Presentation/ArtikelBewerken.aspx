@@ -13,41 +13,60 @@
         <asp:Button ID="btnZoek" runat="server" Text="zoeken" />
 
     <br />
+    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+        <ContentTemplate>
+            <asp:ListBox ID="lsbArtikels" runat="server"></asp:ListBox>
+            <br />
+        </ContentTemplate>
+    </asp:UpdatePanel>
+<asp:Button ID="btnBewerken" runat="server" 
+    Text="bewerken" />
     <br />
-    <asp:Label ID="lblTitel" runat="server" Text="Titel: "></asp:Label>
-    <asp:TextBox ID="txtTitel" runat="server"></asp:TextBox>
     <br />
     <br />
-    <asp:Label ID="lblTag" runat="server" Text="Tag: "></asp:Label>
-    <asp:TextBox ID="txtTag" runat="server"></asp:TextBox>
+    <br />
+    <asp:Label ID="lblTitel" runat="server" Text="Titel: " Visible="false"></asp:Label>
+    <asp:TextBox ID="txtTitel" runat="server" Visible="false"></asp:TextBox>
+    <br />
+    
+    <br />
+    <asp:Label ID="lblTag" runat="server" Text="Tag: " Visible="false"></asp:Label>
+    <asp:TextBox ID="txtTag" runat="server" Visible="false"></asp:TextBox>
     <br />
     <br />
-    <asp:Label ID="lblCategorie" runat="server" Text="Categorie: "></asp:Label>
+    <asp:Label ID="lblCategorie" runat="server" Text="Categorie: " Visible="false"></asp:Label>
     <asp:DropDownList ID="ddlCategorie" runat="server" DataSourceID="objdCategorie" 
-        DataTextField="Categorie" DataValueField="CategorieID">
+        DataTextField="Categorie" DataValueField="CategorieID" Visible="false" >
     </asp:DropDownList>
     <br />
     <br />
-    <asp:Label ID="lblVersie" runat="server" Text="Versie: "></asp:Label>
+    <asp:Label ID="lblVersie" runat="server" Text="Versie: " Visible="false"></asp:Label>
     <asp:DropDownList ID="ddlVersie" runat="server" 
         DataSourceID="ObjectDataSource1" DataTextField="Versie" 
-        DataValueField="VersieID">
+        DataValueField="VersieID" Visible="false">
     </asp:DropDownList>
     <br />
     <br />
-    <asp:Label ID="lblTaal" runat="server" Text="Taal: "></asp:Label>
+    <asp:Label ID="lblTaal" runat="server" Text="Taal: " Visible="false"></asp:Label>
     <asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
-        DataTextField="Taal" DataValueField="TaalID">
+        DataTextField="Taal" DataValueField="TaalID" Visible="false">
     </asp:DropDownList>
     <br />
     <br />
-    <asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label>
+    <asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: " Visible="false"></asp:Label>
     <asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
-        DataTextField="Naam" DataValueField="BedrijfID">
+        DataTextField="Naam" DataValueField="BedrijfID" Visible="false">
     </asp:DropDownList>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <asp:Label ID="lblIs_final" runat="server" Text="Artikel is finaal: " 
+        Visible="False"></asp:Label>
+    <asp:CheckBox ID="ckbFinal" runat="server" Visible="False" />
     <br />
 
-<cc1:Editor ID="Editor1" runat="server" Height="300px" Width="600px" />
+<cc1:Editor ID="Editor1" runat="server" Height="300px" Width="600px" Visible="false"/>
+
+    <asp:Button ID="btnUpdate" runat="server" Text="Wijzig" />
+&nbsp;<asp:Label ID="lblVar" runat="server" Visible="False"></asp:Label>
 
     <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" 
         DeleteMethod="Delete" InsertMethod="Insert" 

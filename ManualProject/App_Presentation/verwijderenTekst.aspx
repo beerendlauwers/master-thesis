@@ -22,8 +22,7 @@
         <asp:Label ID="lblSearch" runat="server" Text="Zoek: "></asp:Label>
         <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
 &nbsp;&nbsp;
-        <asp:Label ID="lblWut" runat="server"></asp:Label>
-    </p>
+        </p>
     <p>
         ----------------------------------------------</p>
     <p>
@@ -44,6 +43,8 @@
     <p>
         &nbsp;&nbsp;
         <asp:Button ID="btnVerwijder" runat="server" Text="Verwijder" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <asp:Label ID="lblRes" runat="server"></asp:Label>
     </p>
 
 

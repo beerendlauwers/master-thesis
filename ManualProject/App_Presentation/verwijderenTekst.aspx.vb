@@ -84,7 +84,11 @@ Partial Class App_Presentation_verwijderenTekst
 
     Protected Sub btnVerwijder_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVerwijder.Click
         Dim artikelID As Integer = ListBox1.SelectedValue
-        lblWut.Text = artikelID.ToString()
+        lblRes.Text = artikelID.ToString()
+        If artikel.verwijderArtikel(artikelID) = True Then
+            lblRes.Text = "Verwijderd"
+        End If
 
     End Sub
 End Class
+
