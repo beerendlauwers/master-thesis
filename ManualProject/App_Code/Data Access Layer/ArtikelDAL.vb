@@ -37,7 +37,34 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
-    Public Function GetArtikelByTag(ByVal tag As String) As tblArtikelDataTable
+    Public Function GetArtikelByID(ByVal ID As Integer) As tblArtikelRow
+        Dim dt As New tblArtikelDataTable
+
+        Dim c As New SqlCommand("Manual_GetArtikelByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@id", SqlDbType.Int).Value = ID
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        If (dt.Rows.Count = 0) Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
+    End Function
+
+    Public Function GetArtikelByTag(ByVal tag As String) As tblArtikelRow
         Dim dt As New tblArtikelDataTable
 
         Dim c As New SqlCommand("Manual_GetArtikelByTag")
@@ -57,7 +84,11 @@ Public Class ArtikelDAL
             c.Connection.Close()
         End Try
 
-        Return dt
+        If (dt.Rows.Count = 0) Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
     End Function
 
     Public Function GetArtikelsByTitel(ByVal titel As String) As tblArtikelDataTable

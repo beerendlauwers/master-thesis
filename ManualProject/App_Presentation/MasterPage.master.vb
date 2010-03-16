@@ -25,11 +25,19 @@ Partial Class App_Presentation_MasterPage
         Dim t As Tree = Tree.GetTree(taal, versie, bedrijf)
         Dim root As Node = t.RootNode
 
-        Dim holder As ContentPlaceHolder = Me.FindControl("ContentPlaceHolderSideBar")
-        Dim boomdiv As HtmlGenericControl = holder.FindControl("divBoomStructuur")
-        Dim dap As Object = holder.Controls.Item(0)
-        Dim dap2 As Object = holder.Controls.Item(1)
-        boomdiv.InnerHtml = t.BeginNieuweLijst(htmlcode, root, -1)
+        htmlcode = String.Concat(htmlcode, "<br/><div>", t.Bedrijf.Naam, "</div>")
+
+        htmlcode = t.BeginNieuweLijst(htmlcode, root, -1)
+
+        Dim t2 As Tree = Tree.GetTree(taal, versie, 1)
+        Dim root2 As Node = t2.RootNode
+
+        htmlcode = String.Concat(htmlcode, "<br/><div>", t2.Bedrijf.Naam, "</div>")
+
+        htmlcode = t.BeginNieuweLijst(htmlcode, root2, -1)
+
+        Dim boomdiv As HtmlGenericControl = Me.FindControl("divBoomStructuur")
+        boomdiv.InnerHtml = htmlcode
 
     End Sub
 

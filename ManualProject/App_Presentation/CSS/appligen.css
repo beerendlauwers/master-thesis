@@ -1,18 +1,41 @@
-﻿.header
-{
-    display:block;
-    margin-left:auto;
-    margin-right:auto;
+﻿body {
 }
 
-body {
+.h1
+{
+	font-size: 150%;
+	font-variant: small-caps;
 }
+
+span.MsoHyperlink
+{
+	text-decoration: none;
+	color: #193C78;
+}
+
+a
+{
+	text-decoration: none;
+}
+
+a:link {color:#193C78;}      /* unvisited link */
+a:visited {color:#193C78;}  /* visited link */
+a:hover {color:#255AB6; text-decoration: underline;}  /* mouse over link */
+a:active {color:#255AB6;}  /* selected link */
+
 
 #header
 {
     display:block;
     margin-left:auto;
     margin-right:auto;
+    border-bottom:22px solid #173E79;
+}
+
+#logo
+{
+	padding-top: 5px;
+	background-color:#F3F6F9;
 }
 
 #main
@@ -335,11 +358,21 @@ position: relative;
 
 #input
 {
+	vertical-align: top;
+}
+
+#td-input
+{
+	vertical-align: top;
+}
+
+#td-boom
+{
+	padding-left: 10px;
+	vertical-align: top;
 	background-image:url('images/main.gif');
 	background-repeat:no-repeat;
 }
-
-
 
 
 #boom

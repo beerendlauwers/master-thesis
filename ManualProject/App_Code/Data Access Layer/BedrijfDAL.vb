@@ -14,6 +14,33 @@ Public Class BedrijfDAL
         Return _tblBedrijfAdapter
     End Function
 
+    Public Function GetBedrijfByID(ByVal id As Integer) As tblBedrijfRow
+        Dim dt As New tblBedrijfDataTable
+
+        Dim c As New SqlCommand("Manual_GetBedrijfByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@id", SqlDbType.Int).Value = id
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
+    End Function
+
     Public Function GetAllBedrijf() As tblBedrijfDataTable
         Dim dt As New tblBedrijfDataTable
 

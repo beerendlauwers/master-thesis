@@ -16,10 +16,14 @@
     </asp:ContentPlaceHolder>
 </head>
 
-<body>
+<body id="MasterBody" runat="server">
     <form id="form1" runat="server">
      <asp:scriptmanager ID="Scriptmanager2" runat="server"></asp:scriptmanager>
-    <img  id="header" src="CSS/images/header.jpg" style="display:block"  />
+    <div id="header" style="display:block">
+    <img src="CSS/images/rodebalk.gif" /></div>
+    <div id="logo">
+    <img src="CSS/images/APPLIGEN-LOGO-BASE-RGB.gif" />
+    </div>
     <div>
     <div id=main>
     <div class="art-nav">
@@ -45,20 +49,20 @@
             </li>
             <li><a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span>
                 <span class="t">Taal</span></a> </li>
+            <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false"><a runat="server" id="A1"><span class="l"></span><span class="r"></span>
+                <span class="t">Dit artikel bewerken</span></a> </li>
         </ul>
     </div>
     <div id="blok">
         <table>
         <tr>
-        <td width="25%">
+        <td width="25%" id="td-boom">
         <div id="boom">
-            <asp:ContentPlaceHolder id="ContentPlaceHolderSideBar" runat="server">
                 <div>Categorieën</div>
                 <div runat="server" id="divBoomstructuur"></div>
-            </asp:ContentPlaceHolder>
         </div>
         </td>
-        <td>
+        <td id="td-input">
         <div id="input">
             <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>

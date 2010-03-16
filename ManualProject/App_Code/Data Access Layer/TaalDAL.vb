@@ -14,6 +14,33 @@ Public Class TaalDAL
         Return _tblTaalAdapter
     End Function
 
+    Public Function GetTaalByID(ByVal id As Integer) As tblTaalRow
+        Dim dt As New tblTaalDataTable
+
+        Dim c As New SqlCommand("Manual_GetTaalByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@id", SqlDbType.Int).Value = id
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
+    End Function
+
     Public Function GetAllTaal() As tblTaalDataTable
         Dim dt As New tblTaalDataTable
 

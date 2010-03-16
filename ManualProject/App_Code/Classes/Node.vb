@@ -74,7 +74,7 @@ Public Class Node
     End Function
 
     ''' <summary>
-    ''' Doorzoek recursief de kinderen van deze node, de kinderen van de kinderen, etc.
+    ''' Doorzoek recursief de kinderen van deze node, de kinderen van de kinderen, etc om een node te vinden
     ''' </summary>
     Public Function GetChildBy(ByVal id As Integer, ByVal type As ContentType) As Node
 
@@ -90,6 +90,25 @@ Public Class Node
                 Return child
             End If
         Next n
+
+        Return Nothing
+    End Function
+
+    ''' <summary>
+    ''' Doorzoek recursief de kinderen van deze node, de kinderen van de kinderen, etc om de parent van een node te vinden
+    ''' </summary>
+    Public Function VindParentVanNode(ByRef node As Node) As Node
+
+        For Each kind As Node In _children
+            If (kind.ID = node.ID And kind.Type = node.Type) Then
+                Return Me
+            End If
+
+            Dim returnednode As Node = kind.VindParentVanNode(node)
+            If returnednode IsNot Nothing Then
+                Return returnednode
+            End If
+        Next
 
         Return Nothing
     End Function

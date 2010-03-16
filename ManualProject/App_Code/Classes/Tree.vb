@@ -4,20 +4,30 @@ Imports ContentType
 
 Public Class Tree
     Private _naam As String
-    Private _taal As Integer
-    Private _versie As Integer
-    Private _bedrijf As Integer
+    Private _taal As Taal
+    Private _versie As Versie
+    Private _bedrijf As Bedrijf
     Private _rootnode As Node
 
     Private Shared FTrees As List(Of Tree) = Nothing
 
     Public Sub New(ByVal naam As String, ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByVal rootnode As Node)
         _naam = naam
-        _taal = taal
-        _versie = versie
-        _bedrijf = bedrijf
+        _taal = New Taal(DatabaseLink.GetInstance.GetTaalFuncties.GetTaalByID(taal))
+        _versie = New Versie(DatabaseLink.GetInstance.GetVersieFuncties.GetVersieByID(versie))
+        _bedrijf = New Bedrijf(DatabaseLink.GetInstance.GetBedrijfFuncties.GetBedrijfByID(bedrijf))
         _rootnode = rootnode
     End Sub
+
+    Public Property Bedrijf() As Bedrijf
+        Get
+            Return _bedrijf
+        End Get
+        Set(ByVal value As Bedrijf)
+            _bedrijf = value
+        End Set
+    End Property
+
 
     Public Property RootNode() As Node
         Get
@@ -40,6 +50,10 @@ Public Class Tree
         Return _rootnode.GetChildBy(id, type)
     End Function
 
+    Public Function VindParentVanNode(ByRef node As Node) As Node
+        Return _rootnode.VindParentVanNode(node)
+    End Function
+
     ''' <summary>
     ''' Haal een tree op op basis van de unieke combinatie van taal, versie en het bedrijf.
     ''' </summary>
@@ -50,7 +64,7 @@ Public Class Tree
         End If
 
         For Each t As Tree In FTrees
-            If (t._taal = taal And t._versie = versie And t._bedrijf = bedrijf) Then
+            If (t._taal.ID = taal And t._versie.ID = versie And t._bedrijf.ID = bedrijf) Then
                 Return t
             End If
         Next t
@@ -63,7 +77,7 @@ Public Class Tree
     ''' </summary>
     Public Shared Function GetTree(ByRef tree As Tree) As Tree
         For Each t As Tree In FTrees
-            If (t._taal = tree._taal And t._versie = tree._versie And t._bedrijf = tree._bedrijf) Then
+            If (t._taal Is tree._taal And t._versie Is tree._versie And t._bedrijf Is tree._bedrijf) Then
                 Return t
             End If
         Next t
@@ -202,7 +216,7 @@ Public Class Tree
             If kind.Type = Categorie Then
                 htmlcode = String.Concat(htmlcode, "<a href=""#"" onclick=""Effect.toggle('parent_", kind.ID, "', 'slide', { duration: 0.5 }); veranderDropdown('imgtab_", kind.ID, "'); return false;""><img src=""CSS/images/add.png"" border=""0"" id=""imgtab_", kind.ID, """> ", kind.Titel, "</a><br/>")
             Else
-                htmlcode = String.Concat(htmlcode, kind.Titel, "<br/>")
+                htmlcode = String.Concat(htmlcode, "<a href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
             End If
 
             If kind.Type = Categorie Then
@@ -231,11 +245,11 @@ Public Class Tree
         End If
 
         'Artikel ophalen uit de database
-        Dim dt As tblArtikelDataTable = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByTag(tag)
+        Dim row As tblArtikelRow = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByTag(tag)
 
-        If dt.Rows.Count > 0 Then
+        If row IsNot Nothing Then
             'Artikel toevoegen aan de categorie
-            Dim artikel As New Artikel(dt.Rows(0))
+            Dim artikel As New Artikel(row)
             categorie.AddChild(New Node(artikel))
         Else
             Return String.Concat("Het artikel met de tag """, tag, """ werd niet gevonden in de database.")
