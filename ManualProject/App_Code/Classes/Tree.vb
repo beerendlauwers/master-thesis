@@ -181,26 +181,41 @@ Public Class Tree
     ''' <summary>
     ''' Deze functie leest een volledige tree uit en geeft alles weer in unordered list formaat.
     ''' </summary>
-    Public Function BeginNieuweLijst(ByVal htmlcode As String, ByVal parent As Node) As String
+    Public Function BeginNieuweLijst(ByVal htmlcode As String, ByVal parent As Node, ByVal diepte As Integer) As String
+
+        Dim huidigediepte As Integer = diepte + 1
 
         If Not parent.GetChildCount = 0 Then
-            htmlcode = String.Concat(htmlcode, "<ul>")
+            If parent.ID = 0 Then
+                htmlcode = String.Concat(htmlcode, "<div id=""parent_", parent.ID, """><div>")
+            Else
+                htmlcode = String.Concat(htmlcode, "<div id=""parent_", parent.ID, """ style=""display:none;""><div>")
+            End If
         End If
 
         For Each kind As Node In parent.GetChildren
-            htmlcode = String.Concat(htmlcode, "<li>", kind.Titel, "</li>")
+
+            For i = 0 To huidigediepte
+                htmlcode = String.Concat(htmlcode, "&nbsp;&nbsp;")
+            Next i
 
             If kind.Type = Categorie Then
-                htmlcode = BeginNieuweLijst(htmlcode, kind)
+                htmlcode = String.Concat(htmlcode, "<a href=""#"" onclick=""Effect.toggle('parent_", kind.ID, "', 'slide', { duration: 0.5 }); veranderDropdown('imgtab_", kind.ID, "'); return false;""><img src=""CSS/images/add.png"" border=""0"" id=""imgtab_", kind.ID, """> ", kind.Titel, "</a><br/>")
+            Else
+                htmlcode = String.Concat(htmlcode, kind.Titel, "<br/>")
+            End If
+
+            If kind.Type = Categorie Then
+                htmlcode = BeginNieuweLijst(htmlcode, kind, huidigediepte)
             End If
 
         Next kind
 
-        If Not parent.GetChildCount = 0 Then
-            htmlcode = String.Concat(htmlcode, "</ul>")
-        End If
+            If Not parent.GetChildCount = 0 Then
+                htmlcode = String.Concat(htmlcode, "</div></div>")
+            End If
 
-        Return htmlcode
+            Return htmlcode
     End Function
 
     ''' <summary>

@@ -6,8 +6,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-<link href="CSS/appligen.css" rel="stylesheet" type="text/css" />
 <head runat="server">
+<link href="CSS/appligen.css" rel="stylesheet" type="text/css" />
+<script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
+<script src="JS/scriptaculous.js" language="javascript" type="text/javascript"></script>
+<script src="JS/custom.js" language="javascript" type="text/javascript"></script>
     <asp:ContentPlaceHolder id="head" runat="server">
     
     </asp:ContentPlaceHolder>
@@ -28,49 +31,45 @@
             <li><a runat="server" ><span class="l"></span><span class="r"></span>
                 <span class="t">Artikels</span></a> 
                 <ul>
-                    <li><a id="A2" runat="server"><img src="CSS/images/add.png" /> Toevoegen</a></li>
-                    <li><a id="A3" runat="server"><img src="CSS/images/wrench.png" /> Bewerken</a></li>
-                    <li><a id="A4" runat="server"><img src="CSS/images/remove.png" /> Verwijderen</a></li>
+                    <li><a runat="server" id="ArtikelToevoegen" runat="server"><img src="CSS/images/add.png" border="0" /> Toevoegen</a></li>
+                    <li><a runat="server" id="ArtikelBewerken" runat="server"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
+                    <li><a runat="server" id="ArtikelVerwijderen" runat="server"><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
                 </ul></li>
             <li><a runat="server" ><span class="l"></span><span class="r"></span>
                 <span class="t">Categoriën </span></a>
                 <ul>
-                    <li><a runat="server"><img src="CSS/images/add.png" /> Toevoegen</a></li>
-                    <li><a runat="server"><img src="CSS/images/wrench.png" /> Bewerken</a></li>
-                    <li><a runat="server"><img src="CSS/images/remove.png" /> Verwijderen</a></li>
+                    <li><a runat="server" id="CategorieToevoegen"><img src="CSS/images/add.png" border="0"  /> Toevoegen</a></li>
+                    <li><a runat="server" id="CategorieBewerken"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
+                    <li><a runat="server" id="CategorieVerwijderen"><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
                 </ul>
             </li>
             <li><a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span>
                 <span class="t">Taal</span></a> </li>
         </ul>
     </div>
+    <div id="blok">
+        <table>
+        <tr>
+        <td width="25%">
         <div id="boom">
-            <a href="#">Categoriën</a><ul>
-                <li>huh? </li>
-                <li>more huh? </li>
-                <li>huh3? </li>
-                <li>negro
-                    <ul>
-                        <li>huh²</li></ul>
-                </li>
-                <li>huh? </li>
-            </ul>
-    </div>
-    <div id=blok>
-    
-    <div id=input>
-        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
-           
-            
-            
-            
-
-        </asp:ContentPlaceHolder>
+            <asp:ContentPlaceHolder id="ContentPlaceHolderSideBar" runat="server">
+                <div>Categorieën</div>
+                <div runat="server" id="divBoomstructuur"></div>
+            </asp:ContentPlaceHolder>
         </div>
+        </td>
+        <td>
+        <div id="input">
+            <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
         </div>
+        </td>
+        </tr>
+        </table>
     </div>
     </div>
-    <div id=footer>
+    </div>
+    <div id="footer">
     © 2010 Appligen
     </div> 
     </form>

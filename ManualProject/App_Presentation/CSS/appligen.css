@@ -23,17 +23,12 @@ margin: 0px auto;
 overflow: hidden;
 padding: 0px 0px 45px;
 position: relative;
-width: 970px;
 
 }
 
 #blok
 {
-    background-image:url('images/main.gif');
-    background-repeat:no-repeat;
-    padding: 0px 0px 0px 30px;
-    width: 700px;
-    float:right;
+    padding: 0px 0px 0px 0px;
     position:relative;    
 }
 
@@ -338,6 +333,11 @@ width: 970px;
 
 /* end MenuSubItem */
 
+#input
+{
+	background-image:url('images/main.gif');
+	background-repeat:no-repeat;
+}
 
 
 
@@ -345,7 +345,7 @@ width: 970px;
 #boom
 {
     display:block;
-    float:left;
+    font-size:smaller;
 }
 
 #footer
@@ -353,11 +353,6 @@ width: 970px;
    
 margin: 0px auto;
 padding: 10px 0px 0px;
-width: 905px;
 font-size:7pt;   
 }
-
-
-
-
 
