@@ -1,5 +1,7 @@
 ﻿<%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="App_Presentation_MasterPage" %>
 
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc2" %>
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit.HTMLEditor"
     TagPrefix="cc1" %>
 
@@ -20,7 +22,8 @@
     <form id="form1" runat="server">
      <asp:scriptmanager ID="Scriptmanager2" runat="server"></asp:scriptmanager>
     <div id="header" style="display:block">
-    <img src="CSS/images/rodebalk.gif" /></div>
+    <img src="CSS/images/rodebalk.gif" />
+    </div>
     <div id="logo">
     <img src="CSS/images/APPLIGEN-LOGO-BASE-RGB.gif" />
     </div>

@@ -19,7 +19,7 @@ Partial Class App_Presentation_invoerenTest
         tekst = Editor1.Content
         tag = txtTag.Text
         titel = txtTitel.Text
-        FK_versie = Integer.Parse(txtVersie.Text)
+        FK_versie = ddlVersie.SelectedValue
         FK_Bedrijf = ddlBedrijf.SelectedValue
         FK_categorie = ddlCategorie.SelectedValue
         FK_taal = ddlTaal.SelectedValue

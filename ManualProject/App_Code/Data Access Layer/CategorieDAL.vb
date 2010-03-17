@@ -126,4 +126,93 @@ Public Class CategorieDAL
         Return dt
 
     End Function
+
+    Public Function getArtikelsByParent(ByVal parent As Integer) As Data.DataTable
+
+        Dim dt As New Data.DataTable
+
+
+
+        Dim c As New SqlCommand("[Manual_GetArtikelsByParent]")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@categorieID", SqlDbType.Int).Value = parent
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
+
+    Public Function getCategorieByParent(ByVal parent As Integer) As Data.DataTable
+
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Manual_getCategorieByParent")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@FK_Parent", SqlDbType.Int).Value = parent
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+
+    Public Function getCategorieZonderRoot() As Data.DataTable
+
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Manual_getCategorieZonderRoot")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+        Return dt
+    End Function
+
 End Class

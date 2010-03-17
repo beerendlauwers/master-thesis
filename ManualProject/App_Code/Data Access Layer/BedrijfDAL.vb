@@ -63,4 +63,28 @@ Public Class BedrijfDAL
 
         Return dt
     End Function
+
+    'Public Function getBedrijfByID(ByVal bedrijfID As Integer) As Manual.tblBedrijfDataTable
+    '    Dim dt As New tblBedrijfDataTable
+
+    '    Dim c As New SqlCommand("Manual_getBedrijfByID")
+    '    c.CommandType = CommandType.StoredProcedure
+    '    c.Parameters.Add("@Id", SqlDbType.Int).Value = bedrijfID
+    '    c.Connection = _myConnection
+
+    '    Try
+    '        Dim r As SqlDataReader
+    '        c.Connection.Open()
+
+    '        r = c.ExecuteReader
+    '        If (r.HasRows) Then dt.Load(r)
+    '        Return dt
+    '    Catch ex As Exception
+    '        Throw ex
+    '    Finally
+    '        c.Connection.Close()
+    '    End Try
+
+    '    Return dt
+    'End Function
 End Class

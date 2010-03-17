@@ -184,4 +184,92 @@ Public Class ArtikelDAL
 
     End Function
 
+    Public Function getArtikelsByVersie(ByVal versieID As Integer) As Data.DataTable
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Manual_getArtikelsByVersie")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@VersieID", SqlDbType.Int).Value = versieID
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+
+
+    Public Function getArtikelsByTaal(ByVal TaalID As Integer) As Data.DataTable
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Manual_getArtikelsByTaal")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@TaalID", SqlDbType.Int).Value = TaalID
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+
+    Public Function getArtikelsByBedrijf(ByVal bedrijfID As Integer) As Data.DataTable
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("[Manual_getArtikelsByBedrijf]")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@BedrijfID", SqlDbType.Int).Value = bedrijfID
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+
 End Class

@@ -42,7 +42,9 @@
 
 
     <asp:Label ID="Label1" runat="server" Text="Versie (optioneel): "></asp:Label>
-<asp:TextBox ID="txtVersie" runat="server"></asp:TextBox>
+&nbsp;<asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie" 
+    DataTextField="Versie" DataValueField="VersieID">
+    </asp:DropDownList>
 
 
     <br />
@@ -112,6 +114,22 @@
         <InsertParameters>
             <asp:Parameter Name="BedrijfID" Type="Int32" />
             <asp:Parameter Name="Naam" Type="String" />
+        </InsertParameters>
+    </asp:ObjectDataSource>
+
+    <asp:ObjectDataSource ID="objdVersie" runat="server" DeleteMethod="Delete" 
+        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="GetData" TypeName="ManualTableAdapters.tblVersieTableAdapter" 
+        UpdateMethod="Update">
+        <DeleteParameters>
+            <asp:Parameter Name="Original_VersieID" Type="Int32" />
+        </DeleteParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="Versie" Type="String" />
+            <asp:Parameter Name="Original_VersieID" Type="Int32" />
+        </UpdateParameters>
+        <InsertParameters>
+            <asp:Parameter Name="Versie" Type="String" />
         </InsertParameters>
     </asp:ObjectDataSource>
 
