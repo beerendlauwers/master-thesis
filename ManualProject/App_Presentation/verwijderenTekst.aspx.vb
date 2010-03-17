@@ -1,46 +1,29 @@
 ﻿
 Partial Class App_Presentation_verwijderenTekst
     Inherits System.Web.UI.Page
-    Private artikel As New ArtikelDAL
     
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
-        Dim str As String
-        Dim dt As New Data.DataTable
-        Dim dr As Data.DataRow = dt.NewRow
-        Dim titel As String = txtSearch.Text
-        Dim tekst As String = txtSearchText.Text
+        Dim titel As String = txtSearchTitel.Text.Trim
+        Dim tekst As String = txtSearchText.Text.Trim
+
         If titel.Length > 0 Then
-            str = "%" + txtSearch.Text + "%"
-            dt = artikel.GetArtikelsByTitel(str)
-            Dim tf As New TemplateField
-            'GridView1.DataSource = dt
-            'GridView1.Columns.Add(tf)
-            'GridView1.DataBind()
-            For Each dr In dt.Rows
+            titel = "%" + txtSearchTitel.Text + "%"
+            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTitel(titel)
+            grdResultaten.DataBind()
+            Me.grdResultaten.Visible = True
+            Me.lblSelecteerArtikel.Visible = True
+        ElseIf tekst.Length > 0 Then
+            tekst = """*" + txtSearchText.Text + "*"""
+            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTekst(tekst)
+            grdResultaten.DataBind()
+            Me.grdResultaten.Visible = True
+            Me.lblSelecteerArtikel.Visible = True
+        End If
 
-                If zoektext(str, dt.Rows(0)("tekst")) = True Then
-                    Exit For
-                Else
-
-                End If
-            Next
-            ListBox1.Items.Clear()
-            For Each dr In dt.Rows
-                ListBox1.Items.Add(dr("titel"))
-            Next
+        If Me.grdResultaten.Rows.Count = 0 Then
+            Me.lblSelecteerArtikel.Text = "Er werden geen artikels gevonden."
         Else
-            str = """" + txtSearchText.Text + """"
-            'lblWut.Text = str
-            dt = artikel.GetArtikelsByTekst(str)
-            Dim tf As New TemplateField
-            'GridView1.DataSource = dt
-            'GridView1.Columns.Add(tf)
-            'GridView1.DataBind()
-            ListBox1.Items.Clear()
-            For Each dr In dt.Rows
-                Dim item As New ListItem(dr("titel"), dr("artikelID"))
-                ListBox1.Items.Add(item)
-            Next
+            Me.lblSelecteerArtikel.Text = "Selecteer een artikel om te verwijderen."
         End If
 
     End Sub
@@ -82,13 +65,55 @@ Partial Class App_Presentation_verwijderenTekst
         Return True
     End Function
 
-    Protected Sub btnVerwijder_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVerwijder.Click
-        Dim artikelID As Integer = ListBox1.SelectedValue
-        lblRes.Text = artikelID.ToString()
-        If artikel.verwijderArtikel(artikelID) = True Then
-            lblRes.Text = "Verwijderd"
-        End If
+    Protected Sub grdResultaten_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdResultaten.RowCommand
+        If e.CommandName = "Select" Then
 
+            Dim row As GridViewRow = Me.grdResultaten.Rows(e.CommandArgument)
+
+            Dim artikeltag As String = row.Cells(1).Text
+            Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
+
+            'Artikel ophalen en in object opslaan
+            Dim artikel As New Artikel(artikeldal.GetArtikelByTag(artikeltag))
+
+            'Artikel verwijderen uit database
+            If artikeldal.verwijderArtikel(artikel.ID) = True Then
+
+                'Artikel verwijderen uit de boomstructuur
+                'We halen de tree op waar dit artikel in werd opgeslagen
+                Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+
+                Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
+
+                If (node Is Nothing) Then
+                    Me.lblRes.Text = "Verwijderen geslaagd met waarschuwing: Het artikel komt niet voor in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren."
+                    Return
+                End If
+
+                Dim parent As Node = tree.VindParentVanNode(node)
+
+                If (parent Is Nothing) Then
+                    Me.lblRes.Text = "Verwijderen geslaagd met waarschuwing: Het artikel staat niet onder een categorie in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren."
+                    Return
+                End If
+
+                parent.VerwijderKind(node)
+
+                Me.lblRes.Text = "Verwijderen geslaagd."
+            Else
+                Me.lblRes.Text = "Verwijderen mislukt: Kon niet verbinden met de database."
+            End If
+
+            Me.grdResultaten.DataBind()
+
+            Dim javascript As String = String.Concat("function verwijderKind_", artikel.ID, "() { document.getElementById(child_", artikel.ID, ").style.display = ""none""; }")
+
+            Page.ClientScript.RegisterStartupScript(Me.GetType(), String.Concat("verwijderKind_", artikel.ID), javascript, True)
+
+            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
+            body.Attributes.Add("onload", String.Concat("verwijderKind_", artikel.ID, "();"))
+
+        End If
     End Sub
 End Class
 

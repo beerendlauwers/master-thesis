@@ -487,6 +487,20 @@ font-size:7pt;
 }
 
 
+
+
+#gridview table tbody tr th
+{
+	background-color: #0352A3;
+	color: #FFFFFF;
+}
+
+#gridview table tbody tr td
+{
+	padding: 2px 2px 2px 2px;
+	text-align: center;
+}
+
 /*ajax uploaden*/
 .update
 {
@@ -495,5 +509,3 @@ font-size:7pt;
     margin-right:auto;
     text-align:center;
 }
-
-

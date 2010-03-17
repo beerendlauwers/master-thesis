@@ -91,6 +91,33 @@ Public Class ArtikelDAL
         End If
     End Function
 
+    Public Function GetArtikelsByTitel(ByVal titel As String, ByVal versie As Integer, ByVal bedrijf As Integer, ByVal taal As Integer) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
+
+        Dim c As New SqlCommand("Manual_GetArtikelsByTitel_Versie_Bedrijf_Taal")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+
+    End Function
+
     Public Function GetArtikelsByTitel(ByVal titel As String) As tblArtikelDataTable
         Dim dt As New tblArtikelDataTable
 
@@ -98,6 +125,32 @@ Public Class ArtikelDAL
         c.CommandType = CommandType.StoredProcedure
         c.Connection = _myConnection
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
+    Public Function GetArtikelsByTekst(ByVal tekst As String, ByVal versie As Integer, ByVal bedrijf As Integer, ByVal taal As Integer) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
+
+        Dim c As New SqlCommand("Manual_getArtikelByTekst_Versie_Bedrijf_Taal")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@tekst", SqlDbType.NVarChar).Value = tekst
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
@@ -137,6 +190,52 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
+    Public Function GetArtikelGegevensByTitel(ByVal titel As String) As DataTable
+        Dim dt As New DataTable
+
+        Dim c As New SqlCommand("Manual_GetArtikelGegevensByTitel")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
+    Public Function GetArtikelGegevensByTekst(ByVal tekst As String) As DataTable
+        Dim dt As New DataTable
+
+        Dim c As New SqlCommand("Manual_GetArtikelGegevensByTekst")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = _myConnection
+        c.Parameters.Add("@tekst", SqlDbType.NVarChar).Value = tekst
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
     Public Function verwijderArtikel(ByVal artikelID As Integer) As Boolean
 
         Dim c As New SqlCommand("Manual_deleteArtikelbyID")
@@ -150,9 +249,12 @@ Public Class ArtikelDAL
             r = c.ExecuteReader
         Catch ex As Exception
             Throw ex
+            Return False
         Finally
             c.Connection.Close()
         End Try
+
+        Return True
     End Function
 
     Public Function updateArtikel(ByVal artikel As Artikel) As Boolean

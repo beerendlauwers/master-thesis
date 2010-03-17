@@ -33,7 +33,7 @@ Partial Class App_Presentation_invoerenTest
         res = adap.Insert(titel, FK_categorie, FK_taal, FK_Bedrijf, FK_versie, tekst, tag, finaal)
         If res = True Then
 
-            'Nu gaan we we de boomstructuur in het geheugen updaten.
+            'Nu gaan we de boomstructuur in het geheugen updaten.
 
             'We halen de tree op waar dit artikel in werd opgeslagen
             Dim tree As Tree = tree.GetTree(FK_taal, FK_versie, FK_Bedrijf)
@@ -43,7 +43,7 @@ Partial Class App_Presentation_invoerenTest
 
             'Boodschap nakijken voor een foutboodschap
             If boodschap = "OK" Then
-                lblresultaat.Text = "Gelukt."
+                lblresultaat.Text = "Toevoegen Geslaagd."
             Else
                 lblresultaat.Text = String.Concat("Toevoegen mislukt: ", boodschap)
             End If

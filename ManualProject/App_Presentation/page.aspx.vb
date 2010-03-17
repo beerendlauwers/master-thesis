@@ -69,7 +69,7 @@ Partial Class App_Presentation_page
             Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
             Dim nodeartikel As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
 
-            Dim javascript As String = String.Concat("function dapsap() { ")
+            Dim javascript As String = String.Concat("function KlapCategorienUit() { ")
 
             Dim nodeparent As Node = tree.VindParentVanNode(nodeartikel)
             While (nodeparent IsNot Nothing)
@@ -86,7 +86,7 @@ Partial Class App_Presentation_page
             Page.ClientScript.RegisterStartupScript(Me.GetType(), "testen", javascript, True)
 
             Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-            body.Attributes.Add("onload", "dapsap();")
+            body.Attributes.Add("onload", "KlapCategorienUit();")
 
         End If
 

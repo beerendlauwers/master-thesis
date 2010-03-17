@@ -49,10 +49,18 @@ Partial Class _Default
             Return
         End If
 
+        Dim taal As String = "Nederlands"
+        If Page.Request.Form("Taal") IsNot Nothing Then
+            If TryCast(Page.Request.Form("Taal"), String) IsNot Nothing Then
+                taal = Page.Request.Form("Taal")
+            End If
+        End If
+
         'Alles is ok, we gaan alles in de sessievariabele schrijven
 
         Session("isIngelogd") = True
         Session("bedrijf") = bedrijf
+        Session("taal") = taal
 
         'Als we ook een paginatag meekregen, gaan we die onderzoeken
 

@@ -1,5 +1,6 @@
 ﻿Imports Microsoft.VisualBasic
 Imports Manual
+Imports System.Diagnostics
 Imports ContentType
 
 Public Class Tree
@@ -39,7 +40,7 @@ Public Class Tree
     End Property
 
     ''' <summary>
-    ''' Doorzoek recursief de tree om een node te vinden op bassi van id en type.
+    ''' Doorzoek recursief de tree om een node te vinden op basis van id en type.
     ''' </summary>
     Public Function DoorzoekTreeVoorNode(ByVal id As Integer, ByVal type As ContentType) As Node
 
@@ -50,6 +51,10 @@ Public Class Tree
         Return _rootnode.GetChildBy(id, type)
     End Function
 
+    ''' <summary>
+    ''' <para>Doorzoek recursief de tree om de parent van een node te vinden.
+    ''' Kost is ongeveer 0.1 milliseconde.</para>
+    ''' </summary>
     Public Function VindParentVanNode(ByRef node As Node) As Node
         Return _rootnode.VindParentVanNode(node)
     End Function
@@ -143,7 +148,7 @@ Public Class Tree
                     Dim rootnode As Node
                     Dim rootnoderij As tblCategorieRow = categoriedt.Rows(0)
                     If rootnoderij.Categorie = "root_node" Then
-                        rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam)
+                        rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam, 0)
                     Else
                         MsgBox("Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De basis (of root node) van de boomstructuur bestaat niet.")
                         Return
@@ -168,7 +173,7 @@ Public Class Tree
                         End If
 
                         'Maak een kind aan
-                        Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie)
+                        Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie, categorie.Hoogte)
 
                         'Plaats het kind onder de parent
                         huidigeParent.AddChild(kind)
@@ -176,11 +181,13 @@ Public Class Tree
                         'En nu alle artikels die onder deze categorie staan ophalen
                         artikeldt = dbartikel.GetArtikelsByParent(categorie.CategorieID)
 
-                        'De huidige parent is nu het kind
+                        'De huidige parent wordt nu het kind
                         huidigeParent = kind
+                        Dim hoogte As Integer = 0
                         For Each artikel As tblArtikelRow In artikeldt
-                            Dim art As New Node(artikel.ArtikelID, ContentType.Artikel, artikel.Titel)
+                            Dim art As New Node(artikel.ArtikelID, ContentType.Artikel, artikel.Titel, hoogte)
                             huidigeParent.AddChild(art)
+                            hoogte = hoogte + 1
                         Next artikel
 
                     Next categorie
@@ -216,7 +223,7 @@ Public Class Tree
             If kind.Type = ContentType.Categorie Then
                 htmlcode = String.Concat(htmlcode, "<a href=""#"" onclick=""Effect.toggle('parent_", kind.ID, "', 'slide', { duration: 0.5 }); veranderDropdown('imgtab_", kind.ID, "'); return false;""><img src=""CSS/images/add.png"" border=""0"" id=""imgtab_", kind.ID, """> ", kind.Titel, "</a><br/>")
             Else
-                htmlcode = String.Concat(htmlcode, "<a href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
+                htmlcode = String.Concat(htmlcode, "<a id=""child_", kind.ID, """ href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
             End If
 
             If kind.Type = ContentType.Categorie Then
@@ -249,8 +256,9 @@ Public Class Tree
 
         If row IsNot Nothing Then
             'Artikel toevoegen aan de categorie
-            Dim artikel As New Artikel(row)
-            categorie.AddChild(New Node(artikel))
+            Dim artikelnode As New Node(New Artikel(row))
+            artikelnode.Hoogte = Node.VindMaxHoogteVanCategorie(categorie)
+            categorie.AddChild(artikelnode)
         Else
             Return String.Concat("Het artikel met de tag """, tag, """ werd niet gevonden in de database.")
         End If

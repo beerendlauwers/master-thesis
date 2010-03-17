@@ -9,15 +9,22 @@ Public Class Node
     Private _ID As Integer
     Private _type As ContentType
     Private _titel As String
+    Private _hoogte As Integer
     Private _children As List(Of Node)
 
-    Public Sub New(ByVal id As Integer, ByVal type As ContentType, ByVal titel As String)
+    Public Sub New(ByVal id As Integer, ByVal type As ContentType, ByVal titel As String, ByVal hoogte As Integer)
         _ID = id
         _type = type
         _titel = titel
+        _hoogte = hoogte
         _children = New List(Of Node)
     End Sub
 
+    ''' <summary>
+    ''' <para>Maak een nieuwe node aan op basis van een artikel.
+    ''' Vergeet niet <see cref="VindMaxHoogteVanCategorie"/> te gebruiken
+    ''' om de hoogte van deze nieuwe node juist in te stellen.</para>
+    ''' </summary>
     Public Sub New(ByRef artikel As Artikel)
         _ID = artikel.ID
         _type = ContentType.Artikel
@@ -49,6 +56,15 @@ Public Class Node
         End Get
         Set(ByVal value As String)
             _titel = value
+        End Set
+    End Property
+
+    Public Property Hoogte() As Integer
+        Get
+            Return _hoogte
+        End Get
+        Set(ByVal value As Integer)
+            _hoogte = value
         End Set
     End Property
 
@@ -95,6 +111,32 @@ Public Class Node
     End Function
 
     ''' <summary>
+    ''' Verwijder het gegeven kind uit de lijst van kinderen.
+    ''' </summary>
+    Public Sub VerwijderKind(ByRef kind As Node)
+        Dim hoogte As Integer = -1
+
+        'Kind opzoeken, hoogte opslaan en dan verwijderen
+        For Each n As Node In _children
+            If n Is kind Then
+                hoogte = n.Hoogte
+                _children.Remove(n)
+                Exit For
+            End If
+        Next n
+
+        If hoogte = -1 Then Return
+
+        'Hoogte aanpassen voor de resterende kinderen
+        For Each n As Node In _children
+            If (n.Hoogte > hoogte) Then
+                n.Hoogte = n.Hoogte - 1
+            End If
+        Next n
+
+    End Sub
+
+    ''' <summary>
     ''' Doorzoek recursief de kinderen van deze node, de kinderen van de kinderen, etc om de parent van een node te vinden
     ''' </summary>
     Public Function VindParentVanNode(ByRef node As Node) As Node
@@ -111,6 +153,21 @@ Public Class Node
         Next
 
         Return Nothing
+    End Function
+
+    ''' <summary>
+    ''' Doorzoek de kinderen van deze node om de hoogste waarde van 'Hoogte' te vinden.
+    ''' </summary>
+    Public Shared Function VindMaxHoogteVanCategorie(ByRef node As Node) As Integer
+        Dim maxhoogte As Integer = 0
+
+        For Each kind As Node In node.GetChildren
+            If (kind.Hoogte > maxhoogte) Then
+                maxhoogte = kind.Hoogte
+            End If
+        Next kind
+
+        Return maxhoogte
     End Function
 
 End Class

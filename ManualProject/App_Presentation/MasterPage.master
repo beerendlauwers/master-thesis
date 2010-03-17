@@ -67,6 +67,10 @@
         </td>
         <td id="td-input">
         <div id="input">
+            <span class="h1">
+            <asp:ContentPlaceHolder id="ContentPlaceHolderTitel" runat="server">
+            </asp:ContentPlaceHolder>
+            </span>
             <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
         </div>
