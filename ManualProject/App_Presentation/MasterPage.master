@@ -20,7 +20,7 @@
 
 <body id="MasterBody" runat="server">
     <form id="form1" runat="server">
-     <asp:scriptmanager ID="Scriptmanager2" runat="server"></asp:scriptmanager>
+     <asp:scriptmanager ID="Scriptmanager2" runat="server" EnablePartialRendering="true"></asp:scriptmanager>
     <div id="header" style="display:block">
     <img src="CSS/images/rodebalk.gif" />
     </div>

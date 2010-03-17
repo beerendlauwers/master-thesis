@@ -8,57 +8,91 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 
+<asp:UpdatePanel ID="updCategorie" runat="server">
+<ContentTemplate>
 
-    <br />
-    <br />
-    <asp:Label ID="lbltitel" runat="server" Text="Titel: "></asp:Label>
-    <asp:TextBox ID="txtTitel" runat="server"></asp:TextBox>
-    <br />
-    <br />
-    <asp:Label ID="lblTag" runat="server" Text="Tag: "></asp:Label>
-&nbsp;<asp:TextBox ID="txtTag" runat="server"></asp:TextBox>
-    <br />
-    <br />
-    <asp:Label ID="lblCategorie" runat="server" Text="Categorie: "></asp:Label>
-<asp:DropDownList ID="ddlCategorie" runat="server" DataSourceID="objdCategorie" 
+<table>
+
+<tr>
+<td><asp:Label ID="lbltitel" runat="server" Text="Titel:"></asp:Label></td>
+<td><asp:TextBox ID="txtTitel" runat="server"></asp:TextBox></td>
+</tr>
+
+<tr>
+<td><asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td>
+<td><asp:TextBox ID="txtTag" runat="server"></asp:TextBox></td>
+</tr>
+
+<tr>
+<td><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
+<td><asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
+        DataTextField="Taal" DataValueField="TaalID" AutoPostBack="true">
+    </asp:DropDownList></td>
+</tr>
+
+<tr>
+<td><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
+        DataTextField="Naam" DataValueField="BedrijfID" AutoPostBack="true">
+    </asp:DropDownList></td>
+</tr>
+
+<tr>
+<td><asp:Label ID="lblVersie" runat="server" Text="Versie:"></asp:Label></td>
+<td><asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie" 
+    DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true">
+    </asp:DropDownList></td>
+</tr>
+
+<tr>
+<td><asp:Label ID="lblCategorie" runat="server" Text="Categorie:"></asp:Label></td>
+<td><asp:DropDownList ID="ddlCategorie" runat="server" 
         DataTextField="Categorie" DataValueField="CategorieID">
 </asp:DropDownList>
-    <br />
-    <br />
+</td>
+<td>
+    <asp:UpdateProgress ID="prgCategorie" runat="server" AssociatedUpdatePanelID="updCategorie">
+    <ProgressTemplate>
+    <div class="update">
+    <img src="CSS/Images/ajaxloader.gif" />
+    Bezig met ophalen van categoriëen...
+    </div>
+    </ProgressTemplate>
+    </asp:UpdateProgress>
+</td>
+</tr>
 
+<tr>
+<td><asp:Label ID="lblFinaal" runat="server" Text="Finale versie:"></asp:Label></td>
+<td><asp:CheckBox ID="ckbFinaal" runat="server" /></td>
+</tr>
 
-    <asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label>
-    <asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
-        DataTextField="Naam" DataValueField="BedrijfID">
-    </asp:DropDownList>
-    <br />
-    <br />
-    <asp:Label ID="lblTaal" runat="server" Text="Taal: "></asp:Label>
-    <asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
-        DataTextField="Taal" DataValueField="TaalID">
-    </asp:DropDownList>
-    <br />
-    <br />
+</table>
 
+</ContentTemplate>
+</asp:UpdatePanel>
 
-    <asp:Label ID="Label1" runat="server" Text="Versie (optioneel): "></asp:Label>
-&nbsp;<asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie" 
-    DataTextField="Versie" DataValueField="VersieID">
-    </asp:DropDownList>
+<br />
 
+<cc1:Editor ID="Editor1" runat="server" height="450px" />
 
-    <br />
-    <br />
-    <asp:Label ID="lblFinaal" runat="server" Text="Finale versie: "></asp:Label>
-    <asp:CheckBox ID="ckbFinaal" runat="server" />
-    <br />
-
-
-    <cc1:Editor ID="Editor1" runat="server" height="300px" Width="450px"/>
-<asp:Label ID="lblresultaat" runat="server"></asp:Label>
 <br />
 <br />
+    <asp:UpdatePanel ID="updToevoegen" runat="server">
+    <ContentTemplate>
 <asp:Button ID="btnVoegtoe" runat="server" Text="Toevoegen" />
+    <asp:UpdateProgress ID="prgToevoegen" runat="server" AssociatedUpdatePanelID="updToevoegen">
+    <ProgressTemplate>
+    <div class="update">
+    <img src="CSS/Images/ajaxloader.gif" />
+    Bezig met opslaan...
+    </div>
+    </ProgressTemplate>
+    </asp:UpdateProgress>
+<asp:Label ID="lblresultaat" runat="server"></asp:Label>
+</ContentTemplate>
+    </asp:UpdatePanel>
+
 
     <asp:ObjectDataSource ID="objdTaal" runat="server" DeleteMethod="Delete" 
         InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 

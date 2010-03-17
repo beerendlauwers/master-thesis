@@ -371,7 +371,7 @@ position: relative;
 	padding-left: 10px;
 	vertical-align: top;
 	background-image:url('images/main.gif');
-	background-repeat:no-repeat;
+	background-repeat:repeat-y;
 	padding-left: 8px;
 }
 

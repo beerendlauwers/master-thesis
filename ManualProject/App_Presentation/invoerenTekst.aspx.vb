@@ -5,6 +5,9 @@ Partial Class App_Presentation_invoerenTest
 
     Private artikel As Manual.tblArtikelRow
     Private adap As New ManualTableAdapters.tblArtikelTableAdapter
+    Private bedrijfIsKlaar As Boolean = False
+    Private versieIsKlaar As Boolean = False
+    Private taalIsKlaar As Boolean = False
 
     Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVoegtoe.Click
         Dim titel As String
@@ -45,13 +48,57 @@ Partial Class App_Presentation_invoerenTest
             If boodschap = "OK" Then
                 lblresultaat.Text = "Toevoegen Geslaagd."
             Else
-                lblresultaat.Text = String.Concat("Toevoegen mislukt: ", boodschap)
+                lblresultaat.Text = String.Concat("Toevoegen Geslaagd met waarschuwing: ", boodschap)
             End If
 
         Else
-            lblresultaat.Text = "Toevoegen mislukt: Kon het artikel niet toevoegen."
+            lblresultaat.Text = "Toevoegen Mislukt: Kon niet verbinden met de database."
         End If
+
+        Me.btnVoegtoe.Visible = False
 
     End Sub
 
+    Protected Sub ddlBedrijf_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBedrijf.DataBound
+        bedrijfIsKlaar = True
+
+        If bedrijfIsKlaar And versieIsKlaar And taalIsKlaar Then
+            LaadCategorien()
+        End If
+    End Sub
+
+    Protected Sub ddlTaal_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTaal.DataBound
+        taalIsKlaar = True
+
+        If bedrijfIsKlaar And versieIsKlaar And taalIsKlaar Then
+            LaadCategorien()
+        End If
+    End Sub
+
+    Protected Sub ddlVersie_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersie.DataBound
+        versieIsKlaar = True
+
+        If bedrijfIsKlaar And versieIsKlaar And taalIsKlaar Then
+            LaadCategorien()
+        End If
+    End Sub
+
+
+
+    Private Sub LaadCategorien()
+        Me.ddlCategorie.DataSource = DatabaseLink.GetInstance.GetCategorieFuncties.GetAllCategorieBy(Me.ddlTaal.SelectedValue, Me.ddlBedrijf.SelectedValue, Me.ddlVersie.SelectedValue)
+        Me.ddlCategorie.DataBind()
+    End Sub
+
+    Protected Sub ddlBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBedrijf.SelectedIndexChanged
+        LaadCategorien()
+    End Sub
+
+    Protected Sub ddlTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTaal.SelectedIndexChanged
+        LaadCategorien()
+    End Sub
+
+    Protected Sub ddlVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersie.SelectedIndexChanged
+        LaadCategorien()
+    End Sub
 End Class
