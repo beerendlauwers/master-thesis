@@ -63,4 +63,61 @@ Public Class VersieDAL
 
         Return dt
     End Function
+
+    Public Function CheckVersie(ByVal versie As String) As tblVersieDataTable
+        Dim dt As New tblVersieDataTable
+
+        Dim c As New SqlCommand("Check_Versie")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@versie", SqlDbType.VarChar).Value = versie
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
+    Public Function CheckVersieByID(ByVal versie As String, ByVal ID As Integer) As tblVersieDataTable
+        Dim dt As New tblVersieDataTable
+
+        Dim c As New SqlCommand("Check_VersieByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@versie", SqlDbType.VarChar).Value = versie
+        c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
 End Class

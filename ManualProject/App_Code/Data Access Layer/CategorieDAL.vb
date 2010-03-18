@@ -192,6 +192,36 @@ Public Class CategorieDAL
         End Try
     End Function
 
+    Public Function checkCategorie(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer) As Data.DataTable
+
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Check_Categorie")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+
     Public Function getCategorieZonderRoot() As Data.DataTable
 
         Dim dt As New Data.DataTable
@@ -213,6 +243,36 @@ Public Class CategorieDAL
             c.Connection.Close()
         End Try
         Return dt
+    End Function
+
+
+    Public Function checkCategorieByID(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal Id As Integer) As Data.DataTable
+
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Check_CategorieByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@ID", SqlDbType.Int).Value = Id
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
     End Function
 
 End Class

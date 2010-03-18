@@ -15,7 +15,8 @@ Partial Class App_Presentation_ArtikelBewerken
                 lsbArtikels.Items.Add(item)
             Next row
         End If
-
+        btnBewerken.Visible = True
+        lsbArtikels.Visible = True
     End Sub
 
     Protected Sub btnBewerken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnBewerken.Click
@@ -24,6 +25,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
         Dim artikel As New Artikel(artikeldal.GetArtikelByID(gewenstArtikel))
 
+        lsbArtikels.Visible = True
         txtTag.Visible = True
         txtTitel.Visible = True
         ddlBedrijf.Visible = True
@@ -32,6 +34,8 @@ Partial Class App_Presentation_ArtikelBewerken
         ddlVersie.Visible = True
         Editor1.Visible = True
         ckbFinal.Visible = True
+        btnUpdate.Visible = True
+
 
         lblBedrijf.Visible = True
         lblCategorie.Visible = True
@@ -41,19 +45,19 @@ Partial Class App_Presentation_ArtikelBewerken
         lblTitel.Visible = True
         lblVersie.Visible = True
 
-        ddlCategorie.SelectedValue = artikel.ID
+        ddlCategorie.SelectedValue = artikel.Categorie
         txtTitel.Text = artikel.Titel
         txtTag.Text = artikel.Tag
         Editor1.Content = artikel.Tekst
         ddlBedrijf.SelectedValue = artikel.Bedrijf
         ddlTaal.SelectedValue = artikel.Taal
-
         ddlVersie.SelectedValue = artikel.Versie
         If artikel.IsFinal = 1 Then
             ckbFinal.Checked = True
         Else
             ckbFinal.Checked = False
         End If
+        UpdatePanel1.Update()
 
     End Sub
 
@@ -97,4 +101,5 @@ Partial Class App_Presentation_ArtikelBewerken
             lblVar.Visible = True
         End If
     End Sub
+
 End Class

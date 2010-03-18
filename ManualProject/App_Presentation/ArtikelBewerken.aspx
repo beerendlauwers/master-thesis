@@ -6,25 +6,38 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<asp:UpdatePanel ID="UpdatePanel3" runat="server">
 
+<ContentTemplate>
+<asp:UpdateProgress ID="UpdateProgress3" runat="server" DisplayAfter="0">
+                            <ProgressTemplate>
+                                <div class="updatetop">
+                                    <img src="CSS/Images/ajaxloader.gif" />
+                                    Even wachten aub...
+                                </div>
+                            </ProgressTemplate>
+                        </asp:UpdateProgress>
 <asp:Label ID="lblSearch" runat="server" Text="Zoek: "></asp:Label>
         <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
-&nbsp;&nbsp;
+        &nbsp;&nbsp;
         <asp:Button ID="btnZoek" runat="server" Text="zoeken" />
 
     <br />
-    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <ContentTemplate>
-            <asp:ListBox ID="lsbArtikels" runat="server"></asp:ListBox>
+    
+    
+            <asp:ListBox ID="lsbArtikels" runat="server" Visible="False"></asp:ListBox>
             <br />
-        </ContentTemplate>
-    </asp:UpdatePanel>
-<asp:Button ID="btnBewerken" runat="server" 
-    Text="bewerken" />
+   
+    
+<asp:Button ID="btnBewerken" runat="server" Text="bewerken" Visible="False" OnClick="btnBewerken_Click" />
+
     <br />
     <br />
     <br />
     <br />
+    
+    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
+    <ContentTemplate>
     <asp:Label ID="lblTitel" runat="server" Text="Titel: " Visible="false"></asp:Label>
     <asp:TextBox ID="txtTitel" runat="server" Visible="false"></asp:TextBox>
     <br />
@@ -60,13 +73,21 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <asp:Label ID="lblIs_final" runat="server" Text="Artikel is finaal: " 
         Visible="False"></asp:Label>
-    <asp:CheckBox ID="ckbFinal" runat="server" Visible="False" />
+    <asp:CheckBox ID="ckbFinal" runat="server" Visible="false" />
     <br />
+    <cc1:Editor ID="Editor1" runat="server" Height="300px" Width="600px" Visible="false"/>
+   
 
-<cc1:Editor ID="Editor1" runat="server" Height="300px" Width="600px" Visible="false"/>
+</ContentTemplate>
+</asp:UpdatePanel>
 
-    <asp:Button ID="btnUpdate" runat="server" Text="Wijzig" />
+</ContentTemplate>
+</asp:UpdatePanel>
+
+
+    <asp:Button ID="btnUpdate" runat="server" Text="Wijzig" Visible="False" />
 &nbsp;<asp:Label ID="lblVar" runat="server" Visible="False"></asp:Label>
+
 
     <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" 
         DeleteMethod="Delete" InsertMethod="Insert" 

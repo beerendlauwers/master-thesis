@@ -405,9 +405,8 @@
                                                     <asp:Label ID="Label4" runat="server" Text="Kies een versie: "></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie"
-                                                        DataTextField="Versie" DataValueField="VersieID" OnSelectedIndexChanged="ddlAddParentcat_SelectedIndexChanged"
-                                                        AutoPostBack="True">
+                                                    <asp:DropDownList ID="ddlAddCatVersie" runat="server" DataSourceID="objdVersie"
+                                                        DataTextField="Versie" DataValueField="VersieID">
                                                     </asp:DropDownList>
                                                 </td>
                                             </tr>
@@ -416,9 +415,8 @@
                                                     <asp:Label ID="Label10" runat="server" Text="Kies een Bedrijf: "></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="objdBedrijf"
-                                                        DataTextField="naam" DataValueField="bedrijfID" OnSelectedIndexChanged="ddlAddParentcat_SelectedIndexChanged"
-                                                        AutoPostBack="True">
+                                                    <asp:DropDownList ID="ddlAddCatBedrijf" runat="server" DataSourceID="objdBedrijf"
+                                                        DataTextField="naam" DataValueField="bedrijfID">
                                                     </asp:DropDownList>
                                                 </td>
                                             </tr>
@@ -488,9 +486,8 @@
                                                     <asp:Label ID="Label17" runat="server" Text="Kies een versie: "></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:DropDownList ID="DropDownList2" runat="server" DataSourceID="objdVersie"
-                                                        DataTextField="Versie" DataValueField="VersieID" OnSelectedIndexChanged="ddlAddParentcat_SelectedIndexChanged"
-                                                        AutoPostBack="True">
+                                                    <asp:DropDownList ID="ddlEditCatVersie" runat="server" DataSourceID="objdVersie"
+                                                        DataTextField="Versie" DataValueField="VersieID">
                                                     </asp:DropDownList>
                                                 </td>
                                             </tr>
@@ -499,9 +496,8 @@
                                                     <asp:Label ID="Label5" runat="server" Text="Kies een Bedrijf: "></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf"
-                                                        DataTextField="naam" DataValueField="bedrijfID" OnSelectedIndexChanged="ddlAddParentcat_SelectedIndexChanged"
-                                                        AutoPostBack="True">
+                                                    <asp:DropDownList ID="ddlEditCatBedrijf" runat="server" DataSourceID="objdBedrijf"
+                                                        DataTextField="naam" DataValueField="bedrijfID">
                                                     </asp:DropDownList>
                                                 </td>
                                             </tr>
@@ -532,7 +528,7 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <asp:Button ID="Button1" runat="server" Text="Verwijder" />
+                                                    <asp:Button ID="btnCatDelete" runat="server" Text="Verwijder" OnClick="Button1_Click"/>
                                                 </td>
                                                 <td>
                                                     <asp:Label ID="lblResDelete" runat="server" Text=""></asp:Label>

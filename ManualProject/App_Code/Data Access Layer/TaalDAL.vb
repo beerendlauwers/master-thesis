@@ -63,4 +63,61 @@ Public Class TaalDAL
 
         Return dt
     End Function
+
+    Public Function checkTaal(ByVal taal As String) As tblTaalDataTable
+        Dim dt As New tblTaalDataTable
+
+        Dim c As New SqlCommand("Check_Taal")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
+    Public Function checkTaalByID(ByVal taal As String, ByVal ID As Integer) As tblTaalDataTable
+        Dim dt As New tblTaalDataTable
+
+        Dim c As New SqlCommand("Check_TaalByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
+        c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
 End Class

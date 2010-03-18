@@ -7,6 +7,10 @@ Public Class Categorie
     Private _Hoogte As Integer
     Private _FK_Parent As Integer
     Private _FK_Taal As Integer
+    Private _FK_Bedrijf As Integer
+    Private _FK_Versie As Integer
+
+
 
   
     Public Property CategorieID() As Integer
@@ -65,16 +69,38 @@ Public Class Categorie
         End Set
     End Property
 
+    Public Property Versie() As String
+        Get
+            Return _FK_Versie
+        End Get
+        Set(ByVal value As String)
+            _FK_Versie = value
+        End Set
+    End Property
+
+    Public Property Bedrijf() As String
+        Get
+            Return _FK_Bedrijf
+        End Get
+        Set(ByVal value As String)
+            _FK_Bedrijf = value
+        End Set
+    End Property
+
+
+
     Public Sub New()
 
     End Sub
 
-    Public Sub New(ByVal CategoryID As Integer, ByVal Categorie As String, ByVal Hoogte As Integer, ByVal Diepte As Integer, ByVal FK_parent As Integer, ByVal FK_Taal As Integer)
+    Public Sub New(ByVal CategoryID As Integer, ByVal Categorie As String, ByVal Hoogte As Integer, ByVal Diepte As Integer, ByVal FK_parent As Integer, ByVal FK_Taal As Integer, ByVal FK_Versie As Integer, ByVal FK_Bedrijf As Integer)
         _CategorieID = CategorieID
         _Categorie = Categorie
         _Hoogte = Hoogte
         _Diepte = Diepte
-        _FK_Parent = FK_Parent
+        _FK_Parent = FK_parent
         _FK_Taal = FK_Taal
+        _FK_Versie = FK_Versie
+        _FK_Bedrijf = FK_Bedrijf
     End Sub
 End Class

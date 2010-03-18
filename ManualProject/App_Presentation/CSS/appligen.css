@@ -509,3 +509,8 @@ font-size:7pt;
     margin-right:auto;
     text-align:center;
 }
+ .updatetop
+ {
+     float:right;
+     height:0px;
+ }

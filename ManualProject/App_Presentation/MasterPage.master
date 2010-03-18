@@ -42,8 +42,8 @@
                     <li><a runat="server" id="ArtikelBewerken" runat="server"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
                     <li><a runat="server" id="ArtikelVerwijderen" runat="server"><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
                 </ul></li>
-            <li><a runat="server" ><span class="l"></span><span class="r"></span>
-                <span class="t">Categoriën </span></a>
+            <li><a runat="server" href=Beheer.aspx ><span class="l"></span><span class="r"></span>
+                <span class="t">Beheer </span></a>
                 <ul>
                     <li><a runat="server" id="CategorieToevoegen"><img src="CSS/images/add.png" border="0"  /> Toevoegen</a></li>
                     <li><a runat="server" id="CategorieBewerken"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>

@@ -64,27 +64,69 @@ Public Class BedrijfDAL
         Return dt
     End Function
 
-    'Public Function getBedrijfByID(ByVal bedrijfID As Integer) As Manual.tblBedrijfDataTable
-    '    Dim dt As New tblBedrijfDataTable
+    Public Function getBedrijfByNaamOrTag(ByVal naam As String, ByVal tag As String) As Data.DataTable
 
-    '    Dim c As New SqlCommand("Manual_getBedrijfByID")
-    '    c.CommandType = CommandType.StoredProcedure
-    '    c.Parameters.Add("@Id", SqlDbType.Int).Value = bedrijfID
-    '    c.Connection = _myConnection
 
-    '    Try
-    '        Dim r As SqlDataReader
-    '        c.Connection.Open()
+        Dim dt As New tblBedrijfDataTable
 
-    '        r = c.ExecuteReader
-    '        If (r.HasRows) Then dt.Load(r)
-    '        Return dt
-    '    Catch ex As Exception
-    '        Throw ex
-    '    Finally
-    '        c.Connection.Close()
-    '    End Try
+        Dim c As New SqlCommand("Check_getBedrijfByNaam_Tag")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@naam", SqlDbType.VarChar).Value = naam
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+        c.Connection = _myConnection
 
-    '    Return dt
-    'End Function
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
+    Public Function getBedrijfByNaamTagID(ByVal naam As String, ByVal tag As String, ByVal ID As Integer) As Data.DataTable
+
+
+        Dim dt As New tblBedrijfDataTable
+
+        Dim c As New SqlCommand("Check_getBedrijfByNaam_Tag_ID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@naam", SqlDbType.VarChar).Value = naam
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+        c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
 End Class
