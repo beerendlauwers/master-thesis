@@ -10,31 +10,25 @@ Partial Class App_Presentation_invoerenTest
     Private taalIsKlaar As Boolean = False
 
     Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVoegtoe.Click
-        Dim titel As String
-        Dim tekst As String
-        Dim tag As String
-        Dim FK_categorie As Integer
-        Dim FK_taal As Integer
-        Dim FK_versie As Integer
+
+        Dim tekst As String = Editor1.Content
+        Dim tag As String = txtTag.Text.Trim
+        Dim titel As String = txtTitel.Text.Trim
+
+        Dim FK_versie As Integer = ddlVersie.SelectedValue
+        Dim FK_Bedrijf As Integer = ddlBedrijf.SelectedValue
+        Dim FK_categorie As Integer = ddlCategorie.SelectedValue
+        Dim FK_taal As Integer = ddlTaal.SelectedValue
+
         Dim finaal As Integer
-        Dim FK_Bedrijf As Integer
-        Dim res As Boolean
-        tekst = Editor1.Content
-        tag = txtTag.Text
-        titel = txtTitel.Text
-        FK_versie = ddlVersie.SelectedValue
-        FK_Bedrijf = ddlBedrijf.SelectedValue
-        FK_categorie = ddlCategorie.SelectedValue
-        FK_taal = ddlTaal.SelectedValue
         If ckbFinaal.Checked = True Then
             finaal = 1
         Else
             finaal = 0
         End If
 
-
-        res = adap.Insert(titel, FK_categorie, FK_taal, FK_Bedrijf, FK_versie, tekst, tag, finaal)
-        If res = True Then
+        Dim insertGelukt As Boolean = adap.Insert(titel, FK_categorie, FK_taal, FK_Bedrijf, FK_versie, tekst, tag, finaal)
+        If insertGelukt = True Then
 
             'Nu gaan we de boomstructuur in het geheugen updaten.
 
@@ -47,15 +41,23 @@ Partial Class App_Presentation_invoerenTest
             'Boodschap nakijken voor een foutboodschap
             If boodschap = "OK" Then
                 lblresultaat.Text = "Toevoegen Geslaagd."
+                lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#86CC7C")
+                imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\tick.gif"
+                Me.btnVoegtoe.Visible = False
             Else
                 lblresultaat.Text = String.Concat("Toevoegen Geslaagd met waarschuwing: ", boodschap)
+                lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#EAB600")
+                imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.gif"
+                Me.btnVoegtoe.Visible = False
             End If
 
         Else
             lblresultaat.Text = "Toevoegen Mislukt: Kon niet verbinden met de database."
+            lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
+            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.gif"
         End If
 
-        Me.btnVoegtoe.Visible = False
+        divFeedback.Visible = True
 
     End Sub
 
@@ -83,13 +85,6 @@ Partial Class App_Presentation_invoerenTest
         End If
     End Sub
 
-
-
-    Private Sub LaadCategorien()
-        Me.ddlCategorie.DataSource = DatabaseLink.GetInstance.GetCategorieFuncties.GetAllCategorieBy(Me.ddlTaal.SelectedValue, Me.ddlBedrijf.SelectedValue, Me.ddlVersie.SelectedValue)
-        Me.ddlCategorie.DataBind()
-    End Sub
-
     Protected Sub ddlBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBedrijf.SelectedIndexChanged
         LaadCategorien()
     End Sub
@@ -100,5 +95,10 @@ Partial Class App_Presentation_invoerenTest
 
     Protected Sub ddlVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersie.SelectedIndexChanged
         LaadCategorien()
+    End Sub
+
+    Private Sub LaadCategorien()
+        Me.ddlCategorie.DataSource = DatabaseLink.GetInstance.GetCategorieFuncties.GetAllCategorieBy(Me.ddlTaal.SelectedValue, Me.ddlBedrijf.SelectedValue, Me.ddlVersie.SelectedValue)
+        Me.ddlCategorie.DataBind()
     End Sub
 End Class

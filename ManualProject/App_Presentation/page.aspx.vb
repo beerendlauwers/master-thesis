@@ -73,6 +73,11 @@ Partial Class App_Presentation_page
 
             Dim nodeparent As Node = tree.VindParentVanNode(nodeartikel)
             While (nodeparent IsNot Nothing)
+
+                If (nodeparent Is tree.RootNode) Then
+                    Exit While
+                End If
+
                 javascript = String.Concat(javascript, "Effect.toggle('parent_", nodeparent.ID, "', 'slide', { duration: 0.5 }); veranderDropdown('imgtab_", nodeparent.ID, "'); ")
                 nodeparent = tree.VindParentVanNode(nodeparent)
 
