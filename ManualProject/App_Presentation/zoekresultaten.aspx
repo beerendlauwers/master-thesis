@@ -7,7 +7,7 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 <h4>Artikels die overeenkomen met u zoektekst:</h4>
 
-    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="false">
+    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="false" AllowPaging="false" AllowSorting="false">
     <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />

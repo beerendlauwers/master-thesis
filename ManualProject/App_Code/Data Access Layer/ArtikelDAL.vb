@@ -374,4 +374,29 @@ Public Class ArtikelDAL
         End Try
     End Function
 
+    Public Function getArtikelsForSearch(ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer, ByVal tag As String) As Data.DataTable
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Manual_theUltimateGet")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@BedrijfID", SqlDbType.Int).Value = bedrijfID
+        c.Parameters.Add("@versieID", SqlDbType.Int).Value = versieID
+        c.Parameters.Add("@TaalID", SqlDbType.Int).Value = taalID
+        c.Parameters.Add("@tekst", SqlDbType.VarChar).Value = tag
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+        Return dt
+    End Function
+
 End Class

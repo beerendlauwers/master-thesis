@@ -97,7 +97,7 @@ Public Class TaalDAL
 
         Dim c As New SqlCommand("Check_TaalByID")
         c.CommandType = CommandType.StoredProcedure
-        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
+        c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
         c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
         c.Connection = _myConnection
 

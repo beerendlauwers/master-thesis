@@ -15,6 +15,8 @@
 <script src="JS/scriptaculous.js" language="javascript" type="text/javascript"></script>
 <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
 <script src="JS/custom.js" language="javascript" type="text/javascript"></script>
+<script src="JS/buttonenable.js" language="javascript" type="text/javascript"></script>
+
     <asp:ContentPlaceHolder id="head" runat="server">
     
     </asp:ContentPlaceHolder>
@@ -71,10 +73,13 @@
                 <span class="t">Taal</span></a> </li>
             <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
                 <asp:HyperLink ID="hrefArtikelBewerken" runat="server">Dit artikel bewerken</asp:HyperLink></span><span class="r"></span></li>
-            <li style="float:right;" runat="server" id="zoeken" visible="true"><div><asp:TextBox ID="TextBox1" runat="server"></asp:TextBox><span class="imgbutton">
+            <li style="float:right;" runat="server" id="zoeken" visible="true"><div><asp:TextBox ID="txtZoek" runat="server"  onkeyup="SetButtonStatus(this)"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="ImageButton1" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
-                    Width="16px"/></span></div></li>
+                    Width="16px" Enabled="false"/></span></div>
+                   
+                    
+                    </li>
         </ul>
     </div>
     <div id="blok">
@@ -104,7 +109,21 @@
     </div>
     <div id="footer">
     © 2010 Appligen
-    </div> 
+    </div>
+
+    <script type="text/javascript">
+    function SetButtonStatus(btn)
+{
+
+if ( btn.value.length >= 2 )
+document.getElementById('<%=ImageButton1.ClientID %>').disabled = false;
+
+else
+
+document.getElementById('<%=ImageButton1.ClientID %>').disabled = true;
+}
+    </script>
+
     </form>
 </body>
 </html>

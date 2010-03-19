@@ -101,7 +101,7 @@ Partial Class App_Presentation_Beheer
 
             adapterCat.Update(categorie.Categorie, categorie.Diepte, categorie.Hoogte, categorie.FK_Parent, categorie.FK_Taal, categorie.Bedrijf, categorie.Versie, categorie.CategorieID)
         Else
-            lblResEdit.Text = "Een ander categorie heeft reeds dezelfde versie of bedrijf."
+            lblResEdit.Text = "Een ander categorie heeft reeds dezelfde naam, versie of bedrijf."
         End If
 
         ddlCatVerwijder.DataBind()
@@ -231,9 +231,11 @@ Partial Class App_Presentation_Beheer
     Protected Sub btnAddTaal_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAddTaal.Click
         Dim acc As AjaxControlToolkit.Accordion = Me.updTaal.FindControl("Accordion2")
         Dim taal As String
+        Dim taaltag As String
         taal = CType(acc.FindControl("txtAddTaal"), TextBox).Text
+        taaltag = txtTaalAfkorting.Text
         If (taaldal.checkTaal(taal) Is Nothing) Then
-            If (adapterTaal.Insert(taal) = 0) Then
+            If (adapterTaal.Insert(taal, taaltag) = 0) Then
                 lblAddTaalRes.Text = "mislukt"
             Else
                 lblAddTaalRes.Text = "Gelukt"
@@ -250,10 +252,12 @@ Partial Class App_Presentation_Beheer
         Dim acc As AjaxControlToolkit.Accordion = Me.updTaal.FindControl("Accordion2")
         Dim taal As String
         Dim taalID As String
+        Dim taaltag As String
+        taaltag = txtEditAfkorting.Text
         taalID = CType(acc.FindControl("ddlBewerkTaal"), DropDownList).SelectedValue
         taal = CType(acc.FindControl("txtEditTaal"), TextBox).Text
         If (taaldal.checkTaalByID(taal, taalID) Is Nothing) Then
-            If (adapterTaal.Update(taal, taalID) = 0) Then
+            If (adapterTaal.Update(taal, taaltag, taalID) = 0) Then
                 lblEditTaalRes.Text = "mislukt"
             Else
                 lblEditTaalRes.Text = "Gelukt"
@@ -351,11 +355,14 @@ Partial Class App_Presentation_Beheer
         Dim acc As AjaxControlToolkit.Accordion = Me.updCategorie.FindControl("Accordion4")
         Dim ddl0 As DropDownList = acc.FindControl("ddlEditCategorie")
         Dim ddl1 As DropDownList = acc.FindControl("ddlCatVerwijder")
-        For Each dr In dt.Rows
-            Dim listitem As New ListItem(dr("Categorie"), dr("CategorieID"))
-            ddl0.Items.Add(listitem)
-            ddl1.Items.Add(listitem)
-        Next
+        If Not IsPostBack Then
+            For Each dr In dt.Rows
+                Dim listitem As New ListItem(dr("Categorie"), dr("CategorieID"))
+                ddl0.Items.Add(listitem)
+                ddl1.Items.Add(listitem)
+            Next
+        End If
+
     End Sub
 
     Protected Sub ddlBewerkVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
@@ -364,6 +371,11 @@ Partial Class App_Presentation_Beheer
 
     Protected Sub ddlBewerkTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
         txtEditTaal.Text = ddlBewerkTaal.SelectedItem.Text
+        Dim taal As String = ddlBewerkTaal.SelectedItem.Text
+        Dim taalid As Integer = ddlBewerkTaal.SelectedValue
+        Dim dr As Manual.tblTaalRow
+        dr = taaldal.GetTaalByID(taalid)
+        txtEditAfkorting.Text = dr("TaalTag")
     End Sub
 
     Protected Sub ddlBewerkBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
@@ -429,6 +441,9 @@ Partial Class App_Presentation_Beheer
 
     Protected Sub ddlBewerkTaal_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBewerkTaal.DataBound
         txtEditTaal.Text = ddlBewerkTaal.SelectedItem.Text
+        Dim dr As Manual.tblTaalRow
+        dr = taaldal.GetTaalByID(ddlBewerkTaal.SelectedValue)
+        txtEditAfkorting.Text = dr("TaalTag")
     End Sub
 
 

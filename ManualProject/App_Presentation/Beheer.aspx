@@ -5,7 +5,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="3" Width="570px">
+    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="1" 
+        Width="570px">
         <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="TabPanel1">
             <HeaderTemplate>
                 Bedrijf
@@ -156,6 +157,14 @@
                                             </tr>
                                             <tr>
                                                 <td>
+                                                    <asp:Label ID="lblAfkorting" runat="server" Text="Afkorting: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:TextBox ID="txtTaalAfkorting" runat="server"></asp:TextBox>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
                                                     <asp:Button ID="btnAddTaal" runat="server" Text="Toevoegen" />
                                                 </td>
                                                 <td>
@@ -187,6 +196,14 @@
                                                 </td>
                                                 <td>
                                                     <asp:TextBox ID="txtEditTaal" runat="server"></asp:TextBox>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <asp:Label ID="lblEditAfkorting" runat="server" Text="Afkorting: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:TextBox ID="txtEditAfkorting" runat="server"></asp:TextBox>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -542,7 +559,7 @@
                         <asp:UpdateProgress ID="UpdateProgress3" runat="server">
                             <ProgressTemplate>
                                 <div class="update">
-                                    <img src="CSS/Images/ajaxloader.gif" />
+                                    <img src="CSS/Images/ajaxloader.gif"/>
                                     Even wachten aub...
                                 </div>
                             </ProgressTemplate>
