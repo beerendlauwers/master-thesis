@@ -1,55 +1,70 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="ArtikelBewerken.aspx.vb" Inherits="App_Presentation_ArtikelBewerken" title="Untitled Page" %>
 
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc2" %>
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit.HTMLEditor"
     TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">
+Artikel Bewerken
+</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-    <asp:UpdatePanel ID="UpdatePanel3" runat="server">
-
+<asp:UpdatePanel ID="updZoeken" runat="server">
 <ContentTemplate>
-<asp:UpdateProgress ID="UpdateProgress3" runat="server" DisplayAfter="0">
+
+
+<table>
+
+<tr>
+<td><asp:Label ID="lblZoekTitel" runat="server" Text="Zoek op titel: "></asp:Label></td>
+<td><asp:TextBox ID="txtZoekTitel" runat="server"></asp:TextBox>
+<asp:RequiredFieldValidator
+        ID="vleZoekTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
+        ControlToValidate="txtZoekTitel" Display="None"></asp:RequiredFieldValidator>
+    <cc2:ValidatorCalloutExtender
+            ID="extZoekTitel" runat="server" TargetControlID="vleZoekTitel">
+        </cc2:ValidatorCalloutExtender>
+        <span style="vertical-align:middle" id='tipZoekTitel'><img src="CSS/images/help.png" alt=''/></span>
+</td>
+</tr>
+
+<tr>
+<td colspan="2"><asp:Button ID="btnZoek" runat="server" Text="zoeken" /></td>
+<td><asp:UpdateProgress ID="prgZoeken" runat="server" DisplayAfter="0">
                             <ProgressTemplate>
                                 <div class="updatetop">
                                     <img src="CSS/Images/ajaxloader.gif" />
                                     Even wachten aub...
                                 </div>
                             </ProgressTemplate>
-                        </asp:UpdateProgress>
-<asp:Label ID="lblSearch" runat="server" Text="Zoek: "></asp:Label>
-        <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
-        &nbsp;&nbsp;
-        <asp:Button ID="btnZoek" runat="server" Text="zoeken" />
+                        </asp:UpdateProgress></td>
+</tr>
+
+</table>
+                        
+        
 
     <br />
     
     
-            <%--<asp:ListBox ID="lsbArtikels" runat="server" Visible="False"></asp:ListBox>--%>
             <asp:GridView ID="grdvLijst" runat="server" AutoGenerateColumns="False" Visible="false">
         <Columns>
-            <%--<asp:BoundField DataField="ArtikelID" HeaderText="ArtikelID" 
-                SortExpression="ArtikelID" />--%>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />
             <asp:BoundField DataField="Versie" HeaderText="Versie" 
                 SortExpression="Versie" />
-            <asp:BoundField DataField="Naam" HeaderText="Naam" SortExpression="Bedrijf" />
+            <asp:BoundField DataField="Naam" HeaderText="Bedrijf" SortExpression="Bedrijf" />
             <asp:BoundField DataField="Taal" HeaderText="Taal" SortExpression="Taal" />
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/wrench.png" 
                 ShowSelectButton="True" />
         </Columns>
     </asp:GridView>
-&nbsp;<div id="gridview">
+<br />
 
-</div>
-            <br />
-   
-    
-<%--<asp:Button ID="btnBewerken" runat="server" Text="bewerken" Visible="False" OnClick="btnBewerken_Click" />
---%>    
-    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
+    <asp:UpdatePanel ID="updBewerken" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 <table>
 <tr>

@@ -10,9 +10,6 @@ Public Class Categorie
     Private _FK_Bedrijf As Integer
     Private _FK_Versie As Integer
 
-
-
-  
     Public Property CategorieID() As Integer
         Get
             Return _CategorieID
@@ -86,8 +83,6 @@ Public Class Categorie
             _FK_Bedrijf = value
         End Set
     End Property
-
-
 
     Public Sub New()
 

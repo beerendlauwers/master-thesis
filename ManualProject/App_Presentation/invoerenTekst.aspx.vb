@@ -47,14 +47,14 @@ Partial Class App_Presentation_invoerenTest
             Else
                 lblresultaat.Text = String.Concat("Toevoegen Geslaagd met waarschuwing: ", boodschap)
                 lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#EAB600")
-                imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.gif"
+                imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
                 Me.btnVoegtoe.Visible = False
             End If
 
         Else
             lblresultaat.Text = "Toevoegen Mislukt: Kon niet verbinden met de database."
             lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
-            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.gif"
+            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
         End If
 
         divFeedback.Visible = True
@@ -100,5 +100,29 @@ Partial Class App_Presentation_invoerenTest
     Private Sub LaadCategorien()
         Me.ddlCategorie.DataSource = DatabaseLink.GetInstance.GetCategorieFuncties.GetAllCategorieBy(Me.ddlTaal.SelectedValue, Me.ddlBedrijf.SelectedValue, Me.ddlVersie.SelectedValue)
         Me.ddlCategorie.DataBind()
+    End Sub
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        'Nieuwe lijst van tooltips definiëren
+        Dim lijst As New List(Of Tooltip)
+
+        'Alle tooltips voor onze pagina toevoegen
+        lijst.Add(New Tooltip("tipTag", "De <b>unieke</b> tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten."))
+        lijst.Add(New Tooltip("tipTitel", "De titel van het nieuwe artikel."))
+        lijst.Add(New Tooltip("tipTaal", "De taal van het nieuwe artikel."))
+        lijst.Add(New Tooltip("tipBedrijf", "Het bedrijf waaronder dit artikel zal worden gepubliceerd."))
+        lijst.Add(New Tooltip("tipVersie", "De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))
+        lijst.Add(New Tooltip("tipCategorie", "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur."))
+        lijst.Add(New Tooltip("tipFinaal", "Bepaalt of het artikel gefinaliseerd is of niet."))
+
+        'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
+        If Page.IsPostBack Then
+            Tooltip.VoegTipToeAanEndRequest(Me, lijst)
+        Else
+            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
+            Tooltip.VoegTipToeAanBody(body, lijst)
+        End If
+
     End Sub
 End Class

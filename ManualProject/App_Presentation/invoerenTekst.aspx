@@ -7,7 +7,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel toevoegen</title>
-    
+       
     </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">Artikel Toevoegen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
@@ -29,17 +29,6 @@
             ID="extTitel" runat="server" TargetControlID="vleTitel">
         </cc2:ValidatorCalloutExtender>
         <span style="vertical-align:middle" id='tipTitel'><img src="CSS/images/help.png" alt=''/></span>
-        <script type="text/javascript" language="javascript">
-        //<![CDATA[
-			new Tip('tipTitel', "De titel van het nieuwe artikel.",
-			{   
-				target: $('tipTitel'),
-				hook: { target: 'rightMiddle', tip: 'leftMiddle' },
-				offset: { x: 10, y: 0 },
-				width: 'auto'
-			 });
-	    //]]>
-	    </script>
 </td>
 </tr>
 
@@ -56,17 +45,6 @@
         FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters" TargetControlID="txtTag" 
         ValidChars="_"></cc2:FilteredTextBoxExtender>
                 <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
-        <script type="text/javascript" language="javascript">
-        //<![CDATA[
-			new Tip('tipTag', "De tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten.",
-			{   
-				target: $('tipTag'),
-				hook: { target: 'rightMiddle', tip: 'leftMiddle' },
-				offset: { x: 10, y: 0 },
-				width: 'auto'
-			 });
-	    //]]>
-	    </script>
 	    </td>
 </tr>
 
@@ -75,18 +53,7 @@
 <td><asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
         DataTextField="Taal" DataValueField="TaalID" AutoPostBack="true">
     </asp:DropDownList>
-                    <span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span>
-        <script type="text/javascript" language="javascript">
-        //<![CDATA[
-			new Tip('tipTaal', "De taal van het nieuwe artikel.",
-			{   
-				target: $('tipTaal'),
-				hook: { target: 'rightMiddle', tip: 'leftMiddle' },
-				offset: { x: 10, y: 0 },
-				width: 'auto'
-			 });
-	    //]]>
-	    </script></td>
+<span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 
 <tr>
@@ -95,17 +62,7 @@
         DataTextField="Naam" DataValueField="BedrijfID" AutoPostBack="true">
     </asp:DropDownList>
                         <span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span>
-        <script type="text/javascript" language="javascript">
-        //<![CDATA[
-			new Tip('tipBedrijf', "Het bedrijf waaronder dit artikel zal worden gepubliceerd.",
-			{   
-				target: $('tipBedrijf'),
-				hook: { target: 'rightMiddle', tip: 'leftMiddle' },
-				offset: { x: 10, y: 0 },
-				width: 'auto'
-			 });
-	    //]]>
-	    </script></td>
+</td>
 </tr>
 
 <tr>
@@ -114,17 +71,7 @@
     DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true">
     </asp:DropDownList>
     <span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span>
-        <script type="text/javascript" language="javascript">
-        //<![CDATA[
-			new Tip('tipVersie', "De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel.",
-			{   
-				target: $('tipVersie'),
-				hook: { target: 'rightMiddle', tip: 'leftMiddle' },
-				offset: { x: 10, y: 0 },
-				width: 'auto'
-			 });
-	    //]]>
-	    </script></td>
+</td>
 </tr>
 
 <tr>
@@ -133,17 +80,6 @@
         DataTextField="Categorie" DataValueField="CategorieID">
 </asp:DropDownList>
 <span style="vertical-align:middle" id='tipCategorie'><img src="CSS/images/help.png" alt=''/></span>
-        <script type="text/javascript" language="javascript">
-        //<![CDATA[
-			new Tip('tipCategorie', "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur.",
-			{   
-				target: $('tipCategorie'),
-				hook: { target: 'rightMiddle', tip: 'leftMiddle' },
-				offset: { x: 10, y: 0 },
-				width: 'auto'
-			 });
-	    //]]>
-	    </script>
 </td>
 <td>
     <asp:UpdateProgress ID="prgCategorie" runat="server" AssociatedUpdatePanelID="updCategorie">
@@ -161,17 +97,7 @@
 <td><asp:Label ID="lblFinaal" runat="server" Text="Finale versie:"></asp:Label></td>
 <td><asp:CheckBox ID="ckbFinaal" runat="server" />
 <span style="vertical-align:middle" id='tipFinaal'><img src="CSS/images/help.png" alt=''/></span>
-        <script type="text/javascript" language="javascript">
-        //<![CDATA[
-			new Tip('tipFinaal', "Bepaalt of het artikel gefinaliseerd is of niet.",
-			{   
-				target: $('tipFinaal'),
-				hook: { target: 'rightMiddle', tip: 'leftMiddle' },
-				offset: { x: 10, y: 0 },
-				width: 'auto'
-			 });
-	    //]]>
-	    </script></td>
+</td>
 </tr>
 
 </table>

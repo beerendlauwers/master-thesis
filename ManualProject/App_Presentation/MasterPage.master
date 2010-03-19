@@ -18,11 +18,26 @@
     <asp:ContentPlaceHolder id="head" runat="server">
     
     </asp:ContentPlaceHolder>
+     
 </head>
 
 <body id="MasterBody" runat="server">
     <form id="form1" runat="server">
      <asp:scriptmanager ID="Scriptmanager2" runat="server" EnablePartialRendering="true"></asp:scriptmanager>
+     
+         <script language="javascript" type="text/javascript">
+       <!--
+       var prm = Sys.WebForms.PageRequestManager.getInstance();
+       prm.add_initializeRequest(InitializeRequest);
+       prm.add_endRequest(EndRequest);
+
+       function InitializeRequest(sender, args)
+           {
+           }
+       
+       // -->
+       </script>
+     
     <div id="header" style="display:block">
     <img src="CSS/images/rodebalk.gif" />
     </div>
@@ -54,12 +69,12 @@
             </li>
             <li><a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span>
                 <span class="t">Taal</span></a> </li>
+            <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
+                <asp:HyperLink ID="hrefArtikelBewerken" runat="server">Dit artikel bewerken</asp:HyperLink></span><span class="r"></span></li>
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div><asp:TextBox ID="TextBox1" runat="server"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="ImageButton1" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                     Width="16px"/></span></div></li>
-            <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false"><a runat="server" id="A1"><span class="l"></span><span class="r"></span>
-                <span class="t">Dit artikel bewerken</span></a> </li>
         </ul>
     </div>
     <div id="blok">
@@ -76,6 +91,7 @@
             <span class="h1">
             <asp:ContentPlaceHolder id="ContentPlaceHolderTitel" runat="server">
             </asp:ContentPlaceHolder>
+            <br />
             </span>
             <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
