@@ -41,7 +41,7 @@
 </tr>
 
 </table>
-
+        
 <div id="gridview">
 
     <asp:GridView ID="grdResultaten" runat="server" 

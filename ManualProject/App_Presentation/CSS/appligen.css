@@ -514,3 +514,7 @@ font-size:7pt;
      float:right;
      height:0px;
  }
+ .imgbutton
+ {
+     display:inline;
+ }

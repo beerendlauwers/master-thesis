@@ -6,7 +6,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-<asp:UpdatePanel ID="UpdatePanel3" runat="server">
+    <asp:UpdatePanel ID="UpdatePanel3" runat="server">
 
 <ContentTemplate>
 <asp:UpdateProgress ID="UpdateProgress3" runat="server" DisplayAfter="0">
@@ -25,68 +25,80 @@
     <br />
     
     
-            <asp:ListBox ID="lsbArtikels" runat="server" Visible="False"></asp:ListBox>
+            <%--<asp:ListBox ID="lsbArtikels" runat="server" Visible="False"></asp:ListBox>--%>
+            <asp:GridView ID="grdvLijst" runat="server" AutoGenerateColumns="False" Visible="false">
+        <Columns>
+            <%--<asp:BoundField DataField="ArtikelID" HeaderText="ArtikelID" 
+                SortExpression="ArtikelID" />--%>
+            <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
+            <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />
+            <asp:BoundField DataField="Versie" HeaderText="Versie" 
+                SortExpression="Versie" />
+            <asp:BoundField DataField="Naam" HeaderText="Naam" SortExpression="Bedrijf" />
+            <asp:BoundField DataField="Taal" HeaderText="Taal" SortExpression="Taal" />
+            <asp:CommandField ButtonType="Image" 
+                SelectImageUrl="~/App_Presentation/CSS/images/wrench.png" 
+                ShowSelectButton="True" />
+        </Columns>
+    </asp:GridView>
+&nbsp;<div id="gridview">
+
+</div>
             <br />
    
     
-<asp:Button ID="btnBewerken" runat="server" Text="bewerken" Visible="False" OnClick="btnBewerken_Click" />
-
-    <br />
-    <br />
-    <br />
-    <br />
-    
+<%--<asp:Button ID="btnBewerken" runat="server" Text="bewerken" Visible="False" OnClick="btnBewerken_Click" />
+--%>    
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
     <ContentTemplate>
-    <asp:Label ID="lblTitel" runat="server" Text="Titel: " Visible="false"></asp:Label>
-    <asp:TextBox ID="txtTitel" runat="server" Visible="false"></asp:TextBox>
-    <br />
-    
-    <br />
-    <asp:Label ID="lblTag" runat="server" Text="Tag: " Visible="false"></asp:Label>
-    <asp:TextBox ID="txtTag" runat="server" Visible="false"></asp:TextBox>
-    <br />
-    <br />
-    <asp:Label ID="lblCategorie" runat="server" Text="Categorie: " Visible="false"></asp:Label>
-    <asp:DropDownList ID="ddlCategorie" runat="server" DataSourceID="objdCategorie" 
+<table>
+<tr>
+<td>   <asp:Label ID="lblTitel" runat="server" Text="Titel: " Visible="false"></asp:Label></td> 
+    <td> <asp:TextBox ID="txtTitel" runat="server" Visible="false"></asp:TextBox></td> 
+  </tr><tr>  
+   <td>  <asp:Label ID="lblTag" runat="server" Text="Tag: " Visible="false"></asp:Label></td> 
+   <td>  <asp:TextBox ID="txtTag" runat="server" Visible="false"></asp:TextBox></td> 
+  </tr><tr>  
+    <td> <asp:Label ID="lblCategorie" runat="server" Text="Categorie: " Visible="false"></asp:Label></td> 
+    <td> <asp:DropDownList ID="ddlCategorie" runat="server" DataSourceID="objdCategorie" 
         DataTextField="Categorie" DataValueField="CategorieID" Visible="false" >
-    </asp:DropDownList>
-    <br />
-    <br />
-    <asp:Label ID="lblVersie" runat="server" Text="Versie: " Visible="false"></asp:Label>
-    <asp:DropDownList ID="ddlVersie" runat="server" 
+    </asp:DropDownList></td> 
+  </tr><tr>  
+    <td> <asp:Label ID="lblVersie" runat="server" Text="Versie: " Visible="false"></asp:Label></td> 
+    <td> <asp:DropDownList ID="ddlVersie" runat="server" 
         DataSourceID="ObjectDataSource1" DataTextField="Versie" 
         DataValueField="VersieID" Visible="false">
-    </asp:DropDownList>
-    <br />
-    <br />
-    <asp:Label ID="lblTaal" runat="server" Text="Taal: " Visible="false"></asp:Label>
-    <asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
+    </asp:DropDownList></td> 
+  </tr><tr>
+   <td>  <asp:Label ID="lblTaal" runat="server" Text="Taal: " Visible="false"></asp:Label></td> 
+   <td>  <asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
         DataTextField="Taal" DataValueField="TaalID" Visible="false">
-    </asp:DropDownList>
-    <br />
-    <br />
-    <asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: " Visible="false"></asp:Label>
-    <asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
+    </asp:DropDownList></td> 
+  </tr><tr>  
+    <td> <asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: " Visible="false"></asp:Label></td> 
+   <td>  <asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
         DataTextField="Naam" DataValueField="BedrijfID" Visible="false">
-    </asp:DropDownList>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </asp:DropDownList></td> 
+   </tr> 
+    </table>  
+    &nbsp;
     <asp:Label ID="lblIs_final" runat="server" Text="Artikel is finaal: " 
         Visible="False"></asp:Label>
     <asp:CheckBox ID="ckbFinal" runat="server" Visible="false" />
-    <br />
+    
     <cc1:Editor ID="Editor1" runat="server" Height="300px" Width="600px" Visible="false"/>
    
-
-</ContentTemplate>
-</asp:UpdatePanel>
-
-</ContentTemplate>
-</asp:UpdatePanel>
-
-
-    <asp:Button ID="btnUpdate" runat="server" Text="Wijzig" Visible="False" />
+<asp:Button ID="btnUpdate" runat="server" Text="Wijzig" Visible="False" />
 &nbsp;<asp:Label ID="lblVar" runat="server" Visible="False"></asp:Label>
+</ContentTemplate>
+</asp:UpdatePanel>
+
+</ContentTemplate>
+</asp:UpdatePanel>
+
+
+    
+
 
 
     <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" 

@@ -44,7 +44,7 @@
                     <li><a runat="server" id="ArtikelBewerken" runat="server"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
                     <li><a runat="server" id="ArtikelVerwijderen" runat="server"><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
                 </ul></li>
-            <li><a runat="server" href=Beheer.aspx ><span class="l"></span><span class="r"></span>
+            <li><a runat="server" href="Beheer.aspx" ><span class="l"></span><span class="r"></span>
                 <span class="t">Beheer </span></a>
                 <ul>
                     <li><a runat="server" id="CategorieToevoegen"><img src="CSS/images/add.png" border="0"  /> Toevoegen</a></li>
@@ -54,6 +54,10 @@
             </li>
             <li><a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span>
                 <span class="t">Taal</span></a> </li>
+            <li style="float:right;" runat="server" id="zoeken" visible="true"><div><asp:TextBox ID="TextBox1" runat="server"></asp:TextBox><span class="imgbutton">
+                <asp:ImageButton ID="ImageButton1" runat="server" BackColor="Transparent" 
+                    Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
+                    Width="16px"/></span></div></li>
             <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false"><a runat="server" id="A1"><span class="l"></span><span class="r"></span>
                 <span class="t">Dit artikel bewerken</span></a> </li>
         </ul>

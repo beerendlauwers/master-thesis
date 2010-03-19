@@ -13,6 +13,7 @@ Partial Class App_Presentation_MasterPage
         ArtikelVerwijderen.HRef = "~/App_Presentation/verwijderenTekst.aspx"
 
 
+
         'Testsysteempje
         Dim taal As Integer = 0
         Dim bedrijf As Integer = 0
@@ -41,5 +42,8 @@ Partial Class App_Presentation_MasterPage
 
     End Sub
 
+    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+        Response.Redirect("~/App_Presentation/zoekresultaten.aspx?tag=" + TextBox1.Text)
+    End Sub
 End Class
 
