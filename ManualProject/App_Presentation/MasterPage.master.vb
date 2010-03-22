@@ -12,8 +12,6 @@ Partial Class App_Presentation_MasterPage
         ArtikelBewerken.HRef = "~/App_Presentation/ArtikelBewerken.aspx"
         ArtikelVerwijderen.HRef = "~/App_Presentation/verwijderenTekst.aspx"
 
-
-
         'Testsysteempje
         Dim taal As Integer = 0
         Dim bedrijf As Integer = 0

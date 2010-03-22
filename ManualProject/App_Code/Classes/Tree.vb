@@ -200,6 +200,38 @@ Public Class Tree
     End Sub
 
     ''' <summary>
+    ''' Deze functie leest een volledige tree uit en zet alles in een DropDownList.
+    ''' </summary>
+    Public Sub VulCategorieDropdown(ByRef ddl As DropDownList, ByRef parent As Node, ByVal diepte As Integer)
+        Dim huidigediepte As Integer = diepte + 1
+
+        For Each n As Node In parent.GetChildren
+
+            'We willen enkel categorieën
+            If n.Type = ContentType.Artikel Then Continue For
+
+
+            Dim tekst As String = String.Empty
+
+            'Spaties toevoegen
+            For index As Integer = 0 To huidigediepte
+                tekst = String.Concat(tekst, "  ")
+            Next index
+
+            tekst = String.Concat(tekst, n.Titel)
+
+            Dim listitem As New ListItem(tekst, n.ID)
+
+            ddl.Items.Add(listitem)
+
+            If n.GetChildCount > 0 Then
+                VulCategorieDropdown(ddl, n, diepte)
+            End If
+        Next n
+
+    End Sub
+
+    ''' <summary>
     ''' Deze functie leest een volledige tree uit en geeft alles weer in unordered list formaat.
     ''' </summary>
     Public Function BeginNieuweLijst(ByVal htmlcode As String, ByVal parent As Node, ByVal diepte As Integer) As String
@@ -232,11 +264,11 @@ Public Class Tree
 
         Next kind
 
-            If Not parent.GetChildCount = 0 Then
-                htmlcode = String.Concat(htmlcode, "</div></div>")
-            End If
+        If Not parent.GetChildCount = 0 Then
+            htmlcode = String.Concat(htmlcode, "</div></div>")
+        End If
 
-            Return htmlcode
+        Return htmlcode
     End Function
 
     ''' <summary>

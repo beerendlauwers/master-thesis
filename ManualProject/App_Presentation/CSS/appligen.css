@@ -1,4 +1,7 @@
-﻿body {
+﻿body 
+{
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
 }
 
 .h1
@@ -518,3 +521,192 @@ font-size:7pt;
  {
      display:inline;
  }
+ 
+ /* Lijstweergave UL */
+ 
+ 
+.list-menu a, .list-menu a:link, .list-menu a:visited
+{
+	text-align:left;
+	text-decoration:none;
+	outline:none;
+	letter-spacing:normal;
+	word-spacing:normal;
+}
+
+.list-menu a:hover
+{
+	text-align:left;
+	text-decoration:underline;
+	outline:none;
+	letter-spacing:normal;
+	word-spacing:normal;
+}
+
+.list-menu, .list-menu ul
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	list-style-type: none;
+	display: block;
+}
+
+.list-menu li
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	display: block;
+	float: left;
+	position: relative;
+	z-index: 5;
+	background:none;
+}
+
+.list-menu li:hover
+{
+	z-index: 10000;
+	white-space: normal;
+}
+
+.list-menu li li
+{
+	float: none;
+}
+
+.list-menu ul
+{
+	visibility: hidden;
+	position: absolute;
+	z-index: 10;
+	left: 0;
+	top: 0;
+	background:none;
+}
+
+.list-menu li:hover>ul
+{
+	visibility: visible;
+	top: 100%;
+}
+
+.list-menu li li:hover>ul
+{
+	top: 0;
+	left: 100%;
+}
+
+.list-menu:after, .list-menu ul:after
+{
+	content: ".";
+	height: 0;
+	display: block;
+	visibility: hidden;
+	overflow: hidden;
+	clear: both;
+}
+.list-menu, .list-menu ul
+{
+	min-height: 0;
+}
+
+.list-menu ul
+{
+	background-color:transparent;
+	padding: 0px 0px 0px 30px;
+	margin: 0px 0 0 -30px;
+}
+
+.list-menu ul ul
+{
+	padding: 30px 30px 30px 10px;
+	margin: -30px 0 0 -10px;
+}
+ 
+.list-menu
+{
+	padding: 8px 8px 0px 0px;
+}
+ 
+ .list-menu a
+{
+	position:relative;
+	display: block;
+	overflow:hidden;
+	height: 26px;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.list-menu ul li
+{
+	clear: both;
+}
+
+.list-menu a .r, .list-menu a .l
+{
+	position:absolute;
+	display: block;
+	top:0;
+	z-index:-1;
+	height: 78px;
+	background-color:#193C78;
+	border-color:Black;
+	border-width:1px;
+	border-style:solid;
+	
+}
+
+.list-menu a .l
+{
+	left:0;
+	right:4px;
+}
+
+.list-menu a .r
+{
+	width:408px;
+	right:0;
+	clip: rect(auto, auto, auto, 404px);
+}
+
+.list-menu a .t 
+{
+	font-family: Georgia, "Times New Roman", Times, Serif;
+	font-size: 13px;
+	color: White;
+	padding: 0 14px;
+	margin: 0 4px;
+	line-height: 26px;
+	text-align: center;
+}
+
+.list-menu a:hover .l, .list-menu a:hover .r
+{
+	top:-26px;
+}
+
+.list-menu li:hover>a .l, .list-menu li:hover>a .r
+{
+	top:-26px;
+}
+
+.list-menu li:hover a .l, .list-menu li:hover a .r
+{
+	top:-26px;
+}
+.list-menu a:hover .t
+{
+	color: white;
+}
+
+.list-menu li:hover a .t
+{
+	color: white;
+}
+
+.list-menu li:hover>a .t
+{
+	color: white;
+}

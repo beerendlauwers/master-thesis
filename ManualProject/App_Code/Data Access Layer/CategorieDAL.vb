@@ -8,8 +8,6 @@ Imports ManualTableAdapters
 Public Class CategorieDAL
     Private conn As String = ConfigurationManager.ConnectionStrings("Reference_manualConnectionString").ConnectionString()
     Private _tblCategorieAdapter As New tblCategorieTableAdapter
-    Private _myConnection As New SqlConnection(conn)
-    Private categorie As Categorie
 
     Public Function StdAdapter() As tblCategorieTableAdapter
         Return _tblCategorieAdapter
@@ -28,7 +26,7 @@ Public Class CategorieDAL
         c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -56,7 +54,7 @@ Public Class CategorieDAL
 
         c.Parameters.Add("@categorieID", SqlDbType.Int).Value = categorieID
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -85,7 +83,7 @@ Public Class CategorieDAL
         Dim bool As Boolean
         Dim c As New SqlCommand("Manual_updateHoogte")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@FK_parent", SqlDbType.Int).Value = FK_Parent
         c.Parameters.Add("@Hoogte", SqlDbType.Int).Value = hoogte
         Try
@@ -109,7 +107,7 @@ Public Class CategorieDAL
 
         c.Parameters.Add("@categorieID", SqlDbType.Int).Value = categorieID
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -138,7 +136,7 @@ Public Class CategorieDAL
 
         c.Parameters.Add("@categorieID", SqlDbType.Int).Value = parent
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -170,7 +168,7 @@ Public Class CategorieDAL
 
         c.Parameters.Add("@FK_Parent", SqlDbType.Int).Value = parent
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -200,7 +198,7 @@ Public Class CategorieDAL
         c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -228,7 +226,7 @@ Public Class CategorieDAL
         Dim c As New SqlCommand("Manual_getCategorieZonderRoot")
         c.CommandType = CommandType.StoredProcedure
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -255,7 +253,7 @@ Public Class CategorieDAL
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
         c.Parameters.Add("@ID", SqlDbType.Int).Value = Id
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader

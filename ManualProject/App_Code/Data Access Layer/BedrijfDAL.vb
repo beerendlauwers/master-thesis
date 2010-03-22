@@ -8,7 +8,6 @@ Imports ManualTableAdapters
 Public Class BedrijfDAL
     Private conn As String = ConfigurationManager.ConnectionStrings("Reference_manualConnectionString").ConnectionString()
     Private _tblBedrijfAdapter As New tblBedrijfTableAdapter
-    Private _myConnection As New SqlConnection(conn)
 
     Public Function StdAdapter() As tblBedrijfTableAdapter
         Return _tblBedrijfAdapter
@@ -20,7 +19,7 @@ Public Class BedrijfDAL
         Dim c As New SqlCommand("Manual_GetBedrijfByID")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@id", SqlDbType.Int).Value = id
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -46,7 +45,7 @@ Public Class BedrijfDAL
 
         Dim c As New SqlCommand("Manual_GetAllBedrijf")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -73,7 +72,7 @@ Public Class BedrijfDAL
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@naam", SqlDbType.VarChar).Value = naam
         c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -106,7 +105,7 @@ Public Class BedrijfDAL
         c.Parameters.Add("@naam", SqlDbType.VarChar).Value = naam
         c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
         c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader

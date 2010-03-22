@@ -8,7 +8,6 @@ Imports ManualTableAdapters
 Public Class ArtikelDAL
     Private conn As String = ConfigurationManager.ConnectionStrings("Reference_manualConnectionString").ConnectionString()
     Private _tblArtikelAdapter As New tblArtikelTableAdapter
-    Private _myConnection As New SqlConnection(conn)
 
     ''' <summary>
     ''' Haal alle artikels op die onder een bepaalde categorie staan.
@@ -18,7 +17,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_GetArtikelsByParent")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@categorieID", SqlDbType.VarChar).Value = categorieID
 
         Try
@@ -42,7 +41,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_GetArtikelByID")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@id", SqlDbType.Int).Value = ID
         Try
             Dim r As SqlDataReader
@@ -69,7 +68,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_GetArtikelByTag")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
         Try
             Dim r As SqlDataReader
@@ -96,7 +95,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_GetArtikelsByTitel_Versie_Bedrijf_Taal")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
@@ -123,7 +122,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_getArtikelsByTitel")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
         Try
             Dim r As SqlDataReader
@@ -146,7 +145,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_getArtikelByTekst_Versie_Bedrijf_Taal")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@tekst", SqlDbType.NVarChar).Value = tekst
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
@@ -172,7 +171,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_getArtikelByTekst")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@tekst", SqlDbType.VarChar).Value = tekst
         Try
             Dim r As SqlDataReader
@@ -195,7 +194,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_GetArtikelGegevensByTitel")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
         Try
             Dim r As SqlDataReader
@@ -218,7 +217,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_GetArtikelGegevensByTekst")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@tekst", SqlDbType.NVarChar).Value = tekst
         Try
             Dim r As SqlDataReader
@@ -240,7 +239,7 @@ Public Class ArtikelDAL
 
         Dim c As New SqlCommand("Manual_deleteArtikelbyID")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@artikelID", SqlDbType.Int).Value = artikelID
         Try
             Dim r As SqlDataReader
@@ -261,7 +260,7 @@ Public Class ArtikelDAL
         Dim bool As Boolean
         Dim c As New SqlCommand("Manual_updateArtikel")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@artikelID", SqlDbType.Int).Value = artikel.ID
         c.Parameters.Add("@Titel", SqlDbType.VarChar).Value = artikel.Titel
         c.Parameters.Add("@FK_Categorie", SqlDbType.Int).Value = artikel.Categorie
@@ -293,7 +292,7 @@ Public Class ArtikelDAL
 
         c.Parameters.Add("@VersieID", SqlDbType.Int).Value = versieID
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -323,7 +322,7 @@ Public Class ArtikelDAL
 
         c.Parameters.Add("@TaalID", SqlDbType.Int).Value = TaalID
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -352,7 +351,7 @@ Public Class ArtikelDAL
 
         c.Parameters.Add("@BedrijfID", SqlDbType.Int).Value = bedrijfID
 
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -383,7 +382,7 @@ Public Class ArtikelDAL
         c.Parameters.Add("@versieID", SqlDbType.Int).Value = versieID
         c.Parameters.Add("@TaalID", SqlDbType.Int).Value = taalID
         c.Parameters.Add("@tekst", SqlDbType.VarChar).Value = tag
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader

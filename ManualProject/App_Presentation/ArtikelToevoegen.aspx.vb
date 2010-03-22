@@ -1,4 +1,5 @@
 ﻿Imports Manual
+Imports System.Diagnostics
 
 Partial Class App_Presentation_invoerenTest
     Inherits System.Web.UI.Page

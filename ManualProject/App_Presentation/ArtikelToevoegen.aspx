@@ -1,4 +1,4 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="invoerenTekst.aspx.vb" Inherits="App_Presentation_invoerenTest" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="ArtikelToevoegen.aspx.vb" Inherits="App_Presentation_invoerenTest" title="Untitled Page" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc2" %>
 

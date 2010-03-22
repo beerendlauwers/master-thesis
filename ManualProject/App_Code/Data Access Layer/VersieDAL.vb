@@ -8,7 +8,6 @@ Imports ManualTableAdapters
 Public Class VersieDAL
     Private conn As String = ConfigurationManager.ConnectionStrings("Reference_manualConnectionString").ConnectionString()
     Private _tblVersieAdapter As New tblVersieTableAdapter
-    Private _myConnection As New SqlConnection(conn)
 
     Public Function StdAdapter() As tblVersieTableAdapter
         Return _tblVersieAdapter
@@ -20,7 +19,7 @@ Public Class VersieDAL
         Dim c As New SqlCommand("Manual_GetVersieByID")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@id", SqlDbType.Int).Value = id
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -46,7 +45,7 @@ Public Class VersieDAL
 
         Dim c As New SqlCommand("Manual_GetAllVersie")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -70,7 +69,7 @@ Public Class VersieDAL
         Dim c As New SqlCommand("Check_Versie")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@versie", SqlDbType.VarChar).Value = versie
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -99,7 +98,7 @@ Public Class VersieDAL
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@versie", SqlDbType.VarChar).Value = versie
         c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader

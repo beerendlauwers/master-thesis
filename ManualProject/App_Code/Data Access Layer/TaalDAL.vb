@@ -8,7 +8,6 @@ Imports ManualTableAdapters
 Public Class TaalDAL
     Private conn As String = ConfigurationManager.ConnectionStrings("Reference_manualConnectionString").ConnectionString()
     Private _tblTaalAdapter As New tblTaalTableAdapter
-    Private _myConnection As New SqlConnection(conn)
 
     Public Function StdAdapter() As tblTaalTableAdapter
         Return _tblTaalAdapter
@@ -20,7 +19,7 @@ Public Class TaalDAL
         Dim c As New SqlCommand("Manual_GetTaalByID")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@id", SqlDbType.Int).Value = id
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -46,7 +45,7 @@ Public Class TaalDAL
 
         Dim c As New SqlCommand("Manual_GetAllTaal")
         c.CommandType = CommandType.StoredProcedure
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -70,7 +69,7 @@ Public Class TaalDAL
         Dim c As New SqlCommand("Check_Taal")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader
@@ -99,7 +98,7 @@ Public Class TaalDAL
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
         c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
-        c.Connection = _myConnection
+        c.Connection = New SqlConnection(conn)
 
         Try
             Dim r As SqlDataReader

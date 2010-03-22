@@ -20,7 +20,7 @@
     <asp:ContentPlaceHolder id="head" runat="server">
     
     </asp:ContentPlaceHolder>
-     
+         
 </head>
 
 <body id="MasterBody" runat="server">
@@ -29,13 +29,21 @@
      
          <script language="javascript" type="text/javascript">
        <!--
+       // Deze functies zijn zeer handig om na te gaan of je AJAX-requests wel correct worden afgehandeld.
+       
        var prm = Sys.WebForms.PageRequestManager.getInstance();
        prm.add_initializeRequest(InitializeRequest);
        prm.add_endRequest(EndRequest);
 
        function InitializeRequest(sender, args)
            {
+           // alert( 'begin');
            }
+           
+       function EndRequest( sender, args)
+       {
+           // alert( 'einde');
+       }
        
        // -->
        </script>
@@ -72,7 +80,7 @@
             <li><a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span>
                 <span class="t">Taal</span></a> </li>
             <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
-                <asp:HyperLink ID="hrefArtikelBewerken" runat="server">Dit artikel bewerken</asp:HyperLink></span><span class="r"></span></li>
+                <asp:HyperLink ID="hrefArtikelBewerken" runat="server"><span class="l"></span><span class="r"></span><span class="t">Dit artikel bewerken</span></asp:HyperLink></li>
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div><asp:TextBox ID="txtZoek" runat="server"  onkeyup="SetButtonStatus(this)"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="ImageButton1" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
@@ -108,20 +116,18 @@
     </div>
     </div>
     <div id="footer">
+        <asp:TextBox ID="txtJavascriptOnEndRequest" runat="server" visible="false"></asp:TextBox>
     © 2010 Appligen
     </div>
 
     <script type="text/javascript">
     function SetButtonStatus(btn)
-{
-
-if ( btn.value.length >= 2 )
-document.getElementById('<%=ImageButton1.ClientID %>').disabled = false;
-
-else
-
-document.getElementById('<%=ImageButton1.ClientID %>').disabled = true;
-}
+    {
+        if ( btn.value.length >= 2 )
+            document.getElementById('<%=ImageButton1.ClientID %>').disabled = false;
+        else
+            document.getElementById('<%=ImageButton1.ClientID %>').disabled = true;
+    }
     </script>
 
     </form>
