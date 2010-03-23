@@ -10,6 +10,8 @@ Public Class Categorie
     Private _FK_Bedrijf As Integer
     Private _FK_Versie As Integer
 
+    Private Shared FCategorieen As List(Of Categorie) = Nothing
+
     Public Property CategorieID() As Integer
         Get
             Return _CategorieID

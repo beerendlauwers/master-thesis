@@ -116,16 +116,14 @@
  
 <tr>
 <td><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
-        DataTextField="Taal" DataValueField="TaalID" AutoPostBack="true">
+<td><asp:DropDownList ID="ddlTaal" runat="server" AutoPostBack="true">
     </asp:DropDownList>
 <span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 
 <tr>
 <td><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
-        DataTextField="Naam" DataValueField="BedrijfID" AutoPostBack="true">
+<td><asp:DropDownList ID="ddlBedrijf" runat="server" AutoPostBack="true">
     </asp:DropDownList>
                         <span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span>
 </td>
@@ -133,8 +131,7 @@
 
 <tr>
 <td><asp:Label ID="lblVersie" runat="server" Text="Versie:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie" 
-    DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true">
+<td><asp:DropDownList ID="ddlVersie" runat="server" AutoPostBack="true"> 
     </asp:DropDownList>
     <span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span>
 </td>
@@ -191,60 +188,6 @@
 
 </ContentTemplate>
 </asp:UpdatePanel>
-
-
-
-    
-    <asp:ObjectDataSource ID="objdVersie" runat="server" 
-        DeleteMethod="Delete" InsertMethod="Insert" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
-        TypeName="ManualTableAdapters.tblVersieTableAdapter" UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_VersieID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="Versie" Type="String" />
-            <asp:Parameter Name="Original_VersieID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="VersieID" Type="Int32" />
-            <asp:Parameter Name="Versie" Type="String" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
-
-<asp:ObjectDataSource ID="objdTaal" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="ManualTableAdapters.tblTaalTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_TaalID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="Taal" Type="String" />
-            <asp:Parameter Name="Original_TaalID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="TaalID" Type="Int32" />
-            <asp:Parameter Name="Taal" Type="String" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
-    <asp:ObjectDataSource ID="objdBedrijf" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="ManualTableAdapters.tblBedrijfTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_BedrijfID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="Naam" Type="String" />
-            <asp:Parameter Name="Original_BedrijfID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="BedrijfID" Type="Int32" />
-            <asp:Parameter Name="Naam" Type="String" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
-
 
 
 </asp:Content>

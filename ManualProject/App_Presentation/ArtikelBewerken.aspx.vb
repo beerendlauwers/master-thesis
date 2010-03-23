@@ -49,6 +49,10 @@ Partial Class App_Presentation_ArtikelBewerken
         If Page.IsPostBack Then
             Tooltip.VoegTipToeAanEndRequest(Me, lijst)
         Else
+
+            'Dropdowns laden
+            LaadDropdowns()
+
             Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
             Tooltip.VoegTipToeAanBody(body, lijst)
         End If
@@ -230,42 +234,45 @@ Partial Class App_Presentation_ArtikelBewerken
 
 #Region "Dropdownlist Event Handlers"
 
-    Protected Sub ddlBedrijf_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBedrijf.DataBound
-        bedrijfIsKlaar = True
-
-        If bedrijfIsKlaar And versieIsKlaar And taalIsKlaar Then
-            LaadCategorien()
-        End If
-    End Sub
-
-    Protected Sub ddlTaal_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTaal.DataBound
-        taalIsKlaar = True
-
-        If bedrijfIsKlaar And versieIsKlaar And taalIsKlaar Then
-            LaadCategorien()
-        End If
-    End Sub
-
-    Protected Sub ddlVersie_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersie.DataBound
-        versieIsKlaar = True
-
-        If bedrijfIsKlaar And versieIsKlaar And taalIsKlaar Then
-            LaadCategorien()
-        End If
-    End Sub
-
     Protected Sub ddlBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBedrijf.SelectedIndexChanged
+        ViewState("bedrijfID") = ddlBedrijf.SelectedValue
         LaadCategorien()
     End Sub
 
     Protected Sub ddlTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTaal.SelectedIndexChanged
+        ViewState("taalID") = ddlTaal.SelectedValue
         LaadCategorien()
     End Sub
 
     Protected Sub ddlVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersie.SelectedIndexChanged
+        ViewState("versieID") = ddlVersie.SelectedValue
         LaadCategorien()
     End Sub
 
 #End Region
+
+    Private Sub LaadDropdowns()
+
+        Me.ddlBedrijf.Items.Clear()
+        For Each b As Bedrijf In Bedrijf.GetBedrijven
+            Dim item As New ListItem(b.Naam, b.ID)
+            Me.ddlBedrijf.Items.Add(item)
+        Next
+
+        Me.ddlTaal.Items.Clear()
+        For Each t As Taal In Taal.GetTalen
+            Dim item As New ListItem(t.TaalNaam, t.ID)
+            Me.ddlTaal.Items.Add(item)
+        Next
+
+        Me.ddlVersie.Items.Clear()
+        For Each v As Versie In Versie.GetVersies
+            Dim item As New ListItem(v.VersieNaam, v.ID)
+            Me.ddlVersie.Items.Add(item)
+        Next
+
+        LaadCategorien()
+
+    End Sub
 
 End Class

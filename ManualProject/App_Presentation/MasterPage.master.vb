@@ -8,27 +8,42 @@ Partial Class App_Presentation_MasterPage
             Tree.BouwTrees()
         End If
 
+        If (bedrijf.GetBedrijven() Is Nothing) Then
+            bedrijf.BouwBedrijfLijst()
+        End If
+
+        If (taal.GetTalen() Is Nothing) Then
+            taal.BouwTaalLijst()
+        End If
+
+        If (versie.GetVersies() Is Nothing) Then
+            versie.BouwVersieLijst()
+        End If
+
+
+
+
         ArtikelToevoegen.HRef = "~/App_Presentation/invoerenTekst.aspx"
         ArtikelBewerken.HRef = "~/App_Presentation/ArtikelBewerken.aspx"
         ArtikelVerwijderen.HRef = "~/App_Presentation/verwijderenTekst.aspx"
 
         'Testsysteempje
-        Dim taal As Integer = 0
-        Dim bedrijf As Integer = 0
-        Dim versie As Integer = 0
+        Dim taalID As Integer = 0
+        Dim bedrijfID As Integer = 0
+        Dim versieID As Integer = 0
 
         Dim rootlist As New HtmlGenericControl("ul")
 
         Dim htmlcode As String = String.Empty
 
-        Dim t As Tree = Tree.GetTree(taal, versie, bedrijf)
+        Dim t As Tree = Tree.GetTree(taalID, versieID, bedrijfID)
         Dim root As Node = t.RootNode
 
         htmlcode = String.Concat(htmlcode, "<br/><div>", t.Bedrijf.Naam, "</div>")
 
         htmlcode = t.BeginNieuweLijst(htmlcode, root, -1)
 
-        Dim t2 As Tree = Tree.GetTree(taal, versie, 1)
+        Dim t2 As Tree = Tree.GetTree(taalID, versieID, 1)
         Dim root2 As Node = t2.RootNode
 
         htmlcode = String.Concat(htmlcode, "<br/><div>", t2.Bedrijf.Naam, "</div>")
