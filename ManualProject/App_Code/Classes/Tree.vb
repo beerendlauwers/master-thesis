@@ -289,6 +289,7 @@ Public Class Tree
         If row IsNot Nothing Then
             'Artikel toevoegen aan de categorie
             Dim artikelnode As New Node(New Artikel(row))
+            artikelnode.Type = ContentType.Artikel
             artikelnode.Hoogte = Node.VindMaxHoogteVanCategorie(categorie)
             categorie.AddChild(artikelnode)
         Else

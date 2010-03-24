@@ -10,21 +10,16 @@
 	font-variant: small-caps;
 }
 
-span.MsoHyperlink
-{
-	text-decoration: none;
-	color: #193C78;
-}
-
 a
 {
-	text-decoration: none;
+	text-decoration: none !important;
+	color: #193C78 !important;
 }
 
-a:link {color:#193C78;}      /* unvisited link */
-a:visited {color:#193C78;}  /* visited link */
-a:hover {color:#255AB6; text-decoration: underline;}  /* mouse over link */
-a:active {color:#255AB6;}  /* selected link */
+a:link {color:#193C78 !important;}      /* unvisited link */
+a:visited {color:#193C78 !important;}  /* visited link */
+a:hover {color:#255AB6 !important; text-decoration: underline !important;}  /* mouse over link */
+a:active {color:#255AB6 !important;}  /* selected link */
 
 
 #header
@@ -407,6 +402,7 @@ font-size:7pt;
 	margin-bottom: 5px;
 	padding: 0 7px;
 	padding-top: 10px;
+	cursor: pointer;
 }
 
 .art-BlockHeaderStrong a:hover
@@ -709,4 +705,33 @@ font-size:7pt;
 .list-menu li:hover>a .t
 {
 	color: white;
+}
+
+.zoekLinkUit
+{
+	vertical-align:middle;
+	opacity: 0.3;
+	filter:alpha(opacity=30);
+	cursor:default;
+}
+
+.zoekLinkAan
+{
+	vertical-align:middle;
+	opacity: 1;
+	filter:alpha(opacity=100);
+	cursor:pointer;
+}
+
+.handle
+{
+	height: 20px;
+	width: 20px;
+	background-color: Black;
+}
+
+.editorWindow
+{
+	height:1600px;
+	width: 100%;
 }

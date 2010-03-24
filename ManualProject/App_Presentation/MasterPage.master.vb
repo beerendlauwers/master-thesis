@@ -55,7 +55,7 @@ Partial Class App_Presentation_MasterPage
 
     End Sub
 
-    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+    Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkZoeken.Click
         Response.Redirect("~/App_Presentation/zoekresultaten.aspx?tag=" + txtZoek.Text + "&bedrijfID=" + "4" + "&versieID=" + "0" + "&taalID=" + "0")
     End Sub
 End Class

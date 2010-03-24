@@ -104,6 +104,15 @@ Partial Class App_Presentation_invoerenTest
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Page.Title = "Artikel Toevoegen"
+
+        'De opslaanknop op disabled zetten als erop geklikt wordt
+        JavaScript.ZetButtonOpDisabledOnClick(btnVoegtoe, "Opslaan...", )
+
+        LaadTooltips()
+    End Sub
+
+    Private Sub LaadTooltips()
 
         'Nieuwe lijst van tooltips definiëren
         Dim lijst As New List(Of Tooltip)

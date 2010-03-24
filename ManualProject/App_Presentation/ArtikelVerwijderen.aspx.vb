@@ -5,6 +5,11 @@ Partial Class App_Presentation_verwijderenTekst
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Artikel Verwijderen"
 
+        LaadTooltips()
+    End Sub
+
+    Private Sub LaadTooltips()
+
         'Nieuwe lijst van tooltips definiëren
         Dim lijst As New List(Of Tooltip)
 
@@ -19,6 +24,7 @@ Partial Class App_Presentation_verwijderenTekst
             Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
             Tooltip.VoegTipToeAanBody(body, lijst)
         End If
+
     End Sub
 
     Sub ValideerZoekTerm(ByVal sender As Object, ByVal args As ServerValidateEventArgs)

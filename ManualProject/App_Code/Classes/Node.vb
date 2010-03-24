@@ -82,6 +82,10 @@ Public Class Node
         _children.Add(node)
     End Sub
 
+    Public Sub RemoveChild(ByRef node As Node)
+        _children.Remove(node)
+    End Sub
+
     ''' <summary>
     ''' Geeft het aantal kinderen van deze nodes terug.
     ''' </summary>

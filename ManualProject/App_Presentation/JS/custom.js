@@ -20,3 +20,23 @@ function veranderDropdown(imagenaam)
 		document.getElementById(imagenaam).src= beginpart + '/images/add.png'
 	}
 }
+
+function VeranderEditorScherm( aantal )
+{
+   var elem = document.getElementById('ctl00_ContentPlaceHolder1_Editor1');
+   
+   if ( elem )
+   {
+      if ( elem.style.height == "100%" )
+    {
+        elem.style.height = "800px";
+    }
+    else
+    {
+        var height = elem.style.height;
+        height = height.substring( 0, height.length - 2 );
+        height = parseInt(height) + aantal;
+        elem.style.height = height + "px";
+    }
+   }
+}

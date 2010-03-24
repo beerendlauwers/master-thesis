@@ -15,9 +15,16 @@ Partial Class App_Presentation_ArtikelBewerken
         Page.Title = "Artikel Bewerken"
 
         'De zoekknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True, "zoekTitel")
+        'De wizjigknop op disabled zetten als erop geklikt wordt
+        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True, "bewerkTekst")
 
+        'Als de pagina de eerste keer laadt
         If Not Page.IsPostBack Then
+
+            'Dropdowns laden
+            LaadDropdowns()
+
             'Artikelcontrols verstoppen
             ArtikelFunctiesZichtbaar(False)
 
@@ -27,35 +34,14 @@ Partial Class App_Presentation_ArtikelBewerken
 
                     Dim id As Integer = Page.Request.QueryString("id")
                     LaadArtikel(id)
+                    JavaScript.VoegJavascriptToeAanBody(Master.FindControl("MasterBody"), "VeranderEditorScherm(200);")
                 End If
             End If
 
         End If
 
-        'Nieuwe lijst van tooltips definiëren
-        Dim lijst As New List(Of Tooltip)
+        LaadTooltips()
 
-        'Alle tooltips voor onze pagina toevoegen
-        lijst.Add(New Tooltip("tipZoekTitel", "Een (gedeelte van) de titel waarop u wilt zoeken."))
-        lijst.Add(New Tooltip("tipTag", "De <b>unieke</b> tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten."))
-        lijst.Add(New Tooltip("tipTitel", "De titel van het artikel."))
-        lijst.Add(New Tooltip("tipTaal", "De taal van het artikel."))
-        lijst.Add(New Tooltip("tipBedrijf", "Het bedrijf waaronder dit artikel zal worden gepubliceerd."))
-        lijst.Add(New Tooltip("tipVersie", "De versie waartoe het artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))
-        lijst.Add(New Tooltip("tipCategorie", "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur."))
-        lijst.Add(New Tooltip("tipFinaal", "Bepaalt of het artikel gefinaliseerd is of niet."))
-
-        'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
-        If Page.IsPostBack Then
-            Tooltip.VoegTipToeAanEndRequest(Me, lijst)
-        Else
-
-            'Dropdowns laden
-            LaadDropdowns()
-
-            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-            Tooltip.VoegTipToeAanBody(body, lijst)
-        End If
 
     End Sub
 
@@ -96,6 +82,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
         Dim artikel As New Artikel
 
+        artikel.ID = Session("artikelID")
         artikel.Bedrijf = ddlBedrijf.SelectedValue
         artikel.Categorie = ddlCategorie.SelectedValue
         artikel.Tag = txtTag.Text
@@ -125,6 +112,25 @@ Partial Class App_Presentation_ArtikelBewerken
                 Return
             Else
                 node.Titel = artikel.Titel
+
+                Dim oudeparent As Node = tree.VindParentVanNode(node)
+                Dim nieuweparent As Node = tree.DoorzoekTreeVoorNode(artikel.Categorie, Global.ContentType.Categorie)
+
+                If nieuweparent IsNot oudeparent Then
+
+                    If oudeparent Is Nothing Or nieuweparent Is Nothing Then
+                        Me.lblresultaat.Text = "Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken."
+                        ArtikelFunctiesZichtbaar(False)
+                        imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
+                        Me.divFeedback.Visible = True
+                        Return
+                    Else
+                        nieuweparent.AddChild(node)
+                        oudeparent.RemoveChild(node)
+                    End If
+
+                End If
+
             End If
 
             lblresultaat.Text = "Update geslaagd."
@@ -137,6 +143,7 @@ Partial Class App_Presentation_ArtikelBewerken
         End If
 
         ArtikelFunctiesZichtbaar(False)
+        Me.divFeedback.Visible = True
     End Sub
 
 #Region "Gridview Event Handlers"
@@ -175,20 +182,21 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Private Sub ArtikelInladen(ByVal artikel As Artikel)
 
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "VeranderEditorScherm(200);")
+
         ArtikelFunctiesZichtbaar(True)
 
-        Session("categorieWaarde") = artikel.Categorie
-
-        Me.ddlTaal.DataBind()
-        Me.ddlVersie.DataBind()
-        Me.ddlBedrijf.DataBind()
-
+        Session("artikelID") = artikel.ID
         txtTitel.Text = artikel.Titel
         txtTag.Text = artikel.Tag
         Editor1.Content = artikel.Tekst
         ddlBedrijf.SelectedValue = artikel.Bedrijf
         ddlTaal.SelectedValue = artikel.Taal
         ddlVersie.SelectedValue = artikel.Versie
+
+        LaadCategorien()
+
+        ddlCategorie.SelectedValue = artikel.Categorie
 
         If artikel.IsFinal = 1 Then
             ckbFinal.Checked = True
@@ -227,6 +235,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Private Sub ArtikelFunctiesZichtbaar(ByVal zichtbaar As Boolean)
         Me.divInvullen.Visible = zichtbaar
+        Me.divFeedback.Visible = False
         Me.btnUpdate.Visible = zichtbaar
     End Sub
 
@@ -272,6 +281,31 @@ Partial Class App_Presentation_ArtikelBewerken
         Next
 
         LaadCategorien()
+
+    End Sub
+
+    Private Sub LaadTooltips()
+
+        'Nieuwe lijst van tooltips definiëren
+        Dim lijst As New List(Of Tooltip)
+
+        'Alle tooltips voor onze pagina toevoegen
+        lijst.Add(New Tooltip("tipZoekTitel", "Een (gedeelte van) de titel waarop u wilt zoeken."))
+        lijst.Add(New Tooltip("tipTag", "De <b>unieke</b> tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten."))
+        lijst.Add(New Tooltip("tipTitel", "De titel van het artikel."))
+        lijst.Add(New Tooltip("tipTaal", "De taal van het artikel."))
+        lijst.Add(New Tooltip("tipBedrijf", "Het bedrijf waaronder dit artikel zal worden gepubliceerd."))
+        lijst.Add(New Tooltip("tipVersie", "De versie waartoe het artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))
+        lijst.Add(New Tooltip("tipCategorie", "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur."))
+        lijst.Add(New Tooltip("tipFinaal", "Bepaalt of het artikel gefinaliseerd is of niet."))
+
+        'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
+        If Page.IsPostBack Then
+            Tooltip.VoegTipToeAanEndRequest(Me, lijst)
+        Else
+            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
+            Tooltip.VoegTipToeAanBody(body, lijst)
+        End If
 
     End Sub
 

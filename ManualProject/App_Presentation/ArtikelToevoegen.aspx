@@ -127,7 +127,7 @@
     </asp:UpdateProgress>
     <div runat="server" id="divFeedback" visible="false">
         <asp:Image ID="imgResultaat" runat="server" />&nbsp;<asp:Label ID="lblresultaat" runat="server"></asp:Label><br />
-        <input id="btnNieuwArtikel" type="button" value="Nog een artikel toevoegen" onclick="window.location = 'invoerenTekst.aspx'" />
+        <input id="btnNieuwArtikel" type="button" value="Nog een artikel toevoegen" onclick="window.location = 'ArtikelToevoegen.aspx'" />
     </div>
 </ContentTemplate>
     </asp:UpdatePanel>

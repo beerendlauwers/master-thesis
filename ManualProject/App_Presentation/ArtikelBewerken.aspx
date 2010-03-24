@@ -6,6 +6,7 @@
     TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">
     Artikel Bewerken
@@ -21,7 +22,7 @@
 <td><asp:TextBox ID="txtZoekTitel" runat="server"></asp:TextBox>
 <asp:RequiredFieldValidator
         ID="vleZoekTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
-        ControlToValidate="txtZoekTitel" Display="None"></asp:RequiredFieldValidator>
+        ControlToValidate="txtZoekTitel" Display="None" ValidationGroup="zoekTitel"></asp:RequiredFieldValidator>
     <cc2:ValidatorCalloutExtender
             ID="extZoekTitel" runat="server" TargetControlID="vleZoekTitel">
         </cc2:ValidatorCalloutExtender>
@@ -30,7 +31,7 @@
 </tr>
 
 <tr>
-<td colspan="2"><asp:Button ID="btnZoek" runat="server" Text="Zoeken" Width="100%" /></td>
+<td colspan="2"><asp:Button ID="btnZoek" runat="server" Text="Zoeken" Width="100%" ValidationGroup="zoekTitel" /></td>
 <td><asp:UpdateProgress ID="prgZoeken" runat="server" DisplayAfter="0" AssociatedUpdatePanelID="updZoeken">
                             <ProgressTemplate>
                                 <div style="vertical-align:middle">
@@ -90,7 +91,7 @@
     <td> <asp:TextBox ID="txtTitel" runat="server"></asp:TextBox>
         <asp:RequiredFieldValidator
         ID="vleTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
-        ControlToValidate="txtTitel" Display="None"></asp:RequiredFieldValidator>
+        ControlToValidate="txtTitel" Display="None" ValidationGroup="bewerkTekst"></asp:RequiredFieldValidator>
     <cc2:ValidatorCalloutExtender
             ID="extTitel" runat="server" TargetControlID="vleTitel">
         </cc2:ValidatorCalloutExtender>
@@ -102,7 +103,7 @@
    <asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
         ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters, nummers en een underscore ( _ ) bevatten." 
-        ControlToValidate="txtTag"></asp:RequiredFieldValidator>
+        ControlToValidate="txtTag" ValidationGroup="bewerkTekst"></asp:RequiredFieldValidator>
     <cc2:ValidatorCalloutExtender
             ID="extTag" runat="server" TargetControlID="vleTag">
         </cc2:ValidatorCalloutExtender>
@@ -158,7 +159,7 @@
 <tr>
 <td><asp:Label ID="lblIs_final" runat="server" Text="Artikel is finaal: " 
         Visible="False"></asp:Label></td>
-        <td<asp:CheckBox ID="ckbFinal" runat="server" Visible="false" />></td>
+        <td<asp:CheckBox ID="ckbFinal" runat="server" Visible="false" /></td>
 </tr>
  
     </table>  
@@ -166,12 +167,18 @@
 </ContentTemplate>
 </asp:UpdatePanel>
     
-    <cc1:Editor ID="Editor1" runat="server" Height="300px" Width="100%"/>
-   
+    <div>
+    <a href="#" onclick="VeranderEditorScherm(200);">Vergroot Editor</a>
+    &nbsp;|&nbsp;
+    <a href="#" onclick="VeranderEditorScherm(-200);">Verklein Editor</a>
+    </div>
+    <cc1:Editor ID="Editor1" runat="server" CssClass="editorWindow"/>
+
+
 </div>
 <br />
 <div style="text-align:center;">
-        <asp:Button ID="btnUpdate" runat="server" Text="Artikel Wijzigen" Visible="false"/>
+        <asp:Button ID="btnUpdate" runat="server" Text="Artikel Wijzigen" Visible="false" ValidationGroup="bewerkTekst"/>
     <asp:UpdateProgress ID="prgUpdaten" runat="server" AssociatedUpdatePanelID="updBewerken">
     <ProgressTemplate>
     <div class="update">
@@ -188,7 +195,6 @@
 
 </ContentTemplate>
 </asp:UpdatePanel>
-
 
 </asp:Content>
 

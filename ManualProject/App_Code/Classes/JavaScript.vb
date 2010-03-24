@@ -33,10 +33,17 @@ Public Class JavaScript
     ''' <summary>
     ''' Voer javascript uit als op een knop wordt gedrukt.
     ''' </summary>
-    Public Shared Sub ZetButtonOpDisabledOnClick(ByRef btn As System.Web.UI.WebControls.Button, ByVal laadTekst As String, Optional ByVal isPostback As Boolean = True)
+    Public Shared Sub ZetButtonOpDisabledOnClick(ByRef btn As System.Web.UI.WebControls.Button, ByVal laadTekst As String, Optional ByVal isPostback As Boolean = True, Optional ByVal validationGroup As String = "")
         Dim js As String = String.Empty
 
-        js = String.Concat(js, "if( Page_ClientValidate() == true )")
+        Dim validateString As String = String.Empty
+        If Not validationGroup = "" Then
+            validateString = String.Concat("Page_ClientValidate('", validationGroup, "')")
+        Else
+            validateString = "Page_ClientValidate()"
+        End If
+
+        js = String.Concat(js, "if( ", validateString, " == true )")
         js = String.Concat(js, "{ this.disabled=true; ")
 
         'laadTekst wijzigen als ze anders is dan de originele tekst
