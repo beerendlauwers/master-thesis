@@ -248,7 +248,7 @@ Public Class Tree
 
         For Each kind As Node In parent.GetChildren
 
-            For i = 0 To huidigediepte
+            For i As Integer = 0 To huidigediepte
                 htmlcode = String.Concat(htmlcode, "&nbsp;&nbsp;")
             Next i
 

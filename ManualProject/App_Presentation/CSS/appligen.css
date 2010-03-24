@@ -499,6 +499,11 @@ font-size:7pt;
 	padding: 2px 2px 2px 2px;
 	text-align: center;
 }
+#gridview table tbody tr th a 
+{
+	background-color: #0352A3;
+	color: #FFFFFF;
+}
 
 /*ajax uploaden*/
 .update

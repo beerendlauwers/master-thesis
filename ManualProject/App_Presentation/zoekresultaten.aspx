@@ -6,6 +6,8 @@
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 <h4>Artikels die overeenkomen met u zoektekst:</h4>
+    <asp:Label ID="lblSort" runat="server" Text="Klik op 1 van de kolommen om de items volgens deze waarde te sorteren." Visible="false"></asp:Label>
+    <div id="gridview">
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" AllowPaging="true" 
         AllowSorting="True" DataSourceID="sqldsArtikel">
     <Columns>
@@ -19,7 +21,7 @@
                 ShowSelectButton="True"/>
         </Columns>
     </asp:GridView>
-    
+    </div>
 
 <br />
 <br />
