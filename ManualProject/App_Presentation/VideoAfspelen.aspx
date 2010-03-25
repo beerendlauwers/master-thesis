@@ -17,7 +17,7 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-
+Kies een video om af te spelen. <br />
     <asp:DropDownList ID="ddlVideo" runat="server" DataSourceID="objdVideo" 
         DataTextField="videoNaam" DataValueField="VideoID"></asp:DropDownList>
        <asp:Button ID="btnPlay" runat="server" Text="Play" />

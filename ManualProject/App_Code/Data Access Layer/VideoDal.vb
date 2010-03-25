@@ -40,6 +40,37 @@ Public Class VideoDal
         End If
     End Function
 
+    Public Function getVideoByNaam(ByVal videoNaam As String) As tblVideoDataTable
+        Dim dt As New tblVideoDataTable
 
+        Dim c As New SqlCommand("Manual_getVideoByNaam")
+        c.Parameters.Add("@videoNaam", SqlDbType.VarChar).Value = videoNaam
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Connection = _myConnection
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+            Else
+                Return Nothing
+            End If
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt
+        End If
+    End Function
 
 End Class

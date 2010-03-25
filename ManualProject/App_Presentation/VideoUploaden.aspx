@@ -22,7 +22,12 @@
 <asp:UpdatePanel ID="updVideo" runat="server">
                     <ContentTemplate>
     
+                        <asp:Button ID="btnVoorbeeld" runat="server" Text="Voorbeeld" Visible="False" />
+    
     <asp:Label ID="lblRes" runat="server" Text=""></asp:Label>
+                        <br />
+                        <br />
+                        
   <asp:UpdateProgress ID="UpdateProgress1" runat="server">
                             <ProgressTemplate>
                                 <div class="update">
@@ -33,30 +38,15 @@
                         </asp:UpdateProgress>
     </ContentTemplate>
     </asp:UpdatePanel>
-   
-    <%--<object height="480" width="640">
-        <param name="movie" value="../video/video.swf" />
-        <embed height="480" src="../video/video.swf" width="640">
-        </embed>
-    </object>--%>
-    <%--<object width="640" height="480">
-<param name="movie" value="../video.swf" />
-<embed src="../video.swf" width="640" height="480"/>
-</embed>
-</object>--%>
-
-<%--<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
-   codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0"
-   width="550" height="400" id="Untitled-1" align="middle">
-<param name="allowScriptAccess" value="sameDomain" />
-<param name="movie" value="../video/video.swf" />
-<param name="quality" value="high" />
-<param name="bgcolor" value="#ffffff" />
-<embed src="../video/video.swf" quality="high" bgcolor="#ffffff" width="550"
-   height="400" name="mymovie" align="middle" allowScriptAccess="sameDomain"
-   type="application/x-shockwave-flash" pluginspage="http://www.adobe.com/go/getflashplayer" />
-</object>--%>
-
+    
+ Reeds Geüploade video's:    
+    <br />
+   <asp:ListBox ID="lstVideo" runat="server" Height="150px"></asp:ListBox>
+   <ul class="view"><li>
+  <asp:ImageButton ID="imgbtnView" runat="server" 
+        ImageUrl="~/App_Presentation/CSS/images/view.png" /> Klik om te selectie te bekijken.</li>
+        </ul>
+&nbsp;
 
 </asp:Content>
 

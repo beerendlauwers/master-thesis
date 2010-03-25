@@ -87,6 +87,14 @@
                    
                     
                     </li>
+                    <li><a><span class="l"></span><span class="r"></span>
+                <span class="t">Video's </span></a>
+                <ul>
+                    <li><a runat="server" id="A2"><img src="CSS/images/add.png" border="0"  /> Video Uploaden</a></li>
+                    <li><a runat="server" id="A3"><img src="CSS/images/view.png" border="0"  /> Video's Afspelen</a></li>
+                    <li><a runat="server" id="A4"><img src="CSS/images/remove.png" border="0"  /> Video's Verwijderen</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
     <div id="blok">

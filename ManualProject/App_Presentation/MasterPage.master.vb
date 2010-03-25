@@ -22,7 +22,8 @@ Partial Class App_Presentation_MasterPage
 
 
 
-
+        A2.HRef = "~/App_Presentation/VideoUploaden.aspx"
+        A3.HRef = "~/App_Presentation/VideoAfspelen.aspx"
         ArtikelToevoegen.HRef = "~/App_Presentation/invoerenTekst.aspx"
         ArtikelBewerken.HRef = "~/App_Presentation/ArtikelBewerken.aspx"
         ArtikelVerwijderen.HRef = "~/App_Presentation/verwijderenTekst.aspx"
@@ -52,6 +53,15 @@ Partial Class App_Presentation_MasterPage
 
         Dim boomdiv As HtmlGenericControl = Me.FindControl("divBoomStructuur")
         boomdiv.InnerHtml = htmlcode
+
+        If Session("Login") = 0 Then
+            'Dim divArtikelbeheer As HtmlGenericControl = Me.FindControl("beheerArtikels")
+            'divArtikelbeheer.Visible = False
+
+            'Dim divBeheer As HtmlGenericControl = Me.FindControl("beheer")
+            'divBeheer.Visible = False
+
+        End If
 
     End Sub
 

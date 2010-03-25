@@ -2,9 +2,10 @@
 <xs:schema id="Manual" targetNamespace="http://tempuri.org/Manual.xsd" xmlns:mstns="http://tempuri.org/Manual.xsd" xmlns="http://tempuri.org/Manual.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
   <xs:annotation>
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
-      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="1" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
         <Connections>
           <Connection AppSettingsObjectName="Web.config" AppSettingsPropertyName="Reference_manualConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="Reference_manualConnectionString (Web.config)" ParameterPrefix="@" PropertyReference="AppConfig.System.Configuration.ConfigurationManager.0.ConnectionStrings.Reference_manualConnectionString.ConnectionString" Provider="System.Data.SqlClient" />
+          <Connection AppSettingsPropertyName="Reference_manualConnectionString" ConnectionStringObject="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" IsAppSettingsProperty="false" Modifier="Assembly" Name="Reference_manualConnectionString" ParameterPrefix="@" Provider="System.Data.SqlClient" />
         </Connections>
         <Tables>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="tblVersieTableAdapter" GeneratorDataComponentClassName="tblVersieTableAdapter" Name="tblVersie" UserDataComponentName="tblVersieTableAdapter">
@@ -264,7 +265,7 @@
           </TableAdapter>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="tblVideoTableAdapter" GeneratorDataComponentClassName="tblVideoTableAdapter" Name="tblVideo" UserDataComponentName="tblVideoTableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="Reference_manualConnectionString (Web.config)" DbObjectName="Reference_manual.dbo.tblVideo" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+              <DbSource ConnectionRef="Reference_manualConnectionString" DbObjectName="Reference_manual.dbo.tblVideo" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
                 <DeleteCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="false">
                     <CommandText>DELETE FROM [dbo].[tblVideo] WHERE (([VideoID] = @Original_VideoID))</CommandText>
@@ -321,8 +322,8 @@
         <xs:element name="tblVersie" msprop:Generator_UserTableName="tblVersie" msprop:Generator_RowDeletedName="tblVersieRowDeleted" msprop:Generator_RowChangedName="tblVersieRowChanged" msprop:Generator_RowClassName="tblVersieRow" msprop:Generator_RowChangingName="tblVersieRowChanging" msprop:Generator_RowEvArgName="tblVersieRowChangeEvent" msprop:Generator_RowEvHandlerName="tblVersieRowChangeEventHandler" msprop:Generator_TableClassName="tblVersieDataTable" msprop:Generator_TableVarName="tabletblVersie" msprop:Generator_RowDeletingName="tblVersieRowDeleting" msprop:Generator_TablePropName="tblVersie">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="VersieID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="VersieID" msprop:Generator_ColumnVarNameInTable="columnVersieID" msprop:Generator_ColumnPropNameInRow="VersieID" msprop:Generator_ColumnPropNameInTable="VersieIDColumn" type="xs:int" />
-              <xs:element name="Versie" msprop:Generator_UserColumnName="Versie" msprop:Generator_ColumnVarNameInTable="columnVersie" msprop:Generator_ColumnPropNameInRow="Versie" msprop:Generator_ColumnPropNameInTable="VersieColumn">
+              <xs:element name="VersieID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="VersieID" msprop:Generator_ColumnPropNameInRow="VersieID" msprop:Generator_ColumnVarNameInTable="columnVersieID" msprop:Generator_ColumnPropNameInTable="VersieIDColumn" type="xs:int" />
+              <xs:element name="Versie" msprop:Generator_UserColumnName="Versie" msprop:Generator_ColumnPropNameInRow="Versie" msprop:Generator_ColumnVarNameInTable="columnVersie" msprop:Generator_ColumnPropNameInTable="VersieColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="50" />
@@ -335,15 +336,15 @@
         <xs:element name="tblTaal" msprop:Generator_UserTableName="tblTaal" msprop:Generator_RowDeletedName="tblTaalRowDeleted" msprop:Generator_RowChangedName="tblTaalRowChanged" msprop:Generator_RowClassName="tblTaalRow" msprop:Generator_RowChangingName="tblTaalRowChanging" msprop:Generator_RowEvArgName="tblTaalRowChangeEvent" msprop:Generator_RowEvHandlerName="tblTaalRowChangeEventHandler" msprop:Generator_TableClassName="tblTaalDataTable" msprop:Generator_TableVarName="tabletblTaal" msprop:Generator_RowDeletingName="tblTaalRowDeleting" msprop:Generator_TablePropName="tblTaal">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="TaalID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="TaalID" msprop:Generator_ColumnVarNameInTable="columnTaalID" msprop:Generator_ColumnPropNameInRow="TaalID" msprop:Generator_ColumnPropNameInTable="TaalIDColumn" type="xs:int" />
-              <xs:element name="Taal" msprop:Generator_UserColumnName="Taal" msprop:Generator_ColumnVarNameInTable="columnTaal" msprop:Generator_ColumnPropNameInRow="Taal" msprop:Generator_ColumnPropNameInTable="TaalColumn">
+              <xs:element name="TaalID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="TaalID" msprop:Generator_ColumnPropNameInRow="TaalID" msprop:Generator_ColumnVarNameInTable="columnTaalID" msprop:Generator_ColumnPropNameInTable="TaalIDColumn" type="xs:int" />
+              <xs:element name="Taal" msprop:Generator_UserColumnName="Taal" msprop:Generator_ColumnPropNameInRow="Taal" msprop:Generator_ColumnVarNameInTable="columnTaal" msprop:Generator_ColumnPropNameInTable="TaalColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="50" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="TaalTag" msprop:Generator_UserColumnName="TaalTag" msprop:Generator_ColumnVarNameInTable="columnTaalTag" msprop:Generator_ColumnPropNameInRow="TaalTag" msprop:Generator_ColumnPropNameInTable="TaalTagColumn" minOccurs="0">
+              <xs:element name="TaalTag" msprop:Generator_UserColumnName="TaalTag" msprop:Generator_ColumnPropNameInRow="TaalTag" msprop:Generator_ColumnVarNameInTable="columnTaalTag" msprop:Generator_ColumnPropNameInTable="TaalTagColumn" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="50" />
@@ -356,35 +357,35 @@
         <xs:element name="tblCategorie" msprop:Generator_UserTableName="tblCategorie" msprop:Generator_RowDeletedName="tblCategorieRowDeleted" msprop:Generator_RowChangedName="tblCategorieRowChanged" msprop:Generator_RowClassName="tblCategorieRow" msprop:Generator_RowChangingName="tblCategorieRowChanging" msprop:Generator_RowEvArgName="tblCategorieRowChangeEvent" msprop:Generator_RowEvHandlerName="tblCategorieRowChangeEventHandler" msprop:Generator_TableClassName="tblCategorieDataTable" msprop:Generator_TableVarName="tabletblCategorie" msprop:Generator_RowDeletingName="tblCategorieRowDeleting" msprop:Generator_TablePropName="tblCategorie">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="CategorieID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="CategorieID" msprop:Generator_ColumnVarNameInTable="columnCategorieID" msprop:Generator_ColumnPropNameInRow="CategorieID" msprop:Generator_ColumnPropNameInTable="CategorieIDColumn" type="xs:int" />
-              <xs:element name="Categorie" msprop:Generator_UserColumnName="Categorie" msprop:Generator_ColumnVarNameInTable="columnCategorie" msprop:Generator_ColumnPropNameInRow="Categorie" msprop:Generator_ColumnPropNameInTable="CategorieColumn">
+              <xs:element name="CategorieID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="CategorieID" msprop:Generator_ColumnPropNameInRow="CategorieID" msprop:Generator_ColumnVarNameInTable="columnCategorieID" msprop:Generator_ColumnPropNameInTable="CategorieIDColumn" type="xs:int" />
+              <xs:element name="Categorie" msprop:Generator_UserColumnName="Categorie" msprop:Generator_ColumnPropNameInRow="Categorie" msprop:Generator_ColumnVarNameInTable="columnCategorie" msprop:Generator_ColumnPropNameInTable="CategorieColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="255" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Diepte" msprop:Generator_UserColumnName="Diepte" msprop:Generator_ColumnVarNameInTable="columnDiepte" msprop:Generator_ColumnPropNameInRow="Diepte" msprop:Generator_ColumnPropNameInTable="DiepteColumn" type="xs:int" />
-              <xs:element name="Hoogte" msprop:Generator_UserColumnName="Hoogte" msprop:Generator_ColumnVarNameInTable="columnHoogte" msprop:Generator_ColumnPropNameInRow="Hoogte" msprop:Generator_ColumnPropNameInTable="HoogteColumn" type="xs:int" />
-              <xs:element name="FK_parent" msprop:Generator_UserColumnName="FK_parent" msprop:Generator_ColumnVarNameInTable="columnFK_parent" msprop:Generator_ColumnPropNameInRow="FK_parent" msprop:Generator_ColumnPropNameInTable="FK_parentColumn" type="xs:int" minOccurs="0" />
-              <xs:element name="FK_taal" msprop:Generator_UserColumnName="FK_taal" msprop:Generator_ColumnVarNameInTable="columnFK_taal" msprop:Generator_ColumnPropNameInRow="FK_taal" msprop:Generator_ColumnPropNameInTable="FK_taalColumn" type="xs:int" />
-              <xs:element name="FK_bedrijf" msprop:Generator_UserColumnName="FK_bedrijf" msprop:Generator_ColumnVarNameInTable="columnFK_bedrijf" msprop:Generator_ColumnPropNameInRow="FK_bedrijf" msprop:Generator_ColumnPropNameInTable="FK_bedrijfColumn" type="xs:int" />
-              <xs:element name="FK_versie" msprop:Generator_UserColumnName="FK_versie" msprop:Generator_ColumnVarNameInTable="columnFK_versie" msprop:Generator_ColumnPropNameInRow="FK_versie" msprop:Generator_ColumnPropNameInTable="FK_versieColumn" type="xs:int" />
+              <xs:element name="Diepte" msprop:Generator_UserColumnName="Diepte" msprop:Generator_ColumnPropNameInRow="Diepte" msprop:Generator_ColumnVarNameInTable="columnDiepte" msprop:Generator_ColumnPropNameInTable="DiepteColumn" type="xs:int" />
+              <xs:element name="Hoogte" msprop:Generator_UserColumnName="Hoogte" msprop:Generator_ColumnPropNameInRow="Hoogte" msprop:Generator_ColumnVarNameInTable="columnHoogte" msprop:Generator_ColumnPropNameInTable="HoogteColumn" type="xs:int" />
+              <xs:element name="FK_parent" msprop:Generator_UserColumnName="FK_parent" msprop:Generator_ColumnPropNameInRow="FK_parent" msprop:Generator_ColumnVarNameInTable="columnFK_parent" msprop:Generator_ColumnPropNameInTable="FK_parentColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="FK_taal" msprop:Generator_UserColumnName="FK_taal" msprop:Generator_ColumnPropNameInRow="FK_taal" msprop:Generator_ColumnVarNameInTable="columnFK_taal" msprop:Generator_ColumnPropNameInTable="FK_taalColumn" type="xs:int" />
+              <xs:element name="FK_bedrijf" msprop:Generator_UserColumnName="FK_bedrijf" msprop:Generator_ColumnPropNameInRow="FK_bedrijf" msprop:Generator_ColumnVarNameInTable="columnFK_bedrijf" msprop:Generator_ColumnPropNameInTable="FK_bedrijfColumn" type="xs:int" />
+              <xs:element name="FK_versie" msprop:Generator_UserColumnName="FK_versie" msprop:Generator_ColumnPropNameInRow="FK_versie" msprop:Generator_ColumnVarNameInTable="columnFK_versie" msprop:Generator_ColumnPropNameInTable="FK_versieColumn" type="xs:int" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
         <xs:element name="tblBedrijf" msprop:Generator_UserTableName="tblBedrijf" msprop:Generator_RowDeletedName="tblBedrijfRowDeleted" msprop:Generator_RowChangedName="tblBedrijfRowChanged" msprop:Generator_RowClassName="tblBedrijfRow" msprop:Generator_RowChangingName="tblBedrijfRowChanging" msprop:Generator_RowEvArgName="tblBedrijfRowChangeEvent" msprop:Generator_RowEvHandlerName="tblBedrijfRowChangeEventHandler" msprop:Generator_TableClassName="tblBedrijfDataTable" msprop:Generator_TableVarName="tabletblBedrijf" msprop:Generator_RowDeletingName="tblBedrijfRowDeleting" msprop:Generator_TablePropName="tblBedrijf">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="BedrijfID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="BedrijfID" msprop:Generator_ColumnVarNameInTable="columnBedrijfID" msprop:Generator_ColumnPropNameInRow="BedrijfID" msprop:Generator_ColumnPropNameInTable="BedrijfIDColumn" type="xs:int" />
-              <xs:element name="Naam" msprop:Generator_UserColumnName="Naam" msprop:Generator_ColumnVarNameInTable="columnNaam" msprop:Generator_ColumnPropNameInRow="Naam" msprop:Generator_ColumnPropNameInTable="NaamColumn">
+              <xs:element name="BedrijfID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="BedrijfID" msprop:Generator_ColumnPropNameInRow="BedrijfID" msprop:Generator_ColumnVarNameInTable="columnBedrijfID" msprop:Generator_ColumnPropNameInTable="BedrijfIDColumn" type="xs:int" />
+              <xs:element name="Naam" msprop:Generator_UserColumnName="Naam" msprop:Generator_ColumnPropNameInRow="Naam" msprop:Generator_ColumnVarNameInTable="columnNaam" msprop:Generator_ColumnPropNameInTable="NaamColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="255" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Tag" msprop:Generator_UserColumnName="Tag" msprop:Generator_ColumnVarNameInTable="columnTag" msprop:Generator_ColumnPropNameInRow="Tag" msprop:Generator_ColumnPropNameInTable="TagColumn">
+              <xs:element name="Tag" msprop:Generator_UserColumnName="Tag" msprop:Generator_ColumnPropNameInRow="Tag" msprop:Generator_ColumnVarNameInTable="columnTag" msprop:Generator_ColumnPropNameInTable="TagColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="255" />
@@ -397,33 +398,33 @@
         <xs:element name="tblArtikel" msprop:Generator_UserTableName="tblArtikel" msprop:Generator_RowDeletedName="tblArtikelRowDeleted" msprop:Generator_RowChangedName="tblArtikelRowChanged" msprop:Generator_RowClassName="tblArtikelRow" msprop:Generator_RowChangingName="tblArtikelRowChanging" msprop:Generator_RowEvArgName="tblArtikelRowChangeEvent" msprop:Generator_RowEvHandlerName="tblArtikelRowChangeEventHandler" msprop:Generator_TableClassName="tblArtikelDataTable" msprop:Generator_TableVarName="tabletblArtikel" msprop:Generator_RowDeletingName="tblArtikelRowDeleting" msprop:Generator_TablePropName="tblArtikel">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="ArtikelID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="ArtikelID" msprop:Generator_ColumnVarNameInTable="columnArtikelID" msprop:Generator_ColumnPropNameInRow="ArtikelID" msprop:Generator_ColumnPropNameInTable="ArtikelIDColumn" type="xs:int" />
-              <xs:element name="Titel" msprop:Generator_UserColumnName="Titel" msprop:Generator_ColumnVarNameInTable="columnTitel" msprop:Generator_ColumnPropNameInRow="Titel" msprop:Generator_ColumnPropNameInTable="TitelColumn">
+              <xs:element name="ArtikelID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="ArtikelID" msprop:Generator_ColumnPropNameInRow="ArtikelID" msprop:Generator_ColumnVarNameInTable="columnArtikelID" msprop:Generator_ColumnPropNameInTable="ArtikelIDColumn" type="xs:int" />
+              <xs:element name="Titel" msprop:Generator_UserColumnName="Titel" msprop:Generator_ColumnPropNameInRow="Titel" msprop:Generator_ColumnVarNameInTable="columnTitel" msprop:Generator_ColumnPropNameInTable="TitelColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="255" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="FK_Categorie" msprop:Generator_UserColumnName="FK_Categorie" msprop:Generator_ColumnVarNameInTable="columnFK_Categorie" msprop:Generator_ColumnPropNameInRow="FK_Categorie" msprop:Generator_ColumnPropNameInTable="FK_CategorieColumn" type="xs:int" />
-              <xs:element name="FK_Taal" msprop:Generator_UserColumnName="FK_Taal" msprop:Generator_ColumnVarNameInTable="columnFK_Taal" msprop:Generator_ColumnPropNameInRow="FK_Taal" msprop:Generator_ColumnPropNameInTable="FK_TaalColumn" type="xs:int" />
-              <xs:element name="FK_Bedrijf" msprop:Generator_UserColumnName="FK_Bedrijf" msprop:Generator_ColumnVarNameInTable="columnFK_Bedrijf" msprop:Generator_ColumnPropNameInRow="FK_Bedrijf" msprop:Generator_ColumnPropNameInTable="FK_BedrijfColumn" type="xs:int" />
-              <xs:element name="FK_Versie" msprop:Generator_UserColumnName="FK_Versie" msprop:Generator_ColumnVarNameInTable="columnFK_Versie" msprop:Generator_ColumnPropNameInRow="FK_Versie" msprop:Generator_ColumnPropNameInTable="FK_VersieColumn" type="xs:int" />
-              <xs:element name="Tekst" msprop:Generator_UserColumnName="Tekst" msprop:Generator_ColumnVarNameInTable="columnTekst" msprop:Generator_ColumnPropNameInRow="Tekst" msprop:Generator_ColumnPropNameInTable="TekstColumn">
+              <xs:element name="FK_Categorie" msprop:Generator_UserColumnName="FK_Categorie" msprop:Generator_ColumnPropNameInRow="FK_Categorie" msprop:Generator_ColumnVarNameInTable="columnFK_Categorie" msprop:Generator_ColumnPropNameInTable="FK_CategorieColumn" type="xs:int" />
+              <xs:element name="FK_Taal" msprop:Generator_UserColumnName="FK_Taal" msprop:Generator_ColumnPropNameInRow="FK_Taal" msprop:Generator_ColumnVarNameInTable="columnFK_Taal" msprop:Generator_ColumnPropNameInTable="FK_TaalColumn" type="xs:int" />
+              <xs:element name="FK_Bedrijf" msprop:Generator_UserColumnName="FK_Bedrijf" msprop:Generator_ColumnPropNameInRow="FK_Bedrijf" msprop:Generator_ColumnVarNameInTable="columnFK_Bedrijf" msprop:Generator_ColumnPropNameInTable="FK_BedrijfColumn" type="xs:int" />
+              <xs:element name="FK_Versie" msprop:Generator_UserColumnName="FK_Versie" msprop:Generator_ColumnPropNameInRow="FK_Versie" msprop:Generator_ColumnVarNameInTable="columnFK_Versie" msprop:Generator_ColumnPropNameInTable="FK_VersieColumn" type="xs:int" />
+              <xs:element name="Tekst" msprop:Generator_UserColumnName="Tekst" msprop:Generator_ColumnPropNameInRow="Tekst" msprop:Generator_ColumnVarNameInTable="columnTekst" msprop:Generator_ColumnPropNameInTable="TekstColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="2147483647" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Tag" msprop:Generator_UserColumnName="Tag" msprop:Generator_ColumnVarNameInTable="columnTag" msprop:Generator_ColumnPropNameInRow="Tag" msprop:Generator_ColumnPropNameInTable="TagColumn">
+              <xs:element name="Tag" msprop:Generator_UserColumnName="Tag" msprop:Generator_ColumnPropNameInRow="Tag" msprop:Generator_ColumnVarNameInTable="columnTag" msprop:Generator_ColumnPropNameInTable="TagColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="255" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Is_final" msprop:Generator_UserColumnName="Is_final" msprop:Generator_ColumnVarNameInTable="columnIs_final" msprop:Generator_ColumnPropNameInRow="Is_final" msprop:Generator_ColumnPropNameInTable="Is_finalColumn" type="xs:int" />
+              <xs:element name="Is_final" msprop:Generator_UserColumnName="Is_final" msprop:Generator_ColumnPropNameInRow="Is_final" msprop:Generator_ColumnVarNameInTable="columnIs_final" msprop:Generator_ColumnPropNameInTable="Is_finalColumn" type="xs:int" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -434,21 +435,21 @@
               <xs:element name="videoNaam" msprop:Generator_UserColumnName="videoNaam" msprop:Generator_ColumnPropNameInRow="videoNaam" msprop:Generator_ColumnVarNameInTable="columnvideoNaam" msprop:Generator_ColumnPropNameInTable="videoNaamColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="255" />
+                    <xs:maxLength value="8000" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="videoPad" msprop:Generator_UserColumnName="videoPad" msprop:Generator_ColumnPropNameInRow="videoPad" msprop:Generator_ColumnVarNameInTable="columnvideoPad" msprop:Generator_ColumnPropNameInTable="videoPadColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="255" />
+                    <xs:maxLength value="8000" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="VideoCode" msprop:Generator_UserColumnName="VideoCode" msprop:Generator_ColumnPropNameInRow="VideoCode" msprop:Generator_ColumnVarNameInTable="columnVideoCode" msprop:Generator_ColumnPropNameInTable="VideoCodeColumn">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="255" />
+                    <xs:maxLength value="8000" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
