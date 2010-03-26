@@ -31,19 +31,49 @@ Public Class JavaScript
     End Sub
 
     ''' <summary>
-    ''' Voer javascript uit als op een knop wordt gedrukt.
+    ''' Zet een dropdown op disabled als een dropdown een postback doet.
     ''' </summary>
-    Public Shared Sub ZetButtonOpDisabledOnClick(ByRef btn As System.Web.UI.WebControls.Button, ByVal laadTekst As String, Optional ByVal isPostback As Boolean = True, Optional ByVal validationGroup As String = "")
+    Public Shared Sub ZetDropdownOpDisabledOnChange(ByRef veranderendeDdl As System.Web.UI.WebControls.DropDownList, Optional ByRef disabledDdl As System.Web.UI.WebControls.DropDownList = Nothing, Optional ByVal laadTekst As String = "")
+
+        If disabledDdl Is Nothing Then
+            disabledDdl = veranderendeDdl
+        End If
+
+        Dim js As String = String.Empty
+
+        js = String.Concat(js, "var ddl = document.getElementById('", disabledDdl.ClientID, "'); ddl.disabled = true; ")
+
+        If Not laadTekst = "" Then
+            js = String.Concat(js, "ddl.options[0].text = '", laadTekst, "'; ")
+        End If
+
+        js = String.Concat(js, veranderendeDdl.Page.ClientScript.GetPostBackEventReference(veranderendeDdl, "").ToString, ";")
+
+        VoerJavaScriptUitOn(veranderendeDdl, js, "onchange")
+    End Sub
+
+    ''' <summary>
+    ''' Zet een button op disabled als erop gedrukt wordt.
+    ''' </summary>
+    Public Shared Sub ZetButtonOpDisabledOnClick(ByRef btn As System.Web.UI.WebControls.Button, ByVal laadTekst As String, Optional ByVal isPostback As Boolean = True, Optional ByVal geenValidatie As Boolean = False)
         Dim js As String = String.Empty
 
         Dim validateString As String = String.Empty
+
+        Dim validationGroup = btn.ValidationGroup
+
         If Not validationGroup = "" Then
             validateString = String.Concat("Page_ClientValidate('", validationGroup, "')")
         Else
             validateString = "Page_ClientValidate()"
         End If
 
-        js = String.Concat(js, "if( ", validateString, " == true )")
+        If geenValidatie Then
+            js = String.Concat(js, "if( true )")
+        Else
+            js = String.Concat(js, "if( ", validateString, " == true )")
+        End If
+
         js = String.Concat(js, "{ this.disabled=true; ")
 
         'laadTekst wijzigen als ze anders is dan de originele tekst
@@ -58,7 +88,18 @@ Public Class JavaScript
 
         js = String.Concat(js, " }")
 
-        btn.Attributes.Item("onclick") = js
+        VoerJavaScriptUitOn(btn, js, "onclick")
     End Sub
+
+    Public Shared Sub VoerJavaScriptUitOn(ByRef control As System.Web.UI.WebControls.WebControl, ByVal js As String, ByVal onEvent As String)
+        control.Attributes.Item(onEvent) = String.Concat(control.Attributes.Item(onEvent), js)
+    End Sub
+
+    ''' <summary>
+    ''' Geeft JavasScript-code terug om een control te disablen.
+    ''' </summary>
+    Public Shared Function DisableCode(ByRef control As System.Web.UI.WebControls.WebControl) As String
+        Return String.Concat("document.getElementById('", control.ClientID, "').disabled = true; ")
+    End Function
 
 End Class

@@ -5,6 +5,8 @@ Partial Class App_Presentation_verwijderenTekst
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Artikel Verwijderen"
 
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
+
         LaadTooltips()
     End Sub
 
@@ -41,6 +43,8 @@ Partial Class App_Presentation_verwijderenTekst
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
         HaalArtikelGegevensOp()
+
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
     End Sub
 
     Private Sub HaalArtikelGegevensOp()

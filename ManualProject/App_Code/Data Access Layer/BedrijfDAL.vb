@@ -128,4 +128,30 @@ Public Class BedrijfDAL
 
     End Function
 
+    Public Function insertBedrijf(ByVal naam As String, ByVal tag As String) As Integer
+
+        Dim c As New SqlCommand("Manual_InsertBedrijf", New SqlConnection(conn))
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@naam", SqlDbType.VarChar).Value = naam
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                r.Read()
+                Return Integer.Parse(r(0))
+            Else
+                Return -1
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
 End Class

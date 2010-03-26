@@ -119,4 +119,30 @@ Public Class TaalDAL
         End Try
 
     End Function
+
+    Public Function insertTaal(ByVal taal As String, ByVal taaltag As String) As Integer
+
+        Dim c As New SqlCommand("Manual_InsertTaal", New SqlConnection(conn))
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
+        c.Parameters.Add("@taaltag", SqlDbType.VarChar).Value = taaltag
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                r.Read()
+                Return Integer.Parse(r(0))
+            Else
+                Return -1
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
 End Class

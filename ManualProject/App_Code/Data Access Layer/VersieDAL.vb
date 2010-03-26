@@ -119,4 +119,30 @@ Public Class VersieDAL
         End Try
 
     End Function
+
+    Public Function insertVersie(ByVal versie As String) As Integer
+
+        Dim c As New SqlCommand("Manual_InsertVersie", New SqlConnection(conn))
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@versie", SqlDbType.VarChar).Value = versie
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                r.Read()
+                Return Integer.Parse(r(0))
+            Else
+                Return -1
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
 End Class

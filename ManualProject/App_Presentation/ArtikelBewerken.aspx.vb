@@ -15,9 +15,9 @@ Partial Class App_Presentation_ArtikelBewerken
         Page.Title = "Artikel Bewerken"
 
         'De zoekknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True, "zoekTitel")
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
         'De wizjigknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True, "bewerkTekst")
+        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True)
 
         'Als de pagina de eerste keer laadt
         If Not Page.IsPostBack Then

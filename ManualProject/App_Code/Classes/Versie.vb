@@ -60,6 +60,18 @@ Public Class Versie
     End Sub
 
     ''' <summary>
+    ''' Verwijder een versie.
+    ''' </summary>
+    Public Shared Sub RemoveVersie(ByVal versie As Versie)
+        'Als de treelijst niet bestaat, maken we deze aan
+        If (FVersies Is Nothing) Then
+            FVersies = New List(Of Versie)
+        End If
+
+        FVersies.Remove(versie)
+    End Sub
+
+    ''' <summary>
     ''' Haal een versie op op basis van een versie
     ''' </summary>
     Public Shared Function GetVersie(ByVal versie As Versie) As Versie
@@ -70,6 +82,24 @@ Public Class Versie
 
         For Each v As Versie In FVersies
             If (v Is versie) Then
+                Return v
+            End If
+        Next v
+
+        Return Nothing
+    End Function
+
+    ''' <summary>
+    ''' Haal een versie op op basis van het ID
+    ''' </summary>
+    Public Shared Function GetVersie(ByVal ID As Integer) As Versie
+
+        If FVersies Is Nothing Then
+            BouwVersieLijst()
+        End If
+
+        For Each v As Versie In FVersies
+            If (v.ID = ID) Then
                 Return v
             End If
         Next v

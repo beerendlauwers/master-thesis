@@ -54,9 +54,11 @@
     </asp:UpdateProgress></td>
 </tr>
 
-<br />
-<div id="gridview">
+</table>
 
+<br />
+<div id="gridview" style="display:none">
+<div>
     <asp:GridView ID="grdResultaten" runat="server" 
         AutoGenerateColumns="False" Visible="false" Width="100%" AllowPaging="true">
         <Columns>
@@ -73,7 +75,7 @@
                 ShowSelectButton="True" />
         </Columns>
     </asp:GridView>
-    
+</div>
 </div>
 
 <asp:Label runat="server" ID="lblSelecteerArtikel" Text="Selecteer een artikel om te verwijderen." Visible="false"></asp:Label>

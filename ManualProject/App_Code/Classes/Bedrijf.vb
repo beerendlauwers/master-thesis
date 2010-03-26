@@ -72,6 +72,36 @@ Public Class Bedrijf
     End Sub
 
     ''' <summary>
+    ''' Verwijder een bedrijf.
+    ''' </summary>
+    Public Shared Sub RemoveBedrijf(ByVal bedrijf As Bedrijf)
+        'Als de treelijst niet bestaat, maken we deze aan
+        If (FBedrijven Is Nothing) Then
+            FBedrijven = New List(Of Bedrijf)
+        End If
+
+        FBedrijven.Remove(bedrijf)
+    End Sub
+
+    ''' <summary>
+    ''' Haal een bedrijf op op basis van de naam
+    ''' </summary>
+    Public Shared Function GetBedrijf(ByVal naam As String) As Bedrijf
+
+        If FBedrijven Is Nothing Then
+            BouwBedrijfLijst()
+        End If
+
+        For Each b As Bedrijf In FBedrijven
+            If (b.Naam = naam) Then
+                Return b
+            End If
+        Next b
+
+        Return Nothing
+    End Function
+
+    ''' <summary>
     ''' Haal een bedrijf op op basis van het bedrijf
     ''' </summary>
     Public Shared Function GetBedrijf(ByVal bedrijf As Bedrijf) As Bedrijf

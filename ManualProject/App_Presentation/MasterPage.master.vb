@@ -4,55 +4,88 @@ Partial Class App_Presentation_MasterPage
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+        'Nakijken of gebruiker deze pagina wel mag zien
+        If Session("isIngelogd") Is Nothing Or Session("isIngelogd") = False Then
+            Session("vorigePagina") = Page.Request.Url.AbsolutePath
+            Response.Redirect("~/Default.aspx")
+        End If
+
+        CheckDataStructures()
+
+        PopuleerLinks()
+		
+		A2.HRef = "~/App_Presentation/VideoUploaden.aspx"
+        A3.HRef = "~/App_Presentation/VideoAfspelen.aspx"
+
+        'Taal ophalen
+        Dim taalID As Integer = Session("taal")
+
+        'Versie ophalen
+        Dim versieID As Integer = Session("versie")
+
+        'Bedrijven ophalen
+
+        'De Appligen-structuur krijgen we altijd te zien
+        Dim appligen As Bedrijf = Bedrijf.GetBedrijf("Appligen")
+
+        Dim anderBedrijfID As Integer
+        'Kijken of we een geldige bedrijftag hadden binnengekregen
+        If Not Session("bedrijf") = -1000 Then
+            anderBedrijfID = Session("bedrijf")
+            'Even checken of het geldige bedrijf dat we hebben binnengekregen niet nog eens Appligen is
+            If appligen.ID = anderBedrijfID Then
+                anderBedrijfID = -1000
+            End If
+        Else
+            anderBedrijfID = -1000
+        End If
+
+        'Lijststructuren genereren voor bedrijven
+        Dim htmlcode As String = String.Empty
+
+        'Appligen-structuur genereren
+        htmlcode = Genereerstructuur(taalID, versieID, appligen.ID, htmlcode)
+
+        'Ander bedrijf genereren
+        If Not anderBedrijfID = -1000 Then
+            htmlcode = Genereerstructuur(taalID, versieID, anderBedrijfID, htmlcode)
+        End If
+
+        'HTML-code in de linkerzijbalk plaatsen
+        Dim boomdiv As HtmlGenericControl = Me.FindControl("divBoomStructuur")
+        boomdiv.InnerHtml = htmlcode
+
+    End Sub
+
+    Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkZoeken.Click
+        Response.Redirect("~/App_Presentation/zoekresultaten.aspx?tag=" + txtZoek.Text + "&bedrijfID=" + "4" + "&versieID=" + "0" + "&taalID=" + "0")
+    End Sub
+
+    Private Sub CheckDataStructures()
+
         If (Tree.GetTrees() Is Nothing) Then
             Tree.BouwTrees()
         End If
 
-        If (bedrijf.GetBedrijven() Is Nothing) Then
-            bedrijf.BouwBedrijfLijst()
+        If (Bedrijf.GetBedrijven() Is Nothing) Then
+            Bedrijf.BouwBedrijfLijst()
         End If
 
-        If (taal.GetTalen() Is Nothing) Then
-            taal.BouwTaalLijst()
+        If (Taal.GetTalen() Is Nothing) Then
+            Taal.BouwTaalLijst()
         End If
 
-        If (versie.GetVersies() Is Nothing) Then
-            versie.BouwVersieLijst()
+        If (Versie.GetVersies() Is Nothing) Then
+            Versie.BouwVersieLijst()
         End If
 
+    End Sub
 
+    Private Sub PopuleerLinks()
 
-        A2.HRef = "~/App_Presentation/VideoUploaden.aspx"
-        A3.HRef = "~/App_Presentation/VideoAfspelen.aspx"
-        ArtikelToevoegen.HRef = "~/App_Presentation/invoerenTekst.aspx"
+        ArtikelToevoegen.HRef = "~/App_Presentation/ArtikelToevoegen.aspx"
         ArtikelBewerken.HRef = "~/App_Presentation/ArtikelBewerken.aspx"
-        ArtikelVerwijderen.HRef = "~/App_Presentation/verwijderenTekst.aspx"
-
-        'Testsysteempje
-        Dim taalID As Integer = 0
-        Dim bedrijfID As Integer = 0
-        Dim versieID As Integer = 0
-
-        Dim rootlist As New HtmlGenericControl("ul")
-
-        Dim htmlcode As String = String.Empty
-
-        Dim t As Tree = Tree.GetTree(taalID, versieID, bedrijfID)
-        Dim root As Node = t.RootNode
-
-        htmlcode = String.Concat(htmlcode, "<br/><div>", t.Bedrijf.Naam, "</div>")
-
-        htmlcode = t.BeginNieuweLijst(htmlcode, root, -1)
-
-        Dim t2 As Tree = Tree.GetTree(taalID, versieID, 1)
-        Dim root2 As Node = t2.RootNode
-
-        htmlcode = String.Concat(htmlcode, "<br/><div>", t2.Bedrijf.Naam, "</div>")
-
-        htmlcode = t.BeginNieuweLijst(htmlcode, root2, -1)
-
-        Dim boomdiv As HtmlGenericControl = Me.FindControl("divBoomStructuur")
-        boomdiv.InnerHtml = htmlcode
+        ArtikelVerwijderen.HRef = "~/App_Presentation/ArtikelVerwijderen.aspx"
 
         If Session("Login") = 0 Then
             'Dim divArtikelbeheer As HtmlGenericControl = Me.FindControl("beheerArtikels")
@@ -65,8 +98,15 @@ Partial Class App_Presentation_MasterPage
 
     End Sub
 
-    Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkZoeken.Click
-        Response.Redirect("~/App_Presentation/zoekresultaten.aspx?tag=" + txtZoek.Text + "&bedrijfID=" + "4" + "&versieID=" + "0" + "&taalID=" + "0")
-    End Sub
+    Private Function Genereerstructuur(ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByRef html As String) As String
+
+        Dim t As Tree = Tree.GetTree(taal, versie, bedrijf)
+        Dim root As Node = t.RootNode
+
+        html = String.Concat(html, "<br/><div>", t.Bedrijf.Naam, "</div>")
+        html = t.BeginNieuweLijst(html, root, -1)
+
+        Return html
+    End Function
 End Class
 

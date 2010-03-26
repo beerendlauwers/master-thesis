@@ -73,6 +73,18 @@ Public Class Taal
     End Sub
 
     ''' <summary>
+    ''' Voeg een taal toe.
+    ''' </summary>
+    Public Shared Sub RemoveTaal(ByVal taal As Taal)
+        'Als de taallijst niet bestaat, maken we deze aan
+        If (FTalen Is Nothing) Then
+            FTalen = New List(Of Taal)
+        End If
+
+        FTalen.Remove(taal)
+    End Sub
+
+    ''' <summary>
     ''' Haal een taal op op basis van een taal
     ''' </summary>
     Public Shared Function GetTaal(ByVal taal As Taal) As Taal
@@ -83,6 +95,24 @@ Public Class Taal
 
         For Each t As Taal In FTalen
             If (t Is taal) Then
+                Return t
+            End If
+        Next t
+
+        Return Nothing
+    End Function
+
+    ''' <summary>
+    ''' Haal een taal op op basis van het ID
+    ''' </summary>
+    Public Shared Function GetTaal(ByVal ID As Integer) As Taal
+
+        If FTalen Is Nothing Then
+            BouwTaalLijst()
+        End If
+
+        For Each t As Taal In FTalen
+            If (t.ID = ID) Then
                 Return t
             End If
         Next t
