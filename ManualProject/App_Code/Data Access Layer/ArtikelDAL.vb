@@ -398,4 +398,29 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
+    Public Function getArtikelsByTitelTaalVersieBedrijf(ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer, ByVal titel As String) As Data.DataTable
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand("Manual_GetArtikelsByTitel_Versie_Bedrijf_Taal")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@BedrijfID", SqlDbType.Int).Value = bedrijfID
+        c.Parameters.Add("@versieID", SqlDbType.Int).Value = versieID
+        c.Parameters.Add("@TaalID", SqlDbType.Int).Value = taalID
+        c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+        Return dt
+    End Function
+
 End Class

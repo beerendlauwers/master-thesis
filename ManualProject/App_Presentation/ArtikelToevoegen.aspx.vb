@@ -9,6 +9,7 @@ Partial Class App_Presentation_invoerenTest
     Private bedrijfIsKlaar As Boolean = False
     Private versieIsKlaar As Boolean = False
     Private taalIsKlaar As Boolean = False
+    Private xml As New iksemel
 
     Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVoegtoe.Click
 
@@ -59,6 +60,7 @@ Partial Class App_Presentation_invoerenTest
         End If
 
         divFeedback.Visible = True
+       
 
     End Sub
 
@@ -110,6 +112,20 @@ Partial Class App_Presentation_invoerenTest
         JavaScript.ZetButtonOpDisabledOnClick(btnVoegtoe, "Opslaan...", )
 
         LaadTooltips()
+
+        If Not IsPostBack Then
+            Editor1.Content = xml.alles
+        End If
+
+        If Session("login") = 1 Then
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            lblLogin.Visible = True
+            lblLogin.Text = "U bent niet ingelogd."
+            ImageButton1.Visible = True
+        End If
+
     End Sub
 
     Private Sub LaadTooltips()
@@ -125,7 +141,7 @@ Partial Class App_Presentation_invoerenTest
         lijst.Add(New Tooltip("tipVersie", "De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))
         lijst.Add(New Tooltip("tipCategorie", "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur."))
         lijst.Add(New Tooltip("tipFinaal", "Bepaalt of het artikel gefinaliseerd is of niet."))
-
+        lijst.Add(New Tooltip("tipUpload", "Hiermee kan u afbeeldingen uploaden. Na het uploaden van 1 afbeelding kan u gewoon een volgende afbeelding uploaden."))
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
             Tooltip.VoegTipToeAanEndRequest(Me, lijst)
@@ -134,5 +150,36 @@ Partial Class App_Presentation_invoerenTest
             Tooltip.VoegTipToeAanBody(body, lijst)
         End If
 
+    End Sub
+
+    Protected Sub btnImageAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        lblFile.Text = ""
+        If FileUpload1.HasFile Then
+            Dim fileextension As String
+            fileextension = System.IO.Path.GetExtension(FileUpload1.FileName)
+            If fileextension = ".jpg" Or fileextension = ".png" Or fileextension = ".gif" Then
+                Dim tekst As String
+                Dim htmltekst As String
+                tekst = FileUpload1.FileName
+                htmltekst = "<img src=""CSS/images/" + FileUpload1.FileName + """ style=""width: 400px; height: 300px;"" />"
+                Dim loc As Integer
+                loc = Editor1.Content.Length
+                Dim content As String
+                content = Editor1.Content
+                content = content + "<br />" + htmltekst
+                Editor1.Content = content
+                FileUpload1.SaveAs("C:/ReferenceManual/App_Presentation/CSS/Images/" + FileUpload1.FileName)
+            Else
+                lblFile.ForeColor = Drawing.Color.Red
+                lblFile.Text = "U kan enkel Jpg, png of gif afbeeldingen in u artikel gebruiken."
+            End If
+        Else
+            lblFile.ForeColor = Drawing.Color.Red
+            lblFile.Text = "U hebt geen afbeelding geselecteerd."
+        End If
+    End Sub
+
+    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+        Response.Redirect("Aanmeldpagina.aspx")
     End Sub
 End Class

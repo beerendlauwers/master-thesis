@@ -5,6 +5,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
+    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
+        Visible="False" />
+<div id="divLoggedIn" runat="server">    
     <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="3" 
         Width="100%">
         <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
@@ -843,4 +847,5 @@
             <asp:Parameter Name="Versie" Type="String" />
         </InsertParameters>
     </asp:ObjectDataSource>
+    </div>
 </asp:Content>

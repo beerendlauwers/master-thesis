@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artikel>
+	<paragraaf titel="Doel">
+		<titelklein>Doel</titelklein>
+		<tekst>typhiertekst</tekst>
+	</paragraaf>
+	<paragraaf titel="functietoetsen">
+		<titelklein>functietoetsen</titelklein>
+		<tekst>typhiertekst</tekst>
+	</paragraaf>
+	<paragraaf titel="selectie">
+		<titelklein>selectie</titelklein>
+		<tekst>typhiertekst</tekst>
+	</paragraaf>
+	<paragraaf titel="Veldinformatie">
+		<titelklein>Veldinformatie</titelklein>
+		<tekst>typhiertekst</tekst>
+	</paragraaf>
+	<paragraaf titel="Selectiecodes">
+		<titelklein>SelectieCodes</titelklein>
+		<tekst>typhiertekst</tekst>
+	</paragraaf>
+</artikel>

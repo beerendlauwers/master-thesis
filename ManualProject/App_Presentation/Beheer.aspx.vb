@@ -322,6 +322,7 @@ Partial Class App_Presentation_Beheer
             'Hoogte van parentcategorie ophalen
             Wijzigen_LaadCategorieHoogte()
 
+
         End If
 
     End Sub
@@ -335,8 +336,10 @@ Partial Class App_Presentation_Beheer
         Dim versieID As Integer = ddlAddCatVersie.SelectedValue
 
         'Hoogte van parent categorie ophalen
-        Dim parentHoogte As Integer = categoriedal.getHoogte(categorieID, bedrijfID, versieID, taalID)
+        'Dim parentHoogte As Integer = categoriedal.getHoogte(categorieID, bedrijfID, versieID, taalID)
 
+        Dim dr As Manual.tblCategorieRow = categoriedal.getCategorieByID(ddlEditCategorie.SelectedValue)
+        Dim parenthoogte As Integer = dr.Hoogte
         Dim hoogte As Integer
         If parentHoogte = Nothing Then
             hoogte = 0
@@ -363,24 +366,26 @@ Partial Class App_Presentation_Beheer
             ddlEditCatTaal.SelectedValue = categorieRij.FK_taal
             ddlEditCatBedrijf.SelectedValue = categorieRij.FK_bedrijf
             ddlEditCatVersie.SelectedValue = categorieRij.FK_versie
+            Dim hoogte As Integer = categorieRij.Hoogte
+            'Wijzigen_LaadCategorienParent()
 
-            Wijzigen_LaadCategorienParent()
+            'ddlEditCatParent.SelectedValue = categorieRij.FK_parent
 
-            ddlEditCatParent.SelectedValue = categorieRij.FK_parent
+            'Wijzigen_LaadCategorieHoogte()
 
-            Dim bedrijfID As Integer = ddlAddCatBedrijf.SelectedValue
-            Dim taalID As Integer = ddlAddCatTaal.SelectedValue
-            Dim versieID As Integer = ddlAddCatVersie.SelectedValue
+            'Dim bedrijfID As Integer = ddlAddCatBedrijf.SelectedValue
+            'Dim taalID As Integer = ddlAddCatTaal.SelectedValue
+            'Dim versieID As Integer = ddlAddCatVersie.SelectedValue
 
-            'Hoogte van parent categorie ophalen
-            Dim parentHoogte As Integer = categoriedal.getHoogte(categorieID, bedrijfID, versieID, taalID)
+            ''Hoogte van parent categorie ophalen
+            'Dim parentHoogte As Integer = categoriedal.getHoogte(categorieID, bedrijfID, versieID, taalID)
 
-            Dim hoogte As Integer
-            If parentHoogte = Nothing Then
-                hoogte = 0
-            Else
-                hoogte = parentHoogte
-            End If
+            'Dim hoogte As Integer
+            'If parentHoogte = Nothing Then
+            '    hoogte = 0
+            'Else
+            '    hoogte = parentHoogte
+            'End If
 
             txtEditCathoogte.Text = hoogte
 
@@ -483,7 +488,7 @@ Partial Class App_Presentation_Beheer
         Dim taaltext As String = txtAddTaal.Text
         Dim taaltag As String = txtTaalAfkorting.Text
 
-        If (taaldal.checkTaal(taaltext) Is Nothing) Then
+        If (taaldal.checkTaal(taaltext, taaltag) Is Nothing) Then
             Dim taalID As Integer = taaldal.insertTaal(taaltext, taaltag)
             If taalID = -1 Then
                 lblAddTaalRes.Text = "Toevoegen mislukt."
@@ -506,7 +511,7 @@ Partial Class App_Presentation_Beheer
         Dim taaltag As String = txtEditAfkorting.Text
         Dim taalID As String = ddlBewerkTaal.SelectedValue
         Dim taaltext As String = txtEditTaal.Text
-        If (taaldal.checkTaalByID(taaltext, taalID) Is Nothing) Then
+        If (taaldal.checkTaalByID(taaltext, taaltag, taalID) Is Nothing) Then
             If (adapterTaal.Update(taaltext, taaltag, taalID) = 0) Then
                 lblEditTaalRes.Text = "Wijzigen mislukt."
             Else
@@ -768,7 +773,15 @@ Partial Class App_Presentation_Beheer
 
         LaadJavascript()
         LaadTooltips()
+        If Session("login") = 1 Then
 
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            lblLogin.Visible = True
+            lblLogin.Text = "U bent niet ingelogd."
+            ImageButton1.Visible = True
+        End If
     End Sub
 
     Private Sub LaadTooltips()
@@ -802,7 +815,7 @@ Partial Class App_Presentation_Beheer
 
         'Categoriebeheer
         lijst.Add(New Tooltip("tipAddCatnaam", "De naam van de categorie."))
-        lijst.Add(New Tooltip("tipAddhoogte", "De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten."))
+        lijst.Add(New Tooltip("tipAddhoogte", "De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten. Deze waarde is default de eerstevolgende hoogte in de Categorie."))
         lijst.Add(New Tooltip("tipAddCatTaal", "De taal van de categorie."))
         lijst.Add(New Tooltip("tipAddCatVersie", "De versie waarin de categorie gebruikt wordt."))
         lijst.Add(New Tooltip("tipAddCatBedrijf", "Het bedrijf waarin de categorie gebruikt wordt."))
@@ -814,7 +827,7 @@ Partial Class App_Presentation_Beheer
 
         lijst.Add(New Tooltip("tipEditCategorie", "De categorie die u wilt wijzigen."))
         lijst.Add(New Tooltip("tipCatbewerknaam", "De naam van de categorie."))
-        lijst.Add(New Tooltip("tipEditCatHoogte", "De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten."))
+        lijst.Add(New Tooltip("tipEditCatHoogte", "De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten. Is de default de hoogte die de categorie al had."))
         lijst.Add(New Tooltip("tipEditCatTaal", "De taal van de categorie."))
         lijst.Add(New Tooltip("tipEditCatVersie", "De versie waarin de categorie gebruikt wordt."))
         lijst.Add(New Tooltip("tipEditCatBedrijf", "Het bedrijf waarin de categorie gebruikt wordt."))
@@ -841,19 +854,19 @@ Partial Class App_Presentation_Beheer
 
         JavaScript.ZetButtonOpDisabledOnClick(btnAddBedrijf, "Toevoegen...")
         JavaScript.ZetButtonOpDisabledOnClick(btnEditBedrijf, "Wijzigen...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteBedrijf, "Verwijderen...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteBedrijf, "Verwijderen...", True, True)
 
         'Taalbeheer
 
         JavaScript.ZetButtonOpDisabledOnClick(btnAddTaal, "Toevoegen...")
         JavaScript.ZetButtonOpDisabledOnClick(btnEditTaal, "Wijzigen...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnTaalDelete, "Verwijderen...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnTaalDelete, "Verwijderen...", True, True)
 
         'Versiebeheer
 
         JavaScript.ZetButtonOpDisabledOnClick(btnAddVersie, "Toevoegen...")
         JavaScript.ZetButtonOpDisabledOnClick(btnEditVersie, "Wijzigen...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteVersie, "Verwijderen...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteVersie, "Verwijderen...", True, True)
 
         'Categoriebeheer
 
@@ -880,5 +893,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
 #End Region
-
+    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+        Response.Redirect("Aanmeldpagina.aspx")
+    End Sub
 End Class

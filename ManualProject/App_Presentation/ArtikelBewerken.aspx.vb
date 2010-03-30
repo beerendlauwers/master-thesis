@@ -10,13 +10,13 @@ Partial Class App_Presentation_ArtikelBewerken
     Private taalIsKlaar As Boolean = False
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-
+        Me.ID = "StampFactsControl"
         'Paginatitel
         Page.Title = "Artikel Bewerken"
 
         'De zoekknop op disabled zetten als erop geklikt wordt
         JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
-        'De wizjigknop op disabled zetten als erop geklikt wordt
+        'De wijzigknop op disabled zetten als erop geklikt wordt
         JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True)
 
         'Als de pagina de eerste keer laadt
@@ -36,12 +36,25 @@ Partial Class App_Presentation_ArtikelBewerken
                     LaadArtikel(id)
                     JavaScript.VoegJavascriptToeAanBody(Master.FindControl("MasterBody"), "VeranderEditorScherm(200);")
                 End If
+            ElseIf Page.Request.QueryString("tag") IsNot Nothing Then
+                Dim tag As String = Page.Request.QueryString("tag")
+                LaadArtikel(tag)
+                JavaScript.VoegJavascriptToeAanBody(Master.FindControl("MasterBody"), "VeranderEditorScherm(200);")
             End If
 
         End If
 
         LaadTooltips()
+        Dim div As HtmlGenericControl = Me.FindControl("LoggedIn")
+        If Session("login") = 1 Then
 
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            lblLogin.Visible = True
+            lblLogin.Text = "U bent niet ingelogd."
+            ImageButton1.Visible = True
+        End If
 
     End Sub
 
@@ -55,7 +68,42 @@ Partial Class App_Presentation_ArtikelBewerken
         titel = txtZoekTitel.Text
         If titel.Length > 0 Then
             titel = "%" + Me.txtZoekTitel.Text + "%"
-            grdvLijst.DataSource = artikeldal.GetArtikelGegevensByTitel(titel)
+            Dim dttitel As Data.DataTable = artikeldal.GetArtikelGegevensByTitel(titel)
+            Dim dttekst As Data.DataTable = artikeldal.GetArtikelGegevensByTekst(titel)
+            Dim dt As New Data.DataTable
+
+            If dttitel.Rows.Count > 0 Then
+                dt = dttitel.Clone
+                For i As Integer = 0 To dttitel.Rows.Count - 1
+                    Dim dr As Data.DataRow = dt.NewRow
+                    dr = dttitel.Rows(i)
+                    dt.ImportRow(dr)
+                Next
+                If dttekst.Rows.Count > 0 Then
+                    For i As Integer = 0 To dttekst.Rows.Count - 1
+                        Dim dr As Data.DataRow = dt.NewRow
+                        dr = dttekst.Rows(i)
+                        dt.ImportRow(dr)
+                    Next
+                End If
+            ElseIf dttekst.Rows.Count > 0 Then
+                dt = dttekst.Clone
+                For i As Integer = 0 To dttekst.Rows.Count - 1
+                    Dim dr As Data.DataRow = dt.NewRow
+                    dr = dttekst.Rows(i)
+                    dt.ImportRow(dr)
+                Next
+                If dttitel.Rows.Count > 0 Then
+                    For i As Integer = 0 To dttitel.Rows.Count - 1
+                        Dim dr As Data.DataRow = dt.NewRow
+                        dr = dttitel.Rows(i)
+                        dt.ImportRow(dr)
+                    Next
+                End If
+            End If
+
+
+            grdvLijst.DataSource = dt
             grdvLijst.DataBind()
             grdvLijst.Visible = True
 
@@ -298,6 +346,7 @@ Partial Class App_Presentation_ArtikelBewerken
         lijst.Add(New Tooltip("tipVersie", "De versie waartoe het artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))
         lijst.Add(New Tooltip("tipCategorie", "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur."))
         lijst.Add(New Tooltip("tipFinaal", "Bepaalt of het artikel gefinaliseerd is of niet."))
+        lijst.Add(New Tooltip("tipUpload", "Hiermee kan u afbeeldingen uploaden. Na het uploaden van 1 afbeelding kan u gewoon een volgende afbeelding uploaden."))
 
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
@@ -309,4 +358,41 @@ Partial Class App_Presentation_ArtikelBewerken
 
     End Sub
 
+
+    Protected Sub btnImageAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+        Dim lblFile As New Label
+        lblFile = updBewerken.FindControl("lblFile")
+        lblFile.Text = ""
+        Dim FileUpload2 As FileUpload
+        FileUpload2 = updBewerken.FindControl("FileUpload2")
+        'lblFile.Text = FileUpload2.FileName
+        'lblFile.Visible = True
+        If FileUpload2.HasFile Then
+            Dim fileextension As String
+            fileextension = System.IO.Path.GetExtension(FileUpload2.FileName)
+            If fileextension = ".jpg" Or fileextension = ".png" Or fileextension = ".gif" Then
+                Dim tekst As String
+                Dim htmltekst As String
+                tekst = FileUpload2.FileName
+                htmltekst = "<img src=""CSS/images/" + FileUpload2.FileName + """ style=""width: 400px; height: 300px;"" />"
+                Dim loc As Integer
+                loc = Editor1.Content.Length
+                Dim content As String
+                content = Editor1.Content
+                content = content + "<br />" + htmltekst
+                Editor1.Content = content
+                FileUpload2.SaveAs("C:/ReferenceManual/App_Presentation/CSS/Images/" + FileUpload2.FileName)
+            Else
+                lblFile.ForeColor = Drawing.Color.Red
+                lblFile.Text = "U kan enkel Jpg, png of gif afbeeldingen in u artikel gebruiken."
+            End If
+        Else
+            lblFile.ForeColor = Drawing.Color.Red
+            lblFile.Text = "Er is iets misgelopen, probeer de afbeelding opnieuw te uploaden."
+        End If
+    End Sub
+    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+        Response.Redirect("Aanmeldpagina.aspx")
+    End Sub
+    
 End Class

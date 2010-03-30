@@ -87,6 +87,16 @@ Partial Class App_Presentation_VideoUploaden
         End If
         lstVideo.selectedIndex = 0
 
+        If Session("login") = 1 Then
+
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            lblLogin.Visible = True
+            lblLogin.Text = "U bent niet ingelogd."
+            ImageButton1.Visible = True
+        End If
+
     End Sub
 
     Protected Sub imgbtnView_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgbtnView.Click
@@ -96,5 +106,9 @@ Partial Class App_Presentation_VideoUploaden
             Dim naam As String = lstVideo.selecteditem.text
             Response.Redirect("~/App_Presentation/VideoAfspelen.aspx?naam=" + naam)
         End If
+    End Sub
+
+    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+        Response.Redirect("Aanmeldpagina.aspx")
     End Sub
 End Class

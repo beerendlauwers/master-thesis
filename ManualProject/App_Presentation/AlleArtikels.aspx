@@ -5,25 +5,43 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
+    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
+        Visible="False" />
+<div id="divLoggedIn" runat="server">
     <asp:DropDownList ID="ddlBedrijf" runat="server" AutoPostBack="false">
     </asp:DropDownList>
     <asp:DropDownList ID="ddlVersie" runat="server" AutoPostBack="false">
     </asp:DropDownList>
     <asp:DropDownList ID="ddlTaal" runat="server"  AutoPostBack="false">
     </asp:DropDownList>
+    &nbsp;Finaal:
+    <asp:CheckBox ID="CheckBox1" runat="server" />
     <asp:Button ID="btnFilter" runat="server" Text="Filter" />
-    <asp:GridView ID="GridView1" runat="server" PageSize="30" AutoGenerateColumns="False" AllowPaging="true" AllowSorting="true"
+    <asp:Label ID="lblFinaal" runat="server" Visible="False"></asp:Label>
+    <div id="gridview">
+    <asp:GridView ID="GridView1" runat="server" PageSize="30" 
+            AutoGenerateColumns="False" AllowPaging="True" AllowSorting="True"
         DataSourceID="SqlDataSource1">
         <Columns>
             <asp:BoundField DataField="titel" HeaderText="titel" SortExpression="titel" />
+            <asp:BoundField DataField="tag" HeaderText="tag" SortExpression="tag" />
             <asp:BoundField DataField="naam" HeaderText="naam" SortExpression="naam" />
             <asp:BoundField DataField="taaltag" HeaderText="taaltag" 
                 SortExpression="taaltag" />
             <asp:BoundField DataField="versie" HeaderText="versie" 
                 SortExpression="versie" />
+            <asp:CommandField ButtonType="Image" 
+                SelectImageUrl="~/App_Presentation/CSS/images/glass.png" 
+                ShowSelectButton="True" />
+             <asp:TemplateField Headertext="">
+            <ItemTemplate >
+            <asp:HyperLink ID="HyperLink1" runat="server"  NavigateUrl='<%# DataBinder.Eval(Container.DataItem,"tag","ArtikelBewerken.aspx?tag={0:c}") %>'><asp:Image ID="Image1" runat="server" ImageUrl="~/App_Presentation/CSS/images/wrench.png" /></asp:HyperLink>
+            </ItemTemplate>
+            </asp:TemplateField>
         </Columns>
     </asp:GridView>
-    
+    </div>
     <asp:ObjectDataSource ID="objdsVersie" runat="server" DeleteMethod="Delete" 
         InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
         SelectMethod="GetData" TypeName="ManualTableAdapters.tblVersieTableAdapter" 
@@ -75,11 +93,13 @@
     </asp:ObjectDataSource>
     <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
         ConnectionString="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" 
-        ProviderName="System.Data.SqlClient" SelectCommand="select titel, B.naam, T.taaltag, V.versie 
+        ProviderName="System.Data.SqlClient" SelectCommand="select titel, A.tag, B.naam, T.taaltag, V.versie 
 from tblArtikel A, tblBedrijf B, tblTaal T, tblVersie V
-where B.naam LIKE @naam and T.Taal LIKE @Taal AND V.versie LIKE @Versie AND A.FK_Bedrijf = B.BedrijfID AND A.FK_Taal = T.TaalID and
+where A.Is_final=@Is_final and B.naam LIKE @naam and T.Taal LIKE @Taal AND V.versie LIKE @Versie AND A.FK_Bedrijf = B.BedrijfID AND A.FK_Taal = T.TaalID and
 A.FK_Versie=V.versieID;">
         <SelectParameters>
+            <asp:ControlParameter ControlID="lblFinaal" Name="Is_final" 
+                PropertyName="Text" />
             <asp:ControlParameter ControlID="ddlBedrijf" Name="naam" 
                 PropertyName="SelectedValue" Type="String"/>
             <asp:ControlParameter ControlID="ddlTaal" Name="Taal" 
@@ -87,5 +107,6 @@ A.FK_Versie=V.versieID;">
                 <asp:ControlParameter ControlID="ddlVersie" Name="Versie" PropertyName="SelectedValue" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
+    </div>
 </asp:Content>
 

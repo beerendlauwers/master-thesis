@@ -1,0 +1,21 @@
+﻿#titel
+{
+    font-family:Arial;
+    font-size:18pt;
+    font-style:italic;
+    font-weight:bold;
+}
+
+#titelklein
+{
+    font-family:Arial;
+    font-size:14pt;
+    font-weight:bold;
+    
+}
+
+#tekst
+{
+    font-family:Arial;
+    font-size:10pt;
+}

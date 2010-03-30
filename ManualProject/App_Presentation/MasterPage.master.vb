@@ -55,6 +55,19 @@ Partial Class App_Presentation_MasterPage
         Dim boomdiv As HtmlGenericControl = Me.FindControl("divBoomStructuur")
         boomdiv.InnerHtml = htmlcode
 
+        If Session("login") = 0 Then
+            livideobewerken.Visible = False
+            liVideoVerwijderen.Visible = False
+            liBeheer.Visible = False
+            liArtikelBeheer.Visible = False
+            liArtikelBewerken.Visible = False
+        End If
+
+        If Session("login") = 1 Then
+            liAanmeld.Visible = False
+        End If
+
+
     End Sub
 
     Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkZoeken.Click

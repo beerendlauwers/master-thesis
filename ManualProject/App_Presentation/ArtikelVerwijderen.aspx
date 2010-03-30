@@ -7,7 +7,11 @@
 </asp:Content>
 <asp:Content runat="server" ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel">Artikel Verwijderen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-
+<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
+    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
+        Visible="False" />
+<div id="divLoggedIn" runat="server">
+    
     <asp:UpdatePanel ID="updVerwijderen" runat="server">
     <ContentTemplate>
 <table>
@@ -100,6 +104,6 @@ function ValideerZoekTerm (source, args)
 
     </ContentTemplate>
     </asp:UpdatePanel>
-
+</div>
 </asp:Content>
 

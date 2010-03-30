@@ -12,13 +12,17 @@
     Artikel Bewerken
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
+    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
+        Visible="False" />
+<div id="divLoggedIn" runat="server">
     <asp:UpdatePanel ID="updZoeken" runat="server" UpdateMode="Conditional">
 <ContentTemplate>
 
 <table>
 
 <tr>
-<td><asp:Label ID="lblZoekTitel" runat="server" Text="Zoek op titel: "></asp:Label></td>
+<td><asp:Label ID="lblZoekTitel" runat="server" Text="Zoek op titel of trefwoord: "></asp:Label></td>
 <td><asp:TextBox ID="txtZoekTitel" runat="server"></asp:TextBox>
 <asp:RequiredFieldValidator
         ID="vleZoekTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
@@ -159,19 +163,27 @@
 <tr>
 <td><asp:Label ID="lblIs_final" runat="server" Text="Artikel is finaal: " 
         Visible="False"></asp:Label></td>
-        <td<asp:CheckBox ID="ckbFinal" runat="server" Visible="false" /></td>
+        <td><asp:CheckBox ID="ckbFinal" runat="server" Visible="false" /></td>
 </tr>
  
     </table>  
 
 </ContentTemplate>
 </asp:UpdatePanel>
+       <br />
+
+<br />
     
     <div>
     <a href="#" onclick="VeranderEditorScherm(200);">Vergroot Editor</a>
     &nbsp;|&nbsp;
     <a href="#" onclick="VeranderEditorScherm(-200);">Verklein Editor</a>
     </div>
+    Afbeeldingen toevoegen:
+    <asp:FileUpload ID="FileUpload2" runat="server" /><span style="vertical-align:middle" id='Span1'><img src="CSS/images/help.png" alt=''/></span>
+    <br />
+<asp:Button ID="btnImageAdd" runat="server" Text="Afbeelding toevoegen" OnClick="btnImageAdd_Click" />
+    <asp:Label ID="lblFile" runat="server"></asp:Label> 
     <cc1:Editor ID="Editor1" runat="server" CssClass="editorWindow"/>
 
 
@@ -194,8 +206,11 @@
 </div>
 
 </ContentTemplate>
+<Triggers>
+<asp:PostBackTrigger ControlID="btnImageAdd" />
+</Triggers>
 </asp:UpdatePanel>
-
+</div>
 </asp:Content>
 
 

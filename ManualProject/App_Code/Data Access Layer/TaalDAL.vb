@@ -63,12 +63,13 @@ Public Class TaalDAL
         Return dt
     End Function
 
-    Public Function checkTaal(ByVal taal As String) As tblTaalDataTable
+    Public Function checkTaal(ByVal taal As String, ByVal taaltag As String) As tblTaalDataTable
         Dim dt As New tblTaalDataTable
 
         Dim c As New SqlCommand("Check_Taal")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
+        c.Parameters.Add("@taaltag", SqlDbType.VarChar).Value = taaltag
         c.Connection = New SqlConnection(conn)
 
         Try
@@ -91,12 +92,13 @@ Public Class TaalDAL
 
     End Function
 
-    Public Function checkTaalByID(ByVal taal As String, ByVal ID As Integer) As tblTaalDataTable
+    Public Function checkTaalByID(ByVal taal As String, ByVal taaltag As String, ByVal ID As Integer) As tblTaalDataTable
         Dim dt As New tblTaalDataTable
 
         Dim c As New SqlCommand("Check_TaalByID")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
+        c.Parameters.Add("@taaltag", SqlDbType.VarChar).Value = taaltag
         c.Parameters.Add("@ID", SqlDbType.Int).Value = ID
         c.Connection = New SqlConnection(conn)
 

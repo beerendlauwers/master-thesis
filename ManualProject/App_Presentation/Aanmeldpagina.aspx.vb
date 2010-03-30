@@ -13,4 +13,9 @@ Partial Class App_Presentation_Aanmeldpagina
 
 
     End Sub
+
+    Protected Sub btnLogOut_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLogOut.Click
+        Session.Abandon()
+        Response.Redirect("~/App_Presentation/Default.aspx")
+    End Sub
 End Class

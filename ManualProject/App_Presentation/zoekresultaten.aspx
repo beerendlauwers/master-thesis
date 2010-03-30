@@ -19,7 +19,7 @@
             <asp:BoundField DataField="taal" HeaderText="Taal" SortExpression="taal" />
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 
-                ShowSelectButton="True"/>
+                ShowSelectButton="True" />
         </Columns>
         
         <pagertemplate>
@@ -41,7 +41,7 @@
 
 <asp:Label ID="lblRes" runat="server" Text=""></asp:Label>
     <asp:SqlDataSource ID="sqldsArtikel" runat="server" 
-        ConnectionString="Data Source=RDC118\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=sa;Password=beerend!" 
+        ConnectionString="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" 
         ProviderName="System.Data.SqlClient" SelectCommand="Manual_theUltimateGet" 
         SelectCommandType="StoredProcedure">
         <SelectParameters>

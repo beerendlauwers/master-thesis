@@ -27,4 +27,7 @@ Vul de juiste gebruikersnaam en wachtwoord in om Beheerder te worden.
    </td>
     </tr>
 </table>
+
+<br />
+Klik op de knop om uit te loggen: <asp:Button ID="btnLogOut" runat="server" Text="Uitloggen" />
 </asp:Content>

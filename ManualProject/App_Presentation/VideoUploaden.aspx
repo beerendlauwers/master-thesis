@@ -6,6 +6,10 @@
     Upload uw videobestanden
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+ <asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
+    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
+        Visible="False" />
+<div id="divLoggedIn" runat="server">
     <br />
      
     <asp:Label ID="lblBestand" runat="server" Text="Upload: "></asp:Label>
@@ -44,9 +48,9 @@
    <asp:ListBox ID="lstVideo" runat="server" Height="150px"></asp:ListBox>
    <ul class="view"><li>
   <asp:ImageButton ID="imgbtnView" runat="server" 
-        ImageUrl="~/App_Presentation/CSS/images/view.png" /> Klik om te selectie te bekijken.</li>
+        ImageUrl="~/App_Presentation/CSS/images/view.png" /> Klik om de geselecteerde video te bekijken.</li>
         </ul>
 &nbsp;
-
+</div>
 </asp:Content>
 

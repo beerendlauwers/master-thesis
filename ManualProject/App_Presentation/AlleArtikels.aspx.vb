@@ -4,6 +4,7 @@ Partial Class App_Presentation_AlleArtikels
     Private versiedal As New VersieDAL
     Private bedrijfdal As New BedrijfDAL
     Private taaldal As New TaalDAL
+    Dim artikeldal As New ArtikelDAL
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Dim dttaal As Manual.tblTaalDataTable
@@ -34,9 +35,48 @@ Partial Class App_Presentation_AlleArtikels
                 ddlTaal.Items.Add(listitems)
             Next
         End If
+        If Not IsPostBack Then
+            lblFinaal.Text = "1"
+            CheckBox1.Checked = True
+        End If
+
+        If Session("login") = 1 Then
+
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            lblLogin.Visible = True
+            lblLogin.Text = "U bent niet ingelogd."
+            ImageButton1.Visible = True
+        End If
     End Sub
 
     Protected Sub btnFilter_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnFilter.Click
+        If CheckBox1.Checked = True Then
+            lblFinaal.Text = "1"
+        Else
+            lblFinaal.Text = "0"
+        End If
+    End Sub
 
+
+    Protected Sub GridView1_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles GridView1.RowCommand
+        
+        If e.CommandName = "Select" Then
+            Dim row As GridViewRow = GridView1.Rows(e.CommandArgument)
+            Dim tag As String = row.Cells(1).Text
+            Dim qst As String = "~/App_Presentation/page.aspx?tag=" + tag
+            Response.Redirect(qst)
+        End If
+    End Sub
+
+    Protected Sub GridView1_RowDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles GridView1.RowDataBound
+        If e.Row.Cells.Count > 4 Then
+            e.Row.Cells(1).Visible = False
+        End If
+    End Sub
+
+    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+        Response.Redirect("Aanmeldpagina.aspx")
     End Sub
 End Class

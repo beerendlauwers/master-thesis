@@ -11,7 +11,11 @@
     </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">Artikel Toevoegen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-
+<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
+    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
+        Visible="False" />
+<div runat="server" id="divLoggedIn">
+    
 <div id="divInvullen">
 
 <asp:UpdatePanel ID="updCategorie" runat="server">
@@ -106,10 +110,14 @@
 </asp:UpdatePanel>
 
 </div>
-
+    <br />
+Afbeeldingen toevoegen:
 <br />
-
-<cc1:Editor ID="Editor1" runat="server" height="450px" />
+    <asp:FileUpload ID="FileUpload1" runat="server" /><span style="vertical-align:middle" id='tipUpload'><img src="CSS/images/help.png" alt=''/></span>
+    <br />
+<asp:Button ID="btnImageAdd" runat="server" Text="Afbeelding toevoegen" OnClick="btnImageAdd_Click" />
+    <asp:Label ID="lblFile" runat="server"></asp:Label>
+<cc1:Editor ID="Editor1" runat="server" height="450px"/>
 
 <br />
 <br />
@@ -208,5 +216,6 @@
     </asp:ObjectDataSource>
 
     <br />
+    </div>
     </asp:Content>
 

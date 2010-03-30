@@ -8,6 +8,17 @@ Partial Class App_Presentation_verwijderenTekst
         JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
 
         LaadTooltips()
+        Dim div As HtmlGenericControl = Me.FindControl("LoggedIn")
+        If Session("login") = 1 Then
+
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            lblLogin.Visible = True
+            lblLogin.Text = "U bent niet ingelogd."
+            ImageButton1.Visible = True
+        End If
+
     End Sub
 
     Private Sub LaadTooltips()
@@ -90,25 +101,6 @@ Partial Class App_Presentation_verwijderenTekst
         For t As Integer = 0 To teller1 - 1
             test = test + reeks(t)
         Next
-        'lblWut.Text = test
-        'Dim re1 As String = ".*?" 'Non-greedy match on filler
-        'Dim re2 As String = reeks(0)   'Word 1
-        'Dim re3 As String = "( )" 'White Space 1
-        'Dim re4 As String = reeks(1)    'Word 2
-        'Dim re5 As String = "( )" 'White Space 2
-        'Dim re6 As String = reeks(2)   'Word 3
-        'Dim re7 As String = "( )" 'White Space 3
-        'Dim re8 As String = reeks(3)  'Word 4
-        'Dim re9 As String = "(!)" 'Any Single Character 1
-
-        'Dim r As Regex = New Regex(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9, RegexOptions.IgnoreCase Or RegexOptions.Singleline)
-        'Dim m As Match = r.Match(txt)
-        'If (m.Success) Then
-        '    lblWut.Text = str
-        '    Return True
-        'Else
-        '    Return False
-        'End If
         Return True
     End Function
 
@@ -196,5 +188,10 @@ Partial Class App_Presentation_verwijderenTekst
         End If
 
     End Sub
+
+    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
+        Response.Redirect("Aanmeldpagina.aspx")
+    End Sub
+
 End Class
 
