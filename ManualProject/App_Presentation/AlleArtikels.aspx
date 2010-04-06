@@ -1,8 +1,10 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AlleArtikels.aspx.vb" Inherits="App_Presentation_AlleArtikels" title="Untitled Page" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<title>Artikels</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
+Artikels
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 <asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
@@ -26,13 +28,13 @@
         <Columns>
             <asp:BoundField DataField="titel" HeaderText="titel" SortExpression="titel" />
             <asp:BoundField DataField="tag" HeaderText="tag" SortExpression="tag" />
-            <asp:BoundField DataField="naam" HeaderText="naam" SortExpression="naam" />
+            <asp:BoundField DataField="naam" HeaderText="Bedrijf" SortExpression="naam" />
             <asp:BoundField DataField="taaltag" HeaderText="taaltag" 
                 SortExpression="taaltag" />
             <asp:BoundField DataField="versie" HeaderText="versie" 
                 SortExpression="versie" />
             <asp:CommandField ButtonType="Image" 
-                SelectImageUrl="~/App_Presentation/CSS/images/glass.png" 
+                SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                 ShowSelectButton="True" />
              <asp:TemplateField Headertext="">
             <ItemTemplate >

@@ -28,7 +28,7 @@ Partial Class App_Presentation_ArtikelBewerken
             'Artikelcontrols verstoppen
             ArtikelFunctiesZichtbaar(False)
 
-            'Checken voor een meegegeven ID
+            'Checken voor een meegegeven ID of tag
             If Page.Request.QueryString("id") IsNot Nothing Then
                 If IsNumeric(Page.Request.QueryString("id")) = True Then
 
@@ -250,8 +250,6 @@ Partial Class App_Presentation_ArtikelBewerken
             Dim upd As UpdatePanel = Me.FindControl("updToevoegen")
             Dim grdvLijst As GridView = updZoeken.FindControl("grdvLijst")
             Dim row As GridViewRow = grdvLijst.Rows(e.CommandArgument)
-
-
             Dim artikeltag As String = row.Cells(1).Text
             LaadArtikel(artikeltag)
         End If
@@ -387,7 +385,7 @@ Partial Class App_Presentation_ArtikelBewerken
         Dim lijst As New List(Of Tooltip)
 
         'Alle tooltips voor onze pagina toevoegen
-        lijst.Add(New Tooltip("tipZoekTitel", "Een (gedeelte van) de titel waarop u wilt zoeken."))
+        lijst.Add(New Tooltip("tipZoekTitel", "Een (gedeelte van de) titel of trefwoord waarop u wilt zoeken."))
         lijst.Add(New Tooltip("tipTag", "De <b>unieke</b> tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten."))
         lijst.Add(New Tooltip("tipTitel", "De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf."))
         lijst.Add(New Tooltip("tipTaal", "De taal van het artikel."))

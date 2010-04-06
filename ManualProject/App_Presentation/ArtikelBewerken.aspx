@@ -6,13 +6,13 @@
     TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-
+<title>Artikel Bewerken</title>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">
     Artikel Bewerken
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
+    <asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
     <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
         Visible="False" />
 <div id="divLoggedIn" runat="server">
@@ -162,8 +162,10 @@
 
 <tr>
 <td><asp:Label ID="lblIs_final" runat="server" Text="Artikel is finaal: " 
-        Visible="False"></asp:Label></td>
-        <td><asp:CheckBox ID="ckbFinal" runat="server" Visible="false" /></td>
+        Visible="true"></asp:Label></td>
+        <td><asp:CheckBox ID="ckbFinal" runat="server" Visible="true" />
+        <span style="vertical-align:middle" id='tipFinaal'><img src="CSS/images/help.png" alt=''/></span>
+        </td>
 </tr>
  
     </table>  
@@ -180,7 +182,7 @@
     <a href="#" onclick="VeranderEditorScherm(-200);">Verklein Editor</a>
     </div>
     Afbeeldingen toevoegen:
-    <asp:FileUpload ID="FileUpload2" runat="server" /><span style="vertical-align:middle" id='Span1'><img src="CSS/images/help.png" alt=''/></span>
+    <asp:FileUpload ID="FileUpload2" runat="server" /><span style="vertical-align:middle" id='tipUpload'><img src="CSS/images/help.png" alt=''/></span>
     <br />
 <asp:Button ID="btnImageAdd" runat="server" Text="Afbeelding toevoegen" OnClick="btnImageAdd_Click" />
     <asp:Label ID="lblFile" runat="server"></asp:Label> 

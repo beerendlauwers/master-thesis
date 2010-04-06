@@ -13,7 +13,13 @@ Partial Class App_Presentation_MasterPage
         CheckDataStructures()
 
         PopuleerLinks()
-		
+
+        If MasterBody.Attributes.Item("onload") Is Nothing Then
+            MasterBody.Attributes.Add("onload", String.Concat("SetButtonStatus(document.getElementById('", txtZoek.ClientID, "')); "))
+        Else
+            MasterBody.Attributes.Item("onload") = String.Concat(MasterBody.Attributes.Item("onload"), "SetButtonStatus(document.getElementById('", txtZoek.ClientID, "')); ")
+        End If
+
 		A2.HRef = "~/App_Presentation/VideoUploaden.aspx"
         A3.HRef = "~/App_Presentation/VideoAfspelen.aspx"
 
@@ -70,9 +76,6 @@ Partial Class App_Presentation_MasterPage
 
     End Sub
 
-    Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkZoeken.Click
-        Response.Redirect("~/App_Presentation/zoekresultaten.aspx?tag=" + txtZoek.Text + "&bedrijfID=" + "4" + "&versieID=" + "0" + "&taalID=" + "0")
-    End Sub
 
     Private Sub CheckDataStructures()
 
@@ -99,15 +102,6 @@ Partial Class App_Presentation_MasterPage
         ArtikelToevoegen.HRef = "~/App_Presentation/ArtikelToevoegen.aspx"
         ArtikelBewerken.HRef = "~/App_Presentation/ArtikelBewerken.aspx"
         ArtikelVerwijderen.HRef = "~/App_Presentation/ArtikelVerwijderen.aspx"
-
-        If Session("Login") = 0 Then
-            'Dim divArtikelbeheer As HtmlGenericControl = Me.FindControl("beheerArtikels")
-            'divArtikelbeheer.Visible = False
-
-            'Dim divBeheer As HtmlGenericControl = Me.FindControl("beheer")
-            'divBeheer.Visible = False
-
-        End If
 
     End Sub
 

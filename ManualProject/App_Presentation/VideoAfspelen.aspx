@@ -11,24 +11,24 @@
             height: 19px;
         }
     </style>
+    <title>Video Afspelen</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
     Video's Bekijken
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-Kies een video om af te spelen. <br />
+<div runat="server" id="divLoggedIn">Kies een video om af te spelen. <br />
     <asp:DropDownList ID="ddlVideo" runat="server" DataSourceID="objdVideo" 
         DataTextField="videoNaam" DataValueField="VideoID"></asp:DropDownList>
        <asp:Button ID="btnPlay" runat="server" Text="Play" />
-    
-    <div runat="server" id="film">
-        
-        
-    </div>
+   </div> 
+
      <asp:Label ID="lblFilmNaam" runat="server" Text=""></asp:Label>
                      <br />
+<div runat="server" id="film">
 
+</div>
     <asp:Label ID="lblHelp" runat="server" Text=""></asp:Label>
                     <ASPNetVideo:QuickTime ID="QuickTime2" runat="server" Enabled="False">
         </ASPNetVideo:QuickTime>

@@ -4,6 +4,7 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit.HTMLEditor"
     TagPrefix="cc1" %>
+    
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -81,7 +82,7 @@
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b>Zoek op: </b><asp:TextBox ID="txtZoek" runat="server" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="lnkZoeken" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
-                    Width="16px" Enabled="false" class="zoekLinkUit" /></span></span></div>
+                    Width="16px" class="zoekLinkUit" PostBackUrl="~/App_Presentation/zoekresultaten.aspx" /></span></span></div>
                    
                     
                     </li>
@@ -130,11 +131,11 @@
     </div>
 
     <script type="text/javascript">
-    function SetButtonStatus(btn)
+    function SetButtonStatus(field)
     {
         var link = document.getElementById('<%=lnkZoeken.ClientID %>');
     
-        if ( btn.value.length >= 2 )
+        if ( field.value.length >= 2 )
         {
             link.className = "zoekLinkAan";
             link.disabled = false;
@@ -142,7 +143,7 @@
         else
         {
             link.className = "zoekLinkUit";
-            link.disabled = false;
+            link.disabled = true;
         }
     }
     </script>

@@ -57,6 +57,11 @@ Partial Class App_Presentation_VideoAfspelen
     ''' Als er een video werd meegestuurd in de querystring wordt deze geladen en afgespeeld.
     ''' </summary>
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Session("login") = 1 Then
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+        End If
         If Request.QueryString.Count > 0 Then
             Dim naam As String = Request.QueryString("naam")
             Dim dt As Manual.tblVideoDataTable
@@ -71,7 +76,7 @@ Partial Class App_Presentation_VideoAfspelen
                 Dim browserversie = Request.Browser.Browser()
 
                 If browserversie = "IE" Then
-                    lblHelp.Text = "U kunt best Firefox of Chrome gebruiken om deze video te bekijken."
+                    lblHelp.Text = "Als de video niet afspeelt kunt U best Firefox gebruiken om deze video te bekijken."
                 End If
             ElseIf ext(ext.GetLength(0) - 1) = "swf" Then
                 Dim htmlcode As String = dt.Rows(0)("videoCode")
@@ -84,7 +89,7 @@ Partial Class App_Presentation_VideoAfspelen
                 WindowsMedia1.Style.Add("vertical-align", "top")
                 Dim browserversie = Request.Browser.Browser()
                 If browserversie = "Firefox" Or browserversie = "AppleMAC-Safari" Then
-                    lblHelp.Text = "U kunt best Internet Explorer gebruiken om deze video te bekijken."
+                    lblHelp.Text = "Als de video niet afspeelt kunt U best Internet Explorer gebruiken om deze video te bekijken."
                 End If
             ElseIf ext(ext.GetLength(0) - 1) = "flv" Then
                 FlashVideo1.Enabled = True

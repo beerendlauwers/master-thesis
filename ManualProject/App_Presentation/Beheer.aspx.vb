@@ -120,18 +120,10 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Private Sub Toevoegen_LaadCategorien()
-
         If ddlAddCatBedrijf.Items.Count > 0 And ddlAddCatTaal.Items.Count > 0 And ddlAddCatVersie.Items.Count > 0 Then
-
-            'Relevante categorieën ophalen
-            ddlAddParentcat.DataSource = categoriedal.GetAllCategorieBy(ddlAddCatTaal.SelectedValue, ddlAddCatBedrijf.SelectedValue, ddlAddCatVersie.SelectedValue)
-            ddlAddParentcat.DataBind()
-
-            'Hoogte van parentcategorie ophalen
-            Toevoegen_LaadCategorieHoogte()
-
+            Dim t As Tree = Tree.GetTree(ddlAddCatTaal.SelectedValue, ddlAddCatVersie.SelectedValue, ddlAddCatBedrijf.SelectedValue)
+            t.VulCategorieDropdown(ddlAddParentcat, t.RootNode, -1)
         End If
-
     End Sub
 
     Private Sub Toevoegen_LaadCategorieHoogte()
@@ -360,6 +352,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub ddlEditCategorie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Wijzigen_LaadCategorienParent()
         Wijzigen_LaadCategorieDetails()
     End Sub
 
@@ -384,12 +377,10 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Private Sub Wijzigen_LaadCategorien()
-
+        'Relevante categorieën ophalen
         If ddlEditCatBedrijfkeuze.Items.Count > 0 And ddlEditCatTaalkeuze.Items.Count > 0 And ddlEditCatVersiekeuze.Items.Count > 0 Then
-
-            'Relevante categorieën ophalen
-            ddlEditCategorie.DataSource = categoriedal.GetAllCategorieBy(ddlEditCatTaalkeuze.SelectedValue, ddlEditCatBedrijfkeuze.SelectedValue, ddlEditCatVersiekeuze.SelectedValue)
-            ddlEditCategorie.DataBind()
+            Dim t As Tree = Tree.GetTree(ddlEditCatTaalkeuze.SelectedValue, ddlEditCatVersiekeuze.SelectedValue, ddlEditCatBedrijfkeuze.SelectedValue)
+            t.VulCategorieDropdown(ddlEditCategorie, t.RootNode, -1)
 
             'root_node eruit halen
             ddlEditCategorie.Items.Remove(New ListItem("root_node", "0"))
@@ -426,10 +417,13 @@ Partial Class App_Presentation_Beheer
     Private Sub Wijzigen_LaadCategorienParent()
 
         If ddlEditCatBedrijf.Items.Count > 0 And ddlEditCatTaal.Items.Count > 0 And ddlEditCatVersie.Items.Count > 0 Then
-
+            ddlEditCatParent.Items.Clear()
             'Relevante categorieën ophalen
-            ddlEditCatParent.DataSource = categoriedal.GetAllCategorieBy(ddlEditCatTaal.SelectedValue, ddlEditCatBedrijf.SelectedValue, ddlEditCatVersie.SelectedValue)
-            ddlEditCatParent.DataBind()
+            Dim t As Tree = Tree.GetTree(ddlEditCatTaalkeuze.SelectedValue, ddlEditCatVersiekeuze.SelectedValue, ddlEditCatBedrijfkeuze.SelectedValue)
+            ddlEditCatParent.Items.Add(New ListItem(("root_node"), ("0")))
+            t.VulCategorieDropdown(ddlEditCatParent, t.RootNode, -1)
+            'ddlEditCatParent.DataSource = categoriedal.GetAllCategorieBy(ddlEditCatTaal.SelectedValue, ddlEditCatBedrijf.SelectedValue, ddlEditCatVersie.SelectedValue)
+            'ddlEditCatParent.DataBind()
 
             'eigen categorie eruit halen
             ddlEditCatParent.Items.Remove(ddlEditCategorie.SelectedItem)
@@ -573,8 +567,10 @@ Partial Class App_Presentation_Beheer
         If ddlCatDelBedrijfkeuze.Items.Count > 0 And ddlCatDelTaalkeuze.Items.Count > 0 And ddlCatDelVersiekeuze.Items.Count > 0 Then
 
             'Relevante categorieën ophalen
-            ddlCatVerwijder.DataSource = categoriedal.GetAllCategorieBy(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue)
-            ddlCatVerwijder.DataBind()
+            'ddlCatVerwijder.DataSource = categoriedal.GetAllCategorieBy(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue)
+            'ddlCatVerwijder.DataBind()
+            Dim t As Tree = Tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
+            t.VulCategorieDropdown(ddlCatVerwijder, t.RootNode, -1)
 
             'root_node verwijderen
             ddlCatVerwijder.Items.Remove(New ListItem("root_node", "0"))

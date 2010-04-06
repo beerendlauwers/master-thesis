@@ -7,5 +7,6 @@
     <br /><br />
     <asp:Label ID="lblTekst" runat="server"></asp:Label>
     <asp:Label ID="lblTag" runat="server" Visible="false"></asp:Label>
+    <asp:Label ID="lblForm" runat="server" Text=""></asp:Label>
 </asp:Content>
 

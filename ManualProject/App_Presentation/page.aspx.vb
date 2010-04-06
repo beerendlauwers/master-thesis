@@ -12,22 +12,23 @@ Partial Class App_Presentation_page
         Dim geldigeTag As Boolean = True
         Dim geldigID As Boolean = True
 
-        If (Request.QueryString("tag") Is Nothing) Then
+        If (Page.Request.Form.Count = 0) Then
             Me.lblTitel.Text = "Ongeldig artikel."
             geldigeTag = False
+        Else
+            If (TryCast(Page.Request.Form(0), String) Is Nothing) Then
+                Me.lblTitel.Text = "Ongeldig artikel."
+                geldigeTag = False
+            End If
         End If
 
-        If (TryCast(Request.QueryString("tag"), String) Is Nothing) Then
-            Me.lblTitel.Text = "Ongeldig artikel."
-            geldigeTag = False
-        End If
-
-        If (Request.QueryString("id") Is Nothing) Then
+        
+        If (Page.Request.Form.Count = 0) Then
             Me.lblTitel.Text = "Ongeldig artikel."
             geldigID = False
         End If
 
-        If (Not IsNumeric(Request.QueryString("id"))) Then
+        If (Not IsNumeric(Page.Request.Form)) Then
             Me.lblTitel.Text = "Ongeldig artikel."
             geldigID = False
         End If
@@ -38,7 +39,7 @@ Partial Class App_Presentation_page
             Dim row As tblArtikelRow
 
             If (geldigeTag) Then
-                Dim tag As String = Request.QueryString("tag")
+                Dim tag As String = Page.Request.Form(0)
                 tag = tag.Trim
 
                 If tag = String.Empty Then
@@ -53,7 +54,7 @@ Partial Class App_Presentation_page
                     Return
                 End If
             Else
-                Dim id As Integer = Integer.Parse(Request.QueryString("id"))
+                Dim id As Integer = Integer.Parse(Page.Request.Form(0))
 
                 row = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByID(id)
 
@@ -88,7 +89,10 @@ Partial Class App_Presentation_page
             KlapBoomStructuurUit(tree, nodeartikel)
 
         End If
-
+       
+        'For i As Integer = 0 To Page.Request.Form.Count - 1
+        '    ddlForm.Items.Add(Page.Request.Form(i))
+        'Next
     End Sub
 
     Private Sub KlapBoomStructuurUit(ByRef tree As Tree, ByRef nodeartikel As Node)
