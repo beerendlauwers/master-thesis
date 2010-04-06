@@ -46,11 +46,14 @@ Public Class Tooltip
         _opties.Add(optie)
     End Sub
 
+    Public Sub VerwijderOptie(ByVal optie As String)
+        _opties.Remove(optie)
+    End Sub
+
     Public Sub VoegStandaardOptiesToe()
         VoegOptieToe(String.Concat("target: $('", _naam, "')"))
         VoegOptieToe("hook: { target: 'rightMiddle', tip: 'leftMiddle' }")
         VoegOptieToe("offset: { x: 10, y: 0 }")
-        VoegOptieToe("width:  'auto'")
     End Sub
 
     ''' <summary>

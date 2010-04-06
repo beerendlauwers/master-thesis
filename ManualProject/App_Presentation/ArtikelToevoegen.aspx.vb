@@ -1,5 +1,7 @@
 ﻿Imports Manual
 Imports System.Diagnostics
+Imports System.IO
+Imports System.Drawing
 
 Partial Class App_Presentation_invoerenTest
     Inherits System.Web.UI.Page
@@ -9,7 +11,6 @@ Partial Class App_Presentation_invoerenTest
     Private bedrijfIsKlaar As Boolean = False
     Private versieIsKlaar As Boolean = False
     Private taalIsKlaar As Boolean = False
-    Private xml As New iksemel
 
     Protected Sub btnVoegtoe_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVoegtoe.Click
 
@@ -27,6 +28,24 @@ Partial Class App_Presentation_invoerenTest
             finaal = 1
         Else
             finaal = 0
+        End If
+
+        'Checken of een ander artikel niet al dezelfde naam heeft
+        If DatabaseLink.GetInstance.GetArtikelFuncties.checkArtikelByTitel(titel, FK_Bedrijf, FK_versie, FK_taal) IsNot Nothing Then
+            lblresultaat.Text = "Toevoegen Mislukt: Er bestaat reeds een artikel met deze titel in deze structuur."
+            lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
+            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            divFeedback.Visible = True
+            Return
+        End If
+
+        'Checken of een ander artikel niet dezelfde tag heeft
+        If DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByTag(tag) IsNot Nothing Then
+            lblresultaat.Text = "Toevoegen Mislukt: Er bestaat reeds een artikel met deze tag."
+            lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
+            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            divFeedback.Visible = True
+            Return
         End If
 
         Dim insertGelukt As Boolean = adap.Insert(titel, FK_categorie, FK_taal, FK_Bedrijf, FK_versie, tekst, tag, finaal)
@@ -101,8 +120,22 @@ Partial Class App_Presentation_invoerenTest
     End Sub
 
     Private Sub LaadCategorien()
-        Me.ddlCategorie.DataSource = DatabaseLink.GetInstance.GetCategorieFuncties.GetAllCategorieBy(Me.ddlTaal.SelectedValue, Me.ddlBedrijf.SelectedValue, Me.ddlVersie.SelectedValue)
-        Me.ddlCategorie.DataBind()
+
+        Dim t As Tree = Tree.GetTree(Me.ddlTaal.SelectedValue, Me.ddlVersie.SelectedValue, Me.ddlBedrijf.SelectedValue)
+        Me.ddlCategorie.Items.Clear()
+
+        Me.ddlCategorie.Items.Add(New ListItem("root_node", "0"))
+
+        t.VulCategorieDropdown(Me.ddlCategorie, t.RootNode, -1)
+
+        If Me.ddlCategorie.Items.Count = 0 Then
+            Me.ddlCategorie.Visible = False
+            Me.lblGeenCategorie.Visible = True
+        Else
+            Me.ddlCategorie.Visible = True
+            Me.lblGeenCategorie.Visible = False
+        End If
+
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -110,21 +143,46 @@ Partial Class App_Presentation_invoerenTest
 
         'De opslaanknop op disabled zetten als erop geklikt wordt
         JavaScript.ZetButtonOpDisabledOnClick(btnVoegtoe, "Opslaan...", )
+        JavaScript.ZetButtonOpDisabledOnClick(btnImageToevoegen, "Bezig met toevoegen..", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True, True)
 
         LaadTooltips()
 
         If Not IsPostBack Then
-            Editor1.Content = xml.alles
+            LaadTemplates()
         End If
 
         If Session("login") = 1 Then
             divLoggedIn.Visible = True
         Else
             divLoggedIn.Visible = False
-            lblLogin.Visible = True
-            lblLogin.Text = "U bent niet ingelogd."
-            ImageButton1.Visible = True
+            Response.Redirect("Aanmeldpagina.aspx")
         End If
+
+    End Sub
+
+    Private Sub LaadTemplates()
+
+        'Directory ophalen
+        Dim di As New IO.DirectoryInfo(String.Concat(Server.MapPath("~/"), "Templates"))
+
+        'Alle templates ophalen
+        Dim templatelijst As New List(Of IO.FileInfo)
+        For Each file As IO.FileInfo In di.GetFiles
+            templatelijst.Add(file)
+        Next
+
+        'Alle geldige XML-XSL combinaties opslaan
+        Dim xmllijst As New List(Of XML)
+        For Each template As IO.FileInfo In templatelijst
+            If template.Extension = ".xml" Then
+                For Each xsltemplate As IO.FileInfo In templatelijst
+                    If xsltemplate.Name.Replace(".xsl", String.Empty) = template.Name.Replace(".xml", String.Empty) And xsltemplate.Extension = ".xsl" Then
+                        lstSjablonen.Items.Add(template.Name.Replace(".xml", String.Empty))
+                    End If
+                Next
+            End If
+        Next template
 
     End Sub
 
@@ -135,13 +193,14 @@ Partial Class App_Presentation_invoerenTest
 
         'Alle tooltips voor onze pagina toevoegen
         lijst.Add(New Tooltip("tipTag", "De <b>unieke</b> tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten."))
-        lijst.Add(New Tooltip("tipTitel", "De titel van het nieuwe artikel."))
+        lijst.Add(New Tooltip("tipTitel", "De titel van het nieuwe artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf."))
         lijst.Add(New Tooltip("tipTaal", "De taal van het nieuwe artikel."))
         lijst.Add(New Tooltip("tipBedrijf", "Het bedrijf waaronder dit artikel zal worden gepubliceerd."))
         lijst.Add(New Tooltip("tipVersie", "De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))
         lijst.Add(New Tooltip("tipCategorie", "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur."))
         lijst.Add(New Tooltip("tipFinaal", "Bepaalt of het artikel gefinaliseerd is of niet."))
-        lijst.Add(New Tooltip("tipUpload", "Hiermee kan u afbeeldingen uploaden. Na het uploaden van 1 afbeelding kan u gewoon een volgende afbeelding uploaden."))
+        lijst.Add(New Tooltip("tipUpload", "Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.<br/><strong>Geldige extensies: JPEG, PNG, GIF</strong>"))
+        lijst.Add(New Tooltip("tipSjabloon", "Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel."))
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
             Tooltip.VoegTipToeAanEndRequest(Me, lijst)
@@ -152,34 +211,55 @@ Partial Class App_Presentation_invoerenTest
 
     End Sub
 
-    Protected Sub btnImageAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs)
-        lblFile.Text = ""
-        If FileUpload1.HasFile Then
-            Dim fileextension As String
-            fileextension = System.IO.Path.GetExtension(FileUpload1.FileName)
-            If fileextension = ".jpg" Or fileextension = ".png" Or fileextension = ".gif" Then
-                Dim tekst As String
-                Dim htmltekst As String
-                tekst = FileUpload1.FileName
-                htmltekst = "<img src=""CSS/images/" + FileUpload1.FileName + """ style=""width: 400px; height: 300px;"" />"
-                Dim loc As Integer
-                loc = Editor1.Content.Length
-                Dim content As String
-                content = Editor1.Content
-                content = content + "<br />" + htmltekst
-                Editor1.Content = content
-                FileUpload1.SaveAs("C:/ReferenceManual/App_Presentation/CSS/Images/" + FileUpload1.FileName)
-            Else
-                lblFile.ForeColor = Drawing.Color.Red
-                lblFile.Text = "U kan enkel Jpg, png of gif afbeeldingen in u artikel gebruiken."
+    Protected Sub btnSjablonen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnSjablonen.Click
+        If lstSjablonen.SelectedItem IsNot Nothing Then
+            If Not lstSjablonen.SelectedItem.Text = String.Empty Then
+
+                Dim template As String = lstSjablonen.SelectedItem.Text
+                Dim x As New XML(String.Concat(Server.MapPath("~/Templates/"), template, ".xml"), String.Concat(Server.MapPath("~/Templates/"), template, ".xsl"))
+                Editor1.Content = String.Concat(Editor1.Content, XML.LeesXMLFile(x))
+
             End If
-        Else
-            lblFile.ForeColor = Drawing.Color.Red
-            lblFile.Text = "U hebt geen afbeelding geselecteerd."
         End If
     End Sub
 
-    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
-        Response.Redirect("Aanmeldpagina.aspx")
+    Private Function CheckOfBestandBestaat(ByVal filename As String) As String
+
+        If File.Exists(String.Concat(Server.MapPath("~/App_Presentation/Uploads/Images/"), filename)) Then
+            Dim r As New Random
+            filename = String.Concat(filename, "_", r.Next, r.Next, r.Next)
+            Return CheckOfBestandBestaat(filename)
+        Else
+            Return filename
+        End If
+
+    End Function
+
+    Protected Sub btnImageToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnImageToevoegen.Click
+
+        If uplAfbeelding.PostedFile IsNot Nothing Then
+
+            Dim type As String = Path.GetExtension(uplAfbeelding.FileName)
+            If type = ".gif" Or type = ".jpeg" Or type = ".jpg" Or type = ".png" Then
+
+                'Checken of bestand bestaat en bestandsnaam veranderen indien nodig
+                Dim filename As String = CheckOfBestandBestaat(uplAfbeelding.FileName)
+
+                'Afbeelding opslaan
+                uplAfbeelding.SaveAs(String.Concat(Server.MapPath("~/App_Presentation/Uploads/Images/"), filename))
+
+                'Afbeelding in editor plaatsen
+                Dim img As String = String.Concat("<img src=""Uploads/Images/", filename, """/>")
+                Editor1.Content = String.Concat(Editor1.Content, img)
+
+                'Editor vergroten
+                Dim image As System.Drawing.Image = System.Drawing.Image.FromStream(uplAfbeelding.PostedFile.InputStream)
+                Dim hoogte As Integer = image.PhysicalDimension.Height
+                Editor1.Height = New Unit(Editor1.Height.Value + hoogte + 50)
+                updContent.Update()
+            End If
+
+        End If
+
     End Sub
 End Class

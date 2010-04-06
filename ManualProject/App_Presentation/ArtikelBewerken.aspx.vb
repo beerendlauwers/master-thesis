@@ -142,12 +142,38 @@ Partial Class App_Presentation_ArtikelBewerken
         Else
             artikel.IsFinal = 0
         End If
+
+        'Checken of een ander artikel reeds deze titel heeft
+        If artikeldal.checkArtikelByTitelEnID(artikel.Titel, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID) IsNot Nothing Then
+            Me.lblresultaat.Text = "Update mislukt: Er bestaat reeds een artikel met deze titel in deze structuur."
+            Me.imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            Me.divFeedback.Visible = True
+            Return
+        End If
+
+        'Checken of een ander artikel niet dezelfde tag heeft
+        If artikeldal.checkArtikelByTag(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID) IsNot Nothing Then
+            Me.lblresultaat.Text = "Update mislukt: Er bestaat reeds een artikel met deze tag."
+            Me.imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            Me.divFeedback.Visible = True
+            Return
+        End If
+
         If artikeldal.updateArtikel(artikel) = True Then
 
             'Boomstructuur in het geheugen updaten.
 
             'We halen de tree op waar dit artikel in werd opgeslagen
             Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+
+            If tree Is Nothing Then
+                Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
+                Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
+                err.Args.Add("Taal = " & artikel.Taal.ToString)
+                err.Args.Add("Versie = " & artikel.Versie.ToString)
+                err.Args.Add("Bedrijf = " & artikel.Bedrijf.ToString)
+                ErrorLogger.WriteError(err)
+            End If
 
             'We zoeken het artikel op en updaten het.
             Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
@@ -157,6 +183,13 @@ Partial Class App_Presentation_ArtikelBewerken
                 ArtikelFunctiesZichtbaar(False)
                 imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
                 Me.divFeedback.Visible = True
+
+                Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+                Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
+                err.Args.Add("ID = " & artikel.ID.ToString)
+                err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+                ErrorLogger.WriteError(err)
+
                 Return
             Else
                 node.Titel = artikel.Titel
@@ -166,7 +199,23 @@ Partial Class App_Presentation_ArtikelBewerken
 
                 If nieuweparent IsNot oudeparent Then
 
-                    If oudeparent Is Nothing Or nieuweparent Is Nothing Then
+                    If oudeparent Is Nothing Then
+                        Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0003")
+                        err.Args.Add("ID = " & node.ID.ToString)
+                        err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+                        ErrorLogger.WriteError(err)
+                    End If
+
+                    If nieuweparent Is Nothing Then
+                        Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0003")
+                        err.Args.Add("ID = " & artikel.Categorie.ToString)
+                        err.Args.Add("Type = " & Global.ContentType.Categorie.ToString)
+                        ErrorLogger.WriteError(err)
+                    End If
+
+                    If nieuweparent Is Nothing Or oudeparent Is Nothing Then
                         Me.lblresultaat.Text = "Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken."
                         ArtikelFunctiesZichtbaar(False)
                         imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
@@ -340,7 +389,7 @@ Partial Class App_Presentation_ArtikelBewerken
         'Alle tooltips voor onze pagina toevoegen
         lijst.Add(New Tooltip("tipZoekTitel", "Een (gedeelte van) de titel waarop u wilt zoeken."))
         lijst.Add(New Tooltip("tipTag", "De <b>unieke</b> tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten."))
-        lijst.Add(New Tooltip("tipTitel", "De titel van het artikel."))
+        lijst.Add(New Tooltip("tipTitel", "De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf."))
         lijst.Add(New Tooltip("tipTaal", "De taal van het artikel."))
         lijst.Add(New Tooltip("tipBedrijf", "Het bedrijf waaronder dit artikel zal worden gepubliceerd."))
         lijst.Add(New Tooltip("tipVersie", "De versie waartoe het artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))

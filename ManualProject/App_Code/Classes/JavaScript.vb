@@ -88,7 +88,7 @@ Public Class JavaScript
 
         js = String.Concat(js, " }")
 
-        VoerJavaScriptUitOn(btn, js, "onclick")
+        VoerJavaScriptUitOn(btn, js, "OnClick")
     End Sub
 
     Public Shared Sub VoerJavaScriptUitOn(ByRef control As System.Web.UI.WebControls.WebControl, ByVal js As String, ByVal onEvent As String)

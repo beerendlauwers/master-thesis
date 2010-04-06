@@ -1,4 +1,4 @@
-﻿#titel
+﻿.titel
 {
     font-family:Arial;
     font-size:18pt;
@@ -6,7 +6,7 @@
     font-weight:bold;
 }
 
-#titelklein
+.titelklein
 {
     font-family:Arial;
     font-size:14pt;
@@ -14,7 +14,7 @@
     
 }
 
-#tekst
+.tekst
 {
     font-family:Arial;
     font-size:10pt;

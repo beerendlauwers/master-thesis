@@ -93,6 +93,19 @@ Public Class Node
         Return _children.Count
     End Function
 
+    Public Function GetRecursiveCategorieCount(ByVal aantal As Integer) As Integer
+
+        For Each kind As Node In _children
+            If kind.Type = ContentType.Categorie Then
+                aantal = aantal + 1
+                aantal = GetRecursiveCategorieCount(aantal)
+            End If
+        Next kind
+
+        Return aantal
+
+    End Function
+
     ''' <summary>
     ''' Doorzoek recursief de kinderen van deze node, de kinderen van de kinderen, etc om een node te vinden
     ''' </summary>
@@ -155,6 +168,14 @@ Public Class Node
                 Return returnednode
             End If
         Next
+
+        'If _children.Count > 0 Then
+        'Dim fout As String = String.Concat("De opgevraagde parent van de node (zie parameters) bestaat niet.")
+        ' Dim e As New ErrorLogger(fout, "NODE_0002", "Klasse Node::VindParentVanNode")
+        ' e.Args.Add("id = " & node.ID.ToString)
+        'e.Args.Add("type = " & node.Type.ToString)
+        'ErrorLogger.WriteError(e)
+        'End If
 
         Return Nothing
     End Function

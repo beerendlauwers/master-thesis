@@ -28,7 +28,11 @@ Public Class BedrijfDAL
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("id = " & id.ToString)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -55,7 +59,10 @@ Public Class BedrijfDAL
             If (r.HasRows) Then dt.Load(r)
             Return dt
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -88,7 +95,12 @@ Public Class BedrijfDAL
 
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("naam = " & naam)
+            e.Args.Add("tag = " & tag)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -121,7 +133,13 @@ Public Class BedrijfDAL
 
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("naam = " & naam)
+            e.Args.Add("tag = " & tag)
+            e.Args.Add("ID = " & ID.ToString)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -147,7 +165,12 @@ Public Class BedrijfDAL
                 Return -1
             End If
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("naam = " & naam)
+            e.Args.Add("tag = " & tag)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try

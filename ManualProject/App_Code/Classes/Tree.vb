@@ -29,6 +29,25 @@ Public Class Tree
         End Set
     End Property
 
+    Public Property Versie() As Versie
+        Get
+            Return _versie
+        End Get
+        Set(ByVal value As Versie)
+            _versie = value
+        End Set
+    End Property
+
+    Public Property Taal() As Taal
+        Get
+            Return _taal
+        End Get
+        Set(ByVal value As Taal)
+            _taal = value
+        End Set
+    End Property
+
+
 
     Public Property RootNode() As Node
         Get
@@ -48,7 +67,18 @@ Public Class Tree
             Return _rootnode
         End If
 
-        Return _rootnode.GetChildBy(id, type)
+        Dim returnednode As Node = _rootnode.GetChildBy(id, type)
+
+        If returnednode Is Nothing Then
+            Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet.")
+            Dim e As New ErrorLogger(fout)
+            e.Code = "NODE_0007"
+            e.Args.Add("id = " & id.ToString)
+            e.Args.Add("type = " & type.ToString)
+            ErrorLogger.WriteError(e)
+        End If
+
+        Return returnednode
     End Function
 
     ''' <summary>
@@ -119,7 +149,7 @@ Public Class Tree
 
         'Als er reeds een verzameling van trees is, maken we deze terug leeg
         If FTrees IsNot Nothing Then
-            FTrees = Nothing
+            FTrees = New List(Of Tree)
         End If
 
         'Databasefuncties ophalen
@@ -135,69 +165,184 @@ Public Class Tree
         Dim taaldt As tblTaalDataTable = dbtaal.GetAllTaal
         Dim bedrijfdt As tblBedrijfDataTable = dbbedrijf.GetAllBedrijf
         Dim versiedt As tblVersieDataTable = dbversie.GetAllVersie
+
+        'Voor elke combinatie van VERSIE, TAAL en BEDRIJF een tree maken.
+        For Each versie As tblVersieRow In versiedt
+
+            If (Not BouwTreesVoorVersie(bedrijfdt, versie, taaldt)) Then
+                Return
+            End If
+
+        Next versie
+
+    End Sub
+
+    Public Shared Function BouwTreesVoorVersie(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versie As tblVersieRow, ByRef taaldt As tblTaalDataTable) As Boolean
+
+        For Each taal As tblTaalRow In taaldt
+
+            For Each bedrijf As tblBedrijfRow In bedrijfdt
+
+                If (Not BouwTreeBedrijf(bedrijf, versie, taal)) Then
+                    Return False
+                End If
+
+            Next bedrijf
+
+        Next taal
+
+        Return True
+
+    End Function
+
+    Public Shared Function BouwTreesVoorTaal(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versiedt As tblVersieDataTable, ByRef taal As tblTaalRow) As Boolean
+
+        For Each versie As tblVersieRow In versiedt
+
+            For Each bedrijf As tblBedrijfRow In bedrijfdt
+
+                If (Not BouwTreeBedrijf(bedrijf, versie, taal)) Then
+                    Return False
+                End If
+
+            Next bedrijf
+
+        Next versie
+
+        Return True
+
+    End Function
+
+    Public Shared Function BouwTreesVoorBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versiedt As tblVersieDataTable, ByRef taaldt As tblTaalDataTable) As Boolean
+
+        For Each versie As tblVersieRow In versiedt
+
+            For Each taal As tblTaalRow In taaldt
+
+                If (Not BouwTreeBedrijf(bedrijf, versie, taal)) Then
+                    Return False
+                End If
+
+            Next taal
+
+        Next versie
+
+        Return True
+
+    End Function
+
+    Public Shared Function BouwTreeBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versie As tblVersieRow, ByRef taal As tblTaalRow) As Boolean
+
+        'Databasefuncties ophalen
+        Dim dblink As DatabaseLink = DatabaseLink.GetInstance
+
+        Dim dbcategorie As CategorieDAL = dblink.GetCategorieFuncties
+        Dim dbtaal As TaalDAL = dblink.GetTaalFuncties
+        Dim dbbedrijf As BedrijfDAL = dblink.GetBedrijfFuncties
+        Dim dbversie As VersieDAL = dblink.GetVersieFuncties
+        Dim dbartikel As ArtikelDAL = dblink.GetArtikelFuncties
+
         Dim categoriedt As tblCategorieDataTable
         Dim artikeldt As tblArtikelDataTable
 
-        For Each taal As tblTaalRow In taaldt
-            For Each bedrijf As tblBedrijfRow In bedrijfdt
-                For Each versie As tblVersieRow In versiedt
+        'Root node ophalen en aanmaken
+        Dim rootnode As Node
+        Dim rootnoderij As tblCategorieRow = dbcategorie.GetRootNode()
 
-                    categoriedt = dbcategorie.GetAllCategorieBy(taal.TaalID, bedrijf.BedrijfID, versie.VersieID)
+        If rootnoderij Is Nothing Then
+            Dim fout As String = "Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De basis (of root node) van de boomstructuur bestaat niet in de database."
+            fout = String.Concat(fout, " Refereer naar de documentatie om dit probleem op te lossen.")
+            Dim e As New ErrorLogger(fout, "TREE_0001")
+            ErrorLogger.WriteError(e)
+            Return False
+        End If
 
-                    'Root node ophalen en aanmaken
-                    Dim rootnode As Node
-                    Dim rootnoderij As tblCategorieRow = categoriedt.Rows(0)
-                    If rootnoderij.Categorie = "root_node" Then
-                        rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam, 0)
-                    Else
-                        MsgBox("Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De basis (of root node) van de boomstructuur bestaat niet.")
-                        Return
-                    End If
+        If rootnoderij.Categorie = "root_node" And rootnoderij.FK_versie = 0 And rootnoderij.FK_taal = 0 And rootnoderij.FK_bedrijf = 0 Then
+            rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam, 0)
+        Else
+            Dim fout As String = "Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De basis (of root node) van de boomstructuur is incorrect (zie parameters)."
+            Dim e As New ErrorLogger(fout, "TREE_0002")
+            e.Args.Add("Titel van de root node (moet 'root_node' zijn): " & rootnoderij.Categorie)
+            e.Args.Add("VersieID van de root node (moet 0 zijn): " & rootnoderij.FK_versie.ToString)
+            e.Args.Add("BedrijfID van de root node (moet 0 zijn): " & rootnoderij.FK_bedrijf.ToString)
+            e.Args.Add("TaalID van de root node (moet 0 zijn):" & rootnoderij.FK_taal.ToString)
+            ErrorLogger.WriteError(e)
+            Return False
+        End If
 
-                    Dim treenaam As String = String.Concat("TREE_", taal.Taal, "_", bedrijf.Naam, "_", versie.Versie)
-                    Dim t As New Tree(treenaam, taal.TaalID, versie.VersieID, bedrijf.BedrijfID, rootnode)
-                    Dim huidigeParent As Node
+        Dim treenaam As String = String.Concat("TREE_", versie.Versie, "_", taal.Taal, "_", bedrijf.Naam)
+        Dim t As New Tree(treenaam, taal.TaalID, versie.VersieID, bedrijf.BedrijfID, rootnode)
+        Dim huidigeParent As Node
 
-                    For Each categorie As tblCategorieRow In categoriedt
+        categoriedt = dbcategorie.GetAllCategorieBy(taal.TaalID, bedrijf.BedrijfID, versie.VersieID)
 
-                        'De root node heeft geen parent, dus in dit geval kunnen we gewoon verdergaan.
-                        If categorie.FK_parent = categorie.CategorieID Then Continue For
+        For Each categorie As tblCategorieRow In categoriedt
 
-                        'Haal de juiste parent op van dit kind.
-                        huidigeParent = t.DoorzoekTreeVoorNode(categorie.FK_parent, ContentType.Categorie)
+            'De root node heeft geen parent, dus in dit geval kunnen we gewoon verdergaan.
+            If categorie.FK_parent = categorie.CategorieID Then Continue For
 
-                        'Check of huidigeParent geldig is
-                        If (huidigeParent Is Nothing) Then
-                            MsgBox(String.Concat("Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De parent met nummer ", categorie.FK_parent, " bestaat niet."))
-                            Return
-                        End If
+            'Haal de juiste parent op van dit kind.
+            huidigeParent = t.DoorzoekTreeVoorNode(categorie.FK_parent, ContentType.Categorie)
 
-                        'Maak een kind aan
-                        Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie, categorie.Hoogte)
+            'Check of huidigeParent geldig is
+            If (huidigeParent Is Nothing) Then
 
-                        'Plaats het kind onder de parent
-                        huidigeParent.AddChild(kind)
+                Dim fout As String = String.Concat("Fout tijdens genereren van de categoriestructuren: De parent met nummer ", categorie.FK_parent, " bestaat niet in deze tree.")
+                Dim e As New ErrorLogger(fout, "TREE_0003")
+                e.Args.Add("Treenaam: " & treenaam)
+                e.Args.Add("CategorieID van de kindcategorie wiens parent niet bestaat: " & categorie.CategorieID)
+                e.Args.Add("VersieID van de kindcategorie: " & categorie.FK_versie.ToString)
+                e.Args.Add("BedrijfID van de kindcategorie: " & categorie.FK_bedrijf.ToString)
+                e.Args.Add("TaalID van de kindcategorie:" & categorie.FK_taal.ToString)
+                ErrorLogger.WriteError(e)
+                Return False
+            End If
 
-                        'En nu alle artikels die onder deze categorie staan ophalen
-                        artikeldt = dbartikel.GetArtikelsByParent(categorie.CategorieID)
+            'Maak een kind aan
+            Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie, categorie.Hoogte)
 
-                        'De huidige parent wordt nu het kind
-                        huidigeParent = kind
-                        Dim hoogte As Integer = 0
-                        For Each artikel As tblArtikelRow In artikeldt
-                            Dim art As New Node(artikel.ArtikelID, ContentType.Artikel, artikel.Titel, hoogte)
-                            huidigeParent.AddChild(art)
-                            hoogte = hoogte + 1
-                        Next artikel
+            'Plaats het kind onder de parent
+            huidigeParent.AddChild(kind)
 
-                    Next categorie
+            'En nu alle artikels die onder deze categorie staan ophalen
+            artikeldt = dbartikel.GetArtikelsByParent(categorie.CategorieID)
 
-                    Tree.AddTree(t)
+            'De huidige parent wordt nu het kind
+            huidigeParent = kind
+            Dim hoogte As Integer = 0
+            For Each artikel As tblArtikelRow In artikeldt
+                Dim art As New Node(artikel.ArtikelID, ContentType.Artikel, artikel.Titel, hoogte)
 
-                Next versie
-            Next bedrijf
-        Next taal
-    End Sub
+                If (categorie.FK_taal = artikel.FK_Taal) And (categorie.FK_versie = artikel.FK_Versie) And (categorie.FK_bedrijf = artikel.FK_Bedrijf) Then
+                    huidigeParent.AddChild(art)
+                    hoogte = hoogte + 1
+                Else
+                    Dim fout As String = String.Concat("Waarschuwing: Het artikel """, artikel.Titel, """ (artikelID: ", artikel.ArtikelID, ") heeft andere foreign keys dan de categorie waaronder ze staat (zie parameters).")
+                    Dim e As New ErrorLogger(fout, "TREE_0006")
+                    e.Args.Add("Treenaam: " & treenaam)
+                    e.Args.Add("Categoriegegevens:")
+                    e.Args.Add("CategorieID: " & categorie.CategorieID)
+                    e.Args.Add("VersieID: " & categorie.FK_versie.ToString)
+                    e.Args.Add("BedrijfID: " & categorie.FK_bedrijf.ToString)
+                    e.Args.Add("TaalID:" & categorie.FK_taal.ToString)
+                    e.Args.Add("Artikelgegevens:")
+                    e.Args.Add("ArtikelID: " & artikel.ArtikelID.ToString)
+                    e.Args.Add("VersieID: " & artikel.FK_Versie.ToString)
+                    e.Args.Add("BedrijfID: " & artikel.FK_Bedrijf.ToString)
+                    e.Args.Add("TaalID:" & artikel.FK_Taal.ToString)
+                    ErrorLogger.WriteError(e)
+                End If
+
+            Next artikel
+
+        Next categorie
+
+        Tree.AddTree(t)
+
+        Return True
+
+    End Function
+
 
     ''' <summary>
     ''' Deze functie leest een volledige tree uit en zet alles in een DropDownList.
@@ -215,7 +360,7 @@ Public Class Tree
 
             'Spaties toevoegen
             For index As Integer = 0 To huidigediepte
-                tekst = String.Concat(tekst, "  ")
+                tekst = String.Concat(tekst, "---")
             Next index
 
             tekst = String.Concat(tekst, n.Titel)
@@ -225,7 +370,7 @@ Public Class Tree
             ddl.Items.Add(listitem)
 
             If n.GetChildCount > 0 Then
-                VulCategorieDropdown(ddl, n, diepte)
+                VulCategorieDropdown(ddl, n, huidigediepte)
             End If
         Next n
 
@@ -280,6 +425,13 @@ Public Class Tree
 
         'Even checken of deze categorie wel bestaat
         If (categorie Is Nothing) Then
+
+            Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+            Dim err As New ErrorLogger(fout, "TREE_0008")
+            err.Args.Add("tag = " & tag)
+            err.Args.Add("categorieID = " & categorieID.ToString)
+            ErrorLogger.WriteError(err)
+
             Return String.Concat("De categorie met nummer """, categorieID, """ bestaat niet in de boomstructuur """, Me._naam, """")
         End If
 

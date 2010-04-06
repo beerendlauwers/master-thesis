@@ -90,7 +90,7 @@ Public Class Categorie
 
     End Sub
 
-    Public Sub New(ByVal CategoryID As Integer, ByVal Categorie As String, ByVal Hoogte As Integer, ByVal Diepte As Integer, ByVal FK_parent As Integer, ByVal FK_Taal As Integer, ByVal FK_Versie As Integer, ByVal FK_Bedrijf As Integer)
+    Public Sub New(ByVal CategorieID As Integer, ByVal Categorie As String, ByVal Hoogte As Integer, ByVal Diepte As Integer, ByVal FK_parent As Integer, ByVal FK_Taal As Integer, ByVal FK_Versie As Integer, ByVal FK_Bedrijf As Integer)
         _CategorieID = CategorieID
         _Categorie = Categorie
         _Hoogte = Hoogte
@@ -99,5 +99,16 @@ Public Class Categorie
         _FK_Taal = FK_Taal
         _FK_Versie = FK_Versie
         _FK_Bedrijf = FK_Bedrijf
+    End Sub
+
+    Public Sub New(ByRef c As Manual.tblCategorieRow)
+        _CategorieID = c.CategorieID
+        _Categorie = c.Categorie
+        _Hoogte = c.Hoogte
+        _Diepte = c.Diepte
+        _FK_Parent = c.FK_parent
+        _FK_Taal = c.FK_taal
+        _FK_Versie = c.FK_versie
+        _FK_Bedrijf = c.FK_bedrijf
     End Sub
 End Class

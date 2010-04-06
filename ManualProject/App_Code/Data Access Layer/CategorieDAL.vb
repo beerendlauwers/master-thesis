@@ -123,36 +123,6 @@ Public Class CategorieDAL
 
     End Function
 
-    Public Function getArtikelsByParent(ByVal parent As Integer) As tblArtikelDataTable
-
-        Dim dt As New tblArtikelDataTable
-
-        Dim c As New SqlCommand("[Manual_GetArtikelsByParent]")
-        c.CommandType = CommandType.StoredProcedure
-        c.Parameters.Add("@categorieID", SqlDbType.Int).Value = parent
-        c.Connection = New SqlConnection(conn)
-
-        Try
-            Dim r As SqlDataReader
-            c.Connection.Open()
-
-            r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
-        Catch ex As Exception
-            Throw ex
-        Finally
-            c.Connection.Close()
-        End Try
-
-    End Function
-
-
     Public Function getCategorieByParent(ByVal parent As Integer) As tblCategorieDataTable
 
         Dim dt As New tblCategorieDataTable
@@ -181,14 +151,15 @@ Public Class CategorieDAL
         End Try
     End Function
 
-    Public Function checkCategorie(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer) As Data.DataTable
+    Public Function checkCategorie(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer) As tblCategorieDataTable
 
-        Dim dt As New Data.DataTable
+        Dim dt As New tblCategorieDataTable
         Dim c As New SqlCommand("Check_Categorie")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
         c.Connection = New SqlConnection(conn)
 
         Try
@@ -235,7 +206,7 @@ Public Class CategorieDAL
     End Function
 
 
-    Public Function checkCategorieByID(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal Id As Integer) As Data.DataTable
+    Public Function checkCategorieByID(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal Id As Integer) As Data.DataTable
 
         Dim dt As New Data.DataTable
         Dim c As New SqlCommand("Check_CategorieByID")
@@ -243,6 +214,7 @@ Public Class CategorieDAL
         c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
         c.Parameters.Add("@ID", SqlDbType.Int).Value = Id
         c.Connection = New SqlConnection(conn)
 
@@ -297,6 +269,65 @@ Public Class CategorieDAL
 
     Public Function updateCategorie(ByRef c As Categorie) As Boolean
         Return StdAdapter.Update(c.Categorie, c.Diepte, c.Hoogte, c.FK_Parent, c.FK_Taal, c.Bedrijf, c.Versie, c.CategorieID)
+    End Function
+
+    Public Function GetRootNode() As tblCategorieRow
+
+        Dim dt As New tblCategorieDataTable
+        Dim c As New SqlCommand("Manual_GetRootNode")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Dim row As tblCategorieRow = dt.Rows(0)
+
+                If row.FK_versie = 0 And row.FK_taal = 0 And row.FK_bedrijf = 0 Then
+                    Return row
+                Else
+                    Return Nothing
+                End If
+            Else
+                Return Nothing
+            End If
+
+        Catch ex As Exception
+            Return Nothing
+        Finally
+            c.Connection.Close()
+        End Try
+
+    End Function
+
+    Public Function GetCategorieByVersie(ByVal versie As Integer) As tblCategorieDataTable
+
+        Dim dt As New tblCategorieDataTable
+        Dim c As New SqlCommand("[Manual_GetCategorieByVersie]")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
     End Function
 
 End Class

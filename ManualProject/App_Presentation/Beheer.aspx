@@ -5,20 +5,18 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
-    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
-        Visible="False" />
 <div id="divLoggedIn" runat="server">    
-    <cc1:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="3" 
-        Width="100%">
+<cc1:TabContainer runat="server" ID="TabContainer" ActiveTabIndex="2">
         <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
             <HeaderTemplate>
                 Bedrijf
+        
+        
         </HeaderTemplate>
         
+
 <ContentTemplate>
-                <asp:UpdatePanel ID="updBedrijf" runat="server">
-                    <ContentTemplate>
+                <asp:UpdatePanel ID="updBedrijf" runat="server"><ContentTemplate>
                         <cc1:Accordion ID="AccordionBedrijf" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
                             ContentCssClass="art-content">
                             <Panes>
@@ -155,17 +153,27 @@
                                 </div>
                             </ProgressTemplate>
                         </asp:UpdateProgress>
-                    </ContentTemplate>
-                </asp:UpdatePanel>
+                    
+    </ContentTemplate>
+</asp:UpdatePanel>
             
             
+        
+
+            
+            
+        
         </ContentTemplate>
+
 
 </cc1:TabPanel>
         <cc1:TabPanel runat="server" HeaderText="Taal" ID="tabTaal">
             <HeaderTemplate>
                 Taal
-       </HeaderTemplate>
+       
+        
+        </HeaderTemplate>
+
 
 <ContentTemplate>
                 <asp:UpdatePanel ID="updTaal" runat="server"><ContentTemplate>
@@ -307,17 +315,25 @@
             
 
             
+        
+            
+
+            
+        
         </ContentTemplate>
+
 
 </cc1:TabPanel>
         <cc1:TabPanel runat="server" HeaderText="Versie" ID="tabVersie">
             <HeaderTemplate>
                 Versie
+        
+        
         </HeaderTemplate>
             
+
 <ContentTemplate>
-                <asp:UpdatePanel ID="updVersie" runat="server">
-                    <ContentTemplate>
+                <asp:UpdatePanel ID="updVersie" runat="server"><ContentTemplate>
                         <cc1:Accordion ID="AccordionVersie" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
                             ContentCssClass="art-content">
                             <Panes>
@@ -337,7 +353,8 @@
                                                     <cc1:ValidatorCalloutExtender ID="extAddVersie" runat="server" TargetControlID="vleAddVersie"></cc1:ValidatorCalloutExtender>
                                                     <span style="vertical-align:middle" id='tipAddVersie'><img src="CSS/images/help.png" alt=''/></span>
                                                     <cc1:FilteredTextBoxExtender ID="fltAddVersie" runat="server" FilterType="Custom, Numbers" 
-                                                    TargetControlID="txtAddVersie" ValidChars="."></cc1:FilteredTextBoxExtender>
+                                                    TargetControlID="txtAddVersie" ValidChars=".">
+                                                    </cc1:FilteredTextBoxExtender>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -374,12 +391,13 @@
                                                 </td>
                                                 <td>
                                                     <asp:TextBox ID="txtEditVersie" runat="server"></asp:TextBox>
-                                                    <asp:RequiredFieldValidator ID="vleEditVersie" runat="server" ErrorMessage="Gelieve een versienaam in te geven." 
+                                                    <asp:RequiredFieldValidator ID="vleEditVersie" runat="server" ErrorMessage="Gelieve een versienummer in te geven." 
                                                     ControlToValidate="txtEditVersie" Display="None" ValidationGroup="versieWijzigen"></asp:RequiredFieldValidator>
                                                     <cc1:ValidatorCalloutExtender ID="extEditVersie" runat="server" TargetControlID="vleEditVersie"></cc1:ValidatorCalloutExtender>
                                                     <span style="vertical-align:middle" id='tipEditVersie'><img src="CSS/images/help.png" alt=''/></span>
                                                     <cc1:FilteredTextBoxExtender ID="fltEditVersie" runat="server" FilterType="Custom, Numbers" 
-                                                    TargetControlID="txtEditVersie" ValidChars="."></cc1:FilteredTextBoxExtender>
+                                                    TargetControlID="txtEditVersie" ValidChars=".">
+                                                    </cc1:FilteredTextBoxExtender>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -388,6 +406,66 @@
                                                 </td>
                                                 <td>
                                                     <asp:Label ID="lblEditVersieRes" runat="server" Text=""></asp:Label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </Content>
+                                </cc1:AccordionPane>
+                                <cc1:AccordionPane ID="PaneVersieKopieren" runat="server">
+                                    <Header>
+                                        Versie kopiëren</Header>
+                                    <Content>
+                                        <table>
+                                            <tr>
+                                                <td class="lbl">
+                                                    <asp:Label ID="lblVersiekopieren" runat="server" Text="Kies een versie om te kopiëren: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:DropDownList ID="ddlVersiekopieren" runat="server" DataSourceID="objdVersie" DataTextField="Versie"
+                                                        DataValueField="VersieID" autopostback="true">
+                                                    </asp:DropDownList>
+                                                    <span style="vertical-align:middle" id='tipVersieKopieren'><img src="CSS/images/help.png" alt=''/></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                            <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                            <th align="left">Kopieergegevens</th>
+                                            </tr>
+                                            <tr>
+                                                <td class="lbl">
+                                                    <asp:Label ID="lblKopieVersieAantalCategorien" runat="server" Text="Aantal categorieën: "></asp:Label>
+                                                    <span style="vertical-align:middle" id='tipAantalCategorien'><img src="CSS/images/help.png" alt=''/></span>
+                                                </td>
+                                                <td>
+                                                   <asp:Label ID="lblKopieVersieAantalArtikels" runat="server" Text="Aantal artikels: "></asp:Label>
+                                                   <span style="vertical-align:middle" id='tipAantalArtikels'><img src="CSS/images/help.png" alt=''/></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lbl">
+                                                    <asp:Label ID="lblNaamNieuweVersieKopie" runat="server" Text="Naam van de nieuwe versie: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:TextBox ID="txtNaamNieuweVersieKopie" runat="server"></asp:TextBox>
+                                                    <asp:RequiredFieldValidator ID="vleNaamNieuweVersieKopie" runat="server" ErrorMessage="Gelieve een versienummer in te geven." 
+                                                    ControlToValidate="txtNaamNieuweVersieKopie" Display="None" ValidationGroup="versieKopieren"></asp:RequiredFieldValidator>
+                                                    <cc1:ValidatorCalloutExtender ID="extNaamNieuweVersieKopie" runat="server" TargetControlID="vleNaamNieuweVersieKopie">
+                                                    </cc1:ValidatorCalloutExtender>
+                                                    <span style="vertical-align:middle" id='tipNaamVersieKopie'>
+                                                    <img src="CSS/images/help.png" alt=''/></span>
+                                                    <cc1:FilteredTextBoxExtender ID="fltNaamNieuweVersieKopie" runat="server" FilterType="Custom, Numbers" 
+                                                    TargetControlID="txtNaamNieuweVersieKopie" ValidChars=".">
+                                                    </cc1:FilteredTextBoxExtender>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <asp:Button ID="btnVersieKopieren" runat="server" Text="Kopiëren" ValidationGroup="versieKopieren" />
+                                                </td>
+                                                <td>
+                                                    <asp:Label ID="lblVersieKopierenFeedback" runat="server" Text=""></asp:Label>
                                                 </td>
                                             </tr>
                                         </table>
@@ -406,7 +484,8 @@
                                                     <asp:DropDownList ID="ddlDeletVersie" runat="server" DataSourceID="objdVersie" DataTextField="versie"
                                                         DataValueField="versieID">
                                                     </asp:DropDownList>
-                                                    <span style="vertical-align:middle" id='tipDeleteVersie'><img src="CSS/images/help.png" alt=''/></span>
+                                                    <span style="vertical-align:middle" id='tipDeleteVersie'>
+                                                    <img src="CSS/images/help.png" alt=''/></span>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -430,17 +509,27 @@
                                 </div>
                             </ProgressTemplate>
                         </asp:UpdateProgress>
-                    </ContentTemplate>
-                </asp:UpdatePanel>
+                    
+    </ContentTemplate>
+</asp:UpdatePanel>
             
             
+        
+
+            
+            
+        
         </ContentTemplate>
+
 
 </cc1:TabPanel>
         <cc1:TabPanel runat="server" HeaderText="Categorie" ID="TabCategorie">
             <HeaderTemplate>
                 Categorie
+        
+        
         </HeaderTemplate>
+
 
 <ContentTemplate>
                 <asp:UpdatePanel ID="updCategorie" runat="server">
@@ -480,17 +569,6 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                            <td class="lbl">
-                                                <asp:Label ID="lblAddCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
-                                            </td>
-                                            <td>
-                                                <asp:DropDownList ID="ddlAddCatTaal" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
-                                                    DataValueField="TaalID" AutoPostBack="true">
-                                                </asp:DropDownList>
-                                                <span style="vertical-align:middle" id='tipAddCatTaal'><img src="CSS/images/help.png" alt=''/></span>
-                                            </td>
-                                            </tr>
-                                            <tr>
                                                 <td class="lbl">
                                                     <asp:Label ID="lblAddCatVersie" runat="server" Text="Kies een versie: "></asp:Label>
                                                 </td>
@@ -500,6 +578,17 @@
                                                     </asp:DropDownList>
                                                     <span style="vertical-align:middle" id='tipAddCatVersie'><img src="CSS/images/help.png" alt=''/></span>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                            <td class="lbl">
+                                                <asp:Label ID="lblAddCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:DropDownList ID="ddlAddCatTaal" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
+                                                    DataValueField="TaalID" AutoPostBack="true">
+                                                </asp:DropDownList>
+                                                <span style="vertical-align:middle" id='tipAddCatTaal'><img src="CSS/images/help.png" alt=''/></span>
+                                            </td>
                                             </tr>
                                             <tr>
                                                 <td class="lbl">
@@ -544,17 +633,6 @@
                                             <th align="left">Categoriekeuze verfijnen</th>
                                             </tr>
                                             <tr>
-                                            <td class="lbl">
-                                                <asp:Label ID="lblBewerkCatTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
-                                            </td>
-                                            <td>
-                                                <asp:DropDownList ID="ddlEditCatTaalkeuze" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
-                                                    DataValueField="TaalID">
-                                                </asp:DropDownList>
-                                                <span style="vertical-align:middle" id='tipEditCatTaalkeuze'><img src="CSS/images/help.png" alt=''/></span>
-                                            </td>
-                                            </tr>
-                                            <tr>
                                                 <td class="lbl">
                                                     <asp:Label ID="lblBewerkCatVersiekeuze" runat="server" Text="Filter op versie: "></asp:Label>
                                                 </td>
@@ -564,6 +642,17 @@
                                                     </asp:DropDownList>
                                                     <span style="vertical-align:middle" id='tipEditCatVersiekeuze'><img src="CSS/images/help.png" alt=''/></span>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                            <td class="lbl">
+                                                <asp:Label ID="lblBewerkCatTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:DropDownList ID="ddlEditCatTaalkeuze" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
+                                                    DataValueField="TaalID">
+                                                </asp:DropDownList>
+                                                <span style="vertical-align:middle" id='tipEditCatTaalkeuze'><img src="CSS/images/help.png" alt=''/></span>
+                                            </td>
                                             </tr>
                                             <tr>
                                                 <td class="lbl">
@@ -628,16 +717,11 @@
                                                     <span style="vertical-align:middle" id='tipEditCatHoogte'><img src="CSS/images/help.png" alt=''/></span>
                                                 </td>
                                             </tr>
-                                            <tr runat="server" id="trBewerkCatTaal">
-                                            <td class="lbl">
-                                                <asp:Label ID="lblBewerkCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
-                                            </td>
-                                            <td>
-                                                <asp:DropDownList ID="ddlEditCatTaal" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
-                                                    DataValueField="TaalID" AutoPostBack="true">
-                                                </asp:DropDownList>
-                                                <span style="vertical-align:middle" id='tipEditCatTaal'><img src="CSS/images/help.png" alt=''/></span>
-                                            </td>
+                                            <tr>
+                                            <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                            <th align="left">Categorie verplaatsen</th>
                                             </tr>
                                             <tr runat="server" id="trBewerkCatVersie">
                                                 <td class="lbl">
@@ -649,6 +733,17 @@
                                                     </asp:DropDownList>
                                                     <span style="vertical-align:middle" id='tipEditCatVersie'><img src="CSS/images/help.png" alt=''/></span>
                                                 </td>
+                                            </tr>
+                                            <tr runat="server" id="trBewerkCatTaal">
+                                            <td class="lbl">
+                                                <asp:Label ID="lblBewerkCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:DropDownList ID="ddlEditCatTaal" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
+                                                    DataValueField="TaalID" AutoPostBack="true">
+                                                </asp:DropDownList>
+                                                <span style="vertical-align:middle" id='tipEditCatTaal'><img src="CSS/images/help.png" alt=''/></span>
+                                            </td>
                                             </tr>
                                             <tr runat="server" id="trBewerkCatBedrijf">
                                                 <td class="lbl">
@@ -693,17 +788,6 @@
                                             <th align="left">Categoriekeuze verfijnen</th>
                                             </tr>
                                             <tr>
-                                            <td class="lbl">
-                                                <asp:Label ID="lblCatDelTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
-                                            </td>
-                                            <td>
-                                                <asp:DropDownList ID="ddlCatDelTaalkeuze" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
-                                                    DataValueField="TaalID">
-                                                </asp:DropDownList>
-                                                <span style="vertical-align:middle" id='tipCatDelTaalkeuze'><img src="CSS/images/help.png" alt=''/></span>
-                                            </td>
-                                            </tr>
-                                            <tr>
                                                 <td class="lbl">
                                                     <asp:Label ID="lblCatDelVersiekeuze" runat="server" Text="Filter op versie: "></asp:Label>
                                                 </td>
@@ -713,6 +797,17 @@
                                                     </asp:DropDownList>
                                                     <span style="vertical-align:middle" id='lbltipCatDelVersiekeuze'><img src="CSS/images/help.png" alt=''/></span>
                                                 </td>
+                                            </tr>
+                                            <tr>
+                                            <td class="lbl">
+                                                <asp:Label ID="lblCatDelTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:DropDownList ID="ddlCatDelTaalkeuze" runat="server" DataSourceID="objdTaal" DataTextField="Taal"
+                                                    DataValueField="TaalID">
+                                                </asp:DropDownList>
+                                                <span style="vertical-align:middle" id='tipCatDelTaalkeuze'><img src="CSS/images/help.png" alt=''/></span>
+                                            </td>
                                             </tr>
                                             <tr>
                                                 <td class="lbl">
@@ -740,7 +835,7 @@
                                             <th align="left">Categorie verwijderen</th>
                                             </tr>
                                             <tr>
-                                                <td>
+                                                <td class="lbl">
                                                     <asp:Label ID="lblCatVerwijder" runat="server" Text="Categorie: "></asp:Label>
                                                 </td>
                                                 <td>
@@ -775,8 +870,13 @@
                 </asp:UpdatePanel>
             
             
+        
+            
+            
+        
         </ContentTemplate>
         
+
 </cc1:TabPanel>
     </cc1:TabContainer>
     <asp:ObjectDataSource ID="objdBedrijf" runat="server" DeleteMethod="Delete" InsertMethod="Insert"

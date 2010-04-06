@@ -13,6 +13,7 @@ Public Class ArtikelDAL
     ''' Haal alle artikels op die onder een bepaalde categorie staan.
     ''' </summary>
     Public Function GetArtikelsByParent(ByVal categorieID As Integer) As tblArtikelDataTable
+
         Dim dt As New tblArtikelDataTable
 
         Dim c As New SqlCommand("Manual_GetArtikelsByParent")
@@ -28,7 +29,11 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
             Return dt
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("categorieID = " & categorieID.ToString)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -51,7 +56,11 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("ID = " & ID.ToString)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -78,7 +87,11 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tag = " & tag)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -108,7 +121,14 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("titel = " & titel)
+            e.Args.Add("versie = " & versie.ToString)
+            e.Args.Add("bedrijf = " & bedrijf.ToString)
+            e.Args.Add("taal = " & taal.ToString)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -132,7 +152,11 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("titel = " & titel)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -158,7 +182,14 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tekst = " & tekst)
+            e.Args.Add("versie = " & versie.ToString)
+            e.Args.Add("bedrijf = " & bedrijf.ToString)
+            e.Args.Add("taal = " & taal.ToString)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -181,7 +212,11 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tekst = " & tekst)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -204,7 +239,11 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("titel = " & titel)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -227,7 +266,11 @@ Public Class ArtikelDAL
             If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tekst = " & tekst)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
@@ -247,7 +290,11 @@ Public Class ArtikelDAL
 
             r = c.ExecuteReader
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("artikelID = " & artikelID.ToString)
+            ErrorLogger.WriteError(e)
+
             Return False
         Finally
             c.Connection.Close()
@@ -278,7 +325,18 @@ Public Class ArtikelDAL
 
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("artikel.ID = " & artikel.ID.ToString)
+            e.Args.Add("artikel.Titel = " & artikel.Titel)
+            e.Args.Add("artikel.Categorie = " & artikel.Categorie)
+            e.Args.Add("artikel.taal = " & artikel.Taal.ToString)
+            e.Args.Add("artikel.Bedrijf = " & artikel.Bedrijf.ToString)
+            e.Args.Add("artikel.Versie = " & artikel.Versie.ToString)
+            e.Args.Add("artikel.Tekst = " & artikel.Tekst)
+            e.Args.Add("artikel.Tag = " & artikel.Tag)
+            e.Args.Add("artikel.IsFinal = " & artikel.IsFinal.ToString)
+            ErrorLogger.WriteError(e)
 
         End Try
         Return Bool
@@ -308,7 +366,12 @@ Public Class ArtikelDAL
 
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("versieID = " & versieID.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+
         Finally
             c.Connection.Close()
         End Try
@@ -338,7 +401,12 @@ Public Class ArtikelDAL
 
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("TaalID = " & TaalID.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+
         Finally
             c.Connection.Close()
         End Try
@@ -367,7 +435,12 @@ Public Class ArtikelDAL
 
 
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("bedrijfID = " & bedrijfID.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+
         Finally
             c.Connection.Close()
         End Try
@@ -391,11 +464,132 @@ Public Class ArtikelDAL
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
-            Throw ex
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tag = " & tag)
+            e.Args.Add("versieID = " & versieID.ToString)
+            e.Args.Add("taalID = " & taalID.ToString)
+            e.Args.Add("bedrijfID = " & bedrijfID.ToString)
+            ErrorLogger.WriteError(e)
+
         Finally
             c.Connection.Close()
         End Try
         Return dt
+    End Function
+
+    Public Function checkArtikelByTitel(ByVal titel As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer) As tblArtikelDataTable
+
+        Dim dt As New tblArtikelDataTable
+        Dim c As New SqlCommand("Check_Artikel")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("titel = " & titel)
+            e.Args.Add("versie = " & versie.ToString)
+            e.Args.Add("bedrijf = " & bedrijf.ToString)
+            e.Args.Add("taal = " & taal.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+
+    Public Function checkArtikelByTitelEnID(ByVal titel As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal id As Integer) As tblArtikelDataTable
+
+        Dim dt As New tblArtikelDataTable
+        Dim c As New SqlCommand("Check_Artikel")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@ID", SqlDbType.Int).Value = id
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("titel = " & titel)
+            e.Args.Add("versie = " & versie.ToString)
+            e.Args.Add("bedrijf = " & bedrijf.ToString)
+            e.Args.Add("taal = " & taal.ToString)
+            e.Args.Add("id = " & id.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+
+    Public Function checkArtikelByTag(ByVal tag As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal id As Integer) As tblArtikelDataTable
+
+        Dim dt As New tblArtikelDataTable
+        Dim c As New SqlCommand("Check_Artikel")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@id", SqlDbType.Int).Value = id
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tag = " & tag)
+            e.Args.Add("versie = " & versie.ToString)
+            e.Args.Add("bedrijf = " & bedrijf.ToString)
+            e.Args.Add("taal = " & taal.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+
+        Finally
+            c.Connection.Close()
+        End Try
     End Function
 
     Public Function getArtikelsByTitelTaalVersieBedrijf(ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer, ByVal titel As String) As Data.DataTable

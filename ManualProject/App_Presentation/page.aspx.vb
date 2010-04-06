@@ -78,7 +78,13 @@ Partial Class App_Presentation_page
 
             'De boomstructuur uitklappen
             Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+
+            If tree Is Nothing Then Return
+
             Dim nodeartikel As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
+
+            If nodeartikel Is Nothing Then Return
+
             KlapBoomStructuurUit(tree, nodeartikel)
 
         End If
@@ -106,7 +112,7 @@ Partial Class App_Presentation_page
 
         javascript = String.Concat(javascript, "return false; }")
 
-        Page.ClientScript.RegisterStartupScript(Me.GetType(), "testen", javascript, True)
+        Page.ClientScript.RegisterStartupScript(Me.GetType(), "UitklappenCategorien", javascript, True)
 
         Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
         body.Attributes.Add("onload", "KlapCategorienUit();")

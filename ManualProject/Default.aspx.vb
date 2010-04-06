@@ -6,7 +6,7 @@ Partial Class _Default
 
     Dim dummyPass As String = String.Empty
     Dim dummyTag As String = "ANDERBEDRIJF"
-    Dim dummyTaal As String = "NL"
+    Dim dummyTaal As String = "FR"
     Dim dummyVersie As String = "3.1"
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -121,13 +121,13 @@ Partial Class _Default
         'If Page.Request.Form("Versie") Is Nothing Then
         If dummyVersie Is Nothing Then
             Me.lblInfo.Text = "Ongeldige versie."
-            Return False
+            Return -1000
         End If
 
         'If TryCast(Page.Request.Form("Versie"), String) Is Nothing Then
         If dummyVersie Is Nothing Then
             Me.lblInfo.Text = "Ongeldige versie."
-            Return False
+            Return -1000
         End If
 
         Dim versie As String = dummyVersie
@@ -177,7 +177,7 @@ Partial Class _Default
 
     Private Function TaalOpzoeken() As Integer
 
-        Dim taal As String = "NL"
+        Dim taal As String = dummyTaal
 
         If Page.Request.Form("Taal") IsNot Nothing Then
             If TryCast(Page.Request.Form("Taal"), String) IsNot Nothing Then
@@ -196,7 +196,7 @@ Partial Class _Default
                 nederlands = row.TaalID
             End If
 
-            If row.Taal = taal Then
+            If row.TaalTag = taal Then
                 taalGevonden = True
                 taalID = row.TaalID
                 Exit For

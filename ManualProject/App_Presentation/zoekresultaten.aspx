@@ -10,7 +10,8 @@
     <div id="gridview">
     <asp:UpdatePanel runat="server" ID="updZoekresultaten"><ContentTemplate>
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" AllowPaging="true" 
-        AllowSorting="True" DataSourceID="sqldsArtikel" Width="100%" PageSize="30" PagerStyle-CssClass="gridview_pager">
+        AllowSorting="True" DataSourceID="sqldsArtikel" Width="100%" PageSize="30" PagerStyle-CssClass="gridview_pager"
+        EmptyDataText="Er zijn geen resultaten die voldoen aan uw zoekterm.">
     <Columns>
             <asp:BoundField DataField="titel" HeaderText="Titel" SortExpression="titel" />
             <asp:BoundField DataField="tag" HeaderText="Tag" SortExpression="tag" />

@@ -91,7 +91,7 @@
     
 <table>
 <tr>
-<td>   <asp:Label ID="lblTitel" runat="server" Text="Titel:"></asp:Label></td> 
+<td>   <asp:Label ID="lblTitel" runat="server" Text="Titel:" Width="200"></asp:Label></td> 
     <td> <asp:TextBox ID="txtTitel" runat="server"></asp:TextBox>
         <asp:RequiredFieldValidator
         ID="vleTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
