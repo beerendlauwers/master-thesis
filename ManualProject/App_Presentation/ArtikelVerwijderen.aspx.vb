@@ -1,22 +1,26 @@
-﻿
+﻿Imports System.Web.HttpUtility
+
+
 Partial Class App_Presentation_verwijderenTekst
     Inherits System.Web.UI.Page
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Artikel Verwijderen"
 
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
-
-        LaadTooltips()
-        Dim div As HtmlGenericControl = Me.FindControl("LoggedIn")
         If Session("login") = 1 Then
-
             divLoggedIn.Visible = True
         Else
             divLoggedIn.Visible = False
-            lblLogin.Visible = True
-            lblLogin.Text = "U bent niet ingelogd."
-            ImageButton1.Visible = True
+            Session("vorigePagina") = Page.Request.Url.AbsolutePath
+            Response.Redirect("Aanmeldpagina.aspx")
+        End If
+
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
+
+        LaadTooltips()
+
+        If Not IsPostBack Then
+            LaadDropdowns()
         End If
 
     End Sub
@@ -27,8 +31,11 @@ Partial Class App_Presentation_verwijderenTekst
         Dim lijst As New List(Of Tooltip)
 
         'Alle tooltips voor onze pagina toevoegen
-        lijst.Add(New Tooltip("tipZoekTitel", "Doorzoekt de titels van elk document."))
-        lijst.Add(New Tooltip("tipZoekTekst", "Doorzoekt de tekst van elk document."))
+        lijst.Add(New Tooltip("tipZoekTitel", XML.GetTip("ARTIKELVERWIJDEREN_TITEL")))
+        lijst.Add(New Tooltip("tipZoekTekst", XML.GetTip("ARTIKELVERWIJDEREN_TEKST")))
+        lijst.Add(New Tooltip("tipTaal", XML.GetTip("ARTIKELVERWIJDEREN_TAAL")))
+        lijst.Add(New Tooltip("tipBedrijf", XML.GetTip("ARTIKELVERWIJDEREN_BEDRIJF")))
+        lijst.Add(New Tooltip("tipVersie", XML.GetTip("ARTIKELVERWIJDEREN_VERSIE")))
 
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
@@ -58,14 +65,34 @@ Partial Class App_Presentation_verwijderenTekst
         JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
     End Sub
 
+    Private Function LeesDropdown(ByRef ddl As DropDownList) As String
+        Dim returnstring As String = String.Empty
+        If ddl.SelectedValue = -1000 Then 'alles
+            For index As Integer = 1 To ddl.Items.Count - 1
+                returnstring = String.Concat(returnstring, ",", ddl.Items(index).Value.ToString)
+            Next
+            returnstring = returnstring.Remove(0, 1) 'Eerste komma verwijderen
+        Else
+            returnstring = ddl.SelectedItem.Value.ToString
+        End If
+
+        Return returnstring
+    End Function
+
     Private Sub HaalArtikelGegevensOp()
 
         Dim titel As String = txtSearchTitel.Text.Trim
         Dim tekst As String = txtSearchText.Text.Trim
 
+        'Dropdownwaardes ophalen
+        Dim versies As String = LeesDropdown(ddlVersie)
+        Dim bedrijven As String = LeesDropdown(ddlBedrijf)
+        Dim talen As String = LeesDropdown(ddlTaal)
+        Dim isFInaal As String = LeesDropdown(ddlIsFInaal)
+
         If titel.Length > 0 Then
             titel = "%" + txtSearchTitel.Text + "%"
-            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTitel(titel)
+            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTitel(titel, isFInaal, versies, bedrijven, talen)
             grdResultaten.DataBind()
             Me.grdResultaten.Visible = True
             Me.lblSelecteerArtikel.Visible = True
@@ -179,6 +206,8 @@ Partial Class App_Presentation_verwijderenTekst
 
         If row.Cells.Count > 1 Then
 
+            row.Cells(0).Text = HtmlDecode(row.Cells(0).Text)
+
             If row.Cells(5).Text = "1" Then
                 row.Cells(5).Text = "Ja"
             ElseIf row.Cells(5).Text = "0" Then
@@ -189,8 +218,31 @@ Partial Class App_Presentation_verwijderenTekst
 
     End Sub
 
-    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
-        Response.Redirect("Aanmeldpagina.aspx")
+    Private Sub LaadDropdowns()
+
+        ddlBedrijf.Items.Clear()
+        ddlBedrijf.Items.Add(New ListItem("Alles", "-1000"))
+        For Each b As Bedrijf In Bedrijf.GetBedrijven
+            ddlBedrijf.Items.Add(New ListItem(b.Naam, b.ID))
+        Next b
+
+        ddlVersie.Items.Clear()
+        ddlVersie.Items.Add(New ListItem("Alles", "-1000"))
+        For Each v As Versie In Versie.GetVersies
+            ddlVersie.Items.Add(New ListItem(v.VersieNaam, v.ID))
+        Next v
+
+        ddlTaal.Items.Clear()
+        ddlTaal.Items.Add(New ListItem("Alles", "-1000"))
+        For Each t As Taal In Taal.GetTalen
+            ddlTaal.Items.Add(New ListItem(t.TaalNaam, t.ID))
+        Next t
+
+        ddlIsFInaal.Items.Clear()
+        ddlIsFInaal.Items.Add(New ListItem("Alles", "-1000"))
+        ddlIsFInaal.Items.Add(New ListItem("Ja", "1"))
+        ddlIsFInaal.Items.Add(New ListItem("Nee", "0"))
+
     End Sub
 
 End Class

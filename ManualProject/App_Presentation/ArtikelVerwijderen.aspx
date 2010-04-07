@@ -7,39 +7,58 @@
 </asp:Content>
 <asp:Content runat="server" ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel">Artikel Verwijderen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-<asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
-    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
-        Visible="False" />
 <div id="divLoggedIn" runat="server">
     
     <asp:UpdatePanel ID="updVerwijderen" runat="server">
     <ContentTemplate>
 <table>
-    
 <tr>
-<th colspan="2">Zoek een artikel op basis van de titel:</th>
+<th align="left">Zoekopdracht verfijnen</th>
 </tr>
-
 <tr>
-<td><asp:Label ID="lblZoekTitel" runat="server" Text="Titel:"></asp:Label></td>
-<td><asp:TextBox ID="txtSearchTitel" runat="server"></asp:TextBox>
+<td class="lbl"><asp:Label ID="lblVersie" runat="server" Text="Versie: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlVersie" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlTaal" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlBedrijf" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblFinaal" runat="server" Text="Artikel is finaal: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlIsFInaal" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipIsFinaal'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<th align="left">Zoeken op...</th>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblZoekTitel" runat="server" Text="Titel:"></asp:Label></td>
+<td><asp:TextBox ID="txtSearchTitel" runat="server" Width="100%"></asp:TextBox>
     <asp:CustomValidator ID="vleZoekTitel" runat="server" ErrorMessage="Gelieve een zoekterm in te geven." Display="None" ControlToValidate="txtSearchTitel" OnServerValidate="ValideerZoekTerm" ClientValidationFunction="ValideerZoekTerm" ValidateEmptyText="true" ></asp:CustomValidator>
     <cc1:ValidatorCalloutExtender
             ID="extSearchTitel" runat="server" TargetControlID="vleZoekTitel"></cc1:ValidatorCalloutExtender>
-    <span style="vertical-align:middle" id="tipZoekTitel"><img src="CSS/images/help.png" alt=''/></span></td>
+</td>
+<td>
+<span style="vertical-align:middle" id="tipZoekTitel"><img src="CSS/images/help.png" alt=''/></span>
+</td>
 </tr>
-
 <tr>
-<th colspan="2">Zoek een artikel op basis van een stuk tekst:</th>
-</tr>
-
-<tr>
-<td><asp:Label ID="lblZoekTekst" runat="server" Text="Tekst:"></asp:Label></td>
-<td><asp:TextBox ID="txtSearchText" runat="server"></asp:TextBox>
+<td class="lbl"><asp:Label ID="lblZoekTekst" runat="server" Text="Tekst:"></asp:Label></td>
+<td><asp:TextBox ID="txtSearchText" runat="server" Width="100%"></asp:TextBox>
     <asp:CustomValidator ID="vleZoekText" runat="server" ErrorMessage="Gelieve een zoekterm in te geven." Display="None" ControlToValidate="txtSearchText" OnServerValidate="ValideerZoekTerm" ClientValidationFunction="ValideerZoekTerm" ValidateEmptyText="true" ></asp:CustomValidator>
     <cc1:ValidatorCalloutExtender
             ID="extSearchText" runat="server" TargetControlID="vleZoekText"></cc1:ValidatorCalloutExtender>
-    <span style="vertical-align:middle" id="tipZoekTekst"><img src="CSS/images/help.png" alt=''/></span></td>
+</td>
+<td>
+<span style="vertical-align:middle" id="tipZoekTekst"><img src="CSS/images/help.png" alt=''/></span>
+</td>
 </tr>
 
 <tr>
@@ -47,7 +66,8 @@
 </tr>
 
 <tr>
-<td colspan="2"><asp:Button ID="btnZoek" runat="server" Text="Zoeken" Width="100%" /></td>
+<td>&nbsp;</td>
+<td><asp:Button ID="btnZoek" runat="server" Text="Zoeken" Width="100%" /></td>
 <td><asp:UpdateProgress ID="prgZoeken" runat="server" AssociatedUpdatePanelID="updVerwijderen">
     <ProgressTemplate>
     <div class="update">
@@ -64,7 +84,7 @@
 <div id="gridview" style="display:none">
 <div>
     <asp:GridView ID="grdResultaten" runat="server" 
-        AutoGenerateColumns="False" Visible="false" Width="100%" AllowPaging="true">
+        AutoGenerateColumns="False" Visible="false" Width="100%">
         <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />
