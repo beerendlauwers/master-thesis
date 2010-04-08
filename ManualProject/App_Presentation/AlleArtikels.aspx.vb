@@ -7,6 +7,15 @@ Partial Class App_Presentation_AlleArtikels
     Dim artikeldal As New ArtikelDAL
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        If Session("login") = 1 Then
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            Session("vorigePagina") = Page.Request.Url.AbsolutePath
+            Response.Redirect("Aanmeldpagina.aspx")
+        End If
+
         Dim dttaal As Manual.tblTaalDataTable
         Dim dtbedrijf As Manual.tblBedrijfDataTable
         Dim dtversie As Manual.tblVersieDataTable
@@ -40,15 +49,6 @@ Partial Class App_Presentation_AlleArtikels
             CheckBox1.Checked = True
         End If
 
-        If Session("login") = 1 Then
-
-            divLoggedIn.Visible = True
-        Else
-            divLoggedIn.Visible = False
-            lblLogin.Visible = True
-            lblLogin.Text = "U bent niet ingelogd."
-            ImageButton1.Visible = True
-        End If
     End Sub
 
     Protected Sub btnFilter_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnFilter.Click
@@ -76,7 +76,4 @@ Partial Class App_Presentation_AlleArtikels
         End If
     End Sub
 
-    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
-        Response.Redirect("Aanmeldpagina.aspx")
-    End Sub
 End Class

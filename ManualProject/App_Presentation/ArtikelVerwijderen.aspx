@@ -11,6 +11,27 @@
     
     <asp:UpdatePanel ID="updVerwijderen" runat="server">
     <ContentTemplate>
+    
+        <asp:Panel ID="pnlConfirmatie" runat="server" style="display:none;" CssClass="modalPopup">
+        <asp:UpdatePanel ID="updConfirmatie" runat="server">
+        <ContentTemplate>
+        <table align="center">
+        <tr>
+        <td colspan="2">Bent u zeker dat u het artikel "<asp:Label runat="server" ID="lblArtikeltitel"></asp:Label>" wilt verwijderen?</td>
+        </tr>
+        <tr>
+        <td><asp:Button ID="btnOK" runat="server" Text="Ja" /></td>
+        <td><asp:Button ID="btnAnnuleer" runat="server" Text="Annuleren" /></td>
+        </tr>
+        </table>
+        </ContentTemplate>
+        </asp:UpdatePanel>
+        </asp:Panel>
+        <asp:HiddenField ID="hdnRowID" runat="server" />
+        <asp:Button ID="btnDummyButton" runat="server" style="display:none;" />
+        <cc1:ModalPopupExtender ID="mpeConfirmatie" runat="server" TargetControlID="btnDummyButton" BackgroundCssClass="modalBackground" OkControlID="btnOK" CancelControlID="btnAnnuleer" PopupControlID="pnlConfirmatie">
+        </cc1:ModalPopupExtender>
+    
 <table>
 <tr>
 <th align="left">Zoekopdracht verfijnen</th>
@@ -84,7 +105,7 @@
 <div id="gridview" style="display:none">
 <div>
     <asp:GridView ID="grdResultaten" runat="server" 
-        AutoGenerateColumns="False" Visible="false" Width="100%">
+        AutoGenerateColumns="False" Width="100%">
         <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />

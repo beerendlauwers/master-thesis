@@ -4,6 +4,10 @@ Imports System.Web.HttpContext
 Imports System.Globalization
 Imports System.Diagnostics
 
+''' <summary>
+''' Een klasse die fouten wegschrijft naar logbestanden.
+''' </summary>
+''' <remarks>Gelieve niet teveel te gebruiken, enkel voor kritische fouten. Deze manier van error logging is niet zo performant.</remarks>
 Public Class ErrorLogger
     Private _boodschap As String
     Private _code As String
@@ -11,11 +15,20 @@ Public Class ErrorLogger
     Private _argumenten As List(Of String)
     Private Shared _errorLock As New Object
 
+    ''' <summary>
+    ''' Maak een nieuwe error aan.
+    ''' </summary>
+    ''' <param name="boodschap">De foutboodschap.</param>
     Public Sub New(ByVal boodschap As String)
         _boodschap = boodschap
         _argumenten = New List(Of String)
     End Sub
 
+    ''' <summary>
+    ''' Maak een nieuwe error aan.
+    ''' </summary>
+    ''' <param name="boodschap">De foutboodschap.</param>
+    ''' <param name="code">De unieke foutcode.</param>
     Public Sub New(ByVal boodschap As String, ByVal code As String)
         _boodschap = boodschap
         _code = code
@@ -55,6 +68,10 @@ Public Class ErrorLogger
         End Set
     End Property
 
+    ''' <summary>
+    ''' Schrijf een error weg naar het logbestand van vandaag.
+    ''' </summary>
+    ''' <param name="e">De weg te schrijven fout.</param>
     Public Shared Sub WriteError(ByRef e As ErrorLogger)
 
         Try

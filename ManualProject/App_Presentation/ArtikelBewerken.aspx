@@ -12,9 +12,6 @@
     Artikel Bewerken
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-    <asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
-    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
-        Visible="False" />
 <div id="divLoggedIn" runat="server">
     <asp:UpdatePanel ID="updZoeken" runat="server" UpdateMode="Conditional">
 <ContentTemplate>
@@ -91,19 +88,22 @@
     
 <table>
 <tr>
-<td>   <asp:Label ID="lblTitel" runat="server" Text="Titel:" Width="200"></asp:Label></td> 
-    <td> <asp:TextBox ID="txtTitel" runat="server"></asp:TextBox>
+<td class="lbl">   <asp:Label ID="lblTitel" runat="server" Text="Titel: " ></asp:Label></td> 
+    <td> <asp:TextBox ID="txtTitel" runat="server" Width="100%"></asp:TextBox>
         <asp:RequiredFieldValidator
         ID="vleTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
         ControlToValidate="txtTitel" Display="None" ValidationGroup="bewerkTekst"></asp:RequiredFieldValidator>
     <cc2:ValidatorCalloutExtender
             ID="extTitel" runat="server" TargetControlID="vleTitel">
         </cc2:ValidatorCalloutExtender>
-        <span style="vertical-align:middle" id='tipTitel'><img src="CSS/images/help.png" alt=''/></span>
     </td> 
-  </tr><tr>  
-   <td>  <asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td> 
-   <td>  <asp:TextBox ID="txtTag" runat="server"></asp:TextBox>
+    <td>
+    <span style="vertical-align:middle" id='tipTitel'><img src="CSS/images/help.png" alt=''/></span>
+    </td>
+  </tr>
+  <tr>  
+   <td class="lbl">  <asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td> 
+   <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%"></asp:TextBox>
    <asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
         ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters, nummers en een underscore ( _ ) bevatten." 
@@ -114,38 +114,47 @@
     <cc2:FilteredTextBoxExtender ID="fltTag" runat="server" 
         FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters" TargetControlID="txtTag" 
         ValidChars="_"></cc2:FilteredTextBoxExtender>
-                <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span></td> 
+   </td>
+   <td>
+   <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
+   </td>
   </tr>
-  
- 
- 
 <tr>
-<td><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlTaal" runat="server" AutoPostBack="true">
+<td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
+<td><asp:DropDownList ID="ddlTaal" runat="server" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
-<span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span></td>
-</tr>
-
-<tr>
-<td><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlBedrijf" runat="server" AutoPostBack="true">
-    </asp:DropDownList>
-                        <span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span>
+</td>
+<td>
+<span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
 <tr>
-<td><asp:Label ID="lblVersie" runat="server" Text="Versie:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlVersie" runat="server" AutoPostBack="true"> 
+<td class="lbl"><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf:"></asp:Label></td>
+<td><asp:DropDownList ID="ddlBedrijf" runat="server" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
-    <span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span>
+</td>
+<td>
+<span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
 <tr>
-<td><asp:Label ID="lblCategorie" runat="server" Text="Categorie:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlCategorie" runat="server"></asp:DropDownList>
+<td class="lbl"><asp:Label ID="lblVersie" runat="server" Text="Versie:"></asp:Label></td>
+<td><asp:DropDownList ID="ddlVersie" runat="server" AutoPostBack="true" Width="100%"> 
+    </asp:DropDownList>
+</td>
+<td>
+<span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span>
+</td>
+</tr>
+
+<tr>
+<td class="lbl"><asp:Label ID="lblCategorie" runat="server" Text="Categorie:"></asp:Label></td>
+<td><asp:DropDownList ID="ddlCategorie" runat="server" Width="100%"></asp:DropDownList>
     <asp:Label ID="lblGeenCategorie" runat="server" Text="Er zijn geen categorieën beschikbaar." Visible="false"></asp:Label>
+</td>
+<td>
 <span style="vertical-align:middle" id='tipCategorie'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 <td>
@@ -161,7 +170,7 @@
 </tr>
 
 <tr>
-<td><asp:Label ID="lblIs_final" runat="server" Text="Artikel is finaal: " 
+<td class="lbl"><asp:Label ID="lblIs_final" runat="server" Text="Finale versie: " 
         Visible="true"></asp:Label></td>
         <td><asp:CheckBox ID="ckbFinal" runat="server" Visible="true" />
         <span style="vertical-align:middle" id='tipFinaal'><img src="CSS/images/help.png" alt=''/></span>
@@ -172,22 +181,80 @@
 
 </ContentTemplate>
 </asp:UpdatePanel>
-       <br />
 
-<br />
+<asp:UpdatePanel ID="updContent" runat="server" UpdateMode="Conditional">
+<ContentTemplate>
+
+<table>
+<tr>
+<td align="center">Sjabloon selecteren&nbsp;<span style="vertical-align:middle" id='tipSjabloon'><img src="CSS/images/help.png" alt=''/></span></td>
+<td align="center">Afbeelding toevoegen&nbsp;<span style="vertical-align:middle" id='tipUpload'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td align="center"><asp:ListBox runat="server" ID="lstSjablonen" width="100%"></asp:ListBox></td>
+<td align="center">
+<asp:UpdatePanel runat="server" id="updAfbeelding" UpdateMode="Conditional">
+<ContentTemplate>
+
+<asp:FileUpload runat="server" ID="uplAfbeelding" onchange="checkExtensies(this);" width="100%" />
+    <asp:UpdateProgress ID="prgAfbeelding" runat="server" AssociatedUpdatePanelID="updAfbeelding">
+    <ProgressTemplate>
+    <div class="update">
+    <img src="CSS/Images/ajaxloader.gif" />
+    Bezig met uploaden...
+    </div>
+    </ProgressTemplate>
+    </asp:UpdateProgress>
     
+    <script type="text/javascript">
+
+function checkExtensies( filename )
+{
+    var lijst = filename.value.split('.');
+    var ext = lijst.pop();
+
+    if(  ext == 'gif' || ext == 'jpg' || ext == 'jpeg' || ext == 'png' )
+    {
+        document.getElementById('lblFeedback').innerHTML = '';
+        document.getElementById('lblFeedback').style.display = 'none';
+        document.getElementById('<%=btnImageToevoegen.ClientID %>').style.display = 'inline';
+        return true;
+    }
+    else
+    {
+        document.getElementById('lblFeedback').innerHTML = 'Dit is geen geldige afbeelding.<br/> Enkel JPEG, GIF en PNG-afbeeldingen zijn toegestaan.';
+        document.getElementById('lblFeedback').style.display = 'inline';
+        document.getElementById('<%=btnImageToevoegen.ClientID %>').style.display = 'none';
+        return false;
+    }
+}
+
+</script>
+    
+</ContentTemplate>
+<Triggers>
+<asp:PostBackTrigger ControlID="btnImageToevoegen" />
+</Triggers>
+</asp:UpdatePanel>
+</td>
+</tr>
+<tr>
+<td align="center"><asp:Button runat="server" ID="btnSjablonen" Text="Sjabloon Toevoegen" width="100%" CausesValidation="false" style="vertical-align:middle;" /></td>
+<td align="center"><asp:button runat="server" ID="btnImageToevoegen" Text="Afbeelding Toevoegen"  width="100%" CausesValidation="false"  style="vertical-align:middle;" /><span id="lblFeedback"  style="vertical-align:middle;display:none"></span></td>
+</tr>
+</table>
+<br />
     <div>
     <a href="#" onclick="VeranderEditorScherm(200);">Vergroot Editor</a>
     &nbsp;|&nbsp;
     <a href="#" onclick="VeranderEditorScherm(-200);">Verklein Editor</a>
     </div>
-    Afbeeldingen toevoegen:
-    <asp:FileUpload ID="FileUpload2" runat="server" /><span style="vertical-align:middle" id='tipUpload'><img src="CSS/images/help.png" alt=''/></span>
-    <br />
-<asp:Button ID="btnImageAdd" runat="server" Text="Afbeelding toevoegen" OnClick="btnImageAdd_Click" />
-    <asp:Label ID="lblFile" runat="server"></asp:Label> 
-    <cc1:Editor ID="Editor1" runat="server" CssClass="editorWindow"/>
 
+<cc1:Editor ID="Editor1" runat="server" CssClass="editorWindow"/>
+
+
+</ContentTemplate>
+</asp:UpdatePanel>
 
 </div>
 <br />
@@ -208,9 +275,6 @@
 </div>
 
 </ContentTemplate>
-<Triggers>
-<asp:PostBackTrigger ControlID="btnImageAdd" />
-</Triggers>
 </asp:UpdatePanel>
 </div>
 </asp:Content>

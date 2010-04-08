@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tooltips>
+	<tip id="ARTIKELTOEVOEGEN_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="ARTIKELTOEVOEGEN_TITEL" text="De titel van het nieuwe artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
+	<tip id="ARTIKELTOEVOEGEN_BEDRIJF" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
+	<tip id="ARTIKELTOEVOEGEN_TAAL" text="De taal van het nieuwe artikel." />
+	<tip id="ARTIKELTOEVOEGEN_VERSIE" text="De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel." />
+	<tip id="ARTIKELTOEVOEGEN_CATEGORIE" text="De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur." />
+	<tip id="ARTIKELTOEVOEGEN_FINAAL" text="Bepaalt of het artikel gefinaliseerd is of niet." />
+	<tip id="ARTIKELTOEVOEGEN_AFBEELDING" text="Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.&lt;br/&gt;&lt;strong&gt;Geldige extensies: JPEG, PNG, GIF&lt;/strong&gt;" />
+	<tip id="ARTIKELTOEVOEGEN_SJABLOON" text="Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel." />
+	
+	<tip id="ARTIKELBEWERKEN_ZOEKTITEL" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
+	<tip id="ARTIKELBEWERKEN_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="ARTIKELBEWERKEN_TITEL" text="De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
+	<tip id="ARTIKELBEWERKEN_TAAL" text="De taal van het artikel." />
+	<tip id="ARTIKELBEWERKEN_BEDRIJF" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
+	<tip id="ARTIKELBEWERKEN_VERSIE" text="De versie waartoe het artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel." />
+	<tip id="ARTIKELBEWERKEN_CATEGORIE" text="De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur." />
+	<tip id="ARTIKELBEWERKEN_FINAAL" text="Bepaalt of het artikel gefinaliseerd is of niet." />
+	<tip id="ARTIKELBEWERKEN_AFBEELDING" text="Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.&lt;br/&gt;&lt;strong&gt;Geldige extensies: JPEG, PNG, GIF&lt;/strong&gt;" />
+
+	<tip id="ARTIKELVERWIJDEREN_TEKST" text="Doorzoekt de tekst van elk document." />
+	<tip id="ARTIKELVERWIJDEREN_TITEL" text="Doorzoekt de titels van elk document." />
+	<tip id="ARTIKELVERWIJDEREN_BEDRIJF" text="Het bedrijf waarin u wilt zoeken." />
+	<tip id="ARTIKELVERWIJDEREN_TAAL" text="De taal waarin u wilt zoeken." />
+	<tip id="ARTIKELVERWIJDEREN_VERSIE" text="De versie waarin u wilt zoeken." />
+	
+	<tip id="BEHEER_BEDRIJF_NAAM" text="De bedrijfsnaam van het bedrijf." />
+	<tip id="BEHEER_BEDRIJF_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="BEHEER_BEDRIJF_BEWERKEN" text="Het bedrijf dat u wilt wijzigen." />
+	<tip id="BEHEER_BEDRIJF_VERWIJDEREN" text="Het bedrijf dat u wilt verwijderen." />
+	
+	<tip id="BEHEER_TAAL_NAAM" text="De naam van de taal." />
+	<tip id="BEHEER_TAAL_AFKORTING" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers." />
+	<tip id="BEHEER_TAAL_BEWERKEN" text="De taal die u wilt wijzigen." />
+	<tip id="BEHEER_TAAL_VERWIJDEREN" text="De taal die u wilt verwijderen." />
+	
+	<tip id="BEHEER_VERSIE_NIEUW_NUMMER" text="Het versienummer van de nieuwe versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
+	<tip id="BEHEER_VERSIE_BEWERKEN_NUMMER" text="Het versienummer van de versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
+	<tip id="BEHEER_VERSIE_KOPIEREN_NUMMER" text="De versie die u wilt kopiren. Alle artikels en categorien van elk bedrijf onder deze versie worden meegekopieerd." />
+	<tip id="BEHEER_VERSIE_KOPIEREN_AANTALCAT" text="Het aantal categorien dat gekopieerd zal worden." />
+	<tip id="BEHEER_VERSIE_KOPIEREN_AANTALART" text="Het aantal artikels dat gekopieerd zal worden." />
+	<tip id="BEHEER_VERSIE_BEWERKEN" text="De versie die u wilt wijzigen." />
+	<tip id="BEHEER_VERSIE_VERWIJDEREN" text="De versie die u wilt verwijderen." />
+	
+	<tip id="BEHEER_CATEGORIE_NAAM" text="De naam van de categorie." />
+	<tip id="BEHEER_CATEGORIE_HOOGTE" text="De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten. Deze waarde is standaard de eerstvolgende hoogte in de categorie." />
+	<tip id="BEHEER_CATEGORIE_TAAL" text="De taal van de categorie." />
+	<tip id="BEHEER_CATEGORIE_VERSIE" text="De versie waarin de categorie gebruikt wordt." />
+	<tip id="BEHEER_CATEGORIE_BEDRIJF" text="Het bedrijf waarin de categorie gebruikt wordt." />
+	<tip id="BEHEER_CATEGORIE_CATEGORIE" text="De hoofdcategorie waar deze categorie onder staat. De categorie 'root_node' is het begin van de structuur." />
+	<tip id="BEHEER_CATEGORIE_FILTERTAAL" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op taal." />
+	<tip id="BEHEER_CATEGORIE_FILTERVERSIE" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op versie." />
+	<tip id="BEHEER_CATEGORIE_FILTERBEDRIJF" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />
+	<tip id="BEHEER_CATEGORIE_VERWIJDEREN" text="De categorie die u wilt verwijderen." />
+	</tooltips>

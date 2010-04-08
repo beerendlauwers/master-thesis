@@ -12,6 +12,14 @@ Public Class Node
     Private _hoogte As Integer
     Private _children As List(Of Node)
 
+    ''' <summary>
+    ''' Maak een nieuwe node aan. Werkt voor artikels en categorieën.
+    ''' </summary>
+    ''' <param name="id">Het database-ID van de bron.</param>
+    ''' <param name="type">Het type van de bron.</param>
+    ''' <param name="titel">De titel van de bron.</param>
+    ''' <param name="hoogte">De hoogte van de bron.</param>
+    ''' <remarks></remarks>
     Public Sub New(ByVal id As Integer, ByVal type As ContentType, ByVal titel As String, ByVal hoogte As Integer)
         _ID = id
         _type = type
@@ -71,6 +79,7 @@ Public Class Node
     ''' <summary>
     ''' Haal de kinderen op van deze node.
     ''' </summary>
+    ''' <returns>Lijst van kinderen.</returns>
     Public Function GetChildren() As List(Of Node)
         Return _children
     End Function
@@ -78,27 +87,58 @@ Public Class Node
     ''' <summary>
     ''' Voeg een kind aan deze node toe.
     ''' </summary>
+    ''' <param name="node">De toe te voegen node.</param>
     Public Sub AddChild(ByRef node As Node)
         _children.Add(node)
     End Sub
 
+    ''' <summary>
+    ''' Verwijder een kind van deze node.
+    ''' </summary>
+    ''' <param name="node">De te verwijderen node.</param>
     Public Sub RemoveChild(ByRef node As Node)
         _children.Remove(node)
     End Sub
 
     ''' <summary>
-    ''' Geeft het aantal kinderen van deze nodes terug.
+    ''' Geeft het aantal kinderen van deze node terug.
     ''' </summary>
+    ''' <returns>Het aantal kinderen onder deze node</returns>
     Public Function GetChildCount() As Integer
         Return _children.Count
     End Function
 
+    ''' <summary>
+    ''' Telt recursief het aantal categoriën onder deze node.
+    ''' </summary>
+    ''' <param name="aantal">Het huidige aantal categorieën.</param>
+    ''' <returns>Totaal aantal categorieën</returns>
     Public Function GetRecursiveCategorieCount(ByVal aantal As Integer) As Integer
 
         For Each kind As Node In _children
             If kind.Type = ContentType.Categorie Then
                 aantal = aantal + 1
-                aantal = GetRecursiveCategorieCount(aantal)
+                aantal = kind.GetRecursiveCategorieCount(aantal)
+            End If
+        Next kind
+
+        Return aantal
+
+    End Function
+
+    ''' <summary>
+    ''' Telft recursief het aantal artikels onder deze node.
+    ''' </summary>
+    ''' <param name="aantal">Het huidige aantal artikels.</param>
+    ''' <returns>Totaal aantal artikels.</returns>
+    Public Function GetRecursiveArtikelCount(ByVal aantal As Integer) As Integer
+
+        For Each kind As Node In _children
+            If kind.Type = ContentType.Artikel Then
+                aantal = aantal + 1
+            End If
+            If kind.Type = ContentType.Categorie Then
+                aantal = kind.GetRecursiveArtikelCount(aantal)
             End If
         Next kind
 
@@ -109,6 +149,9 @@ Public Class Node
     ''' <summary>
     ''' Doorzoek recursief de kinderen van deze node, de kinderen van de kinderen, etc om een node te vinden
     ''' </summary>
+    ''' <param name="id">Het database-ID van de te vinden node.</param>
+    ''' <param name="type">Het type van de te vinden node.</param>
+    ''' <returns>De gezochte node indien gevonden, Nothing indien niet gevonden.</returns>
     Public Function GetChildBy(ByVal id As Integer, ByVal type As ContentType) As Node
 
         For Each n As Node In _children
@@ -130,6 +173,7 @@ Public Class Node
     ''' <summary>
     ''' Verwijder het gegeven kind uit de lijst van kinderen.
     ''' </summary>
+    ''' <param name="kind">Het te verwijderen kind.</param>
     Public Sub VerwijderKind(ByRef kind As Node)
         Dim hoogte As Integer = -1
 
@@ -156,6 +200,8 @@ Public Class Node
     ''' <summary>
     ''' Doorzoek recursief de kinderen van deze node, de kinderen van de kinderen, etc om de parent van een node te vinden
     ''' </summary>
+    ''' <param name="node">De node waarvan men de parent zoekt.</param>
+    ''' <returns>De parent van de gegeven node indien gevonden, Nothing indien niet gevonden.</returns>
     Public Function VindParentVanNode(ByRef node As Node) As Node
 
         For Each kind As Node In _children
@@ -169,20 +215,14 @@ Public Class Node
             End If
         Next
 
-        'If _children.Count > 0 Then
-        'Dim fout As String = String.Concat("De opgevraagde parent van de node (zie parameters) bestaat niet.")
-        ' Dim e As New ErrorLogger(fout, "NODE_0002", "Klasse Node::VindParentVanNode")
-        ' e.Args.Add("id = " & node.ID.ToString)
-        'e.Args.Add("type = " & node.Type.ToString)
-        'ErrorLogger.WriteError(e)
-        'End If
-
         Return Nothing
     End Function
 
     ''' <summary>
     ''' Doorzoek de kinderen van deze node om de hoogste waarde van 'Hoogte' te vinden.
     ''' </summary>
+    ''' <param name="node">De node waarvan men de kinderen wilt doorzoeken.</param>
+    ''' <returns>De hoogste waarde van attribuut 'Hoogte'.</returns>
     Public Shared Function VindMaxHoogteVanCategorie(ByRef node As Node) As Integer
         Dim maxhoogte As Integer = 0
 

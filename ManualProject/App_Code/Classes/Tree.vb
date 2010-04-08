@@ -1,6 +1,6 @@
 ﻿Imports Microsoft.VisualBasic
 Imports Manual
-Imports System.Diagnostics
+Imports System.Web.HttpUtility
 Imports ContentType
 
 Public Class Tree
@@ -12,6 +12,15 @@ Public Class Tree
 
     Private Shared FTrees As List(Of Tree) = Nothing
 
+    ''' <summary>
+    ''' Maak een nieuwe tree aan
+    ''' </summary>
+    ''' <param name="naam">De naam van de tree.</param>
+    ''' <param name="taal">Het database-ID van de taal van de tree.</param>
+    ''' <param name="versie">Het database-ID van de versie van de tree.</param>
+    ''' <param name="bedrijf">Het database-ID van het bedrijf van de tree.</param>
+    ''' <param name="rootnode">De beginnode van de tree.</param>
+    ''' <remarks></remarks>
     Public Sub New(ByVal naam As String, ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByVal rootnode As Node)
         _naam = naam
         _taal = New Taal(DatabaseLink.GetInstance.GetTaalFuncties.GetTaalByID(taal))
@@ -47,8 +56,6 @@ Public Class Tree
         End Set
     End Property
 
-
-
     Public Property RootNode() As Node
         Get
             Return _rootnode
@@ -61,6 +68,9 @@ Public Class Tree
     ''' <summary>
     ''' Doorzoek recursief de tree om een node te vinden op basis van id en type.
     ''' </summary>
+    ''' <param name="id">Het database-ID van de node.</param>
+    ''' <param name="type">Het type van de node (Artikel of Categorie).</param>
+    ''' <returns>De opgevraagde node of Nothing indien ze niet werd gevonden.</returns>
     Public Function DoorzoekTreeVoorNode(ByVal id As Integer, ByVal type As ContentType) As Node
 
         If (_rootnode.ID = id And _rootnode.Type = ContentType.Categorie) Then
@@ -85,6 +95,8 @@ Public Class Tree
     ''' <para>Doorzoek recursief de tree om de parent van een node te vinden.
     ''' Kost is ongeveer 0.1 milliseconde.</para>
     ''' </summary>
+    ''' <param name="node">De te vinden node.</param>µ
+    ''' <returns>De opgevraagde node of Nothing indien ze niet werd gevonden.</returns>
     Public Function VindParentVanNode(ByRef node As Node) As Node
         Return _rootnode.VindParentVanNode(node)
     End Function
@@ -92,9 +104,17 @@ Public Class Tree
     ''' <summary>
     ''' Haal een tree op op basis van de unieke combinatie van taal, versie en het bedrijf.
     ''' </summary>
+    ''' <param name="taal">Het database-ID van de taal.</param>
+    ''' <param name="bedrijf">Het database-ID van het bedrijf.</param>
+    ''' <param name="versie">Het database-ID van de versie.</param>
+    ''' <returns>De opgevraagde tree of Nothing indien ze niet werd gevonden.</returns>
     Public Shared Function GetTree(ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer) As Tree
 
         If FTrees Is Nothing Then
+            BouwTrees()
+        End If
+
+        If FTrees.Count = 0 Then
             BouwTrees()
         End If
 
@@ -110,6 +130,8 @@ Public Class Tree
     ''' <summary>
     ''' Haal een tree op op basis van de unieke combinatie van taal, versie en het bedrijf.
     ''' </summary>
+    ''' <param name="tree">De te vinden tree.</param>
+    ''' <returns>De opgevraagde tree of Nothing indien ze niet werd gevonden.</returns>
     Public Shared Function GetTree(ByRef tree As Tree) As Tree
         For Each t As Tree In FTrees
             If (t._taal Is tree._taal And t._versie Is tree._versie And t._bedrijf Is tree._bedrijf) Then
@@ -123,6 +145,7 @@ Public Class Tree
     ''' <summary>
     ''' Voeg een tree toe.
     ''' </summary>
+    ''' <param name="tree">De toe te voegen tree.</param>
     Public Shared Sub AddTree(ByVal tree As Tree)
         'Als de treelijst niet bestaat, maken we deze aan
         If (FTrees Is Nothing) Then
@@ -138,7 +161,13 @@ Public Class Tree
     ''' <summary>
     ''' Vraag de verzameling trees op.
     ''' </summary>
+    ''' <returns>Lijst van alle trees.</returns>
     Public Shared Function GetTrees() As List(Of Tree)
+        'Als de treelijst niet bestaat, maken we deze aan
+        If (FTrees Is Nothing) Then
+            FTrees = New List(Of Tree)
+        End If
+
         Return FTrees
     End Function
 
@@ -177,6 +206,14 @@ Public Class Tree
 
     End Sub
 
+    ''' <summary>
+    ''' Bouwt alle trees voor een bepaalde versie (alle combinaties van versie-taal-bedrijf).
+    ''' </summary>
+    ''' <param name="bedrijfdt">Een strong-typed DataTable met alle bedrijven erin.</param>
+    ''' <param name="versie">De databaserij van de gewenste versie.</param>
+    ''' <param name="taaldt">Een strong-typed DataTable met alle talen erin.</param>
+    ''' <returns>True indien gelukt, False indien gefaald.</returns>
+    ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
     Public Shared Function BouwTreesVoorVersie(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versie As tblVersieRow, ByRef taaldt As tblTaalDataTable) As Boolean
 
         For Each taal As tblTaalRow In taaldt
@@ -195,6 +232,14 @@ Public Class Tree
 
     End Function
 
+    ''' <summary>
+    ''' Bouwt alle trees voor een bepaalde taal (alle combinaties van versie-taal-bedrijf).
+    ''' </summary>
+    ''' <param name="bedrijfdt">Een strong-typed DataTable met alle bedrijven erin.</param>
+    ''' <param name="versiedt">Een strong-typed DataTable met alle versies erin.</param>
+    ''' <param name="taal">De databaserij van de gewenste taal.</param>
+    ''' <returns>True indien gelukt, False indien gefaald.</returns>
+    ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
     Public Shared Function BouwTreesVoorTaal(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versiedt As tblVersieDataTable, ByRef taal As tblTaalRow) As Boolean
 
         For Each versie As tblVersieRow In versiedt
@@ -213,6 +258,14 @@ Public Class Tree
 
     End Function
 
+    ''' <summary>
+    ''' Bouwt alle trees voor een bepaald bedrijf (alle combinaties van versie-taal-bedrijf).
+    ''' </summary>
+    ''' <param name="bedrijf">De databaserij van het gewenste bedrijf.</param>
+    ''' <param name="versiedt">Een strong-typed DataTable met alle versies erin.</param>
+    ''' <param name="taaldt">Een strong-typed DataTable met alle talen erin.</param>
+    ''' <returns>True indien gelukt, False indien gefaald.</returns>
+    ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
     Public Shared Function BouwTreesVoorBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versiedt As tblVersieDataTable, ByRef taaldt As tblTaalDataTable) As Boolean
 
         For Each versie As tblVersieRow In versiedt
@@ -231,6 +284,14 @@ Public Class Tree
 
     End Function
 
+    ''' <summary>
+    ''' Bouwt de tree voor de gegeven unieke combinatie van versie, taal en bedrijf.
+    ''' </summary>
+    ''' <param name="bedrijf">De databaserij van het bedrijf.</param>
+    ''' <param name="versie">De databaserij van  de versie.</param>
+    ''' <param name="taal">De databaserij van de taal.</param>
+    ''' <returns>True indien gelukt, False indien gefaald.</returns>
+    ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
     Public Shared Function BouwTreeBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versie As tblVersieRow, ByRef taal As tblTaalRow) As Boolean
 
         'Databasefuncties ophalen
@@ -345,8 +406,11 @@ Public Class Tree
 
 
     ''' <summary>
-    ''' Deze functie leest een volledige tree uit en zet alles in een DropDownList.
+    ''' Deze functie leest recursief een volledige tree uit en zet alles in een DropDownList.
     ''' </summary>
+    ''' <param name="ddl">De te populeren DropDownLijst.</param>
+    ''' <param name="diepte">De huidige diepte. Begin met de hoogte van de root node. (Meestal -1)</param>
+    ''' <param name="parent">De huidige parent. Begin met de root node.</param>
     Public Sub VulCategorieDropdown(ByRef ddl As DropDownList, ByRef parent As Node, ByVal diepte As Integer)
         Dim huidigediepte As Integer = diepte + 1
 
@@ -363,7 +427,7 @@ Public Class Tree
                 tekst = String.Concat(tekst, "---")
             Next index
 
-            tekst = String.Concat(tekst, n.Titel)
+            tekst = String.Concat(tekst, HtmlDecode(n.Titel))
 
             Dim listitem As New ListItem(tekst, n.ID)
 
@@ -379,6 +443,10 @@ Public Class Tree
     ''' <summary>
     ''' Deze functie leest een volledige tree uit en geeft alles weer in unordered list formaat.
     ''' </summary>
+    ''' <param name="diepte">De huidige diepte. Begin met de hoogte van de root node. (Meestal -1)</param>
+    ''' <param name="parent">De huidige parent. Begin met de root node.</param>
+    ''' <param name="htmlcode">De start-HTML-code</param>
+    ''' <returns>String met HTML-code voor de volledige tree.</returns>
     Public Function BeginNieuweLijst(ByVal htmlcode As String, ByVal parent As Node, ByVal diepte As Integer) As String
 
         Dim huidigediepte As Integer = diepte + 1
@@ -419,6 +487,9 @@ Public Class Tree
     ''' <summary>
     ''' Voegt een artikel toe aan een categorie. Geeft de string "OK" terug indien gelukt, foutboodschap bij een fout.
     ''' </summary>
+    ''' <param name="categorieID">Het database-ID van de categorie waaraan het artikel zal worden toegevoegd.</param>
+    ''' <param name="tag">De unieke tag van het toe te voegen artikel.</param>
+    ''' <returns>Geeft de string 'OK' terug indien geslaagd, foutboodschap indien gefaald.</returns>
     Public Function VoegArtikelToeAanCategorie(ByVal tag As String, ByRef categorieID As Integer) As String
 
         Dim categorie As Node = DoorzoekTreeVoorNode(categorieID, ContentType.Categorie)

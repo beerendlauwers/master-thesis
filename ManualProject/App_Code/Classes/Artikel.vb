@@ -91,10 +91,23 @@ Public Class Artikel
         End Set
     End Property
 
+    ''' <summary>
+    '''Maak een nieuw artikel aan.
+    ''' </summary>
     Public Sub New()
-
     End Sub
 
+    ''' <summary>
+    '''Maak een nieuw artikel aan.
+    ''' </summary>
+    ''' <param name="id">Het database-ID van het artikel.</param>
+    ''' <param name="bedrijf">Het database-ID van het bedrijf.</param>
+    ''' <param name="categorie">Het database-ID van de categorie.</param>
+    ''' <param name="isfinal">Bepaalt of het artikel gefinaliseerd is (1) of niet (0).</param>
+    ''' <param name="tag">De unieke tag van het artikel.</param>
+    ''' <param name="tekst">De tekst van het artikel.</param>
+    ''' <param name="titel">De titel van het artikel.</param>
+    ''' <param name="versie">Het database-ID van de versie.</param>
     Public Sub New(ByVal id As Integer, ByVal titel As String, ByVal categorie As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByVal tekst As String, ByVal tag As String, ByVal isfinal As Integer)
         _ID = id
         _titel = titel
@@ -107,6 +120,10 @@ Public Class Artikel
         _taal = Taal
     End Sub
 
+    ''' <summary>
+    '''Maak een nieuw artikel aan.
+    ''' </summary>
+    ''' <param name="row">Een artikelrij vanuit de database.</param>
     Public Sub New(ByRef row As Manual.tblArtikelRow)
         _ID = row.ArtikelID
         _titel = row.Titel

@@ -11,17 +11,25 @@ Partial Class App_Presentation_Aanmeldpagina
 
         If txtGebruikersNaam.Text = user And txtPaswd.Text = pass Then
             Session("login") = 1
-            Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+            divRes.Visible = True
+
+            If Session("vorigePagina") IsNot Nothing Then
+                Response.Redirect(Session("vorigePagina"))
+            Else
+                Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+            End If
+
         Else
             Session("login") = 0
-            lblRes.Text = "Verkeerde Login."
+            divRes.Visible = True
+            Util.SetError("Verkeerde login.", lblRes, imgRes)
         End If
 
 
     End Sub
 
     Protected Sub btnLogOut_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLogOut.Click
-        Session.Abandon()
+        Session("login") = Nothing
         Response.Redirect("~/App_Presentation/Default.aspx")
     End Sub
 

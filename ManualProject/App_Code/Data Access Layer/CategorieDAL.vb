@@ -44,7 +44,57 @@ Public Class CategorieDAL
         Return dt
     End Function
 
-    Public Function getHoogte(ByVal categorieID As Integer, ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer) As Integer
+    Public Function GetCategorieByBedrijf(ByVal bedrijfID As Integer) As tblCategorieDataTable
+        Dim dt As New tblCategorieDataTable
+
+        Dim c As New SqlCommand("Check_CategorieByTaal")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@bedrijfID", SqlDbType.Int).Value = bedrijfID
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+            Return dt
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
+    Public Function GetCategorieByTaal(ByVal taalID As Integer) As tblCategorieDataTable
+        Dim dt As New tblCategorieDataTable
+
+        Dim c As New SqlCommand("Check_CategorieByTaal")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taalID
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+            Return dt
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
+    Public Function GetHoogte(ByVal categorieID As Integer, ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer) As Integer
         Dim dt As New tblCategorieDataTable
 
         Dim c As New SqlCommand("Manual_getHoogte")
@@ -182,9 +232,9 @@ Public Class CategorieDAL
         End Try
     End Function
 
-    Public Function getCategorieZonderRoot() As Data.DataTable
+    Public Function getCategorieZonderRoot() As tblCategorieRow
 
-        Dim dt As New Data.DataTable
+        Dim dt As New tblCategorieDataTable
         Dim c As New SqlCommand("Manual_getCategorieZonderRoot")
         c.CommandType = CommandType.StoredProcedure
 
@@ -195,20 +245,24 @@ Public Class CategorieDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then dt.Load(r)
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt.Rows(0)
+            End If
+
 
         Catch ex As Exception
             Throw ex
         Finally
             c.Connection.Close()
         End Try
-        Return dt
+        Return Nothing
     End Function
 
 
-    Public Function checkCategorieByID(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal Id As Integer) As Data.DataTable
+    Public Function checkCategorieByID(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal Id As Integer) As tblCategorieDataTable
 
-        Dim dt As New Data.DataTable
+        Dim dt As New tblCategorieDataTable
         Dim c As New SqlCommand("Check_CategorieByID")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
@@ -309,7 +363,7 @@ Public Class CategorieDAL
         Dim dt As New tblCategorieDataTable
         Dim c As New SqlCommand("[Manual_GetCategorieByVersie]")
         c.CommandType = CommandType.StoredProcedure
-        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
         c.Connection = New SqlConnection(conn)
 
         Try

@@ -27,7 +27,7 @@ Public Class Tooltip
     End Property
 
     ''' <summary>
-    ''' Maak een nieuwe Tooltip aan. Verwachte parameters:
+    ''' Maak een nieuwe Tooltip aan.
     ''' </summary>
     ''' <param name="naam">Het ID van de html-tag (div, span, etc) waarop de tooltip moet komen.</param>
     ''' <param name="tekst">De tekst die in de tooltip komt te staan.</param>
@@ -42,14 +42,23 @@ Public Class Tooltip
         End If
     End Sub
 
+    ''' <summary>
+    ''' Voeg een optie toe aan de Tooltip.
+    ''' </summary>
     Public Sub VoegOptieToe(ByVal optie As String)
         _opties.Add(optie)
     End Sub
 
+    ''' <summary>
+    ''' Verwijder een optie van de Tooltip.
+    ''' </summary>
     Public Sub VerwijderOptie(ByVal optie As String)
         _opties.Remove(optie)
     End Sub
 
+    ''' <summary>
+    ''' Voeg de standaardopties toe aan de Tooltip.
+    ''' </summary>
     Public Sub VoegStandaardOptiesToe()
         VoegOptieToe(String.Concat("target: $('", _naam, "')"))
         VoegOptieToe("hook: { target: 'rightMiddle', tip: 'leftMiddle' }")

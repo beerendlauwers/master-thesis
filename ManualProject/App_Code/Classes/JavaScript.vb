@@ -6,6 +6,7 @@ Public Class JavaScript
     ''' <summary>
     ''' Haalt Javascript-functies op.
     ''' </summary>
+    ''' <returns>Geeft de huidige Javascript-instance terug.</returns>
     Public Shared ReadOnly Property GetInstance() As JavaScript
         Get
             If (FInstance Is Nothing) Then
@@ -17,15 +18,21 @@ Public Class JavaScript
     End Property
 
     ''' <summary>
-    ''' Voeg javascript toe aan het 'onload' statement van de body tag. 
+    ''' Voeg JavaScript toe aan het 'onload' statement van de body tag. 
     ''' </summary>
+    ''' <param name="body">De 'body'-HTML-tag waaraan de JavaScript dient toegevoegd te worden.</param>
+    ''' <param name="js">De toe te voegen JavaScript.</param>
+    ''' <remarks>Vergeet niet een ';' te plaatsen na je script.</remarks>
     Public Shared Sub VoegJavascriptToeAanBody(ByRef body As HtmlGenericControl, ByRef js As String)
         body.Attributes.Add("onload", String.Concat(body.Attributes.Item("onload"), js))
     End Sub
 
     ''' <summary>
-    ''' Voeg javascript toe aan het AJAX-Request.
+    ''' Voeg JavaScript toe aan het AJAX-Request.
     ''' </summary>
+    ''' <param name="pagina">De pagina waaraan de JavaScript dient toegevoegd te worden.</param>
+    ''' <param name="js">De toe te voegen JavaScript.</param>
+    ''' <remarks>Vergeet niet een ';' te plaatsen na je script.</remarks>
     Public Shared Sub VoegJavascriptToeAanEndRequest(ByRef pagina As System.Web.UI.Page, ByRef js As String)
         ScriptManager.RegisterClientScriptBlock(pagina, pagina.GetType, "EndRequest", js, True)
     End Sub
@@ -33,6 +40,9 @@ Public Class JavaScript
     ''' <summary>
     ''' Zet een dropdown op disabled als een dropdown een postback doet.
     ''' </summary>
+    ''' <param name="disabledDdl">De te disablen DropDownList.</param>
+    ''' <param name="laadTekst">De tekst die moet worden weergegeven tijdens de postback.</param>
+    ''' <param name="veranderendeDdl">De DropDownList die de verandering teweegbrengt.</param>
     Public Shared Sub ZetDropdownOpDisabledOnChange(ByRef veranderendeDdl As System.Web.UI.WebControls.DropDownList, Optional ByRef disabledDdl As System.Web.UI.WebControls.DropDownList = Nothing, Optional ByVal laadTekst As String = "")
 
         If disabledDdl Is Nothing Then
@@ -55,6 +65,11 @@ Public Class JavaScript
     ''' <summary>
     ''' Zet een button op disabled als erop gedrukt wordt.
     ''' </summary>
+    ''' <param name="btn">De te disablen Button.</param>
+    ''' <param name="geenValidatie">Boolean om te checken voor validatie of niet.</param>
+    ''' <param name="laadTekst">De tekst die moet worden weergegeven op de Button tijdens de postback.</param>
+    ''' <param name="isPostback">Boolean om te bepalen of het om een postback gaat of niet.</param>
+    ''' <remarks>Indien de button deel uitmaakt van een validationGroup, wordt enkel deze groep gevalideerd.</remarks>
     Public Shared Sub ZetButtonOpDisabledOnClick(ByRef btn As System.Web.UI.WebControls.Button, ByVal laadTekst As String, Optional ByVal isPostback As Boolean = True, Optional ByVal geenValidatie As Boolean = False)
         Dim js As String = String.Empty
 
@@ -91,6 +106,13 @@ Public Class JavaScript
         VoerJavaScriptUitOn(btn, js, "OnClick")
     End Sub
 
+    ''' <summary>
+    ''' Voert JavaScript uit op een bepaald event van de gegeven control.
+    ''' </summary>
+    ''' <param name="control">De control waaraan de JavaScript wordt toegevoegd.</param>
+    ''' <param name="js">De JavaScript-code.</param>
+    ''' <param name="onEvent">Het event waaraan de JavaScript wordt toegevoegd.</param>
+    ''' <remarks>Vergeet niet een ';' te plaatsen na je script.</remarks>
     Public Shared Sub VoerJavaScriptUitOn(ByRef control As System.Web.UI.WebControls.WebControl, ByVal js As String, ByVal onEvent As String)
         control.Attributes.Item(onEvent) = String.Concat(control.Attributes.Item(onEvent), js)
     End Sub
@@ -98,8 +120,19 @@ Public Class JavaScript
     ''' <summary>
     ''' Geeft JavasScript-code terug om een control te disablen.
     ''' </summary>
+    ''' <param name="control">De te disablen control.</param>
+    ''' <returns>JavaScript-code om de control te disablen.</returns>
     Public Shared Function DisableCode(ByRef control As System.Web.UI.WebControls.WebControl) As String
         Return String.Concat("document.getElementById('", control.ClientID, "').disabled = true; ")
+    End Function
+
+    ''' <summary>
+    ''' Geeft JavaScript-code terug om een control te verstoppen.
+    ''' </summary>
+    ''' <param name="control">De te verstoppen control.</param>
+    ''' <returns>JavaScript-Code om de control te verstoppen.</returns>
+    Public Shared Function HideCode(ByRef control As System.Web.UI.WebControls.WebControl) As String
+        Return String.Concat("document.getElementById('", control.ClientID, "').style.display = 'none'; ")
     End Function
 
 End Class

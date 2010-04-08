@@ -255,13 +255,17 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
-    Public Function GetArtikelGegevensByTekst(ByVal tekst As String) As tblArtikelDataTable
+    Public Function GetArtikelGegevensByTekst(ByVal tekst As String, ByVal isfinal As String, ByVal versies As String, ByVal bedrijven As String, ByVal talen As String) As tblArtikelDataTable
         Dim dt As New tblArtikelDataTable
 
         Dim c As New SqlCommand("Manual_GetArtikelGegevensByTekst")
         c.CommandType = CommandType.StoredProcedure
         c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@tekst", SqlDbType.NVarChar).Value = tekst
+        c.Parameters.Add("@versies", SqlDbType.VarChar).Value = versies
+        c.Parameters.Add("@bedrijven", SqlDbType.VarChar).Value = bedrijven
+        c.Parameters.Add("@talen", SqlDbType.VarChar).Value = talen
+        c.Parameters.Add("@isfinal", SqlDbType.VarChar).Value = isfinal
         Try
             Dim r As SqlDataReader
             c.Connection.Open()

@@ -98,7 +98,7 @@ Partial Class App_Presentation_verwijderenTekst
             Me.lblSelecteerArtikel.Visible = True
         ElseIf tekst.Length > 0 Then
             tekst = """*" + txtSearchText.Text + "*"""
-            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTekst(tekst)
+            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTekst(tekst, isFInaal, versies, bedrijven, talen)
             grdResultaten.DataBind()
             Me.grdResultaten.Visible = True
             Me.lblSelecteerArtikel.Visible = True
@@ -131,73 +131,21 @@ Partial Class App_Presentation_verwijderenTekst
         Return True
     End Function
 
-    Protected Sub grdResultaten_PageIndexChanged(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewPageEventArgs) Handles grdResultaten.PageIndexChanged
-
-        grdResultaten.PageIndex = e.NewPageIndex
-        grdResultaten.DataBind()
-
-    End Sub
-
     Protected Sub grdResultaten_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdResultaten.RowCommand
         If e.CommandName = "Select" Then
 
             Dim row As GridViewRow = Me.grdResultaten.Rows(e.CommandArgument)
+            hdnRowID.Value = e.CommandArgument.ToString
 
-            Dim artikeltag As String = row.Cells(1).Text
-            Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
-
-            'Artikel ophalen en in object opslaan
-            Dim artikel As New Artikel(artikeldal.GetArtikelByTag(artikeltag))
-
-            'Artikel verwijderen uit database
-            If artikeldal.verwijderArtikel(artikel.ID) = True Then
-
-                'Artikel verwijderen uit de boomstructuur
-                'We halen de tree op waar dit artikel in werd opgeslagen
-                Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
-
-                Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
-
-                If (node Is Nothing) Then
-                    Me.lblResultaat.Text = "Verwijderen geslaagd met waarschuwing: Het artikel komt niet voor in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren."
-                    Me.imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
-                    Me.lblResultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#EAB600")
-                    HaalArtikelGegevensOp()
-                    Return
-                End If
-
-                Dim parent As Node = tree.VindParentVanNode(node)
-
-                If (parent Is Nothing) Then
-                    Me.lblResultaat.Text = "Verwijderen geslaagd met waarschuwing: Het artikel staat niet onder een categorie in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren."
-                    Me.imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
-                    Me.lblResultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#EAB600")
-                    HaalArtikelGegevensOp()
-                    Return
-                End If
-
-                parent.VerwijderKind(node)
-
-                Me.lblResultaat.Text = "Verwijderen geslaagd."
-                Me.lblResultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#86CC7C")
-                Me.imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\tick.gif"
-            Else
-                Me.lblResultaat.Text = "Verwijderen mislukt: Kon niet verbinden met de database."
-                Me.lblResultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
-                Me.imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
-            End If
+            lblArtikeltitel.Text = row.Cells(0).Text
 
             HaalArtikelGegevensOp()
-            Me.divFeedback.Visible = True
+            JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
 
-            Dim javascript As String = String.Concat("function verwijderKind_", artikel.ID, "() { document.getElementById(child_", artikel.ID, ").style.display = ""none""; }")
-
-            Page.ClientScript.RegisterStartupScript(Me.GetType(), String.Concat("verwijderKind_", artikel.ID), javascript, True)
-
-            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-            body.Attributes.Add("onload", String.Concat("verwijderKind_", artikel.ID, "();"))
+            mpeConfirmatie.Show()
 
         End If
+
 
     End Sub
 
@@ -215,6 +163,55 @@ Partial Class App_Presentation_verwijderenTekst
             End If
 
         End If
+
+    End Sub
+
+    Private Sub VerwijderArtikel(ByRef row As GridViewRow)
+
+        Dim artikeltag As String = row.Cells(1).Text
+        Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
+
+        'Artikel ophalen en in object opslaan
+        Dim artikel As New Artikel(artikeldal.GetArtikelByTag(artikeltag))
+
+        'Artikel verwijderen uit database
+        If artikeldal.verwijderArtikel(artikel.ID) = True Then
+
+            'Artikel verwijderen uit de boomstructuur
+            'We halen de tree op waar dit artikel in werd opgeslagen
+            Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+
+            Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
+
+            If (node Is Nothing) Then
+                Util.SetWarn("Verwijderen geslaagd met waarschuwing: Het artikel komt niet voor in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren.", lblResultaat, imgResultaat)
+                HaalArtikelGegevensOp()
+                Return
+            End If
+
+            Dim parent As Node = tree.VindParentVanNode(node)
+
+            If (parent Is Nothing) Then
+                Util.SetWarn("Verwijderen geslaagd met waarschuwing: Het artikel staat niet onder een categorie in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren.", lblResultaat, imgResultaat)
+                HaalArtikelGegevensOp()
+                Return
+            End If
+
+            parent.VerwijderKind(node)
+            Util.SetOK("Verwijderen Geslaagd.", lblResultaat, imgResultaat)
+        Else
+            Util.SetError("Verwijderen mislukt: Kon niet verbinden met de database.", lblResultaat, imgResultaat)
+        End If
+
+        HaalArtikelGegevensOp()
+        Me.divFeedback.Visible = True
+
+        'Dim javascript As String = String.Concat("function verwijderKind_", artikel.ID, "() { document.getElementById(child_", artikel.ID, ").style.display = ""none""; }")
+
+        'Page.ClientScript.RegisterStartupScript(Me.GetType(), String.Concat("verwijderKind_", artikel.ID), javascript, True)
+
+        'Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
+        'body.Attributes.Add("onload", String.Concat("verwijderKind_", artikel.ID, "();"))
 
     End Sub
 
@@ -245,5 +242,14 @@ Partial Class App_Presentation_verwijderenTekst
 
     End Sub
 
+    Protected Sub btnOK_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOK.Click
+
+        Dim row As GridViewRow = grdResultaten.Rows(hdnRowID.Value)
+
+        VerwijderArtikel(row)
+
+        HaalArtikelGegevensOp()
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
+    End Sub
 End Class
 

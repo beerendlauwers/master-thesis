@@ -22,20 +22,22 @@
 
 <tr>
 <td class="lbl"><asp:Label ID="lbltitel" runat="server" Text="Titel:"></asp:Label></td>
-<td><asp:TextBox ID="txtTitel" runat="server"></asp:TextBox>
+<td><asp:TextBox ID="txtTitel" runat="server" Width="100%"></asp:TextBox>
     <asp:RequiredFieldValidator
         ID="vleTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
         ControlToValidate="txtTitel" Display="None"></asp:RequiredFieldValidator>
     <cc2:ValidatorCalloutExtender
             ID="extTitel" runat="server" TargetControlID="vleTitel">
         </cc2:ValidatorCalloutExtender>
-        <span style="vertical-align:middle" id='tipTitel'><img src="CSS/images/help.png" alt=''/></span>
+</td>
+<td>
+<span style="vertical-align:middle" id='tipTitel'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td>
-<td><asp:TextBox ID="txtTag" runat="server"></asp:TextBox><asp:RequiredFieldValidator
+<td><asp:TextBox ID="txtTag" runat="server" Width="100%"></asp:TextBox><asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
         ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters, nummers en een underscore ( _ ) bevatten." 
         ControlToValidate="txtTag"></asp:RequiredFieldValidator>
@@ -45,42 +47,53 @@
     <cc2:FilteredTextBoxExtender ID="fltTag" runat="server" 
         FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters" TargetControlID="txtTag" 
         ValidChars="_"></cc2:FilteredTextBoxExtender>
-                <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
+	    </td>
+	    <td>
+	    <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
 	    </td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
 <td><asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
-        DataTextField="Taal" DataValueField="TaalID" AutoPostBack="true">
+        DataTextField="Taal" DataValueField="TaalID" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
-<span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span></td>
+</td>
+<td>
+<span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span>
+</td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label></td>
 <td><asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
-        DataTextField="Naam" DataValueField="BedrijfID" AutoPostBack="true">
+        DataTextField="Naam" DataValueField="BedrijfID" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
-                        <span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span>
+</td>
+<td>
+<span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblVersie" runat="server" Text="Versie:"></asp:Label></td>
 <td><asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie" 
-    DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true">
+    DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
-    <span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span>
+</td>
+<td>
+<span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblCategorie" runat="server" Text="Categorie:"></asp:Label></td>
 <td><asp:DropDownList ID="ddlCategorie" runat="server" 
-        DataTextField="Categorie" DataValueField="CategorieID">
+        DataTextField="Categorie" DataValueField="CategorieID" Width="100%">
 </asp:DropDownList>
 <asp:Label runat="server" ID="lblGeenCategorie" Visible="false" Text="Er zijn geen categorieën beschikbaar."></asp:Label>
+</td>
+<td>
 <span style="vertical-align:middle" id='tipCategorie'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 <td>
@@ -170,9 +183,14 @@ function checkExtensies( filename )
 <td align="center"><asp:button runat="server" ID="btnImageToevoegen" Text="Afbeelding Toevoegen"  width="100%" CausesValidation="false"  style="vertical-align:middle;" /><span id="lblFeedback"  style="vertical-align:middle;display:none"></span></td>
 </tr>
 </table>
+<br />
+    <div>
+    <a href="#" onclick="VeranderEditorScherm(200);">Vergroot Editor</a>
+    &nbsp;|&nbsp;
+    <a href="#" onclick="VeranderEditorScherm(-200);">Verklein Editor</a>
+    </div>
 
-
-<cc1:Editor ID="Editor1" runat="server" height="450px"/>
+<cc1:Editor ID="Editor1" runat="server" CssClass="editorWindow"/>
 
 
 </ContentTemplate>

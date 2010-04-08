@@ -3,9 +3,70 @@ Imports System.IO
 Imports System.Xml
 Imports System.Xml.Xsl
 Imports System.Xml.XPath
+Imports System.Web.HttpContext
+
+Public Structure XMLTooltip
+    Public ID As String
+    Public Text As String
+End Structure
+
 Public Class XML
     Private _xml As String
     Private _xsl As String
+    Private Shared FTooltips As List(Of XMLTooltip)
+
+    Private Shared Function GetTooltips() As List(Of XMLTooltip)
+
+        'Als de lijst niet bestaat, maken we deze aan
+        If (FTooltips Is Nothing) Then
+            ParseTooltips()
+        End If
+
+        Return FTooltips
+    End Function
+
+    Private Shared Sub ParseTooltips()
+        FTooltips = New List(Of XMLTooltip)
+
+        Dim locatie As String = HttpContext.Current.Server.MapPath("~/App_Data/tooltips.xml")
+
+        'Document laden
+        Dim xml As New XmlDocument()
+        xml.Load(locatie)
+
+        'root node ophalen
+        Dim root As XmlNode = xml.DocumentElement
+
+        'Alle tooltips uitlezen
+        For Each child As XmlNode In root.ChildNodes
+            Dim tip As New XMLTooltip
+            tip.ID = child.Attributes.GetNamedItem("id").Value
+            tip.Text = child.Attributes.GetNamedItem("text").Value
+            FTooltips.Add(tip)
+        Next child
+
+    End Sub
+
+    Public Shared Function GetTip(ByVal ID As String) As String
+        For Each tip As XMLTooltip In GetTooltips()
+            If tip.ID = ID Then
+                Return tip.Text
+            End If
+        Next tip
+
+        'Hmm. We hebben de tip niet gevonden. We gaan de tooltiplijst opnieuw laden,
+        'en als het dan niet lukt, dan geven we een lege string terug.
+        ParseTooltips()
+
+        For Each tip As XMLTooltip In GetTooltips()
+            If tip.ID = ID Then
+                Return tip.Text
+            End If
+        Next tip
+
+        Return String.Empty
+    End Function
+
 
     Public Property XMLBestand() As String
         Get

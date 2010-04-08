@@ -32,18 +32,14 @@ Partial Class App_Presentation_invoerenTest
 
         'Checken of een ander artikel niet al dezelfde naam heeft
         If DatabaseLink.GetInstance.GetArtikelFuncties.checkArtikelByTitel(titel, FK_Bedrijf, FK_versie, FK_taal) IsNot Nothing Then
-            lblresultaat.Text = "Toevoegen Mislukt: Er bestaat reeds een artikel met deze titel in deze structuur."
-            lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
-            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            Util.SetError("Toevoegen Mislukt: Er bestaat reeds een artikel met deze titel in deze structuur.", lblresultaat, imgResultaat)
             divFeedback.Visible = True
             Return
         End If
 
         'Checken of een ander artikel niet dezelfde tag heeft
         If DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByTag(tag) IsNot Nothing Then
-            lblresultaat.Text = "Toevoegen Mislukt: Er bestaat reeds een artikel met deze tag."
-            lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
-            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            Util.SetWarn("Toevoegen Mislukt: Er bestaat reeds een artikel met deze tag.", lblresultaat, imgResultaat)
             divFeedback.Visible = True
             Return
         End If
@@ -61,21 +57,15 @@ Partial Class App_Presentation_invoerenTest
 
             'Boodschap nakijken voor een foutboodschap
             If boodschap = "OK" Then
-                lblresultaat.Text = "Toevoegen Geslaagd."
-                lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#86CC7C")
-                imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\tick.gif"
+                Util.SetOK("Toevoegen Geslaagd.", lblresultaat, imgResultaat)
                 Me.btnVoegtoe.Visible = False
             Else
-                lblresultaat.Text = String.Concat("Toevoegen Geslaagd met waarschuwing: ", boodschap)
-                lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#EAB600")
-                imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
+                Util.SetWarn(String.Concat("Toevoegen Geslaagd met waarschuwing: ", boodschap), lblresultaat, imgResultaat)
                 Me.btnVoegtoe.Visible = False
             End If
 
         Else
-            lblresultaat.Text = "Toevoegen Mislukt: Kon niet verbinden met de database."
-            lblresultaat.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
-            imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            Util.SetError("Toevoegen Mislukt: Kon niet verbinden met de database.", lblresultaat, imgResultaat)
         End If
 
         divFeedback.Visible = True
@@ -141,6 +131,14 @@ Partial Class App_Presentation_invoerenTest
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Artikel Toevoegen"
 
+        If Session("login") = 1 Then
+            divLoggedIn.Visible = True
+        Else
+            divLoggedIn.Visible = False
+            Session("vorigePagina") = Page.Request.Url.AbsolutePath
+            Response.Redirect("Aanmeldpagina.aspx")
+        End If
+
         'De opslaanknop op disabled zetten als erop geklikt wordt
         JavaScript.ZetButtonOpDisabledOnClick(btnVoegtoe, "Opslaan...", )
         JavaScript.ZetButtonOpDisabledOnClick(btnImageToevoegen, "Bezig met toevoegen..", True, True)
@@ -150,13 +148,6 @@ Partial Class App_Presentation_invoerenTest
 
         If Not IsPostBack Then
             LaadTemplates()
-        End If
-
-        If Session("login") = 1 Then
-            divLoggedIn.Visible = True
-        Else
-            divLoggedIn.Visible = False
-            Response.Redirect("Aanmeldpagina.aspx")
         End If
 
     End Sub
@@ -192,15 +183,16 @@ Partial Class App_Presentation_invoerenTest
         Dim lijst As New List(Of Tooltip)
 
         'Alle tooltips voor onze pagina toevoegen
-        lijst.Add(New Tooltip("tipTag", "De <b>unieke</b> tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten."))
-        lijst.Add(New Tooltip("tipTitel", "De titel van het nieuwe artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf."))
-        lijst.Add(New Tooltip("tipTaal", "De taal van het nieuwe artikel."))
-        lijst.Add(New Tooltip("tipBedrijf", "Het bedrijf waaronder dit artikel zal worden gepubliceerd."))
-        lijst.Add(New Tooltip("tipVersie", "De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel."))
-        lijst.Add(New Tooltip("tipCategorie", "De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur."))
-        lijst.Add(New Tooltip("tipFinaal", "Bepaalt of het artikel gefinaliseerd is of niet."))
-        lijst.Add(New Tooltip("tipUpload", "Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.<br/><strong>Geldige extensies: JPEG, PNG, GIF</strong>"))
-        lijst.Add(New Tooltip("tipSjabloon", "Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel."))
+        lijst.Add(New Tooltip("tipTag", XML.GetTip("ARTIKELTOEVOEGEN_TAG")))
+        lijst.Add(New Tooltip("tipTitel", XML.GetTip("ARTIKELTOEVOEGEN_TITEL")))
+        lijst.Add(New Tooltip("tipTaal", XML.GetTip("ARTIKELTOEVOEGEN_TAAL")))
+        lijst.Add(New Tooltip("tipBedrijf", XML.GetTip("ARTIKELTOEVOEGEN_BEDRIJF")))
+        lijst.Add(New Tooltip("tipVersie", XML.GetTip("ARTIKELTOEVOEGEN_VERSIE")))
+        lijst.Add(New Tooltip("tipCategorie", XML.GetTip("ARTIKELTOEVOEGEN_CATEGORIE")))
+        lijst.Add(New Tooltip("tipFinaal", XML.GetTip("ARTIKELTOEVOEGEN_FINAAL")))
+        lijst.Add(New Tooltip("tipUpload", XML.GetTip("ARTIKELTOEVOEGEN_AFBEELDING")))
+        lijst.Add(New Tooltip("tipSjabloon", XML.GetTip("ARTIKELTOEVOEGEN_SJABLOON")))
+
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
             Tooltip.VoegTipToeAanEndRequest(Me, lijst)
@@ -227,7 +219,15 @@ Partial Class App_Presentation_invoerenTest
 
         If File.Exists(String.Concat(Server.MapPath("~/App_Presentation/Uploads/Images/"), filename)) Then
             Dim r As New Random
-            filename = String.Concat(filename, "_", r.Next, r.Next, r.Next)
+            Dim bestand As String() = filename.Split(".")
+            filename = String.Concat(bestand(0), "_", r.Next, r.Next, r.Next, ".", bestand(1))
+
+            If bestand.Count > 2 Then
+                For i As Integer = 2 To bestand.Count - 1
+                    filename = String.Concat(filename, ".", bestand(i))
+                Next
+            End If
+
             Return CheckOfBestandBestaat(filename)
         Else
             Return filename

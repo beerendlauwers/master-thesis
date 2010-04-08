@@ -3,7 +3,7 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<title>AanmeldPagina</title>
+<title>Aanmeldpagina</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
 Aanmeldpagina
@@ -34,9 +34,32 @@ Vul de juiste gebruikersnaam en wachtwoord in om Beheerder te worden.
         <cc1:ValidatorCalloutExtender ID="extPaswd" TargetControlID="vlePaswd" runat="server">
         </cc1:ValidatorCalloutExtender></td></tr>
     <tr>
-        <td><asp:Button ID="btnAanmelden" runat="server" Text="Aanmelden" ValidationGroup="valInloggen" /></td>
+        <td><asp:Button ID="btnAanmelden" runat="server" Text="Aanmelden" ValidationGroup="valInloggen" Onclientclick="setZichtbaarheid()" /></td>
    <td>
-       <asp:Label ID="lblRes" runat="server" Text=""></asp:Label>
+       <asp:UpdateProgress ID="prgInloggen" runat="server">
+    <ProgressTemplate>
+    <div class="update">
+    <img src="CSS/Images/ajaxloader.gif" />
+    Bezig met aanmelden...
+    </div>
+    </ProgressTemplate>
+    </asp:UpdateProgress>
+       <div id="divRes" runat="server" style="display:inline">
+       <asp:Image runat="server" ID="imgRes" />&nbsp;
+       <asp:Label ID="lblRes" runat="server" Text=" "></asp:Label>
+       </div>
+       <script type="text/javascript">
+       <!--
+       function setZichtbaarheid()
+       {
+        var elem = document.getElementById('<%=divRes.ClientID%>');
+        if( elem )
+        {
+            elem.style.display = 'none';
+        }
+       }
+       -->
+       </script>
    </td>
     </tr>
 </table>

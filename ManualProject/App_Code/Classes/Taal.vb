@@ -5,7 +5,6 @@ Public Class Taal
     Private _ID As Integer
     Private _taal As String
     Private _taalTag As String
-
     Private Shared FTalen As List(Of Taal) = Nothing
 
     Public Property ID() As Integer
@@ -35,19 +34,34 @@ Public Class Taal
         End Set
     End Property
 
+    ''' <summary>
+    ''' Maak een nieuwe taal aan.
+    ''' </summary>
+    ''' <param name="id">Het database-ID van de taal.</param>
+    ''' <param name="taal">De naam van de taal.</param>
+    ''' <param name="taaltag">De afkorting van de taal.</param>
+    ''' <remarks></remarks>
     Public Sub New(ByVal id As Integer, ByVal taal As String, ByVal taaltag As String)
         _ID = id
         _taal = taal
         _taalTag = TaalTag
     End Sub
 
+    ''' <summary>
+    ''' Maak een nieuwe taal aan.
+    ''' </summary>
+    ''' <param name="row">Een taalrij uit de database.</param>
+    ''' <remarks></remarks>
     Public Sub New(ByRef row As tblTaalRow)
         _ID = row.TaalID
         _taal = row.Taal
         _taalTag = row.TaalTag
     End Sub
 
-
+    ''' <summary>
+    ''' Haalt alle talen op vanuit het geheugen
+    ''' </summary>
+    ''' <returns>Taallijst</returns>
     Public Shared Function GetTalen() As List(Of Taal)
         If (FTalen Is Nothing) Then
             FTalen = New List(Of Taal)
@@ -60,6 +74,7 @@ Public Class Taal
     ''' <summary>
     ''' Voeg een taal toe.
     ''' </summary>
+    ''' <param name="taal">De toe te voegen taal.</param>
     Public Shared Sub AddTaal(ByVal taal As Taal)
         'Als de taallijst niet bestaat, maken we deze aan
         If (FTalen Is Nothing) Then
@@ -75,6 +90,7 @@ Public Class Taal
     ''' <summary>
     ''' Voeg een taal toe.
     ''' </summary>
+    ''' <param name="taal">De te verwijderen taal.</param>
     Public Shared Sub RemoveTaal(ByVal taal As Taal)
         'Als de taallijst niet bestaat, maken we deze aan
         If (FTalen Is Nothing) Then
@@ -87,6 +103,8 @@ Public Class Taal
     ''' <summary>
     ''' Haal een taal op op basis van een taal
     ''' </summary>
+    ''' <param name="taal">De te vinden taal.</param>
+    ''' <returns>De gezochte taal indien gevonden, Nothing indien niet gevonden</returns>
     Public Shared Function GetTaal(ByVal taal As Taal) As Taal
 
         If FTalen Is Nothing Then
@@ -105,6 +123,7 @@ Public Class Taal
     ''' <summary>
     ''' Haal een taal op op basis van het ID
     ''' </summary>
+    ''' <returns>De gezochte taal indien gevonden, Nothing indien niet gevonden</returns>
     Public Shared Function GetTaal(ByVal ID As Integer) As Taal
 
         If FTalen Is Nothing Then
@@ -120,6 +139,9 @@ Public Class Taal
         Return Nothing
     End Function
 
+    ''' <summary>
+    ''' (Her)bouw de taallijst.
+    ''' </summary>
     Public Shared Sub BouwTaalLijst()
         Dim dblink As DatabaseLink = DatabaseLink.GetInstance
         Dim dbtaal As TaalDAL = dblink.GetTaalFuncties
