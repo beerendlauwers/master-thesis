@@ -62,6 +62,10 @@ Public Class JavaScript
         VoerJavaScriptUitOn(veranderendeDdl, js, "onchange")
     End Sub
 
+    Public Shared Function GetPostBackReferenceVoorControl(ByRef ctl As WebControl) As String
+        Return ctl.Page.ClientScript.GetPostBackEventReference(ctl, "").ToString
+    End Function
+
     ''' <summary>
     ''' Zet een button op disabled als erop gedrukt wordt.
     ''' </summary>
@@ -122,7 +126,7 @@ Public Class JavaScript
     ''' </summary>
     ''' <param name="control">De te disablen control.</param>
     ''' <returns>JavaScript-code om de control te disablen.</returns>
-    Public Shared Function DisableCode(ByRef control As System.Web.UI.WebControls.WebControl) As String
+    Public Shared Function DisableCode(ByRef control As Object) As String
         Return String.Concat("document.getElementById('", control.ClientID, "').disabled = true; ")
     End Function
 
@@ -131,8 +135,18 @@ Public Class JavaScript
     ''' </summary>
     ''' <param name="control">De te verstoppen control.</param>
     ''' <returns>JavaScript-Code om de control te verstoppen.</returns>
-    Public Shared Function HideCode(ByRef control As System.Web.UI.WebControls.WebControl) As String
+    Public Shared Function HideCode(ByRef control As Object) As String
         Return String.Concat("document.getElementById('", control.ClientID, "').style.display = 'none'; ")
+    End Function
+
+    ''' <summary>
+    ''' Geeft JavaScript-code terug om een control weer te geven.
+    ''' </summary>
+    ''' <param name="control">De te weer te geven control.</param>
+    ''' <param name="display">De waarde die aan style.display wordt gegeven.</param>
+    ''' <returns>JavaScript-Code om de control weer te geven.</returns>
+    Public Shared Function ShowCode(ByRef control As Object, Optional ByVal display As String = "inline") As String
+        Return String.Concat("document.getElementById('", control.ClientID, "').style.display = '", display, "'; ")
     End Function
 
 End Class

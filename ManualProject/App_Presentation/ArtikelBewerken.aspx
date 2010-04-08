@@ -6,46 +6,116 @@
     TagPrefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<title>Artikel Bewerken</title>
+    <title>Artikel Bewerken</title>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">
     Artikel Bewerken
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-<div id="divLoggedIn" runat="server">
+    <div id="divLoggedIn" runat="server">
     <asp:UpdatePanel ID="updZoeken" runat="server" UpdateMode="Conditional">
 <ContentTemplate>
 
 <table>
-
 <tr>
-<td><asp:Label ID="lblZoekTitel" runat="server" Text="Zoek op titel of trefwoord: "></asp:Label></td>
-<td><asp:TextBox ID="txtZoekTitel" runat="server"></asp:TextBox>
-<asp:RequiredFieldValidator
-        ID="vleZoekTitel" runat="server" ErrorMessage="Gelieve een titel in te geven." 
-        ControlToValidate="txtZoekTitel" Display="None" ValidationGroup="zoekTitel"></asp:RequiredFieldValidator>
-    <cc2:ValidatorCalloutExtender
-            ID="extZoekTitel" runat="server" TargetControlID="vleZoekTitel">
+<th align="left">Zoekopdracht verfijnen</th>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblVersieVerfijnen" runat="server" Text="Versie: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlVersieVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipVersieVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblTaalVerfijnen" runat="server" Text="Taal: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlTaalVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipTaalVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblBedrijfVerfijnen" runat="server" Text="Bedrijf: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlBedrijfVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipBedrijfVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td class="lbl"><asp:Label ID="lblFinaalVerfijnen" runat="server" Text="Artikel is finaal: "></asp:Label></td>
+<td><asp:DropDownList ID="ddlIsFInaalVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td><span style="vertical-align:middle" id='tipIsFinaalVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<th align="left">Zoeken op...</th>
+</tr>
+<tr>
+    <td class="lbl">
+        <asp:Label ID="lblZoekTitel" runat="server" Text="Titel of trefwoord: "></asp:Label>
+    </td>
+    <td>
+        <asp:TextBox ID="txtZoekTitel" runat="server" Width="100%"></asp:TextBox>
+        <asp:CustomValidator ID="vleZoekTitel" runat="server" 
+            ClientValidationFunction="ValideerZoekTerm" ControlToValidate="txtZoekTitel" 
+            Display="None" ErrorMessage="Gelieve een zoekterm in te geven." 
+            OnServerValidate="ValideerZoekTerm" ValidateEmptyText="true" 
+            ValidationGroup="zoekTitel"></asp:CustomValidator>
+        <cc2:ValidatorCalloutExtender ID="extSearchTitel" runat="server" 
+            TargetControlID="vleZoekTitel">
         </cc2:ValidatorCalloutExtender>
-        <span style="vertical-align:middle" id='tipZoekTitel'><img src="CSS/images/help.png" alt=''/></span>
-</td>
-</tr>
-
-<tr>
-<td colspan="2"><asp:Button ID="btnZoek" runat="server" Text="Zoeken" Width="100%" ValidationGroup="zoekTitel" /></td>
-<td><asp:UpdateProgress ID="prgZoeken" runat="server" DisplayAfter="0" AssociatedUpdatePanelID="updZoeken">
-                            <ProgressTemplate>
-                                <div style="vertical-align:middle">
-                                    <img src="CSS/Images/ajaxloader.gif" />
-                                    Even wachten aub...
-                                </div>
-                            </ProgressTemplate>
-                        </asp:UpdateProgress></td>
-</tr>
+    </td>
+    <td>
+        <span ID="tipZoekTitel" style="vertical-align: middle">
+        <img alt="" src="CSS/images/help.png" /></span></td>
+    <tr>
+        <td class="lbl">
+            <asp:Label ID="lblZoekTag" runat="server" Text="Artikeltag: "></asp:Label>
+        </td>
+        <td>
+            <asp:TextBox ID="txtZoekTag" runat="server" Width="100%"></asp:TextBox>
+            <asp:CustomValidator ID="vleZoekTag" runat="server" 
+                ClientValidationFunction="ValideerZoekTerm" ControlToValidate="txtZoekTag" 
+                Display="None" ErrorMessage="Gelieve een tag in te geven." 
+                OnServerValidate="ValideerZoekTerm" ValidateEmptyText="true" 
+                ValidationGroup="zoekTitel"></asp:CustomValidator>
+            <cc2:ValidatorCalloutExtender ID="extZoekTag" runat="server" 
+                TargetControlID="vleZoekTag">
+            </cc2:ValidatorCalloutExtender>
+        </td>
+        <td>
+            <span ID="tipZoekTag" style="vertical-align: middle">
+            <img alt="" src="CSS/images/help.png" /></span></td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;</td>
+        <td>
+            <asp:Button ID="btnZoek" runat="server" Text="Zoeken" 
+                ValidationGroup="zoekTitel" Width="100%" />
+        </td>
+        <td>
+            <asp:UpdateProgress ID="prgZoeken" runat="server" 
+                AssociatedUpdatePanelID="updZoeken" DisplayAfter="0">
+                <ProgressTemplate>
+                    <div style="vertical-align: middle">
+                        <img src="CSS/Images/ajaxloader.gif" /> Even wachten aub...
+                    </div>
+                </ProgressTemplate>
+            </asp:UpdateProgress>
+        </td>
+    </tr>
 
 </table>
                         
-        
+<script type="text/javascript">
+<!--
+function ValideerZoekTerm (source, args)
+{
+    // Default Value
+    args.IsValid = true;
+
+    var resultaten = document.getElementById('<%=txtZoekTag.clientID%>').value + document.getElementById('<%=txtZoekTitel.clientID%>').value;
+    
+    if( resultaten === '' )
+        args.isValid = false;
+    
+}
+-->
+</script>
 
 <br />
 <div id="divResultatenTonen" runat="server" visible="false">
@@ -65,6 +135,8 @@
                 SortExpression="Versie" />
             <asp:BoundField DataField="Naam" HeaderText="Bedrijf" SortExpression="Bedrijf" />
             <asp:BoundField DataField="Taal" HeaderText="Taal" SortExpression="Taal" />
+            <asp:BoundField DataField="Is_final" HeaderText="Finale Versie" 
+                SortExpression="Is_final" />
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/wrench.png" 
                 ShowSelectButton="True" />

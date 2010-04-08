@@ -23,12 +23,12 @@ Artikels
             AutoGenerateColumns="False" AllowPaging="True" AllowSorting="True"
         DataSourceID="SqlDataSource1">
         <Columns>
-            <asp:BoundField DataField="titel" HeaderText="titel" SortExpression="titel" />
+            <asp:BoundField DataField="titel" HeaderText="Titel" SortExpression="titel" />
             <asp:BoundField DataField="tag" HeaderText="tag" SortExpression="tag" />
             <asp:BoundField DataField="naam" HeaderText="Bedrijf" SortExpression="naam" />
-            <asp:BoundField DataField="taaltag" HeaderText="taaltag" 
+            <asp:BoundField DataField="taaltag" HeaderText="Taal" 
                 SortExpression="taaltag" />
-            <asp:BoundField DataField="versie" HeaderText="versie" 
+            <asp:BoundField DataField="versie" HeaderText="Versie" 
                 SortExpression="versie" />
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 

@@ -84,7 +84,7 @@ Public Class Bedrijf
     End Sub
 
     ''' <summary>
-    ''' Haal een bedrijf op op basis van de naam
+    ''' Haal een bedrijf op op basis van de naam.
     ''' </summary>
     Public Shared Function GetBedrijf(ByVal naam As String) As Bedrijf
 

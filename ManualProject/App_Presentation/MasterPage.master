@@ -69,7 +69,7 @@
                     <li><a runat="server" id="ArtikelToevoegen" runat="server"><img src="CSS/images/add.png" border="0" /> Toevoegen</a></li>
                     <li><a runat="server" id="ArtikelBewerken" runat="server"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
                     <li><a runat="server" id="ArtikelVerwijderen" runat="server"><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
-                    <li><a runat="server" id="AlleArtikels" href="AlleArtikels.aspx" runat="server">Alle Artikels</a></li>
+                    <li><a runat="server" id="AlleArtikels" href="AlleArtikels.aspx" runat="server"><img src="CSS/images/doc_text_image.png" border="0"  /> Alle Artikels</a></li>
                 </ul></li>
             <li runat="server" id="liBeheer"><a runat="server" href="Beheer.aspx" ><span class="l"></span><span class="r"></span>
                 <span class="t">Beheer </span></a>

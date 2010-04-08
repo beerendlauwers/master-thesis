@@ -2,6 +2,7 @@
 Imports System.Diagnostics
 Imports System.IO
 Imports System.Drawing
+Imports System.Web.HttpUtility
 
 Partial Class App_Presentation_ArtikelBewerken
     Inherits System.Web.UI.Page
@@ -22,11 +23,6 @@ Partial Class App_Presentation_ArtikelBewerken
             Session("vorigePagina") = Page.Request.Url.AbsolutePath
             Response.Redirect("Aanmeldpagina.aspx")
         End If
-
-        'De zoekknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
-        'De wijzigknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True)
 
         'Als de pagina de eerste keer laadt
         If Not Page.IsPostBack Then
@@ -55,6 +51,11 @@ Partial Class App_Presentation_ArtikelBewerken
 
         LaadTooltips()
 
+        'De zoekknop op disabled zetten als erop geklikt wordt
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
+        'De wijzigknop op disabled zetten als erop geklikt wordt
+        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True)
+
         JavaScript.ZetButtonOpDisabledOnClick(btnImageToevoegen, "Bezig met toevoegen..", True, True)
         JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True, True)
 
@@ -65,58 +66,57 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
-        Dim titel As String
 
-        Dim zoekterm As String = "%" + Me.txtZoekTitel.Text.Trim + "%"
+        'Zoekwaardes ophalen
+        Dim zoekTag As String = Me.txtZoekTag.Text.Trim
+        Dim zoekTitel As String = Me.txtZoekTitel.Text.Trim
 
-        Dim grdvLijst As GridView = updZoeken.FindControl("grdvLijst")
+        'Dropdownwaardes ophalen
+        Dim versies As String = Util.LeesDropdown(ddlVersieVerfijnen)
+        Dim bedrijven As String = Util.LeesDropdown(ddlBedrijfVerfijnen)
+        Dim talen As String = Util.LeesDropdown(ddlTaalVerfijnen)
+        Dim isFInaal As String = Util.LeesDropdown(ddlIsFInaalVerfijnen)
 
-        titel = txtZoekTitel.Text
-        If titel.Length > 0 Then
-            titel = "%" + Me.txtZoekTitel.Text + "%"
-            Dim dttitel As Data.DataTable '= artikeldal.GetArtikelGegevensByTitel(titel)
-            Dim dttekst As Data.DataTable '= artikeldal.GetArtikelGegevensByTekst(titel)
-            Dim dt As New Data.DataTable
+
+        Dim dt As New Data.DataTable
+
+        If zoekTitel.Length > 0 Then
+
+            Dim zoekTekst As String = String.Concat("""*", zoekTitel, "*""")
+            zoekTitel = String.Concat("%", zoekTitel, "%")
+            Dim dttitel As Data.DataTable = artikeldal.GetArtikelGegevensByTitel(zoekTitel, isFInaal, versies, bedrijven, talen)
+            Dim dttekst As Data.DataTable = artikeldal.GetArtikelGegevensByTekst(zoekTekst, isFInaal, versies, bedrijven, talen)
 
             If dttitel.Rows.Count > 0 Then
                 dt = dttitel.Clone
-                For i As Integer = 0 To dttitel.Rows.Count - 1
-                    Dim dr As Data.DataRow = dt.NewRow
-                    dr = dttitel.Rows(i)
-                    dt.ImportRow(dr)
-                Next
-                If dttekst.Rows.Count > 0 Then
-                    For i As Integer = 0 To dttekst.Rows.Count - 1
-                        Dim dr As Data.DataRow = dt.NewRow
-                        dr = dttekst.Rows(i)
-                        dt.ImportRow(dr)
-                    Next
-                End If
             ElseIf dttekst.Rows.Count > 0 Then
                 dt = dttekst.Clone
+            End If
+
+            For i As Integer = 0 To dttitel.Rows.Count - 1
+                Dim dr As Data.DataRow = dt.NewRow
+                dr = dttitel.Rows(i)
+                dt.ImportRow(dr)
+            Next
+            If dttekst.Rows.Count > 0 Then
                 For i As Integer = 0 To dttekst.Rows.Count - 1
                     Dim dr As Data.DataRow = dt.NewRow
                     dr = dttekst.Rows(i)
                     dt.ImportRow(dr)
                 Next
-                If dttitel.Rows.Count > 0 Then
-                    For i As Integer = 0 To dttitel.Rows.Count - 1
-                        Dim dr As Data.DataRow = dt.NewRow
-                        dr = dttitel.Rows(i)
-                        dt.ImportRow(dr)
-                    Next
-                End If
             End If
 
-
-            grdvLijst.DataSource = dt
-            grdvLijst.DataBind()
-            grdvLijst.Visible = True
-
-            Me.divResultatenTonen.Visible = True
-            JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('divZoekResultaten', 'slide');")
-
+        ElseIf zoekTag.Length > 0 Then
+            zoekTag = String.Concat("%", zoekTag, "%")
+            dt = artikeldal.GetArtikelGegevensByTag(zoekTag, isFInaal, versies, bedrijven, talen)
         End If
+
+        grdvLijst.DataSource = dt
+        grdvLijst.DataBind()
+        grdvLijst.Visible = True
+
+        Me.divResultatenTonen.Visible = True
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('divZoekResultaten', 'slide');")
 
         updBewerken.Update()
         updZoeken.Update()
@@ -128,8 +128,7 @@ Partial Class App_Presentation_ArtikelBewerken
     Protected Sub btnUpdate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnUpdate.Click
 
         If Me.ddlCategorie.Items.Count = 0 Then
-            Me.lblresultaat.Text = "U dient een categorie op te geven."
-            Me.imgResultaat.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+            Util.SetError("U dient een categorie op te geven.", lblresultaat, imgResultaat)
             Me.divFeedback.Visible = True
             Return
         End If
@@ -247,11 +246,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Protected Sub grdvLijst_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdvLijst.RowCommand
         If e.CommandName = "Select" Then
-            Dim upd As UpdatePanel = Me.FindControl("updToevoegen")
-            Dim grdvLijst As GridView = updZoeken.FindControl("grdvLijst")
             Dim row As GridViewRow = grdvLijst.Rows(e.CommandArgument)
-
-
             Dim artikeltag As String = row.Cells(1).Text
             LaadArtikel(artikeltag)
         End If
@@ -259,7 +254,17 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Protected Sub grdvLijst_RowDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles grdvLijst.RowDataBound
         If (e.Row.Cells(0).Text = "Titel" And e.Row.Cells(1).Text = "Tag" And e.Row.Cells(2).Text = "Versie" And e.Row.Cells(3).Text = "Bedrijf" And e.Row.Cells(4).Text = "Taal") Then
-            e.Row.Cells(5).Text = "Artikel Wijzigen"
+            e.Row.Cells(6).Text = "Artikel Wijzigen"
+        End If
+
+        If e.Row.Cells.Count > 1 Then
+            e.Row.Cells(0).Text = HtmlDecode(e.Row.Cells(0).Text)
+
+            If e.Row.Cells(5).Text = "1" Then
+                e.Row.Cells(5).Text = "Ja"
+            ElseIf e.Row.Cells(5).Text = "0" Then
+                e.Row.Cells(5).Text = "Nee"
+            End If
         End If
     End Sub
 
@@ -311,6 +316,8 @@ Partial Class App_Presentation_ArtikelBewerken
         Dim t As Tree = Tree.GetTree(Me.ddlTaal.SelectedValue, Me.ddlVersie.SelectedValue, Me.ddlBedrijf.SelectedValue)
         Me.ddlCategorie.Items.Clear()
 
+        Me.ddlCategorie.Items.Add(New ListItem("root_node", "0"))
+
         t.VulCategorieDropdown(Me.ddlCategorie, t.RootNode, -1)
 
         If Me.ddlCategorie.Items.Count = 0 Then
@@ -359,6 +366,29 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Private Sub LaadDropdowns()
 
+        ddlBedrijfVerfijnen.Items.Clear()
+        ddlBedrijfVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
+        For Each b As Bedrijf In Bedrijf.GetBedrijven
+            ddlBedrijfVerfijnen.Items.Add(New ListItem(b.Naam, b.ID))
+        Next b
+
+        ddlVersieVerfijnen.Items.Clear()
+        ddlVersieVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
+        For Each v As Versie In Versie.GetVersies
+            ddlVersieVerfijnen.Items.Add(New ListItem(v.VersieNaam, v.ID))
+        Next v
+
+        ddlTaalVerfijnen.Items.Clear()
+        ddlTaalVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
+        For Each t As Taal In Taal.GetTalen
+            ddlTaalVerfijnen.Items.Add(New ListItem(t.TaalNaam, t.ID))
+        Next t
+
+        ddlIsFInaalVerfijnen.Items.Clear()
+        ddlIsFInaalVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
+        ddlIsFInaalVerfijnen.Items.Add(New ListItem("Ja", "1"))
+        ddlIsFInaalVerfijnen.Items.Add(New ListItem("Nee", "0"))
+
         Me.ddlBedrijf.Items.Clear()
         For Each b As Bedrijf In Bedrijf.GetBedrijven
             Dim item As New ListItem(b.Naam, b.ID)
@@ -388,6 +418,11 @@ Partial Class App_Presentation_ArtikelBewerken
 
         'Alle tooltips voor onze pagina toevoegen
         lijst.Add(New Tooltip("tipZoekTitel", XML.GetTip("ARTIKELBEWERKEN_ZOEKTITEL")))
+        lijst.Add(New Tooltip("tipTaalVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_TAAL")))
+        lijst.Add(New Tooltip("tipBedrijfVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_BEDRIJF")))
+        lijst.Add(New Tooltip("tipVersieVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_VERSIE")))
+        lijst.Add(New Tooltip("tipIsFinaalVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_ISFINAAL")))
+        lijst.Add(New Tooltip("tipZoekTag", XML.GetTip("ARTIKELBEWERKEN_ZOEKTAG")))
         lijst.Add(New Tooltip("tipTag", XML.GetTip("ARTIKELBEWERKEN_TAG")))
         lijst.Add(New Tooltip("tipTitel", XML.GetTip("ARTIKELBEWERKEN_TITEL")))
         lijst.Add(New Tooltip("tipTaal", XML.GetTip("ARTIKELBEWERKEN_TAAL")))
@@ -397,6 +432,7 @@ Partial Class App_Presentation_ArtikelBewerken
         lijst.Add(New Tooltip("tipFinaal", XML.GetTip("ARTIKELBEWERKEN_FINAAL")))
         lijst.Add(New Tooltip("tipUpload", XML.GetTip("ARTIKELBEWERKEN_AFBEELDING")))
         lijst.Add(New Tooltip("tipSjabloon", XML.GetTip("ARTIKELTOEVOEGEN_SJABLOON")))
+
 
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
@@ -452,6 +488,19 @@ Partial Class App_Presentation_ArtikelBewerken
         End If
 
     End Function
+
+    Sub ValideerZoekTerm(ByVal sender As Object, ByVal args As ServerValidateEventArgs)
+        ' Default Value
+        args.IsValid = True
+
+        Dim resultaten As String = String.Concat(Me.txtZoekTag.Text, Me.txtZoekTitel.Text)
+
+        If resultaten = String.Empty Then
+            args.IsValid = False
+        End If
+
+        divResultatenTonen.Visible = False
+    End Sub
 
     Protected Sub btnSjablonen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnSjablonen.Click
         If lstSjablonen.SelectedItem IsNot Nothing Then

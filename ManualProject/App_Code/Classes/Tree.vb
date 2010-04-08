@@ -2,6 +2,7 @@
 Imports Manual
 Imports System.Web.HttpUtility
 Imports ContentType
+Imports System.Web.HttpContext
 
 Public Class Tree
     Private _naam As String
@@ -28,6 +29,15 @@ Public Class Tree
         _bedrijf = New Bedrijf(DatabaseLink.GetInstance.GetBedrijfFuncties.GetBedrijfByID(bedrijf))
         _rootnode = rootnode
     End Sub
+
+    Public Property Naam() As String
+        Get
+            Return _naam
+        End Get
+        Set(ByVal value As String)
+            _naam = value
+        End Set
+    End Property
 
     Public Property Bedrijf() As Bedrijf
         Get
@@ -120,6 +130,30 @@ Public Class Tree
 
         For Each t As Tree In FTrees
             If (t._taal.ID = taal And t._versie.ID = versie And t._bedrijf.ID = bedrijf) Then
+                Return t
+            End If
+        Next t
+
+        Return Nothing
+    End Function
+
+    ''' <summary>
+    ''' Haal een tree op op basis van de unieke naam.
+    ''' </summary>
+    ''' <param name="naam">De unieke naam van de tree.</param>
+    ''' <returns>De opgevraagde tree of Nothing indien ze niet werd gevonden.</returns>
+    Public Shared Function GetTree(ByVal naam As String) As Tree
+
+        If FTrees Is Nothing Then
+            BouwTrees()
+        End If
+
+        If FTrees.Count = 0 Then
+            BouwTrees()
+        End If
+
+        For Each t As Tree In FTrees
+            If (t.Naam = naam) Then
                 Return t
             End If
         Next t
@@ -439,6 +473,44 @@ Public Class Tree
         Next n
 
     End Sub
+
+    Public Function LeesTree(ByVal htmlcode As String, ByVal parent As Node, ByVal diepte As Integer) As String
+
+        Dim huidigediepte As Integer = diepte + 1
+
+        If Not parent.GetChildCount = 0 Then
+            If parent.ID = 0 Then
+                htmlcode = String.Concat(htmlcode, "<div id=""parent_", parent.ID, """><div>")
+            Else
+                htmlcode = String.Concat(htmlcode, "<div id=""parent_", parent.ID, """ style=""display:none;""><div>")
+            End If
+        End If
+
+        For Each kind As Node In parent.GetChildren
+
+            For i As Integer = 0 To huidigediepte
+                htmlcode = String.Concat(htmlcode, "&nbsp;&nbsp;&nbsp;")
+            Next i
+
+            If kind.Type = ContentType.Categorie Then
+                htmlcode = String.Concat(htmlcode, "<a href=""#"" onclick=""Effect.toggle('parent_", kind.ID, "', 'slide', { duration: 0.5 }); veranderDropdown('imgtab_", kind.ID, "'); return false;""><img src=""CSS/images/add.png"" border=""0"" id=""imgtab_", kind.ID, """> ", kind.Titel, "</a><br/>")
+            Else
+                htmlcode = String.Concat(htmlcode, "<img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "<br/>")
+            End If
+
+            If kind.Type = ContentType.Categorie Then
+                htmlcode = LeesTree(htmlcode, kind, huidigediepte)
+            End If
+
+        Next kind
+
+        If Not parent.GetChildCount = 0 Then
+            htmlcode = String.Concat(htmlcode, "</div></div>")
+        End If
+
+        Return htmlcode
+
+    End Function
 
     ''' <summary>
     ''' Deze functie leest een volledige tree uit en geeft alles weer in unordered list formaat.

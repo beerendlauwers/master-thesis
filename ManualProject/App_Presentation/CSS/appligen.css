@@ -801,3 +801,11 @@ font-size:7pt;
 	width: 250px;
 	border: solid 3px black;
 }
+
+.modalPopupTreeView
+{
+	font-size: smaller;
+	padding: 5px 5px 5px 5px;
+	background-color: #EEEEEE;
+	border: solid 3px black;
+}

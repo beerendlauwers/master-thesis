@@ -130,6 +130,7 @@ Public Class Artikel
         _categorie = row.FK_Categorie
         _versie = row.FK_Versie
         _bedrijf = row.FK_Bedrijf
+        _taal = row.FK_Taal
         _tekst = row.Tekst
         _tag = row.Tag
         _isfinal = row.Is_final

@@ -16,6 +16,8 @@ Partial Class App_Presentation_verwijderenTekst
         End If
 
         JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnAnnuleer, "Annuleren...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnOK, "Verwijderen...")
 
         LaadTooltips()
 
@@ -32,10 +34,11 @@ Partial Class App_Presentation_verwijderenTekst
 
         'Alle tooltips voor onze pagina toevoegen
         lijst.Add(New Tooltip("tipZoekTitel", XML.GetTip("ARTIKELVERWIJDEREN_TITEL")))
-        lijst.Add(New Tooltip("tipZoekTekst", XML.GetTip("ARTIKELVERWIJDEREN_TEKST")))
+        lijst.Add(New Tooltip("tipZoekTag", XML.GetTip("ARTIKELVERWIJDEREN_TAG")))
         lijst.Add(New Tooltip("tipTaal", XML.GetTip("ARTIKELVERWIJDEREN_TAAL")))
         lijst.Add(New Tooltip("tipBedrijf", XML.GetTip("ARTIKELVERWIJDEREN_BEDRIJF")))
         lijst.Add(New Tooltip("tipVersie", XML.GetTip("ARTIKELVERWIJDEREN_VERSIE")))
+        lijst.Add(New Tooltip("tipIsFinaal", XML.GetTip("ARTIKELVERWIJDEREN_ISFINAAL")))
 
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
@@ -51,12 +54,11 @@ Partial Class App_Presentation_verwijderenTekst
         ' Default Value
         args.IsValid = True
 
-        Dim resultaten As String = String.Concat(Me.txtSearchText.Text, Me.txtSearchTitel.Text)
+        Dim resultaten As String = String.Concat(Me.txtSearchTag.Text, Me.txtSearchTitel.Text)
 
         If resultaten = String.Empty Then
             args.IsValid = False
         End If
-
     End Sub
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
@@ -65,44 +67,55 @@ Partial Class App_Presentation_verwijderenTekst
         JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
     End Sub
 
-    Private Function LeesDropdown(ByRef ddl As DropDownList) As String
-        Dim returnstring As String = String.Empty
-        If ddl.SelectedValue = -1000 Then 'alles
-            For index As Integer = 1 To ddl.Items.Count - 1
-                returnstring = String.Concat(returnstring, ",", ddl.Items(index).Value.ToString)
-            Next
-            returnstring = returnstring.Remove(0, 1) 'Eerste komma verwijderen
-        Else
-            returnstring = ddl.SelectedItem.Value.ToString
-        End If
 
-        Return returnstring
-    End Function
 
     Private Sub HaalArtikelGegevensOp()
 
-        Dim titel As String = txtSearchTitel.Text.Trim
-        Dim tekst As String = txtSearchText.Text.Trim
+        Dim zoekTitel As String = txtSearchTitel.Text.Trim
+        Dim zoekTag As String = txtSearchTag.Text.Trim
 
         'Dropdownwaardes ophalen
-        Dim versies As String = LeesDropdown(ddlVersie)
-        Dim bedrijven As String = LeesDropdown(ddlBedrijf)
-        Dim talen As String = LeesDropdown(ddlTaal)
-        Dim isFInaal As String = LeesDropdown(ddlIsFInaal)
+        Dim versies As String = Util.LeesDropdown(ddlVersie)
+        Dim bedrijven As String = Util.LeesDropdown(ddlBedrijf)
+        Dim talen As String = Util.LeesDropdown(ddlTaal)
+        Dim isFInaal As String = Util.LeesDropdown(ddlIsFInaal)
 
-        If titel.Length > 0 Then
-            titel = "%" + txtSearchTitel.Text + "%"
-            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTitel(titel, isFInaal, versies, bedrijven, talen)
-            grdResultaten.DataBind()
-            Me.grdResultaten.Visible = True
-            Me.lblSelecteerArtikel.Visible = True
-        ElseIf tekst.Length > 0 Then
-            tekst = """*" + txtSearchText.Text + "*"""
-            grdResultaten.DataSource = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTekst(tekst, isFInaal, versies, bedrijven, talen)
-            grdResultaten.DataBind()
-            Me.grdResultaten.Visible = True
-            Me.lblSelecteerArtikel.Visible = True
+        Dim dt As New Data.DataTable
+
+        If zoekTitel.Length > 0 Then
+
+            Dim zoekTekst As String = String.Concat("""*", zoekTitel, "*""")
+            zoekTitel = String.Concat("%", zoekTitel, "%")
+            Dim dttitel As Data.DataTable = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTitel(zoekTitel, isFInaal, versies, bedrijven, talen)
+            Dim dttekst As Data.DataTable = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTekst(zoekTekst, isFInaal, versies, bedrijven, talen)
+
+            If dttitel.Rows.Count > 0 Then
+                dt = dttitel.Clone
+            ElseIf dttekst.Rows.Count > 0 Then
+                dt = dttekst.Clone
+            End If
+
+            For i As Integer = 0 To dttitel.Rows.Count - 1
+                Dim dr As Data.DataRow = dt.NewRow
+                dr = dttitel.Rows(i)
+                dt.ImportRow(dr)
+            Next
+            If dttekst.Rows.Count > 0 Then
+                For i As Integer = 0 To dttekst.Rows.Count - 1
+                    Dim dr As Data.DataRow = dt.NewRow
+                    dr = dttekst.Rows(i)
+                    dt.ImportRow(dr)
+                Next
+            End If
+        ElseIf zoekTag.Length > 0 Then
+            zoekTag = String.Concat("%", zoekTag, "%")
+            dt = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTag(zoekTag, isFInaal, versies, bedrijven, talen)
         End If
+
+        grdResultaten.DataSource = dt
+        grdResultaten.DataBind()
+        Me.grdResultaten.Visible = True
+        Me.lblSelecteerArtikel.Visible = True
 
         If Me.grdResultaten.Rows.Count = 0 Then
             Me.lblSelecteerArtikel.Text = "Er werden geen artikels gevonden."
@@ -138,6 +151,7 @@ Partial Class App_Presentation_verwijderenTekst
             hdnRowID.Value = e.CommandArgument.ToString
 
             lblArtikeltitel.Text = row.Cells(0).Text
+            updConfirmatie.Update()
 
             HaalArtikelGegevensOp()
             JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
@@ -248,6 +262,11 @@ Partial Class App_Presentation_verwijderenTekst
 
         VerwijderArtikel(row)
 
+        HaalArtikelGegevensOp()
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
+    End Sub
+
+    Protected Sub btnAnnuleer_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAnnuleer.Click
         HaalArtikelGegevensOp()
         JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
     End Sub

@@ -224,8 +224,8 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
-    Public Function GetArtikelGegevensByTitel(ByVal titel As String, ByVal isfinal As String, ByVal versies As String, ByVal bedrijven As String, ByVal talen As String) As tblArtikelDataTable
-        Dim dt As New tblArtikelDataTable
+    Public Function GetArtikelGegevensByTitel(ByVal titel As String, ByVal isfinal As String, ByVal versies As String, ByVal bedrijven As String, ByVal talen As String) As DataTable
+        Dim dt As New DataTable
 
         Dim c As New SqlCommand("Manual_GetArtikelGegevensByTitel")
         c.CommandType = CommandType.StoredProcedure
@@ -255,8 +255,39 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
-    Public Function GetArtikelGegevensByTekst(ByVal tekst As String, ByVal isfinal As String, ByVal versies As String, ByVal bedrijven As String, ByVal talen As String) As tblArtikelDataTable
-        Dim dt As New tblArtikelDataTable
+    Public Function GetArtikelGegevensByTag(ByVal tag As String, ByVal isfinal As String, ByVal versies As String, ByVal bedrijven As String, ByVal talen As String) As DataTable
+        Dim dt As New DataTable
+
+        Dim c As New SqlCommand("Manual_GetArtikelGegevensByTag")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = New SqlConnection(conn)
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+        c.Parameters.Add("@versies", SqlDbType.VarChar).Value = versies
+        c.Parameters.Add("@bedrijven", SqlDbType.VarChar).Value = bedrijven
+        c.Parameters.Add("@talen", SqlDbType.VarChar).Value = talen
+        c.Parameters.Add("@isfinal", SqlDbType.VarChar).Value = isfinal
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("titel = " & tag)
+            ErrorLogger.WriteError(e)
+
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
+    Public Function GetArtikelGegevensByTekst(ByVal tekst As String, ByVal isfinal As String, ByVal versies As String, ByVal bedrijven As String, ByVal talen As String) As DataTable
+        Dim dt As New DataTable
 
         Dim c As New SqlCommand("Manual_GetArtikelGegevensByTekst")
         c.CommandType = CommandType.StoredProcedure
@@ -526,7 +557,7 @@ Public Class ArtikelDAL
     Public Function checkArtikelByTitelEnID(ByVal titel As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal id As Integer) As tblArtikelDataTable
 
         Dim dt As New tblArtikelDataTable
-        Dim c As New SqlCommand("Check_Artikel")
+        Dim c As New SqlCommand("Check_ArtikelByID")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf

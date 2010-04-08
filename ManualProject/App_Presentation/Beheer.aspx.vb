@@ -900,6 +900,48 @@ Partial Class App_Presentation_Beheer
         txtEditVersie.Text = ddlBewerkVersie.SelectedItem.Text
     End Sub
 
+    Protected Sub ddlVersiekopieren_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersiekopieren.DataBound
+        Dim versie As Versie = versie.GetVersie(ddlVersiekopieren.SelectedValue)
+        lblKopieVersieAantalArt.Text = BerekenArtikelsVoorVersie(versie)
+        lblKopieVersieAantalCat.Text = BerekenCategorienVoorVersie(versie)
+    End Sub
+
+    Protected Sub ddlVersiekopieren_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersiekopieren.SelectedIndexChanged
+        Dim versie As Versie = versie.GetVersie(ddlVersiekopieren.SelectedValue)
+        lblKopieVersieAantalArt.Text = BerekenArtikelsVoorVersie(versie)
+        lblKopieVersieAantalCat.Text = BerekenCategorienVoorVersie(versie)
+    End Sub
+
+    Private Function BerekenCategorienVoorVersie(ByVal versie As Versie) As Integer
+
+        Dim aantal As Integer = 0
+
+        For Each t As Taal In Taal.GetTalen
+            For Each b As Bedrijf In Bedrijf.GetBedrijven
+                Dim tree As Tree = tree.GetTree(t.ID, versie.ID, b.ID)
+                aantal = tree.RootNode.GetRecursiveCategorieCount(aantal)
+            Next b
+        Next t
+
+        Return aantal
+
+    End Function
+
+    Private Function BerekenArtikelsVoorVersie(ByVal versie As Versie) As Integer
+
+        Dim aantal As Integer = 0
+
+        For Each t As Taal In Taal.GetTalen
+            For Each b As Bedrijf In Bedrijf.GetBedrijven
+                Dim tree As Tree = tree.GetTree(t.ID, versie.ID, b.ID)
+                aantal = tree.RootNode.GetRecursiveArtikelCount(aantal)
+            Next b
+        Next t
+
+        Return aantal
+
+    End Function
+
 #End Region
 
 #Region "Code voor Bedrijfbeheer"
@@ -1004,6 +1046,11 @@ Partial Class App_Presentation_Beheer
 
         LaadJavascript()
         LaadTooltips()
+
+        If Not IsPostBack Then
+            LaadTreeGegevens()
+        End If
+
         If Session("login") = 1 Then
 
             divLoggedIn.Visible = True
@@ -1133,47 +1180,35 @@ Partial Class App_Presentation_Beheer
         JavaScript.ZetButtonOpDisabledOnClick(btnCatDelFilteren, "Filteren...", True, True)
     End Sub
 
+    Private Sub LaadTreeGegevens()
+
+        lblTreesAantal.Text = Tree.GetTrees.Count
+
+        ddlTreesWeergeven.Items.Add(New ListItem("-- Boomstructuur --", -1000))
+
+        Dim aantalCats As Integer = 0
+        Dim aantalArts As Integer = 0
+        For Each t As Tree In Tree.GetTrees
+            ddlTreesWeergeven.Items.Add(New ListItem(t.Naam))
+            aantalCats = t.RootNode.GetRecursiveCategorieCount(aantalCats)
+            aantalArts = t.RootNode.GetRecursiveArtikelCount(aantalArts)
+        Next t
+
+        lblTreesAantalCats.Text = aantalCats
+        lblTreesAantalArts.Text = aantalArts
+
+    End Sub
+
 #End Region
 
-    Protected Sub ddlVersiekopieren_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersiekopieren.DataBound
-        Dim versie As Versie = versie.GetVersie(ddlVersiekopieren.SelectedValue)
-        lblKopieVersieAantalArt.Text = BerekenArtikelsVoorVersie(versie)
-        lblKopieVersieAantalCat.Text = BerekenCategorienVoorVersie(versie)
+
+    Protected Sub ddlTreesWeergeven_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTreesWeergeven.SelectedIndexChanged
+
+        Dim t As Tree = Tree.GetTree(ddlTreesWeergeven.SelectedItem.Text)
+        lblTreeWeergave.InnerHTML = t.LeesTree(String.Empty, t.RootNode, -1)
+        updTreeWeergave.Update()
+
+        mpeTreeWeergave.Show()
+
     End Sub
-
-    Protected Sub ddlVersiekopieren_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersiekopieren.SelectedIndexChanged
-        Dim versie As Versie = versie.GetVersie(ddlVersiekopieren.SelectedValue)
-        lblKopieVersieAantalArt.Text = BerekenArtikelsVoorVersie(versie)
-        lblKopieVersieAantalCat.Text = BerekenCategorienVoorVersie(versie)
-    End Sub
-
-    Private Function BerekenCategorienVoorVersie(ByVal versie As Versie) As Integer
-
-        Dim aantal As Integer = 0
-
-        For Each t As Taal In Taal.GetTalen
-            For Each b As Bedrijf In Bedrijf.GetBedrijven
-                Dim tree As Tree = tree.GetTree(t.ID, versie.ID, b.ID)
-                aantal = tree.RootNode.GetRecursiveCategorieCount(aantal)
-            Next b
-        Next t
-
-        Return aantal
-
-    End Function
-
-    Private Function BerekenArtikelsVoorVersie(ByVal versie As Versie) As Integer
-
-        Dim aantal As Integer = 0
-
-        For Each t As Taal In Taal.GetTalen
-            For Each b As Bedrijf In Bedrijf.GetBedrijven
-                Dim tree As Tree = tree.GetTree(t.ID, versie.ID, b.ID)
-                aantal = tree.RootNode.GetRecursiveArtikelCount(aantal)
-            Next b
-        Next t
-
-        Return aantal
-
-    End Function
 End Class

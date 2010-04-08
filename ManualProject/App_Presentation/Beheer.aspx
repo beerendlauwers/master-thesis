@@ -10,16 +10,8 @@
         <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
             <HeaderTemplate>
                 Bedrijf
-        
-        
-        
-        
-        
-        
         </HeaderTemplate>
-        
-
-
+       
 <ContentTemplate>
                 <asp:UpdatePanel ID="updBedrijf" runat="server"><ContentTemplate>
                         <cc1:Accordion ID="AccordionBedrijf" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -1075,6 +1067,104 @@
         
 
 
+</cc1:TabPanel>
+
+<cc1:TabPanel runat="server" ID="tabOnderhoud" HeaderText="Applicatie-Onderhoud">
+            <HeaderTemplate>
+                Applicatie-Onderhoud
+        </HeaderTemplate>
+<ContentTemplate>
+<asp:UpdatePanel ID="updOnderhoud" runat="server"><ContentTemplate>
+                        <cc1:Accordion ID="AccordionOnderhoud" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
+                            ContentCssClass="art-content">
+                            <Panes>
+                                <cc1:AccordionPane runat="server" BackColor="Black" ID="PaneTrees">
+                                    <Header>
+                                        Boomstructuren</Header>
+                                    <Content>
+                                    
+                           <asp:Panel ID="pnlTreeWeergave" runat="server" style="display:none;" CssClass="modalPopupTreeView">
+                    <asp:UpdatePanel ID="updTreeWeergave" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+        <span runat="server" id="lblTreeWeergave"></span>
+        <asp:Button runat="server" ID="btnTerug" Text="Terug" />
+        </ContentTemplate>
+        </asp:UpdatePanel>
+        </asp:Panel>
+        <asp:Button ID="btnDummyButton" runat="server" style="display:none;" />
+        <cc1:ModalPopupExtender ID="mpeTreeWeergave" runat="server" TargetControlID="btnDummyButton" BackgroundCssClass="modalBackground" OkControlID="btnTerug" PopupControlID="pnlTreeWeergave">
+        </cc1:ModalPopupExtender>
+                                    
+                                        <table>
+                                        <tr>
+                                        <th align="left">Boomstructuur-info</th>
+                                        </tr>
+                                            <tr>
+                                                <td class="lbl">
+                                                    <asp:Label ID="lblTreesAantalInfo" runat="server" Text="Aantal boomstructuren: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:Label ID="lblTreesAantal" runat="server"></asp:Label>
+                                                </td>
+                                                <td>
+                                                <span style="vertical-align:middle" id='tipTreesAantal'><img src="CSS/images/help.png" alt=''/></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lbl">
+                                                    <asp:Label ID="lblTreesAantalCatsInfo" runat="server" Text="Aantal categorieën: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:Label ID="lblTreesAantalCats" runat="server"></asp:Label>
+                                                </td>
+                                                <td>
+                                                <span style="vertical-align:middle" id='tipTreesAantalCats'><img src="CSS/images/help.png" alt=''/></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lbl">
+                                                    <asp:Label ID="lblTreesAantalArtsInfo" runat="server" Text="Aantal artikels: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:Label ID="lblTreesAantalArts" runat="server"></asp:Label>
+                                                </td>
+                                                <td>
+                                                <span style="vertical-align:middle" id='tipTreesAantalArts'><img src="CSS/images/help.png" alt=''/></span>
+                                                </td>
+                                            </tr>
+                                       <tr>
+                                        <th align="left">Boomstructuur weergeven</th>
+                                        </tr>
+                                            <tr>
+                                                <td class="lbl">
+                                                    <asp:Label ID="lblTreesWeergeven" runat="server" Text="Kies een boomstructuur: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:DropDownList runat="server" ID="ddlTreesWeergeven" AutoPostBack="true"></asp:DropDownList>
+                                                </td>
+                                                <td>
+                                                <span style="vertical-align:middle" id='tipTreesWeergeven'><img src="CSS/images/help.png" alt=''/></span>
+                                                </td>
+                                            </tr>
+                                            
+                                        </table>
+                                    </Content>
+                                </cc1:AccordionPane>
+                            </Panes>
+                        </cc1:Accordion>
+                        <asp:UpdateProgress ID="UpdateProgress4" runat="server">
+                            <ProgressTemplate>
+                                <div class="update">
+                                    <img src="CSS/Images/ajaxloader.gif" />
+                                    Even wachten aub...
+                                </div>
+                            </ProgressTemplate>
+                        </asp:UpdateProgress>
+                    
+    
+    </ContentTemplate>
+</asp:UpdatePanel>
+</ContentTemplate>
 </cc1:TabPanel>
     </cc1:TabContainer>
     <asp:ObjectDataSource ID="objdBedrijf" runat="server" DeleteMethod="Delete" InsertMethod="Insert"

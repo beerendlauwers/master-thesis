@@ -11,6 +11,7 @@
 	<tip id="ARTIKELTOEVOEGEN_SJABLOON" text="Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel." />
 	
 	<tip id="ARTIKELBEWERKEN_ZOEKTITEL" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
+	<tip id="ARTIKELBEWERKEN_ZOEKTAG" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
 	<tip id="ARTIKELBEWERKEN_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
 	<tip id="ARTIKELBEWERKEN_TITEL" text="De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
 	<tip id="ARTIKELBEWERKEN_TAAL" text="De taal van het artikel." />
@@ -20,11 +21,12 @@
 	<tip id="ARTIKELBEWERKEN_FINAAL" text="Bepaalt of het artikel gefinaliseerd is of niet." />
 	<tip id="ARTIKELBEWERKEN_AFBEELDING" text="Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.&lt;br/&gt;&lt;strong&gt;Geldige extensies: JPEG, PNG, GIF&lt;/strong&gt;" />
 
-	<tip id="ARTIKELVERWIJDEREN_TEKST" text="Doorzoekt de tekst van elk document." />
-	<tip id="ARTIKELVERWIJDEREN_TITEL" text="Doorzoekt de titels van elk document." />
+	<tip id="ARTIKELVERWIJDEREN_TEKST" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
+	<tip id="ARTIKELVERWIJDEREN_TAG" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
 	<tip id="ARTIKELVERWIJDEREN_BEDRIJF" text="Het bedrijf waarin u wilt zoeken." />
 	<tip id="ARTIKELVERWIJDEREN_TAAL" text="De taal waarin u wilt zoeken." />
 	<tip id="ARTIKELVERWIJDEREN_VERSIE" text="De versie waarin u wilt zoeken." />
+	<tip id="ARTIKELVERWIJDEREN_ISFINAAL" text="Kies of het artikel gefinaliseerd is of niet." />
 	
 	<tip id="BEHEER_BEDRIJF_NAAM" text="De bedrijfsnaam van het bedrijf." />
 	<tip id="BEHEER_BEDRIJF_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />

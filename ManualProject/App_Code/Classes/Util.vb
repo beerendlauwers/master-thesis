@@ -41,4 +41,23 @@ Public Class Util
         img.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
     End Sub
 
+    ''' <summary>
+    ''' Leest een of meerdere waardes uit een DropDownList.
+    ''' </summary>
+    ''' <param name="ddl">De DropDownList waaruit de waardes dienen te komen.</param>
+    ''' <returns>Alle waardes indien SelectedValue = -1000, anders enkel de waarde van de geselecteerdeo optie</returns>
+    Public Shared Function LeesDropdown(ByRef ddl As DropDownList) As String
+        Dim returnstring As String = String.Empty
+        If ddl.SelectedValue = -1000 Then 'alles
+            For index As Integer = 1 To ddl.Items.Count - 1
+                returnstring = String.Concat(returnstring, ",", ddl.Items(index).Value.ToString)
+            Next
+            returnstring = returnstring.Remove(0, 1) 'Eerste komma verwijderen
+        Else
+            returnstring = ddl.SelectedItem.Value.ToString
+        End If
+
+        Return returnstring
+    End Function
+
 End Class
