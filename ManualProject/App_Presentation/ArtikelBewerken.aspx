@@ -131,8 +131,7 @@ function ValideerZoekTerm (source, args)
         <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />
-            <asp:BoundField DataField="Versie" HeaderText="Versie" 
-                SortExpression="Versie" />
+            <asp:BoundField DataField="Versie" HeaderText="Versie" SortExpression="Versie" />
             <asp:BoundField DataField="Naam" HeaderText="Bedrijf" SortExpression="Bedrijf" />
             <asp:BoundField DataField="Taal" HeaderText="Taal" SortExpression="Taal" />
             <asp:BoundField DataField="Is_final" HeaderText="Finale Versie" 
@@ -175,7 +174,10 @@ function ValideerZoekTerm (source, args)
   </tr>
   <tr>  
    <td class="lbl">  <asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td> 
-   <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%"></asp:TextBox>
+   <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%" TabIndex="-1"></asp:TextBox>
+       <cc2:ModalPopupExtender ID="txtTag_ModalPopupExtender" runat="server" 
+           TargetControlID="txtTag" PopupControlID="modalpopup" OkControlID="btnOk" CancelControlID="btnCancel" DropShadow="true" BackgroundCssClass="modalBackground">
+       </cc2:ModalPopupExtender>
    <asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
         ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters, nummers en een underscore ( _ ) bevatten." 
@@ -190,6 +192,18 @@ function ValideerZoekTerm (source, args)
    <td>
    <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
    </td>
+                <asp:Panel ID="modalpopup" runat="server" BackColor="White">
+                <div>
+                    <asp:RadioButton ID="rdbAlleTalen" runat="server" GroupName="Tag" />Tag voor alle talen wijzigen
+                </div>
+                <div>
+                    <asp:RadioButton ID="rdbEnkeleTaal" runat="server" GroupName="Tag"/>Alleen tag in deze taal wijzigen
+                </div>
+                <div>
+                    <asp:Button ID="btnOk" runat="server" Text="Ok" OnClientClick="ctl00_ContentPlaceHolder1_txtTag.focus();" /><asp:Button ID="btnCancel" runat="server"
+                        Text="Cancel" />
+                </div>
+                 </asp:Panel>
   </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>

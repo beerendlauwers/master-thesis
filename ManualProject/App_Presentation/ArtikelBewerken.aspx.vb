@@ -8,6 +8,7 @@ Partial Class App_Presentation_ArtikelBewerken
     Inherits System.Web.UI.Page
 
     Private artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
+    Private taaldal As New TaalDAL
     Private bedrijfIsKlaar As Boolean = False
     Private versieIsKlaar As Boolean = False
     Private taalIsKlaar As Boolean = False
@@ -138,10 +139,14 @@ Partial Class App_Presentation_ArtikelBewerken
         artikel.ID = Session("artikelID")
         artikel.Bedrijf = ddlBedrijf.SelectedValue
         artikel.Categorie = ddlCategorie.SelectedValue
-        artikel.Tag = txtTag.Text
+        artikel.Taal = ddlTaal.SelectedValue
+        artikel.Versie = ddlVersie.SelectedValue
+        Dim dr As Manual.tblTaalRow
+        dr = taaldal.GetTaalByID(artikel.Taal)
+        artikel.Tag = dr("TaalTag") + "_" + txtTag.Text
         artikel.Tekst = Editor1.Content
         artikel.Titel = txtTitel.Text
-        artikel.Versie = ddlVersie.SelectedValue
+
         If ckbFinal.Checked = True Then
             artikel.IsFinal = 1
         Else
@@ -161,8 +166,15 @@ Partial Class App_Presentation_ArtikelBewerken
             Me.divFeedback.Visible = True
             Return
         End If
-
+        If rdbAlleTalen.Checked Then
+            Dim taaldal As New TaalDAL
+            Dim oudetag As String = Session("oudetag")
+            Dim i As Integer
+            i = taaldal.updateTagTalen(oudetag, artikel.Tag)
+        End If
         If artikeldal.updateArtikel(artikel) = True Then
+
+
 
             'Boomstructuur in het geheugen updaten.
 
@@ -240,6 +252,8 @@ Partial Class App_Presentation_ArtikelBewerken
 
         ArtikelFunctiesZichtbaar(False)
         Me.divFeedback.Visible = True
+
+        grdvLijst.DataBind()
     End Sub
 
 #Region "Gridview Event Handlers"
@@ -290,12 +304,13 @@ Partial Class App_Presentation_ArtikelBewerken
 
         Session("artikelID") = artikel.ID
         txtTitel.Text = artikel.Titel
-        txtTag.Text = artikel.Tag
+        Dim tag() As String = Split(artikel.Tag, "_")
+        txtTag.Text = tag(1)
         Editor1.Content = artikel.Tekst
         ddlBedrijf.SelectedValue = artikel.Bedrijf
         ddlTaal.SelectedValue = artikel.Taal
         ddlVersie.SelectedValue = artikel.Versie
-
+        Session("oudetag") = artikel.Tag
         LaadCategorien()
 
         ddlCategorie.SelectedValue = artikel.Categorie
@@ -539,7 +554,6 @@ Partial Class App_Presentation_ArtikelBewerken
             End If
 
         End If
-
     End Sub
 
 End Class
