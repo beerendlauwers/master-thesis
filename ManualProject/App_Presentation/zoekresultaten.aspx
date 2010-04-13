@@ -24,13 +24,9 @@
             <%--<asp:BoundField DataField="Versie" HeaderText="Versie" 
                 SortExpression="Versie" />
             <asp:BoundField DataField="taal" HeaderText="Taal" SortExpression="taal" />--%>
-            <%--<asp:CommandField ButtonType="Image" 
+            <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 
-                ShowSelectButton="True" />--%>
-            <asp:TemplateField Headertext="">
-            <ItemTemplate >
-            </ItemTemplate>
-            </asp:TemplateField>
+                ShowSelectButton="True" />
         </Columns>
         
         <pagertemplate>

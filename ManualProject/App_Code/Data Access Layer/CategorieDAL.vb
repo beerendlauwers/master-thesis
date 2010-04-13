@@ -83,8 +83,14 @@ Public Class CategorieDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then dt.Load(r)
-            Return dt
+            If (r.HasRows) Then
+                dt.Load(r)
+                Return dt
+            Else
+                Return Nothing
+            End If
+
+
         Catch ex As Exception
             Throw ex
         Finally

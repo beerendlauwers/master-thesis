@@ -62,7 +62,7 @@
         </div>
         <div class="r">
         </div>
-        <ul class="art-menu">
+        <ul class="art-menu" runat="server" id="ul">
             <li runat="server" id="liArtikelBeheer"><a runat="server" ><span class="l"></span><span class="r"></span>
                 <span class="t">Artikels</span></a> 
                 <ul>
@@ -70,22 +70,23 @@
                     <li><a runat="server" id="ArtikelBewerken" runat="server"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
                     <li><a runat="server" id="ArtikelVerwijderen" runat="server"><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
                     <li><a runat="server" id="AlleArtikels" href="AlleArtikels.aspx" runat="server"><img src="CSS/images/doc_text_image.png" border="0"  /> Alle Artikels</a></li>
+                    <li><a runat="server" id="OverzichtPerTaal" href="OverzichtPerTaal.aspx" runat="server"><img src="CSS/images/doc_text_image.png" border="0"  /> Overzicht per Taal</a></li>
                 </ul></li>
             <li runat="server" id="liBeheer"><a runat="server" href="Beheer.aspx" ><span class="l"></span><span class="r"></span>
                 <span class="t">Beheer </span></a>
                 
             </li>
-            <%--<li><a runat="server" id="lnkContact"><span class="l"></span><span class="r"></span>
-                <span class="t">Taal</span></a> </li>--%>
             <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
                 <asp:HyperLink ID="hrefArtikelBewerken" runat="server"><span class="l"></span><span class="r"></span><span class="t">Dit artikel bewerken</span></asp:HyperLink></li>
-            <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b>Zoek op: </b><asp:TextBox ID="txtZoek" runat="server" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
+            <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b><asp:Label ID="lblZoek" runat="server" Text=""></asp:Label>
+            </b><asp:TextBox ID="txtZoek" runat="server" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="lnkZoeken" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                     Width="16px" class="zoekLinkUit" PostBackUrl="~/App_Presentation/zoekresultaten.aspx" /></span></span></div>
                    
+              </li>      
                     
-                    </li>
+                    
              <li><a><span class="l"></span><span class="r"></span>
                 <span class="t">Video's </span></a>
                 <ul>
@@ -129,7 +130,7 @@
         <asp:TextBox ID="txtJavascriptOnEndRequest" runat="server" visible="false"></asp:TextBox>
     © 2010 Appligen
     </div>
-
+    
     <script type="text/javascript">
     function SetButtonStatus(field)
     {

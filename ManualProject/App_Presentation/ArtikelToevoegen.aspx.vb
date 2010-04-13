@@ -5,7 +5,7 @@ Imports System.Drawing
 
 Partial Class App_Presentation_invoerenTest
     Inherits System.Web.UI.Page
-
+    Private taaldal As New TaalDAL
     Private artikel As Manual.tblArtikelRow
     Private adap As New ManualTableAdapters.tblArtikelTableAdapter
     Private bedrijfIsKlaar As Boolean = False
@@ -22,7 +22,9 @@ Partial Class App_Presentation_invoerenTest
         Dim FK_Bedrijf As Integer = ddlBedrijf.SelectedValue
         Dim FK_categorie As Integer = ddlCategorie.SelectedValue
         Dim FK_taal As Integer = ddlTaal.SelectedValue
-
+        Dim dr As Manual.tblTaalRow
+        dr = taaldal.GetTaalByID(FK_taal)
+        tag = dr("TaalTag") + "_" + tag
         Dim finaal As Integer
         If ckbFinaal.Checked = True Then
             finaal = 1

@@ -52,6 +52,12 @@ Partial Class App_Presentation_ArtikelBewerken
 
         LaadTooltips()
 
+        Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
+
+        Dim js As String = String.Concat("if( this.checked ){ var tr = document.getElementsByName('trRad'); tr.style.display='none';}")
+        JavaScript.VoerJavaScriptUitOn(rdbAlleTalen, js, "onclick")
+        JavaScript.VoerJavaScriptUitOn(rdbEnkeleTaal, js, "onclick")
+
         'De zoekknop op disabled zetten als erop geklikt wordt
         JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
         'De wijzigknop op disabled zetten als erop geklikt wordt
@@ -63,7 +69,9 @@ Partial Class App_Presentation_ArtikelBewerken
         If Not IsPostBack Then
             LaadTemplates()
         End If
-
+        txtTag.Attributes.Add("onClick", "trVisible()")
+        rdbAlleTalen.Attributes.Add("onClick", "trInvisible()")
+        rdbEnkeleTaal.Attributes.Add("onClick", "trInvisible()")
     End Sub
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
@@ -171,6 +179,9 @@ Partial Class App_Presentation_ArtikelBewerken
             Dim oudetag As String = Session("oudetag")
             Dim i As Integer
             i = taaldal.updateTagTalen(oudetag, artikel.Tag)
+            If i = 0 Then
+                lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
+            End If
         End If
         If artikeldal.updateArtikel(artikel) = True Then
 
@@ -556,4 +567,11 @@ Partial Class App_Presentation_ArtikelBewerken
         End If
     End Sub
 
+    Protected Sub rdbAlleTalen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbAlleTalen.CheckedChanged
+        trRadio.Visible = False
+    End Sub
+
+    Protected Sub rdbEnkeleTaal_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbEnkeleTaal.CheckedChanged
+        trRadio.Visible = False
+    End Sub
 End Class

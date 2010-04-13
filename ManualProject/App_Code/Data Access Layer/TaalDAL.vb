@@ -147,5 +147,104 @@ Public Class TaalDAL
         End Try
 
     End Function
-   
+
+
+    Public Function GetTaalByIDDT(ByVal id As Integer) As tblTaalDataTable
+        Dim dt As New tblTaalDataTable
+        Dim c As New SqlCommand("Manual_GetTaalByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@id", SqlDbType.Int).Value = id
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt
+        End If
+    End Function
+
+    Public Function getVglTalen(ByVal text As String) As Data.DataTable
+        Dim connect As New SqlConnection(conn)
+        Dim dt As New Data.DataTable
+        Dim c As New SqlCommand(Text, connect)
+        c.CommandType = CommandType.Text
+        c.Connection = New SqlConnection(conn)
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt
+        End If
+    End Function
+
+    Public Function updateTagTalen(ByVal oudetag As String, ByVal nieuweTag As String) As Integer
+
+        Dim c As New SqlCommand("Manual_UpdateTagTalen")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@OudeTag", SqlDbType.VarChar).Value = oudetag
+        c.Parameters.Add("@NieuweTag", SqlDbType.VarChar).Value = nieuweTag
+        c.Connection = New SqlConnection(conn)
+        Dim i As Integer
+        Try
+            c.Connection.Open()
+            i = c.ExecuteNonQuery
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+        Return i
+    End Function
+
+    Public Function getTaalByNaam(ByVal taal As String) As tblTaalRow
+        Dim dt As New tblTaalDataTable
+
+        Dim c As New SqlCommand("Manual_getTaalByNaam")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@Taal", SqlDbType.VarChar).Value = taal
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
+    End Function
 End Class

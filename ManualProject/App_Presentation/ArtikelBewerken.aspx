@@ -175,9 +175,7 @@ function ValideerZoekTerm (source, args)
   <tr>  
    <td class="lbl">  <asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td> 
    <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%" TabIndex="-1"></asp:TextBox>
-       <cc2:ModalPopupExtender ID="txtTag_ModalPopupExtender" runat="server" 
-           TargetControlID="txtTag" PopupControlID="modalpopup" OkControlID="btnOk" CancelControlID="btnCancel" DropShadow="true" BackgroundCssClass="modalBackground">
-       </cc2:ModalPopupExtender>
+       
    <asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
         ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters, nummers en een underscore ( _ ) bevatten." 
@@ -191,20 +189,13 @@ function ValideerZoekTerm (source, args)
    </td>
    <td>
    <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
-   </td>
-                <asp:Panel ID="modalpopup" runat="server" BackColor="White">
-                <div>
-                    <asp:RadioButton ID="rdbAlleTalen" runat="server" GroupName="Tag" />Tag voor alle talen wijzigen
-                </div>
-                <div>
-                    <asp:RadioButton ID="rdbEnkeleTaal" runat="server" GroupName="Tag"/>Alleen tag in deze taal wijzigen
-                </div>
-                <div>
-                    <asp:Button ID="btnOk" runat="server" Text="Ok" OnClientClick="ctl00_ContentPlaceHolder1_txtTag.focus();" /><asp:Button ID="btnCancel" runat="server"
-                        Text="Cancel" />
-                </div>
-                 </asp:Panel>
-  </tr>
+   </td></tr>     
+   <tr ><td class="lbl">&nbsp</td>
+   <td runat="server" id="trRadio" name="trRad" style="display:none;">
+   <asp:RadioButton ID="rdbAlleTalen" runat="server" GroupName="Tag"  />Tag voor alle talen wijzigen<br />
+   <asp:RadioButton ID="rdbEnkeleTaal" runat="server" GroupName="Tag" Checked="true" />Alleen tag in deze taal wijzigen
+   </td></tr>         
+    
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
 <td><asp:DropDownList ID="ddlTaal" runat="server" AutoPostBack="true" Width="100%">
@@ -294,6 +285,26 @@ function ValideerZoekTerm (source, args)
     
     <script type="text/javascript">
 
+
+
+
+function namodalpopup()
+{
+    var mpe = $find('mpe');
+    mpe.dispose();
+    ctl00_contentplaceholder1_txtTag.focus();
+}
+
+function trVisible()
+{
+var tr = document.getElementsByName('trRad')[0]
+tr.style.display='inline'
+}
+function trInvisible()
+{
+var tr = document.getElementsByName('trRad')[0]
+tr.style.display='none'
+}
 function checkExtensies( filename )
 {
     var lijst = filename.value.split('.');

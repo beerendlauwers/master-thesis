@@ -4,6 +4,6 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 <p>
-Welkom op de Appligen Reference Manual. Gebruik de menustructuur in de linkerzijbalk of de zoekbalk rechtsboven om een artikel te bezichtigen.
+    <asp:Label ID="lblWelkom" runat="server" Text=""></asp:Label>
 </p>
 </asp:Content>

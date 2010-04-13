@@ -655,5 +655,48 @@ Public Class ArtikelDAL
         End Try
         Return dt
     End Function
+    Public Function updateTagAlleTalen(ByVal nieuweTag As String, ByVal oudetag As String) As Integer
+        Dim x As Integer
+        Dim c As New SqlCommand("Manual_GetArtikelsByTitel_Versie_Bedrijf_Taal")
+        c.CommandType = CommandType.StoredProcedure
 
+        c.Parameters.Add("@NieuweTag", SqlDbType.VarChar).Value = nieuweTag
+        c.Parameters.Add("@OudeTag", SqlDbType.VarChar).Value = oudetag
+        c.Connection = New SqlConnection(conn)
+        Try
+            c.Connection.Open()
+            x = c.ExecuteNonQuery()
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Nieuwe tag = " & nieuweTag)
+            e.Args.Add("Oude tag = " & oudetag)
+            ErrorLogger.WriteError(e)
+
+        End Try
+        Return x
+    End Function
+
+    Public Function getTitelByTag(ByVal tag As String) As String
+        Dim titel As String
+        Dim c As New SqlCommand("Manual_getTitelByTag")
+        Dim dt As New tblArtikelDataTable
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@Tag", SqlDbType.VarChar).Value = tag
+        c.Connection = New SqlConnection(conn)
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            titel = Convert.ToString(c.ExecuteScalar)
+            
+            Return titel
+
+        Catch ex As Exception
+            Throw ex
+        Finally
+            c.Connection.Close()
+        End Try
+        Return titel
+    End Function
 End Class

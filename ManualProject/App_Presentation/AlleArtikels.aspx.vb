@@ -74,6 +74,15 @@ Partial Class App_Presentation_AlleArtikels
         If e.Row.Cells.Count > 4 Then
             e.Row.Cells(1).Visible = False
         End If
+        If e.Row.Cells.Count = 1 Then
+
+        Else
+            Dim titel As String
+            titel = e.Row.Cells(0).Text
+            Server.HtmlEncode(titel)
+            e.Row.Cells(0).Text = Server.HtmlDecode(titel)
+        End If
+        
     End Sub
 
 End Class

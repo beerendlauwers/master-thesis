@@ -1,6 +1,7 @@
 ﻿
 Partial Class App_Presentation_MasterPage
     Inherits System.Web.UI.MasterPage
+    Private taaldal As New TaalDAL
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -24,7 +25,31 @@ Partial Class App_Presentation_MasterPage
         A3.HRef = "~/App_Presentation/VideoAfspelen.aspx"
 
         'Taal ophalen
+        Dim str1(100) As String
+        For i As Integer = 0 To Page.Request.Form.Count - 1
+            str1(i) = Page.Request.Form(i)
+            Dim taal() As String = Split(str1(i), "$")
+            If taal.Length > 1 Then
+                If taal(1).Length > 3 Then
+                    taal(1) = taal(1).Substring(3)
+                    If taaldal.getTaalByNaam(taal(1)) IsNot Nothing Then
+                        Dim tr As Manual.tblTaalRow
+                        tr = taaldal.getTaalByNaam(taal(1))
+                        Session("taal") = tr("taalID")
+                        Exit For
+                    End If
+                End If
+            End If
+        Next
+
         Dim taalID As Integer = Session("taal")
+        If taalID = 0 Then
+            lblZoek.Text = "Zoek op: "
+        ElseIf taalID = 5 Then
+            lblZoek.Text = "Cherchez sur: "
+        Else
+            lblZoek.Text = "Search: "
+        End If
 
         'Versie ophalen
         Dim versieID As Integer = Session("versie")
@@ -72,6 +97,21 @@ Partial Class App_Presentation_MasterPage
         If Session("login") = 1 Then
             liAanmeld.Visible = False
         End If
+
+
+        Dim dt As Manual.tblTaalDataTable
+        Dim ul As HtmlGenericControl = Me.FindControl("ul")
+        Dim str As String = ""
+        str = str + "<li style=""float:right;""" + " runat=""server""" + " id=""talenli""" + " visible=""true""" + "><a runat=""server""" + " ><span class=""l""" + "></span><span class=""r""" + "></span><span class=""t""" + ">Talen/Languages</span></a><ul> "
+        dt = taaldal.GetAllTaal()
+
+        For i As Integer = 0 To dt.Rows.Count - 1
+            str = str + "<li><a id=""ctl00_lnk" + dt.Rows(i)("taal") + """ href=""javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$lnk" + dt.Rows(i)("taal") + "&quot;, &quot;&quot;, false, &quot;&quot;, &quot;Default.aspx&quot;, false, true))""""" + ">" + dt.Rows(i)("taal") + "</a></li>"
+        Next
+        Dim li As New HtmlGenericControl
+        str = str + "</ul></li>"
+        li.InnerHtml = str
+        ul.Controls.Add(li)
 
 
     End Sub
