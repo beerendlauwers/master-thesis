@@ -11,6 +11,7 @@ Public Class Tree
     Private _bedrijf As Bedrijf
     Private _rootnode As Node
 
+    Private Shared _treeLock As New Object
     Private Shared FTrees As List(Of Tree) = Nothing
 
     ''' <summary>
@@ -210,33 +211,37 @@ Public Class Tree
     ''' </summary>
     Public Shared Sub BouwTrees()
 
-        'Als er reeds een verzameling van trees is, maken we deze terug leeg
-        If FTrees IsNot Nothing Then
-            FTrees = New List(Of Tree)
-        End If
+        SyncLock _treeLock
 
-        'Databasefuncties ophalen
-        Dim dblink As DatabaseLink = DatabaseLink.GetInstance
-
-        Dim dbcategorie As CategorieDAL = dblink.GetCategorieFuncties
-        Dim dbtaal As TaalDAL = dblink.GetTaalFuncties
-        Dim dbbedrijf As BedrijfDAL = dblink.GetBedrijfFuncties
-        Dim dbversie As VersieDAL = dblink.GetVersieFuncties
-        Dim dbartikel As ArtikelDAL = dblink.GetArtikelFuncties
-
-        'Alle tabellen ophalen
-        Dim taaldt As tblTaalDataTable = dbtaal.GetAllTaal
-        Dim bedrijfdt As tblBedrijfDataTable = dbbedrijf.GetAllBedrijf
-        Dim versiedt As tblVersieDataTable = dbversie.GetAllVersie
-
-        'Voor elke combinatie van VERSIE, TAAL en BEDRIJF een tree maken.
-        For Each versie As tblVersieRow In versiedt
-
-            If (Not BouwTreesVoorVersie(bedrijfdt, versie, taaldt)) Then
-                Return
+            'Als er reeds een verzameling van trees is, maken we deze terug leeg
+            If FTrees IsNot Nothing Then
+                FTrees = New List(Of Tree)
             End If
 
-        Next versie
+            'Databasefuncties ophalen
+            Dim dblink As DatabaseLink = DatabaseLink.GetInstance
+
+            Dim dbcategorie As CategorieDAL = dblink.GetCategorieFuncties
+            Dim dbtaal As TaalDAL = dblink.GetTaalFuncties
+            Dim dbbedrijf As BedrijfDAL = dblink.GetBedrijfFuncties
+            Dim dbversie As VersieDAL = dblink.GetVersieFuncties
+            Dim dbartikel As ArtikelDAL = dblink.GetArtikelFuncties
+
+            'Alle tabellen ophalen
+            Dim taaldt As tblTaalDataTable = dbtaal.GetAllTaal
+            Dim bedrijfdt As tblBedrijfDataTable = dbbedrijf.GetAllBedrijf
+            Dim versiedt As tblVersieDataTable = dbversie.GetAllVersie
+
+            'Voor elke combinatie van VERSIE, TAAL en BEDRIJF een tree maken.
+            For Each versie As tblVersieRow In versiedt
+
+                If (Not BouwTreesVoorVersie(bedrijfdt, versie, taaldt)) Then
+                    Return
+                End If
+
+            Next versie
+
+        End SyncLock
 
     End Sub
 

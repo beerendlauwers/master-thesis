@@ -1,59 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tooltips>
-	<tip id="ARTIKELTOEVOEGEN_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
-	<tip id="ARTIKELTOEVOEGEN_TITEL" text="De titel van het nieuwe artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
-	<tip id="ARTIKELTOEVOEGEN_BEDRIJF" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
-	<tip id="ARTIKELTOEVOEGEN_TAAL" text="De taal van het nieuwe artikel." />
-	<tip id="ARTIKELTOEVOEGEN_VERSIE" text="De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel." />
-	<tip id="ARTIKELTOEVOEGEN_CATEGORIE" text="De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur." />
-	<tip id="ARTIKELTOEVOEGEN_FINAAL" text="Bepaalt of het artikel gefinaliseerd is of niet." />
-	<tip id="ARTIKELTOEVOEGEN_AFBEELDING" text="Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.&lt;br/&gt;&lt;strong&gt;Geldige extensies: JPEG, PNG, GIF&lt;/strong&gt;" />
-	<tip id="ARTIKELTOEVOEGEN_SJABLOON" text="Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel." />
+	<!-- Artikel Toevoegen -->
+	<tip id="tipTagArtikelToevoegen" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="tipTitelArtikelToevoegen" text="De titel van het nieuwe artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
+	<tip id="tipBedrijfArtikelToevoegen" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
+	<tip id="tipTaalArtikelToevoegen" text="De taal van het nieuwe artikel." />
+	<tip id="tipVersieArtikelToevoegen" text="De versie waartoe het nieuwe artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel." />
+	<tip id="tipCategorieArtikelToevoegen" text="De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur." />
+	<tip id="tipFinaalArtikelToevoegen" text="Bepaalt of het artikel gefinaliseerd is of niet." />
+	<tip id="tipUploadArtikelToevoegen" text="Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.&lt;br/&gt;&lt;strong&gt;Geldige extensies: JPEG, PNG, GIF&lt;/strong&gt;" />
+	<tip id="tipSjabloonArtikelToevoegen" text="Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel." />
 	
-	<tip id="ARTIKELBEWERKEN_ZOEKTITEL" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
-	<tip id="ARTIKELBEWERKEN_ZOEKTAG" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
-	<tip id="ARTIKELBEWERKEN_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
-	<tip id="ARTIKELBEWERKEN_TITEL" text="De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
-	<tip id="ARTIKELBEWERKEN_TAAL" text="De taal van het artikel." />
-	<tip id="ARTIKELBEWERKEN_BEDRIJF" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
-	<tip id="ARTIKELBEWERKEN_VERSIE" text="De versie waartoe het artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel." />
-	<tip id="ARTIKELBEWERKEN_CATEGORIE" text="De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur." />
-	<tip id="ARTIKELBEWERKEN_FINAAL" text="Bepaalt of het artikel gefinaliseerd is of niet." />
-	<tip id="ARTIKELBEWERKEN_AFBEELDING" text="Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.&lt;br/&gt;&lt;strong&gt;Geldige extensies: JPEG, PNG, GIF&lt;/strong&gt;" />
+	<!-- Artikel Bewerken -->
+	<tip id="tipZoekTitel" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
+	<tip id="tipZoekTag" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
+	<tip id="tipBedrijfVerfijnen" text="Het bedrijf waarin u wilt zoeken." />
+	<tip id="tipTaalVerfijnen" text="De taal waarin u wilt zoeken." />
+	<tip id="tipVersieVerfijnen" text="De versie waarin u wilt zoeken." />
+	<tip id="tipIsFinaalVerfijnen" text="Kies of het artikel gefinaliseerd is of niet." />
+	<tip id="tipTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="tipTitel" text="De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
+	<tip id="tipTaal" text="De taal van het artikel." />
+	<tip id="tipBedrijf" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
+	<tip id="tipVersie" text="De versie waartoe het artikel toebehoort. Dit nummer slaat op de versie van de applicatie, en niet op de versie van het artikel." />
+	<tip id="tipCategorie" text="De categorie waaronder dit artikel zal worden gepubliceerd. De 'root_node' categorie is het beginpunt van de structuur." />
+	<tip id="tipFinaal" text="Bepaalt of het artikel gefinaliseerd is of niet." />
+	<tip id="tipUpload" text="Selecteer een afbeelding om te uploaden en druk op de knop ''Afbeelding Toevoegen'' om deze toe te voegen aan het einde van uw artikel.&lt;br/&gt;&lt;strong&gt;Geldige extensies: JPEG, PNG, GIF&lt;/strong&gt;" />
+	<tip id="tipSjabloon" text="Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel." />
 
-	<tip id="ARTIKELVERWIJDEREN_TEKST" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
-	<tip id="ARTIKELVERWIJDEREN_TAG" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
-	<tip id="ARTIKELVERWIJDEREN_BEDRIJF" text="Het bedrijf waarin u wilt zoeken." />
-	<tip id="ARTIKELVERWIJDEREN_TAAL" text="De taal waarin u wilt zoeken." />
-	<tip id="ARTIKELVERWIJDEREN_VERSIE" text="De versie waarin u wilt zoeken." />
-	<tip id="ARTIKELVERWIJDEREN_ISFINAAL" text="Kies of het artikel gefinaliseerd is of niet." />
+	<!-- Artikel Verwijderen -->
+	<tip id="tipZoekTitelVerwijderen" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
+	<tip id="tipZoekTagVerwijderen" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
+	<tip id="tipBedrijfKeuze" text="Het bedrijf waarin u wilt zoeken." />
+	<tip id="tipTaalKeuze" text="De taal waarin u wilt zoeken." />
+	<tip id="tipVersieKeuze" text="De versie waarin u wilt zoeken." />
+	<tip id="tipIsFinaalKeuze" text="Kies of het artikel gefinaliseerd is of niet." />
 	
-	<tip id="BEHEER_BEDRIJF_NAAM" text="De bedrijfsnaam van het bedrijf." />
-	<tip id="BEHEER_BEDRIJF_TAG" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
-	<tip id="BEHEER_BEDRIJF_BEWERKEN" text="Het bedrijf dat u wilt wijzigen." />
-	<tip id="BEHEER_BEDRIJF_VERWIJDEREN" text="Het bedrijf dat u wilt verwijderen." />
+	<!-- Bedrijfbeheer -->
+	<tip id="tipAddBedrijf" text="De bedrijfsnaam van het bedrijf." />
+	<tip id="tipAddTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="tipEditTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="tipEditBedrijf" text="De bedrijfsnaam van het bedrijf." />
+	<tip id="tipDeleteBedrijf" text="Het bedrijf dat u wilt verwijderen." />
+	<tip id="tipBewerkBedrijf" text="Het bedrijf dat u wilt wijzigen." />
 	
-	<tip id="BEHEER_TAAL_NAAM" text="De naam van de taal." />
-	<tip id="BEHEER_TAAL_AFKORTING" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers." />
-	<tip id="BEHEER_TAAL_BEWERKEN" text="De taal die u wilt wijzigen." />
-	<tip id="BEHEER_TAAL_VERWIJDEREN" text="De taal die u wilt verwijderen." />
+	<!-- Taalbeheer -->
+	<tip id="tipAddTaal" text="De naam van de taal." />
+	<tip id="tipTaalAfkorting" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers." />
+	<tip id="tipEditAfkorting" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers." />
+	<tip id="tipEditTaal" text="De naam van de taal." />
+	<tip id="tipBewerkTaal" text="De taal die u wilt wijzigen." />
+	<tip id="tipTaalDelete" text="De taal die u wilt verwijderen." />
 	
-	<tip id="BEHEER_VERSIE_NIEUW_NUMMER" text="Het versienummer van de nieuwe versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
-	<tip id="BEHEER_VERSIE_BEWERKEN_NUMMER" text="Het versienummer van de versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
-	<tip id="BEHEER_VERSIE_KOPIEREN_NUMMER" text="De versie die u wilt kopiren. Alle artikels en categorien van elk bedrijf onder deze versie worden meegekopieerd." />
-	<tip id="BEHEER_VERSIE_KOPIEREN_AANTALCAT" text="Het aantal categorien dat gekopieerd zal worden." />
-	<tip id="BEHEER_VERSIE_KOPIEREN_AANTALART" text="Het aantal artikels dat gekopieerd zal worden." />
-	<tip id="BEHEER_VERSIE_BEWERKEN" text="De versie die u wilt wijzigen." />
-	<tip id="BEHEER_VERSIE_VERWIJDEREN" text="De versie die u wilt verwijderen." />
+	<!-- Versiebeheer -->
+	<tip id="tipAddVersie" text="Het versienummer van de nieuwe versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
+	<tip id="tipEditVersie" text="Het versienummer van de versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
+	<tip id="tipVersieKopieren" text="De versie die u wilt kopiëren. Alle artikels en categorien van elk bedrijf onder deze versie worden meegekopieerd." />
+	<tip id="tipNaamVersieKopie" text="Het versienummer van de nieuwe versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
+	<tip id="tipAantalCategorien" text="Het aantal categorien dat gekopieerd zal worden." />
+	<tip id="tipAantalArtikels" text="Het aantal artikels dat gekopieerd zal worden." />
+	<tip id="tipBewerkVersie" text="De versie die u wilt wijzigen." />
+	<tip id="tipDeleteVersie" text="De versie die u wilt verwijderen." />
 	
-	<tip id="BEHEER_CATEGORIE_NAAM" text="De naam van de categorie." />
-	<tip id="BEHEER_CATEGORIE_HOOGTE" text="De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten. Deze waarde is standaard de eerstvolgende hoogte in de categorie." />
-	<tip id="BEHEER_CATEGORIE_TAAL" text="De taal van de categorie." />
-	<tip id="BEHEER_CATEGORIE_VERSIE" text="De versie waarin de categorie gebruikt wordt." />
-	<tip id="BEHEER_CATEGORIE_BEDRIJF" text="Het bedrijf waarin de categorie gebruikt wordt." />
-	<tip id="BEHEER_CATEGORIE_CATEGORIE" text="De hoofdcategorie waar deze categorie onder staat. De categorie 'root_node' is het begin van de structuur." />
-	<tip id="BEHEER_CATEGORIE_FILTERTAAL" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op taal." />
-	<tip id="BEHEER_CATEGORIE_FILTERVERSIE" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op versie." />
-	<tip id="BEHEER_CATEGORIE_FILTERBEDRIJF" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />
-	<tip id="BEHEER_CATEGORIE_VERWIJDEREN" text="De categorie die u wilt verwijderen." />
+	<!-- Categoriebeheer -->
+	<tip id="tipAddCatnaam" text="De naam van de categorie." />
+	<tip id="tipAddhoogte" text="De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten. Deze waarde is standaard de eerstvolgende hoogte in de categorie." />
+	<tip id="tipAddCatTaal" text="De taal van de categorie." />
+	<tip id="tipAddCatVersie" text="De versie waarin de categorie gebruikt wordt." />
+	<tip id="tipAddCatBedrijf" text="Het bedrijf waarin de categorie gebruikt wordt." />
+	<tip id="tipAddParentcat" text="De hoofdcategorie waar deze categorie onder staat. De categorie 'root_node' is het begin van de structuur." />
+	
+	<tip id="tipEditCategorie" text="De categorie die u wilt wijzigen." />
+	<tip id="tipCatbewerknaam" text="De naam van de categorie." />
+	<tip id="tipEditCatHoogte" text="De hoogte van de categorie. Mag enkel positieve gehele nummers bevatten. Deze waarde is standaard de eerstvolgende hoogte in de categorie." />
+	<tip id="tipEditCatTaal" text="De taal van de categorie." />
+	<tip id="tipEditCatVersie" text="De versie waarin de categorie gebruikt wordt." />
+	<tip id="tipEditCatBedrijf" text="Het bedrijf waarin de categorie gebruikt wordt." />
+	<tip id="tipEditCatParent" text="De hoofdcategorie waar deze categorie onder staat. De categorie 'root_node' is het begin van de structuur." />
+	<tip id="tipEditCatTaalkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op taal." />
+	<tip id="tipEditCatVersiekeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op versie." />
+	<tip id="tipEditCatBedrijfkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />
+	
+	<tip id="tipCatDelTaalkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op taal." />
+	<tip id="lbltipCatDelVersiekeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op versie." />
+	<tip id="tipCatDelBedrijfkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />
+	<tip id="tipCatVerwijder" text="De categorie die u wilt verwijderen." />
+	
+	<!-- Applicatiebeheer -->
+	<tip id="tipTreesAantal" text="Het aantal boomstructuren momenteel opgeslagen in het geheugen. De meeste hiervan zullen leeg zijn, klaar om nieuwe categorieën en artikels te ontvangen." />
+	<tip id="tipTreesAantalCats" text="Het totale aantal categorieën momenteel opgeslagen in het geheugen." />
+	<tip id="tipTreesAantalArts" text="Het totale aantal artikels momenteel opgeslagen in het geheugen." />
+	<tip id="tipTreesWeergeven" text="Kies een boomstructuur uit de lijst en druk op de 'Weergeven'-knop om de volledige structuur te zien." />
+	<tip id="tipTreesHerbouwen" text="Herbouwt alle boomstructuren: voor elke mogelijke combinatie van versie, taal en bedrijf wordt er een structuur opgebouwd." />
+	
+	<tip id="tipAantalTooltips" text="Het totale aantal tooltips momenteel opgeslagen in het geheugen." />
+	<tip id="tipHerlaadTooltips" text="Herbouwt volledig de tooltiplijst. Gebruik dit indien u aanpassingen heeft uitgevoerd aan de tooltiplijst." />
 	</tooltips>

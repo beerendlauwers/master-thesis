@@ -60,4 +60,13 @@ Public Class Util
         Return returnstring
     End Function
 
+    Public Shared Sub CheckOfBeheerder(ByVal pagina As String)
+        If HttpContext.Current.Session("login") IsNot Nothing Then
+            If HttpContext.Current.Session("login") = 0 Then
+                HttpContext.Current.Session("vorigePagina") = pagina
+            End If
+        Else
+            HttpContext.Current.Response.Redirect("Aanmeldpagina.aspx")
+        End If
+    End Sub
 End Class

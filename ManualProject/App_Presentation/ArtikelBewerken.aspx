@@ -2,11 +2,13 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc2" %>
 
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit.HTMLEditor"
-    TagPrefix="cc1" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel Bewerken</title>
+    <link href="CSS/prototip.css" rel="stylesheet" type="text/css" />
+    <script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
+    <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
+    <script src="JS/ckeditor/ckeditor.js" language="javascript" type="text/javascript"></script>
+    <script src="JS/ckfinder/ckfinder.js" language="javascript" type="text/javascript"></script>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">
     Artikel Bewerken

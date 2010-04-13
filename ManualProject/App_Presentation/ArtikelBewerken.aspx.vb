@@ -178,7 +178,7 @@ Partial Class App_Presentation_ArtikelBewerken
             Dim taaldal As New TaalDAL
             Dim oudetag As String = Session("oudetag")
             Dim i As Integer
-            i = taaldal.updateTagTalen(oudetag, artikel.Tag)
+            'i = taaldal.updateTagTalen(oudetag, artikel.Tag)
             If i = 0 Then
                 lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
             End If
@@ -443,21 +443,21 @@ Partial Class App_Presentation_ArtikelBewerken
         Dim lijst As New List(Of Tooltip)
 
         'Alle tooltips voor onze pagina toevoegen
-        lijst.Add(New Tooltip("tipZoekTitel", XML.GetTip("ARTIKELBEWERKEN_ZOEKTITEL")))
-        lijst.Add(New Tooltip("tipTaalVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_TAAL")))
-        lijst.Add(New Tooltip("tipBedrijfVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_BEDRIJF")))
-        lijst.Add(New Tooltip("tipVersieVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_VERSIE")))
-        lijst.Add(New Tooltip("tipIsFinaalVerfijnen", XML.GetTip("ARTIKELVERWIJDEREN_ISFINAAL")))
-        lijst.Add(New Tooltip("tipZoekTag", XML.GetTip("ARTIKELBEWERKEN_ZOEKTAG")))
-        lijst.Add(New Tooltip("tipTag", XML.GetTip("ARTIKELBEWERKEN_TAG")))
-        lijst.Add(New Tooltip("tipTitel", XML.GetTip("ARTIKELBEWERKEN_TITEL")))
-        lijst.Add(New Tooltip("tipTaal", XML.GetTip("ARTIKELBEWERKEN_TAAL")))
-        lijst.Add(New Tooltip("tipBedrijf", XML.GetTip("ARTIKELBEWERKEN_BEDRIJF")))
-        lijst.Add(New Tooltip("tipVersie", XML.GetTip("ARTIKELBEWERKEN_VERSIE")))
-        lijst.Add(New Tooltip("tipCategorie", XML.GetTip("ARTIKELBEWERKEN_CATEGORIE")))
-        lijst.Add(New Tooltip("tipFinaal", XML.GetTip("ARTIKELBEWERKEN_FINAAL")))
-        lijst.Add(New Tooltip("tipUpload", XML.GetTip("ARTIKELBEWERKEN_AFBEELDING")))
-        lijst.Add(New Tooltip("tipSjabloon", XML.GetTip("ARTIKELTOEVOEGEN_SJABLOON")))
+        lijst.Add(New Tooltip("tipZoekTitel"))
+        lijst.Add(New Tooltip("tipTaalVerfijnen"))
+        lijst.Add(New Tooltip("tipBedrijfVerfijnen"))
+        lijst.Add(New Tooltip("tipVersieVerfijnen"))
+        lijst.Add(New Tooltip("tipIsFinaalVerfijnen"))
+        lijst.Add(New Tooltip("tipZoekTag"))
+        lijst.Add(New Tooltip("tipTag"))
+        lijst.Add(New Tooltip("tipTitel"))
+        lijst.Add(New Tooltip("tipTaal"))
+        lijst.Add(New Tooltip("tipBedrijf"))
+        lijst.Add(New Tooltip("tipVersie"))
+        lijst.Add(New Tooltip("tipCategorie"))
+        lijst.Add(New Tooltip("tipFinaal"))
+        lijst.Add(New Tooltip("tipUpload"))
+        lijst.Add(New Tooltip("tipSjabloon"))
 
 
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.

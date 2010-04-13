@@ -13,6 +13,7 @@ End Structure
 Public Class XML
     Private _xml As String
     Private _xsl As String
+    Private Shared _parseLock As New Object
     Private Shared FTooltips As List(Of XMLTooltip)
 
     Private Shared Function GetTooltips() As List(Of XMLTooltip)
@@ -25,26 +26,36 @@ Public Class XML
         Return FTooltips
     End Function
 
-    Private Shared Sub ParseTooltips()
-        FTooltips = New List(Of XMLTooltip)
+    Public Shared Function GetTipCount() As Integer
+        Return FTooltips.Count
+    End Function
 
-        Dim locatie As String = HttpContext.Current.Server.MapPath("~/App_Data/tooltips.xml")
+    Public Shared Sub ParseTooltips()
 
-        'Document laden
-        Dim xml As New XmlDocument()
-        xml.Load(locatie)
+        SyncLock _parseLock
 
-        'root node ophalen
-        Dim root As XmlNode = xml.DocumentElement
+            FTooltips = New List(Of XMLTooltip)
 
-        'Alle tooltips uitlezen
-        For Each child As XmlNode In root.ChildNodes
-            Dim tip As New XMLTooltip
-            tip.ID = child.Attributes.GetNamedItem("id").Value
-            tip.Text = child.Attributes.GetNamedItem("text").Value
-            FTooltips.Add(tip)
-        Next child
+            Dim locatie As String = HttpContext.Current.Server.MapPath("~/App_Data/tooltips.xml")
 
+            'Document laden
+            Dim xml As New XmlDocument()
+            xml.Load(locatie)
+
+            'root node ophalen
+            Dim root As XmlNode = xml.DocumentElement
+
+            'Alle tooltips uitlezen
+            For Each child As XmlNode In root.ChildNodes
+                If child.NodeType = XmlNodeType.Comment Then Continue For
+
+                Dim tip As New XMLTooltip
+                tip.ID = child.Attributes.GetNamedItem("id").Value
+                tip.Text = child.Attributes.GetNamedItem("text").Value
+                FTooltips.Add(tip)
+            Next child
+
+        End SyncLock
     End Sub
 
     Public Shared Function GetTip(ByVal ID As String) As String

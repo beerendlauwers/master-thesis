@@ -29,12 +29,11 @@ Public Class Tooltip
     ''' <summary>
     ''' Maak een nieuwe Tooltip aan.
     ''' </summary>
-    ''' <param name="naam">Het ID van de html-tag (div, span, etc) waarop de tooltip moet komen.</param>
-    ''' <param name="tekst">De tekst die in de tooltip komt te staan.</param>
+    ''' <param name="naam">Het ID van de html-tag (div, span, etc) waarop de tooltip moet komen. Dit is tevens het ID van de XML-tag in 'tooltips.xml'.</param>
     ''' <param name="standaardOpties">Een boolean die bepaalt of je de standaardlayout van een tooltip wilt gebruiken. Default is true.</param>
-    Public Sub New(ByVal naam As String, ByVal tekst As String, Optional ByVal standaardOpties As Boolean = True)
+    Public Sub New(ByVal naam As String, Optional ByVal standaardOpties As Boolean = True)
         _naam = naam
-        _tekst = tekst
+        _tekst = XML.GetTip(naam)
         _opties = New List(Of String)
 
         If standaardOpties Then

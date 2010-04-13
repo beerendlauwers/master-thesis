@@ -33,12 +33,12 @@ Partial Class App_Presentation_verwijderenTekst
         Dim lijst As New List(Of Tooltip)
 
         'Alle tooltips voor onze pagina toevoegen
-        lijst.Add(New Tooltip("tipZoekTitel", XML.GetTip("ARTIKELVERWIJDEREN_TITEL")))
-        lijst.Add(New Tooltip("tipZoekTag", XML.GetTip("ARTIKELVERWIJDEREN_TAG")))
-        lijst.Add(New Tooltip("tipTaal", XML.GetTip("ARTIKELVERWIJDEREN_TAAL")))
-        lijst.Add(New Tooltip("tipBedrijf", XML.GetTip("ARTIKELVERWIJDEREN_BEDRIJF")))
-        lijst.Add(New Tooltip("tipVersie", XML.GetTip("ARTIKELVERWIJDEREN_VERSIE")))
-        lijst.Add(New Tooltip("tipIsFinaal", XML.GetTip("ARTIKELVERWIJDEREN_ISFINAAL")))
+        lijst.Add(New Tooltip("tipZoekTitelVerwijderen"))
+        lijst.Add(New Tooltip("tipZoekTagVerwijderen"))
+        lijst.Add(New Tooltip("tipTaalKeuze"))
+        lijst.Add(New Tooltip("tipBedrijfKeuze"))
+        lijst.Add(New Tooltip("tipVersieKeuze"))
+        lijst.Add(New Tooltip("tipIsFinaalKeuze"))
 
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then

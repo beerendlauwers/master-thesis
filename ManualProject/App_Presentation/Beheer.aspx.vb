@@ -1049,6 +1049,7 @@ Partial Class App_Presentation_Beheer
 
         If Not IsPostBack Then
             LaadTreeGegevens()
+            LaadTooltipInfo()
         End If
 
         If Session("login") = 1 Then
@@ -1059,6 +1060,7 @@ Partial Class App_Presentation_Beheer
             Response.Redirect("Aanmeldpagina.aspx")
             divLoggedIn.Visible = False
         End If
+
     End Sub
 
     Private Sub LaadTooltips()
@@ -1069,55 +1071,63 @@ Partial Class App_Presentation_Beheer
         'Alle tooltips voor onze pagina toevoegen
 
         'Bedrijfbeheer
-        lijst.Add(New Tooltip("tipAddBedrijf", XML.GetTip("BEHEER_BEDRIJF_NAAM")))
-        lijst.Add(New Tooltip("tipAddTag", XML.GetTip("BEHEER_BEDRIJF_TAG")))
-        lijst.Add(New Tooltip("tipEditBedrijf", XML.GetTip("BEHEER_BEDRIJF_NAAM")))
-        lijst.Add(New Tooltip("tipEditTag", XML.GetTip("BEHEER_BEDRIJF_TAG")))
-        lijst.Add(New Tooltip("tipBewerkBedrijf", XML.GetTip("BEHEER_BEDRIJF_BEWERKEN")))
-        lijst.Add(New Tooltip("tipDeleteBedrijf", XML.GetTip("BEHEER_BEDRIJF_VERWIJDEREN")))
+        lijst.Add(New Tooltip("tipAddBedrijf"))
+        lijst.Add(New Tooltip("tipAddTag"))
+        lijst.Add(New Tooltip("tipEditBedrijf"))
+        lijst.Add(New Tooltip("tipEditTag"))
+        lijst.Add(New Tooltip("tipBewerkBedrijf"))
+        lijst.Add(New Tooltip("tipDeleteBedrijf"))
 
         'Taalbeheer
-        lijst.Add(New Tooltip("tipAddTaal", XML.GetTip("BEHEER_TAAL_NAAM")))
-        lijst.Add(New Tooltip("tipTaalAfkorting", XML.GetTip("BEHEER_TAAL_AFKORTING")))
-        lijst.Add(New Tooltip("tipEditTaal", XML.GetTip("BEHEER_TAAL_NAAM")))
-        lijst.Add(New Tooltip("tipEditAfkorting", XML.GetTip("BEHEER_TAAL_AFKORTING")))
-        lijst.Add(New Tooltip("tipBewerkTaal", XML.GetTip("BEHEER_TAAL_BEWERKEN")))
-        lijst.Add(New Tooltip("tipTaalDelete", XML.GetTip("BEHEER_TAAL_VERWIJDEREN")))
+        lijst.Add(New Tooltip("tipAddTaal"))
+        lijst.Add(New Tooltip("tipTaalAfkorting"))
+        lijst.Add(New Tooltip("tipEditTaal"))
+        lijst.Add(New Tooltip("tipEditAfkorting"))
+        lijst.Add(New Tooltip("tipBewerkTaal"))
+        lijst.Add(New Tooltip("tipTaalDelete"))
 
         'Versiebeheer
-        lijst.Add(New Tooltip("tipAddVersie", XML.GetTip("BEHEER_VERSIE_NIEUW_NUMMER")))
-        lijst.Add(New Tooltip("tipEditVersie", XML.GetTip("BEHEER_VERSIE_BEWERKEN_NUMMER")))
-        lijst.Add(New Tooltip("tipVersieKopieren", XML.GetTip("BEHEER_VERSIE_KOPIEREN_NUMMER")))
-        lijst.Add(New Tooltip("tipNaamVersieKopie", XML.GetTip("BEHEER_VERSIE_NIEUW_NUMMER")))
-        lijst.Add(New Tooltip("tipAantalCategorien", XML.GetTip("BEHEER_VERSIE_KOPIEREN_AANTALCAT")))
-        lijst.Add(New Tooltip("tipAantalArtikels", XML.GetTip("BEHEER_VERSIE_KOPIEREN_AANTALART")))
-        lijst.Add(New Tooltip("tipBewerkVersie", XML.GetTip("BEHEER_VERSIE_BEWERKEN")))
-        lijst.Add(New Tooltip("tipDeleteVersie", XML.GetTip("BEHEER_VERSIE_VERWIJDEREN")))
+        lijst.Add(New Tooltip("tipAddVersie"))
+        lijst.Add(New Tooltip("tipEditVersie"))
+        lijst.Add(New Tooltip("tipVersieKopieren"))
+        lijst.Add(New Tooltip("tipNaamVersieKopie"))
+        lijst.Add(New Tooltip("tipAantalCategorien"))
+        lijst.Add(New Tooltip("tipAantalArtikels"))
+        lijst.Add(New Tooltip("tipBewerkVersie"))
+        lijst.Add(New Tooltip("tipDeleteVersie"))
 
         'Categoriebeheer
-        lijst.Add(New Tooltip("tipAddCatnaam", XML.GetTip("BEHEER_CATEGORIE_NAAM")))
-        lijst.Add(New Tooltip("tipAddhoogte", XML.GetTip("BEHEER_CATEGORIE_HOOGTE")))
-        lijst.Add(New Tooltip("tipAddCatTaal", XML.GetTip("BEHEER_CATEGORIE_TAAL")))
-        lijst.Add(New Tooltip("tipAddCatVersie", XML.GetTip("BEHEER_CATEGORIE_VERSIE")))
-        lijst.Add(New Tooltip("tipAddCatBedrijf", XML.GetTip("BEHEER_CATEGORIE_BEDRIJF")))
-        lijst.Add(New Tooltip("tipAddParentcat", XML.GetTip("BEHEER_CATEGORIE_CATEGORIE")))
+        lijst.Add(New Tooltip("tipAddCatnaam"))
+        lijst.Add(New Tooltip("tipAddhoogte"))
+        lijst.Add(New Tooltip("tipAddCatTaal"))
+        lijst.Add(New Tooltip("tipAddCatVersie"))
+        lijst.Add(New Tooltip("tipAddCatBedrijf"))
+        lijst.Add(New Tooltip("tipAddParentcat"))
 
-        lijst.Add(New Tooltip("tipEditCatTaalkeuze", XML.GetTip("BEHEER_CATEGORIE_FILTERTAAL")))
-        lijst.Add(New Tooltip("tipEditCatVersiekeuze", XML.GetTip("BEHEER_CATEGORIE_FILTERVERSIE")))
-        lijst.Add(New Tooltip("tipEditCatBedrijfkeuze", XML.GetTip("BEHEER_CATEGORIE_FILTERBEDRIJF")))
+        lijst.Add(New Tooltip("tipEditCatTaalkeuze"))
+        lijst.Add(New Tooltip("tipEditCatVersiekeuze"))
+        lijst.Add(New Tooltip("tipEditCatBedrijfkeuze"))
 
-        lijst.Add(New Tooltip("tipEditCategorie", "De categorie die u wilt wijzigen."))
-        lijst.Add(New Tooltip("tipCatbewerknaam", XML.GetTip("BEHEER_CATEGORIE_NAAM")))
-        lijst.Add(New Tooltip("tipEditCatHoogte", XML.GetTip("BEHEER_CATEGORIE_HOOGTE")))
-        lijst.Add(New Tooltip("tipEditCatTaal", XML.GetTip("BEHEER_CATEGORIE_TAAL")))
-        lijst.Add(New Tooltip("tipEditCatVersie", XML.GetTip("BEHEER_CATEGORIE_VERSIE")))
-        lijst.Add(New Tooltip("tipEditCatBedrijf", XML.GetTip("BEHEER_CATEGORIE_BEDRIJF")))
-        lijst.Add(New Tooltip("tipEditCatParent", XML.GetTip("BEHEER_CATEGORIE_CATEGORIE")))
+        lijst.Add(New Tooltip("tipEditCategorie"))
+        lijst.Add(New Tooltip("tipCatbewerknaam"))
+        lijst.Add(New Tooltip("tipEditCatHoogte"))
+        lijst.Add(New Tooltip("tipEditCatTaal"))
+        lijst.Add(New Tooltip("tipEditCatVersie"))
+        lijst.Add(New Tooltip("tipEditCatBedrijf"))
+        lijst.Add(New Tooltip("tipEditCatParent"))
 
-        lijst.Add(New Tooltip("tipCatDelTaalkeuze", XML.GetTip("BEHEER_CATEGORIE_FILTERTAAL")))
-        lijst.Add(New Tooltip("lbltipCatDelVersiekeuze", XML.GetTip("BEHEER_CATEGORIE_FILTERVERSIE")))
-        lijst.Add(New Tooltip("tipCatDelBedrijfkeuze", XML.GetTip("BEHEER_CATEGORIE_FILTERBEDRIJF")))
-        lijst.Add(New Tooltip("tipCatVerwijder", XML.GetTip("BEHEER_CATEGORIE_VERWIJDEREN")))
+        lijst.Add(New Tooltip("tipCatDelTaalkeuze"))
+        lijst.Add(New Tooltip("lbltipCatDelVersiekeuze"))
+        lijst.Add(New Tooltip("tipCatDelBedrijfkeuze"))
+        lijst.Add(New Tooltip("tipCatVerwijder"))
+
+        lijst.Add(New Tooltip("tipTreesAantal"))
+        lijst.Add(New Tooltip("tipTreesAantalCats"))
+        lijst.Add(New Tooltip("tipTreesAantalArts"))
+        lijst.Add(New Tooltip("tipTreesWeergeven"))
+        lijst.Add(New Tooltip("tipTreesHerbouwen"))
+        lijst.Add(New Tooltip("tipAantalTooltips"))
+        lijst.Add(New Tooltip("tipHerlaadTooltips"))
 
         'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
         If Page.IsPostBack Then
@@ -1178,6 +1188,12 @@ Partial Class App_Presentation_Beheer
         'Verwijderen
         JavaScript.ZetButtonOpDisabledOnClick(btnCatDelete, "Verwijderen...", True, True)
         JavaScript.ZetButtonOpDisabledOnClick(btnCatDelFilteren, "Filteren...", True, True)
+
+        'Applicatie-onderhoud
+        JavaScript.ZetButtonOpDisabledOnClick(btnTreeWeergeven, "Bezig met opbouwen...", True, True)
+
+        JavaScript.ZetButtonOpDisabledOnClick(btnHerlaadTooltips, "Herladen...", True, True)
+
     End Sub
 
     Private Sub LaadTreeGegevens()
@@ -1189,9 +1205,9 @@ Partial Class App_Presentation_Beheer
         Dim aantalCats As Integer = 0
         Dim aantalArts As Integer = 0
         For Each t As Tree In Tree.GetTrees
-            ddlTreesWeergeven.Items.Add(New ListItem(t.Naam))
             aantalCats = t.RootNode.GetRecursiveCategorieCount(aantalCats)
             aantalArts = t.RootNode.GetRecursiveArtikelCount(aantalArts)
+            ddlTreesWeergeven.Items.Add(New ListItem(t.Naam))
         Next t
 
         lblTreesAantalCats.Text = aantalCats
@@ -1202,13 +1218,25 @@ Partial Class App_Presentation_Beheer
 #End Region
 
 
-    Protected Sub ddlTreesWeergeven_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTreesWeergeven.SelectedIndexChanged
+    Protected Sub btnTreeWeergeven_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTreeWeergeven.Click
+        If ddlTreesWeergeven.SelectedItem.Text = "-- Boomstructuur --" Then Return
 
         Dim t As Tree = Tree.GetTree(ddlTreesWeergeven.SelectedItem.Text)
-        lblTreeWeergave.InnerHTML = t.LeesTree(String.Empty, t.RootNode, -1)
-        updTreeWeergave.Update()
+        Session("LeesTreeTitel") = t.Naam
+        Session("LeesTree") = t.LeesTree(String.Empty, t.RootNode, -1)
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "genericPopup('TreeWeergeven.aspx',800,800, 1);")
+    End Sub
 
-        mpeTreeWeergave.Show()
+    Protected Sub btnOk_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOk.Click
+        Tree.BouwTrees()
+    End Sub
 
+    Protected Sub btnHerlaadTooltips_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnHerlaadTooltips.Click
+        XML.ParseTooltips()
+        LaadTooltipInfo()
+    End Sub
+
+    Private Sub LaadTooltipInfo()
+        lblAantalTooltips.Text = XML.GetTipCount
     End Sub
 End Class

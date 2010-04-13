@@ -4,6 +4,9 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel Verwijderen</title>
+    <link href="CSS/prototip.css" rel="stylesheet" type="text/css" />
+    <script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
+    <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
 </asp:Content>
 <asp:Content runat="server" ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel">Artikel Verwijderen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
@@ -45,22 +48,22 @@
 <tr>
 <td class="lbl"><asp:Label ID="lblVersie" runat="server" Text="Versie: "></asp:Label></td>
 <td><asp:DropDownList ID="ddlVersie" runat="server" Width="100%"></asp:DropDownList></td>
-<td><span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span></td>
+<td><span style="vertical-align:middle" id='tipVersieKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal: "></asp:Label></td>
 <td><asp:DropDownList ID="ddlTaal" runat="server" Width="100%"></asp:DropDownList></td>
-<td><span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span></td>
+<td><span style="vertical-align:middle" id='tipTaalKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label></td>
 <td><asp:DropDownList ID="ddlBedrijf" runat="server" Width="100%"></asp:DropDownList></td>
-<td><span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span></td>
+<td><span style="vertical-align:middle" id='tipBedrijfKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblFinaal" runat="server" Text="Artikel is finaal: "></asp:Label></td>
 <td><asp:DropDownList ID="ddlIsFInaal" runat="server" Width="100%"></asp:DropDownList></td>
-<td><span style="vertical-align:middle" id='tipIsFinaal'><img src="CSS/images/help.png" alt=''/></span></td>
+<td><span style="vertical-align:middle" id='tipIsFinaalKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <th align="left">Zoeken op...</th>
@@ -73,7 +76,7 @@
             ID="extSearchTitel" runat="server" TargetControlID="vleZoekTitel"></cc1:ValidatorCalloutExtender>
 </td>
 <td>
-<span style="vertical-align:middle" id="tipZoekTitel"><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id="tipZoekTitelVerwijderen"><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 <tr>
@@ -84,7 +87,7 @@
             ID="extSearchTag" runat="server" TargetControlID="vleZoekTag"></cc1:ValidatorCalloutExtender>
 </td>
 <td>
-<span style="vertical-align:middle" id="tipZoekTag"><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id="tipZoekTagVerwijderen"><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 

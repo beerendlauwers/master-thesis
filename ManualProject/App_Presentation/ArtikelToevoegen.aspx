@@ -1,17 +1,24 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="ArtikelToevoegen.aspx.vb" Inherits="App_Presentation_invoerenTest" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" ValidateRequest="false" CodeFile="ArtikelToevoegen.aspx.vb" Inherits="App_Presentation_invoerenTest" title="Untitled Page" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc2" %>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit.HTMLEditor"
     TagPrefix="cc1" %>
+    
+<%@ Register Assembly="FredCK.CKEditor" Namespace="FredCK.CKEditor" TagPrefix="FredCK" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel toevoegen</title>
+    <link href="CSS/prototip.css" rel="stylesheet" type="text/css" />
+    <script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
+    <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
+    <script src="JS/ckeditor/ckeditor.js" language="javascript" type="text/javascript"></script>
+    <script src="JS/ckfinder/ckfinder.js" language="javascript" type="text/javascript"></script>
        
     </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">Artikel Toevoegen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-<div runat="server" id="divLoggedIn">
+    <div runat="server" id="divLoggedIn">
     
 <div id="divInvullen">
 
@@ -31,7 +38,7 @@
         </cc2:ValidatorCalloutExtender>
 </td>
 <td>
-<span style="vertical-align:middle" id='tipTitel'><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id='tipTitelArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
@@ -49,40 +56,40 @@
         ValidChars="_"></cc2:FilteredTextBoxExtender>
 	    </td>
 	    <td>
-	    <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
+	    <span style="vertical-align:middle" id='tipTagArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
 	    </td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlTaal" runat="server" DataSourceID="objdTaal" 
+<td><asp:DropDownList ID="ddlTaal" runat="server" 
         DataTextField="Taal" DataValueField="TaalID" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
 </td>
 <td>
-<span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id='tipTaalArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
+<td><asp:DropDownList ID="ddlBedrijf" runat="server"  
         DataTextField="Naam" DataValueField="BedrijfID" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
 </td>
 <td>
-<span style="vertical-align:middle" id='tipBedrijf'><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id='tipBedrijfArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
 <tr>
 <td class="lbl"><asp:Label ID="lblVersie" runat="server" Text="Versie:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie" 
+<td><asp:DropDownList ID="ddlVersie" runat="server"  
     DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
 </td>
 <td>
-<span style="vertical-align:middle" id='tipVersie'><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id='tipVersieArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
@@ -94,7 +101,7 @@
 <asp:Label runat="server" ID="lblGeenCategorie" Visible="false" Text="Er zijn geen categorieën beschikbaar."></asp:Label>
 </td>
 <td>
-<span style="vertical-align:middle" id='tipCategorie'><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id='tipCategorieArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 <td>
     <asp:UpdateProgress ID="prgCategorie" runat="server" AssociatedUpdatePanelID="updCategorie">
@@ -111,7 +118,7 @@
 <tr>
 <td class="lbl"><asp:Label ID="lblFinaal" runat="server" Text="Finale versie:"></asp:Label></td>
 <td><asp:CheckBox ID="ckbFinaal" runat="server" />
-<span style="vertical-align:middle" id='tipFinaal'><img src="CSS/images/help.png" alt=''/></span>
+<span style="vertical-align:middle" id='tipFinaalArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
 </td>
 </tr>
 
@@ -124,73 +131,24 @@
 
 <asp:UpdatePanel ID="updContent" runat="server" UpdateMode="Conditional">
 <ContentTemplate>
-
 <table>
 <tr>
-<td align="center">Sjabloon selecteren&nbsp;<span style="vertical-align:middle" id='tipSjabloon'><img src="CSS/images/help.png" alt=''/></span></td>
-<td align="center">Afbeelding toevoegen&nbsp;<span style="vertical-align:middle" id='tipUpload'><img src="CSS/images/help.png" alt=''/></span></td>
+<td align="center">Sjabloon selecteren&nbsp;<span style="vertical-align:middle" id='tipSjabloonArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td align="center"><asp:ListBox runat="server" ID="lstSjablonen" width="100%"></asp:ListBox></td>
-<td align="center">
-<asp:UpdatePanel runat="server" id="updAfbeelding" UpdateMode="Conditional">
-<ContentTemplate>
-
-<asp:FileUpload runat="server" ID="uplAfbeelding" onchange="checkExtensies(this);" width="100%" />
-    <asp:UpdateProgress ID="prgAfbeelding" runat="server" AssociatedUpdatePanelID="updAfbeelding">
-    <ProgressTemplate>
-    <div class="update">
-    <img src="CSS/Images/ajaxloader.gif" />
-    Bezig met uploaden...
-    </div>
-    </ProgressTemplate>
-    </asp:UpdateProgress>
-    
-    <script type="text/javascript">
-
-function checkExtensies( filename )
-{
-    var lijst = filename.value.split('.');
-    var ext = lijst.pop();
-
-    if(  ext == 'gif' || ext == 'jpg' || ext == 'jpeg' || ext == 'png' )
-    {
-        document.getElementById('lblFeedback').innerHTML = '';
-        document.getElementById('lblFeedback').style.display = 'none';
-        document.getElementById('<%=btnImageToevoegen.ClientID %>').style.display = 'inline';
-        return true;
-    }
-    else
-    {
-        document.getElementById('lblFeedback').innerHTML = 'Dit is geen geldige afbeelding.<br/> Enkel JPEG, GIF en PNG-afbeeldingen zijn toegestaan.';
-        document.getElementById('lblFeedback').style.display = 'inline';
-        document.getElementById('<%=btnImageToevoegen.ClientID %>').style.display = 'none';
-        return false;
-    }
-}
-
-</script>
-    
-</ContentTemplate>
-<Triggers>
-<asp:PostBackTrigger ControlID="btnImageToevoegen" />
-</Triggers>
-</asp:UpdatePanel>
-</td>
 </tr>
 <tr>
 <td align="center"><asp:Button runat="server" ID="btnSjablonen" Text="Sjabloon Toevoegen" width="100%" CausesValidation="false" style="vertical-align:middle;" /></td>
-<td align="center"><asp:button runat="server" ID="btnImageToevoegen" Text="Afbeelding Toevoegen"  width="100%" CausesValidation="false"  style="vertical-align:middle;" /><span id="lblFeedback"  style="vertical-align:middle;display:none"></span></td>
 </tr>
 </table>
 <br />
-    <div>
-    <a href="#" onclick="VeranderEditorScherm(200);">Vergroot Editor</a>
-    &nbsp;|&nbsp;
-    <a href="#" onclick="VeranderEditorScherm(-200);">Verklein Editor</a>
-    </div>
+    <FredCK:CKEditor runat="server" ID="EditorToevoegen" Height="600"></FredCK:CKEditor>
+    <script type="text/javascript">
+    CKFinder.SetupCKEditor( null, 'JS/ckfinder/' );
+    </script>
+			
 
-<cc1:Editor ID="Editor1" runat="server" CssClass="editorWindow"/>
 
 
 </ContentTemplate>
@@ -211,85 +169,13 @@ function checkExtensies( filename )
     </asp:UpdateProgress>
     <div runat="server" id="divFeedback" visible="false">
         <asp:Image ID="imgResultaat" runat="server" />&nbsp;<asp:Label ID="lblresultaat" runat="server"></asp:Label><br />
-        <input id="btnNieuwArtikel" type="button" value="Nog een artikel toevoegen" onclick="window.location = 'ArtikelToevoegen.aspx'" />
+    </div>
+    <div runat="server" id="divNogEenArtikelToevoegen" visible="false">
+    <input id="btnNieuwArtikel" type="button" value="Nog een artikel toevoegen" onclick="window.location = 'ArtikelToevoegen.aspx'" />
     </div>
 </ContentTemplate>
     </asp:UpdatePanel>
 </div>
-
-
-    <asp:ObjectDataSource ID="objdTaal" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="ManualTableAdapters.tblTaalTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_TaalID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="Taal" Type="String" />
-            <asp:Parameter Name="Original_TaalID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="TaalID" Type="Int32" />
-            <asp:Parameter Name="Taal" Type="String" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
-    <asp:ObjectDataSource ID="objdCategorie" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="ManualTableAdapters.tblCategorieTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_CategorieID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="Categorie" Type="String" />
-            <asp:Parameter Name="Diepte" Type="Int32" />
-            <asp:Parameter Name="Hoogte" Type="Int32" />
-            <asp:Parameter Name="FK_parent" Type="Int32" />
-            <asp:Parameter Name="FK_taal" Type="Int32" />
-            <asp:Parameter Name="Original_CategorieID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="CategorieID" Type="Int32" />
-            <asp:Parameter Name="Categorie" Type="String" />
-            <asp:Parameter Name="Diepte" Type="Int32" />
-            <asp:Parameter Name="Hoogte" Type="Int32" />
-            <asp:Parameter Name="FK_parent" Type="Int32" />
-            <asp:Parameter Name="FK_taal" Type="Int32" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
-    <asp:ObjectDataSource ID="objdBedrijf" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="ManualTableAdapters.tblBedrijfTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_BedrijfID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="Naam" Type="String" />
-            <asp:Parameter Name="Original_BedrijfID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="BedrijfID" Type="Int32" />
-            <asp:Parameter Name="Naam" Type="String" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
-
-    <asp:ObjectDataSource ID="objdVersie" runat="server" DeleteMethod="Delete" 
-        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
-        SelectMethod="GetData" TypeName="ManualTableAdapters.tblVersieTableAdapter" 
-        UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_VersieID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="Versie" Type="String" />
-            <asp:Parameter Name="Original_VersieID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="Versie" Type="String" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
 
     <br />
     </div>

@@ -7,7 +7,10 @@ Imports ManualTableAdapters
 
 Public Class ArtikelDAL
     Private conn As String = ConfigurationManager.ConnectionStrings("Reference_manualConnectionString").ConnectionString()
-    Private _tblArtikelAdapter As New tblArtikelTableAdapter
+
+    Public Function StdAdapter() As tblArtikelTableAdapter
+        Return New tblArtikelTableAdapter
+    End Function
 
     ''' <summary>
     ''' Haal alle artikels op die onder een bepaalde categorie staan.
