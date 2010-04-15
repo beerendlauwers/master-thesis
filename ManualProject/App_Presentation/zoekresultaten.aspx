@@ -1,4 +1,5 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="zoekresultaten.aspx.vb" Inherits="App_Presentation_zoekresultaten" title="Untitled Page" EnableEventValidation="true"%>
+<%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Zoekresultaten</title>
@@ -10,20 +11,17 @@
 
    
 
-    <h4 style="text-align:center;">Artikels die overeenkomen met uw zoektekst:</h4>
+    <h4 style="text-align:center;" runat="server" id="headerArtikels">Artikels die overeenkomen met uw zoektekst:</h4>
     <asp:Label ID="lblSort" runat="server" Text="Klik op één van de kolommen om de items volgens deze waarde te sorteren." Visible="false" style="text-align:center;width:100%;float:right;"></asp:Label><br />
     <div id="gridview">
     <asp:UpdatePanel runat="server" ID="updZoekresultaten" EnableViewState="False"><ContentTemplate>
-    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" AllowPaging="True" 
+    <asp:GridView ID="grdResultaten" runat="server" AutoGenerateColumns="False" AllowPaging="True" 
         AllowSorting="True" Width="100%" PageSize="30" 
             PagerStyle-CssClass="gridview_pager" EmptyDataText="Geen data gevonden" 
             DataSourceID="sqldsArtikel" EnableViewState="False">
     <Columns>
             <asp:BoundField DataField="titel" HeaderText="Titel" SortExpression="titel" />
             <asp:BoundField DataField="tag" HeaderText="Tag" SortExpression="tag" />
-            <%--<asp:BoundField DataField="Versie" HeaderText="Versie" 
-                SortExpression="Versie" />
-            <asp:BoundField DataField="taal" HeaderText="Taal" SortExpression="taal" />--%>
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                 ShowSelectButton="True" />
@@ -37,12 +35,6 @@
         
     </asp:GridView>
     <br />
-    <asp:UpdateProgress runat="server" ID="prgZoekresultaten"><ProgressTemplate>
-                                    <div style="vertical-align:middle;text-align:center;">
-                                    <img src="CSS/Images/ajaxloader.gif" />
-                                    Even wachten aub...
-                                </div>
-    </ProgressTemplate></asp:UpdateProgress>
     </ContentTemplate></asp:UpdatePanel>
     </div>
 <br />

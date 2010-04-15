@@ -1,6 +1,7 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="ArtikelBewerken.aspx.vb" Inherits="App_Presentation_ArtikelBewerken" title="Untitled Page"%>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc2" %>
+<%@ Register Assembly="FredCK.CKEditor" Namespace="FredCK.CKEditor" TagPrefix="FredCK" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel Bewerken</title>
@@ -61,7 +62,7 @@
         </cc2:ValidatorCalloutExtender>
     </td>
     <td>
-        <span ID="tipZoekTitel" style="vertical-align: middle">
+        <span id="tipZoekTitel" style="vertical-align: middle">
         <img alt="" src="CSS/images/help.png" /></span></td>
     <tr>
         <td class="lbl">
@@ -93,7 +94,7 @@
             <asp:UpdateProgress ID="prgZoeken" runat="server" 
                 AssociatedUpdatePanelID="updZoeken" DisplayAfter="0">
                 <ProgressTemplate>
-                    <div style="vertical-align: middle">
+                    <div style="vertical-align: middle;">
                         <img src="CSS/Images/ajaxloader.gif" /> Even wachten aub...
                     </div>
                 </ProgressTemplate>
@@ -256,39 +257,9 @@ function ValideerZoekTerm (source, args)
         </td>
 </tr>
  
-    </table>  
-
-</ContentTemplate>
-</asp:UpdatePanel>
-
-<asp:UpdatePanel ID="updContent" runat="server" UpdateMode="Conditional">
-<ContentTemplate>
-
-<table>
-<tr>
-<td align="center">Sjabloon selecteren&nbsp;<span style="vertical-align:middle" id='tipSjabloon'><img src="CSS/images/help.png" alt=''/></span></td>
-<td align="center">Afbeelding toevoegen&nbsp;<span style="vertical-align:middle" id='tipUpload'><img src="CSS/images/help.png" alt=''/></span></td>
-</tr>
-<tr>
-<td align="center"><asp:ListBox runat="server" ID="lstSjablonen" width="100%"></asp:ListBox></td>
-<td align="center">
-<asp:UpdatePanel runat="server" id="updAfbeelding" UpdateMode="Conditional">
-<ContentTemplate>
-
-<asp:FileUpload runat="server" ID="uplAfbeelding" onchange="checkExtensies(this);" width="100%" />
-    <asp:UpdateProgress ID="prgAfbeelding" runat="server" AssociatedUpdatePanelID="updAfbeelding">
-    <ProgressTemplate>
-    <div class="update">
-    <img src="CSS/Images/ajaxloader.gif" />
-    Bezig met uploaden...
-    </div>
-    </ProgressTemplate>
-    </asp:UpdateProgress>
+    </table>
     
     <script type="text/javascript">
-
-
-
 
 function namodalpopup()
 {
@@ -307,50 +278,33 @@ function trInvisible()
 var tr = document.getElementsByName('trRad')[0]
 tr.style.display='none'
 }
-function checkExtensies( filename )
-{
-    var lijst = filename.value.split('.');
-    var ext = lijst.pop();
-
-    if(  ext == 'gif' || ext == 'jpg' || ext == 'jpeg' || ext == 'png' )
-    {
-        document.getElementById('lblFeedback').innerHTML = '';
-        document.getElementById('lblFeedback').style.display = 'none';
-        document.getElementById('<%=btnImageToevoegen.ClientID %>').style.display = 'inline';
-        return true;
-    }
-    else
-    {
-        document.getElementById('lblFeedback').innerHTML = 'Dit is geen geldige afbeelding.<br/> Enkel JPEG, GIF en PNG-afbeeldingen zijn toegestaan.';
-        document.getElementById('lblFeedback').style.display = 'inline';
-        document.getElementById('<%=btnImageToevoegen.ClientID %>').style.display = 'none';
-        return false;
-    }
-}
 
 </script>
-    
+
 </ContentTemplate>
-<Triggers>
-<asp:PostBackTrigger ControlID="btnImageToevoegen" />
-</Triggers>
 </asp:UpdatePanel>
-</td>
+
+<asp:UpdatePanel ID="updContent" runat="server" UpdateMode="Conditional">
+<ContentTemplate>
+
+<table>
+<tr>
+<td align="center">Sjabloon selecteren&nbsp;<span style="vertical-align:middle" id='tipSjabloon'><img src="CSS/images/help.png" alt=''/></span></td>
+</tr>
+<tr>
+<td align="center"><asp:ListBox runat="server" ID="lstSjablonen" width="100%"></asp:ListBox></td>
 </tr>
 <tr>
 <td align="center"><asp:Button runat="server" ID="btnSjablonen" Text="Sjabloon Toevoegen" width="100%" CausesValidation="false" style="vertical-align:middle;" /></td>
-<td align="center"><asp:button runat="server" ID="btnImageToevoegen" Text="Afbeelding Toevoegen"  width="100%" CausesValidation="false"  style="vertical-align:middle;" /><span id="lblFeedback"  style="vertical-align:middle;display:none"></span></td>
 </tr>
 </table>
 <br />
-    <div>
-    <a href="#" onclick="VeranderEditorScherm(200);">Vergroot Editor</a>
-    &nbsp;|&nbsp;
-    <a href="#" onclick="VeranderEditorScherm(-200);">Verklein Editor</a>
-    </div>
 
-<cc1:Editor ID="Editor1" runat="server" CssClass="editorWindow"/>
-
+    <FredCK:CKEditor runat="server" ID="EditorBewerken" Height="600"></FredCK:CKEditor>
+    <script type="text/javascript">
+    CKFinder.SetupCKEditor( null, 'JS/ckfinder/' );
+    </script>
+			
 
 </ContentTemplate>
 </asp:UpdatePanel>

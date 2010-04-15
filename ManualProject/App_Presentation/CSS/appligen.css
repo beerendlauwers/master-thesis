@@ -2,6 +2,16 @@
 {
 	padding: 0px 0px 0px 0px;
 	margin: 0px 0px 0px 0px;
+	font-family: Verdana, Arial;
+	font-size: 80%;
+}
+
+.categorietekst
+{
+	font-size:120%;
+	font-weight:bold;
+	background-color:#E0E8F0;
+	text-align:center;
 }
 
 .h1
@@ -362,22 +372,27 @@ position: relative;
 #td-input
 {
 	vertical-align: top;
+	padding-left: 3px;
 }
 
 #td-boom
 {
-	padding-left: 10px;
 	vertical-align: top;
 	background-image:url('images/main.gif');
 	background-repeat:repeat-y;
-	padding-left: 8px;
+	padding-left: 4px;
+}
+
+.boomstructuur
+{
+	padding-left: 4px;
 }
 
 
 #boom
 {
     display:block;
-    font-size:smaller;
+    font-size:small;
 }
 
 #footer

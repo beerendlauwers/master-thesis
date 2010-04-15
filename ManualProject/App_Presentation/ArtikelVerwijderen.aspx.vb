@@ -7,18 +7,9 @@ Partial Class App_Presentation_verwijderenTekst
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Artikel Verwijderen"
 
-        If Session("login") = 1 Then
-            divLoggedIn.Visible = True
-        Else
-            divLoggedIn.Visible = False
-            Session("vorigePagina") = Page.Request.Url.AbsolutePath
-            Response.Redirect("Aanmeldpagina.aspx")
-        End If
+        Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
 
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnAnnuleer, "Annuleren...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnOK, "Verwijderen...")
-
+        LaadJavascript()
         LaadTooltips()
 
         If Not IsPostBack Then
@@ -39,14 +30,42 @@ Partial Class App_Presentation_verwijderenTekst
         lijst.Add(New Tooltip("tipBedrijfKeuze"))
         lijst.Add(New Tooltip("tipVersieKeuze"))
         lijst.Add(New Tooltip("tipIsFinaalKeuze"))
+        Util.TooltipsToevoegen(Me, lijst)
 
-        'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
-        If Page.IsPostBack Then
-            Tooltip.VoegTipToeAanEndRequest(Me, lijst)
-        Else
-            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-            Tooltip.VoegTipToeAanBody(body, lijst)
-        End If
+    End Sub
+
+    Private Sub LaadJavaScript()
+
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnAnnuleer, "Annuleren...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnOK, "Verwijderen...")
+
+    End Sub
+
+    Private Sub LaadDropdowns()
+
+        ddlBedrijf.Items.Clear()
+        ddlBedrijf.Items.Add(New ListItem("Alles", "-1000"))
+        For Each b As Bedrijf In Bedrijf.GetBedrijven
+            ddlBedrijf.Items.Add(New ListItem(b.Naam, b.ID))
+        Next b
+
+        ddlVersie.Items.Clear()
+        ddlVersie.Items.Add(New ListItem("Alles", "-1000"))
+        For Each v As Versie In Versie.GetVersies
+            ddlVersie.Items.Add(New ListItem(v.VersieNaam, v.ID))
+        Next v
+
+        ddlTaal.Items.Clear()
+        ddlTaal.Items.Add(New ListItem("Alles", "-1000"))
+        For Each t As Taal In Taal.GetTalen
+            ddlTaal.Items.Add(New ListItem(t.TaalNaam, t.ID))
+        Next t
+
+        ddlIsFInaal.Items.Clear()
+        ddlIsFInaal.Items.Add(New ListItem("Alles", "-1000"))
+        ddlIsFInaal.Items.Add(New ListItem("Ja", "1"))
+        ddlIsFInaal.Items.Add(New ListItem("Nee", "0"))
 
     End Sub
 
@@ -63,11 +82,8 @@ Partial Class App_Presentation_verwijderenTekst
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
         HaalArtikelGegevensOp()
-
         JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
     End Sub
-
-
 
     Private Sub HaalArtikelGegevensOp()
 
@@ -75,10 +91,10 @@ Partial Class App_Presentation_verwijderenTekst
         Dim zoekTag As String = txtSearchTag.Text.Trim
 
         'Dropdownwaardes ophalen
-        Dim versies As String = Util.LeesDropdown(ddlVersie)
-        Dim bedrijven As String = Util.LeesDropdown(ddlBedrijf)
-        Dim talen As String = Util.LeesDropdown(ddlTaal)
-        Dim isFInaal As String = Util.LeesDropdown(ddlIsFInaal)
+        Dim versies As String = Util.DropdownUitlezen(ddlVersie)
+        Dim bedrijven As String = Util.DropdownUitlezen(ddlBedrijf)
+        Dim talen As String = Util.DropdownUitlezen(ddlTaal)
+        Dim isFInaal As String = Util.DropdownUitlezen(ddlIsFInaal)
 
         Dim dt As New Data.DataTable
 
@@ -125,24 +141,6 @@ Partial Class App_Presentation_verwijderenTekst
 
         Me.divFeedback.Visible = False
     End Sub
-
-    Public Function zoektext(ByVal text As String, ByVal str As String) As Boolean
-        Dim stri As String = str
-        Dim txt As String = text
-        Dim reeks(50) As String
-        Dim teller As Integer
-        Dim test As String = " "
-        reeks(0) = test
-        For t As Integer = 0 To stri.Length()
-            reeks = text.Split(" ")
-            teller = teller + 1
-        Next
-        Dim teller1 As Integer = reeks.Length - 1
-        For t As Integer = 0 To teller1 - 1
-            test = test + reeks(t)
-        Next
-        Return True
-    End Function
 
     Protected Sub grdResultaten_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdResultaten.RowCommand
         If e.CommandName = "Select" Then
@@ -226,33 +224,6 @@ Partial Class App_Presentation_verwijderenTekst
 
         'Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
         'body.Attributes.Add("onload", String.Concat("verwijderKind_", artikel.ID, "();"))
-
-    End Sub
-
-    Private Sub LaadDropdowns()
-
-        ddlBedrijf.Items.Clear()
-        ddlBedrijf.Items.Add(New ListItem("Alles", "-1000"))
-        For Each b As Bedrijf In Bedrijf.GetBedrijven
-            ddlBedrijf.Items.Add(New ListItem(b.Naam, b.ID))
-        Next b
-
-        ddlVersie.Items.Clear()
-        ddlVersie.Items.Add(New ListItem("Alles", "-1000"))
-        For Each v As Versie In Versie.GetVersies
-            ddlVersie.Items.Add(New ListItem(v.VersieNaam, v.ID))
-        Next v
-
-        ddlTaal.Items.Clear()
-        ddlTaal.Items.Add(New ListItem("Alles", "-1000"))
-        For Each t As Taal In Taal.GetTalen
-            ddlTaal.Items.Add(New ListItem(t.TaalNaam, t.ID))
-        Next t
-
-        ddlIsFInaal.Items.Clear()
-        ddlIsFInaal.Items.Add(New ListItem("Alles", "-1000"))
-        ddlIsFInaal.Items.Add(New ListItem("Ja", "1"))
-        ddlIsFInaal.Items.Add(New ListItem("Nee", "0"))
 
     End Sub
 

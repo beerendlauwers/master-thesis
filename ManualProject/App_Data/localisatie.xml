@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Speciale karakters dienen te worden HTML-geencodeerd. Zie http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references voor een lijst. -->
+<talen>
+<taal id="0">
+	<tekst id="WELKOMTEKST" text="Welkom op de Appligen Reference Manual. Gebruik de menustructuur in de linkerzijbalk of de zoekbalk rechtsboven om een artikel te bezichtigen." />
+	<tekst id="LAADSCHERMTEKST" text="Even wachten aub..." />
+	<tekst id="BEHEER" text="Beheer" />
+	<tekst id="TALEN" text="Talen" />
+	<tekst id="ZOEKENOP" text="Zoeken op:" />
+	<tekst id="CATEGORIEN" text="Categorie&#235;n" />
+	<tekst id="ZOEKRESULTATEN" text="Zoekresultaten" />
+	<tekst id="ZOEKEN_GEVONDENARTIKELS" text="Artikels die overeenkomen met uw zoektekst:" />
+	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Klik op &#233;&#233;n van de kolommen om de items volgens deze waarde te sorteren." />
+	<tekst id="ZOEKEN_TITEL" text="Titel" />
+	<tekst id="ZOEKEN_TAG" text="Tag" />
+	<tekst id="ZOEKEN_PAGINA" text="Pagina:" />
+	<tekst id="ONGELDIGID" text="Ongeldig ID." />
+	<tekst id="STARTPAGINATITEL" text="Startpagina" />
+	<tekst id="GEENCATEGORIEN" text="Er werden geen categorie&#235;n gevonden." />
+	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+</taal>
+<taal id="5">
+	<tekst id="WELKOMTEKST" text="Bienvenue sur le Reference Manual de Appligen. Utilisez le structure &#224; gauche ou recherchez un article." />
+	<tekst id="LAADSCHERMTEKST" text="Un instant svp..." />
+	<tekst id="BEHEER" text="Gestion" />
+	<tekst id="TALEN" text="Languages" />
+	<tekst id="ZOEKENOP" text="Cherchez sur:" />
+	<tekst id="CATEGORIEN" text="Cat&#233;gories" />
+	<tekst id="ZOEKRESULTATEN" text="R&#233;sultats" />
+	<tekst id="ZOEKEN_GEVONDENARTIKELS" text="Articles qui correspondent &#224; votre recherche en texte:" />
+	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Cliquez sur le titre d'une colonne pour organiser les lignes en fonction de cette valeur." />
+	<tekst id="ZOEKEN_TITEL" text="Titre" />
+	<tekst id="ZOEKEN_TAG" text="Tag" />
+	<tekst id="ZOEKEN_PAGINA" text="Page:" />
+	<tekst id="ONGELDIGID" text="ID Invalide." />
+	<tekst id="STARTPAGINATITEL" text="Page d'Accueil" />
+	<tekst id="GEENCATEGORIEN" text="Il n'y avait pas de cat&#233;gories trouv&#233;es." />
+	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+</taal>
+<taal id="10">
+	<tekst id="WELKOMTEKST" text="Welcome to the Appligen Reference Manual. Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
+	<tekst id="LAADSCHERMTEKST" text="One moment please..." />
+	<tekst id="BEHEER" text="Admin" />
+	<tekst id="TALEN" text="Languages" />
+	<tekst id="ZOEKENOP" text="Search for:" />
+	<tekst id="CATEGORIEN" text="Categories" />
+	<tekst id="ZOEKRESULTATEN" text="Search results" />
+	<tekst id="ZOEKEN_GEVONDENARTIKELS" text="Articles that correspond with your search:" />
+	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Click on one of the column titles to sort the items according to that value." />
+	<tekst id="ZOEKEN_TITEL" text="Title" />
+	<tekst id="ZOEKEN_TAG" text="Tag" />
+	<tekst id="ZOEKEN_PAGINA" text="Page:" />
+	<tekst id="ONGELDIGID" text="Invalid ID." />
+	<tekst id="STARTPAGINATITEL" text="Home Page" />
+	<tekst id="GEENCATEGORIEN" text="No categories were found." />
+	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+</taal>
+</talen>

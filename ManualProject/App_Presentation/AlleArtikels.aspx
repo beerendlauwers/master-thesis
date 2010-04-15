@@ -1,14 +1,15 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AlleArtikels.aspx.vb" Inherits="App_Presentation_AlleArtikels" title="Untitled Page" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<title>Artikels</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
-Artikels
+    Artikels
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-<div id="divLoggedIn" runat="server">
-    <asp:DropDownList ID="ddlBedrijf" runat="server" AutoPostBack="false">
+    <div id="divLoggedIn" runat="server">
+<asp:UpdatePanel runat="server" ID="updAlleArtikels">
+<ContentTemplate>
+    <asp:DropDownList ID="ddlBedrijf" runat="server" AutoPostBack="false" >
     </asp:DropDownList>
     <asp:DropDownList ID="ddlVersie" runat="server" AutoPostBack="false">
     </asp:DropDownList>
@@ -19,9 +20,9 @@ Artikels
     <asp:Button ID="btnFilter" runat="server" Text="Filter" />
     <asp:Label ID="lblFinaal" runat="server" Visible="False"></asp:Label>
     <div id="gridview">
-    <asp:GridView ID="GridView1" runat="server" PageSize="30" 
+    <asp:GridView ID="grdArtikels" runat="server" PageSize="30" Width="100%" 
             AutoGenerateColumns="False" AllowPaging="true" AllowSorting="True"
-        DataSourceID="SqlDataSource1">
+        DataSourceID="SqlDataSource1" EmptyDataText="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden.">
         <Columns>
             <asp:BoundField DataField="titel" HeaderText="Titel" SortExpression="titel" />
             <asp:BoundField DataField="tag" HeaderText="tag" SortExpression="tag" />
@@ -95,7 +96,7 @@ Artikels
         ProviderName="System.Data.SqlClient" SelectCommand="select A.titel, A.tag, B.naam, T.taaltag, V.versie 
 from tblArtikel A, tblBedrijf B, tblTaal T, tblVersie V
 where A.Is_final=@Is_final and B.naam LIKE @naam and T.Taal LIKE @Taal AND V.versie LIKE @Versie AND A.FK_Bedrijf = B.BedrijfID AND A.FK_Taal = T.TaalID and
-A.FK_Versie=V.versieID;">
+A.FK_Versie=V.versieID ORDER BY A.Titel;">
         <SelectParameters>
             <asp:ControlParameter ControlID="lblFinaal" Name="Is_final" 
                 PropertyName="Text" />
@@ -106,6 +107,9 @@ A.FK_Versie=V.versieID;">
                 <asp:ControlParameter ControlID="ddlVersie" Name="Versie" PropertyName="SelectedValue" Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>
+    
+    </ContentTemplate>
+</asp:UpdatePanel>
     </div>
 </asp:Content>
 

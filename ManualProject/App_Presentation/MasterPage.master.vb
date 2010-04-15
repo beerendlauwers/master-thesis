@@ -1,55 +1,127 @@
 ﻿
 Partial Class App_Presentation_MasterPage
     Inherits System.Web.UI.MasterPage
-    Private taaldal As New TaalDAL
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         'Nakijken of gebruiker deze pagina wel mag zien
+        CheckOfIngelogd()
+
+        'Kijk na of de boomstructuren en dergelijke ingeladen zijn in het geheugen
+        CheckDataStructures()
+
+        'Nakijken of er een taalwijziging is aangevraagd
+        CheckVoorTaalWijziging()
+
+        'Rest van Masterpagecontent genereren
+        GenereerContent()
+
+    End Sub
+
+    Private Sub CheckOfIngelogd()
         If Session("isIngelogd") Is Nothing Or Session("isIngelogd") = False Then
             Session("vorigePagina") = Page.Request.Url.AbsolutePath
             Response.Redirect("~/Default.aspx")
         End If
+    End Sub
 
-        CheckDataStructures()
+    Private Sub CheckDataStructures()
 
+        If (Tree.GetTrees() Is Nothing) Then
+            Tree.BouwTrees()
+        End If
+
+        If (Bedrijf.GetBedrijven() Is Nothing) Then
+            Bedrijf.BouwBedrijfLijst()
+        End If
+
+        If (Taal.GetTalen() Is Nothing) Then
+            Taal.BouwTaalLijst()
+        End If
+
+        If (Versie.GetVersies() Is Nothing) Then
+            Versie.BouwVersieLijst()
+        End If
+
+        If (XML.GetToolTips() Is Nothing) Then
+            XML.ParseTooltips()
+        End If
+
+        If (XML.GetLocalisatieStrings() Is Nothing) Then
+            XML.ParseLocalisatieStrings()
+        End If
+
+    End Sub
+
+    Public Sub CheckVoorTaalWijziging()
+
+        Dim control As String = Page.Request.Params.Get("__EVENTTARGET")
+        Dim arg As String = Page.Request.Params.Get("__EVENTARGUMENT")
+
+        If control IsNot Nothing And arg IsNot Nothing Then
+            If control.Contains("lnkTaal") Then
+                Session("taal") = Integer.Parse(arg)
+            End If
+        End If
+
+    End Sub
+
+    Private Sub GenereerContent()
+
+        'Bepaalde content verstoppen
+        VerstopContent()
+
+        'Gelokaliseerde tekst genereren
+        GenereerGelokaliseerdeTekst()
+
+        'Zijbalk genereren
+        GenereerZijbalk()
+
+        'Links dynamisch populeren
         PopuleerLinks()
 
+        'JavaScript laden
+        LaadJavascript()
+
+    End Sub
+
+#Region "Contentgeneratie"
+
+    Private Sub VerstopContent()
+        If Session("login") = 0 Then
+            liVideos.Visible = False
+            liVideoAfspelen.Visible = False
+            liVideoBewerken.Visible = False
+            liVideoVerwijderen.Visible = False
+            liBeheer.Visible = False
+            liArtikelBeheer.Visible = False
+            liArtikelBewerken.Visible = False
+        End If
+
+        If Session("login") = 1 Then
+            liAanmeld.Visible = False
+        End If
+    End Sub
+
+    Private Sub LaadJavascript()
         If MasterBody.Attributes.Item("onload") Is Nothing Then
             MasterBody.Attributes.Add("onload", String.Concat("SetButtonStatus(document.getElementById('", txtZoek.ClientID, "')); "))
         Else
             MasterBody.Attributes.Item("onload") = String.Concat(MasterBody.Attributes.Item("onload"), "SetButtonStatus(document.getElementById('", txtZoek.ClientID, "')); ")
         End If
+    End Sub
 
-		A2.HRef = "~/App_Presentation/VideoUploaden.aspx"
-        A3.HRef = "~/App_Presentation/VideoAfspelen.aspx"
+    Private Sub GenereerGelokaliseerdeTekst()
+        divCategorienTekst.InnerHtml = XML.GetString("CATEGORIEN")
+        lblZoek.Text = XML.GetString("ZOEKENOP")
+        spanBeheer.InnerText = XML.GetString("BEHEER")
+        spanBeheerAanmeld.InnerHtml = XML.GetString("BEHEER")
+        spanTalen.InnerHtml = XML.GetString("TALEN")
+    End Sub
 
+    Private Sub GenereerZijbalk()
         'Taal ophalen
-        Dim str1(100) As String
-        For i As Integer = 0 To Page.Request.Form.Count - 1
-            str1(i) = Page.Request.Form(i)
-            Dim taal() As String = Split(str1(i), "$")
-            If taal.Length > 1 Then
-                If taal(1).Length > 3 Then
-                    taal(1) = taal(1).Substring(3)
-                    If taaldal.getTaalByNaam(taal(1)) IsNot Nothing Then
-                        Dim tr As Manual.tblTaalRow
-                        tr = taaldal.getTaalByNaam(taal(1))
-                        Session("taal") = tr("taalID")
-                        Exit For
-                    End If
-                End If
-            End If
-        Next
-
         Dim taalID As Integer = Session("taal")
-        If taalID = 0 Then
-            lblZoek.Text = "Zoek op: "
-        ElseIf taalID = 5 Then
-            lblZoek.Text = "Cherchez sur: "
-        Else
-            lblZoek.Text = "Search: "
-        End If
 
         'Versie ophalen
         Dim versieID As Integer = Session("versie")
@@ -85,56 +157,19 @@ Partial Class App_Presentation_MasterPage
         'HTML-code in de linkerzijbalk plaatsen
         Dim boomdiv As HtmlGenericControl = Me.FindControl("divBoomStructuur")
         boomdiv.InnerHtml = htmlcode
-
-        If Session("login") = 0 Then
-            livideobewerken.Visible = False
-            liVideoVerwijderen.Visible = False
-            liBeheer.Visible = False
-            liArtikelBeheer.Visible = False
-            liArtikelBewerken.Visible = False
-        End If
-
-        If Session("login") = 1 Then
-            liAanmeld.Visible = False
-        End If
-
-
-        Dim dt As Manual.tblTaalDataTable
-        Dim ul As HtmlGenericControl = Me.FindControl("ul")
-        Dim str As String = ""
-        str = str + "<li style=""float:right;""" + " runat=""server""" + " id=""talenli""" + " visible=""true""" + "><a runat=""server""" + " ><span class=""l""" + "></span><span class=""r""" + "></span><span class=""t""" + ">Talen/Languages</span></a><ul> "
-        dt = taaldal.GetAllTaal()
-
-        For i As Integer = 0 To dt.Rows.Count - 1
-            str = str + "<li><a id=""ctl00_lnk" + dt.Rows(i)("taal") + """ href=""javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$lnk" + dt.Rows(i)("taal") + "&quot;, &quot;&quot;, false, &quot;&quot;, &quot;Default.aspx&quot;, false, true))""""" + ">" + dt.Rows(i)("taal") + "</a></li>"
-        Next
-        Dim li As New HtmlGenericControl
-        str = str + "</ul></li>"
-        li.InnerHtml = str
-        ul.Controls.Add(li)
-
-
     End Sub
 
+    Private Sub GenereerTaalkeuze()
+        Dim split() As String = Page.AppRelativeVirtualPath.Split("/")
+        Dim pagina As String = split(split.Length - 1)
 
-    Private Sub CheckDataStructures()
+        Dim code As String = String.Empty
+        For Each t As Taal In Taal.GetTalen
+            code = String.Concat(code, "<li><a id=""ctl00_lnkTaal", t.ID.ToString, """ href=""javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$lnkTaal", t.ID.ToString, "&quot;,&quot;", t.ID.ToString, "&quot;, false, &quot;&quot;, &quot;", pagina, "&quot;, false, true))""""" + ">", t.TaalNaam, "</a></li>")
+        Next
 
-        If (Tree.GetTrees() Is Nothing) Then
-            Tree.BouwTrees()
-        End If
-
-        If (Bedrijf.GetBedrijven() Is Nothing) Then
-            Bedrijf.BouwBedrijfLijst()
-        End If
-
-        If (Taal.GetTalen() Is Nothing) Then
-            Taal.BouwTaalLijst()
-        End If
-
-        If (Versie.GetVersies() Is Nothing) Then
-            Versie.BouwVersieLijst()
-        End If
-
+        Dim ul As HtmlGenericControl = Me.FindControl("ulTalen")
+        ul.InnerHtml = code
     End Sub
 
     Private Sub PopuleerLinks()
@@ -143,6 +178,10 @@ Partial Class App_Presentation_MasterPage
         ArtikelBewerken.HRef = "~/App_Presentation/ArtikelBewerken.aspx"
         ArtikelVerwijderen.HRef = "~/App_Presentation/ArtikelVerwijderen.aspx"
 
+        lnkVideoBewerken.HRef = "~/App_Presentation/VideoUploaden.aspx"
+        lnkVideoAfspelen.HRef = "~/App_Presentation/VideoAfspelen.aspx"
+
+        GenereerTaalkeuze()
     End Sub
 
     Private Function Genereerstructuur(ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByRef html As String) As String
@@ -150,10 +189,16 @@ Partial Class App_Presentation_MasterPage
         Dim t As Tree = Tree.GetTree(taal, versie, bedrijf)
         Dim root As Node = t.RootNode
 
-        html = String.Concat(html, "<br/><div>", t.Bedrijf.Naam, "</div>")
+        Dim oudehtml As String = html
+        html = String.Concat(oudehtml, "<br/><div>", t.Bedrijf.Naam, "</div>")
+        Dim originelehtml As String = String.Concat(oudehtml, "<br/><div>", t.Bedrijf.Naam, "</div>")
+
         html = t.BeginNieuweLijst(html, root, -1)
+        If html = originelehtml Then html = String.Concat(html, XML.GetString("GEENCATEGORIEN"))
 
         Return html
     End Function
+
+#End Region
 End Class
 

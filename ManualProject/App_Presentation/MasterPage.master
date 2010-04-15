@@ -22,7 +22,7 @@
 <script src="JS/custom.js" language="javascript" type="text/javascript"></script>
 <script type="text/javascript" src="JS/shadowbox/shadowbox.js"></script>
 <script type="text/javascript">
-Shadowbox.init();
+Shadowbox.init({ modal: true });
 </script>
 
     <asp:ContentPlaceHolder id="head" runat="server">
@@ -39,19 +39,23 @@ Shadowbox.init();
        <!--
        // Deze functies zijn zeer handig om na te gaan of je AJAX-requests wel correct worden afgehandeld.
        
+       /*
        var prm = Sys.WebForms.PageRequestManager.getInstance();
        prm.add_initializeRequest(InitializeRequest);
        prm.add_endRequest(EndRequest);
 
+       
        function InitializeRequest(sender, args)
            {
-           // alert( 'begin');
+           // alert('begin');
            }
            
        function EndRequest( sender, args)
        {
            // alert( 'einde');
        }
+       
+       */
        
        // -->
        </script>
@@ -69,7 +73,7 @@ Shadowbox.init();
         </div>
         <div class="r">
         </div>
-        <ul class="art-menu" runat="server" id="ul">
+        <ul class="art-menu">
             <li runat="server" id="liArtikelBeheer"><a runat="server" ><span class="l"></span><span class="r"></span>
                 <span class="t">Artikels</span></a> 
                 <ul>
@@ -80,31 +84,38 @@ Shadowbox.init();
                     <li><a runat="server" id="OverzichtPerTaal" href="OverzichtPerTaal.aspx" runat="server"><img src="CSS/images/doc_text_image.png" border="0"  /> Overzicht per Taal</a></li>
                 </ul></li>
             <li runat="server" id="liBeheer"><a runat="server" href="Beheer.aspx" ><span class="l"></span><span class="r"></span>
-                <span class="t">Beheer </span></a>
+                <span class="t" runat="server" id="spanBeheer">Beheer </span></a>
                 
             </li>
-            <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
-                <asp:HyperLink ID="hrefArtikelBewerken" runat="server"><span class="l"></span><span class="r"></span><span class="t">Dit artikel bewerken</span></asp:HyperLink></li>
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b><asp:Label ID="lblZoek" runat="server" Text=""></asp:Label>
             </b><asp:TextBox ID="txtZoek" runat="server" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="lnkZoeken" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                     Width="16px" class="zoekLinkUit" PostBackUrl="~/App_Presentation/zoekresultaten.aspx" /></span></span></div>
                    
-              </li>      
+              </li>
                     
-                    
-             <li><a><span class="l"></span><span class="r"></span>
+            <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
+                <asp:HyperLink ID="hrefArtikelBewerken" runat="server"><span class="l"></span><span class="r"></span><span class="t">Dit artikel bewerken</span></asp:HyperLink></li>
+             <li runat="server" id="liVideos"><a><span class="l"></span><span class="r"></span>
                 <span class="t">Video's </span></a>
                 <ul>
-                    <li runat="server" id="livideobewerken"><a runat="server" id="A2"><img src="CSS/images/add.png" border="0"  /> Video Uploaden</a></li>
-                    <li><a runat="server" id="A3"><img src="CSS/images/view.png" border="0"  /> Video's Afspelen</a></li>
+                    <li runat="server" id="liVideoBewerken"><a runat="server" id="lnkVideoBewerken"><img src="CSS/images/add.png" border="0"  /> Video Uploaden</a></li>
+                    <li runat="server" id="liVideoAfspelen"><a runat="server" id="lnkVideoAfspelen"><img src="CSS/images/view.png" border="0"  /> Video's Afspelen</a></li>
                     <li runat="server" id="liVideoVerwijderen"><a runat="server" id="A4"><img src="CSS/images/remove.png" border="0"  /> Video's Verwijderen</a></li>
                 </ul>
             </li>
+
             <li runat="server" id="liAanmeld">
             <a runat="server" id="BeheerLink" href="Aanmeldpagina.aspx"><span class="l"></span><span class="r"></span>
-                <span class="t">Beheer </span></a>
+                <span class="t" runat="server" id="spanBeheerAanmeld">Beheer </span></a>
+            </li>
+            
+            <li runat="server" id="liTalen" visible="true" >
+            <a id="lnkTalen" runat="server"><span class="l"></span><span class="r"></span><span class="t" runat="server" id="spanTalen">Talen/Languages</span></a>
+            <ul runat="server" id="ulTalen">
+            
+            </ul>
             </li>
         </ul>
     </div>
@@ -113,8 +124,8 @@ Shadowbox.init();
         <tr>
         <td width="25%" id="td-boom">
         <div id="boom">
-                <div>Categorieën</div>
-                <div runat="server" id="divBoomstructuur"></div>
+                <div runat="server" id="divCategorienTekst" class="categorietekst">Categorieën</div>
+                <div runat="server" id="divBoomstructuur" class="boomstructuur"></div>
         </div>
         </td>
         <td id="td-input">

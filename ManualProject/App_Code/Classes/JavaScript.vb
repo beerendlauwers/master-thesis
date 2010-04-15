@@ -37,6 +37,13 @@ Public Class JavaScript
         ScriptManager.RegisterClientScriptBlock(pagina, pagina.GetType, "EndRequest", js, True)
     End Sub
 
+    Public Shared Sub VoegJavaScriptToeAanBeginRequest(ByRef pagina As System.Web.UI.Page, ByRef script As String)
+        Dim js As String = "var prm = Sys.WebForms.PageRequestManager.getInstance();"
+        js = String.Concat(js, "prm.add_initializeRequest(InitializeRequest);")
+        js = String.Concat(js, "function InitializeRequest(sender, args) { ", script, " } ")
+        VoegJavascriptToeAanBody(pagina.Master.FindControl("MasterBody"), js)
+    End Sub
+
     ''' <summary>
     ''' Zet een dropdown op disabled als een dropdown een postback doet.
     ''' </summary>
@@ -148,5 +155,13 @@ Public Class JavaScript
     Public Shared Function ShowCode(ByRef control As Object, Optional ByVal display As String = "inline") As String
         Return String.Concat("document.getElementById('", control.ClientID, "').style.display = '", display, "'; ")
     End Function
+
+    Public Shared Sub ShadowBoxLaderTonenBijPostback(ByRef pagina As System.Web.UI.Page)
+        JavaScript.VoegJavaScriptToeAanBeginRequest(pagina, "ShadowBoxLaderTonen();")
+    End Sub
+
+    Public Shared Sub ShadowBoxLaderSluiten(ByRef pagina As System.Web.UI.Page)
+        JavaScript.VoegJavascriptToeAanEndRequest(pagina, "ShadowBoxLaderSluiten();")
+    End Sub
 
 End Class

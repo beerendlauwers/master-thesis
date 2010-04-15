@@ -2,10 +2,10 @@
 CKEDITOR.dialog.add( 'video', function( editor )
 {
 
-	var lblInfoTekst = '<strong>OPMERKING:</strong> Als u deze videolink wil verplaatsen, dient u eerst<br/>'
-					   + 'op de link te klikken, en hierna op het <strong>"a"</strong>-veldje te klikken (voorbeeld hieronder).'
-					   + '<br/>Enkel dan zal de volledige videolink geselecteerd zijn,<br/> waarna u hem kan knippen en plakken naarwaar u wilt.<br/>' 
-					   + '<i>Voorbeeld:</i> <img style="vertical-align:middle;" src="' + CKEDITOR.plugins.getPath( 'video' ) + 'images/infoelement.png" />';
+	var lblInfoTekst = '<br/><strong>OPMERKING:</strong> Als u deze videolink wil verplaatsen, dient u eerst<br/>'
+					   + 'op de link te klikken, en hierna op het <strong>"a"</strong>-veldje te klikken in de onderste balk.'
+					   + '<br/>Enkel dan zal de volledige videolink geselecteerd zijn,<br/> waarna u hem kan knippen en plakken naarwaar u wilt.<br/><br/>' 
+					   + '<i>Voorbeeld van onderste balk:</i> <img style="vertical-align:middle;" src="' + CKEDITOR.plugins.getPath( 'video' ) + 'images/infoelement.png" />';
 			
 	// Function called in onShow to load selected element.
 	var loadElements = function( editor, selection, element )
@@ -28,10 +28,25 @@ CKEDITOR.dialog.add( 'video', function( editor )
 		{
 
 			var txtVideoBox = this.getValueOf( 'info', 'txtVideo' );
+
+			var relationship = 'shadowbox';
+			
+			if( this.getValueOf( 'info', 'txtHoogte' ) || this.getValueOf( 'info', 'txtBreedte' ) )
+				relationship = relationship + ';';
+			
+			if( this.getValueOf( 'info', 'txtHoogte' ) )
+			{
+				relationship = relationship + 'height=' + this.getValueOf( 'info', 'txtHoogte' );
+				if( this.getValueOf( 'info', 'txtBreedte' ) )
+					relationship = relationship + ';';
+			}
+			
+			if( this.getValueOf( 'info', 'txtBreedte' ) )
+				relationship = relationship + 'width=' + this.getValueOf( 'info', 'txtBreedte' );
 		
 			element = editor.document.createElement( 'a' );
 			element.setAttribute('href', txtVideoBox);
-			element.setAttribute('rel', 'shadowbox');
+			element.setAttribute('rel', relationship );
 		
 			var htmlwaarde = this.getValueOf( 'info', 'txtTekst' ) + '<img border="0" src="CSS/images/view.png" style="display:inline" />';
 			element.setHtml( htmlwaarde );
@@ -92,50 +107,95 @@ CKEDITOR.dialog.add( 'video', function( editor )
 				elements :
 				[
 					{
-						type : 'text',
-						id : 'txtVideo',
-						label : 'Videobestand',
-						required: true,
-						validate : function()
-						{
-							if ( !this.getValue() )
+						type : 'vbox',
+						padding : 0,
+						children :
+						[
 							{
-								alert( 'Gelieve een geldige waarde in te geven!' );
-								return false;
-							}
-							return true;
-						}
-					},
-					{
-						type : 'button',
-						id : 'btnSelecteerBestand',
-						label : 'Bestand Kiezen',
-						filebrowser :
-						{
-							action : 'Browse',
-							target : 'info:txtVideo'
-						}
-					},
-					{
-						type : 'text',
-						id : 'txtTekst',
-						label : 'Weer te geven tekst',
-						required: true,
-						validate : function()
-						{
-							if ( !this.getValue() )
+								type : 'hbox',
+								widths : [ '280px', '110px' ],
+								align : 'right',
+								children :
+								[
+									{
+										type : 'text',
+										id : 'txtVideo',
+										label : 'Videobestand',
+										required: true,
+										validate : function()
+										{
+											if ( !this.getValue() )
+											{
+												alert( 'Gelieve een videobestand op te geven.' );
+												return false;
+											}
+											return true;
+										}
+									},
+									{
+										type : 'button',
+										id : 'btnSelecteerBestand',
+										style : 'display:inline-block;margin-top:10px;',
+										label : 'Bestand Kiezen',
+										filebrowser :
+										{
+											action : 'Browse',
+											target : 'info:txtVideo'
+										}
+									}
+								]
+							},
 							{
-								alert( 'Gelieve een geldige waarde in te geven!' );
-								return false;
+								type : 'hbox',
+								widths : [ '50%', '50%' ],
+								children :
+								[
+									{
+										type : 'text',
+										id : 'txtHoogte',
+										label : 'Hoogte'
+									},
+									{
+										type : 'text',
+										id : 'txtBreedte',
+										label : 'Breedte'
+									}
+								]
+							},
+							{
+								type : 'hbox',
+								children :
+								[
+									{
+										type : 'text',
+										id : 'txtTekst',
+										label : 'Weer te geven tekst',
+										required: true,
+										validate : function()
+										{
+											if ( !this.getValue() )
+											{
+												alert( 'Gelieve tekst in te vullen.' );
+												return false;
+											}
+											return true;
+										}
+									}
+								]
+							},
+							{
+								type : 'hbox',
+								children :
+								[
+									{
+										type : 'html',
+										id : 'lblInfo',
+										style : 'width:300px;',
+										html : lblInfoTekst
+									}
+								]
 							}
-							return true;
-						}
-					},
-					{
-						type : 'html',
-						id : 'lblInfo',
-						style : 'width:300px;',
-						html : lblInfoTekst
+						]
 					}
 				]
 			}

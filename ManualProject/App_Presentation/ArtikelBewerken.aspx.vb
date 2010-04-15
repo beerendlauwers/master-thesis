@@ -8,28 +8,23 @@ Partial Class App_Presentation_ArtikelBewerken
     Inherits System.Web.UI.Page
 
     Private artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
-    Private taaldal As New TaalDAL
-    Private bedrijfIsKlaar As Boolean = False
-    Private versieIsKlaar As Boolean = False
-    Private taalIsKlaar As Boolean = False
+    Private taaldal As TaalDAL = DatabaseLink.GetInstance.GetTaalFuncties
+ 
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         'Paginatitel
         Page.Title = "Artikel Bewerken"
 
-        If Session("login") = 1 Then
-            divLoggedIn.Visible = True
-        Else
-            divLoggedIn.Visible = False
-            Session("vorigePagina") = Page.Request.Url.AbsolutePath
-            Response.Redirect("Aanmeldpagina.aspx")
-        End If
+        Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
 
         'Als de pagina de eerste keer laadt
         If Not Page.IsPostBack Then
 
             'Dropdowns laden
             LaadDropdowns()
+
+            'Templates laden
+            LaadTemplates()
 
             'Artikelcontrols verstoppen
             ArtikelFunctiesZichtbaar(False)
@@ -51,24 +46,8 @@ Partial Class App_Presentation_ArtikelBewerken
         End If
 
         LaadTooltips()
+        LaadJavascript()
 
-        Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-
-        Dim js As String = String.Concat("if( this.checked ){ var tr = document.getElementsByName('trRad'); tr.style.display='none';}")
-        JavaScript.VoerJavaScriptUitOn(rdbAlleTalen, js, "onclick")
-        JavaScript.VoerJavaScriptUitOn(rdbEnkeleTaal, js, "onclick")
-
-        'De zoekknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
-        'De wijzigknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True)
-
-        JavaScript.ZetButtonOpDisabledOnClick(btnImageToevoegen, "Bezig met toevoegen..", True, True)
-        JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True, True)
-
-        If Not IsPostBack Then
-            LaadTemplates()
-        End If
         txtTag.Attributes.Add("onClick", "trVisible()")
         rdbAlleTalen.Attributes.Add("onClick", "trInvisible()")
         rdbEnkeleTaal.Attributes.Add("onClick", "trInvisible()")
@@ -81,11 +60,10 @@ Partial Class App_Presentation_ArtikelBewerken
         Dim zoekTitel As String = Me.txtZoekTitel.Text.Trim
 
         'Dropdownwaardes ophalen
-        Dim versies As String = Util.LeesDropdown(ddlVersieVerfijnen)
-        Dim bedrijven As String = Util.LeesDropdown(ddlBedrijfVerfijnen)
-        Dim talen As String = Util.LeesDropdown(ddlTaalVerfijnen)
-        Dim isFInaal As String = Util.LeesDropdown(ddlIsFInaalVerfijnen)
-
+        Dim versies As String = Util.DropdownUitlezen(ddlVersieVerfijnen)
+        Dim bedrijven As String = Util.DropdownUitlezen(ddlBedrijfVerfijnen)
+        Dim talen As String = Util.DropdownUitlezen(ddlTaalVerfijnen)
+        Dim isFInaal As String = Util.DropdownUitlezen(ddlIsFInaalVerfijnen)
 
         Dim dt As New Data.DataTable
 
@@ -149,10 +127,8 @@ Partial Class App_Presentation_ArtikelBewerken
         artikel.Categorie = ddlCategorie.SelectedValue
         artikel.Taal = ddlTaal.SelectedValue
         artikel.Versie = ddlVersie.SelectedValue
-        Dim dr As Manual.tblTaalRow
-        dr = taaldal.GetTaalByID(artikel.Taal)
-        artikel.Tag = dr("TaalTag") + "_" + txtTag.Text
-        artikel.Tekst = Editor1.Content
+        artikel.Tag = String.Concat(Taal.GetTaal(ddlTaal.SelectedValue).TaalNaam, "_", txtTag.Text.Trim)
+        artikel.Tekst = EditorBewerken.Value
         artikel.Titel = txtTitel.Text
 
         If ckbFinal.Checked = True Then
@@ -178,14 +154,12 @@ Partial Class App_Presentation_ArtikelBewerken
             Dim taaldal As New TaalDAL
             Dim oudetag As String = Session("oudetag")
             Dim i As Integer
-            'i = taaldal.updateTagTalen(oudetag, artikel.Tag)
+            i = taaldal.updateTagTalen(oudetag, artikel.Tag)
             If i = 0 Then
                 lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
             End If
         End If
         If artikeldal.updateArtikel(artikel) = True Then
-
-
 
             'Boomstructuur in het geheugen updaten.
 
@@ -234,7 +208,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
                     If nieuweparent Is Nothing Then
                         Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0003")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0004")
                         err.Args.Add("ID = " & artikel.Categorie.ToString)
                         err.Args.Add("Type = " & Global.ContentType.Categorie.ToString)
                         ErrorLogger.WriteError(err)
@@ -309,15 +283,19 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Private Sub ArtikelInladen(ByVal artikel As Artikel)
 
-        JavaScript.VoegJavascriptToeAanEndRequest(Me, "VeranderEditorScherm(200);")
-
         ArtikelFunctiesZichtbaar(True)
 
         Session("artikelID") = artikel.ID
         txtTitel.Text = artikel.Titel
         Dim tag() As String = Split(artikel.Tag, "_")
-        txtTag.Text = tag(1)
-        Editor1.Content = artikel.Tekst
+
+        If (tag.Length = 1) Then
+            txtTag.Text = tag(0)
+        Else
+            txtTag.Text = tag(1)
+        End If
+
+        EditorBewerken.Value = artikel.Tekst
         ddlBedrijf.SelectedValue = artikel.Bedrijf
         ddlTaal.SelectedValue = artikel.Taal
         ddlVersie.SelectedValue = artikel.Versie
@@ -340,11 +318,7 @@ Partial Class App_Presentation_ArtikelBewerken
     Private Sub LaadCategorien()
 
         Dim t As Tree = Tree.GetTree(Me.ddlTaal.SelectedValue, Me.ddlVersie.SelectedValue, Me.ddlBedrijf.SelectedValue)
-        Me.ddlCategorie.Items.Clear()
-
-        Me.ddlCategorie.Items.Add(New ListItem("root_node", "0"))
-
-        t.VulCategorieDropdown(Me.ddlCategorie, t.RootNode, -1)
+        Util.LeesCategorien(ddlCategorie, t)
 
         If Me.ddlCategorie.Items.Count = 0 Then
             Me.ddlCategorie.Visible = False
@@ -392,46 +366,23 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Private Sub LaadDropdowns()
 
-        ddlBedrijfVerfijnen.Items.Clear()
         ddlBedrijfVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
-        For Each b As Bedrijf In Bedrijf.GetBedrijven
-            ddlBedrijfVerfijnen.Items.Add(New ListItem(b.Naam, b.ID))
-        Next b
+        Util.LeesBedrijven(ddlBedrijfVerfijnen, False)
 
-        ddlVersieVerfijnen.Items.Clear()
         ddlVersieVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
-        For Each v As Versie In Versie.GetVersies
-            ddlVersieVerfijnen.Items.Add(New ListItem(v.VersieNaam, v.ID))
-        Next v
+        Util.LeesVersies(ddlVersieVerfijnen, False)
 
-        ddlTaalVerfijnen.Items.Clear()
         ddlTaalVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
-        For Each t As Taal In Taal.GetTalen
-            ddlTaalVerfijnen.Items.Add(New ListItem(t.TaalNaam, t.ID))
-        Next t
+        Util.LeesTalen(ddlTaalVerfijnen, False)
 
         ddlIsFInaalVerfijnen.Items.Clear()
         ddlIsFInaalVerfijnen.Items.Add(New ListItem("Alles", "-1000"))
         ddlIsFInaalVerfijnen.Items.Add(New ListItem("Ja", "1"))
         ddlIsFInaalVerfijnen.Items.Add(New ListItem("Nee", "0"))
 
-        Me.ddlBedrijf.Items.Clear()
-        For Each b As Bedrijf In Bedrijf.GetBedrijven
-            Dim item As New ListItem(b.Naam, b.ID)
-            Me.ddlBedrijf.Items.Add(item)
-        Next
-
-        Me.ddlTaal.Items.Clear()
-        For Each t As Taal In Taal.GetTalen
-            Dim item As New ListItem(t.TaalNaam, t.ID)
-            Me.ddlTaal.Items.Add(item)
-        Next
-
-        Me.ddlVersie.Items.Clear()
-        For Each v As Versie In Versie.GetVersies
-            Dim item As New ListItem(v.VersieNaam, v.ID)
-            Me.ddlVersie.Items.Add(item)
-        Next
+        Util.LeesBedrijven(ddlBedrijf)
+        Util.LeesTalen(ddlTaal)
+        Util.LeesVersies(ddlVersie)
 
         LaadCategorien()
 
@@ -457,63 +408,30 @@ Partial Class App_Presentation_ArtikelBewerken
         lijst.Add(New Tooltip("tipCategorie"))
         lijst.Add(New Tooltip("tipFinaal"))
         lijst.Add(New Tooltip("tipUpload"))
-        lijst.Add(New Tooltip("tipSjabloon"))
-
-
-        'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
-        If Page.IsPostBack Then
-            Tooltip.VoegTipToeAanEndRequest(Me, lijst)
-        Else
-            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-            Tooltip.VoegTipToeAanBody(body, lijst)
-        End If
+        Util.TooltipsToevoegen(Me, lijst)
 
     End Sub
 
     Private Sub LaadTemplates()
-
-        'Directory ophalen
-        Dim di As New IO.DirectoryInfo(String.Concat(Server.MapPath("~/"), "Templates"))
-
-        'Alle templates ophalen
-        Dim templatelijst As New List(Of IO.FileInfo)
-        For Each file As IO.FileInfo In di.GetFiles
-            templatelijst.Add(file)
-        Next
-
-        'Alle geldige XML-XSL combinaties opslaan
-        Dim xmllijst As New List(Of XML)
-        For Each template As IO.FileInfo In templatelijst
-            If template.Extension = ".xml" Then
-                For Each xsltemplate As IO.FileInfo In templatelijst
-                    If xsltemplate.Name.Replace(".xsl", String.Empty) = template.Name.Replace(".xml", String.Empty) And xsltemplate.Extension = ".xsl" Then
-                        lstSjablonen.Items.Add(template.Name.Replace(".xml", String.Empty))
-                    End If
-                Next
-            End If
-        Next template
-
+        XML.GetTemplates(lstSjablonen)
     End Sub
 
-    Private Function CheckOfBestandBestaat(ByVal filename As String) As String
+    Private Sub LaadJavascript()
 
-        If File.Exists(String.Concat(Server.MapPath("~/App_Presentation/Uploads/Images/"), filename)) Then
-            Dim r As New Random
-            Dim bestand As String() = filename.Split(".")
-            filename = String.Concat(bestand(0), "_", r.Next, r.Next, r.Next, ".", bestand(1))
+        Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
 
-            If bestand.Count > 2 Then
-                For i As Integer = 2 To bestand.Count - 1
-                    filename = String.Concat(filename, ".", bestand(i))
-                Next
-            End If
+        Dim js As String = String.Concat("if( this.checked ){ var tr = document.getElementsByName('trRad'); tr.style.display='none';}")
+        JavaScript.VoerJavaScriptUitOn(rdbAlleTalen, js, "onclick")
+        JavaScript.VoerJavaScriptUitOn(rdbEnkeleTaal, js, "onclick")
 
-            Return CheckOfBestandBestaat(filename)
-        Else
-            Return filename
-        End If
+        'De zoekknop op disabled zetten als erop geklikt wordt
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
+        'De wijzigknop op disabled zetten als erop geklikt wordt
+        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True)
 
-    End Function
+        JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True, True)
+
+    End Sub
 
     Sub ValideerZoekTerm(ByVal sender As Object, ByVal args As ServerValidateEventArgs)
         ' Default Value
@@ -534,36 +452,9 @@ Partial Class App_Presentation_ArtikelBewerken
 
                 Dim template As String = lstSjablonen.SelectedItem.Text
                 Dim x As New XML(String.Concat(Server.MapPath("~/Templates/"), template, ".xml"), String.Concat(Server.MapPath("~/Templates/"), template, ".xsl"))
-                Editor1.Content = String.Concat(Editor1.Content, XML.LeesXMLFile(x))
+                EditorBewerken.Value = String.Concat(EditorBewerken.Value, XML.LeesXMLFile(x))
 
             End If
-        End If
-    End Sub
-
-    Protected Sub btnImageToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnImageToevoegen.Click
-
-        If uplAfbeelding.PostedFile IsNot Nothing Then
-
-            Dim type As String = Path.GetExtension(uplAfbeelding.FileName)
-            If type = ".gif" Or type = ".jpeg" Or type = ".jpg" Or type = ".png" Then
-
-                'Checken of bestand bestaat en bestandsnaam veranderen indien nodig
-                Dim filename As String = CheckOfBestandBestaat(uplAfbeelding.FileName)
-
-                'Afbeelding opslaan
-                uplAfbeelding.SaveAs(String.Concat(Server.MapPath("~/App_Presentation/Uploads/Images/"), filename))
-
-                'Afbeelding in editor plaatsen
-                Dim img As String = String.Concat("<img src=""Uploads/Images/", filename, """/>")
-                Editor1.Content = String.Concat(Editor1.Content, img)
-
-                'Editor vergroten
-                Dim image As System.Drawing.Image = System.Drawing.Image.FromStream(uplAfbeelding.PostedFile.InputStream)
-                Dim hoogte As Integer = image.PhysicalDimension.Height
-                Editor1.Height = New Unit(Editor1.Height.Value + hoogte + 50)
-                updContent.Update()
-            End If
-
         End If
     End Sub
 

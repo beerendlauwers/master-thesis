@@ -20,23 +20,19 @@ function veranderDropdown(imagenaam)
 		document.getElementById(imagenaam).src= beginpart + '/images/add.png'
 	}
 }
-
-function VeranderEditorScherm( aantal )
+function ShadowBoxLaderTonen()
 {
-   var elem = document.getElementById('ctl00_ContentPlaceHolder1_Editor1');
-   
-   if ( elem )
-   {
-      if ( elem.style.height == "100%" )
-    {
-        elem.style.height = "800px";
-    }
-    else
-    {
-        var height = elem.style.height;
-        height = height.substring( 0, height.length - 2 );
-        height = parseInt(height) + aantal;
-        elem.style.height = height + "px";
-    }
-   }
+    // open a message
+    Shadowbox.open({
+        content:    '<div style="padding-top:40px;text-align:center;vertical-align:middle;color:#FFFFFF;font-family:arial,verdana;"><img src="CSS/images/loading.gif" style="vertical-align:middle;"/> Even wachten aub...</div>',
+        player:     "html",
+        height: 100,
+        width: 200
+    });
+}
+
+function ShadowBoxLaderSluiten()
+{
+    // close message
+    parent.Shadowbox.close();
 }

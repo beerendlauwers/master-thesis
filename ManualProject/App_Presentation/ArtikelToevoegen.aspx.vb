@@ -25,27 +25,12 @@ Partial Class App_Presentation_invoerenTest
 
     Private Sub LaadCategorien()
 
-        Me.ddlVersie.Items.Clear()
-        For Each v As Versie In Versie.GetVersies
-            ddlVersie.Items.Add(New ListItem(v.VersieNaam, v.ID))
-        Next
-
-        Me.ddlTaal.Items.Clear()
-        For Each taal As Taal In taal.GetTalen
-            ddlTaal.Items.Add(New ListItem(taal.TaalNaam, taal.ID))
-        Next
-
-        Me.ddlBedrijf.Items.Clear()
-        For Each b As Bedrijf In Bedrijf.GetBedrijven
-            ddlBedrijf.Items.Add(New ListItem(b.Naam, b.ID))
-        Next
+        Util.LeesVersies(ddlVersie)
+        Util.LeesTalen(ddlTaal)
+        Util.LeesBedrijven(ddlBedrijf)
 
         Dim t As Tree = Tree.GetTree(Me.ddlTaal.SelectedValue, Me.ddlVersie.SelectedValue, Me.ddlBedrijf.SelectedValue)
-        Me.ddlCategorie.Items.Clear()
-
-        Me.ddlCategorie.Items.Add(New ListItem("root_node", "0"))
-
-        t.VulCategorieDropdown(Me.ddlCategorie, t.RootNode, -1)
+        Util.LeesCategorien(ddlCategorie, t)
 
         If Me.ddlCategorie.Items.Count = 0 Then
             Me.ddlCategorie.Visible = False
@@ -64,28 +49,7 @@ Partial Class App_Presentation_invoerenTest
     End Sub
 
     Private Sub LaadTemplates()
-
-        'Directory ophalen
-        Dim di As New IO.DirectoryInfo(String.Concat(Server.MapPath("~/"), "Templates"))
-
-        'Alle templates ophalen
-        Dim templatelijst As New List(Of IO.FileInfo)
-        For Each file As IO.FileInfo In di.GetFiles
-            templatelijst.Add(file)
-        Next
-
-        'Alle geldige XML-XSL combinaties opslaan
-        Dim xmllijst As New List(Of XML)
-        For Each template As IO.FileInfo In templatelijst
-            If template.Extension = ".xml" Then
-                For Each xsltemplate As IO.FileInfo In templatelijst
-                    If xsltemplate.Name.Replace(".xsl", String.Empty) = template.Name.Replace(".xml", String.Empty) And xsltemplate.Extension = ".xsl" Then
-                        lstSjablonen.Items.Add(template.Name.Replace(".xml", String.Empty))
-                    End If
-                Next
-            End If
-        Next template
-
+        XML.GetTemplates(lstSjablonen)
     End Sub
 
     Private Sub LaadTooltips()
@@ -102,14 +66,7 @@ Partial Class App_Presentation_invoerenTest
         lijst.Add(New Tooltip("tipCategorieArtikelToevoegen"))
         lijst.Add(New Tooltip("tipFinaalArtikelToevoegen"))
         lijst.Add(New Tooltip("tipSjabloonArtikelToevoegen"))
-
-        'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
-        If Page.IsPostBack Then
-            Tooltip.VoegTipToeAanEndRequest(Me, lijst)
-        Else
-            Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-            Tooltip.VoegTipToeAanBody(body, lijst)
-        End If
+        Util.TooltipsToevoegen(Me, lijst)
 
     End Sub
 

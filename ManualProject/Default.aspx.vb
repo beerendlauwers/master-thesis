@@ -7,7 +7,7 @@ Partial Class _Default
     Dim dummyPass As String = String.Empty
     Dim dummyTag As String = "ANDERBEDRIJF"
     Dim dummyTaal As String = "NL"
-    Dim dummyVersie As String = "3.1"
+    Dim dummyVersie As String = "010302"
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 

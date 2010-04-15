@@ -688,11 +688,8 @@ Public Class ArtikelDAL
         c.Parameters.Add("@Tag", SqlDbType.VarChar).Value = tag
         c.Connection = New SqlConnection(conn)
         Try
-            Dim r As SqlDataReader
             c.Connection.Open()
-
             titel = Convert.ToString(c.ExecuteScalar)
-            
             Return titel
 
         Catch ex As Exception

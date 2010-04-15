@@ -46,7 +46,7 @@ Public Class Util
     ''' </summary>
     ''' <param name="ddl">De DropDownList waaruit de waardes dienen te komen.</param>
     ''' <returns>Alle waardes indien SelectedValue = -1000, anders enkel de waarde van de geselecteerdeo optie</returns>
-    Public Shared Function LeesDropdown(ByRef ddl As DropDownList) As String
+    Public Shared Function DropdownUitlezen(ByRef ddl As DropDownList) As String
         Dim returnstring As String = String.Empty
         If ddl.SelectedValue = -1000 Then 'alles
             For index As Integer = 1 To ddl.Items.Count - 1
@@ -69,4 +69,162 @@ Public Class Util
             HttpContext.Current.Response.Redirect("Aanmeldpagina.aspx")
         End If
     End Sub
+
+    Public Shared Sub TooltipsToevoegen(ByRef pagina As System.Web.UI.Page, ByRef tips As List(Of Tooltip))
+        'Tooltips op de pagina zetten via scriptmanager als het een postback is, anders gewoon in de onload functie van de body.
+
+        If pagina.IsPostBack Then
+            Tooltip.VoegTipToeAanEndRequest(pagina, tips)
+        Else
+            Dim body As HtmlGenericControl = pagina.Master.FindControl("MasterBody")
+            Tooltip.VoegTipToeAanBody(body, tips)
+        End If
+    End Sub
+
+    Public Shared Sub LeesBedrijven(ByRef ddl As DropDownList, Optional ByVal ddlLeegmaken As Boolean = True, Optional ByVal tekstWaardes As Boolean = False)
+        If ddlLeegmaken Then
+            ddl.Items.Clear()
+        End If
+        For Each b As Bedrijf In Bedrijf.GetBedrijven
+            If tekstWaardes Then
+                ddl.Items.Add(New ListItem(b.Naam, b.Naam))
+            Else
+                ddl.Items.Add(New ListItem(b.Naam, b.ID))
+            End If
+        Next
+    End Sub
+
+    Public Shared Sub LeesVersies(ByRef ddl As DropDownList, Optional ByVal ddlLeegmaken As Boolean = True, Optional ByVal tekstWaardes As Boolean = False)
+        If ddlLeegmaken Then
+            ddl.Items.Clear()
+        End If
+        For Each v As Versie In Versie.GetVersies
+            If tekstWaardes Then
+                ddl.Items.Add(New ListItem(v.VersieNaam, v.VersieNaam))
+            Else
+                ddl.Items.Add(New ListItem(v.VersieNaam, v.ID))
+            End If
+        Next
+    End Sub
+
+    Public Shared Sub LeesTalen(ByRef ddl As DropDownList, Optional ByVal ddlLeegmaken As Boolean = True, Optional ByVal tekstWaardes As Boolean = False)
+        If ddlLeegmaken Then
+            ddl.Items.Clear()
+        End If
+        For Each taal As Taal In taal.GetTalen
+            If tekstWaardes Then
+                ddl.Items.Add(New ListItem(taal.TaalNaam, taal.TaalNaam))
+            Else
+                ddl.Items.Add(New ListItem(taal.TaalNaam, taal.ID))
+            End If
+        Next
+    End Sub
+
+    Public Shared Sub LeesCategorien(ByRef ddl As DropDownList, ByRef t As Tree, Optional ByVal ddlLeegmaken As Boolean = True, Optional ByVal metRootNode As Boolean = False)
+        If ddlLeegmaken Then
+            ddl.Items.Clear()
+        End If
+
+        If metRootNode Then
+            ddl.Items.Add(New ListItem("root_node", "0"))
+        End If
+
+        t.VulCategorieDropdown(ddl, t.RootNode, -1)
+    End Sub
+
+    ''' <summary>
+    ''' Gaat na of de opgegeven WebControls een waarde bevatten.
+    ''' </summary>
+    ''' <param name="w1">Eerste WebControl.</param>
+    ''' <param name="w2">Tweede WebControl.</param>
+    ''' <param name="w3">Derde WebControl.</param>
+    ''' <param name="w4">Vierde WebControl.</param>
+    ''' <returns>True indien alles een waarde bevat, anders False.</returns>
+    ''' <remarks>Valideert enkel Textboxes, Dropdownlists en Listboxes.</remarks>
+    Public Shared Function Valideer(ByRef w1 As WebControl, ByRef w2 As WebControl, ByRef w3 As WebControl, ByRef w4 As WebControl) As Boolean
+        If IsGeldig(w1) And IsGeldig(w2) And IsGeldig(w3) And IsGeldig(w4) Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Gaat na of de opgegeven WebControls een waarde bevatten.
+    ''' </summary>
+    ''' <param name="w1">Eerste WebControl.</param>
+    ''' <param name="w2">Tweede WebControl.</param>
+    ''' <param name="w3">Derde WebControl.</param>
+    ''' <returns>True indien alles een waarde bevat, anders False.</returns>
+    ''' <remarks>Valideert enkel Textboxes, Dropdownlists en Listboxes.</remarks>
+    Public Shared Function Valideer(ByRef w1 As WebControl, ByRef w2 As WebControl, ByRef w3 As WebControl) As Boolean
+        If IsGeldig(w1) And IsGeldig(w2) And IsGeldig(w3) Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Gaat na of de opgegeven WebControls een waarde bevatten.
+    ''' </summary>
+    ''' <param name="w1">Eerste WebControl.</param>
+    ''' <param name="w2">Tweede WebControl.</param>
+    ''' <returns>True indien alles een waarde bevat, anders False.</returns>
+    ''' <remarks>Valideert enkel Textboxes, Dropdownlists en Listboxes.</remarks>
+    Public Shared Function Valideer(ByRef w1 As WebControl, ByRef w2 As WebControl) As Boolean
+        If IsGeldig(w1) And IsGeldig(w2) Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Gaat na of de opgegeven WebControl een waarde bevat.
+    ''' </summary>
+    ''' <param name="w">De te valideren WebControl.</param>
+    ''' <returns>True indien alles een waarde bevat, anders False.</returns>
+    ''' <remarks>Valideert enkel Textboxes, Dropdownlists en Listboxes.</remarks>
+    Public Shared Function Valideer(ByRef w As WebControl) As Boolean
+        Return IsGeldig(w)
+    End Function
+
+    ''' <summary>
+    ''' Gaat na of de opgegeven WebControls een waarde bevatten.
+    ''' </summary>
+    ''' <param name="lijst">Array van WebControls.</param>
+    ''' <returns>True indien alles een waarde bevat, anders False.</returns>
+    ''' <remarks>Valideert enkel Textboxes, Dropdownlists en Listboxes.</remarks>
+    Public Shared Function Valideer(ByRef lijst() As WebControl) As Boolean
+        For Each ctl As WebControl In lijst
+            If Not IsGeldig(ctl) Then Return False
+        Next ctl
+        Return True
+    End Function
+
+    Private Shared Function IsGeldig(ByRef w As WebControl) As Boolean
+        If w Is Nothing Then Return False
+
+        If TryCast(w, TextBox) IsNot Nothing Then
+            Dim txt As TextBox = w
+            If txt.Text = String.Empty Then
+                Return False
+            End If
+        ElseIf TryCast(w, DropDownList) IsNot Nothing Then
+            Dim ddl As DropDownList = w
+            If ddl.SelectedItem Is Nothing Then
+                Return False
+            End If
+        ElseIf TryCast(w, ListBox) IsNot Nothing Then
+            Dim lst As ListBox = w
+            If lst.SelectedItem Is Nothing Then
+                Return False
+            End If
+        End If
+
+        Return True
+    End Function
+
+
 End Class

@@ -128,6 +128,7 @@ Public Class TaalDAL
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@taal", SqlDbType.VarChar).Value = taal
         c.Parameters.Add("@taaltag", SqlDbType.VarChar).Value = taaltag
+        c.CommandTimeout = 300
 
         Try
             Dim r As SqlDataReader

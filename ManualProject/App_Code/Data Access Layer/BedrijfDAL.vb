@@ -144,6 +144,7 @@ Public Class BedrijfDAL
             c.Connection.Close()
         End Try
 
+        Return Nothing
     End Function
 
     Public Function insertBedrijf(ByVal naam As String, ByVal tag As String) As Integer

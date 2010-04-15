@@ -1,4 +1,5 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="Default.aspx.vb" Inherits="App_Presentation_Default" title="Untitled Page" %>
+<%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
