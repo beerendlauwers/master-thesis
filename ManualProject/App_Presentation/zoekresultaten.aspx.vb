@@ -7,7 +7,6 @@ Partial Class App_Presentation_zoekresultaten
             Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
             If zoekterm IsNot Nothing And Not zoekterm = "%%" Then
                 Session("tag") = zoekterm
-                grdResultaten.DataBind()
             End If
         End If
 
@@ -15,13 +14,15 @@ Partial Class App_Presentation_zoekresultaten
             Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
             If zoekterm IsNot Nothing And Not zoekterm = "%%" Then
                 Session("tag") = zoekterm
-                grdResultaten.DataBind()
                 JavaScript.ShadowBoxLaderSluiten(Me)
             End If
         End If
 
         If grdResultaten.Rows.Count > 0 Then
             lblSort.Visible = True
+        End If
+
+        If Session("tag") IsNot Nothing Then
             Page.Title = String.Concat("Zoekresultaten voor de term '", Session("tag"), "'")
         End If
 
@@ -34,7 +35,10 @@ Partial Class App_Presentation_zoekresultaten
             End If
         End If
 
-        JavaScript.ShadowBoxLaderTonenBijPostback(Me)
+        JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
+    End Sub
+
+    Protected Sub grdResultaten_DataBinding(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdResultaten.DataBinding
         GenereerGelokaliseerdeTekst()
     End Sub
 
@@ -59,7 +63,6 @@ Partial Class App_Presentation_zoekresultaten
 
             r.Cells(0).Controls.Add(ctl)
         Next index
-
     End Sub
 
     Protected Sub grdResultaten_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdResultaten.RowCommand
@@ -85,13 +88,13 @@ Partial Class App_Presentation_zoekresultaten
 
     Private Sub GenereerGelokaliseerdeTekst()
         Master.CheckVoorTaalWijziging()
-        headerArtikels.InnerHtml = XML.GetString("ZOEKEN_GEVONDENARTIKELS")
-        lblSort.Text = XML.GetString("ZOEKEN_UITLEGKOLOMMEN")
-        grdResultaten.EmptyDataText = XML.GetString("GEENDATAGEVONDEN")
+        headerArtikels.InnerHtml = Lokalisatie.GetString("ZOEKEN_GEVONDENARTIKELS")
+        lblSort.Text = Lokalisatie.GetString("ZOEKEN_UITLEGKOLOMMEN")
+        grdResultaten.EmptyDataText = Lokalisatie.GetString("GEENDATAGEVONDEN")
 
         For Each d As DataControlField In grdResultaten.Columns
-            If d.SortExpression = "titel" Then d.HeaderText = XML.GetString("ZOEKEN_TITEL")
-            If d.SortExpression = "tag" Then d.HeaderText = XML.GetString("ZOEKEN_TAG")
+            If d.SortExpression = "titel" Then d.HeaderText = Lokalisatie.GetString("ZOEKEN_TITEL")
+            If d.SortExpression = "tag" Then d.HeaderText = Lokalisatie.GetString("ZOEKEN_TAG")
         Next
     End Sub
 

@@ -209,41 +209,49 @@ Public Class Tree
     ''' <summary>
     ''' (Her)bouw de volledige treeverzameling. Dit is zeer intensief voor de server, dus gebruik dit zo weinig mogelijk.
     ''' </summary>
-    Public Shared Sub BouwTrees()
+    Public Shared Function BouwTrees() As String
 
         SyncLock _treeLock
 
-            'Als er reeds een verzameling van trees is, maken we deze terug leeg
-            If FTrees IsNot Nothing Then
-                FTrees = New List(Of Tree)
-            End If
+            Try
 
-            'Databasefuncties ophalen
-            Dim dblink As DatabaseLink = DatabaseLink.GetInstance
-
-            Dim dbcategorie As CategorieDAL = dblink.GetCategorieFuncties
-            Dim dbtaal As TaalDAL = dblink.GetTaalFuncties
-            Dim dbbedrijf As BedrijfDAL = dblink.GetBedrijfFuncties
-            Dim dbversie As VersieDAL = dblink.GetVersieFuncties
-            Dim dbartikel As ArtikelDAL = dblink.GetArtikelFuncties
-
-            'Alle tabellen ophalen
-            Dim taaldt As tblTaalDataTable = dbtaal.GetAllTaal
-            Dim bedrijfdt As tblBedrijfDataTable = dbbedrijf.GetAllBedrijf
-            Dim versiedt As tblVersieDataTable = dbversie.GetAllVersie
-
-            'Voor elke combinatie van VERSIE, TAAL en BEDRIJF een tree maken.
-            For Each versie As tblVersieRow In versiedt
-
-                If (Not BouwTreesVoorVersie(bedrijfdt, versie, taaldt)) Then
-                    Return
+                'Als er reeds een verzameling van trees is, maken we deze terug leeg
+                If FTrees IsNot Nothing Then
+                    FTrees = New List(Of Tree)
                 End If
 
-            Next versie
+                'Databasefuncties ophalen
+                Dim dblink As DatabaseLink = DatabaseLink.GetInstance
 
+                Dim dbcategorie As CategorieDAL = dblink.GetCategorieFuncties
+                Dim dbtaal As TaalDAL = dblink.GetTaalFuncties
+                Dim dbbedrijf As BedrijfDAL = dblink.GetBedrijfFuncties
+                Dim dbversie As VersieDAL = dblink.GetVersieFuncties
+                Dim dbartikel As ArtikelDAL = dblink.GetArtikelFuncties
+
+                'Alle tabellen ophalen
+                Dim taaldt As tblTaalDataTable = dbtaal.GetAllTaal
+                Dim bedrijfdt As tblBedrijfDataTable = dbbedrijf.GetAllBedrijf
+                Dim versiedt As tblVersieDataTable = dbversie.GetAllVersie
+
+                'Voor elke combinatie van VERSIE, TAAL en BEDRIJF een tree maken.
+                For Each versie As tblVersieRow In versiedt
+
+                    Dim resultaat As String = BouwTreesVoorVersie(bedrijfdt, versie, taaldt)
+                    If (Not resultaat = "OK") Then
+                        ErrorLogger.WriteError(New ErrorLogger(resultaat))
+                        Return resultaat
+                    End If
+
+                Next versie
+            Catch ex As Exception
+                ErrorLogger.WriteError(New ErrorLogger(ex.Message))
+                Return ex.Message
+            End Try
         End SyncLock
 
-    End Sub
+        Return "OK"
+    End Function
 
     ''' <summary>
     ''' Bouwt alle trees voor een bepaalde versie (alle combinaties van versie-taal-bedrijf).
@@ -253,21 +261,22 @@ Public Class Tree
     ''' <param name="taaldt">Een strong-typed DataTable met alle talen erin.</param>
     ''' <returns>True indien gelukt, False indien gefaald.</returns>
     ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
-    Public Shared Function BouwTreesVoorVersie(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versie As tblVersieRow, ByRef taaldt As tblTaalDataTable) As Boolean
+    Public Shared Function BouwTreesVoorVersie(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versie As tblVersieRow, ByRef taaldt As tblTaalDataTable) As String
 
         For Each taal As tblTaalRow In taaldt
 
             For Each bedrijf As tblBedrijfRow In bedrijfdt
 
-                If (Not BouwTreeBedrijf(bedrijf, versie, taal)) Then
-                    Return False
+                Dim resultaat As String = BouwTreeBedrijf(bedrijf, versie, taal)
+                If (Not resultaat = "OK") Then
+                    Return resultaat
                 End If
 
             Next bedrijf
 
         Next taal
 
-        Return True
+        Return "OK"
 
     End Function
 
@@ -285,15 +294,16 @@ Public Class Tree
 
             For Each bedrijf As tblBedrijfRow In bedrijfdt
 
-                If (Not BouwTreeBedrijf(bedrijf, versie, taal)) Then
-                    Return False
+                Dim resultaat As String = BouwTreeBedrijf(bedrijf, versie, taal)
+                If (Not resultaat = "OK") Then
+                    Return resultaat
                 End If
 
             Next bedrijf
 
         Next versie
 
-        Return True
+        Return "OK"
 
     End Function
 
@@ -311,15 +321,16 @@ Public Class Tree
 
             For Each taal As tblTaalRow In taaldt
 
-                If (Not BouwTreeBedrijf(bedrijf, versie, taal)) Then
-                    Return False
+                Dim resultaat As String = BouwTreeBedrijf(bedrijf, versie, taal)
+                If (Not resultaat = "OK") Then
+                    Return resultaat
                 End If
 
             Next taal
 
         Next versie
 
-        Return True
+        Return "OK"
 
     End Function
 
@@ -331,7 +342,7 @@ Public Class Tree
     ''' <param name="taal">De databaserij van de taal.</param>
     ''' <returns>True indien gelukt, False indien gefaald.</returns>
     ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
-    Public Shared Function BouwTreeBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versie As tblVersieRow, ByRef taal As tblTaalRow) As Boolean
+    Public Shared Function BouwTreeBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versie As tblVersieRow, ByRef taal As tblTaalRow) As String
 
         'Databasefuncties ophalen
         Dim dblink As DatabaseLink = DatabaseLink.GetInstance
@@ -354,7 +365,7 @@ Public Class Tree
             fout = String.Concat(fout, " Refereer naar de documentatie om dit probleem op te lossen.")
             Dim e As New ErrorLogger(fout, "TREE_0001")
             ErrorLogger.WriteError(e)
-            Return False
+            Return e.Boodschap
         End If
 
         If rootnoderij.Categorie = "root_node" And rootnoderij.FK_versie = 0 And rootnoderij.FK_taal = 0 And rootnoderij.FK_bedrijf = 0 Then
@@ -367,7 +378,7 @@ Public Class Tree
             e.Args.Add("BedrijfID van de root node (moet 0 zijn): " & rootnoderij.FK_bedrijf.ToString)
             e.Args.Add("TaalID van de root node (moet 0 zijn):" & rootnoderij.FK_taal.ToString)
             ErrorLogger.WriteError(e)
-            Return False
+            Return e.Boodschap
         End If
 
         Dim treenaam As String = String.Concat("TREE_", versie.Versie, "_", taal.Taal, "_", bedrijf.Naam)
@@ -395,7 +406,7 @@ Public Class Tree
                 e.Args.Add("BedrijfID van de kindcategorie: " & categorie.FK_bedrijf.ToString)
                 e.Args.Add("TaalID van de kindcategorie:" & categorie.FK_taal.ToString)
                 ErrorLogger.WriteError(e)
-                Return False
+                Return e.Boodschap
             End If
 
             'Maak een kind aan
@@ -439,7 +450,7 @@ Public Class Tree
 
         Tree.AddTree(t)
 
-        Return True
+        Return "OK"
 
     End Function
 
@@ -545,7 +556,20 @@ Public Class Tree
             If kind.Type = ContentType.Categorie Then
                 htmlcode = String.Concat(htmlcode, "<a href=""#"" onclick=""Effect.toggle('parent_", kind.ID, "', 'slide', { duration: 0.5 }); veranderDropdown('imgtab_", kind.ID, "'); return false;""><img src=""CSS/images/add.png"" border=""0"" id=""imgtab_", kind.ID, """> ", kind.Titel, "</a><br/>")
             Else
-                htmlcode = String.Concat(htmlcode, "<a id=""child_", kind.ID, """ href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
+                If Current.Session("huidigArtikelID") IsNot Nothing Then
+                    If IsNumeric(Current.Session("huidigArtikelID")) Then
+                        If Current.Session("huidigArtikelID") = kind.ID Then
+                            htmlcode = String.Concat(htmlcode, "<a id=""child_", kind.ID, """ href=""page.aspx?id=", kind.ID, """><strong><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</strong></a><br/>")
+                            Current.Session("huidigArtikelID") = Nothing
+                        Else
+                            htmlcode = String.Concat(htmlcode, "<a id=""child_", kind.ID, """ href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
+                        End If
+                    Else
+                        htmlcode = String.Concat(htmlcode, "<a id=""child_", kind.ID, """ href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
+                    End If
+                Else
+                    htmlcode = String.Concat(htmlcode, "<a id=""child_", kind.ID, """ href=""page.aspx?id=", kind.ID, """><img src=""CSS/images/doc_text_image.png"" border=""0"" /> ", kind.Titel, "</a><br/>")
+                End If
             End If
 
             If kind.Type = ContentType.Categorie Then

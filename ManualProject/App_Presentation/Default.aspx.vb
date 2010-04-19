@@ -7,8 +7,8 @@
 
     Private Sub GenereerGelokaliseerdeTekst()
         Master.CheckVoorTaalWijziging()
-        Page.Title = XML.GetString("STARTPAGINATITEL")
-        lblWelkom.Text = XML.GetString("WELKOMTEKST")
+        Page.Title = Lokalisatie.GetString("STARTPAGINATITEL")
+        lblWelkom.Text = Lokalisatie.GetString("WELKOMTEKST")
     End Sub
 
 

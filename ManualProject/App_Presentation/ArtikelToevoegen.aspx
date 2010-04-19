@@ -164,7 +164,7 @@
     </ProgressTemplate>
     </asp:UpdateProgress>
     <div runat="server" id="divFeedback" visible="false">
-        <asp:Image ID="imgResultaat" runat="server" />&nbsp;<asp:Label ID="lblresultaat" runat="server"></asp:Label><br />
+        <asp:Image ID="imgResultaat" runat="server" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label ID="lblresultaat" runat="server"></asp:Label><br />
     </div>
     <div runat="server" id="divNogEenArtikelToevoegen" visible="false">
     <input id="btnNieuwArtikel" type="button" value="Nog een artikel toevoegen" onclick="window.location = 'ArtikelToevoegen.aspx'" />

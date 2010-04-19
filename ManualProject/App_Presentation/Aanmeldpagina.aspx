@@ -45,7 +45,7 @@ Vul de juiste gebruikersnaam en wachtwoord in om Beheerder te worden.
     </ProgressTemplate>
     </asp:UpdateProgress>
        <div id="divRes" runat="server" style="display:inline">
-       <asp:Image runat="server" ID="imgRes" />&nbsp;
+       <asp:Image runat="server" ID="imgRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;
        <asp:Label ID="lblRes" runat="server" Text=" "></asp:Label>
        </div>
        <script type="text/javascript">

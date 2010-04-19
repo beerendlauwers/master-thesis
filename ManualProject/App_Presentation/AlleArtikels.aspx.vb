@@ -26,7 +26,7 @@ Partial Class App_Presentation_AlleArtikels
             CheckBox1.Checked = True
         End If
 
-        JavaScript.ShadowBoxLaderTonenBijPostback(Me)
+        JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
         JavaScript.ZetButtonOpDisabledOnClick(btnFilter, "Filteren...", True, True)
 
     End Sub

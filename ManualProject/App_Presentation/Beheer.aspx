@@ -3,10 +3,11 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+<script type="text/javascript" src="JS/ckfinder/ckfinder.js"></script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="divLoggedIn" runat="server">
-        <cc1:TabContainer runat="server" ID="TabContainer" ActiveTabIndex="4">
+        <cc1:TabContainer runat="server" ID="TabContainer" ActiveTabIndex="3">
             <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
                 <HeaderTemplate>
                     Bedrijf
@@ -59,15 +60,15 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnAddBedrijf" runat="server" Text="Toevoegen" ValidationGroup="bedrijfToevoegen"
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgAddBedrijfRes" />&nbsp;<asp:Label ID="lblAddBedrijfRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgAddBedrijfRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;&nbsp;<asp:Label
+                                                            ID="lblAddBedrijfRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -83,9 +84,9 @@
                                                         <asp:Label ID="lblBewerkBedrijf" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlBewerkBedrijf" runat="server"
-                                                            DataTextField="naam" DataValueField="bedrijfID" OnSelectedIndexChanged="ddlBewerkBedrijf_SelectedIndexChanged"
-                                                            AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlBewerkBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
+                                                            OnSelectedIndexChanged="ddlBewerkBedrijf_SelectedIndexChanged" AutoPostBack="true"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -130,15 +131,15 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnEditBedrijf" runat="server" Text="Wijzigen" ValidationGroup="bedrijfWijzigen"
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgEditBedrijfRes" />&nbsp;<asp:Label ID="lblEditbedrijfRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgEditBedrijfRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;&nbsp;<asp:Label
+                                                            ID="lblEditbedrijfRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -154,8 +155,8 @@
                                                         <asp:Label ID="lblBedrijfNaamVerwijderen" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlDeleteBedrijf" runat="server"
-                                                            DataTextField="naam" DataValueField="bedrijfID" Width="100%">
+                                                        <asp:DropDownList ID="ddlDeleteBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -165,14 +166,14 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnDeleteBedrijf" runat="server" Text="Verwijderen" Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgDeleteBedrijfRes" />&nbsp;<asp:Label ID="lblDeleteBedrijfRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgDeleteBedrijfRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblDeleteBedrijfRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -239,15 +240,15 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnAddTaal" runat="server" Text="Toevoegen" ValidationGroup="taalToevoegen"
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgAddTaalRes" />&nbsp;<asp:Label ID="lblAddTaalRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgAddTaalRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblAddTaalRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -263,9 +264,9 @@
                                                         <asp:Label ID="lblBewerkTaal" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlBewerkTaal" runat="server" DataTextField="Taal"
-                                                            DataValueField="TaalID" OnSelectedIndexChanged="ddlBewerkTaal_SelectedIndexChanged"
-                                                            AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlBewerkTaal" runat="server" DataTextField="Taal" DataValueField="TaalID"
+                                                            OnSelectedIndexChanged="ddlBewerkTaal_SelectedIndexChanged" AutoPostBack="true"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -311,8 +312,8 @@
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgEditTaalRes" />&nbsp;<asp:Label ID="lblEditTaalRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgEditTaalRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblEditTaalRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -328,8 +329,8 @@
                                                         <asp:Label ID="lblTaalDelete" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlTaalDelete" runat="server" DataTextField="taal"
-                                                            DataValueField="TaalID" Width="100%">
+                                                        <asp:DropDownList ID="ddlTaalDelete" runat="server" DataTextField="taal" DataValueField="TaalID"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -339,14 +340,14 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnTaalDelete" runat="server" Text="Verwijderen" Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgDeleteTaalRes" />&nbsp;<asp:Label ID="lblDeleteTaalRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgDeleteTaalRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblDeleteTaalRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -402,15 +403,15 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnAddVersie" runat="server" Text="Toevoegen" ValidationGroup="versieToevoegen"
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgAddVersieRes" />&nbsp;&nbsp;<asp:Label ID="lblAddVersieRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgAddVersieRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;&nbsp;<asp:Label
+                                                            ID="lblAddVersieRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -426,9 +427,9 @@
                                                         <asp:Label ID="lblBewerkVersie" runat="server" Text="Kies een Versie: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlBewerkVersie" runat="server" DataTextField="Versie"
-                                                            DataValueField="VersieID" OnSelectedIndexChanged="ddlBewerkVersie_SelectedIndexChanged"
-                                                            AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlBewerkVersie" runat="server" DataTextField="Versie" DataValueField="VersieID"
+                                                            OnSelectedIndexChanged="ddlBewerkVersie_SelectedIndexChanged" AutoPostBack="true"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -457,15 +458,15 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnEditVersie" runat="server" Text="Wijzigen" ValidationGroup="versieWijzigen"
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgEditVersieRes" />&nbsp;&nbsp;<asp:Label ID="lblEditVersieRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgEditVersieRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;&nbsp;<asp:Label
+                                                            ID="lblEditVersieRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -481,8 +482,8 @@
                                                         <asp:Label ID="lblVersiekopieren" runat="server" Text="Kies een versie om te kopiëren: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlVersiekopieren" runat="server"
-                                                            DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlVersiekopieren" runat="server" DataTextField="Versie" DataValueField="VersieID"
+                                                            AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -492,7 +493,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -545,15 +546,15 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnVersieKopieren" runat="server" Text="Kopiëren" ValidationGroup="versieKopieren"
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgVersieKopierenFeedback" />&nbsp;<asp:Label ID="lblVersieKopierenFeedback"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgVersieKopierenFeedback" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblVersieKopierenFeedback" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -569,8 +570,8 @@
                                                         <asp:Label ID="lblVerwijderVersie" runat="server" Text="Versie: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlDeletVersie" runat="server" DataTextField="versie"
-                                                            DataValueField="versieID" Width="100%">
+                                                        <asp:DropDownList ID="ddlDeletVersie" runat="server" DataTextField="versie" DataValueField="versieID"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -580,14 +581,14 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnDeleteVersie" runat="server" Text="Verwijderen" Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgDeleteVersieRes" />&nbsp;<asp:Label ID="lblDeleteVersieRes"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgDeleteVersieRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblDeleteVersieRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -659,7 +660,7 @@
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipAddhoogte'>
-                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                            <img src="CSS/images/help.png" alt='' /></span>&#160;
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -667,8 +668,8 @@
                                                         <asp:Label ID="lblAddCatVersie" runat="server" Text="Kies een versie: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlAddCatVersie" runat="server" DataTextField="Versie"
-                                                            DataValueField="VersieID" AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlAddCatVersie" runat="server" DataTextField="Versie" DataValueField="VersieID"
+                                                            AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -681,8 +682,8 @@
                                                         <asp:Label ID="lblAddCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlAddCatTaal" runat="server" DataTextField="Taal"
-                                                            DataValueField="TaalID" AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlAddCatTaal" runat="server" DataTextField="Taal" DataValueField="TaalID"
+                                                            AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -695,8 +696,8 @@
                                                         <asp:Label ID="lblAddCatBedrijf" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlAddCatBedrijf" runat="server"
-                                                            DataTextField="naam" DataValueField="bedrijfID" AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlAddCatBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
+                                                            AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -721,15 +722,15 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &#160;&nbsp;
+                                                        &#160;&#160;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnCatAdd" runat="server" Text="Toevoegen" ValidationGroup="categorieToevoegen"
                                                             Width="100%"></asp:Button>
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgResAdd" />&nbsp;<asp:Label ID="lblResAdd" runat="server"
-                                                            Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgResAdd" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblResAdd" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -750,8 +751,8 @@
                                                         <asp:Label ID="lblBewerkCatVersiekeuze" runat="server" Text="Filter op versie: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlEditCatVersiekeuze" runat="server"
-                                                            DataTextField="Versie" DataValueField="VersieID" Width="100%">
+                                                        <asp:DropDownList ID="ddlEditCatVersiekeuze" runat="server" DataTextField="Versie"
+                                                            DataValueField="VersieID" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -764,8 +765,8 @@
                                                         <asp:Label ID="lblBewerkCatTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlEditCatTaalkeuze" runat="server"
-                                                            DataTextField="Taal" DataValueField="TaalID" Width="100%">
+                                                        <asp:DropDownList ID="ddlEditCatTaalkeuze" runat="server" DataTextField="Taal" DataValueField="TaalID"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -778,8 +779,8 @@
                                                         <asp:Label ID="lblBewerkCatBedrijfkeuze" runat="server" Text="Filter op bedrijf: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlEditCatBedrijfkeuze" runat="server"
-                                                            DataTextField="naam" DataValueField="bedrijfID" Width="100%">
+                                                        <asp:DropDownList ID="ddlEditCatBedrijfkeuze" runat="server" DataTextField="naam"
+                                                            DataValueField="bedrijfID" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -789,7 +790,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="lbl">
-                                                        &#160;&nbsp;
+                                                        &#160;&#160;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnEditCatVerfijnen" runat="server" Text="Filteren" Width="100%">
@@ -798,7 +799,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &#160;
+                                                        &#160;&#160;
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -859,7 +860,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &#160;
+                                                        &#160;&#160;
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -872,8 +873,8 @@
                                                         <asp:Label ID="lblBewerkCatVersie" runat="server" Text="Kies een versie: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlEditCatVersie" runat="server"
-                                                            DataTextField="Versie" DataValueField="VersieID" AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlEditCatVersie" runat="server" DataTextField="Versie" DataValueField="VersieID"
+                                                            AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -886,8 +887,8 @@
                                                         <asp:Label ID="lblBewerkCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlEditCatTaal" runat="server" DataTextField="Taal"
-                                                            DataValueField="TaalID" AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlEditCatTaal" runat="server" DataTextField="Taal" DataValueField="TaalID"
+                                                            AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -900,8 +901,8 @@
                                                         <asp:Label ID="lblBewerkCatBedrijf" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlEditCatBedrijf" runat="server"
-                                                            DataTextField="naam" DataValueField="bedrijfID" AutoPostBack="true" Width="100%">
+                                                        <asp:DropDownList ID="ddlEditCatBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
+                                                            AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -926,15 +927,15 @@
                                                 </tr>
                                                 <tr runat="server" id="trCatEditButton">
                                                     <td>
-                                                        &#160;&nbsp;
+                                                        &#160;&#160;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnCatEdit" runat="server" Text="Wijzigen" ValidationGroup="categorieWijzigen"
                                                             Width="100%"></asp:Button>
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgResEdit" />&nbsp;<asp:Label ID="lblResEdit" runat="server"
-                                                            Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgResEdit" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblResEdit" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -955,13 +956,13 @@
                                                         <asp:Label ID="lblCatDelVersiekeuze" runat="server" Text="Filter op versie: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlCatDelVersiekeuze" runat="server"
-                                                            DataTextField="Versie" DataValueField="VersieID" Width="100%">
+                                                        <asp:DropDownList ID="ddlCatDelVersiekeuze" runat="server" DataTextField="Versie"
+                                                            DataValueField="VersieID" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='lbltipCatDelVersiekeuze'>
-                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                            <img src="CSS/images/help.png" alt='' /></span>&#160;
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -969,8 +970,8 @@
                                                         <asp:Label ID="lblCatDelTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlCatDelTaalkeuze" runat="server"
-                                                            DataTextField="Taal" DataValueField="TaalID" Width="100%">
+                                                        <asp:DropDownList ID="ddlCatDelTaalkeuze" runat="server" DataTextField="Taal" DataValueField="TaalID"
+                                                            Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -983,8 +984,8 @@
                                                         <asp:Label ID="lblCatDelBedrijfkeuze" runat="server" Text="Filter op bedrijf: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="ddlCatDelBedrijfkeuze" runat="server"
-                                                            DataTextField="naam" DataValueField="bedrijfID" Width="100%">
+                                                        <asp:DropDownList ID="ddlCatDelBedrijfkeuze" runat="server" DataTextField="naam"
+                                                            DataValueField="bedrijfID" Width="100%">
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -994,7 +995,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="lbl">
-                                                        &#160;&nbsp;
+                                                        &#160;&#160;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnCatDelFilteren" runat="server" Text="Filteren" Width="100%"></asp:Button>
@@ -1002,7 +1003,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &#160;
+                                                        &#160;&#160;
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1028,14 +1029,14 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &#160;
+                                                        &#160;&#160;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnCatDelete" runat="server" Text="Verwijderen" Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgResDelete" />&nbsp;<asp:Label ID="lblResDelete"
-                                                            runat="server" Text=""></asp:Label>
+                                                        <asp:Image runat="server" ID="imgResDelete" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblResDelete" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -1054,6 +1055,90 @@
                         </ContentTemplate>
                     </asp:UpdatePanel>
                 </ContentTemplate>
+            </cc1:TabPanel>
+            <cc1:TabPanel runat="server"  ID="tabVideo" HeaderText="Video">
+            <HeaderTemplate>Video</HeaderTemplate>
+            <ContentTemplate>
+            <asp:UpdatePanel ID="updVideo" runat="server">
+                        <ContentTemplate>
+                            <cc1:Accordion ID="accordionVideo" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
+                                ContentCssClass="art-content">
+                                <Panes>
+                                    <cc1:AccordionPane runat="server" BackColor="Black" ID="paneVideoBeheren">
+                                        <Header>
+                                            Video's beheren</Header>
+                                        <Content>
+                                            <table>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <input type="button" value="Video's Beheren" onclick="CKFinder.Popup( 'JS/ckfinder/', null, null, null ) ;" />
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipVideoBeheren'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </Content>
+                                    </cc1:AccordionPane>
+                                    <cc1:AccordionPane runat="server" BackColor="Black" ID="paneVideoPreview">
+                                        <Header>
+                                            Videopreview</Header>
+                                        <Content>
+                                        <asp:UpdatePanel runat="server" ID="updPreviewLinkUpdaten" OnLoad="updPreviewLinkUpdaten_Load">
+                                        <ContentTemplate>
+                                            <table>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <input type="button" value="Video Selecteren" onclick="CKFinder.Popup( 'JS/ckfinder/', null, null, videoSelectieInvullenInPreview ) ;" />
+                                                        <script type="text/javascript">
+                                                        function videoSelectieInvullenInPreview( fileUrl, data )
+                                                        {
+                                                            var link = document.getElementById("<%= lblVideoPreviewLink.ClientID %>");
+                                                            if( link )
+                                                            {
+                                                                link.value = fileUrl;
+                                                                __doPostBack('<%= updPreviewLinkUpdaten.ClientID %>', '');
+                                                            }
+                                                        }
+                                                        </script>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipVideoPreviewKiezen'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                <td class="lbl">
+                                                    <asp:Label runat="server" ID="lblVideoPreview" text="Preview-link: "></asp:Label>
+                                                </td>
+                                                <td>
+                                                    <asp:HiddenField runat="server" ID="lblVideoPreviewLink" />
+                                                    <a href="#" runat="server" id="linkVideoPreview" rel="shadowbox" >Preview Tonen</a>
+                                                </td>
+                                                <td>
+                                                        <span style="vertical-align: middle" id='tipVideoPreview'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                </td>
+                                                </tr>
+                                            </table>
+                                            </ContentTemplate>
+                                           </asp:UpdatePanel>
+                                        </Content>
+                                    </cc1:AccordionPane>
+                                </Panes>
+                            </cc1:Accordion>
+                            <asp:UpdateProgress ID="UpdateProgress5" runat="server">
+                                <ProgressTemplate>
+                                    <div class="update">
+                                        <img src="CSS/Images/ajaxloader.gif" />
+                                        Even wachten aub...
+                                    </div>
+                                </ProgressTemplate>
+                            </asp:UpdateProgress>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+            </ContentTemplate>
             </cc1:TabPanel>
             <cc1:TabPanel runat="server" ID="tabOnderhoud" HeaderText="Applicatie-Onderhoud">
                 <HeaderTemplate>
@@ -1121,7 +1206,7 @@
                                                         <asp:Label ID="lblTreesWeergeven" runat="server" Text="Kies een boomstructuur: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList runat="server" ID="ddlTreesWeergeven">
+                                                        <asp:DropDownList runat="server" ID="ddlTreesWeergeven" Width="100%" >
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td>
@@ -1131,7 +1216,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button runat="server" ID="btnTreeWeergeven" Text="Weergeven" Width="100%" />
@@ -1156,7 +1241,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <input type="button" id="btnTreesHerbouwen" value="Herbouwen" runat="server" />
@@ -1175,6 +1260,12 @@
                                                             </div>
                                                         </asp:Panel>
                                                     </td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>
+                                                        &#160;&nbsp;
+                                                    </td>
+                                                    <td><asp:Image runat="server" ID="imgHerbouwTreesRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label runat="server" ID="lblHerbouwTreesRes"></asp:Label></td>
                                                 </tr>
                                             </table>
                                         </Content>
@@ -1208,7 +1299,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        &nbsp;
+                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button runat="server" ID="btnHerlaadTooltips" Text="Herladen" />
@@ -1217,6 +1308,98 @@
                                                         <span style="vertical-align: middle" id='tipHerlaadTooltips'>
                                                             <img src="CSS/images/help.png" alt='' /></span>
                                                     </td>
+                                                </tr>
+                                                                                                <tr>
+                                                    <td>
+                                                        &#160;&nbsp;
+                                                    </td>
+                                                    <td><asp:Image runat="server" ID="imgHerlaadTooltipsRes"  ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label runat="server" ID="lblHerlaadTooltipsRes"></asp:Label></td>
+                                                </tr>
+                                            </table>
+                                        </Content>
+                                    </cc1:AccordionPane>
+                                    <cc1:AccordionPane runat="server" BackColor="Black" ID="AccordionLokalisatie">
+                                        <Header>
+                                            Lokalisatie</Header>
+                                        <Content>
+                                            <table>
+                                                <tr>
+                                                    <th align="left">
+                                                        Lokalisatie-info
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblAantalTalenInfo" runat="server" Text="Aantal gelokaliseerde talen: "></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <asp:Label ID="lblAantalTalen" runat="server"></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipAantalTalen'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblAantalStringsInfo" runat="server" Text="Aantal gelokaliseerde teksten: "></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <asp:Label ID="lblAantalStrings" runat="server"></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipAantalTeksten'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th align="left">
+                                                        Gelokaliseerde taal weergeven
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblTaalWeergeven" runat="server" Text="Kies een taal: "></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <asp:DropDownList runat="server" ID="ddlTaalWeergeven" Width="100%" >
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipTaalWeergeven'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        &#160;&nbsp;
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button runat="server" ID="btnTaalWeergeven" Text="Weergeven" Width="100%" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th align="left">
+                                                        Lokalisatie herladen
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        &#160;&nbsp;
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button runat="server" ID="btnLokalisatieHerladen" Text="Herladen" Width="100%" />
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipLokalisatieHerladen'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        &#160;&nbsp;
+                                                    </td>
+                                                    <td><asp:Image runat="server" id="imgLokalisatieHerladenRes"  ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label runat="server" ID="lblLokalisatieHerladenRes"></asp:Label></td>
                                                 </tr>
                                             </table>
                                         </Content>

@@ -156,12 +156,17 @@ Public Class JavaScript
         Return String.Concat("document.getElementById('", control.ClientID, "').style.display = '", display, "'; ")
     End Function
 
-    Public Shared Sub ShadowBoxLaderTonenBijPostback(ByRef pagina As System.Web.UI.Page)
+    Public Shared Sub ShadowBoxLaderTonenBijElkePostback(ByRef pagina As System.Web.UI.Page)
         JavaScript.VoegJavaScriptToeAanBeginRequest(pagina, "ShadowBoxLaderTonen();")
     End Sub
 
     Public Shared Sub ShadowBoxLaderSluiten(ByRef pagina As System.Web.UI.Page)
         JavaScript.VoegJavascriptToeAanEndRequest(pagina, "ShadowBoxLaderSluiten();")
+    End Sub
+
+    Public Shared Sub ShadowBoxOpenen(ByRef pagina As System.Web.UI.Page, ByVal js As String)
+        js = Regex.Replace(js, "[']", "\'")
+        JavaScript.VoegJavascriptToeAanEndRequest(pagina, String.Concat("ShadowBoxTonen('", js, "');"))
     End Sub
 
 End Class

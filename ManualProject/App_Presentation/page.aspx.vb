@@ -6,7 +6,7 @@ Partial Class App_Presentation_page
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         'Titel bepalen
-        Page.Title = "Ongeldig Artikel"
+        Page.Title = Lokalisatie.GetString("ONGELDIGARTIKEL")
 
         'Querystring checken op geldigheid
         Dim type As Integer = CheckQueryString()
@@ -37,14 +37,16 @@ Partial Class App_Presentation_page
             tag = tag.Trim
 
             If tag = String.Empty Then
-                Me.lblTitel.Text = "Ongeldig artikel."
+                Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+                Me.lblTitel.Visible = False
                 Return Nothing
             End If
 
             row = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByTag(tag)
 
             If (row Is Nothing) Then
-                Me.lblTitel.Text = "Er werd geen artikel gevonden met deze tag."
+                Me.lblTekst.Text = Lokalisatie.GetString("GEENARTIKELGEVONDENTAG")
+                Me.lblTitel.Visible = False
                 Return Nothing
             End If
         Else
@@ -53,7 +55,8 @@ Partial Class App_Presentation_page
             row = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelByID(id)
 
             If (row Is Nothing) Then
-                Me.lblTitel.Text = "Er werd geen artikel gevonden met dit ID."
+                Me.lblTekst.Text = Lokalisatie.GetString("GEENARTIKELGEVONDENID")
+                Me.lblTitel.Visible = False
                 Return Nothing
             End If
 
@@ -71,23 +74,27 @@ Partial Class App_Presentation_page
         Dim geldigeTag As Boolean = True
         Dim geldigID As Boolean = True
 
-        If (Request.QueryString("tag") Is Nothing) Then
-            Me.lblTitel.Text = "Ongeldig artikel."
+        If (Request.QueryString("tag") IsNot Nothing) Then
+            If (TryCast(Request.QueryString("tag"), String) Is Nothing) Then
+                Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+                Me.lblTitel.Visible = False
+                geldigeTag = False
+            End If
+        Else
+            Me.lblTekst.Text = Lokalisatie.GetString("GEENTAGOFID")
+            Me.lblTitel.Visible = False
             geldigeTag = False
         End If
 
-        If (TryCast(Request.QueryString("tag"), String) Is Nothing) Then
-            Me.lblTitel.Text = "Ongeldig artikel."
-            geldigeTag = False
-        End If
-
-        If (Request.QueryString("id") Is Nothing) Then
-            Me.lblTitel.Text = "Ongeldig artikel."
-            geldigID = False
-        End If
-
-        If (Not IsNumeric(Request.QueryString("id"))) Then
-            Me.lblTitel.Text = "Ongeldig artikel."
+        If (Request.QueryString("id") IsNot Nothing) Then
+            If (Not IsNumeric(Request.QueryString("id"))) Then
+                Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+                Me.lblTitel.Visible = False
+                geldigID = False
+            End If
+        Else
+            Me.lblTekst.Text = Lokalisatie.GetString("GEENTAGOFID")
+            Me.lblTitel.Visible = False
             geldigID = False
         End If
 
@@ -109,12 +116,14 @@ Partial Class App_Presentation_page
         Dim ingelogdBedrijf As Integer = Session("bedrijf")
 
         If Not ingelogdeVersie = a.Versie Then
-            Me.lblTitel.Text = "Ongeldig artikel."
+            Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+            Me.lblTitel.Visible = False
             Return False
         End If
 
         If Not (ingelogdBedrijf = a.Bedrijf Or a.Bedrijf = 0) Then
-            Me.lblTitel.Text = "Ongeldig artikel."
+            Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+            Me.lblTitel.Visible = False
             Return False
         End If
 
@@ -143,6 +152,8 @@ Partial Class App_Presentation_page
         Dim nodeartikel As Node = tree.DoorzoekTreeVoorNode(a.ID, Global.ContentType.Artikel)
 
         If nodeartikel Is Nothing Then Return
+
+        Session("huidigArtikelID") = nodeartikel.ID
 
         KlapBoomStructuurUit(tree, nodeartikel)
 

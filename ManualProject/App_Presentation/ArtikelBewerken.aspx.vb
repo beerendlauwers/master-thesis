@@ -45,7 +45,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
         End If
 
-        LaadTooltips()
+        LaadZoekTooltips()
         LaadJavascript()
 
         txtTag.Attributes.Add("onClick", "trVisible()")
@@ -310,6 +310,7 @@ Partial Class App_Presentation_ArtikelBewerken
             ckbFinal.Checked = False
         End If
 
+        LaadBewerkToolTips()
         updBewerken.Update()
 
         Me.divFeedback.Visible = False
@@ -388,7 +389,23 @@ Partial Class App_Presentation_ArtikelBewerken
 
     End Sub
 
-    Private Sub LaadTooltips()
+    Private Sub LaadBewerkToolTips()
+        'Nieuwe lijst van tooltips definiëren
+        Dim lijst As New List(Of Tooltip)
+
+        lijst.Add(New Tooltip("tipTag"))
+        lijst.Add(New Tooltip("tipTitel"))
+        lijst.Add(New Tooltip("tipTaal"))
+        lijst.Add(New Tooltip("tipBedrijf"))
+        lijst.Add(New Tooltip("tipVersie"))
+        lijst.Add(New Tooltip("tipCategorie"))
+        lijst.Add(New Tooltip("tipFinaal"))
+        lijst.Add(New Tooltip("tipSjabloon"))
+
+        Util.TooltipsToevoegen(Me, lijst)
+    End Sub
+
+    Private Sub LaadZoekTooltips()
 
         'Nieuwe lijst van tooltips definiëren
         Dim lijst As New List(Of Tooltip)
@@ -400,14 +417,7 @@ Partial Class App_Presentation_ArtikelBewerken
         lijst.Add(New Tooltip("tipVersieVerfijnen"))
         lijst.Add(New Tooltip("tipIsFinaalVerfijnen"))
         lijst.Add(New Tooltip("tipZoekTag"))
-        lijst.Add(New Tooltip("tipTag"))
-        lijst.Add(New Tooltip("tipTitel"))
-        lijst.Add(New Tooltip("tipTaal"))
-        lijst.Add(New Tooltip("tipBedrijf"))
-        lijst.Add(New Tooltip("tipVersie"))
-        lijst.Add(New Tooltip("tipCategorie"))
-        lijst.Add(New Tooltip("tipFinaal"))
-        lijst.Add(New Tooltip("tipUpload"))
+
         Util.TooltipsToevoegen(Me, lijst)
 
     End Sub

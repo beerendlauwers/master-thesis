@@ -441,7 +441,7 @@ Partial Class App_Presentation_Beheer
             Dim categorieID As Integer = ddlCatVerwijder.SelectedValue
 
             'Nakijken of er nog artikels of categorieën onder deze categorie staan
-            If (artikeldal.GetArtikelsByParent(categorieID) Is Nothing) And (categoriedal.getCategorieByParent(categorieID) Is Nothing) Then
+            If (artikeldal.GetArtikelsByParent(categorieID).Count = 0) And (categoriedal.getCategorieByParent(categorieID).Count = 0) Then
 
                 'Alles ok, categorie verwijderen
                 If Not adapterCat.Delete(categorieID) = 0 Then
@@ -1061,15 +1061,25 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub btnOk_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOk.Click
-        Versie.BouwVersieLijst()
-        Taal.BouwTaalLijst()
-        Bedrijf.BouwBedrijfLijst()
-        Tree.BouwTrees()
+        Dim resultaat As String = Tree.BouwTrees()
+        If resultaat = "OK" Then
+            LaadTreeGegevens()
+            Util.SetOK("Trees herbouwd.", lblHerbouwTreesRes, imgHerbouwTreesRes)
+        Else
+            JavaScript.ShadowBoxOpenen(Me, String.Concat("<strong>Er is een fout gebeurd tijdens het herbouwen van de boomstructuren:</strong><br/>", resultaat))
+            Util.SetError("Er is een fout opgetreden tijdens het herbouwen van de boomstructuren.", lblHerbouwTreesRes, imgHerbouwTreesRes)
+        End If
     End Sub
 
     Protected Sub btnHerlaadTooltips_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnHerlaadTooltips.Click
-        XML.ParseTooltips()
-        LaadTooltipInfo()
+        Dim resultaat As String = XML.ParseTooltips()
+        If resultaat = "OK" Then
+            LaadTooltipInfo()
+            Util.SetOK("Tooltips herladen.", lblHerlaadTooltipsRes, imgHerlaadTooltipsRes)
+        Else
+            JavaScript.ShadowBoxOpenen(Me, String.Concat("<strong>Er is een fout gebeurd tijdens het herladen van de tooltips:</strong><br/>", resultaat))
+            Util.SetError("Er is een fout opgetreden tijdens het herladen van de tooltips.", lblHerlaadTooltipsRes, imgHerlaadTooltipsRes)
+        End If
     End Sub
 
 #End Region
@@ -1093,6 +1103,7 @@ Partial Class App_Presentation_Beheer
 
             LaadTreeGegevens()
             LaadTooltipInfo()
+            LaadLokalisatieInfo()
         End If
 
     End Sub
@@ -1155,13 +1166,27 @@ Partial Class App_Presentation_Beheer
         lijst.Add(New Tooltip("tipCatDelBedrijfkeuze"))
         lijst.Add(New Tooltip("tipCatVerwijder"))
 
+        'Videobeheer
+        lijst.Add(New Tooltip("tipVideoBeheren"))
+        lijst.Add(New Tooltip("tipVideoPreviewKiezen"))
+        lijst.Add(New Tooltip("tipVideoPreview"))
+
+        'Trees
         lijst.Add(New Tooltip("tipTreesAantal"))
         lijst.Add(New Tooltip("tipTreesAantalCats"))
         lijst.Add(New Tooltip("tipTreesAantalArts"))
         lijst.Add(New Tooltip("tipTreesWeergeven"))
         lijst.Add(New Tooltip("tipTreesHerbouwen"))
+
+        'Tooltips
         lijst.Add(New Tooltip("tipAantalTooltips"))
         lijst.Add(New Tooltip("tipHerlaadTooltips"))
+
+        'Lokalisatie
+        lijst.Add(New Tooltip("tipAantalTalen"))
+        lijst.Add(New Tooltip("tipAantalTeksten"))
+        lijst.Add(New Tooltip("tipTaalWeergeven"))
+        lijst.Add(New Tooltip("tipLokalisatieHerladen"))
 
         Util.TooltipsToevoegen(Me, lijst)
 
@@ -1218,9 +1243,15 @@ Partial Class App_Presentation_Beheer
         JavaScript.ZetButtonOpDisabledOnClick(btnCatDelFilteren, "Filteren...", True, True)
 
         'Applicatie-onderhoud
+        'Trees
         JavaScript.ZetButtonOpDisabledOnClick(btnTreeWeergeven, "Bezig met opbouwen...", True, True)
 
+        'Tooltips
         JavaScript.ZetButtonOpDisabledOnClick(btnHerlaadTooltips, "Herladen...", True, True)
+
+        'Lokalisatie
+        JavaScript.ZetButtonOpDisabledOnClick(btnTaalWeergeven, "Bezig met laden...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnLokalisatieHerladen, "Herladen...", True, True)
 
     End Sub
 
@@ -1247,7 +1278,41 @@ Partial Class App_Presentation_Beheer
         lblAantalTooltips.Text = XML.GetTipCount
     End Sub
 
+    Private Sub LaadLokalisatieInfo()
+        lblAantalStrings.Text = Lokalisatie.GetTekstCount
+        lblAantalTalen.Text = Lokalisatie.Talen.Count
+
+        ddlTaalWeergeven.Items.Add(New ListItem("-- Talen --", -1000))
+        For Each lokalisatie As Lokalisatie In lokalisatie.Talen
+            Dim t As Taal = Taal.GetTaal(lokalisatie.TaalID)
+            ddlTaalWeergeven.Items.Add(New ListItem(t.TaalNaam, lokalisatie.TaalID))
+        Next
+    End Sub
+
 #End Region
 
+    Protected Sub btnTaalWeergeven_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTaalWeergeven.Click
+        If ddlTaalWeergeven.SelectedItem.Text = "-- Talen --" Then Return
+        Session("LeesTaal") = Lokalisatie.Taal(ddlTaalWeergeven.SelectedValue).LeesContent
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "genericPopup('TaalWeergeven.aspx',800,800, 1);")
+    End Sub
 
+    Protected Sub btnLokalisatieHerladen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLokalisatieHerladen.Click
+        Dim resultaat As String = Lokalisatie.ParseLocalisatieStrings()
+        If resultaat = "OK" Then
+            LaadLokalisatieInfo()
+            Util.SetOK("Taallokalisaties herladen.", lblLokalisatieHerladenRes, imgLokalisatieHerladenRes)
+        Else
+            JavaScript.ShadowBoxOpenen(Me, String.Concat("<strong>Er is een fout gebeurd tijdens het herladen van de taallokalisaties:</strong><br/>", resultaat))
+            Util.SetError("Er is een fout opgetreden tijdens het herladen van de taallokalisaties.", lblLokalisatieHerladenRes, imgLokalisatieHerladenRes)
+        End If
+
+    End Sub
+
+    Protected Sub updPreviewLinkUpdaten_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles updPreviewLinkUpdaten.Load
+        If IsPostBack Then
+            JavaScript.VoegJavascriptToeAanEndRequest(Me, "Shadowbox.setup();")
+            linkVideoPreview.HRef = lblVideoPreviewLink.Value
+        End If
+    End Sub
 End Class

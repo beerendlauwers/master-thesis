@@ -14,7 +14,7 @@
 <link href="CSS/appligen.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="JS/shadowbox/shadowbox.css" />
 <link href="CSS/prototip.css" rel="stylesheet" type="text/css" />
-<link href="JS/ckeditor/customcss.css" rel="Stylesheet" text="text/css" />
+<link href="JS/ckeditor/customcss.css" rel="Stylesheet" type="text/css" />
 
 <script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
 <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
@@ -23,6 +23,7 @@
 <script type="text/javascript" src="JS/shadowbox/shadowbox.js"></script>
 <script type="text/javascript">
 Shadowbox.init({ modal: true });
+var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
 </script>
 
     <asp:ContentPlaceHolder id="head" runat="server">
@@ -67,7 +68,7 @@ Shadowbox.init({ modal: true });
     <img src="CSS/images/APPLIGEN-LOGO-BASE-RGB.gif" />
     </div>
     <div>
-    <div id=main>
+    <div id="main">
     <div class="art-nav">
         <div class="l">
         </div>
@@ -77,18 +78,18 @@ Shadowbox.init({ modal: true });
             <li runat="server" id="liArtikelBeheer"><a runat="server" ><span class="l"></span><span class="r"></span>
                 <span class="t">Artikels</span></a> 
                 <ul>
-                    <li><a runat="server" id="ArtikelToevoegen" runat="server"><img src="CSS/images/add.png" border="0" /> Toevoegen</a></li>
-                    <li><a runat="server" id="ArtikelBewerken" runat="server"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
-                    <li><a runat="server" id="ArtikelVerwijderen" runat="server"><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
-                    <li><a runat="server" id="AlleArtikels" href="AlleArtikels.aspx" runat="server"><img src="CSS/images/doc_text_image.png" border="0"  /> Alle Artikels</a></li>
-                    <li><a runat="server" id="OverzichtPerTaal" href="OverzichtPerTaal.aspx" runat="server"><img src="CSS/images/doc_text_image.png" border="0"  /> Overzicht per Taal</a></li>
+                    <li><a runat="server" id="ArtikelToevoegen"><img src="CSS/images/add.png" border="0" /> Toevoegen</a></li>
+                    <li><a runat="server" id="ArtikelBewerken"><img src="CSS/images/wrench.png" border="0"  /> Bewerken</a></li>
+                    <li><a runat="server" id="ArtikelVerwijderen" ><img src="CSS/images/remove.png" border="0"  /> Verwijderen</a></li>
+                    <li><a runat="server" id="AlleArtikels" href="AlleArtikels.aspx"><img src="CSS/images/doc_text_image.png" border="0"  /> Alle Artikels</a></li>
+                    <li><a runat="server" id="OverzichtPerTaal" href="OverzichtPerTaal.aspx"><img src="CSS/images/doc_text_image.png" border="0"  /> Overzicht per Taal</a></li>
                 </ul></li>
             <li runat="server" id="liBeheer"><a runat="server" href="Beheer.aspx" ><span class="l"></span><span class="r"></span>
                 <span class="t" runat="server" id="spanBeheer">Beheer </span></a>
                 
             </li>
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b><asp:Label ID="lblZoek" runat="server" Text=""></asp:Label>
-            </b><asp:TextBox ID="txtZoek" runat="server" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
+            </b><asp:TextBox ID="txtZoek" runat="server" onmouseover="SetButtonStatus(this)" onmouseout="SetButtonStatus(this)" onmouseup="SetButtonStatus(this)" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="lnkZoeken" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                     Width="16px" class="zoekLinkUit" PostBackUrl="~/App_Presentation/zoekresultaten.aspx" /></span></span></div>

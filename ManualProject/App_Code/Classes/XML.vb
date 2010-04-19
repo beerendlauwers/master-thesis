@@ -10,18 +10,11 @@ Public Structure XMLTooltip
     Public Text As String
 End Structure
 
-Public Structure XMLLocalisation
-    Public taalID As Integer
-    Public keys As NameValueCollection
-End Structure
-
 Public Class XML
     Private _xml As String
     Private _xsl As String
-    Private Shared _parseLocalisationLock As New Object
     Private Shared _parseLock As New Object
     Private Shared FTooltips As List(Of XMLTooltip)
-    Private Shared FLocalisation As List(Of XMLLocalisation)
 
     Public Shared Function GetTooltips() As List(Of XMLTooltip)
 
@@ -37,33 +30,39 @@ Public Class XML
         Return FTooltips.Count
     End Function
 
-    Public Shared Sub ParseTooltips()
-
+    Public Shared Function ParseTooltips() As String
         SyncLock _parseLock
 
-            FTooltips = New List(Of XMLTooltip)
+            Try
+                FTooltips = New List(Of XMLTooltip)
 
-            Dim locatie As String = HttpContext.Current.Server.MapPath("~/App_Data/tooltips.xml")
+                Dim locatie As String = HttpContext.Current.Server.MapPath("~/App_Data/tooltips.xml")
 
-            'Document laden
-            Dim xml As New XmlDocument()
-            xml.Load(locatie)
+                'Document laden
+                Dim xml As New XmlDocument()
+                xml.Load(locatie)
 
-            'root node ophalen
-            Dim root As XmlNode = xml.DocumentElement
+                'root node ophalen
+                Dim root As XmlNode = xml.DocumentElement
 
-            'Alle tooltips uitlezen
-            For Each child As XmlNode In root.ChildNodes
-                If child.NodeType = XmlNodeType.Comment Then Continue For
+                'Alle tooltips uitlezen
+                For Each child As XmlNode In root.ChildNodes
+                    If child.NodeType = XmlNodeType.Comment Then Continue For
 
-                Dim tip As New XMLTooltip
-                tip.ID = child.Attributes.GetNamedItem("id").Value
-                tip.Text = child.Attributes.GetNamedItem("text").Value
-                FTooltips.Add(tip)
-            Next child
+                    Dim tip As New XMLTooltip
+                    tip.ID = child.Attributes.GetNamedItem("id").Value
+                    tip.Text = child.Attributes.GetNamedItem("text").Value
+                    FTooltips.Add(tip)
+                Next child
+
+            Catch ex As Exception
+                ErrorLogger.WriteError(New ErrorLogger(ex.Message))
+                Return ex.Message
+            End Try
 
         End SyncLock
-    End Sub
+        Return "OK"
+    End Function
 
     Public Shared Function GetTip(ByVal ID As String) As String
         For Each tip As XMLTooltip In GetTooltips()
@@ -177,81 +176,5 @@ Public Class XML
     Public Shared Function LeesXMLFile(ByVal xmlbestand As String, ByVal xslbestand As String) As String
         Return XML.XMLUitlezen(xmlbestand, xslbestand)
     End Function
-
-    Public Shared Function GetString(ByVal id As String) As String
-        If FLocalisation Is Nothing Then ParseLocalisatieStrings()
-        If FLocalisation.Count = 0 Then Return String.Empty
-
-        Dim taalID As Integer = FLocalisation.Item(0).taalID
-        If Current.Session("taal") IsNot Nothing Then
-            taalID = Current.Session("taal")
-        End If
-
-        For Each lijst As XMLLocalisation In FLocalisation
-            If lijst.taalID = taalID Then
-                Dim key As String = lijst.keys.Item(id)
-                If key IsNot Nothing Then
-                    Return HttpUtility.HtmlDecode(key)
-                End If
-            End If
-        Next lijst
-
-        ParseLocalisatieStrings()
-
-        For Each lijst As XMLLocalisation In FLocalisation
-            If lijst.taalID = taalID Then
-                Dim key As String = lijst.keys.Item(id)
-                If key IsNot Nothing Then
-                    Return HttpUtility.HtmlDecode(key)
-                Else
-                    Return String.Empty
-                End If
-            End If
-        Next lijst
-
-        Return String.Empty
-    End Function
-
-    Public Shared Function GetLocalisatieStrings() As List(Of XMLLocalisation)
-        If FLocalisation Is Nothing Then ParseLocalisatieStrings()
-        Return FLocalisation
-    End Function
-
-    Public Shared Sub ParseLocalisatieStrings()
-
-        SyncLock _parseLocalisationLock
-
-            FLocalisation = New List(Of XMLLocalisation)
-
-            Dim locatie As String = HttpContext.Current.Server.MapPath("~/App_Data/localisatie.xml")
-
-            'Document laden
-            Dim xml As New XmlDocument()
-            xml.Load(locatie)
-
-            'root node ophalen
-            Dim root As XmlNode = xml.DocumentElement
-
-            'Alle strings uitlezen
-            For Each child As XmlNode In root.ChildNodes
-                If child.NodeType = XmlNodeType.Comment Then Continue For
-
-                Dim taal As New XMLLocalisation
-                taal.taalID = Integer.Parse(child.Attributes.GetNamedItem("id").Value)
-                taal.keys = New NameValueCollection
-
-                For Each tekst As XmlNode In child.ChildNodes
-                    If child.NodeType = XmlNodeType.Comment Then Continue For
-                    Dim id As String = tekst.Attributes.GetNamedItem("id").Value
-                    Dim text As String = tekst.Attributes.GetNamedItem("text").Value
-                    taal.keys.Add(id, text)
-                Next tekst
-
-                FLocalisation.Add(taal)
-            Next child
-
-        End SyncLock
-
-    End Sub
 
 End Class

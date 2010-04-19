@@ -135,7 +135,7 @@
 <asp:Label runat="server" ID="lblSelecteerArtikel" Text="Selecteer een artikel om te verwijderen." Visible="false"></asp:Label>
 <br /><br />
 <div runat="server" id="divFeedback" visible="false" style="text-align:center;">
-        <asp:Image ID="imgResultaat" runat="server" />&nbsp;<asp:Label ID="lblResultaat" runat="server"></asp:Label>
+        <asp:Image ID="imgResultaat" runat="server" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label ID="lblResultaat" runat="server"></asp:Label>
 </div>
 
 <script type="text/javascript">

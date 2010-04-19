@@ -2,7 +2,6 @@
 <%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <title>Zoekresultaten</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
     Zoekresultaten
@@ -17,7 +16,7 @@
     <asp:UpdatePanel runat="server" ID="updZoekresultaten" EnableViewState="False"><ContentTemplate>
     <asp:GridView ID="grdResultaten" runat="server" AutoGenerateColumns="False" AllowPaging="True" 
         AllowSorting="True" Width="100%" PageSize="30" 
-            PagerStyle-CssClass="gridview_pager" EmptyDataText="Geen data gevonden" 
+            PagerStyle-CssClass="gridview_pager" 
             DataSourceID="sqldsArtikel" EnableViewState="False">
     <Columns>
             <asp:BoundField DataField="titel" HeaderText="Titel" SortExpression="titel" />

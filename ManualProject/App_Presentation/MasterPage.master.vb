@@ -47,8 +47,8 @@ Partial Class App_Presentation_MasterPage
             XML.ParseTooltips()
         End If
 
-        If (XML.GetLocalisatieStrings() Is Nothing) Then
-            XML.ParseLocalisatieStrings()
+        If (Lokalisatie.Talen() Is Nothing) Then
+            Lokalisatie.ParseLocalisatieStrings()
         End If
 
     End Sub
@@ -73,6 +73,9 @@ Partial Class App_Presentation_MasterPage
 
         'Gelokaliseerde tekst genereren
         GenereerGelokaliseerdeTekst()
+
+        'Variabelen in de header initialiseren (nodig voor zijbalk)
+        Page.Header.DataBind()
 
         'Zijbalk genereren
         GenereerZijbalk()
@@ -112,11 +115,11 @@ Partial Class App_Presentation_MasterPage
     End Sub
 
     Private Sub GenereerGelokaliseerdeTekst()
-        divCategorienTekst.InnerHtml = XML.GetString("CATEGORIEN")
-        lblZoek.Text = XML.GetString("ZOEKENOP")
-        spanBeheer.InnerText = XML.GetString("BEHEER")
-        spanBeheerAanmeld.InnerHtml = XML.GetString("BEHEER")
-        spanTalen.InnerHtml = XML.GetString("TALEN")
+        divCategorienTekst.InnerHtml = Lokalisatie.GetString("CATEGORIEN")
+        lblZoek.Text = Lokalisatie.GetString("ZOEKENOP")
+        spanBeheer.InnerText = Lokalisatie.GetString("BEHEER")
+        spanBeheerAanmeld.InnerHtml = Lokalisatie.GetString("BEHEER")
+        spanTalen.InnerHtml = Lokalisatie.GetString("TALEN")
     End Sub
 
     Private Sub GenereerZijbalk()
@@ -163,6 +166,10 @@ Partial Class App_Presentation_MasterPage
         Dim split() As String = Page.AppRelativeVirtualPath.Split("/")
         Dim pagina As String = split(split.Length - 1)
 
+        If pagina = "page.aspx" Then
+            pagina = "Default.aspx"
+        End If
+
         Dim code As String = String.Empty
         For Each t As Taal In Taal.GetTalen
             code = String.Concat(code, "<li><a id=""ctl00_lnkTaal", t.ID.ToString, """ href=""javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$lnkTaal", t.ID.ToString, "&quot;,&quot;", t.ID.ToString, "&quot;, false, &quot;&quot;, &quot;", pagina, "&quot;, false, true))""""" + ">", t.TaalNaam, "</a></li>")
@@ -190,13 +197,17 @@ Partial Class App_Presentation_MasterPage
         Dim root As Node = t.RootNode
 
         Dim oudehtml As String = html
-        html = String.Concat(oudehtml, "<br/><div>", t.Bedrijf.Naam, "</div>")
-        Dim originelehtml As String = String.Concat(oudehtml, "<br/><div>", t.Bedrijf.Naam, "</div>")
+        html = String.Concat(oudehtml, "<br/><div><strong>", t.Bedrijf.Naam, "</strong></div>")
+        Dim originelehtml As String = String.Concat(oudehtml, "<br/><div><strong>", t.Bedrijf.Naam, "</strong></div>")
 
         html = t.BeginNieuweLijst(html, root, -1)
-        If html = originelehtml Then html = String.Concat(html, XML.GetString("GEENCATEGORIEN"))
+        If html = originelehtml Then html = String.Concat(html, Lokalisatie.GetString("GEENCATEGORIEN"))
 
         Return html
+    End Function
+
+    Protected Function GenereerLaadTekst() As String
+        Return Lokalisatie.GetString("LAADSCHERMTEKST")
     End Function
 
 #End Region

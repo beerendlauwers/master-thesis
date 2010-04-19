@@ -9,15 +9,19 @@
 	<tekst id="ZOEKENOP" text="Zoeken op:" />
 	<tekst id="CATEGORIEN" text="Categorie&#235;n" />
 	<tekst id="ZOEKRESULTATEN" text="Zoekresultaten" />
-	<tekst id="ZOEKEN_GEVONDENARTIKELS" text="Artikels die overeenkomen met uw zoektekst:" />
+	<tekst id="ZOEKEN_GEVONDENARTIKELS" text="Arëëëtikels die overeenkomen met uw zoektekst:" />
 	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Klik op &#233;&#233;n van de kolommen om de items volgens deze waarde te sorteren." />
 	<tekst id="ZOEKEN_TITEL" text="Titel" />
 	<tekst id="ZOEKEN_TAG" text="Tag" />
 	<tekst id="ZOEKEN_PAGINA" text="Pagina:" />
 	<tekst id="ONGELDIGID" text="Ongeldig ID." />
+	<tekst id="ONGELDIGARTIKEL" text="Ongeldig artikel." />
+	<tekst id="GEENARTIKELGEVONDENTAG" text="Er werd geen artikel gevonden met deze tag." />
+	<tekst id="GEENARTIKELGEVONDENID" text="Er werd geen artikel gevonden met dit ID." />
 	<tekst id="STARTPAGINATITEL" text="Startpagina" />
 	<tekst id="GEENCATEGORIEN" text="Er werden geen categorie&#235;n gevonden." />
 	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+	<tekst id="GEENTAGOFID" text="Gebruik de menustructuur in de linkerzijbalk of de zoekbalk rechtsboven om een artikel te bezichtigen." />
 </taal>
 <taal id="5">
 	<tekst id="WELKOMTEKST" text="Bienvenue sur le Reference Manual de Appligen. Utilisez le structure &#224; gauche ou recherchez un article." />
@@ -32,10 +36,14 @@
 	<tekst id="ZOEKEN_TITEL" text="Titre" />
 	<tekst id="ZOEKEN_TAG" text="Tag" />
 	<tekst id="ZOEKEN_PAGINA" text="Page:" />
-	<tekst id="ONGELDIGID" text="ID Invalide." />
+	<tekst id="ONGELDIGID" text="ID invalide." />
+	<tekst id="ONGELDIGARTIKEL" text="Article invalide." />
+	<tekst id="GEENARTIKELGEVONDENTAG" text="Er werd geen artikel gevonden met deze tag." />
+	<tekst id="GEENARTIKELGEVONDENID" text="Er werd geen artikel gevonden met dit ID." />
 	<tekst id="STARTPAGINATITEL" text="Page d'Accueil" />
 	<tekst id="GEENCATEGORIEN" text="Il n'y avait pas de cat&#233;gories trouv&#233;es." />
 	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+	<tekst id="GEENTAGOFID" text="Utilisez le structure &#224; gauche ou recherchez un article." />
 </taal>
 <taal id="10">
 	<tekst id="WELKOMTEKST" text="Welcome to the Appligen Reference Manual. Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
@@ -51,8 +59,12 @@
 	<tekst id="ZOEKEN_TAG" text="Tag" />
 	<tekst id="ZOEKEN_PAGINA" text="Page:" />
 	<tekst id="ONGELDIGID" text="Invalid ID." />
+	<tekst id="ONGELDIGARTIKEL" text="Invalid article." />
+	<tekst id="GEENARTIKELGEVONDENTAG" text="Er werd geen artikel gevonden met deze tag." />
+	<tekst id="GEENARTIKELGEVONDENID" text="Er werd geen artikel gevonden met dit ID." />
 	<tekst id="STARTPAGINATITEL" text="Home Page" />
 	<tekst id="GEENCATEGORIEN" text="No categories were found." />
 	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+	<tekst id="GEENTAGOFID" text="Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
 </taal>
 </talen>
