@@ -5,9 +5,6 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel Bewerken</title>
-    <link href="CSS/prototip.css" rel="stylesheet" type="text/css" />
-    <script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
-    <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
     <script src="JS/ckeditor/ckeditor.js" language="javascript" type="text/javascript"></script>
     <script src="JS/ckfinder/ckfinder.js" language="javascript" type="text/javascript"></script>
 </asp:Content>
@@ -177,7 +174,7 @@ function ValideerZoekTerm (source, args)
   </tr>
   <tr>  
    <td class="lbl">  <asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td> 
-   <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%" TabIndex="-1" onkeyup="setLabel(this)"></asp:TextBox>
+   <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%" TabIndex="-1" onkeyup="wijzigLabel(this)"></asp:TextBox>
        
    <asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
@@ -191,7 +188,7 @@ function ValideerZoekTerm (source, args)
         ValidChars="."></cc2:FilteredTextBoxExtender>
         <span id="lblTaalTag" runat="server" style="display:none;"></span>
         <script type="text/javascript">
-    function setLabel(field)
+    function wijzigLabel(field)
     {
         var lbl = document.getElementById("ctl00_ContentPlaceHolder1_lblTagvoorbeeld");
         var dropdownIndexversie = document.getElementById('ctl00_ContentPlaceHolder1_ddlVersie').selectedIndex;

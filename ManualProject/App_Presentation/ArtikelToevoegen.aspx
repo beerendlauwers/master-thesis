@@ -5,9 +5,6 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel toevoegen</title>
-    <link href="CSS/prototip.css" rel="stylesheet" type="text/css" />
-    <script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
-    <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
     <script src="JS/ckeditor/ckeditor.js" language="javascript" type="text/javascript"></script>
     <script src="JS/ckfinder/ckfinder.js" language="javascript" type="text/javascript"></script>
        
@@ -40,7 +37,7 @@
 
 <tr>
 <td class="lbl"><asp:Label ID="lblTag" runat="server" Text="Tag:" ></asp:Label></td>
-<td><asp:TextBox ID="txtTag" runat="server" Width="100%" onkeyup="setLabel(this)"></asp:TextBox><asp:RequiredFieldValidator
+<td><asp:TextBox ID="txtTag" runat="server" Width="100%" onkeyup="wijzigLabel(this)"></asp:TextBox><asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
         ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters, nummers en een underscore ( _ ) bevatten." 
         ControlToValidate="txtTag"></asp:RequiredFieldValidator>
@@ -52,7 +49,7 @@
         ValidChars=""></cc2:FilteredTextBoxExtender>
         <span id="lblTaalTag" runat="server" style="display:none;"></span>
         <script type="text/javascript">
-    function setLabel(field)
+    function wijzigLabel(field)
     {
         var lbl = document.getElementById("ctl00_ContentPlaceHolder1_lblTagvoorbeeld");
         var dropdownIndexversie = document.getElementById('ctl00_ContentPlaceHolder1_ddlVersie').selectedIndex;
