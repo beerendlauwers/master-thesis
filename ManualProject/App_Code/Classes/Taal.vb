@@ -53,9 +53,18 @@ Public Class Taal
     ''' <param name="row">Een taalrij uit de database.</param>
     ''' <remarks></remarks>
     Public Sub New(ByRef row As tblTaalRow)
-        _ID = row.TaalID
-        _taal = row.Taal
-        _taalTag = row.TaalTag
+        Try
+            _ID = row.TaalID
+            _taal = row.Taal
+            _taalTag = row.TaalTag
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("_ID = " & row.TaalID.ToString)
+            e.Args.Add("_Taal = " & row.Taal)
+            e.Args.Add("_taaltag = " & row.TaalTag)
+            ErrorLogger.WriteError(e)
+        End Try
+
     End Sub
 
     ''' <summary>
@@ -112,7 +121,7 @@ Public Class Taal
         End If
 
         For Each t As Taal In FTalen
-            If (t Is taal) Then
+            If (t.ID = taal.ID And t.TaalNaam = taal.TaalNaam And t.TaalTag = taal.TaalTag) Then
                 Return t
             End If
         Next t

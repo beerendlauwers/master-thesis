@@ -38,8 +38,14 @@ Public Class Versie
     ''' </summary>
     ''' <param name="row">Een versierij vanuit de database</param>
     Public Sub New(ByRef row As tblVersieRow)
-        _ID = row.VersieID
-        _versie = row.Versie
+        Try
+            _ID = row.VersieID
+            _versie = row.Versie
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("_ID = " & row.VersieID.ToString)
+            e.Args.Add("_versie = " & row.Versie)
+        End Try
     End Sub
 
     ''' <summary>
@@ -96,7 +102,7 @@ Public Class Versie
         End If
 
         For Each v As Versie In FVersies
-            If (v Is versie) Then
+            If (v.ID = versie.ID And v.VersieNaam = versie.VersieNaam) Then
                 Return v
             End If
         Next v

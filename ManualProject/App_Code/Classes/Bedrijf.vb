@@ -111,7 +111,7 @@ Public Class Bedrijf
         End If
 
         For Each b As Bedrijf In FBedrijven
-            If (b Is bedrijf) Then
+            If (b.ID = bedrijf.ID And b.Tag = bedrijf.Tag And b.Naam = bedrijf.Naam) Then
                 Return b
             End If
         Next b

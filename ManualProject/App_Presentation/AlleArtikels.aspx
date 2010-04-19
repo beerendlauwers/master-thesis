@@ -1,5 +1,7 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="AlleArtikels.aspx.vb" Inherits="App_Presentation_AlleArtikels" title="Untitled Page" %>
 
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
@@ -21,8 +23,9 @@
     <asp:Label ID="lblFinaal" runat="server" Visible="False"></asp:Label>
     <div id="gridview">
     <asp:GridView ID="grdArtikels" runat="server" PageSize="30" Width="100%" 
-            AutoGenerateColumns="False" AllowPaging="true" AllowSorting="True"
-        DataSourceID="SqlDataSource1" EmptyDataText="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden.">
+            AutoGenerateColumns="False" AllowPaging="True" AllowSorting="True"
+        DataSourceID="SqlDataSource1" 
+            EmptyDataText="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden.">
         <Columns>
             <asp:BoundField DataField="titel" HeaderText="Titel" SortExpression="titel" />
             <asp:BoundField DataField="tag" HeaderText="tag" SortExpression="tag" />
@@ -34,14 +37,18 @@
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                 ShowSelectButton="True" />
-             <asp:TemplateField Headertext="">
-            <ItemTemplate >
-            <asp:HyperLink ID="HyperLink1" runat="server"  NavigateUrl='<%# DataBinder.Eval(Container.DataItem,"tag","ArtikelBewerken.aspx?tag={0:c}") %>'><asp:Image ID="Image1" runat="server" ImageUrl="~/App_Presentation/CSS/images/wrench.png" /></asp:HyperLink>
-            </ItemTemplate>
-            </asp:TemplateField>
+            <asp:CommandField ButtonType="Image" 
+                SelectImageUrl="~/App_Presentation/CSS/images/wrench.png" 
+                ShowSelectButton="True"  /> 
+            <asp:CommandField ButtonType="Image" 
+                DeleteImageUrl="~/App_Presentation/CSS/images/remove.png" 
+                SelectImageUrl="~/App_Presentation/CSS/images/remove.png" 
+                ShowDeleteButton="True" />
         </Columns>
     </asp:GridView>
     </div>
+    
+    
     <asp:ObjectDataSource ID="objdsVersie" runat="server" DeleteMethod="Delete" 
         InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
         SelectMethod="GetData" TypeName="ManualTableAdapters.tblVersieTableAdapter" 
@@ -96,7 +103,7 @@
         ProviderName="System.Data.SqlClient" SelectCommand="select A.titel, A.tag, B.naam, T.taaltag, V.versie 
 from tblArtikel A, tblBedrijf B, tblTaal T, tblVersie V
 where A.Is_final=@Is_final and B.naam LIKE @naam and T.Taal LIKE @Taal AND V.versie LIKE @Versie AND A.FK_Bedrijf = B.BedrijfID AND A.FK_Taal = T.TaalID and
-A.FK_Versie=V.versieID ORDER BY A.Titel;">
+A.FK_Versie=V.versieID ORDER BY A.Titel;" >
         <SelectParameters>
             <asp:ControlParameter ControlID="lblFinaal" Name="Is_final" 
                 PropertyName="Text" />

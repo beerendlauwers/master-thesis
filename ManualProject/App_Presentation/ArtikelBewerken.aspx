@@ -25,22 +25,22 @@
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblVersieVerfijnen" runat="server" Text="Versie: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlVersieVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlVersieVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipVersieVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblTaalVerfijnen" runat="server" Text="Taal: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlTaalVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlTaalVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipTaalVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblBedrijfVerfijnen" runat="server" Text="Bedrijf: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlBedrijfVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlBedrijfVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipBedrijfVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblFinaalVerfijnen" runat="server" Text="Artikel is finaal: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlIsFInaalVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlIsFInaalVerfijnen" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipIsFinaalVerfijnen'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
@@ -177,7 +177,7 @@ function ValideerZoekTerm (source, args)
   </tr>
   <tr>  
    <td class="lbl">  <asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td> 
-   <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%" TabIndex="-1"></asp:TextBox>
+   <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%" TabIndex="-1" onkeyup="setLabel(this)"></asp:TextBox>
        
    <asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
@@ -188,22 +188,57 @@ function ValideerZoekTerm (source, args)
         </cc2:ValidatorCalloutExtender>
     <cc2:FilteredTextBoxExtender ID="fltTag" runat="server" 
         FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters" TargetControlID="txtTag" 
-        ValidChars="_"></cc2:FilteredTextBoxExtender>
+        ValidChars="."></cc2:FilteredTextBoxExtender>
+        <span id="lblTaalTag" runat="server" style="display:none;"></span>
+        <script type="text/javascript">
+    function setLabel(field)
+    {
+        var lbl = document.getElementById("ctl00_ContentPlaceHolder1_lblTagvoorbeeld");
+        var dropdownIndexversie = document.getElementById('ctl00_ContentPlaceHolder1_ddlVersie').selectedIndex;
+        var dropdownValueversie = document.getElementById('ctl00_ContentPlaceHolder1_ddlVersie')[dropdownIndexversie].text;
+        var dropdownIndextaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal').selectedIndex;
+        var dropdownValueTaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal')[dropdownIndextaal].text;
+        var dropdownIndexBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf').selectedIndex;
+        var dropdownValueBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf')[dropdownIndexBedrijf].text;
+        var dropdownIndexModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule').selectedIndex;
+        var dropdownValueModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule')[dropdownIndexModule].text;
+        var taaltag = document.getElementById("ctl00_ContentPlaceHolder1_lblTaalTag").innerHTML;
+        if(lbl)
+        {
+        lbl.innerHTML = dropdownValueversie + "_" + taaltag + "_" + dropdownValueBedrijf + "_" + dropdownValueModule + "_" +  field.value;
+        }
+        else
+        {
+        alert('iets is niet gevonden');
+        }
+    }
+    </script>
    </td>
    <td>
    <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
-   </td></tr>     
+   </td></tr> 
+   <tr><td></td><td>
+<span id="lblTagvoorbeeld" name="Tagvoorbeeld" runat="server"></span>
+</td></tr>    
    <tr ><td class="lbl">&nbsp</td>
    <td runat="server" id="trRadio" name="trRad" style="display:none;">
    <asp:RadioButton ID="rdbAlleTalen" runat="server" GroupName="Tag"  />Tag voor alle talen wijzigen<br />
    <asp:RadioButton ID="rdbEnkeleTaal" runat="server" GroupName="Tag" Checked="true" />Alleen tag in deze taal wijzigen
    </td></tr>         
-    
+    <tr>
+    <td class="lbl"><asp:Label ID="lblModule" runat="server" Text="Module: "></asp:Label></td>
+    <td>
+        <asp:DropDownList ID="ddlModule" runat="server" DataSourceID="objdModule" 
+            DataTextField="module" DataValueField="module" AutoPostBack="true">
+        </asp:DropDownList>
+    </td>
+    </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal:"></asp:Label></td>
 <td><asp:DropDownList ID="ddlTaal" runat="server" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
 </td>
+    
 <td>
 <span style="vertical-align:middle" id='tipTaal'><img src="CSS/images/help.png" alt=''/></span>
 </td>
@@ -231,7 +266,7 @@ function ValideerZoekTerm (source, args)
 
 <tr>
 <td class="lbl"><asp:Label ID="lblCategorie" runat="server" Text="Categorie:"></asp:Label></td>
-<td><asp:DropDownList ID="ddlCategorie" runat="server" Width="100%"></asp:DropDownList>
+<td class="ietd"><asp:DropDownList ID="ddlCategorie" runat="server" Width="100%"></asp:DropDownList>
     <asp:Label ID="lblGeenCategorie" runat="server" Text="Er zijn geen categorieën beschikbaar." Visible="false"></asp:Label>
 </td>
 <td>
@@ -270,13 +305,13 @@ function namodalpopup()
 
 function trVisible()
 {
-var tr = document.getElementsByName('trRad')[0]
-tr.style.display='inline'
+var tr = document.getElementsByName('trRad')[0];
+tr.style.display='block';
 }
 function trInvisible()
 {
-var tr = document.getElementsByName('trRad')[0]
-tr.style.display='none'
+var tr = document.getElementsByName('trRad')[0];
+tr.style.display='none';
 }
 
 </script>
@@ -299,13 +334,10 @@ tr.style.display='none'
 </tr>
 </table>
 <br />
-
     <FredCK:CKEditor runat="server" ID="EditorBewerken" Height="600"></FredCK:CKEditor>
     <script type="text/javascript">
     CKFinder.SetupCKEditor( null, 'JS/ckfinder/' );
     </script>
-			
-
 </ContentTemplate>
 </asp:UpdatePanel>
 
@@ -326,7 +358,21 @@ tr.style.display='none'
     </div>
 
 </div>
-
+        <asp:ObjectDataSource ID="objdModule" runat="server" DeleteMethod="Delete" 
+            InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
+            SelectMethod="GetData" TypeName="ManualTableAdapters.tblModuleTableAdapter" 
+            UpdateMethod="Update">
+            <DeleteParameters>
+                <asp:Parameter Name="Original_moduleID" Type="Int32" />
+            </DeleteParameters>
+            <UpdateParameters>
+                <asp:Parameter Name="_module" Type="String" />
+                <asp:Parameter Name="Original_moduleID" Type="Int32" />
+            </UpdateParameters>
+            <InsertParameters>
+                <asp:Parameter Name="_module" Type="String" />
+            </InsertParameters>
+        </asp:ObjectDataSource>
 </ContentTemplate>
 </asp:UpdatePanel>
 </div>

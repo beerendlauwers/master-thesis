@@ -10,6 +10,10 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+<meta content="IE=EmulateIE7" http-equiv="X-UA-Compatible">
+<!--[if IE]>
+<link href="CSS/ie.css" type="text/css" rel="Stylesheet" />
+<![endif]-->
 <link href="CSS/xml.css" type="text/css" rel="Stylesheet" />
 <link href="CSS/appligen.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="JS/shadowbox/shadowbox.css" />
@@ -98,20 +102,16 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
                     
             <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
                 <asp:HyperLink ID="hrefArtikelBewerken" runat="server"><span class="l"></span><span class="r"></span><span class="t">Dit artikel bewerken</span></asp:HyperLink></li>
-             <li runat="server" id="liVideos"><a><span class="l"></span><span class="r"></span>
-                <span class="t">Video's </span></a>
-                <ul>
-                    <li runat="server" id="liVideoBewerken"><a runat="server" id="lnkVideoBewerken"><img src="CSS/images/add.png" border="0"  /> Video Uploaden</a></li>
-                    <li runat="server" id="liVideoAfspelen"><a runat="server" id="lnkVideoAfspelen"><img src="CSS/images/view.png" border="0"  /> Video's Afspelen</a></li>
-                    <li runat="server" id="liVideoVerwijderen"><a runat="server" id="A4"><img src="CSS/images/remove.png" border="0"  /> Video's Verwijderen</a></li>
-                </ul>
-            </li>
+             
 
             <li runat="server" id="liAanmeld">
             <a runat="server" id="BeheerLink" href="Aanmeldpagina.aspx"><span class="l"></span><span class="r"></span>
                 <span class="t" runat="server" id="spanBeheerAanmeld">Beheer </span></a>
             </li>
-            
+            <li>
+            <a runat="server" id="A1" href="Module.aspx"><span class="l"></span><span class="r"></span>
+                <span class="t" runat="server" id="span1">Modules </span></a>
+            </li>
             <li runat="server" id="liTalen" visible="true" >
             <a id="lnkTalen" runat="server"><span class="l"></span><span class="r"></span><span class="t" runat="server" id="spanTalen">Talen/Languages</span></a>
             <ul runat="server" id="ulTalen">

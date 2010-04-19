@@ -18,16 +18,35 @@ Partial Class App_Presentation_invoerenTest
 
         'Templates en dropdowns laden
         If Not IsPostBack Then
-            LaadCategorien()
+            ddlModule.DataBind()
+            LaadDropdowns()
             LaadTemplates()
         End If
+
+
+    End Sub
+
+    Private Sub LaadDropdowns()
+
+        Util.LeesVersies(ddlVersie)
+        'Util.LeesTalen(ddlTaal)
+        Util.LeesBedrijven(ddlBedrijf)
+
+        Me.ddlTaal.Items.Clear()
+        For Each taal As Taal In taal.GetTalen
+            ddlTaal.Items.Add(New ListItem(taal.TaalNaam + " - " + taal.TaalTag, taal.ID))
+        Next
+
+        LaadCategorien()
+
     End Sub
 
     Private Sub LaadCategorien()
 
-        Util.LeesVersies(ddlVersie)
-        Util.LeesTalen(ddlTaal)
-        Util.LeesBedrijven(ddlBedrijf)
+        Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
+        strtag(1) = Trim(strtag(1))
+        lblTaalTag.InnerHtml = strtag(1)
+        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
 
         Dim t As Tree = Tree.GetTree(Me.ddlTaal.SelectedValue, Me.ddlVersie.SelectedValue, Me.ddlBedrijf.SelectedValue)
         Util.LeesCategorien(ddlCategorie, t)
@@ -81,9 +100,8 @@ Partial Class App_Presentation_invoerenTest
         Dim FK_Bedrijf As Integer = ddlBedrijf.SelectedValue
         Dim FK_categorie As Integer = ddlCategorie.SelectedValue
         Dim FK_taal As Integer = ddlTaal.SelectedValue
-
-        tag = String.Concat(Taal.GetTaal(FK_taal).TaalNaam, "_", tag)
-
+        Dim str As String = lblTagvoorbeeld.InnerHtml
+        tag = str
         Dim finaal As Integer
         If ckbFinaal.Checked = True Then
             finaal = 1
@@ -162,4 +180,11 @@ Partial Class App_Presentation_invoerenTest
         End If
     End Sub
 
+    Protected Sub ddlModule_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.SelectedIndexChanged
+        Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
+        strtag(1) = Trim(strtag(1))
+        lblTaalTag.InnerHtml = strtag(1)
+        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+
+    End Sub
 End Class

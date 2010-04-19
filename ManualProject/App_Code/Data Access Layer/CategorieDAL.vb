@@ -36,7 +36,12 @@ Public Class CategorieDAL
             If (r.HasRows) Then dt.Load(r)
             Return dt
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Taal = " & taal.ToString)
+            e.Args.Add("Bedrijf = " & bedrijf.ToString)
+            e.Args.Add("Versie = " & versie.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -61,12 +66,14 @@ Public Class CategorieDAL
             If (r.HasRows) Then dt.Load(r)
             Return dt
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Bedrijf = " & bedrijfID.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        Return dt
     End Function
 
     Public Function GetCategorieByTaal(ByVal taalID As Integer) As tblCategorieDataTable
@@ -92,12 +99,14 @@ Public Class CategorieDAL
 
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Taal = " & taalID.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        Return dt
     End Function
 
     Public Function GetHoogte(ByVal categorieID As Integer, ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer) As Integer
@@ -125,7 +134,12 @@ Public Class CategorieDAL
             End If
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Taal = " & taalID.ToString)
+            e.Args.Add("Bedrijf = " & bedrijfID.ToString)
+            e.Args.Add("Versie = " & versieID.ToString)
+            e.Args.Add("Categorie = " & categorieID.ToString)
+            ErrorLogger.WriteError(e)
             Return Nothing
         Finally
             c.Connection.Close()
@@ -142,12 +156,14 @@ Public Class CategorieDAL
         c.Parameters.Add("@Hoogte", SqlDbType.Int).Value = hoogte
         Try
             c.Connection.Open()
-
             bool = c.ExecuteNonQuery()
+            Return bool
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Hoogte = " & hoogte.ToString)
+            Return Nothing
         End Try
-        Return bool
+
     End Function
 
     Public Function getCategorieByID(ByVal categorieID As Integer) As tblCategorieRow
@@ -172,7 +188,9 @@ Public Class CategorieDAL
             End If
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Categorie = " & categorieID.ToString)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -201,7 +219,9 @@ Public Class CategorieDAL
             End If
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Parent = " & parent.ToString)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -232,7 +252,12 @@ Public Class CategorieDAL
 
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("categorie = " & catnaam)
+            e.Args.Add("Bedrijf = " & bedrijf.ToString)
+            e.Args.Add("Versie = " & versie.ToString)
+            e.Args.Add("Taal = " & taal.ToString)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -258,7 +283,8 @@ Public Class CategorieDAL
 
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -290,7 +316,13 @@ Public Class CategorieDAL
                 Return Nothing
             End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("categorie = " & catnaam)
+            e.Args.Add("Bedrijf = " & bedrijf.ToString)
+            e.Args.Add("Versie = " & versie.ToString)
+            e.Args.Add("Taal = " & taal.ToString)
+            e.Args.Add("Id = " & Id.ToString)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -320,7 +352,16 @@ Public Class CategorieDAL
                 Return -1
             End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("categorie = " & cat.Categorie)
+            e.Args.Add("Bedrijf = " & cat.Bedrijf.ToString)
+            e.Args.Add("Versie = " & cat.Versie.ToString)
+            e.Args.Add("Taal = " & cat.FK_Taal.ToString)
+            e.Args.Add("Diepte = " & cat.Diepte.ToString)
+            e.Args.Add("Taal = " & cat.Hoogte.ToString)
+            e.Args.Add("FK_Parent = " & cat.FK_Parent.ToString)
+
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -357,6 +398,7 @@ Public Class CategorieDAL
             End If
 
         Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
             Return Nothing
         Finally
             c.Connection.Close()
@@ -384,7 +426,9 @@ Public Class CategorieDAL
                 Return Nothing
             End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Versie = " & versie)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try

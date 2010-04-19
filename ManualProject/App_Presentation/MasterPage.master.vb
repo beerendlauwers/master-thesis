@@ -92,10 +92,6 @@ Partial Class App_Presentation_MasterPage
 
     Private Sub VerstopContent()
         If Session("login") = 0 Then
-            liVideos.Visible = False
-            liVideoAfspelen.Visible = False
-            liVideoBewerken.Visible = False
-            liVideoVerwijderen.Visible = False
             liBeheer.Visible = False
             liArtikelBeheer.Visible = False
             liArtikelBewerken.Visible = False
@@ -184,9 +180,6 @@ Partial Class App_Presentation_MasterPage
         ArtikelToevoegen.HRef = "~/App_Presentation/ArtikelToevoegen.aspx"
         ArtikelBewerken.HRef = "~/App_Presentation/ArtikelBewerken.aspx"
         ArtikelVerwijderen.HRef = "~/App_Presentation/ArtikelVerwijderen.aspx"
-
-        lnkVideoBewerken.HRef = "~/App_Presentation/VideoUploaden.aspx"
-        lnkVideoAfspelen.HRef = "~/App_Presentation/VideoAfspelen.aspx"
 
         GenereerTaalkeuze()
     End Sub

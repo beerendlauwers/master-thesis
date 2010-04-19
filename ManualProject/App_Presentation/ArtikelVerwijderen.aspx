@@ -47,22 +47,22 @@
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblVersie" runat="server" Text="Versie: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlVersie" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlVersie" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipVersieKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlTaal" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlTaal" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipTaalKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblBedrijf" runat="server" Text="Bedrijf: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlBedrijf" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlBedrijf" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipBedrijfKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblFinaal" runat="server" Text="Artikel is finaal: "></asp:Label></td>
-<td><asp:DropDownList ID="ddlIsFInaal" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd"><asp:DropDownList ID="ddlIsFInaal" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipIsFinaalKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
@@ -120,7 +120,7 @@
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />
             <asp:BoundField DataField="Versie" HeaderText="Versie" 
                 SortExpression="Versie" />
-            <asp:BoundField DataField="Naam" HeaderText="Naam" SortExpression="Bedrijf" />
+            <asp:BoundField DataField="Naam" HeaderText="Bedrijf" SortExpression="Bedrijf" />
             <asp:BoundField DataField="Taal" HeaderText="Taal" SortExpression="Taal" />
             <asp:BoundField DataField="Is_final" HeaderText="Finale Versie" 
                 SortExpression="Is_final" />

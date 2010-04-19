@@ -14,6 +14,10 @@
 	text-align:center;
 }
 
+.ietd
+{
+}
+
 .h1
 {
 	font-size: 150%;
@@ -28,7 +32,7 @@ a
 
 a:link {color:#193C78 !important;}      /* unvisited link */
 a:visited {color:#193C78 !important;}  /* visited link */
-a:hover {color:#255AB6 !important; text-decoration: underline !important;}  /* mouse over link */
+a:hover {color:#255AB6 !important; text-decoration: underline;}  /* mouse over link */
 a:active {color:#255AB6 !important;}  /* selected link */
 
 
@@ -97,6 +101,7 @@ position: relative;
 {
 	z-index: 10000;
 	white-space: normal;
+	list-style-type:none !important;
 }
 
 .art-menu li li
@@ -229,13 +234,14 @@ position: relative;
 	border-color:Black;
 	border-width:1px;
 	border-style:solid;
-	
+	text-decoration:none;
 }
 
 .art-menu a .l
 {
 	left:0;
 	right:4px;
+	text-decoration:none;
 }
 
 .art-menu a .r
@@ -243,6 +249,7 @@ position: relative;
 	width:408px;
 	right:0;
 	clip: rect(auto, auto, auto, 404px);
+	text-decoration:none;
 }
 
 .art-menu a .t 
@@ -254,6 +261,7 @@ position: relative;
 	margin: 0 4px;
 	line-height: 26px;
 	text-align: center;
+	text-decoration:none;
 }
 
 .art-menu a:hover .l, .art-menu a:hover .r
@@ -269,20 +277,24 @@ position: relative;
 .art-menu li:hover a .l, .art-menu li:hover a .r
 {
 	top:-26px;
+	text-decoration:none;
 }
 .art-menu a:hover .t
 {
 	color: white;
+	text-decoration:none;
 }
 
 .art-menu li:hover a .t
 {
 	color: white;
+	text-decoration:none;
 }
 
 .art-menu li:hover>a .t
 {
 	color: white;
+	text-decoration:none;
 }
 
 
@@ -301,7 +313,7 @@ position: relative;
 	line-height: 20px;
 	margin-right: auto;
 
-
+    text-decoration:none;
 	background-color:#F3F6F9;
 	background-position: left top;
 	background-repeat: repeat-x;
@@ -703,17 +715,19 @@ font-size:7pt;
 	border-color:Black;
 	border-width:1px;
 	border-style:solid;
-	
+	text-decoration:none;
 }
 
 .list-menu a .l
 {
 	left:0;
 	right:4px;
+	text-decoration:none;
 }
 
 .list-menu a .r
 {
+    text-decoration:none;
 	width:408px;
 	right:0;
 	clip: rect(auto, auto, auto, 404px);
@@ -728,6 +742,7 @@ font-size:7pt;
 	margin: 0 4px;
 	line-height: 26px;
 	text-align: center;
+	text-decoration:none;
 }
 
 .list-menu a:hover .l, .list-menu a:hover .r
@@ -743,6 +758,7 @@ font-size:7pt;
 .list-menu li:hover a .l, .list-menu li:hover a .r
 {
 	top:-26px;
+	text-decoration:none;
 }
 .list-menu a:hover .t
 {
@@ -752,6 +768,7 @@ font-size:7pt;
 .list-menu li:hover a .t
 {
 	color: white;
+	text-decoration:none;
 }
 
 .list-menu li:hover>a .t

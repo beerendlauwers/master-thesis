@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- Speciale karakters dienen te worden HTML-geencodeerd. Zie http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references voor een lijst. -->
 <talen>
 <taal id="0">
@@ -21,13 +21,14 @@
 	<tekst id="STARTPAGINATITEL" text="Startpagina" />
 	<tekst id="GEENCATEGORIEN" text="Er werden geen categorie&#235;n gevonden." />
 	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+	<tekst id="MODPAGINATITEL" text="Overzicht van Modules"/>
 	<tekst id="GEENTAGOFID" text="Gebruik de menustructuur in de linkerzijbalk of de zoekbalk rechtsboven om een artikel te bezichtigen." />
 </taal>
 <taal id="5">
 	<tekst id="WELKOMTEKST" text="Bienvenue sur le Reference Manual de Appligen. Utilisez le structure &#224; gauche ou recherchez un article." />
 	<tekst id="LAADSCHERMTEKST" text="Un instant svp..." />
 	<tekst id="BEHEER" text="Gestion" />
-	<tekst id="TALEN" text="Languages" />
+	<tekst id="TALEN" text="Langues" />
 	<tekst id="ZOEKENOP" text="Cherchez sur:" />
 	<tekst id="CATEGORIEN" text="Cat&#233;gories" />
 	<tekst id="ZOEKRESULTATEN" text="R&#233;sultats" />
@@ -42,7 +43,8 @@
 	<tekst id="GEENARTIKELGEVONDENID" text="Er werd geen artikel gevonden met dit ID." />
 	<tekst id="STARTPAGINATITEL" text="Page d'Accueil" />
 	<tekst id="GEENCATEGORIEN" text="Il n'y avait pas de cat&#233;gories trouv&#233;es." />
-	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+	<tekst id="GEENDATAGEVONDEN" text="Aucun article a &#233;t&#233; retrouv&#233; qui correspond avec votre crit&#232; de recherche." />
+	<tekst id="MODPAGINATITEL" text="R&#233;sum&#233; de Modules"/>
 	<tekst id="GEENTAGOFID" text="Utilisez le structure &#224; gauche ou recherchez un article." />
 </taal>
 <taal id="10">
@@ -64,7 +66,8 @@
 	<tekst id="GEENARTIKELGEVONDENID" text="Er werd geen artikel gevonden met dit ID." />
 	<tekst id="STARTPAGINATITEL" text="Home Page" />
 	<tekst id="GEENCATEGORIEN" text="No categories were found." />
-	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
+	<tekst id="GEENDATAGEVONDEN" text="No articles were found that corresponded with your search request." />
+	<tekst id="MODPAGINATITEL" text="Overview de Modules"/>
 	<tekst id="GEENTAGOFID" text="Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
 </taal>
 </talen>

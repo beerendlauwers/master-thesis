@@ -100,7 +100,7 @@ Public Class BedrijfDAL
             e.Args.Add("naam = " & naam)
             e.Args.Add("tag = " & tag)
             ErrorLogger.WriteError(e)
-
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -139,7 +139,7 @@ Public Class BedrijfDAL
             e.Args.Add("tag = " & tag)
             e.Args.Add("ID = " & ID.ToString)
             ErrorLogger.WriteError(e)
-
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -171,7 +171,7 @@ Public Class BedrijfDAL
             e.Args.Add("naam = " & naam)
             e.Args.Add("tag = " & tag)
             ErrorLogger.WriteError(e)
-
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try

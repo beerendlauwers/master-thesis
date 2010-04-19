@@ -27,17 +27,20 @@ Public Class TaalDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
+            If dt.Rows.Count = 0 Then
+                Return Nothing
+            Else
+                Return dt.Rows(0)
+            End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("taalID = " & id)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        If dt.Rows.Count = 0 Then
-            Return Nothing
-        Else
-            Return dt.Rows(0)
-        End If
+
     End Function
 
     Public Function GetAllTaal() As tblTaalDataTable
@@ -55,12 +58,12 @@ Public Class TaalDAL
             If (r.HasRows) Then dt.Load(r)
             Return dt
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        Return dt
     End Function
 
     Public Function checkTaal(ByVal taal As String, ByVal taaltag As String) As tblTaalDataTable
@@ -85,7 +88,10 @@ Public Class TaalDAL
             End If
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("taal = " & taal)
+            e.Args.Add("taaltag = " & taaltag)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -115,7 +121,11 @@ Public Class TaalDAL
             End If
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("taal = " & taal)
+            e.Args.Add("taaltag = " & taaltag)
+            e.Args.Add("taalID = " & ID.ToString)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -142,7 +152,10 @@ Public Class TaalDAL
                 Return -1
             End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("taal = " & taal)
+            e.Args.Add("taaltag = " & taaltag)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -163,17 +176,20 @@ Public Class TaalDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
+            If dt.Rows.Count = 0 Then
+                Return Nothing
+            Else
+                Return dt
+            End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("taalID = " & id.ToString)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        If dt.Rows.Count = 0 Then
-            Return Nothing
-        Else
-            Return dt
-        End If
+
     End Function
 
     Public Function getVglTalen(ByVal text As String) As Data.DataTable
@@ -188,18 +204,19 @@ Public Class TaalDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
+            If dt.Rows.Count = 0 Then
+                Return Nothing
+            Else
+                Return dt
+            End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("query = " & text)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        Return dt
-        If dt.Rows.Count = 0 Then
-            Return Nothing
-        Else
-            Return dt
-        End If
     End Function
 
     Public Function updateTagTalen(ByVal oudetag As String, ByVal nieuweTag As String) As Integer
@@ -213,13 +230,16 @@ Public Class TaalDAL
         Try
             c.Connection.Open()
             i = c.ExecuteNonQuery
-
+            Return i
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Oude_tag = " & oudetag)
+            e.Args.Add("Nieuwe_tag = " & nieuweTag)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
-        Return i
+
     End Function
 
     Public Function getTaalByNaam(ByVal taal As String) As tblTaalRow
@@ -236,16 +256,19 @@ Public Class TaalDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
+            If dt.Rows.Count = 0 Then
+                Return Nothing
+            Else
+                Return dt.Rows(0)
+            End If
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("taal = " & taal)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        If dt.Rows.Count = 0 Then
-            Return Nothing
-        Else
-            Return dt.Rows(0)
-        End If
+
     End Function
 End Class

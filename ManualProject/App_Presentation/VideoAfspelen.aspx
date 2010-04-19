@@ -2,7 +2,6 @@
 
 <%@ Register Assembly="ASPNetFlashVideo.NET3" Namespace="ASPNetFlashVideo" TagPrefix="ASPNetFlashVideo" %>
 
-<%@ Register Assembly="ASPNetVideo.NET3" Namespace="ASPNetVideo" TagPrefix="ASPNetVideo" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <style type="text/css">
@@ -30,13 +29,13 @@
 
 </div>
     <asp:Label ID="lblHelp" runat="server" Text=""></asp:Label>
-                    <ASPNetVideo:QuickTime ID="QuickTime2" runat="server" Enabled="False">
+                  <%--  <ASPNetVideo:QuickTime ID="QuickTime2" runat="server" Enabled="False">
         </ASPNetVideo:QuickTime>
         <ASPNetVideo:WindowsMedia ID="WindowsMedia1" runat="server" 
         AutoPlay="False" Enabled="False">
     </ASPNetVideo:WindowsMedia>
     <ASPNetFlashVideo:FlashVideo ID="FlashVideo1" runat="server" Enabled="False">
-    </ASPNetFlashVideo:FlashVideo>
+    </ASPNetFlashVideo:FlashVideo>--%>
     
     
         <asp:ObjectDataSource ID="objdVideo" runat="server" 

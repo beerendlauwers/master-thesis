@@ -125,14 +125,30 @@ Public Class Artikel
     ''' </summary>
     ''' <param name="row">Een artikelrij vanuit de database.</param>
     Public Sub New(ByRef row As Manual.tblArtikelRow)
-        _ID = row.ArtikelID
-        _titel = row.Titel
-        _categorie = row.FK_Categorie
-        _versie = row.FK_Versie
-        _bedrijf = row.FK_Bedrijf
-        _taal = row.FK_Taal
-        _tekst = row.Tekst
-        _tag = row.Tag
-        _isfinal = row.Is_final
+        Try
+            _ID = row.ArtikelID
+            _titel = row.Titel
+            _categorie = row.FK_Categorie
+            _versie = row.FK_Versie
+            _bedrijf = row.FK_Bedrijf
+            _taal = row.FK_Taal
+            _tekst = row.Tekst
+            _tag = row.Tag
+            _isfinal = row.Is_final
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+
+            e.Args.Add("_titel = " & row.Titel)
+            e.Args.Add("_categorie = " & row.FK_Categorie.ToString)
+            e.Args.Add("_versie =" & row.FK_Versie.ToString)
+            e.Args.Add("_bedrijf =" & row.FK_Bedrijf.ToString)
+            e.Args.Add("_taal =" & row.FK_Taal.ToString)
+            e.Args.Add("_tekst =" & row.Tekst)
+            e.Args.Add("_tag =" & row.Tag)
+            e.Args.Add("_isfinal =" & row.Is_final.ToString)
+            ErrorLogger.WriteError(e)
+        End Try
+
     End Sub
 End Class

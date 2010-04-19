@@ -83,7 +83,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkBedrijf" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlBewerkBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
                                                             OnSelectedIndexChanged="ddlBewerkBedrijf_SelectedIndexChanged" AutoPostBack="true"
                                                             Width="100%">
@@ -154,7 +154,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBedrijfNaamVerwijderen" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlDeleteBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
                                                             Width="100%">
                                                         </asp:DropDownList>
@@ -263,7 +263,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkTaal" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlBewerkTaal" runat="server" DataTextField="Taal" DataValueField="TaalID"
                                                             OnSelectedIndexChanged="ddlBewerkTaal_SelectedIndexChanged" AutoPostBack="true"
                                                             Width="100%">
@@ -328,7 +328,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblTaalDelete" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlTaalDelete" runat="server" DataTextField="taal" DataValueField="TaalID"
                                                             Width="100%">
                                                         </asp:DropDownList>
@@ -426,7 +426,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkVersie" runat="server" Text="Kies een Versie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlBewerkVersie" runat="server" DataTextField="Versie" DataValueField="VersieID"
                                                             OnSelectedIndexChanged="ddlBewerkVersie_SelectedIndexChanged" AutoPostBack="true"
                                                             Width="100%">
@@ -481,7 +481,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblVersiekopieren" runat="server" Text="Kies een versie om te kopiëren: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlVersiekopieren" runat="server" DataTextField="Versie" DataValueField="VersieID"
                                                             AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
@@ -569,7 +569,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblVerwijderVersie" runat="server" Text="Versie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlDeletVersie" runat="server" DataTextField="versie" DataValueField="versieID"
                                                             Width="100%">
                                                         </asp:DropDownList>
@@ -667,7 +667,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblAddCatVersie" runat="server" Text="Kies een versie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlAddCatVersie" runat="server" DataTextField="Versie" DataValueField="VersieID"
                                                             AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
@@ -681,7 +681,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblAddCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlAddCatTaal" runat="server" DataTextField="Taal" DataValueField="TaalID"
                                                             AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
@@ -695,7 +695,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblAddCatBedrijf" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlAddCatBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
                                                             AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
@@ -709,7 +709,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblAddParentCat" runat="server" Text="Kies een hoofdcategorie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlAddParentcat" runat="server" DataTextField="Categorie" DataValueField="CategorieID"
                                                             OnSelectedIndexChanged="ddlAddParentcat_SelectedIndexChanged" AutoPostBack="True"
                                                             Width="100%">
@@ -750,7 +750,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkCatVersiekeuze" runat="server" Text="Filter op versie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlEditCatVersiekeuze" runat="server" DataTextField="Versie"
                                                             DataValueField="VersieID" Width="100%">
                                                         </asp:DropDownList>
@@ -764,7 +764,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkCatTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlEditCatTaalkeuze" runat="server" DataTextField="Taal" DataValueField="TaalID"
                                                             Width="100%">
                                                         </asp:DropDownList>
@@ -778,7 +778,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkCatBedrijfkeuze" runat="server" Text="Filter op bedrijf: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlEditCatBedrijfkeuze" runat="server" DataTextField="naam"
                                                             DataValueField="bedrijfID" Width="100%">
                                                         </asp:DropDownList>
@@ -811,7 +811,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkCategorie" runat="server" Text="Kies een categorie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <div runat="server" id="divEditCategorie">
                                                             <asp:DropDownList ID="ddlEditCategorie" DataTextField="Categorie" DataValueField="CategorieID"
                                                                 runat="server" OnSelectedIndexChanged="ddlEditCategorie_SelectedIndexChanged"
@@ -872,7 +872,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkCatVersie" runat="server" Text="Kies een versie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlEditCatVersie" runat="server" DataTextField="Versie" DataValueField="VersieID"
                                                             AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
@@ -886,7 +886,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkCatTaal" runat="server" Text="Kies een taal: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlEditCatTaal" runat="server" DataTextField="Taal" DataValueField="TaalID"
                                                             AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
@@ -900,7 +900,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkCatBedrijf" runat="server" Text="Kies een bedrijf: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlEditCatBedrijf" runat="server" DataTextField="naam" DataValueField="bedrijfID"
                                                             AutoPostBack="true" Width="100%">
                                                         </asp:DropDownList>
@@ -914,7 +914,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkParentCat" runat="server" Text="Kies een hoofdcategorie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlEditCatParent" runat="server" DataTextField="Categorie"
                                                             DataValueField="CategorieID" OnSelectedIndexChanged="ddlEditCatParent_SelectedIndexChanged"
                                                             AutoPostBack="true" Width="100%">
@@ -955,7 +955,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblCatDelVersiekeuze" runat="server" Text="Filter op versie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlCatDelVersiekeuze" runat="server" DataTextField="Versie"
                                                             DataValueField="VersieID" Width="100%">
                                                         </asp:DropDownList>
@@ -969,7 +969,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblCatDelTaalkeuze" runat="server" Text="Filter op taal: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlCatDelTaalkeuze" runat="server" DataTextField="Taal" DataValueField="TaalID"
                                                             Width="100%">
                                                         </asp:DropDownList>
@@ -983,7 +983,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblCatDelBedrijfkeuze" runat="server" Text="Filter op bedrijf: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlCatDelBedrijfkeuze" runat="server" DataTextField="naam"
                                                             DataValueField="bedrijfID" Width="100%">
                                                         </asp:DropDownList>
@@ -1015,7 +1015,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblCatVerwijder" runat="server" Text="Categorie: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList ID="ddlCatVerwijder" runat="server" DataTextField="Categorie" DataValueField="CategorieID"
                                                             Width="100%">
                                                         </asp:DropDownList>
@@ -1205,7 +1205,7 @@
                                                     <td class="lbl">
                                                         <asp:Label ID="lblTreesWeergeven" runat="server" Text="Kies een boomstructuur: "></asp:Label>
                                                     </td>
-                                                    <td>
+                                                    <td class="ietd">
                                                         <asp:DropDownList runat="server" ID="ddlTreesWeergeven" Width="100%" >
                                                         </asp:DropDownList>
                                                     </td>

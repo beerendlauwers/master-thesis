@@ -18,10 +18,10 @@ Partial Class App_Presentation_VideoAfspelen
 
         'Alles resetten
         film.InnerHtml = String.Empty
-        WindowsMedia1.Enabled = False
-        QuickTime2.Enabled = False
-        FlashVideo1.Enabled = False
-        lblHelp.Text = String.Empty
+        'WindowsMedia1.Enabled = False
+        'QuickTime2.Enabled = False
+        'FlashVideo1.Enabled = False
+        'lblHelp.Text = String.Empty
 
         'Checken voor een meegegeven ID
         If Page.Request.QueryString("id") IsNot Nothing Then
@@ -57,10 +57,10 @@ Partial Class App_Presentation_VideoAfspelen
 
         If type = "mov" Then
 
-            QuickTime2.VideoURL = String.Concat("~/video/", video.videoNaam)
-            QuickTime2.Enabled = True
-            QuickTime2.AutoPlay = True
-            QuickTime2.Style.Add("vertical-align", "top")
+            'QuickTime2.VideoURL = String.Concat("~/video/", video.videoNaam)
+            'QuickTime2.Enabled = True
+            'QuickTime2.AutoPlay = True
+            'QuickTime2.Style.Add("vertical-align", "top")
 
             If browserversie = "IE" Then
                 lblHelp.Text = "Als de video niet afspeelt kunt U best Firefox gebruiken om deze video te bekijken."
@@ -69,20 +69,20 @@ Partial Class App_Presentation_VideoAfspelen
         ElseIf type = "swf" Then
             film.InnerHtml = video.VideoCode
         ElseIf type = "avi" Or type = "wmv" Then
-            WindowsMedia1.VideoURL = String.Concat("~/video/", video.videoNaam)
-            WindowsMedia1.Enabled = True
-            WindowsMedia1.AutoPlay = True
-            WindowsMedia1.Style.Add("vertical-align", "top")
+            'WindowsMedia1.VideoURL = String.Concat("~/video/", video.videoNaam)
+            'WindowsMedia1.Enabled = True
+            'WindowsMedia1.AutoPlay = True
+            'WindowsMedia1.Style.Add("vertical-align", "top")
 
             If browserversie = "Firefox" Or browserversie = "AppleMAC-Safari" Then
                 lblHelp.Text = "Als de video niet afspeelt kunt U best Internet Explorer gebruiken om deze video te bekijken."
             End If
 
         ElseIf type = "flv" Then
-            FlashVideo1.Enabled = True
-            FlashVideo1.AutoPlay = True
-            FlashVideo1.VideoURL = String.Concat("~/video/", video.videoNaam)
-            FlashVideo1.Style.Add("vertical-align", "top")
+            'FlashVideo1.Enabled = True
+            'FlashVideo1.AutoPlay = True
+            'FlashVideo1.VideoURL = String.Concat("~/video/", video.videoNaam)
+            'FlashVideo1.Style.Add("vertical-align", "top")
 
         End If
 

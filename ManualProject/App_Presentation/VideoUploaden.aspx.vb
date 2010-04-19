@@ -90,9 +90,8 @@ Partial Class App_Presentation_VideoUploaden
             divLoggedIn.Visible = True
         Else
             divLoggedIn.Visible = False
-            lblLogin.Visible = True
-            lblLogin.Text = "U bent niet ingelogd."
-            ImageButton1.Visible = True
+            Session("vorigePagina") = Page.Request.Url.AbsolutePath
+            Response.Redirect("Aanmeldpagina.aspx")
         End If
         LaadTooltips()
     End Sub
@@ -100,10 +99,6 @@ Partial Class App_Presentation_VideoUploaden
     Protected Sub imgbtnView_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgbtnView.Click
         Dim naam As String = ddlVideo.SelectedItem.Text
         Response.Redirect("~/App_Presentation/VideoAfspelen.aspx?naam=" + naam)
-    End Sub
-
-    Protected Sub ImageButton1_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles ImageButton1.Click
-        Response.Redirect("Aanmeldpagina.aspx")
     End Sub
 
     Private Sub LaadTooltips()

@@ -6,7 +6,6 @@ Imports System.Web.HttpUtility
 
 Partial Class App_Presentation_ArtikelBewerken
     Inherits System.Web.UI.Page
-
     Private artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
     Private taaldal As TaalDAL = DatabaseLink.GetInstance.GetTaalFuncties
  
@@ -51,6 +50,11 @@ Partial Class App_Presentation_ArtikelBewerken
         txtTag.Attributes.Add("onClick", "trVisible()")
         rdbAlleTalen.Attributes.Add("onClick", "trInvisible()")
         rdbEnkeleTaal.Attributes.Add("onClick", "trInvisible()")
+        Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
+        str(1) = Trim(str(1))
+        lblTaalTag.InnerHtml = str(1)
+        ddlModule.DataBind()
+        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
     End Sub
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
@@ -127,7 +131,7 @@ Partial Class App_Presentation_ArtikelBewerken
         artikel.Categorie = ddlCategorie.SelectedValue
         artikel.Taal = ddlTaal.SelectedValue
         artikel.Versie = ddlVersie.SelectedValue
-        artikel.Tag = String.Concat(Taal.GetTaal(ddlTaal.SelectedValue).TaalNaam, "_", txtTag.Text.Trim)
+        artikel.Tag = lblTagvoorbeeld.InnerHtml
         artikel.Tekst = EditorBewerken.Value
         artikel.Titel = txtTitel.Text
 
@@ -287,15 +291,14 @@ Partial Class App_Presentation_ArtikelBewerken
 
         Session("artikelID") = artikel.ID
         txtTitel.Text = artikel.Titel
+
+        lblTagvoorbeeld.InnerHtml = artikel.Tag
         Dim tag() As String = Split(artikel.Tag, "_")
 
-        If (tag.Length = 1) Then
-            txtTag.Text = tag(0)
-        Else
-            txtTag.Text = tag(1)
-        End If
-
+        txtTag.Text = tag(tag.Count - 1)
+        ddlModule.SelectedValue = tag(tag.Count - 2)
         EditorBewerken.Value = artikel.Tekst
+
         ddlBedrijf.SelectedValue = artikel.Bedrijf
         ddlTaal.SelectedValue = artikel.Taal
         ddlVersie.SelectedValue = artikel.Versie
@@ -351,16 +354,19 @@ Partial Class App_Presentation_ArtikelBewerken
     Protected Sub ddlBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlBedrijf.SelectedIndexChanged
         ViewState("bedrijfID") = ddlBedrijf.SelectedValue
         LaadCategorien()
+        gettag()
     End Sub
 
     Protected Sub ddlTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTaal.SelectedIndexChanged
         ViewState("taalID") = ddlTaal.SelectedValue
         LaadCategorien()
+        gettag()
     End Sub
 
     Protected Sub ddlVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersie.SelectedIndexChanged
         ViewState("versieID") = ddlVersie.SelectedValue
         LaadCategorien()
+        gettag()
     End Sub
 
 #End Region
@@ -382,8 +388,14 @@ Partial Class App_Presentation_ArtikelBewerken
         ddlIsFInaalVerfijnen.Items.Add(New ListItem("Nee", "0"))
 
         Util.LeesBedrijven(ddlBedrijf)
-        Util.LeesTalen(ddlTaal)
+        'Util.LeesTalen(ddlTaal)
         Util.LeesVersies(ddlVersie)
+
+        Me.ddlTaal.Items.Clear()
+        For Each t As Taal In Taal.GetTalen
+            Dim item As New ListItem(t.TaalNaam + " - " + t.TaalTag, t.ID)
+            Me.ddlTaal.Items.Add(item)
+        Next
 
         LaadCategorien()
 
@@ -474,5 +486,19 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Protected Sub rdbEnkeleTaal_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbEnkeleTaal.CheckedChanged
         trRadio.Visible = False
+    End Sub
+    Public Sub gettag()
+        Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
+        strtag(1) = Trim(strtag(1))
+        lblTaalTag.InnerHtml = strtag(1)
+        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+    End Sub
+
+    Protected Sub ddlModule_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.DataBound
+        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+    End Sub
+
+    Protected Sub ddlModule_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.SelectedIndexChanged
+        gettag()
     End Sub
 End Class

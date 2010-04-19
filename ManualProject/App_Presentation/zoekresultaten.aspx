@@ -21,6 +21,7 @@
     <Columns>
             <asp:BoundField DataField="titel" HeaderText="Titel" SortExpression="titel" />
             <asp:BoundField DataField="tag" HeaderText="Tag" SortExpression="tag" />
+            <asp:BoundField DataField="Tekst" HeaderText="Tekst" SortExpression="Tekst" />
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                 ShowSelectButton="True" />
@@ -40,6 +41,8 @@
 <br />
 
 <asp:Label ID="lblRes" runat="server" Text=""></asp:Label>
+<asp:Label ID="lblZoekterm" runat="server" Text="" style="display:none;"></asp:Label>
+    <asp:HiddenField ID="hiddenZoekterm" runat="server" />
     <asp:SqlDataSource ID="sqldsArtikel" runat="server" 
         ConnectionString="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" 
         ProviderName="System.Data.SqlClient" SelectCommand="Manual_theUltimateGet" 

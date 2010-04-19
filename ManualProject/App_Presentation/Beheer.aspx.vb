@@ -293,8 +293,8 @@ Partial Class App_Presentation_Beheer
                                 oudeparent.RemoveChild(categorienode)
                             End If
 
-                            Util.SetOK("Categorie gewijzigd.", lblResEdit, imgResEdit)
                         End If
+                        Util.SetOK("Categorie gewijzigd.", lblResEdit, imgResEdit)
                     End If
                 Else
                     Util.SetError("Wijzigen mislukt.", lblResEdit, imgResEdit)
@@ -304,6 +304,7 @@ Partial Class App_Presentation_Beheer
             End If
 
             LaadAlleCategorien()
+            Wijzigen_LaadKeuzeCategorie()
         Else
             Util.SetError("Gelieve alle velden correct in te vullen.", lblResEdit, imgResEdit)
         End If
@@ -372,7 +373,7 @@ Partial Class App_Presentation_Beheer
     Private Sub Wijzigen_LaadParentCategorie()
         If ddlEditCatBedrijf.Items.Count > 0 And ddlEditCatTaal.Items.Count > 0 And ddlEditCatVersie.Items.Count > 0 Then
             Dim t As Tree = Tree.GetTree(ddlEditCatTaal.SelectedValue, ddlEditCatVersie.SelectedValue, ddlEditCatBedrijf.SelectedValue)
-            Util.LeesCategorien(ddlEditCatParent, t)
+            Util.LeesCategorien(ddlEditCatParent, t, True, True)
 
             'Eigen categorie eruit halen
             ddlEditCatParent.Items.Remove(ddlEditCategorie.SelectedItem)
@@ -422,6 +423,8 @@ Partial Class App_Presentation_Beheer
                 Dim hoogte As Integer = categorieRij.Hoogte
                 txtEditCathoogte.Text = hoogte
 
+                Wijzigen_LaadParentCategorie()
+
                 Try
                     ddlEditCatParent.SelectedValue = categorieRij.FK_parent
                 Catch
@@ -442,7 +445,6 @@ Partial Class App_Presentation_Beheer
 
             'Nakijken of er nog artikels of categorieën onder deze categorie staan
             If (artikeldal.GetArtikelsByParent(categorieID).Count = 0) And (categoriedal.getCategorieByParent(categorieID).Count = 0) Then
-
                 'Alles ok, categorie verwijderen
                 If Not adapterCat.Delete(categorieID) = 0 Then
 
@@ -671,6 +673,10 @@ Partial Class App_Presentation_Beheer
 
                     'Geheugen updaten
                     Versie.AddVersie(New Versie(versieID, versietext))
+                    Dim bedrijfdt As tblBedrijfDataTable = DatabaseLink.GetInstance.GetBedrijfFuncties.GetAllBedrijf
+                    Dim versierij As tblVersieRow = DatabaseLink.GetInstance.GetVersieFuncties.GetVersieByID(versieID)
+                    Dim taaldt As tblTaalDataTable = DatabaseLink.GetInstance.GetTaalFuncties.GetAllTaal()
+                    Tree.BouwTreesVoorVersie(bedrijfdt, versierij, taaldt)
 
                     Util.SetOK("Versie toegevoegd.", lblAddVersieRes, imgAddVersieRes)
                 End If
@@ -756,7 +762,7 @@ Partial Class App_Presentation_Beheer
                 End If
             Else
                 Dim a As New Artikel(artikeldal.GetArtikelByID(kind.ID))
-                resultaat = adapterArtikel.Insert(a.Titel, a.Categorie, a.Taal, a.Bedrijf, a.Versie, a.Tekst, a.Tag, a.IsFinal)
+                resultaat = adapterArtikel.Insert(a.Titel, a.Categorie, a.Taal, a.Bedrijf, versieID, a.Tekst, a.Tag, a.IsFinal)
 
                 If resultaat = False Then 'kon een artikel niet kopiëren
                     Return False
@@ -909,7 +915,9 @@ Partial Class App_Presentation_Beheer
         For Each t As Taal In Taal.GetTalen
             For Each b As Bedrijf In Bedrijf.GetBedrijven
                 Dim tree As Tree = tree.GetTree(t.ID, versie.ID, b.ID)
-                aantal = tree.RootNode.GetRecursiveCategorieCount(aantal)
+                If tree IsNot Nothing Then
+                    aantal = tree.RootNode.GetRecursiveCategorieCount(aantal)
+                End If
             Next b
         Next t
 
@@ -924,7 +932,9 @@ Partial Class App_Presentation_Beheer
         For Each t As Taal In Taal.GetTalen
             For Each b As Bedrijf In Bedrijf.GetBedrijven
                 Dim tree As Tree = tree.GetTree(t.ID, versie.ID, b.ID)
-                aantal = tree.RootNode.GetRecursiveArtikelCount(aantal)
+                If tree IsNot Nothing Then
+                    aantal = tree.RootNode.GetRecursiveArtikelCount(aantal)
+                End If
             Next b
         Next t
 
@@ -964,7 +974,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub btnEditBedrijf_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditBedrijf.Click
-        If Not txtEditTag.Text = String.Empty And Not txtEditBedrijf.Text And ddlBewerkBedrijf.SelectedItem IsNot Nothing Then
+        If Not txtEditTag.Text = String.Empty And Not txtEditBedrijf.Text = String.Empty And ddlBewerkBedrijf.SelectedItem IsNot Nothing Then
             Dim bedrijfID As Integer = ddlBewerkBedrijf.SelectedValue
             Dim bedrijfTag As String = txtEditTag.Text
             Dim bedrijfnaam As String = txtEditBedrijf.Text

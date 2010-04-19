@@ -31,6 +31,7 @@ Public Class ArtikelDAL
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
             Return dt
+
         Catch ex As Exception
 
             Dim e As New ErrorLogger(ex.Message)
@@ -320,7 +321,7 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
-    Public Function verwijderArtikel(ByVal artikelID As Integer) As Boolean
+    Public Function verwijderArtikel(ByVal artikelID As Integer) As Integer
 
         Dim c As New SqlCommand("Manual_deleteArtikelbyID")
         c.CommandType = CommandType.StoredProcedure
@@ -331,6 +332,7 @@ Public Class ArtikelDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
+
         Catch ex As Exception
 
             Dim e As New ErrorLogger(ex.Message)
@@ -651,12 +653,19 @@ Public Class ArtikelDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
+            Return dt
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Titel = " & titel)
+            e.Args.Add("versie = " & versieID.ToString)
+            e.Args.Add("bedrijf = " & bedrijfID.ToString)
+            e.Args.Add("taal = " & taalID.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
-        Return dt
+
     End Function
     Public Function updateTagAlleTalen(ByVal nieuweTag As String, ByVal oudetag As String) As Integer
         Dim x As Integer
@@ -675,7 +684,7 @@ Public Class ArtikelDAL
             e.Args.Add("Nieuwe tag = " & nieuweTag)
             e.Args.Add("Oude tag = " & oudetag)
             ErrorLogger.WriteError(e)
-
+            Return Nothing
         End Try
         Return x
     End Function
@@ -688,15 +697,73 @@ Public Class ArtikelDAL
         c.Parameters.Add("@Tag", SqlDbType.VarChar).Value = tag
         c.Connection = New SqlConnection(conn)
         Try
+            'Dim r As SqlDataReader
             c.Connection.Open()
+
             titel = Convert.ToString(c.ExecuteScalar)
+            
             Return titel
 
         Catch ex As Exception
-            Throw ex
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tag = " & tag)
+            ErrorLogger.WriteError(e)
+            Return Nothing
         Finally
             c.Connection.Close()
         End Try
-        Return titel
+    End Function
+
+    Public Function getArtikelTekst(ByVal Zoekterm As String, ByVal tag As String) As String
+        Dim tekst As String
+        Dim c As New SqlCommand("Manual_getArtikelTekst")
+        Dim dt As New tblArtikelDataTable
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+        c.Parameters.Add("@Zoekterm", SqlDbType.VarChar).Value = Zoekterm
+        c.Connection = New SqlConnection(conn)
+        Try
+            'Dim r As SqlDataReader
+            c.Connection.Open()
+
+            tekst = Convert.ToString(c.ExecuteScalar)
+            If tekst IsNot Nothing Then
+                Return tekst
+            Else
+                Return Nothing
+            End If
+
+
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("zoekterm = " & Zoekterm)
+            e.Args.Add("tag = " & tag)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+        Finally
+            c.Connection.Close()
+        End Try
+    End Function
+    Public Function getArtikelsByModule(ByVal modul As String) As Data.DataTable
+        Dim c As New SqlCommand("Manual_getArtikelsByModule")
+        Dim dt As New Data.DataTable
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@module", SqlDbType.VarChar).Value = modul
+        c.Connection = New SqlConnection(conn)
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+            Return dt
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("module = " & modul)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+        Finally
+            c.Connection.Close()
+        End Try
+
     End Function
 End Class

@@ -29,7 +29,7 @@
 	<tip id="tipSjabloon" text="Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel." />
 
 	<!-- Artikel Verwijderen -->
-	<tip id="tipZoekTitelVerwijderen" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken." />
+	<tip id="tipZoekTitelVerwijderen" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken. Of typ '%%' om alle Artikels weer te geven."/>
 	<tip id="tipZoekTagVerwijderen" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
 	<tip id="tipBedrijfKeuze" text="Het bedrijf waarin u wilt zoeken." />
 	<tip id="tipTaalKeuze" text="De taal waarin u wilt zoeken." />

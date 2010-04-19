@@ -5,9 +5,10 @@ Partial Class _Default
     Inherits System.Web.UI.Page
 
     Dim dummyPass As String = String.Empty
-    Dim dummyTag As String = "ANDERBEDRIJF"
+    Dim dummyTag As String = "Appligen"
     Dim dummyTaal As String = "NL"
     Dim dummyVersie As String = "010302"
+    Dim dummyModule As String = "BAS"
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 

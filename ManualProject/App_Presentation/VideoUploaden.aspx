@@ -8,9 +8,6 @@
    
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-    <asp:Label ID="lblLogin" runat="server" Text="" Visible="false"></asp:Label>
-    <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="CSS/images/key.png" 
-        Visible="False" />
 <div id="divLoggedIn" runat="server">
     <br />
 <asp:Label ID="lblBestand" runat="server" Text="Upload: "></asp:Label>
