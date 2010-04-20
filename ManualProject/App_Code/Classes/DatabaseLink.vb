@@ -13,6 +13,7 @@ Public Class DatabaseLink
     Private _tblVersieDAL As VersieDAL
     Private _tblBedrijfDAL As BedrijfDAL
     Private _tblVideoDAL As VideoDAL
+    Private _tblModuleDAL As ModuleDAL
 
     Private Sub New()
         _tblArtikelDAL = New ArtikelDAL
@@ -21,6 +22,7 @@ Public Class DatabaseLink
         _tblVersieDAL = New VersieDAL
         _tblBedrijfDAL = New BedrijfDAL
         _tblVideoDAL = New VideoDAL
+        _tblModuleDAL = New ModuleDAL
     End Sub
 
     ''' <summary>
@@ -83,5 +85,13 @@ Public Class DatabaseLink
     ''' <returns>Een DAL-klasse voor de tabel 'Video'.</returns>
     Public Function GetVideoFuncties() As VideoDAL
         Return _tblVideoDAL
+    End Function
+
+    ''' <summary>
+    ''' Haal de databasefuncties op voor de tabel 'Module'.
+    ''' </summary>
+    ''' <returns>Een DAL-klasse voor de tabel 'Module'.</returns>
+    Public Function GetModuleFuncties() As ModuleDAL
+        Return _tblModuleDAL
     End Function
 End Class
