@@ -98,5 +98,30 @@ Public Class ModuleDAL
 
         Return dt
     End Function
+    Public Function GetModulesMetArtikels(ByVal FK_taal As Integer, ByVal FK_Versie As Integer, ByVal FK_Bedrijf As Integer) As Data.DataTable
+        Dim c As New SqlCommand("Manual_getModulesMetArtikels")
+        Dim dt As New Data.DataTable
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@FK_taal", SqlDbType.VarChar).Value = FK_taal
+        c.Parameters.Add("@FK_Versie", SqlDbType.VarChar).Value = FK_Versie
+        c.Parameters.Add("@FK_Bedrijf", SqlDbType.VarChar).Value = FK_Bedrijf
+        c.Connection = New SqlConnection(conn)
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
 
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("FK_taal = " & FK_taal.ToString)
+            e.Args.Add("FK_Versie = " & FK_Versie.ToString)
+            e.Args.Add("FK_Bedrijf = " & FK_Bedrijf.ToString)
+            ErrorLogger.WriteError(e)
+            Return Nothing
+        Finally
+            c.Connection.Close()
+        End Try
+        Return dt
+    End Function
 End Class
