@@ -74,6 +74,10 @@ Public Class Lokalisatie
             Dim taalID As Integer = Talen.Item(0).TaalID
             If Current.Session("taal") IsNot Nothing Then
                 taalID = Current.Session("taal")
+                If taalID = 0 Or taalID = 5 Then
+                Else
+                    taalID = 10
+                End If
             End If
 
             For Each lijst As Lokalisatie In Talen

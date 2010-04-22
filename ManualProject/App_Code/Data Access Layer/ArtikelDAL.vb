@@ -495,7 +495,7 @@ Public Class ArtikelDAL
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
-        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
         c.Connection = New SqlConnection(conn)
 
         Try
@@ -514,7 +514,6 @@ Public Class ArtikelDAL
         Finally
             c.Connection.Close()
         End Try
-
         Return dt
     End Function
 

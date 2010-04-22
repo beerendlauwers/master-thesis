@@ -37,9 +37,8 @@
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/magnify.png" 
                 ShowSelectButton="True" />
-            <asp:CommandField ButtonType="Image" 
-                SelectImageUrl="~/App_Presentation/CSS/images/wrench.png" 
-                ShowSelectButton="True"  /> 
+            <asp:CommandField EditImageUrl="~/App_Presentation/CSS/images/wrench.png" 
+                ShowEditButton="True" ButtonType="Image"  /> 
             <asp:CommandField ButtonType="Image" 
                 DeleteImageUrl="~/App_Presentation/CSS/images/remove.png" 
                 SelectImageUrl="~/App_Presentation/CSS/images/remove.png" 

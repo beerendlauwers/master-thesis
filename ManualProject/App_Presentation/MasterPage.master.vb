@@ -168,7 +168,11 @@ Partial Class App_Presentation_MasterPage
 
         Dim code As String = String.Empty
         For Each t As Taal In Taal.GetTalen
-            code = String.Concat(code, "<li><a id=""ctl00_lnkTaal", t.ID.ToString, """ href=""javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$lnkTaal", t.ID.ToString, "&quot;,&quot;", t.ID.ToString, "&quot;, false, &quot;&quot;, &quot;", pagina, "&quot;, false, true))""""" + ">", t.TaalNaam, "</a></li>")
+            If t.ID = Session("taal") Then
+                code = String.Concat(code, "<li><a href=""#""""><STRONG>", t.TaalNaam, "</STRONG></a></li>")
+            Else
+                code = String.Concat(code, "<li><a id=""ctl00_lnkTaal", t.ID.ToString, """ href=""javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$lnkTaal", t.ID.ToString, "&quot;,&quot;", t.ID.ToString, "&quot;, false, &quot;&quot;, &quot;", pagina, "&quot;, false, true))""""" + ">", t.TaalNaam, "</a></li>")
+            End If
         Next
 
         Dim ul As HtmlGenericControl = Me.FindControl("ulTalen")

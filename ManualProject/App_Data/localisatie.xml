@@ -23,6 +23,9 @@
 	<tekst id="GEENDATAGEVONDEN" text="Er werden geen artikels gevonden die aan uw zoekvoorwaarden voldeden." />
 	<tekst id="MODPAGINATITEL" text="Overzicht van Modules"/>
 	<tekst id="GEENTAGOFID" text="Gebruik de menustructuur in de linkerzijbalk of de zoekbalk rechtsboven om een artikel te bezichtigen." />
+  <tekst id="MODULETITEL" text="Een overzicht van de artikels die tot een geselecteerde Module behoren" />
+  <tekst id="MODULENOARTIKELS" text="Er zijn nog geen Artikels voor deze taal beschikbaar en dus ook geen Modules." />
+  <tekst id="MODULECHECKBOX" text="Enkel modules tonen waar artikels in staan."/>
 </taal>
 <taal id="5">
 	<tekst id="WELKOMTEKST" text="Bienvenue sur le Reference Manual de Appligen. Utilisez le structure &#224; gauche ou recherchez un article." />
@@ -43,9 +46,12 @@
 	<tekst id="GEENARTIKELGEVONDENID" text="Er werd geen artikel gevonden met dit ID." />
 	<tekst id="STARTPAGINATITEL" text="Page d'Accueil" />
 	<tekst id="GEENCATEGORIEN" text="Il n'y avait pas de cat&#233;gories trouv&#233;es." />
-	<tekst id="GEENDATAGEVONDEN" text="Aucun article a &#233;t&#233; retrouv&#233; qui correspond avec votre crit&#232; de recherche." />
+	<tekst id="GEENDATAGEVONDEN" text="Aucun article a &#233;t&#233; retrouv&#233; qui correspond avec votre crit&#232;re de recherche." />
 	<tekst id="MODPAGINATITEL" text="R&#233;sum&#233; de Modules"/>
 	<tekst id="GEENTAGOFID" text="Utilisez le structure &#224; gauche ou recherchez un article." />
+  <tekst id="MODULETITEL" text="Un R&#233;sum&#233; d'articles qui appartiennent a un Module select&#233;" />
+  <tekst id="MODULENOARTIKELS" text="Il n'y a pas d'articles disponible pour cette langue, ni de modules." />
+  <tekst id="MODULECHECKBOX" text="Seulement montrer les modules auxquelles appartiennent des articles."/>
 </taal>
 <taal id="10">
 	<tekst id="WELKOMTEKST" text="Welcome to the Appligen Reference Manual. Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
@@ -67,7 +73,10 @@
 	<tekst id="STARTPAGINATITEL" text="Home Page" />
 	<tekst id="GEENCATEGORIEN" text="No categories were found." />
 	<tekst id="GEENDATAGEVONDEN" text="No articles were found that corresponded with your search request." />
-	<tekst id="MODPAGINATITEL" text="Overview de Modules"/>
+	<tekst id="MODPAGINATITEL" text="Overview of Modules"/>
 	<tekst id="GEENTAGOFID" text="Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
+  <tekst id="MODULETITEL" text="An overview of the articles belonging to a selected Module" />
+  <tekst id="MODULENOARTIKELS" text="No articles are available for his language, and because of that no modules are available either." />
+  <tekst id="MODULECHECKBOX" text="Only show modules that have articles."/>
 </taal>
 </talen>

@@ -105,4 +105,10 @@
 	<tip id="tipAantalTeksten" text="Het totale aantal gelokaliseerde teksten momenteel opgeslagen in het geheugen." />
 	<tip id="tipTaalWeergeven" text="Kies een taal uit de lijst en druk op de 'Weergeven'-knop om alle gelokaliseerde teksten ervan te zien." />
 	<tip id="tipLokalisatieHerladen" text="Herbouwt alle taallokalisaties. Gebruik dit indien u aanpassingen heeft uitgevoerd aan de lokalisatie." />
-	</tooltips>
+	
+  <!-- TaalOverzicht -->
+  <tip id="tipTaalKiezen" text="Vink de talen aan die u wenst te vergelijken." />
+  <tip id="tipOverzicht" text="Hier krijgt u een overzicht van uw selectie. Een kruisje betekent dat er geen artikel aanwezig is voor die taal. Als u op het kruisje klikt kan u een artikel toevoegen." />
+  
+
+</tooltips>

@@ -196,7 +196,6 @@ Public Class CategorieDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Parent = " & parent.ToString)
@@ -204,7 +203,6 @@ Public Class CategorieDAL
         Finally
             c.Connection.Close()
         End Try
-
         Return dt
     End Function
 
@@ -216,7 +214,7 @@ Public Class CategorieDAL
         c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
-        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
         c.Connection = New SqlConnection(conn)
 
         Try

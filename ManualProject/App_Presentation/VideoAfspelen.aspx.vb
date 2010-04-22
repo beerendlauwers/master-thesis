@@ -2,12 +2,12 @@
 
 Partial Class App_Presentation_VideoAfspelen
     Inherits System.Web.UI.Page
-    Private videodal As VideoDAL = DatabaseLink.GetInstance.GetVideoFuncties
+
 
     Protected Sub btnPlay_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnPlay.Click
 
         Dim videoID As Integer = ddlVideo.SelectedValue
-        VideoLaden(videodal.getVideoByID(videoID))
+        'VideoLaden(videodal.getVideoByID(videoID))
         
     End Sub
 
@@ -39,11 +39,11 @@ Partial Class App_Presentation_VideoAfspelen
     End Sub
 
     Private Sub LaadVideo(ByVal id As Integer)
-        VideoLaden(videodal.getVideoByID(id))
+        ' VideoLaden(videodal.getVideoByID(id))
     End Sub
 
     Private Sub LaadVideo(ByVal naam As String)
-        VideoLaden(videodal.getVideoByNaam(naam))
+        ' VideoLaden(videodal.getVideoByNaam(naam))
     End Sub
 
     Private Sub VideoLaden(ByRef video As tblVideoRow)

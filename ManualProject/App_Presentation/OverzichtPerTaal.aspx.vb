@@ -28,7 +28,7 @@ Partial Class App_Presentation_OverzichtPerTaal
 
     Public Function getsqlTextfiltered() As String
         Dim sqltextselect As String = "SELECT dbo.getTitelMetTag(tag)Titel,Tag"
-        Dim sqltextwhere As String = "WHERE "
+        Dim sqltextwhere As String = "WHERE ("
         Dim sqltext As String
         For Each row As GridViewRow In GridView1.Rows
             Dim cb As CheckBox = row.FindControl("chkTaal")
@@ -40,11 +40,13 @@ Partial Class App_Presentation_OverzichtPerTaal
         Next
 
         sqltextwhere = sqltextwhere.Remove(sqltextwhere.Length - 3)
+        sqltextwhere = sqltextwhere + ") AND Versie='" + ddlVersie.SelectedItem.Text + "' and bedrijf='" + ddlBedrijf.SelectedItem.Text + "'"
         sqltext = sqltextselect + " FROM tblVglTaal " + sqltextwhere
         Return sqltext
     End Function
     Public Function getsqlunfiltered() As String
         Dim sqltextselect As String = "SELECT dbo.getTitelMetTag(tag) Titel,Tag"
+        Dim sqltextwhere As String = "Where Versie='" + ddlVersie.SelectedItem.Text + "' and bedrijf='" + ddlBedrijf.SelectedItem.Text + "'"
         Dim sqltext As String
         For Each row As GridViewRow In GridView1.Rows
             Dim cb As CheckBox = row.FindControl("chkTaal")
@@ -54,10 +56,13 @@ Partial Class App_Presentation_OverzichtPerTaal
             End If
         Next
         sqltext = sqltextselect + " FROM tblVglTaal"
+        sqltext = sqltext + " " + sqltextwhere
         Return sqltext
     End Function
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Page.Title = "Overzicht Per Taal"
+
         If Session("login") = 1 Then
             divLoggedIn.Visible = True
         Else
@@ -75,8 +80,10 @@ Partial Class App_Presentation_OverzichtPerTaal
                 End If
             Next
         End If
-
-
+        If Not IsPostBack Then
+            ddlBedrijf.DataBind()
+            ddlVersie.DataBind()
+        End If
         Dim sqltext As String
         If ckbOntbreek.Checked Then
             sqltext = getsqlTextfiltered()
@@ -98,6 +105,18 @@ Partial Class App_Presentation_OverzichtPerTaal
         End If
 
         GridView3.DataBind()
+        LaadTooltips()
+    End Sub
+
+    Private Sub LaadTooltips()
+
+        'Nieuwe lijst van tooltips definiëren
+        Dim lijst As New List(Of Tooltip)
+
+        'Alle tooltips voor onze pagina toevoegen
+        lijst.Add(New Tooltip("tipTaalKiezen"))
+        lijst.Add(New Tooltip("tipOverzicht"))
+        Util.TooltipsToevoegen(Me, lijst)
 
     End Sub
 
@@ -119,7 +138,7 @@ Partial Class App_Presentation_OverzichtPerTaal
     End Sub
     Protected Sub GridView3_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles GridView3.DataBound
         Dim r As GridViewRow = GridView3.BottomPagerRow
-        
+
         Dim i As Integer = GridView3.PageIndex
         If r IsNot Nothing Then
             Dim d As Integer = GridView3.Rows.Count
@@ -161,9 +180,14 @@ Partial Class App_Presentation_OverzichtPerTaal
         GridView3.DataBind()
     End Sub
 
+    Protected Sub GridView3_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles GridView3.RowCommand
+        Dim str As String = e.CommandName
+    End Sub
+
     Protected Sub GridView3_RowDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles GridView3.RowDataBound
         GridView3.Visible = True
         For i As Integer = 0 To e.Row.Cells.Count - 1
+
             If e.Row.Cells(i).Visible = True Then
                 Dim img As New ImageButton
                 If e.Row.Cells(i).Text = "1" Then

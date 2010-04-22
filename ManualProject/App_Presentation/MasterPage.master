@@ -10,7 +10,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-<meta content="IE=EmulateIE7" http-equiv="X-UA-Compatible">
+<meta content="IE=EmulateIE7" http-equiv="X-UA-Compatible"/>
 <!--[if IE]>
 <link href="CSS/ie.css" type="text/css" rel="Stylesheet" />
 <![endif]-->

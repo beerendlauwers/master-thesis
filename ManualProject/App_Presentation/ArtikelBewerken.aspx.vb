@@ -44,12 +44,16 @@ Partial Class App_Presentation_ArtikelBewerken
 
         End If
 
+        If IsPostBack Then
+            JavaScript.VoegJavascriptToeAanEndRequest(Me, "if (CKEDITOR.instances['ctl00_ContentPlaceHolder1_EditorBewerken']) {CKEDITOR.remove(CKEDITOR.instances['ctl00_ContentPlaceHolder1_EditorBewerken']); CKEDITOR.replace('ctl00_ContentPlaceHolder1_EditorBewerken');CKFinder.SetupCKEditor( null, 'JS/ckfinder/' ); alert('en we zijn klaar'); }")
+        End If
+
         LaadZoekTooltips()
         LaadJavascript()
 
-        txtTag.Attributes.Add("onClick", "trVisible()")
-        rdbAlleTalen.Attributes.Add("onClick", "trInvisible()")
-        rdbEnkeleTaal.Attributes.Add("onClick", "trInvisible()")
+        'txtTag.Attributes.Add("onClick", "trVisible()")
+        'rdbAlleTalen.Attributes.Add("onClick", "trInvisible()")
+        'rdbEnkeleTaal.Attributes.Add("onClick", "trInvisible()")
         Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
         str(1) = Trim(str(1))
         lblTaalTag.InnerHtml = str(1)
@@ -58,6 +62,10 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
+        ZoekresultatenWeergeven()
+    End Sub
+
+    Private Sub ZoekresultatenWeergeven()
 
         'Zoekwaardes ophalen
         Dim zoekTag As String = Me.txtZoekTag.Text.Trim
@@ -113,7 +121,6 @@ Partial Class App_Presentation_ArtikelBewerken
         updZoeken.Update()
 
         ArtikelFunctiesZichtbaar(False)
-
     End Sub
 
     Protected Sub btnUpdate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnUpdate.Click
@@ -238,20 +245,21 @@ Partial Class App_Presentation_ArtikelBewerken
             Util.SetError("Update mislukt: Kon niet met de database verbinden.", lblresultaat, imgResultaat)
             Me.divFeedback.Visible = True
         End If
-
         ArtikelFunctiesZichtbaar(False)
+        ZoekresultatenWeergeven()
         Me.divFeedback.Visible = True
 
-        grdvLijst.DataBind()
     End Sub
 
 #Region "Gridview Event Handlers"
 
     Protected Sub grdvLijst_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdvLijst.RowCommand
         If e.CommandName = "Select" Then
+
             Dim row As GridViewRow = grdvLijst.Rows(e.CommandArgument)
             Dim artikeltag As String = row.Cells(1).Text
-            LaadArtikel(artikeltag)
+            Dim artikelID As Integer = Integer.Parse(row.Cells(7).Text)
+            LaadArtikel(artikelID)
         End If
     End Sub
 
@@ -269,6 +277,7 @@ Partial Class App_Presentation_ArtikelBewerken
                 e.Row.Cells(5).Text = "Nee"
             End If
         End If
+        e.Row.Cells(7).Visible = False
     End Sub
 
 #End Region
@@ -281,6 +290,7 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Private Sub LaadArtikel(ByVal tag As String)
+
         Dim artikel As New Artikel(artikeldal.GetArtikelByTag(tag))
         ArtikelInladen(artikel)
     End Sub
@@ -441,10 +451,6 @@ Partial Class App_Presentation_ArtikelBewerken
     Private Sub LaadJavascript()
 
         Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-
-        Dim js As String = String.Concat("if( this.checked ){ var tr = document.getElementsByName('trRad'); tr.style.display='none';}")
-        JavaScript.VoerJavaScriptUitOn(rdbAlleTalen, js, "onclick")
-        JavaScript.VoerJavaScriptUitOn(rdbEnkeleTaal, js, "onclick")
 
         'De zoekknop op disabled zetten als erop geklikt wordt
         JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")

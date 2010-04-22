@@ -1,9 +1,10 @@
 ﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="Module.aspx.vb" Inherits="App_Presentation_Module" title="Untitled Page" %>
 <%@ MasterType VirtualPath="~/App_Presentation/MasterPage.master" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server"><title>Overzicht van Module</title>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">Een overzicht van de artikels die tot deze Module behoren
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
+    <asp:Label ID="lblTitel" runat="server" Text=""></asp:Label>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 
@@ -11,9 +12,15 @@
     <asp:UpdatePanel ID="updModuleOverzicht" runat="server">
    <ContentTemplate>
 
-    <asp:DropDownList ID="ddlModule" runat="server" DataSourceID="objdModule" 
-        DataTextField="module" DataValueField="module" AutoPostBack="true">
+    <asp:DropDownList ID="ddlModule" runat="server"  
+         AutoPostBack="true">
     </asp:DropDownList>
+       <asp:Label ID="lblDropdown" runat="server" Text=""></asp:Label>
+       &nbsp;&nbsp;
+       <asp:CheckBox ID="ckbModules" runat="server" AutoPostBack="True" 
+           Checked="True" />
+       <asp:Label ID="lblCkb" runat="server" 
+           Text=""></asp:Label>
     <asp:GridView ID="grdvmodule" runat="server" AutoGenerateColumns="False" 
         DataKeyNames="ArtikelID" DataSourceID="sqldsModule" AllowPaging="true" PagerStyle-CssClass="gridview_pager" AllowSorting="true" PageSize="30" Width="100%">
         <Columns>
@@ -29,13 +36,10 @@
         <pagertemplate>
          <asp:label id="lblPagina" text="Pagina:" runat="server"/><br />      
         </pagertemplate>
-        
-        <PagerStyle CssClass="gridview_pager" />
-    </asp:GridView></div> 
-    
-    
+                <PagerStyle CssClass="gridview_pager" />
+    </asp:GridView>    
     </ContentTemplate>
-    </asp:UpdatePanel>
+    </asp:UpdatePanel></div>
     <asp:SqlDataSource ID="sqldsModule" runat="server" 
         ConnectionString="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" 
         ProviderName="System.Data.SqlClient" SelectCommand="Manual_getArtikelsByModule" 

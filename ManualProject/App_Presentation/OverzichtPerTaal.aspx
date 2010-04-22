@@ -9,6 +9,12 @@
 
 <div runat="server" id="divLoggedIn">
 <div id="gridview">
+    <asp:DropDownList ID="ddlVersie" runat="server" DataSourceID="objdVersie" 
+        DataTextField="Versie" DataValueField="VersieID">
+    </asp:DropDownList>
+    <asp:DropDownList ID="ddlBedrijf" runat="server" DataSourceID="objdBedrijf" 
+        DataTextField="Naam" DataValueField="BedrijfID">
+    </asp:DropDownList>
     <asp:GridView ID="GridView1" runat="server" AllowSorting="True" 
         AutoGenerateColumns="False" DataKeyNames="TaalID" DataSourceID="objdTaal">
         <Columns>
@@ -20,13 +26,17 @@
             </asp:TemplateField>
         </Columns>  
     </asp:GridView>
+    <span style="vertical-align:middle" id='tipTaalKiezen'><img src="CSS/images/help.png" alt=''/></span>
     </div>
     Enkel tonen wanneer er artikels <br />ontbreken in één van de geselecteerd Talen: 
               <asp:CheckBox ID="ckbOntbreek" runat="server" Checked="true"/>
       <asp:UpdatePanel runat="server" ID="updGrid" UpdateMode="Always">
-          <ContentTemplate><asp:Button ID="btnVergelijk" runat="server" Text="Vergelijk" />
-             <div id="gridview">
-              <asp:GridView ID="GridView3" OnSorting="GridView3_Sorting" runat="server" Visible ="false" AllowPaging="true" AllowSorting="true"  PageSize="20" PagerStyle-CssClass="gridview_pager">
+          <ContentTemplate>
+          <asp:Button ID="btnVergelijk" runat="server" Text="Vergelijk" />
+          <br />
+             <div id="gridview" style="width:100%;text-align:center;">
+             <span ID="tipOverzicht" ><img alt="" src="CSS/images/help.png" /></span>
+              <asp:GridView width=100% ID="GridView3" OnSorting="GridView3_Sorting" runat="server" Visible ="false" AllowPaging="true" AllowSorting="true"  PageSize="20" PagerStyle-CssClass="gridview_pager">
               <Columns>
               </Columns>
               <pagertemplate>
@@ -35,7 +45,7 @@
         
         <PagerStyle CssClass="gridview_pager" />
               </asp:GridView>
-    </div>
+              &nbsp;</div>
     <asp:UpdateProgress ID="prgZoeken" runat="server" AssociatedUpdatePanelID="updGrid">
     <ProgressTemplate>
     <div class="update">
@@ -89,6 +99,37 @@
         
         SelectCommand="SELECT * FROM [tblVglTaal]">
     </asp:SqlDataSource>
-
+    <asp:ObjectDataSource ID="objdBedrijf" runat="server" DeleteMethod="Delete" 
+        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="GetData" TypeName="ManualTableAdapters.tblBedrijfTableAdapter" 
+        UpdateMethod="Update">
+        <DeleteParameters>
+            <asp:Parameter Name="Original_BedrijfID" Type="Int32" />
+        </DeleteParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="Naam" Type="String" />
+            <asp:Parameter Name="Tag" Type="String" />
+            <asp:Parameter Name="Original_BedrijfID" Type="Int32" />
+        </UpdateParameters>
+        <InsertParameters>
+            <asp:Parameter Name="Naam" Type="String" />
+            <asp:Parameter Name="Tag" Type="String" />
+        </InsertParameters>
+    </asp:ObjectDataSource>
+    <asp:ObjectDataSource ID="objdVersie" runat="server" DeleteMethod="Delete" 
+        InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="GetData" TypeName="ManualTableAdapters.tblVersieTableAdapter" 
+        UpdateMethod="Update">
+        <DeleteParameters>
+            <asp:Parameter Name="Original_VersieID" Type="Int32" />
+        </DeleteParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="Versie" Type="String" />
+            <asp:Parameter Name="Original_VersieID" Type="Int32" />
+        </UpdateParameters>
+        <InsertParameters>
+            <asp:Parameter Name="Versie" Type="String" />
+        </InsertParameters>
+    </asp:ObjectDataSource>
 </asp:Content>
 

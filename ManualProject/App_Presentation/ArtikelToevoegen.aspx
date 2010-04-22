@@ -78,7 +78,7 @@
 </tr>
 <tr><td></td><td>
 <span id="lblTagvoorbeeld" name="Tagvoorbeeld" runat="server"></span>
-    <%--<input type="text" runat="server" value="dap" id="lblTagvoorbeeld" name="Tagvoorbeeld" />--%>
+ 
 </td></tr>
 <tr>
 <td class="lbl">

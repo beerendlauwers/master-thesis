@@ -1,12 +1,36 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" ValidateRequest="false" AutoEventWireup="false" CodeFile="ArtikelBewerken.aspx.vb" Inherits="App_Presentation_ArtikelBewerken" title="Untitled Page"%>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" EnableEventValidation="false" ValidateRequest="false" AutoEventWireup="false" CodeFile="ArtikelBewerken.aspx.vb" Inherits="App_Presentation_ArtikelBewerken" title="Untitled Page"%>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc2" %>
 <%@ Register Assembly="FredCK.CKEditor" Namespace="FredCK.CKEditor" TagPrefix="FredCK" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel Bewerken</title>
+
     <script src="JS/ckeditor/ckeditor.js" language="javascript" type="text/javascript"></script>
     <script src="JS/ckfinder/ckfinder.js" language="javascript" type="text/javascript"></script>
+    <script type="text/javascript">
+    function wijzigLabel(field)
+    {
+        var lbl = document.getElementById("ctl00_ContentPlaceHolder1_lblTagvoorbeeld");
+        var dropdownIndexversie = document.getElementById('ctl00_ContentPlaceHolder1_ddlVersie').selectedIndex;
+        var dropdownValueversie = document.getElementById('ctl00_ContentPlaceHolder1_ddlVersie')[dropdownIndexversie].text;
+        var dropdownIndextaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal').selectedIndex;
+        var dropdownValueTaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal')[dropdownIndextaal].text;
+        var dropdownIndexBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf').selectedIndex;
+        var dropdownValueBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf')[dropdownIndexBedrijf].text;
+        var dropdownIndexModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule').selectedIndex;
+        var dropdownValueModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule')[dropdownIndexModule].text;
+        var taaltag = document.getElementById("ctl00_ContentPlaceHolder1_lblTaalTag").innerHTML;
+        if(lbl)
+        {
+        lbl.innerHTML = dropdownValueversie + "_" + taaltag + "_" + dropdownValueBedrijf + "_" + dropdownValueModule + "_" +  field.value;
+        }
+        else
+        {
+        alert('iets is niet gevonden');
+        }
+    }
+    </script>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">
     Artikel Bewerken
@@ -125,9 +149,11 @@ function ValideerZoekTerm (source, args)
 </ul>
 
 </div>
+
+  
 <div id="divZoekResultaten" style="display:none;">
 <div id="gridview">
-            <asp:GridView ID="grdvLijst" runat="server" AutoGenerateColumns="False" Visible="false" Width="100%">
+            <asp:GridView ID="grdvLijst" runat="server" AutoGenerateColumns="False" Visible="true" Width="100%">
         <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />
@@ -139,11 +165,14 @@ function ValideerZoekTerm (source, args)
             <asp:CommandField ButtonType="Image" 
                 SelectImageUrl="~/App_Presentation/CSS/images/wrench.png" 
                 ShowSelectButton="True" />
+            <asp:BoundField DataField="ArtikelID" HeaderText="ArtikelID" SortExpression="ArtikelID" />
         </Columns>
     </asp:GridView>
 </div>
 
 </div>
+
+
 
 
 </ContentTemplate>
@@ -174,7 +203,10 @@ function ValideerZoekTerm (source, args)
   </tr>
   <tr>  
    <td class="lbl">  <asp:Label ID="lblTag" runat="server" Text="Tag:"></asp:Label></td> 
+   
+
    <td>  <asp:TextBox ID="txtTag" runat="server" Width="100%" TabIndex="-1" onkeyup="wijzigLabel(this)"></asp:TextBox>
+
        
    <asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
@@ -218,7 +250,7 @@ function ValideerZoekTerm (source, args)
 <span id="lblTagvoorbeeld" name="Tagvoorbeeld" runat="server"></span>
 </td></tr>    
    <tr ><td class="lbl">&nbsp</td>
-   <td runat="server" id="trRadio" name="trRad" style="display:none;">
+   <td runat="server" id="trRadio" name="trRad">
    <asp:RadioButton ID="rdbAlleTalen" runat="server" GroupName="Tag"  />Tag voor alle talen wijzigen<br />
    <asp:RadioButton ID="rdbEnkeleTaal" runat="server" GroupName="Tag" Checked="true" />Alleen tag in deze taal wijzigen
    </td></tr>         
@@ -303,12 +335,12 @@ function namodalpopup()
 function trVisible()
 {
 var tr = document.getElementsByName('trRad')[0];
-tr.style.display='block';
+tr.style.display="inline";
 }
 function trInvisible()
 {
 var tr = document.getElementsByName('trRad')[0];
-tr.style.display='none';
+tr.style.display="none";
 }
 
 </script>

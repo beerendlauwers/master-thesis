@@ -7,8 +7,14 @@ Partial Class App_Presentation_verwijderenTekst
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Artikel Verwijderen"
         Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
-        
-        LaadJavascript()
+
+        If Not Request.UrlReferrer Is Nothing Then
+            Dim vorige As String = Request.UrlReferrer.LocalPath
+            If vorige = "/ReferenceManual/App_Presentation/AlleArtikels.aspx" Then
+                Session("alleArtikels") = vorige
+            End If
+        End If
+        LaadJavaScript()
         LaadTooltips()
 
         If Not IsPostBack Then
@@ -246,6 +252,10 @@ Partial Class App_Presentation_verwijderenTekst
         HaalArtikelGegevensOp()
         JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
         mpeConfirmatie.Hide()
+        Dim str As String = Session("alleArtikels")
+        If str = "/ReferenceManual/App_Presentation/AlleArtikels.aspx" Then
+            Response.Redirect("AlleArtikels.aspx")
+        End If
     End Sub
     Private Sub VerwijderArtikel(ByVal tag As String)
         Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
