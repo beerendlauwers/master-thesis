@@ -44,7 +44,7 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
        <!--
        // Deze functies zijn zeer handig om na te gaan of je AJAX-requests wel correct worden afgehandeld.
        
-       /*
+       
        var prm = Sys.WebForms.PageRequestManager.getInstance();
        prm.add_initializeRequest(InitializeRequest);
        prm.add_endRequest(EndRequest);
@@ -52,15 +52,15 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
        
        function InitializeRequest(sender, args)
            {
-           // alert('begin');
+            //alert('begin');
            }
            
        function EndRequest( sender, args)
        {
-           // alert( 'einde');
+            //alert( 'einde');
        }
        
-       */
+       
        
        // -->
        </script>

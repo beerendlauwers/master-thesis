@@ -16,7 +16,6 @@ Public Class ArtikelDAL
     ''' Haal alle artikels op die onder een bepaalde categorie staan.
     ''' </summary>
     Public Function GetArtikelsByParent(ByVal categorieID As Integer) As tblArtikelDataTable
-
         Dim dt As New tblArtikelDataTable
 
         Dim c As New SqlCommand("Manual_GetArtikelsByParent")
@@ -30,14 +29,11 @@ Public Class ArtikelDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            Return dt
 
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("categorieID = " & categorieID.ToString)
             ErrorLogger.WriteError(e)
-
         Finally
             c.Connection.Close()
         End Try
@@ -138,7 +134,6 @@ Public Class ArtikelDAL
         End Try
 
         Return dt
-
     End Function
 
     Public Function GetArtikelsByTitel(ByVal titel As String) As tblArtikelDataTable
@@ -330,7 +325,6 @@ Public Class ArtikelDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
 
         Catch ex As Exception
@@ -338,7 +332,6 @@ Public Class ArtikelDAL
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("artikelID = " & artikelID.ToString)
             ErrorLogger.WriteError(e)
-
             Return False
         Finally
             c.Connection.Close()
@@ -383,17 +376,15 @@ Public Class ArtikelDAL
             ErrorLogger.WriteError(e)
 
         End Try
-        Return Bool
+        Return bool
 
     End Function
 
-    Public Function getArtikelsByVersie(ByVal versieID As Integer) As Data.DataTable
-        Dim dt As New Data.DataTable
+    Public Function getArtikelsByVersie(ByVal versieID As Integer) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
         Dim c As New SqlCommand("Manual_getArtikelsByVersie")
         c.CommandType = CommandType.StoredProcedure
-
         c.Parameters.Add("@VersieID", SqlDbType.Int).Value = versieID
-
         c.Connection = New SqlConnection(conn)
 
         Try
@@ -401,34 +392,25 @@ Public Class ArtikelDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
+            If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("versieID = " & versieID.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
-
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
 
-    Public Function getArtikelsByTaal(ByVal TaalID As Integer) As Data.DataTable
-        Dim dt As New Data.DataTable
+    Public Function getArtikelsByTaal(ByVal TaalID As Integer) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
         Dim c As New SqlCommand("Manual_getArtikelsByTaal")
         c.CommandType = CommandType.StoredProcedure
-
         c.Parameters.Add("@TaalID", SqlDbType.Int).Value = TaalID
-
         c.Connection = New SqlConnection(conn)
 
         Try
@@ -436,33 +418,23 @@ Public Class ArtikelDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
-
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("TaalID = " & TaalID.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
-
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
-    Public Function getArtikelsByBedrijf(ByVal bedrijfID As Integer) As Data.DataTable
-        Dim dt As New Data.DataTable
+    Public Function getArtikelsByBedrijf(ByVal bedrijfID As Integer) As tblBedrijfDataTable
+        Dim dt As New tblBedrijfDataTable
         Dim c As New SqlCommand("[Manual_getArtikelsByBedrijf]")
         c.CommandType = CommandType.StoredProcedure
-
         c.Parameters.Add("@BedrijfID", SqlDbType.Int).Value = bedrijfID
-
         c.Connection = New SqlConnection(conn)
 
         Try
@@ -470,24 +442,17 @@ Public Class ArtikelDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
+            If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("bedrijfID = " & bedrijfID.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
-
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
     Public Function getArtikelsForSearch(ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer, ByVal tag As String) As Data.DataTable
@@ -536,14 +501,8 @@ Public Class ArtikelDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
 
             Dim e As New ErrorLogger(ex.Message)
@@ -552,11 +511,11 @@ Public Class ArtikelDAL
             e.Args.Add("bedrijf = " & bedrijf.ToString)
             e.Args.Add("taal = " & taal.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
-
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
     Public Function checkArtikelByTitelEnID(ByVal titel As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal id As Integer) As tblArtikelDataTable
@@ -574,14 +533,8 @@ Public Class ArtikelDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
 
             Dim e As New ErrorLogger(ex.Message)
@@ -591,11 +544,11 @@ Public Class ArtikelDAL
             e.Args.Add("taal = " & taal.ToString)
             e.Args.Add("id = " & id.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
-
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
     Public Function checkArtikelByTag(ByVal tag As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal id As Integer) As tblArtikelDataTable
@@ -613,14 +566,8 @@ Public Class ArtikelDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
 
             Dim e As New ErrorLogger(ex.Message)
@@ -629,11 +576,11 @@ Public Class ArtikelDAL
             e.Args.Add("bedrijf = " & bedrijf.ToString)
             e.Args.Add("taal = " & taal.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
-
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
     Public Function getArtikelsByTitelTaalVersieBedrijf(ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer, ByVal titel As String) As Data.DataTable
@@ -650,10 +597,8 @@ Public Class ArtikelDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            Return dt
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Titel = " & titel)
@@ -661,11 +606,11 @@ Public Class ArtikelDAL
             e.Args.Add("bedrijf = " & bedrijfID.ToString)
             e.Args.Add("taal = " & taalID.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
+        Return dt
     End Function
     Public Function updateTagAlleTalen(ByVal nieuweTag As String, ByVal oudetag As String) As Integer
         Dim x As Integer
@@ -684,38 +629,34 @@ Public Class ArtikelDAL
             e.Args.Add("Nieuwe tag = " & nieuweTag)
             e.Args.Add("Oude tag = " & oudetag)
             ErrorLogger.WriteError(e)
-            Return Nothing
+            Return -1
         End Try
         Return x
     End Function
 
     Public Function getTitelByTag(ByVal tag As String) As String
-        Dim titel As String
+        Dim titel As String = String.Empty
         Dim c As New SqlCommand("Manual_getTitelByTag")
         Dim dt As New tblArtikelDataTable
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@Tag", SqlDbType.VarChar).Value = tag
         c.Connection = New SqlConnection(conn)
         Try
-            'Dim r As SqlDataReader
             c.Connection.Open()
-
             titel = Convert.ToString(c.ExecuteScalar)
-            
-            Return titel
-
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("tag = " & tag)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
+
+        Return titel
     End Function
 
     Public Function getArtikelTekst(ByVal Zoekterm As String, ByVal tag As String) As String
-        Dim tekst As String
+        Dim tekst As String = String.Empty
         Dim c As New SqlCommand("Manual_getArtikelTekst")
         Dim dt As New tblArtikelDataTable
         c.CommandType = CommandType.StoredProcedure
@@ -723,17 +664,8 @@ Public Class ArtikelDAL
         c.Parameters.Add("@Zoekterm", SqlDbType.VarChar).Value = Zoekterm
         c.Connection = New SqlConnection(conn)
         Try
-            'Dim r As SqlDataReader
             c.Connection.Open()
-
             tekst = Convert.ToString(c.ExecuteScalar)
-            If tekst IsNot Nothing Then
-                Return tekst
-            Else
-                Return Nothing
-            End If
-
-
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("zoekterm = " & Zoekterm)
@@ -743,10 +675,13 @@ Public Class ArtikelDAL
         Finally
             c.Connection.Close()
         End Try
+
+        Return tekst
     End Function
-    Public Function getArtikelsByModule(ByVal modul As String) As Data.DataTable
+    Public Function getArtikelsByModule(ByVal modul As String) As tblModuleDataTable
+        Dim dt As New tblModuleDataTable
+
         Dim c As New SqlCommand("Manual_getArtikelsByModule")
-        Dim dt As New Data.DataTable
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@module", SqlDbType.VarChar).Value = modul
         c.Connection = New SqlConnection(conn)
@@ -755,15 +690,14 @@ Public Class ArtikelDAL
             c.Connection.Open()
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            Return dt
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("module = " & modul)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
+        Return dt
     End Function
 End Class

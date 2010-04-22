@@ -3,7 +3,8 @@
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
-<script type="text/javascript" src="JS/ckfinder/ckfinder.js"></script>
+
+    <script type="text/javascript" src="JS/ckfinder/ckfinder.js"></script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="divLoggedIn" runat="server">
@@ -11,8 +12,8 @@
             <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
                 <HeaderTemplate>
                     Bedrijf
-                </HeaderTemplate>
-                <ContentTemplate>
+            </HeaderTemplate>
+<ContentTemplate>
                     <asp:UpdatePanel ID="updBedrijf" runat="server">
                         <ContentTemplate>
                             <cc1:Accordion ID="AccordionBedrijf" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -191,13 +192,13 @@
                             </asp:UpdateProgress>
                         </ContentTemplate>
                     </asp:UpdatePanel>
-                </ContentTemplate>
-            </cc1:TabPanel>
+            </ContentTemplate>
+</cc1:TabPanel>
             <cc1:TabPanel runat="server" HeaderText="Taal" ID="tabTaal">
                 <HeaderTemplate>
                     Taal
-                </HeaderTemplate>
-                <ContentTemplate>
+            </HeaderTemplate>
+<ContentTemplate>
                     <asp:UpdatePanel ID="updTaal" runat="server">
                         <ContentTemplate>
                             <cc1:Accordion ID="AccordionTaal" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -365,13 +366,13 @@
                             </asp:UpdateProgress>
                         </ContentTemplate>
                     </asp:UpdatePanel>
-                </ContentTemplate>
-            </cc1:TabPanel>
+            </ContentTemplate>
+</cc1:TabPanel>
             <cc1:TabPanel runat="server" HeaderText="Versie" ID="tabVersie">
                 <HeaderTemplate>
                     Versie
-                </HeaderTemplate>
-                <ContentTemplate>
+            </HeaderTemplate>
+<ContentTemplate>
                     <asp:UpdatePanel ID="updVersie" runat="server">
                         <ContentTemplate>
                             <cc1:Accordion ID="AccordionVersie" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -606,15 +607,160 @@
                             </asp:UpdateProgress>
                         </ContentTemplate>
                     </asp:UpdatePanel>
-                </ContentTemplate>
-            </cc1:TabPanel>
+            </ContentTemplate>
+</cc1:TabPanel>
+<cc1:TabPanel runat="server" HeaderText="Taal" ID="tabModule">
+                <HeaderTemplate>
+                    Module
+            </HeaderTemplate>
+<ContentTemplate>
+                    <asp:UpdatePanel ID="updModule" runat="server">
+                        <ContentTemplate>
+                            <cc1:Accordion ID="accordionModule" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
+                                ContentCssClass="art-content">
+                                <Panes>
+                                    <cc1:AccordionPane ID="paneModuleToevoegen" runat="server" BackColor="Black">
+                                        <Header>
+                                            Module toevoegen</Header>
+                                        <Content>
+                                            <table>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblModuleToevoegenNaam" runat="server" Text="Naam: "></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <asp:TextBox ID="txtModuleToevoegenNaam" runat="server" Width="100%"></asp:TextBox><asp:RequiredFieldValidator
+                                                            ID="vleModuleToevoegenNaam" runat="server" ErrorMessage="Gelieve een naam in te geven." ControlToValidate="txtModuleToevoegenNaam"
+                                                            Display="None" ValidationGroup="moduleToevoegen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
+                                                                ID="extModuleToevoegenNaam" runat="server" TargetControlID="vleModuleToevoegenNaam">
+                                                            </cc1:ValidatorCalloutExtender>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipModuleToevoegenNaam'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        &#160;&nbsp;
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button ID="btnModuleToevoegen" runat="server" Text="Toevoegen" ValidationGroup="moduleToevoegen"
+                                                            Width="100%" />
+                                                    </td>
+                                                    <td>
+                                                        <asp:Image runat="server" ID="imgModuleToevoegenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblModuleToevoegenRes" runat="server" Text=""></asp:Label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </Content>
+                                    </cc1:AccordionPane>
+                                    <cc1:AccordionPane ID="paneModuleWijzigen" runat="server">
+                                        <Header>
+                                            Module wijzigen</Header>
+                                        <Content>
+                                            <table>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblModuleWijzigenKeuze" runat="server" Text="Kies een module: "></asp:Label>
+                                                    </td>
+                                                    <td class="ietd">
+                                                        <asp:DropDownList ID="ddlModuleWijzigenKeuze" runat="server" DataTextField="module" DataValueField="moduleID" AutoPostBack="true"
+                                                            Width="100%">
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipModuleWijzigenKeuze'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblModuleWijzigenNaam" runat="server" Text="Naam: "></asp:Label>
+                                                    </td>
+                                                    <td>
+                                                        <asp:TextBox ID="txtModuleWijzigenNaam" runat="server" Width="100%"></asp:TextBox><asp:RequiredFieldValidator
+                                                            ID="vleModuleWijzigenNaam" runat="server" ErrorMessage="Gelieve een naam in te geven."
+                                                            ControlToValidate="txtModuleWijzigenNaam" Display="None" ValidationGroup="moduleWijzigen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
+                                                                ID="extModuleWijzigenNaam" runat="server" TargetControlID="vleModuleWijzigenNaam">
+                                                            </cc1:ValidatorCalloutExtender>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipModuleWijzigenNaam'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                    &nbsp;
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button ID="btnModuleWijzigen" runat="server" Text="Wijzigen" ValidationGroup="moduleWijzigen"
+                                                            Width="100%" />
+                                                    </td>
+                                                    <td>
+                                                        <asp:Image runat="server" ID="imgModuleWijzigenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblModuleWijzigenRes" runat="server" Text=""></asp:Label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </Content>
+                                    </cc1:AccordionPane>
+                                    <cc1:AccordionPane ID="paneModuleVerwijderen" runat="server">
+                                        <Header>
+                                            Module verwijderen</Header>
+                                        <Content>
+                                            <table>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblModuleVerwijderenKeuze" runat="server" Text="Kies een module: "></asp:Label>
+                                                    </td>
+                                                    <td class="ietd">
+                                                        <asp:DropDownList ID="ddlModuleVerwijderenKeuze" runat="server" DataTextField="taal" DataValueField="TaalID"
+                                                            Width="100%">
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipModuleVerwijderenKeuze'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        &#160;&nbsp;
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button ID="btnModuleVerwijderen" runat="server" Text="Verwijderen" Width="100%" />
+                                                    </td>
+                                                    <td>
+                                                        <asp:Image runat="server" ID="imgModuleVerwijderenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                            ID="lblModuleVerwijderenRes" runat="server" Text=""></asp:Label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </Content>
+                                    </cc1:AccordionPane>
+                                </Panes>
+                            </cc1:Accordion>
+                            <asp:UpdateProgress ID="UpdateProgress6" runat="server">
+                                <ProgressTemplate>
+                                    <div class="update">
+                                        <img src="CSS/Images/ajaxloader.gif" />
+                                        Even wachten aub...
+                                    </div>
+                                </ProgressTemplate>
+                            </asp:UpdateProgress>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+            </ContentTemplate>
+</cc1:TabPanel>
             <cc1:TabPanel runat="server" HeaderText="Categorie" ID="TabCategorie">
                 <HeaderTemplate>
                     Categorie
-                </HeaderTemplate>
-                <ContentTemplate>
-                    <asp:UpdatePanel ID="updCategorie" runat="server">
-                        <ContentTemplate>
+            </HeaderTemplate>
+<ContentTemplate>
+                    <asp:UpdatePanel ID="updCategorie" runat="server"><ContentTemplate>
                             <cc1:Accordion ID="AccordionCategorie" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
                                 ContentCssClass="art-content">
                                 <Panes>
@@ -998,7 +1144,7 @@
                                                         &#160;&#160;
                                                     </td>
                                                     <td>
-                                                        <asp:Button ID="btnCatDelFilteren" runat="server" Text="Filteren" Width="100%"></asp:Button>
+                                                        <asp:Button ID="btnCatDelFilteren" runat="server" Text="Filteren" Width="100%" UseSubmitBehavior="false" /></asp:Button>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1052,13 +1198,15 @@
                                     </div>
                                 </ProgressTemplate>
                             </asp:UpdateProgress>
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
-                </ContentTemplate>
-            </cc1:TabPanel>
+    </ContentTemplate>
+</asp:UpdatePanel>
+            </ContentTemplate>
+</cc1:TabPanel>
             <cc1:TabPanel runat="server"  ID="tabVideo" HeaderText="Video">
-            <HeaderTemplate>Video</HeaderTemplate>
-            <ContentTemplate>
+            <HeaderTemplate>
+Video
+            </HeaderTemplate>
+<ContentTemplate>
             <asp:UpdatePanel ID="updVideo" runat="server">
                         <ContentTemplate>
                             <cc1:Accordion ID="accordionVideo" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -1101,8 +1249,7 @@
                                                                 __doPostBack('<%= updPreviewLinkUpdaten.ClientID %>', '');
                                                             }
                                                         }
-                                                        </script>
-                                                    </td>
+                                                        </script> </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipVideoPreviewKiezen'>
                                                             <img src="CSS/images/help.png" alt='' /></span>
@@ -1139,12 +1286,12 @@
                         </ContentTemplate>
                     </asp:UpdatePanel>
             </ContentTemplate>
-            </cc1:TabPanel>
+</cc1:TabPanel>
             <cc1:TabPanel runat="server" ID="tabOnderhoud" HeaderText="Applicatie-Onderhoud">
                 <HeaderTemplate>
                     Applicatie-Onderhoud
-                </HeaderTemplate>
-                <ContentTemplate>
+            </HeaderTemplate>
+<ContentTemplate>
                     <asp:UpdatePanel ID="updOnderhoud" runat="server">
                         <ContentTemplate>
                             <cc1:Accordion ID="AccordionOnderhoud" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -1455,12 +1602,20 @@
             }
         }
 
-                            </script>
-
-                        </ContentTemplate>
+                            </script> </ContentTemplate>
                     </asp:UpdatePanel>
-                </ContentTemplate>
-            </cc1:TabPanel>
+                
+                
+            
+                
+                
+            
+            </ContentTemplate>
+            
+
+
+
+</cc1:TabPanel>
         </cc1:TabContainer>
     </div>
 </asp:Content>

@@ -35,8 +35,8 @@ Partial Class App_Presentation_verwijderenTekst
 
     Private Sub LaadJavaScript()
 
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnAnnuleer, "Annuleren...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnAnnuleer, "Annuleren...", True)
         JavaScript.ZetButtonOpDisabledOnClick(btnOK, "Verwijderen...")
 
     End Sub

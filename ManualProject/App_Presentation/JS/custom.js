@@ -47,3 +47,50 @@ function ShadowBoxTonen( message )
         player:     "html"
     });
 }
+
+function WaardeSubmitten(source, tekstWaarde, validatieGroep, metPostback)
+{
+	ret = true;
+	
+    if (typeof (Page_ClientValidate) == 'function')
+    {
+        if( validatieGroep != null )
+        {
+            if(typeof (validatieGroep) == 'boolean') 
+            {
+                if( validatieGroep == false )
+                {
+                    ret = true;
+                    alert('geen validatie');
+                }
+            }
+            else
+            {
+                Page_ClientValidate( validatieGroep );
+                ret = Page_IsValid;
+                alert('enkel validatiegroep ' + validatieGroep + ' valideren');
+            }
+        }
+        else
+        {
+            Page_ClientValidate();
+            ret = Page_IsValid;
+            alert('alles valideren');
+        }
+    }
+    
+    alert(ret);
+    
+    if (ret)
+    {
+        source.value = tekstWaarde;
+        source.disabled = true;
+        
+        if( metPostback )
+        {
+            __doPostBack(source.name, "");
+            alert('postback gedaan');
+        }
+    }
+    return ret;
+}

@@ -31,17 +31,14 @@ Public Class CategorieDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            Return dt
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Taal = " & taal.ToString)
             e.Args.Add("Bedrijf = " & bedrijf.ToString)
             e.Args.Add("Versie = " & versie.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
@@ -52,7 +49,7 @@ Public Class CategorieDAL
     Public Function GetCategorieByBedrijf(ByVal bedrijfID As Integer) As tblCategorieDataTable
         Dim dt As New tblCategorieDataTable
 
-        Dim c As New SqlCommand("Check_CategorieByTaal")
+        Dim c As New SqlCommand("Check_CategorieByBedrijf")
         c.CommandType = CommandType.StoredProcedure
 
         c.Parameters.Add("@bedrijfID", SqlDbType.Int).Value = bedrijfID
@@ -64,16 +61,15 @@ Public Class CategorieDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            Return dt
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Bedrijf = " & bedrijfID.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
+        Return dt
     End Function
 
     Public Function GetCategorieByTaal(ByVal taalID As Integer) As tblCategorieDataTable
@@ -90,23 +86,16 @@ Public Class CategorieDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
-
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Taal = " & taalID.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
+        Return dt
     End Function
 
     Public Function GetHoogte(ByVal categorieID As Integer, ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer) As Integer
@@ -130,7 +119,7 @@ Public Class CategorieDAL
                 Dim rij As tblCategorieRow = dt.Rows(0)
                 Return rij.Hoogte
             Else
-                Return Nothing
+                Return 0
             End If
 
         Catch ex As Exception
@@ -157,17 +146,15 @@ Public Class CategorieDAL
         Try
             c.Connection.Open()
             bool = c.ExecuteNonQuery()
-            Return bool
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Hoogte = " & hoogte.ToString)
-            Return Nothing
         End Try
 
+        Return bool
     End Function
 
     Public Function getCategorieByID(ByVal categorieID As Integer) As tblCategorieRow
-
         Dim dt As New tblCategorieDataTable
 
         Dim c As New SqlCommand("Manual_getCategorieByID")
@@ -178,27 +165,24 @@ Public Class CategorieDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt.Rows(0)
-            Else
-                Return Nothing
-            End If
-
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Categorie = " & categorieID.ToString)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
 
+        If dt.Count > 0 Then
+            Return dt.Rows(0)
+        Else
+            Return Nothing
+        End If
     End Function
 
     Public Function getCategorieByParent(ByVal parent As Integer) As tblCategorieDataTable
-
         Dim dt As New tblCategorieDataTable
 
         Dim c As New SqlCommand("Manual_getCategorieByParent")
@@ -211,25 +195,22 @@ Public Class CategorieDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Parent = " & parent.ToString)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
     Public Function checkCategorie(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer) As tblCategorieDataTable
-
         Dim dt As New tblCategorieDataTable
+
         Dim c As New SqlCommand("Check_Categorie")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
@@ -241,60 +222,25 @@ Public Class CategorieDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
-
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("categorie = " & catnaam)
             e.Args.Add("Bedrijf = " & bedrijf.ToString)
             e.Args.Add("Versie = " & versie.ToString)
             e.Args.Add("Taal = " & taal.ToString)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
-
-    Public Function getCategorieZonderRoot() As tblCategorieRow
-
-        Dim dt As New tblCategorieDataTable
-        Dim c As New SqlCommand("Manual_getCategorieZonderRoot")
-        c.CommandType = CommandType.StoredProcedure
-
-        c.Connection = New SqlConnection(conn)
-
-        Try
-            Dim r As SqlDataReader
-            c.Connection.Open()
-
-            r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt.Rows(0)
-            End If
-
-
-        Catch ex As Exception
-            Dim e As New ErrorLogger(ex.Message)
-            Return Nothing
-        Finally
-            c.Connection.Close()
-        End Try
-        Return Nothing
-    End Function
-
 
     Public Function checkCategorieByID(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal Id As Integer) As tblCategorieDataTable
-
         Dim dt As New tblCategorieDataTable
+
         Dim c As New SqlCommand("Check_CategorieByID")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@catnaam", SqlDbType.VarChar).Value = catnaam
@@ -307,14 +253,8 @@ Public Class CategorieDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("categorie = " & catnaam)
@@ -322,10 +262,12 @@ Public Class CategorieDAL
             e.Args.Add("Versie = " & versie.ToString)
             e.Args.Add("Taal = " & taal.ToString)
             e.Args.Add("Id = " & Id.ToString)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
     Public Function insertCategorie(ByRef cat As Categorie) As Integer
@@ -360,8 +302,8 @@ Public Class CategorieDAL
             e.Args.Add("Diepte = " & cat.Diepte.ToString)
             e.Args.Add("Taal = " & cat.Hoogte.ToString)
             e.Args.Add("FK_Parent = " & cat.FK_Parent.ToString)
-
-            Return Nothing
+            ErrorLogger.WriteError(e)
+            Return -1
         Finally
             c.Connection.Close()
         End Try
@@ -399,6 +341,7 @@ Public Class CategorieDAL
 
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(e)
             Return Nothing
         Finally
             c.Connection.Close()
@@ -419,19 +362,16 @@ Public Class CategorieDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Versie = " & versie)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
 End Class

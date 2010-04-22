@@ -142,14 +142,14 @@ Partial Class App_Presentation_ArtikelBewerken
         End If
 
         'Checken of een ander artikel reeds deze titel heeft
-        If artikeldal.checkArtikelByTitelEnID(artikel.Titel, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID) IsNot Nothing Then
+        If artikeldal.checkArtikelByTitelEnID(artikel.Titel, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
             Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze titel in deze structuur.", lblresultaat, imgResultaat)
             Me.divFeedback.Visible = True
             Return
         End If
 
         'Checken of een ander artikel niet dezelfde tag heeft
-        If artikeldal.checkArtikelByTag(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID) IsNot Nothing Then
+        If artikeldal.checkArtikelByTag(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
             Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze tag.", lblresultaat, imgResultaat)
             Me.divFeedback.Visible = True
             Return
@@ -447,11 +447,11 @@ Partial Class App_Presentation_ArtikelBewerken
         JavaScript.VoerJavaScriptUitOn(rdbEnkeleTaal, js, "onclick")
 
         'De zoekknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...", True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnZoek, "Laden...")
         'De wijzigknop op disabled zetten als erop geklikt wordt
-        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...", True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnUpdate, "Opslaan...")
 
-        JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True)
 
     End Sub
 

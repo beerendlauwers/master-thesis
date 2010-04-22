@@ -9,6 +9,7 @@ Partial Class App_Presentation_Beheer
     Private versiedal As VersieDAL = DatabaseLink.GetInstance.GetVersieFuncties
     Private taaldal As TaalDAL = DatabaseLink.GetInstance.GetTaalFuncties
     Private bedrijfdal As BedrijfDAL = DatabaseLink.GetInstance.GetBedrijfFuncties
+    Private moduledal As ModuleDAL = DatabaseLink.GetInstance.GetModuleFuncties
 
     Private adapterCat As New ManualTableAdapters.tblCategorieTableAdapter
     Private adapterVersie As New ManualTableAdapters.tblVersieTableAdapter
@@ -22,97 +23,118 @@ Partial Class App_Presentation_Beheer
 #Region "Code: Categorie Toevoegen"
 
     Protected Sub btnCatAdd_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatAdd.Click
-        Dim val() As WebControl = {txtAddhoogte, txtAddCatnaam, ddlAddCatBedrijf, ddlAddCatTaal, ddlAddCatVersie, ddlAddParentcat}
-        If Util.Valideer(val) Then
+        Try
+            Dim val() As WebControl = {txtAddhoogte, txtAddCatnaam, ddlAddCatBedrijf, ddlAddCatTaal, ddlAddCatVersie, ddlAddParentcat}
+            If Util.Valideer(val) Then
 
-            'Gewenste hoogte opslaan
-            Dim hoogte As Integer = Integer.Parse(txtAddhoogte.Text)
+                'Gewenste hoogte opslaan
+                Dim hoogte As Integer = Integer.Parse(txtAddhoogte.Text)
 
-            'CategorieID ophalen van parent categorie
-            Dim parentCategorieID As Integer = ddlAddParentcat.SelectedValue
+                'CategorieID ophalen van parent categorie
+                Dim parentCategorieID As Integer = ddlAddParentcat.SelectedValue
 
-            'Parent categorie ophalen uit database
-            Dim parentCategorierij As tblCategorieRow = categoriedal.getCategorieByID(parentCategorieID)
+                'Parent categorie ophalen uit database
+                Dim parentCategorierij As tblCategorieRow = categoriedal.getCategorieByID(parentCategorieID)
 
-            'Hoogte van parent categorie opslaan
-            Dim parentHoogte As Integer = parentCategorierij.Hoogte
+                'Hoogte van parent categorie opslaan
+                Dim parentHoogte As Integer = parentCategorierij.Hoogte
 
-            'Hoogte van de parent updaten als deze groter (+1) is dan de gewenste hoogte 
-            If hoogte < parentHoogte + 1 Then
-                categoriedal.updateHoogte(hoogte, parentCategorieID)
-            End If
-
-            'Alle gegevens inlezen
-            Dim c As New Categorie
-            c.Bedrijf = ddlAddCatBedrijf.SelectedValue
-            c.Versie = ddlAddCatVersie.SelectedValue
-            c.Categorie = txtAddCatnaam.Text
-            c.Diepte = parentCategorierij.Diepte + 1
-            c.Hoogte = hoogte
-            c.FK_Parent = parentCategorieID
-            c.FK_Taal = ddlAddCatTaal.SelectedValue
-
-            'Nagaan of er reeds een categorie met dezelfde naam bestaat in deze versie en bedrijf.
-            If categoriedal.checkCategorie(c.Categorie, c.Bedrijf, c.Versie, c.FK_Taal) Is Nothing Then
-
-                'Alles ok, categorie inserten
-                Dim categorieID As Integer = categoriedal.insertCategorie(c)
-
-                If Not categorieID = -1 Then
-
-                    'Toevoegen in geheugen
-                    Dim tree As Tree = tree.GetTree(c.FK_Taal, c.Versie, c.Bedrijf)
-
-                    'Parent opzoeken
-                    Dim parent As Node = tree.DoorzoekTreeVoorNode(c.FK_Parent, Global.ContentType.Categorie)
-
-                    If parent Is Nothing Then
-                        Util.SetWarn("Categorie toegevoegd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResAdd, imgResAdd)
-                        txtAddCatnaam.Text = String.Empty
-                        txtAddhoogte.Text = String.Empty
-                    Else
-                        Dim kind As New Node(categorieID, Global.ContentType.Categorie, c.Categorie, c.Hoogte)
-
-                        parent.AddChild(kind)
-
-                        Util.SetOK("Categorie toegevoegd.", lblResAdd, imgResAdd)
-                        txtAddCatnaam.Text = String.Empty
-                        txtAddhoogte.Text = String.Empty
-                    End If
-                Else
-                    Util.SetError("Toevoegen mislukt.", lblResAdd, imgResAdd)
+                'Hoogte van de parent updaten als deze groter (+1) is dan de gewenste hoogte 
+                If hoogte < parentHoogte + 1 Then
+                    categoriedal.updateHoogte(hoogte, parentCategorieID)
                 End If
 
-            Else
-                Util.SetError("Deze categorie bestaat reeds voor deze versie of dit bedrijf.", lblResAdd, imgResAdd)
-            End If
+                'Alle gegevens inlezen
+                Dim c As New Categorie
+                c.Bedrijf = ddlAddCatBedrijf.SelectedValue
+                c.Versie = ddlAddCatVersie.SelectedValue
+                c.Categorie = txtAddCatnaam.Text
+                c.Diepte = parentCategorierij.Diepte + 1
+                c.Hoogte = hoogte
+                c.FK_Parent = parentCategorieID
+                c.FK_Taal = ddlAddCatTaal.SelectedValue
 
-            LaadAlleCategorien()
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblResAdd, imgResAdd)
-        End If
+                'Nagaan of er reeds een categorie met dezelfde naam bestaat in deze versie en bedrijf.
+                If categoriedal.checkCategorie(c.Categorie, c.Bedrijf, c.Versie, c.FK_Taal).Count = 0 Then
+
+                    'Alles ok, categorie inserten
+                    Dim categorieID As Integer = categoriedal.insertCategorie(c)
+
+                    If Not categorieID = -1 Then
+
+                        'Toevoegen in geheugen
+                        Dim tree As Tree = tree.GetTree(c.FK_Taal, c.Versie, c.Bedrijf)
+
+                        'Parent opzoeken
+                        Dim parent As Node = tree.DoorzoekTreeVoorNode(c.FK_Parent, Global.ContentType.Categorie)
+
+                        If parent Is Nothing Then
+                            Util.SetWarn("Categorie toegevoegd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResAdd, imgResAdd)
+                            txtAddCatnaam.Text = String.Empty
+                            txtAddhoogte.Text = String.Empty
+                        Else
+                            Dim kind As New Node(categorieID, Global.ContentType.Categorie, c.Categorie, c.Hoogte)
+
+                            parent.AddChild(kind)
+
+                            Util.SetOK("Categorie toegevoegd.", lblResAdd, imgResAdd)
+                            txtAddCatnaam.Text = String.Empty
+                            txtAddhoogte.Text = String.Empty
+                        End If
+                    Else
+                        Util.SetError("Toevoegen mislukt.", lblResAdd, imgResAdd)
+                    End If
+
+                Else
+                    Util.SetError("Deze categorie bestaat reeds voor deze versie of dit bedrijf.", lblResAdd, imgResAdd)
+                End If
+
+                LaadAlleCategorien()
+            Else
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblResAdd, imgResAdd)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnCatAdd, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlAddCatBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlAddCatBedrijf.SelectedIndexChanged
-        Toevoegen_LaadParentCategorie()
+        Try
+            Toevoegen_LaadParentCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlAddCatBedrijf, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlAddCatTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlAddCatTaal.SelectedIndexChanged
-        Toevoegen_LaadParentCategorie()
+        Try
+            Toevoegen_LaadParentCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlAddCatTaal, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlAddCatVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlAddCatVersie.SelectedIndexChanged
-        Toevoegen_LaadParentCategorie()
+        Try
+            Toevoegen_LaadParentCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlAddCatVersie, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlAddParentcat_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        Toevoegen_LaadCategorieHoogte()
+        Try
+            Toevoegen_LaadCategorieHoogte()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlAddParentcat, ex.Message)
+        End Try
     End Sub
 
     Private Sub Toevoegen_LaadParentCategorie()
         If ddlAddCatBedrijf.Items.Count > 0 And ddlAddCatTaal.Items.Count > 0 And ddlAddCatVersie.Items.Count > 0 Then
             Dim t As Tree = Tree.GetTree(ddlAddCatTaal.SelectedValue, ddlAddCatVersie.SelectedValue, ddlAddCatBedrijf.SelectedValue)
             Util.LeesCategorien(ddlAddParentcat, t, True, True)
+            Toevoegen_LaadCategorieHoogte()
         End If
     End Sub
 
@@ -142,12 +164,12 @@ Partial Class App_Presentation_Beheer
     Private Function Wijzigen_CheckCategorieRecursief(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal parentCategorieID As Integer) As Boolean
 
         'Check of deze categorie een dubbele naam heeft
-        If (categoriedal.checkCategorieByID(catnaam, bedrijf, versie, taal, parentCategorieID) IsNot Nothing) Then
+        If (categoriedal.checkCategorieByID(catnaam, bedrijf, versie, taal, parentCategorieID).Count = 0) Then
             Return False
         Else
 
             Dim dt As tblCategorieDataTable = categoriedal.getCategorieByParent(parentCategorieID)
-            If dt IsNot Nothing Then
+            If dt.Count > 0 Then
 
                 Dim resultaat As Boolean
                 'Check voor elke subcategorie van deze parentcategorie of ze een dubbele naam heeft
@@ -164,12 +186,12 @@ Partial Class App_Presentation_Beheer
 
             'Artikels checken onder parentcategorie
             Dim artikeldt As tblArtikelDataTable = artikeldal.GetArtikelsByParent(parentCategorieID)
-            If artikeldt IsNot Nothing Then
+            If artikeldt.Count > 0 Then
 
                 'Elk artikel van deze parentcategorie checken
                 For Each artikel As tblArtikelRow In artikeldt
 
-                    If artikeldal.checkArtikelByTitel(artikel.Titel, bedrijf, versie, taal) IsNot Nothing Then
+                    If artikeldal.checkArtikelByTitel(artikel.Titel, bedrijf, versie, taal).Count > 0 Then
                         Return False 'Dit artikel heeft een dubbele titel
                     End If
 
@@ -191,7 +213,7 @@ Partial Class App_Presentation_Beheer
 
         'De kinderen updaten
         Dim dt As tblCategorieDataTable = categoriedal.getCategorieByParent(parent.CategorieID)
-        If dt IsNot Nothing Then
+        If dt.Count > 0 Then
 
             Dim resultaat As Boolean
             'Elke subcategorie van deze parentcategorie updaten
@@ -209,7 +231,7 @@ Partial Class App_Presentation_Beheer
 
         'Artikels updaten onder parentcategorie
         Dim artikeldt As tblArtikelDataTable = artikeldal.GetArtikelsByParent(parent.CategorieID)
-        If artikeldt IsNot Nothing Then
+        If artikeldt.Count > 0 Then
 
             Dim resultaat As Boolean
             'Elk artikel van deze parentcategorie updaten
@@ -233,106 +255,133 @@ Partial Class App_Presentation_Beheer
     End Function
 
     Protected Sub btnCatEdit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatEdit.Click
-        Dim val() As WebControl = {txtCatbewerknaam, txtEditCathoogte, ddlEditCategorie, ddlEditCatParent, ddlEditCatTaal, ddlEditCatBedrijf, ddlEditCatVersie}
-        If Util.Valideer(val) Then
-            'Alle gegevens inlezen
-            Dim nieuwecategorie As New Categorie
+        Try
+            Dim val() As WebControl = {txtCatbewerknaam, txtEditCathoogte, ddlEditCategorie, ddlEditCatParent, ddlEditCatTaal, ddlEditCatBedrijf, ddlEditCatVersie}
+            If Util.Valideer(val) Then
+                'Alle gegevens inlezen
+                Dim nieuwecategorie As New Categorie
 
-            nieuwecategorie.CategorieID = ddlEditCategorie.SelectedValue
-            nieuwecategorie.Categorie = txtCatbewerknaam.Text
-            nieuwecategorie.FK_Parent = ddlEditCatParent.SelectedValue
+                nieuwecategorie.CategorieID = ddlEditCategorie.SelectedValue
+                nieuwecategorie.Categorie = txtCatbewerknaam.Text
+                nieuwecategorie.FK_Parent = ddlEditCatParent.SelectedValue
 
-            Dim origineleCategorie As tblCategorieRow = categoriedal.getCategorieByID(nieuwecategorie.CategorieID)
+                Dim origineleCategorie As tblCategorieRow = categoriedal.getCategorieByID(nieuwecategorie.CategorieID)
 
-            Dim parentCategorierij As tblCategorieRow = categoriedal.getCategorieByID(nieuwecategorie.FK_Parent)
-            nieuwecategorie.Diepte = parentCategorierij.Diepte + 1
+                Dim parentCategorierij As tblCategorieRow = categoriedal.getCategorieByID(nieuwecategorie.FK_Parent)
+                nieuwecategorie.Diepte = parentCategorierij.Diepte + 1
 
-            nieuwecategorie.FK_Taal = ddlEditCatTaal.SelectedValue
-            nieuwecategorie.Hoogte = txtEditCathoogte.Text
-            nieuwecategorie.Bedrijf = ddlEditCatBedrijf.SelectedValue
-            nieuwecategorie.Versie = ddlEditCatVersie.SelectedValue
+                nieuwecategorie.FK_Taal = ddlEditCatTaal.SelectedValue
+                nieuwecategorie.Hoogte = txtEditCathoogte.Text
+                nieuwecategorie.Bedrijf = ddlEditCatBedrijf.SelectedValue
+                nieuwecategorie.Versie = ddlEditCatVersie.SelectedValue
 
-            'Nagaan of de gewenste categorienaam reeds in gebruik is door een andere categorie, 
-            'en ook voor alle namen van de subcategorieën
-            If Wijzigen_CheckCategorieRecursief(nieuwecategorie.Categorie, nieuwecategorie.Bedrijf, nieuwecategorie.Versie, nieuwecategorie.FK_Taal, nieuwecategorie.CategorieID) = True Then
+                'Nagaan of de gewenste categorienaam reeds in gebruik is door een andere categorie, 
+                'en ook voor alle namen van de subcategorieën
+                If Wijzigen_CheckCategorieRecursief(nieuwecategorie.Categorie, nieuwecategorie.Bedrijf, nieuwecategorie.Versie, nieuwecategorie.FK_Taal, nieuwecategorie.CategorieID) = True Then
 
-                'Alles ok, categorie en categoriëën daaronder updaten
-                If (Wijzigen_UpdateCategorieRecursief(nieuwecategorie)) Then
+                    'Alles ok, categorie en categoriëën daaronder updaten
+                    If (Wijzigen_UpdateCategorieRecursief(nieuwecategorie)) Then
 
-                    'Geheugen updaten
-                    Dim oudetree As Tree = Tree.GetTree(origineleCategorie.FK_taal, origineleCategorie.FK_versie, origineleCategorie.FK_bedrijf)
-                    Dim categorienode As Node = oudetree.DoorzoekTreeVoorNode(nieuwecategorie.CategorieID, Global.ContentType.Categorie)
+                        'Geheugen updaten
+                        Dim oudetree As Tree = Tree.GetTree(origineleCategorie.FK_taal, origineleCategorie.FK_versie, origineleCategorie.FK_bedrijf)
+                        Dim categorienode As Node = oudetree.DoorzoekTreeVoorNode(nieuwecategorie.CategorieID, Global.ContentType.Categorie)
 
-                    If categorienode Is Nothing Then
-                        Util.SetWarn("Categorie gewijzigd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResEdit, imgResEdit)
-                    Else
-                        categorienode.Titel = nieuwecategorie.Categorie
-                        categorienode.Hoogte = nieuwecategorie.Hoogte
+                        If categorienode Is Nothing Then
+                            Util.SetWarn("Categorie gewijzigd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResEdit, imgResEdit)
+                        Else
+                            categorienode.Titel = nieuwecategorie.Categorie
+                            categorienode.Hoogte = nieuwecategorie.Hoogte
 
-                        'Nakijken of de categorie onder een andere tree is verplaatst, we gaan de tree ophalen van de gewenste parent categorie
-                        Dim nieuwetree As Tree = Tree.GetTree(nieuwecategorie.FK_Taal, nieuwecategorie.Versie, nieuwecategorie.Bedrijf)
+                            'Nakijken of de categorie onder een andere tree is verplaatst, we gaan de tree ophalen van de gewenste parent categorie
+                            Dim nieuwetree As Tree = Tree.GetTree(nieuwecategorie.FK_Taal, nieuwecategorie.Versie, nieuwecategorie.Bedrijf)
 
-                        If oudetree IsNot nieuwetree Then 'Verschillende tree
+                            If oudetree IsNot nieuwetree Then 'Verschillende tree
 
-                            Dim oudeparent As Node = oudetree.VindParentVanNode(categorienode)
-                            Dim nieuweparent As Node = nieuwetree.DoorzoekTreeVoorNode(nieuwecategorie.FK_Parent, Global.ContentType.Categorie)
+                                Dim oudeparent As Node = oudetree.VindParentVanNode(categorienode)
+                                Dim nieuweparent As Node = nieuwetree.DoorzoekTreeVoorNode(nieuwecategorie.FK_Parent, Global.ContentType.Categorie)
 
-                            'De parents zijn verschillend, dus de categorie is onder een nieuwe categorie verplaatst
-                            nieuweparent.AddChild(categorienode)
-                            oudeparent.RemoveChild(categorienode)
-
-                        Else 'Dezelfde tree
-
-                            'Nakijken of de categorie onder een andere categorie is verplaatst
-                            Dim oudeparent As Node = oudetree.VindParentVanNode(categorienode)
-                            Dim nieuweparent As Node = oudetree.DoorzoekTreeVoorNode(nieuwecategorie.FK_Parent, Global.ContentType.Categorie)
-
-                            If Not oudeparent Is nieuweparent Then
                                 'De parents zijn verschillend, dus de categorie is onder een nieuwe categorie verplaatst
                                 nieuweparent.AddChild(categorienode)
                                 oudeparent.RemoveChild(categorienode)
-                            End If
 
+                            Else 'Dezelfde tree
+
+                                'Nakijken of de categorie onder een andere categorie is verplaatst
+                                Dim oudeparent As Node = oudetree.VindParentVanNode(categorienode)
+                                Dim nieuweparent As Node = oudetree.DoorzoekTreeVoorNode(nieuwecategorie.FK_Parent, Global.ContentType.Categorie)
+
+                                If Not oudeparent Is nieuweparent Then
+                                    'De parents zijn verschillend, dus de categorie is onder een nieuwe categorie verplaatst
+                                    nieuweparent.AddChild(categorienode)
+                                    oudeparent.RemoveChild(categorienode)
+                                End If
+
+                            End If
+                            Util.SetOK("Categorie gewijzigd.", lblResEdit, imgResEdit)
                         End If
-                        Util.SetOK("Categorie gewijzigd.", lblResEdit, imgResEdit)
+                    Else
+                        Util.SetError("Wijzigen mislukt.", lblResEdit, imgResEdit)
                     End If
                 Else
-                    Util.SetError("Wijzigen mislukt.", lblResEdit, imgResEdit)
+                    Util.SetError("Een andere categorie in deze combinate van taal, versie en bedrijf heeft reeds dezelfde naam.", lblResEdit, imgResEdit)
                 End If
-            Else
-                Util.SetError("Een andere categorie in deze combinate van taal, versie en bedrijf heeft reeds dezelfde naam.", lblResEdit, imgResEdit)
-            End If
 
-            LaadAlleCategorien()
-            Wijzigen_LaadKeuzeCategorie()
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblResEdit, imgResEdit)
-        End If
+                LaadAlleCategorien()
+                Wijzigen_LaadKeuzeCategorie()
+            Else
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblResEdit, imgResEdit)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnCatEdit, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnEditCatVerfijnen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditCatVerfijnen.Click
-        Wijzigen_LaadKeuzeCategorie()
+        Try
+            Wijzigen_LaadKeuzeCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(btnEditCatVerfijnen, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlEditCatBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlEditCatBedrijf.SelectedIndexChanged
-        Wijzigen_LaadParentCategorie()
+        Try
+            Wijzigen_LaadParentCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlEditCatBedrijf, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlEditCatTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlEditCatTaal.SelectedIndexChanged
-        Wijzigen_LaadParentCategorie()
+        Try
+            Wijzigen_LaadParentCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlEditCatTaal, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlEditCatVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlEditCatVersie.SelectedIndexChanged
-        Wijzigen_LaadParentCategorie()
+        Try
+            Wijzigen_LaadParentCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlEditCatVersie, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlEditCategorie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        Wijzigen_LaadParentCategorie()
-        Wijzigen_LaadCategorieDetails()
+        Try
+            Wijzigen_LaadCategorieDetails()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlEditCategorie, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlEditCatParent_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        Wijzigen_LaadCategorieHoogte()
+        Try
+            Wijzigen_LaadCategorieHoogte()
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlEditCatParent, ex.Message)
+        End Try
     End Sub
 
     Private Sub Wijzigen_LaadKeuzeCategorie()
@@ -364,6 +413,8 @@ Partial Class App_Presentation_Beheer
                 trBewerkCatBedrijf.Visible = True
                 trBewerkParentCat.Visible = True
                 trCatEditButton.Visible = True
+
+                LaadTooltipsCategorieBewerken()
             End If
 
         End If
@@ -391,7 +442,7 @@ Partial Class App_Presentation_Beheer
         Dim taalID As Integer = ddlAddCatTaal.SelectedValue
         Dim versieID As Integer = ddlAddCatVersie.SelectedValue
 
-        Dim dr As Manual.tblCategorieRow = categoriedal.getCategorieByID(ddlEditCategorie.SelectedValue)
+        Dim dr As tblCategorieRow = categoriedal.getCategorieByID(ddlEditCategorie.SelectedValue)
         Dim parenthoogte As Integer = dr.Hoogte
         Dim hoogte As Integer
         If parenthoogte = Nothing Then
@@ -440,59 +491,56 @@ Partial Class App_Presentation_Beheer
 #Region "Code: Categorie Verwijderen"
 
     Protected Sub btnCatDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatDelete.Click
-        If Util.Valideer(ddlCatVerwijder) Then
-            Dim categorieID As Integer = ddlCatVerwijder.SelectedValue
+        Try
+            If Util.Valideer(ddlCatVerwijder) Then
+                Dim categorieID As Integer = ddlCatVerwijder.SelectedValue
 
-            'Nakijken of er nog artikels of categorieën onder deze categorie staan
-            If (artikeldal.GetArtikelsByParent(categorieID).Count = 0) And (categoriedal.getCategorieByParent(categorieID).Count = 0) Then
-                'Alles ok, categorie verwijderen
-                If Not adapterCat.Delete(categorieID) = 0 Then
+                'Nakijken of er nog artikels of categorieën onder deze categorie staan
+                If (artikeldal.GetArtikelsByParent(categorieID).Count = 0) And (categoriedal.getCategorieByParent(categorieID).Count = 0) Then
+                    'Alles ok, categorie verwijderen
+                    If Not adapterCat.Delete(categorieID) = 0 Then
 
-                    'Geheugen updaten
-                    Dim tree As Tree = tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
-                    Dim node As Node = tree.DoorzoekTreeVoorNode(categorieID, Global.ContentType.Categorie)
+                        'Geheugen updaten
+                        Dim tree As Tree = tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
+                        Dim node As Node = tree.DoorzoekTreeVoorNode(categorieID, Global.ContentType.Categorie)
 
-                    If node Is Nothing Then
-                        Util.SetWarn("Categorie verwijderd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResDelete, imgResDelete)
-                    Else
-                        Dim parent As Node = tree.VindParentVanNode(node)
-
-                        If parent Is Nothing Then
+                        If node Is Nothing Then
                             Util.SetWarn("Categorie verwijderd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResDelete, imgResDelete)
                         Else
-                            parent.RemoveChild(node)
-                            Util.SetOK("Categorie verwijderd.", lblResDelete, imgResDelete)
+                            Dim parent As Node = tree.VindParentVanNode(node)
+
+                            If parent Is Nothing Then
+                                Util.SetWarn("Categorie verwijderd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResDelete, imgResDelete)
+                            Else
+                                parent.RemoveChild(node)
+                                Util.SetOK("Categorie verwijderd.", lblResDelete, imgResDelete)
+                            End If
                         End If
+
+                    Else
+                        Util.SetError("Verwijderen mislukt.", lblResDelete, imgResDelete)
                     End If
 
                 Else
-                    Util.SetError("Verwijderen mislukt.", lblResDelete, imgResDelete)
+                    Util.SetError("Er staan nog artikels of andere categorieën onder deze categorie.", lblResDelete, imgResDelete)
                 End If
 
+                LaadAlleCategorien()
+                Verwijderen_LaadParentCategorie()
             Else
-                Util.SetError("Er staan nog artikels of andere categorieën onder deze categorie.", lblResDelete, imgResDelete)
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblResDelete, imgResDelete)
             End If
-
-            LaadAlleCategorien()
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblResDelete, imgResDelete)
-        End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnCatDelFilteren, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnCatDelFilteren_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatDelFilteren.Click
-        Verwijderen_LaadParentCategorie()
-    End Sub
-
-    Protected Sub ddlCatDelBedrijfkeuze_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlCatDelBedrijfkeuze.DataBound
-        Verwijderen_LaadParentCategorie()
-    End Sub
-
-    Protected Sub ddlCatDelTaalkeuze_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlCatDelTaalkeuze.DataBound
-        Verwijderen_LaadParentCategorie()
-    End Sub
-
-    Protected Sub ddlCatDelVersiekeuze_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlCatDelVersiekeuze.DataBound
-        Verwijderen_LaadParentCategorie()
+        Try
+            Verwijderen_LaadParentCategorie()
+        Catch ex As Exception
+            Util.OnverwachteFout(btnCatDelFilteren, ex.Message)
+        End Try
     End Sub
 
     Private Sub Verwijderen_LaadParentCategorie()
@@ -527,10 +575,12 @@ Partial Class App_Presentation_Beheer
         'Categorie Wijzigen - Te wijzigen categorie
         t = Tree.GetTree(ddlEditCatTaalkeuze.SelectedValue, ddlEditCatVersiekeuze.SelectedValue, ddlEditCatBedrijfkeuze.SelectedValue)
         Util.LeesCategorien(ddlEditCategorie, t)
+        Wijzigen_LaadKeuzeCategorie()
 
         'Categorie Verwijderen - Te verwijderen categorie
         t = Tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
         Util.LeesCategorien(ddlCatVerwijder, t)
+        Verwijderen_LaadParentCategorie()
     End Sub
 
 #End Region
@@ -538,99 +588,115 @@ Partial Class App_Presentation_Beheer
 #Region "Code voor Taalbeheer"
 
     Protected Sub btnAddTaal_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAddTaal.Click
+        Try
+            If Not txtAddTaal.Text = String.Empty And Not txtTaalAfkorting.Text = String.Empty Then
+                Dim taaltext As String = txtAddTaal.Text
+                Dim taaltag As String = txtTaalAfkorting.Text
 
-        If Not txtAddTaal.Text = String.Empty And Not txtTaalAfkorting.Text = String.Empty Then
-            Dim taaltext As String = txtAddTaal.Text
-            Dim taaltag As String = txtTaalAfkorting.Text
-
-            If (taaldal.checkTaal(taaltext, taaltag) Is Nothing) Then
-                Dim taalID As Integer = taaldal.insertTaal(taaltext, taaltag)
-                If taalID = -1 Then
-                    Util.SetError("Toevoegen mislukt.", lblAddTaalRes, imgAddTaalRes)
-                Else
-                    'Geheugen updaten
-                    Taal.AddTaal(New Taal(taalID, taaltext, taaltag))
-
-                    'Trees bouwen voor dit bedrijf
-                    Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf
-                    Dim versies As tblVersieDataTable = versiedal.GetAllVersie
-                    Dim nieuwetaal As tblTaalRow = taaldal.GetTaalByID(taalID)
-                    Tree.BouwTreesVoorTaal(bedrijven, versies, nieuwetaal)
-
-                    Util.SetOK("Taal toegevoegd.", lblAddTaalRes, imgAddTaalRes)
-                End If
-
-                LaadTaalDropdowns()
-            Else
-                Util.SetError("Deze taal is reeds toegvoegd.", lblAddTaalRes, imgAddTaalRes)
-            End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblAddTaalRes, imgAddTaalRes)
-        End If
-    End Sub
-
-    Protected Sub btnEditTaal_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditTaal.Click
-
-        If Not txtEditAfkorting.Text = String.Empty And Not txtEditTaal.Text = String.Empty And ddlBewerkTaal.SelectedItem IsNot Nothing Then
-            Dim taaltag As String = txtEditAfkorting.Text
-            Dim taalID As String = ddlBewerkTaal.SelectedValue
-            Dim taaltext As String = txtEditTaal.Text
-
-            If (taaldal.checkTaalByID(taaltext, taaltag, taalID) Is Nothing) Then
-                If (adapterTaal.Update(taaltext, taaltag, taalID) = 0) Then
-                    Util.SetError("Wijzigen mislukt.", lblEditTaalRes, imgEditTaalRes)
-                Else
-
-                    'Geheugen updaten
-                    Dim t As Taal = Taal.GetTaal(taalID)
-
-                    If t Is Nothing Then
-                        Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblEditTaalRes, imgEditTaalRes)
+                If (taaldal.checkTaal(taaltext, taaltag).Count = 0) Then
+                    Dim taalID As Integer = taaldal.insertTaal(taaltext, taaltag)
+                    If taalID = -1 Then
+                        Util.SetError("Toevoegen mislukt.", lblAddTaalRes, imgAddTaalRes)
                     Else
-                        t.TaalNaam = taaltext
-                        t.TaalTag = taaltag
+                        'Geheugen updaten
+                        Taal.AddTaal(New Taal(taalID, taaltext, taaltag))
 
-                        Util.SetOK("Taal gewijzigd.", lblEditTaalRes, imgEditTaalRes)
-                    End If
+                        'Trees bouwen voor dit bedrijf
+                        Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf
+                        Dim versies As tblVersieDataTable = versiedal.GetAllVersie
+                        Dim nieuwetaal As tblTaalRow = taaldal.GetTaalByID(taalID)
+                        Dim resultaat As String = Tree.BouwTreesVoorTaal(bedrijven, versies, nieuwetaal)
 
-                End If
-
-                LaadTaalDropdowns()
-            Else
-                Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
-            End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblEditTaalRes, imgEditTaalRes)
-        End If
-    End Sub
-
-    Protected Sub btnTaalDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTaalDelete.Click
-        If ddlTaalDelete.SelectedItem IsNot Nothing Then
-            Dim taalID As Integer = ddlTaalDelete.SelectedValue
-
-            If (artikeldal.getArtikelsByTaal(taalID) Is Nothing And categoriedal.GetCategorieByTaal(taalID) Is Nothing) Then
-                If (adapterTaal.Delete(taalID) = 0) Then
-                    Util.SetError("Verwijderen mislukt.", lblDeleteTaalRes, imgDeleteTaalRes)
-                Else
-
-                    'Geheugen updaten
-                    Dim t As Taal = Taal.GetTaal(taalID)
-
-                    If t Is Nothing Then
-                        Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblDeleteTaalRes, imgDeleteTaalRes)
-                    Else
-                        Taal.RemoveTaal(t)
-                        Util.SetOK("Taal verwijderd.", lblDeleteTaalRes, imgDeleteTaalRes)
+                        If resultaat = "OK" Then
+                            Util.SetOK("Taal toegevoegd.", lblAddTaalRes, imgAddTaalRes)
+                            Me.txtAddTaal.Text = String.Empty
+                            Me.txtTaalAfkorting.Text = String.Empty
+                        Else
+                            Util.SetWarn("Taal toegevoegd met waarschuwing: kon de taal niet in het geheugen toevoegen. Gelieve de boomstructuren te herbouwen.", lblAddTaalRes, imgAddTaalRes)
+                        End If
                     End If
 
                     LaadTaalDropdowns()
+                Else
+                    Util.SetError("Deze taal is reeds toegvoegd.", lblAddTaalRes, imgAddTaalRes)
                 End If
             Else
-                Util.SetError("Er bestaan nog artikels of categorieën onder deze taal.", lblDeleteTaalRes, imgDeleteTaalRes)
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblAddTaalRes, imgAddTaalRes)
             End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteTaalRes, imgDeleteTaalRes)
-        End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnAddTaal, ex.Message)
+        End Try
+    End Sub
+
+    Protected Sub btnEditTaal_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditTaal.Click
+        Try
+            If Not txtEditAfkorting.Text = String.Empty And Not txtEditTaal.Text = String.Empty And ddlBewerkTaal.SelectedItem IsNot Nothing Then
+                Dim taaltag As String = txtEditAfkorting.Text
+                Dim taalID As String = ddlBewerkTaal.SelectedValue
+                Dim taaltext As String = txtEditTaal.Text
+
+                If (taaldal.checkTaalByID(taaltext, taaltag, taalID).Count = 0) Then
+                    If (adapterTaal.Update(taaltext, taaltag, taalID) = 0) Then
+                        Util.SetError("Wijzigen mislukt.", lblEditTaalRes, imgEditTaalRes)
+                    Else
+
+                        'Geheugen updaten
+                        Dim t As Taal = Taal.GetTaal(taalID)
+
+                        If t Is Nothing Then
+                            Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblEditTaalRes, imgEditTaalRes)
+                        Else
+                            t.TaalNaam = taaltext
+                            t.TaalTag = taaltag
+
+                            Util.SetOK("Taal gewijzigd.", lblEditTaalRes, imgEditTaalRes)
+                        End If
+
+                    End If
+
+                    LaadTaalDropdowns()
+                Else
+                    Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
+                End If
+            Else
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblEditTaalRes, imgEditTaalRes)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnEditTaal, ex.Message)
+        End Try
+    End Sub
+
+    Protected Sub btnTaalDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTaalDelete.Click
+        Try
+            If ddlTaalDelete.SelectedItem IsNot Nothing Then
+                Dim taalID As Integer = ddlTaalDelete.SelectedValue
+
+                If (artikeldal.getArtikelsByTaal(taalID).Count = 0 And categoriedal.GetCategorieByTaal(taalID).Count = 0) Then
+                    If (adapterTaal.Delete(taalID) = 0) Then
+                        Util.SetError("Verwijderen mislukt.", lblDeleteTaalRes, imgDeleteTaalRes)
+                    Else
+
+                        'Geheugen updaten
+                        Dim t As Taal = Taal.GetTaal(taalID)
+
+                        If t Is Nothing Then
+                            Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblDeleteTaalRes, imgDeleteTaalRes)
+                        Else
+                            Taal.RemoveTaal(t)
+                            Util.SetOK("Taal verwijderd.", lblDeleteTaalRes, imgDeleteTaalRes)
+                        End If
+
+                        LaadTaalDropdowns()
+                    End If
+                Else
+                    Util.SetError("Er bestaan nog artikels of categorieën onder deze taal.", lblDeleteTaalRes, imgDeleteTaalRes)
+                End If
+            Else
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteTaalRes, imgDeleteTaalRes)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnTaalDelete, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlBewerkTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
@@ -660,63 +726,76 @@ Partial Class App_Presentation_Beheer
 #Region "Code voor Versiebeheer"
 
     Protected Sub btnAddVersie_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAddVersie.Click
-        If Not txtAddVersie.Text = String.Empty Then
+        Try
+            If Not txtAddVersie.Text = String.Empty Then
 
-            Dim versietext As String = txtAddVersie.Text
+                Dim versietext As String = txtAddVersie.Text
 
-            If (versiedal.CheckVersie(versietext) Is Nothing) Then
-                Dim versieID As Integer = versiedal.insertVersie(versietext)
+                If (versiedal.CheckVersie(versietext).Count = 0) Then
+                    Dim versieID As Integer = versiedal.insertVersie(versietext)
 
-                If versieID = -1 Then
-                    Util.SetError("Toevoegen mislukt.", lblAddVersieRes, imgAddVersieRes)
-                Else
-
-                    'Geheugen updaten
-                    Versie.AddVersie(New Versie(versieID, versietext))
-                    Dim bedrijfdt As tblBedrijfDataTable = DatabaseLink.GetInstance.GetBedrijfFuncties.GetAllBedrijf
-                    Dim versierij As tblVersieRow = DatabaseLink.GetInstance.GetVersieFuncties.GetVersieByID(versieID)
-                    Dim taaldt As tblTaalDataTable = DatabaseLink.GetInstance.GetTaalFuncties.GetAllTaal()
-                    Tree.BouwTreesVoorVersie(bedrijfdt, versierij, taaldt)
-
-                    Util.SetOK("Versie toegevoegd.", lblAddVersieRes, imgAddVersieRes)
-                End If
-
-                LaadVersieDropdowns()
-            Else
-                Util.SetWarn("Deze versie bestaat reeds.", lblAddVersieRes, imgAddVersieRes)
-            End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblAddVersieRes, imgAddVersieRes)
-        End If
-    End Sub
-
-    Protected Sub btnEditVersie_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditVersie.Click
-        If Not txtEditVersie.Text = String.Empty And ddlBewerkVersie.SelectedItem IsNot Nothing Then
-            Dim versietext As String = txtEditVersie.Text
-            Dim versieID As Integer = ddlBewerkVersie.SelectedValue
-
-            If (versiedal.CheckVersieByID(versietext, versieID) Is Nothing) Then
-                If adapterVersie.Update(versietext, versieID) = 0 Then
-                    Util.SetError("Wijzigen mislukt.", lblEditVersieRes, imgEditVersieRes)
-                Else
-                    'Geheugen updaten
-                    Dim v As Versie = Versie.GetVersie(versieID)
-
-                    If v Is Nothing Then
-                        Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblEditVersieRes, imgEditVersieRes)
+                    If versieID = -1 Then
+                        Util.SetError("Toevoegen mislukt.", lblAddVersieRes, imgAddVersieRes)
                     Else
-                        v.VersieNaam = versietext
-                        Util.SetOK("Versie gewijzigd.", lblEditVersieRes, imgEditVersieRes)
+
+                        'Geheugen updaten
+                        Versie.AddVersie(New Versie(versieID, versietext))
+                        Dim bedrijfdt As tblBedrijfDataTable = DatabaseLink.GetInstance.GetBedrijfFuncties.GetAllBedrijf
+                        Dim versierij As tblVersieRow = DatabaseLink.GetInstance.GetVersieFuncties.GetVersieByID(versieID)
+                        Dim taaldt As tblTaalDataTable = DatabaseLink.GetInstance.GetTaalFuncties.GetAllTaal()
+                        Dim resultaat As String = Tree.BouwTreesVoorVersie(bedrijfdt, versierij, taaldt)
+                        If resultaat = "OK" Then
+                            Util.SetOK("Versie toegevoegd.", lblAddVersieRes, imgAddVersieRes)
+                            Me.txtAddVersie.Text = String.Empty
+                        Else
+                            Util.SetWarn("Versie toegevoegd met waarschuwing: kon de versie niet in het geheugen toevoegen. Gelieve de boomstructuren te herbouwen.", lblAddTaalRes, imgAddTaalRes)
+                        End If
+
                     End If
 
                     LaadVersieDropdowns()
+                Else
+                    Util.SetWarn("Deze versie bestaat reeds.", lblAddVersieRes, imgAddVersieRes)
                 End If
             Else
-                Util.SetError("Een andere versie heeft dit versienummer al.", lblEditVersieRes, imgEditVersieRes)
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblAddVersieRes, imgAddVersieRes)
             End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblEditVersieRes, imgEditVersieRes)
-        End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnAddVersie, ex.Message)
+        End Try
+    End Sub
+
+    Protected Sub btnEditVersie_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditVersie.Click
+        Try
+            If Not txtEditVersie.Text = String.Empty And ddlBewerkVersie.SelectedItem IsNot Nothing Then
+                Dim versietext As String = txtEditVersie.Text
+                Dim versieID As Integer = ddlBewerkVersie.SelectedValue
+
+                If (versiedal.CheckVersieByID(versietext, versieID).Count = 0) Then
+                    If adapterVersie.Update(versietext, versieID) = 0 Then
+                        Util.SetError("Wijzigen mislukt.", lblEditVersieRes, imgEditVersieRes)
+                    Else
+                        'Geheugen updaten
+                        Dim v As Versie = Versie.GetVersie(versieID)
+
+                        If v Is Nothing Then
+                            Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblEditVersieRes, imgEditVersieRes)
+                        Else
+                            v.VersieNaam = versietext
+                            Util.SetOK("Versie gewijzigd.", lblEditVersieRes, imgEditVersieRes)
+                        End If
+
+                        LaadVersieDropdowns()
+                    End If
+                Else
+                    Util.SetError("Een andere versie heeft dit versienummer al.", lblEditVersieRes, imgEditVersieRes)
+                End If
+            Else
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblEditVersieRes, imgEditVersieRes)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnEditVersie, ex.Message)
+        End Try
     End Sub
 
     Private Function Kopieren_KopieerCategorieRecursief(ByRef parent As Node, ByRef tree As Tree, ByVal versieID As Integer, ByVal categorieID As Integer) As Boolean
@@ -777,105 +856,121 @@ Partial Class App_Presentation_Beheer
     End Function
 
     Protected Sub btnVersieKopieren_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVersieKopieren.Click
-        If Not txtNaamNieuweVersieKopie.Text = String.Empty And ddlVersiekopieren.SelectedItem IsNot Nothing Then
-            Dim versietext As String = txtNaamNieuweVersieKopie.Text
-            Dim versieID As Integer = ddlVersiekopieren.SelectedValue
+        Try
+            If Not txtNaamNieuweVersieKopie.Text = String.Empty And ddlVersiekopieren.SelectedItem IsNot Nothing Then
+                Dim versietext As String = txtNaamNieuweVersieKopie.Text
+                Dim versieID As Integer = ddlVersiekopieren.SelectedValue
 
-            If (versiedal.CheckVersieByID(versietext, versieID) Is Nothing) Then
+                If (versiedal.CheckVersieByID(versietext, versieID).Count = 0) Then
 
-                Dim nieuweVersieID As Integer = versiedal.insertVersie(versietext)
-                If nieuweVersieID = -1 Then
-                    Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
-                Else
-                    Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf()
-                    Dim talen As tblTaalDataTable = taaldal.GetAllTaal()
-
-                    'Alle categorieën van deze versie recursief kopiëren
-                    For Each t As tblTaalRow In talen
-                        For Each b As tblBedrijfRow In bedrijven
-                            Dim oudeversietree As Tree = Tree.GetTree(t.TaalID, versieID, b.BedrijfID)
-
-                            If oudeversietree Is Nothing Then
-                                Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
-
-                                Dim fout As String = "De opgevraagde tree (zie parameters) bestaat niet in het geheugen."
-                                fout = String.Concat(fout, " Refereer naar de documentatie om dit probleem op te lossen.")
-                                Dim err As New ErrorLogger(fout, "BEHEER_0001")
-                                err.Args.Add("Taal = " & t.TaalID.ToString)
-                                err.Args.Add("Versie = " & versieID.ToString)
-                                err.Args.Add("Bedrijf = " & b.BedrijfID.ToString)
-                                ErrorLogger.WriteError(err)
-
-                                Return
-                            End If
-
-                            If Not Kopieren_KopieerCategorieRecursief(oudeversietree.RootNode, oudeversietree, nieuweVersieID, oudeversietree.RootNode.ID) Then
-                                Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
-                                Return
-                            End If
-
-                        Next b
-                    Next t
-
-                    'Geheugen updaten
-
-                    Dim versie As tblVersieRow = versiedal.GetVersieByID(nieuweVersieID)
-
-                    Dim gelukt As Boolean = Tree.BouwTreesVoorVersie(bedrijven, versie, talen)
-
-                    If Not gelukt Then
-                        Util.SetWarn("Kopiëren gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                    Dim nieuweVersieID As Integer = versiedal.insertVersie(versietext)
+                    If nieuweVersieID = -1 Then
+                        Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
                     Else
-                        Util.SetOK("Versie gekopieerd.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                        Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf()
+                        Dim talen As tblTaalDataTable = taaldal.GetAllTaal()
+
+                        'Alle categorieën van deze versie recursief kopiëren
+                        For Each t As tblTaalRow In talen
+                            For Each b As tblBedrijfRow In bedrijven
+                                Dim oudeversietree As Tree = Tree.GetTree(t.TaalID, versieID, b.BedrijfID)
+
+                                If oudeversietree Is Nothing Then
+                                    Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+
+                                    Dim fout As String = "De opgevraagde tree (zie parameters) bestaat niet in het geheugen."
+                                    fout = String.Concat(fout, " Refereer naar de documentatie om dit probleem op te lossen.")
+                                    Dim err As New ErrorLogger(fout, "BEHEER_0001")
+                                    err.Args.Add("Taal = " & t.TaalID.ToString)
+                                    err.Args.Add("Versie = " & versieID.ToString)
+                                    err.Args.Add("Bedrijf = " & b.BedrijfID.ToString)
+                                    ErrorLogger.WriteError(err)
+
+                                    Return
+                                End If
+
+                                If Not Kopieren_KopieerCategorieRecursief(oudeversietree.RootNode, oudeversietree, nieuweVersieID, oudeversietree.RootNode.ID) Then
+                                    Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                                    Return
+                                End If
+
+                            Next b
+                        Next t
+
+                        'Geheugen updaten
+                        Versie.AddVersie(New Versie(nieuweVersieID, versietext))
+
+                        Dim v As tblVersieRow = versiedal.GetVersieByID(nieuweVersieID)
+                        Dim gelukt As String = Tree.BouwTreesVoorVersie(bedrijven, v, talen)
+
+                        If Not gelukt = "OK" Then
+                            Util.SetWarn("Kopiëren gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                        Else
+                            Util.SetOK("Versie gekopieerd.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                        End If
+
                     End If
-
+                Else
+                    Util.SetError("Een andere versie heeft deze naam al.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
                 End If
-            Else
-                Util.SetError("Een andere versie heeft deze naam al.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
-            End If
 
-            LaadVersieDropdowns()
-            Me.txtNaamNieuweVersieKopie.Text = String.Empty
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
-        End If
+                LaadVersieDropdowns()
+                Me.txtNaamNieuweVersieKopie.Text = String.Empty
+            Else
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnVersieKopieren, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnDeleteVersie_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnDeleteVersie.Click
-        If ddlDeletVersie.SelectedItem IsNot Nothing Then
-            Dim versieID As Integer = ddlDeletVersie.SelectedValue
+        Try
+            If ddlDeletVersie.SelectedItem IsNot Nothing Then
+                Dim versieID As Integer = ddlDeletVersie.SelectedValue
 
-            If (artikeldal.getArtikelsByVersie(versieID) Is Nothing And categoriedal.GetCategorieByVersie(versieID) Is Nothing) Then
-                If (adapterVersie.Delete(versieID) = 0) Then
-                    Util.SetError("Verwijderen mislukt.", lblDeleteVersieRes, imgDeleteVersieRes)
-                Else
-
-                    'Geheugen updaten
-                    Dim v As Versie = Versie.GetVersie(versieID)
-
-                    If v Is Nothing Then
-                        Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblDeleteVersieRes, imgDeleteVersieRes)
+                If (artikeldal.getArtikelsByVersie(versieID).Count = 0 And categoriedal.GetCategorieByVersie(versieID).Count = 0) Then
+                    If (adapterVersie.Delete(versieID) = 0) Then
+                        Util.SetError("Verwijderen mislukt.", lblDeleteVersieRes, imgDeleteVersieRes)
                     Else
-                        Versie.RemoveVersie(v)
-                        Util.SetOK("Versie verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
-                    End If
 
-                    LaadVersieDropdowns()
+                        'Geheugen updaten
+                        Dim v As Versie = Versie.GetVersie(versieID)
+
+                        If v Is Nothing Then
+                            Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblDeleteVersieRes, imgDeleteVersieRes)
+                        Else
+                            Versie.RemoveVersie(v)
+                            Util.SetOK("Versie verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
+                        End If
+
+                        LaadVersieDropdowns()
+                    End If
+                Else
+                    Util.SetError("Deze versie heeft nog artikels of categorieën onder zich.", lblDeleteVersieRes, imgDeleteVersieRes)
                 End If
             Else
-                Util.SetError("Deze versie heeft nog artikels of categorieën onder zich.", lblDeleteVersieRes, imgDeleteVersieRes)
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteVersieRes, imgDeleteVersieRes)
             End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteVersieRes, imgDeleteVersieRes)
-        End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnDeleteVersie, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlBewerkVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        LeesVersie(Versie.GetVersie(ddlBewerkVersie.SelectedValue))
+        Try
+            LeesVersie(Versie.GetVersie(ddlBewerkVersie.SelectedValue))
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlBewerkVersie, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlVersiekopieren_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersiekopieren.SelectedIndexChanged
-        LeesTeKopierenVersie(Versie.GetVersie(ddlVersiekopieren.SelectedValue))
+        Try
+            LeesTeKopierenVersie(Versie.GetVersie(ddlVersiekopieren.SelectedValue))
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlVersiekopieren, ex.Message)
+        End Try
     End Sub
 
     Private Sub LaadVersieDropdowns()
@@ -926,7 +1021,6 @@ Partial Class App_Presentation_Beheer
     End Function
 
     Private Function BerekenArtikelsVoorVersie(ByVal versie As Versie) As Integer
-
         Dim aantal As Integer = 0
 
         For Each t As Taal In Taal.GetTalen
@@ -947,94 +1041,122 @@ Partial Class App_Presentation_Beheer
 #Region "Code voor Bedrijfbeheer"
 
     Protected Sub btnAddBedrijf_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAddBedrijf.Click
-        If Not txtAddTag.Text = String.Empty And Not txtAddbedrijf.Text = String.Empty Then
+        Try
+            If Not txtAddTag.Text = String.Empty And Not txtAddbedrijf.Text = String.Empty Then
 
-            Dim bedrijfTag As String = txtAddTag.Text
-            Dim bedrijfnaam As String = txtAddbedrijf.Text
-            If (bedrijfdal.getBedrijfByNaamOrTag(bedrijfnaam, bedrijfTag) Is Nothing) Then
+                Dim bedrijfTag As String = txtAddTag.Text
+                Dim bedrijfnaam As String = txtAddbedrijf.Text
+                If (bedrijfdal.getBedrijfByNaamOrTag(bedrijfnaam, bedrijfTag).Count = 0) Then
 
-                Dim bedrijfID As Integer = bedrijfdal.insertBedrijf(bedrijfnaam, bedrijfTag)
+                    Dim bedrijfID As Integer = bedrijfdal.insertBedrijf(bedrijfnaam, bedrijfTag)
 
-                If bedrijfID = -1 Then
-                    Util.SetError("Toevoegen mislukt.", lblAddBedrijfRes, imgAddBedrijfRes)
+                    If bedrijfID = -1 Then
+                        Util.SetError("Toevoegen mislukt.", lblAddBedrijfRes, imgAddBedrijfRes)
+                    Else
+
+                        'Geheugen updaten
+                        Bedrijf.AddBedrijf(New Bedrijf(bedrijfID, bedrijfnaam, bedrijfTag))
+
+                        Dim bedrijfrij As tblBedrijfRow = DatabaseLink.GetInstance.GetBedrijfFuncties.GetBedrijfByID(bedrijfID)
+                        Dim versiedt As tblVersieDataTable = DatabaseLink.GetInstance.GetVersieFuncties.GetAllVersie
+                        Dim taaldt As tblTaalDataTable = DatabaseLink.GetInstance.GetTaalFuncties.GetAllTaal()
+                        Dim resultaat As String = Tree.BouwTreesVoorBedrijf(bedrijfrij, versiedt, taaldt)
+
+                        If resultaat = "OK" Then
+                            Util.SetOK("Bedrijf toegevoegd.", lblAddBedrijfRes, imgAddBedrijfRes)
+                            Me.txtAddTag.Text = String.Empty
+                            Me.txtAddbedrijf.Text = String.Empty
+                        Else
+                            Util.SetWarn("Bedrijf toegevoegd met waarschuwing: kon het bedrijf niet in het geheugen toevoegen. Gelieve de boomstructuren te herbouwen.", lblAddTaalRes, imgAddTaalRes)
+                        End If
+                    End If
+
+                    LaadBedrijfDropdowns()
                 Else
+                    Util.SetError("Dit bedrijf bestaat al, of een ander bedrijf heeft reeds dezelfde tag.", lblAddBedrijfRes, imgAddBedrijfRes)
+                End If
+            Else
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblAddBedrijfRes, imgAddBedrijfRes)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnAddBedrijf, ex.Message)
+        End Try
+    End Sub
 
-                    'Geheugen updaten
-                    Bedrijf.AddBedrijf(New Bedrijf(bedrijfID, bedrijfnaam, bedrijfTag))
-                    Util.SetOK("Bedrijf toegevoegd.", lblAddBedrijfRes, imgAddBedrijfRes)
+    Protected Sub btnEditBedrijf_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditBedrijf.Click
+        Try
+            If Not txtEditTag.Text = String.Empty And Not txtEditBedrijf.Text = String.Empty And ddlBewerkBedrijf.SelectedItem IsNot Nothing Then
+                Dim bedrijfID As Integer = ddlBewerkBedrijf.SelectedValue
+                Dim bedrijfTag As String = txtEditTag.Text
+                Dim bedrijfnaam As String = txtEditBedrijf.Text
+
+                If (bedrijfdal.getBedrijfByNaamTagID(bedrijfnaam, bedrijfTag, bedrijfID).Count = 0) Then
+                    If (adapterBedrijf.Update(bedrijfnaam, bedrijfTag, bedrijfID) = 0) Then
+                        Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
+                    Else
+
+                        'Geheugen updaten
+                        Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
+
+                        If b Is Nothing Then
+                            Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblEditbedrijfRes, imgEditBedrijfRes)
+                        Else
+                            b.Naam = bedrijfnaam
+                            b.Tag = bedrijfTag
+                            Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
+                        End If
+                    End If
+                Else
+                    Util.SetError("Een ander bedrijf heeft reeds deze bedrijfsnaam of tag.", lblEditbedrijfRes, imgEditBedrijfRes)
                 End If
 
                 LaadBedrijfDropdowns()
             Else
-                Util.SetError("Dit bedrijf bestaat al, of een ander bedrijf heeft reeds dezelfde tag.", lblAddBedrijfRes, imgAddBedrijfRes)
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblEditbedrijfRes, imgEditBedrijfRes)
             End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblAddBedrijfRes, imgAddBedrijfRes)
-        End If
-    End Sub
-
-    Protected Sub btnEditBedrijf_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnEditBedrijf.Click
-        If Not txtEditTag.Text = String.Empty And Not txtEditBedrijf.Text = String.Empty And ddlBewerkBedrijf.SelectedItem IsNot Nothing Then
-            Dim bedrijfID As Integer = ddlBewerkBedrijf.SelectedValue
-            Dim bedrijfTag As String = txtEditTag.Text
-            Dim bedrijfnaam As String = txtEditBedrijf.Text
-
-            If (bedrijfdal.getBedrijfByNaamTagID(bedrijfnaam, bedrijfTag, bedrijfID) Is Nothing) Then
-                If (adapterBedrijf.Update(bedrijfnaam, bedrijfTag, bedrijfID) = 0) Then
-                    Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
-                Else
-
-                    'Geheugen updaten
-                    Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
-
-                    If b Is Nothing Then
-                        Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblEditbedrijfRes, imgEditBedrijfRes)
-                    Else
-                        b.Naam = bedrijfnaam
-                        b.Tag = bedrijfTag
-                        Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
-                    End If
-                End If
-            Else
-                Util.SetError("Een ander bedrijf heeft reeds deze bedrijfsnaam of tag.", lblEditbedrijfRes, imgEditBedrijfRes)
-            End If
-
-            LaadBedrijfDropdowns()
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblEditbedrijfRes, imgEditBedrijfRes)
-        End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnEditBedrijf, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnDeleteBedrijf_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnDeleteBedrijf.Click
-        If ddlDeleteBedrijf.SelectedItem IsNot Nothing Then
-            Dim bedrijfID As Integer = ddlDeleteBedrijf.SelectedValue
+        Try
+            If ddlDeleteBedrijf.SelectedItem IsNot Nothing Then
+                Dim bedrijfID As Integer = ddlDeleteBedrijf.SelectedValue
 
-            If (artikeldal.getArtikelsByBedrijf(bedrijfID) Is Nothing And categoriedal.GetCategorieByBedrijf(bedrijfID) Is Nothing) Then
-                If (adapterBedrijf.Delete(bedrijfID) = 0) Then
-                    Util.SetError("Verwijderen mislukt.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
-                Else
-
-                    'Geheugen updaten
-                    Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
-                    If b Is Nothing Then
-                        Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                If (artikeldal.getArtikelsByBedrijf(bedrijfID).Count = 0 And categoriedal.GetCategorieByBedrijf(bedrijfID).Count = 0) Then
+                    If (adapterBedrijf.Delete(bedrijfID) = 0) Then
+                        Util.SetError("Verwijderen mislukt.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                     Else
-                        Bedrijf.RemoveBedrijf(b)
-                        Util.SetOK("Bedrijf verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
-                    End If
 
-                    LaadBedrijfDropdowns()
+                        'Geheugen updaten
+                        Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
+                        If b Is Nothing Then
+                            Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                        Else
+                            Bedrijf.RemoveBedrijf(b)
+                            Util.SetOK("Bedrijf verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                        End If
+
+                        LaadBedrijfDropdowns()
+                    End If
+                Else
+                    Util.SetError("Er staan nog artikels of categorieën onder dit bedrijf.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                 End If
             Else
-                Util.SetError("Er staan nog artikels of categorieën onder dit bedrijf.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
             End If
-        Else
-            Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
-        End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnDeleteBedrijf, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlBewerkBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        LeesBedrijf(Bedrijf.GetBedrijf(Integer.Parse(ddlBewerkBedrijf.SelectedValue)))
+        Try
+            LeesBedrijf(Bedrijf.GetBedrijf(Integer.Parse(ddlBewerkBedrijf.SelectedValue)))
+        Catch ex As Exception
+            Util.OnverwachteFout(ddlBewerkBedrijf, ex.Message)
+        End Try
     End Sub
 
     Private Sub LaadBedrijfDropdowns()
@@ -1062,34 +1184,187 @@ Partial Class App_Presentation_Beheer
 #Region "Code Voor Applicatie-Onderhoud"
 
     Protected Sub btnTreeWeergeven_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTreeWeergeven.Click
-        If ddlTreesWeergeven.SelectedItem.Text = "-- Boomstructuur --" Then Return
+        Try
+            If ddlTreesWeergeven.SelectedItem.Text = "-- Boomstructuur --" Then Return
 
-        Dim t As Tree = Tree.GetTree(ddlTreesWeergeven.SelectedItem.Text)
-        Session("LeesTreeTitel") = t.Naam
-        Session("LeesTree") = t.LeesTree(String.Empty, t.RootNode, -1)
-        JavaScript.VoegJavascriptToeAanEndRequest(Me, "genericPopup('TreeWeergeven.aspx',800,800, 1);")
+            Dim t As Tree = Tree.GetTree(ddlTreesWeergeven.SelectedItem.Text)
+            Session("LeesTreeTitel") = t.Naam
+            Session("LeesTree") = t.LeesTree(String.Empty, t.RootNode, -1)
+            JavaScript.VoegJavascriptToeAanEndRequest(btnTreeWeergeven, "genericPopup('TreeWeergeven.aspx',800,800, 1);")
+        Catch ex As Exception
+            Util.OnverwachteFout(btnTreeWeergeven, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnOk_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOk.Click
-        Dim resultaat As String = Tree.BouwTrees()
-        If resultaat = "OK" Then
-            LaadTreeGegevens()
-            Util.SetOK("Trees herbouwd.", lblHerbouwTreesRes, imgHerbouwTreesRes)
-        Else
-            JavaScript.ShadowBoxOpenen(Me, String.Concat("<strong>Er is een fout gebeurd tijdens het herbouwen van de boomstructuren:</strong><br/>", resultaat))
-            Util.SetError("Er is een fout opgetreden tijdens het herbouwen van de boomstructuren.", lblHerbouwTreesRes, imgHerbouwTreesRes)
-        End If
+        Try
+            Dim resultaat As String = Tree.BouwTrees()
+            If resultaat = "OK" Then
+                LaadTreeGegevens()
+                Util.SetOK("Trees herbouwd.", lblHerbouwTreesRes, imgHerbouwTreesRes)
+            Else
+                JavaScript.ShadowBoxOpenen(btnOk, String.Concat("<strong>Er is een fout gebeurd tijdens het herbouwen van de boomstructuren:</strong><br/>", resultaat))
+                Util.SetError("Er is een fout opgetreden tijdens het herbouwen van de boomstructuren.", lblHerbouwTreesRes, imgHerbouwTreesRes)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnOk, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnHerlaadTooltips_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnHerlaadTooltips.Click
-        Dim resultaat As String = XML.ParseTooltips()
-        If resultaat = "OK" Then
-            LaadTooltipInfo()
-            Util.SetOK("Tooltips herladen.", lblHerlaadTooltipsRes, imgHerlaadTooltipsRes)
+        Try
+            Dim resultaat As String = XML.ParseTooltips()
+            If resultaat = "OK" Then
+                LaadTooltipInfo()
+                Util.SetOK("Tooltips herladen.", lblHerlaadTooltipsRes, imgHerlaadTooltipsRes)
+            Else
+                JavaScript.ShadowBoxOpenen(btnHerlaadTooltips, String.Concat("<strong>Er is een fout gebeurd tijdens het herladen van de tooltips:</strong><br/>", resultaat))
+                Util.SetError("Er is een fout opgetreden tijdens het herladen van de tooltips.", lblHerlaadTooltipsRes, imgHerlaadTooltipsRes)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnHerlaadTooltips, ex.Message)
+        End Try
+    End Sub
+
+    Protected Sub btnTaalWeergeven_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTaalWeergeven.Click
+        Try
+            If ddlTaalWeergeven.SelectedItem.Text = "-- Talen --" Then Return
+            Session("LeesTaal") = Lokalisatie.Taal(ddlTaalWeergeven.SelectedValue).LeesContent
+            JavaScript.VoegJavascriptToeAanEndRequest(btnTaalWeergeven, "genericPopup('TaalWeergeven.aspx',800,800, 1);")
+        Catch ex As Exception
+            Util.OnverwachteFout(btnTaalWeergeven, ex.Message)
+        End Try
+    End Sub
+
+    Protected Sub btnLokalisatieHerladen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLokalisatieHerladen.Click
+        Try
+            Dim resultaat As String = Lokalisatie.ParseLocalisatieStrings()
+            If resultaat = "OK" Then
+                LaadLokalisatieInfo()
+                Util.SetOK("Taallokalisaties herladen.", lblLokalisatieHerladenRes, imgLokalisatieHerladenRes)
+            Else
+                JavaScript.ShadowBoxOpenen(btnLokalisatieHerladen, String.Concat("<strong>Er is een fout gebeurd tijdens het herladen van de taallokalisaties:</strong><br/>", resultaat))
+                Util.SetError("Er is een fout opgetreden tijdens het herladen van de taallokalisaties.", lblLokalisatieHerladenRes, imgLokalisatieHerladenRes)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnLokalisatieHerladen, ex.Message)
+        End Try
+    End Sub
+
+    Protected Sub updPreviewLinkUpdaten_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles updPreviewLinkUpdaten.Load
+        Try
+            If IsPostBack Then
+                JavaScript.VoegJavascriptToeAanEndRequest(Me, "Shadowbox.setup();")
+                linkVideoPreview.HRef = lblVideoPreviewLink.Value
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
+    End Sub
+
+#End Region
+
+#Region "Code voor Modulebeheer"
+
+    Protected Sub btnModuleToevoegen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnModuleToevoegen.Click
+        If Page.IsValid And Util.Valideer(txtModuleToevoegenNaam) Then
+            Try
+                Dim naam As String = txtModuleToevoegenNaam.Text.Trim
+
+                If moduledal.checkModuleByNaam(naam).Count = 0 Then
+                    If moduledal.StdAdapter.Insert(naam) Then
+                        Util.SetOK("Module toegevoegd.", lblModuleToevoegenRes, imgModuleToevoegenRes)
+                    Else
+                        Util.SetError("Toevoegen mislukt.", lblModuleToevoegenRes, imgModuleToevoegenRes)
+                    End If
+                Else
+                    Util.SetError("Een andere module heeft reeds deze naam.", lblModuleToevoegenRes, imgModuleToevoegenRes)
+                End If
+
+                LaadModuleDropdowns()
+            Catch ex As Exception
+                Util.OnverwachteFout(btnModuleToevoegen, ex.Message)
+            End Try
         Else
-            JavaScript.ShadowBoxOpenen(Me, String.Concat("<strong>Er is een fout gebeurd tijdens het herladen van de tooltips:</strong><br/>", resultaat))
-            Util.SetError("Er is een fout opgetreden tijdens het herladen van de tooltips.", lblHerlaadTooltipsRes, imgHerlaadTooltipsRes)
+            Util.SetError("Gelieve alle velden correct in te vullen.", lblModuleToevoegenRes, imgModuleToevoegenRes)
         End If
+    End Sub
+
+    Protected Sub ddlModuleWijzigenKeuze_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModuleWijzigenKeuze.SelectedIndexChanged
+        If Util.Valideer(ddlModuleWijzigenKeuze) Then
+            Try
+                ModuleInladen()
+            Catch ex As Exception
+                Util.OnverwachteFout(ddlModuleWijzigenKeuze, ex.Message)
+            End Try
+        Else
+            Util.SetError("Gelieve alle velden correct in te vullen.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+        End If
+    End Sub
+
+    Protected Sub btnModuleWijzigen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnModuleWijzigen.Click
+        If Page.IsValid And Util.Valideer(txtModuleWijzigenNaam, ddlModuleWijzigenKeuze) Then
+            Try
+                Dim naam As String = txtModuleWijzigenNaam.Text.Trim
+                Dim moduleID As Integer = ddlModuleWijzigenKeuze.SelectedValue
+
+                If moduledal.checkModuleByNaamEnID(naam, moduleID).Count = 0 Then
+                    If moduledal.StdAdapter.Update(naam, moduleID) Then
+                        Util.SetOK("Module gewijzigd.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                    Else
+                        Util.SetError("Wijzigen mislukt.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                    End If
+                Else
+                    Util.SetError("Een andere module heeft reeds deze naam.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                End If
+
+                LaadModuleDropdowns()
+                ModuleInladen()
+            Catch ex As Exception
+                Util.OnverwachteFout(btnModuleWijzigen, ex.Message)
+            End Try
+        Else
+            Util.SetError("Gelieve alle velden correct in te vullen.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+        End If
+    End Sub
+
+    Protected Sub btnModuleVerwijderen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnModuleVerwijderen.Click
+        If Util.Valideer(ddlModuleVerwijderenKeuze) Then
+            Try
+                Dim moduleID As Integer = ddlModuleVerwijderenKeuze.SelectedValue
+
+                If moduledal.StdAdapter.Delete(moduleID) Then
+                    Util.SetOK("Module verwijderd.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
+                Else
+                    Util.SetError("Verwijderen mislukt.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
+                End If
+
+                LaadModuleDropdowns()
+            Catch ex As Exception
+                Util.OnverwachteFout(btnModuleVerwijderen, ex.Message)
+            End Try
+        Else
+            Util.SetError("Gelieve alle velden correct in te vullen.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
+        End If
+    End Sub
+
+    Private Sub ModuleInladen()
+        Dim rij As tblModuleRow = moduledal.GetModuleByID(ddlModuleWijzigenKeuze.SelectedValue)
+        If rij IsNot Nothing Then
+            txtModuleWijzigenNaam.Text = rij._module
+        Else
+            Util.SetError("Kon de opgevraagde module niet laden.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+        End If
+    End Sub
+
+    Private Sub LaadModuleDropdowns()
+        ddlModuleWijzigenKeuze.Items.Clear()
+        ddlModuleVerwijderenKeuze.Items.Clear()
+        For Each rij As tblModuleRow In moduledal.StdAdapter.GetData
+            Dim listitem As New ListItem(rij._module, rij.moduleID)
+            ddlModuleWijzigenKeuze.Items.Add(listitem)
+            ddlModuleVerwijderenKeuze.Items.Add(listitem)
+        Next rij
     End Sub
 
 #End Region
@@ -1097,25 +1372,51 @@ Partial Class App_Presentation_Beheer
 #Region "Page Load Methods"
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        Page.Title = "Beheerpagina"
+        Try
+            Page.Title = "Beheerpagina"
 
-        Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
+            Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
 
-        LaadJavascript()
-        LaadTooltips()
+            LaadTooltips()
 
-        If Not IsPostBack Then
-            'Dropdowns laden
-            LaadBedrijfDropdowns()
-            LaadVersieDropdowns()
-            LaadTaalDropdowns()
-            LaadAlleCategorien()
+            If IsPostBack Then
+                JavaScript.VoegJavascriptToeAanEndRequest(Me, "Shadowbox.setup();")
+            End If
 
-            LaadTreeGegevens()
-            LaadTooltipInfo()
-            LaadLokalisatieInfo()
-        End If
+            If Not IsPostBack Then
 
+                LaadJavascript()
+
+                'Dropdowns laden
+                LaadBedrijfDropdowns()
+                LaadVersieDropdowns()
+                LaadTaalDropdowns()
+                LaadModuleDropdowns()
+                LaadAlleCategorien()
+
+                LaadTreeGegevens()
+                LaadTooltipInfo()
+                LaadLokalisatieInfo()
+            End If
+
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
+    End Sub
+
+    Private Sub LaadTooltipsCategorieBewerken()
+        'Nieuwe lijst van tooltips definiëren
+        Dim lijst As New List(Of Tooltip)
+
+        lijst.Add(New Tooltip("tipEditCategorie"))
+        lijst.Add(New Tooltip("tipCatbewerknaam"))
+        lijst.Add(New Tooltip("tipEditCatHoogte"))
+        lijst.Add(New Tooltip("tipEditCatTaal"))
+        lijst.Add(New Tooltip("tipEditCatVersie"))
+        lijst.Add(New Tooltip("tipEditCatBedrijf"))
+        lijst.Add(New Tooltip("tipEditCatParent"))
+
+        Util.TooltipsToevoegen(Me, lijst)
     End Sub
 
     Private Sub LaadTooltips()
@@ -1163,14 +1464,6 @@ Partial Class App_Presentation_Beheer
         lijst.Add(New Tooltip("tipEditCatVersiekeuze"))
         lijst.Add(New Tooltip("tipEditCatBedrijfkeuze"))
 
-        lijst.Add(New Tooltip("tipEditCategorie"))
-        lijst.Add(New Tooltip("tipCatbewerknaam"))
-        lijst.Add(New Tooltip("tipEditCatHoogte"))
-        lijst.Add(New Tooltip("tipEditCatTaal"))
-        lijst.Add(New Tooltip("tipEditCatVersie"))
-        lijst.Add(New Tooltip("tipEditCatBedrijf"))
-        lijst.Add(New Tooltip("tipEditCatParent"))
-
         lijst.Add(New Tooltip("tipCatDelTaalkeuze"))
         lijst.Add(New Tooltip("lbltipCatDelVersiekeuze"))
         lijst.Add(New Tooltip("tipCatDelBedrijfkeuze"))
@@ -1204,19 +1497,20 @@ Partial Class App_Presentation_Beheer
 
     Private Sub LaadJavascript()
 
+
         'Bedrijfbeheer
 
         JavaScript.ZetButtonOpDisabledOnClick(btnAddBedrijf, "Toevoegen...")
         JavaScript.ZetButtonOpDisabledOnClick(btnEditBedrijf, "Wijzigen...")
         JavaScript.VoerJavaScriptUitOn(ddlBewerkBedrijf, JavaScript.DisableCode(txtEditBedrijf) & JavaScript.DisableCode(txtEditTag) & JavaScript.DisableCode(btnEditBedrijf), "onchange")
-        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteBedrijf, "Verwijderen...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteBedrijf, "Verwijderen...", True)
 
         'Taalbeheer
 
         JavaScript.ZetButtonOpDisabledOnClick(btnAddTaal, "Toevoegen...")
         JavaScript.ZetButtonOpDisabledOnClick(btnEditTaal, "Wijzigen...")
         JavaScript.VoerJavaScriptUitOn(ddlBewerkTaal, JavaScript.DisableCode(txtEditTaal) & JavaScript.DisableCode(txtEditAfkorting) & JavaScript.DisableCode(btnEditTaal), "onchange")
-        JavaScript.ZetButtonOpDisabledOnClick(btnTaalDelete, "Verwijderen...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnTaalDelete, "Verwijderen...", True)
 
         'Versiebeheer
 
@@ -1224,44 +1518,64 @@ Partial Class App_Presentation_Beheer
         JavaScript.ZetButtonOpDisabledOnClick(btnEditVersie, "Wijzigen...")
         JavaScript.VoerJavaScriptUitOn(ddlBewerkVersie, JavaScript.DisableCode(txtEditVersie) & JavaScript.DisableCode(btnEditVersie), "onchange")
         JavaScript.ZetButtonOpDisabledOnClick(btnVersieKopieren, "Kopiëren...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteVersie, "Verwijderen...", True, True)
+        JavaScript.VoerJavaScriptUitOn(ddlVersiekopieren, JavaScript.DisableCode(btnVersieKopieren) & JavaScript.DisableCode(txtNaamNieuweVersieKopie), "onchange")
+        JavaScript.ZetButtonOpDisabledOnClick(btnDeleteVersie, "Verwijderen...", True)
 
         'Categoriebeheer
 
         'Toevoegen
-        JavaScript.ZetButtonOpDisabledOnClick(btnCatAdd, "Toevoegen...", True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnCatAdd, "Toevoegen...")
+        Dim altijdDisabled As String = String.Concat(JavaScript.DisableCode(btnCatAdd), JavaScript.DisableCode(txtAddCatnaam), JavaScript.DisableCode(txtAddhoogte), JavaScript.DisableCode(ddlAddParentcat))
 
         JavaScript.ZetDropdownOpDisabledOnChange(ddlAddCatBedrijf, ddlAddParentcat, "Laden...")
+        JavaScript.VoerJavaScriptUitOn(ddlAddCatBedrijf, altijdDisabled & JavaScript.DisableCode(ddlAddCatTaal) & JavaScript.DisableCode(ddlAddCatVersie), "onchange")
         JavaScript.ZetDropdownOpDisabledOnChange(ddlAddCatTaal, ddlAddParentcat, "Laden...")
+        JavaScript.VoerJavaScriptUitOn(ddlAddCatTaal, altijdDisabled & JavaScript.DisableCode(ddlAddCatBedrijf) & JavaScript.DisableCode(ddlAddCatVersie), "onchange")
         JavaScript.ZetDropdownOpDisabledOnChange(ddlAddCatVersie, ddlAddParentcat, "Laden...")
+        JavaScript.VoerJavaScriptUitOn(ddlAddCatVersie, altijdDisabled & JavaScript.DisableCode(ddlAddCatTaal) & JavaScript.DisableCode(ddlAddCatBedrijf), "onchange")
+
+        JavaScript.VoerJavaScriptUitOn(ddlAddParentcat, JavaScript.DisableCode(btnCatAdd) & JavaScript.DisableCode(txtAddCatnaam) & JavaScript.DisableCode(txtAddhoogte) & JavaScript.DisableCode(ddlAddCatTaal) & JavaScript.DisableCode(ddlAddCatBedrijf) & JavaScript.DisableCode(ddlAddCatVersie), "onchange")
 
         'Wijzigen
-        JavaScript.ZetButtonOpDisabledOnClick(btnCatEdit, "Wijzigen...", True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnCatEdit, "Wijzigen...")
+        altijdDisabled = String.Concat(JavaScript.DisableCode(txtEditCathoogte), JavaScript.DisableCode(txtCatbewerknaam), JavaScript.DisableCode(btnEditCatVerfijnen), JavaScript.DisableCode(ddlEditCatBedrijfkeuze), JavaScript.DisableCode(ddlEditCatTaalkeuze), JavaScript.DisableCode(ddlEditCatVersiekeuze), JavaScript.DisableCode(btnCatEdit))
+        Dim ddlDisabled As String = String.Concat(JavaScript.DisableCode(ddlEditCatBedrijf), JavaScript.DisableCode(ddlEditCatParent), JavaScript.DisableCode(ddlEditCatTaal), JavaScript.DisableCode(ddlEditCatVersie))
 
-        JavaScript.ZetButtonOpDisabledOnClick(btnEditCatVerfijnen, "Filteren...", True, True)
-        JavaScript.VoerJavaScriptUitOn(btnEditCatVerfijnen, JavaScript.DisableCode(ddlEditCategorie), "onclick")
+        JavaScript.VoerJavaScriptUitOn(btnEditCatVerfijnen, JavaScript.DisableCode(ddlEditCategorie) & ddlDisabled & JavaScript.DisableCode(btnCatEdit) & altijdDisabled, "onclick")
+        JavaScript.ZetButtonOpDisabledOnClick(btnEditCatVerfijnen, "Filteren...", True)
+
+        JavaScript.VoerJavaScriptUitOn(ddlEditCategorie, JavaScript.DisableCode(txtEditCathoogte) & JavaScript.DisableCode(txtCatbewerknaam) & JavaScript.DisableCode(ddlEditCatBedrijfkeuze) & JavaScript.DisableCode(ddlEditCatTaalkeuze) & JavaScript.DisableCode(ddlEditCatVersiekeuze) & JavaScript.DisableCode(btnCatEdit) & ddlDisabled & JavaScript.DisableCode(btnEditCatVerfijnen), "onchange")
 
         JavaScript.ZetDropdownOpDisabledOnChange(ddlEditCatBedrijf, ddlEditCatParent, "Laden...")
-        JavaScript.VoerJavaScriptUitOn(ddlEditCatBedrijf, JavaScript.DisableCode(btnCatEdit), "onchange")
+        JavaScript.VoerJavaScriptUitOn(ddlEditCatBedrijf, JavaScript.DisableCode(btnCatEdit) & altijdDisabled & JavaScript.DisableCode(ddlEditCatParent) & JavaScript.DisableCode(ddlEditCatTaal) & JavaScript.DisableCode(ddlEditCatVersie) & JavaScript.DisableCode(ddlEditCategorie), "onchange")
         JavaScript.ZetDropdownOpDisabledOnChange(ddlEditCatTaal, ddlEditCatParent, "Laden...")
-        JavaScript.VoerJavaScriptUitOn(ddlEditCatTaal, JavaScript.DisableCode(btnCatEdit), "onchange")
+        JavaScript.VoerJavaScriptUitOn(ddlEditCatTaal, JavaScript.DisableCode(btnCatEdit) & altijdDisabled & JavaScript.DisableCode(ddlEditCatParent) & JavaScript.DisableCode(ddlEditCatVersie) & JavaScript.DisableCode(ddlEditCatBedrijf) & JavaScript.DisableCode(ddlEditCategorie), "onchange")
         JavaScript.ZetDropdownOpDisabledOnChange(ddlEditCatVersie, ddlEditCatParent, "Laden...")
-        JavaScript.VoerJavaScriptUitOn(ddlEditCatVersie, JavaScript.DisableCode(btnCatEdit), "onchange")
+        JavaScript.VoerJavaScriptUitOn(ddlEditCatVersie, JavaScript.DisableCode(btnCatEdit) & altijdDisabled & JavaScript.DisableCode(ddlEditCatBedrijf) & JavaScript.DisableCode(ddlEditCatParent) & JavaScript.DisableCode(ddlEditCatTaal) & JavaScript.DisableCode(ddlEditCategorie), "onchange")
+
+        JavaScript.VoerJavaScriptUitOn(ddlEditCatParent, altijdDisabled & JavaScript.DisableCode(ddlEditCatBedrijf) & JavaScript.DisableCode(ddlEditCatVersie) & JavaScript.DisableCode(ddlEditCatTaal) & JavaScript.DisableCode(ddlEditCategorie), "onchange")
 
         'Verwijderen
-        JavaScript.ZetButtonOpDisabledOnClick(btnCatDelete, "Verwijderen...", True, True)
-        JavaScript.ZetButtonOpDisabledOnClick(btnCatDelFilteren, "Filteren...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnCatDelete, "Verwijderen...", True)
+        JavaScript.VoerJavaScriptUitOn(btnCatDelFilteren, JavaScript.DisableCode(ddlCatDelBedrijfkeuze) & JavaScript.DisableCode(ddlCatDelTaalkeuze) & JavaScript.DisableCode(ddlCatDelVersiekeuze) & JavaScript.DisableCode(ddlCatVerwijder) & JavaScript.DisableCode(btnCatDelete), "onclick")
+        JavaScript.ZetButtonOpDisabledOnClick(btnCatDelFilteren, "Filteren...", True)
+
+        'Modulebeheer
+        JavaScript.ZetButtonOpDisabledOnClick(btnModuleToevoegen, "Toevoegen...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnModuleWijzigen, "Wijzigen...")
+        JavaScript.ZetButtonOpDisabledOnClick(btnModuleVerwijderen, "Verwijderen...", True)
+        JavaScript.VoerJavaScriptUitOn(ddlModuleWijzigenKeuze, JavaScript.DisableCode(btnModuleWijzigen) & JavaScript.DisableCode(txtModuleWijzigenNaam), "onchange")
 
         'Applicatie-onderhoud
         'Trees
-        JavaScript.ZetButtonOpDisabledOnClick(btnTreeWeergeven, "Bezig met opbouwen...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnTreeWeergeven, "Bezig met opbouwen...", True)
 
         'Tooltips
-        JavaScript.ZetButtonOpDisabledOnClick(btnHerlaadTooltips, "Herladen...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnHerlaadTooltips, "Herladen...", True)
 
         'Lokalisatie
-        JavaScript.ZetButtonOpDisabledOnClick(btnTaalWeergeven, "Bezig met laden...", True, True)
-        JavaScript.ZetButtonOpDisabledOnClick(btnLokalisatieHerladen, "Herladen...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnTaalWeergeven, "Bezig met laden...", True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnLokalisatieHerladen, "Herladen...", True)
 
     End Sub
 
@@ -1296,33 +1610,8 @@ Partial Class App_Presentation_Beheer
         For Each lokalisatie As Lokalisatie In lokalisatie.Talen
             Dim t As Taal = Taal.GetTaal(lokalisatie.TaalID)
             ddlTaalWeergeven.Items.Add(New ListItem(t.TaalNaam, lokalisatie.TaalID))
-        Next
+        Next lokalisatie
     End Sub
 
 #End Region
-
-    Protected Sub btnTaalWeergeven_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTaalWeergeven.Click
-        If ddlTaalWeergeven.SelectedItem.Text = "-- Talen --" Then Return
-        Session("LeesTaal") = Lokalisatie.Taal(ddlTaalWeergeven.SelectedValue).LeesContent
-        JavaScript.VoegJavascriptToeAanEndRequest(Me, "genericPopup('TaalWeergeven.aspx',800,800, 1);")
-    End Sub
-
-    Protected Sub btnLokalisatieHerladen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLokalisatieHerladen.Click
-        Dim resultaat As String = Lokalisatie.ParseLocalisatieStrings()
-        If resultaat = "OK" Then
-            LaadLokalisatieInfo()
-            Util.SetOK("Taallokalisaties herladen.", lblLokalisatieHerladenRes, imgLokalisatieHerladenRes)
-        Else
-            JavaScript.ShadowBoxOpenen(Me, String.Concat("<strong>Er is een fout gebeurd tijdens het herladen van de taallokalisaties:</strong><br/>", resultaat))
-            Util.SetError("Er is een fout opgetreden tijdens het herladen van de taallokalisaties.", lblLokalisatieHerladenRes, imgLokalisatieHerladenRes)
-        End If
-
-    End Sub
-
-    Protected Sub updPreviewLinkUpdaten_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles updPreviewLinkUpdaten.Load
-        If IsPostBack Then
-            JavaScript.VoegJavascriptToeAanEndRequest(Me, "Shadowbox.setup();")
-            linkVideoPreview.HRef = lblVideoPreviewLink.Value
-        End If
-    End Sub
 End Class

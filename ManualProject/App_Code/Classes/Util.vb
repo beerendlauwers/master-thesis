@@ -1,4 +1,5 @@
 ﻿Imports Microsoft.VisualBasic
+Imports System.Web.HttpContext
 
 ''' <summary>
 ''' Een klasse met verschillende functies die in verschillende pagina's worden gebruikt
@@ -132,6 +133,68 @@ Public Class Util
         t.VulCategorieDropdown(ddl, t.RootNode, -1)
     End Sub
 
+    Public Shared Sub LaadPaginering(ByRef grid As GridView)
+        Dim r As GridViewRow = grid.BottomPagerRow
+
+        For index As Integer = 0 To grid.PageCount - 1
+            Dim ctl As WebControl = Nothing
+
+            If index = grid.PageIndex Then
+                Dim label As New Label
+                label.Text = index + 1
+                label.CssClass = "gridview_bignumber"
+                label.ID = String.Concat("lblPaginaNummer_" + label.Text)
+                ctl = label
+            Else
+                Dim linkbutton As New LinkButton()
+                linkbutton.Text = index + 1
+                linkbutton.ID = String.Concat("lnbPaginaNummer_" + linkbutton.Text)
+                ctl = linkbutton
+            End If
+
+            r.Cells(0).Controls.Add(ctl)
+        Next index
+    End Sub
+
+    Public Shared Function LeesPaginaNummer(ByRef page As Page, ByRef grid As GridView) As Boolean
+        Dim control As String = page.Request.Params.Get("__EVENTTARGET")
+
+        If control IsNot Nothing And Not control = String.Empty Then
+            grid.DataBind()
+            If TryCast(page.FindControl(control), LinkButton) IsNot Nothing Then
+                Dim ctl As LinkButton = page.FindControl(control)
+                grid.PageIndex = Integer.Parse(ctl.Text) - 1
+                Return True
+            End If
+        End If
+
+        Return False
+    End Function
+
+    Public Shared Sub OnverwachteFout(ByRef ctl As WebControl, ByVal message As String)
+        ErrorLogger.WriteError(New ErrorLogger(message))
+        JavaScript.ShadowBoxOpenen(ctl, String.Concat("<strong>Er is een onverwachte fout gebeurd: </strong><br/>", message))
+    End Sub
+
+    Public Shared Sub OnverwachteFout(ByRef page As Page, ByVal message As String)
+        ErrorLogger.WriteError(New ErrorLogger(message))
+        JavaScript.ShadowBoxOpenen(page, String.Concat("<strong>Er is een onverwachte fout gebeurd: </strong><br/>", message))
+    End Sub
+
+    Public Shared Sub SetPostback(ByVal bool As Boolean)
+        Current.Session("bezigMetPostBack") = bool
+    End Sub
+
+    Public Shared Function CheckPostback() As Boolean
+        If Current.Session("bezigMetPostBack") IsNot Nothing Then
+            If Current.Session("bezigMetPostBack") = True Then
+                Return False
+            End If
+        End If
+
+        Return True
+    End Function
+
     ''' <summary>
     ''' Gaat na of de opgegeven WebControls een waarde bevatten.
     ''' </summary>
@@ -225,6 +288,8 @@ Public Class Util
 
         Return True
     End Function
+
+
 
 
 End Class

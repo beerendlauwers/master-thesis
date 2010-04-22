@@ -8,22 +8,14 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 
     <div id="gridview">
-    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+    <asp:UpdatePanel ID="updModuleOverzicht" runat="server">
    <ContentTemplate>
 
     <asp:DropDownList ID="ddlModule" runat="server" DataSourceID="objdModule" 
         DataTextField="module" DataValueField="module" AutoPostBack="true">
     </asp:DropDownList>
-    <asp:UpdateProgress ID="prgZoeken" runat="server" 
-                AssociatedUpdatePanelID="UpdatePanel1" DisplayAfter="0">
-                <ProgressTemplate>
-                    <div style="vertical-align: middle">
-                        <img src="CSS/Images/ajaxloader.gif" /> Even wachten aub...
-                    </div>
-                </ProgressTemplate>
-            </asp:UpdateProgress>
     <asp:GridView ID="grdvmodule" runat="server" AutoGenerateColumns="False" 
-        DataKeyNames="ArtikelID" DataSourceID="sqldsModule" AllowPaging="true" PagerStyle-CssClass="gridview_pager" AllowSorting="true" PageSize="20">
+        DataKeyNames="ArtikelID" DataSourceID="sqldsModule" AllowPaging="true" PagerStyle-CssClass="gridview_pager" AllowSorting="true" PageSize="30" Width="100%">
         <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="ArtikelID" HeaderText="ArtikelID" 

@@ -64,7 +64,7 @@ Partial Class App_Presentation_invoerenTest
     Private Sub LaadJavaScript()
         'De opslaanknop op disabled zetten als erop geklikt wordt
         JavaScript.ZetButtonOpDisabledOnClick(btnVoegtoe, "Opslaan...", )
-        JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnSjablonen, "Bezig met toevoegen..", True)
     End Sub
 
     Private Sub LaadTemplates()
@@ -110,7 +110,7 @@ Partial Class App_Presentation_invoerenTest
         End If
 
         'Checken of een ander artikel niet al dezelfde naam heeft
-        If artikeldal.checkArtikelByTitel(titel, FK_Bedrijf, FK_versie, FK_taal) IsNot Nothing Then
+        If artikeldal.checkArtikelByTitel(titel, FK_Bedrijf, FK_versie, FK_taal).Count > 0 Then
             Util.SetError("Toevoegen Mislukt: Er bestaat reeds een artikel met deze titel in deze structuur.", lblresultaat, imgResultaat)
             divFeedback.Visible = True
             divNogEenArtikelToevoegen.Visible = False

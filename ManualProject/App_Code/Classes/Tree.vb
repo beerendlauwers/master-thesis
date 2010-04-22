@@ -288,7 +288,7 @@ Public Class Tree
     ''' <param name="taal">De databaserij van de gewenste taal.</param>
     ''' <returns>True indien gelukt, False indien gefaald.</returns>
     ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
-    Public Shared Function BouwTreesVoorTaal(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versiedt As tblVersieDataTable, ByRef taal As tblTaalRow) As Boolean
+    Public Shared Function BouwTreesVoorTaal(ByRef bedrijfdt As tblBedrijfDataTable, ByRef versiedt As tblVersieDataTable, ByRef taal As tblTaalRow) As String
 
         For Each versie As tblVersieRow In versiedt
 
@@ -315,7 +315,7 @@ Public Class Tree
     ''' <param name="taaldt">Een strong-typed DataTable met alle talen erin.</param>
     ''' <returns>True indien gelukt, False indien gefaald.</returns>
     ''' <remarks>Indien False, bekijk de logbestanden in de 'Logs'-folder.</remarks>
-    Public Shared Function BouwTreesVoorBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versiedt As tblVersieDataTable, ByRef taaldt As tblTaalDataTable) As Boolean
+    Public Shared Function BouwTreesVoorBedrijf(ByRef bedrijf As tblBedrijfRow, ByRef versiedt As tblVersieDataTable, ByRef taaldt As tblTaalDataTable) As String
 
         For Each versie As tblVersieRow In versiedt
 

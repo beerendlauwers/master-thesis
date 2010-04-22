@@ -15,7 +15,7 @@ Public Class ModuleDAL
     Public Function GetModuleByID(ByVal id As Integer) As tblModuleRow
         Dim dt As New tblModuleDataTable
 
-        Dim c As New SqlCommand("Check_Module")
+        Dim c As New SqlCommand("Manual_GetModuleByID")
         c.CommandType = CommandType.StoredProcedure
         c.Connection = New SqlConnection(conn)
         c.Parameters.Add("@id", SqlDbType.Int).Value = id

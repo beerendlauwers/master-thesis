@@ -27,20 +27,19 @@ Public Class VersieDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            If dt.Rows.Count = 0 Then
-                Return Nothing
-            Else
-                Return dt.Rows(0)
-            End If
+
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("versieID = " & id.ToString)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-
+        If dt.Rows.Count = 0 Then
+            Return Nothing
+        Else
+            Return dt.Rows(0)
+        End If
     End Function
 
     Public Function GetAllVersie() As tblVersieDataTable
@@ -56,13 +55,14 @@ Public Class VersieDAL
 
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            Return dt
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
+
+        Return dt
     End Function
 
     Public Function CheckVersie(ByVal versie As String) As tblVersieDataTable
@@ -78,21 +78,17 @@ Public Class VersieDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("versie = " & versie)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
 
+        Return dt
     End Function
 
     Public Function CheckVersieByID(ByVal versie As String, ByVal ID As Integer) As tblVersieDataTable
@@ -109,22 +105,18 @@ Public Class VersieDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
+            If (r.HasRows) Then dt.Load(r)
 
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("versie = " & versie)
             e.Args.Add("versieID = " & ID.ToString)
-            Return Nothing
+            ErrorLogger.WriteError(e)
         Finally
             c.Connection.Close()
         End Try
 
+        Return dt
     End Function
 
     Public Function insertVersie(ByVal versie As String) As Integer
@@ -147,7 +139,8 @@ Public Class VersieDAL
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("versie = " & versie)
-            Return Nothing
+            ErrorLogger.WriteError(e)
+            Return -1
         Finally
             c.Connection.Close()
         End Try

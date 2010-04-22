@@ -37,6 +37,10 @@ Public Class JavaScript
         ScriptManager.RegisterClientScriptBlock(pagina, pagina.GetType, "EndRequest", js, True)
     End Sub
 
+    Public Shared Sub VoegJavascriptToeAanEndRequest(ByRef ctl As WebControl, ByRef js As String)
+        ScriptManager.RegisterClientScriptBlock(ctl, ctl.GetType, "EndRequest", js, True)
+    End Sub
+
     Public Shared Sub VoegJavaScriptToeAanBeginRequest(ByRef pagina As System.Web.UI.Page, ByRef script As String)
         Dim js As String = "var prm = Sys.WebForms.PageRequestManager.getInstance();"
         js = String.Concat(js, "prm.add_initializeRequest(InitializeRequest);")
@@ -79,9 +83,8 @@ Public Class JavaScript
     ''' <param name="btn">De te disablen Button.</param>
     ''' <param name="geenValidatie">Boolean om te checken voor validatie of niet.</param>
     ''' <param name="laadTekst">De tekst die moet worden weergegeven op de Button tijdens de postback.</param>
-    ''' <param name="isPostback">Boolean om te bepalen of het om een postback gaat of niet.</param>
     ''' <remarks>Indien de button deel uitmaakt van een validationGroup, wordt enkel deze groep gevalideerd.</remarks>
-    Public Shared Sub ZetButtonOpDisabledOnClick(ByRef btn As System.Web.UI.WebControls.Button, ByVal laadTekst As String, Optional ByVal isPostback As Boolean = True, Optional ByVal geenValidatie As Boolean = False)
+    Public Shared Sub ZetButtonOpDisabledOnClick(ByRef btn As System.Web.UI.WebControls.Button, ByVal laadTekst As String, Optional ByVal geenValidatie As Boolean = False)
         Dim js As String = String.Empty
 
         Dim validateString As String = String.Empty
@@ -108,11 +111,9 @@ Public Class JavaScript
         End If
 
         'Als het een postback is dan voegen we nog een postbackreference toe
-        If isPostback Then
-            js = String.Concat(js, btn.Page.ClientScript.GetPostBackEventReference(btn, "").ToString, ";")
-        End If
+        js = String.Concat(js, btn.Page.ClientScript.GetPostBackEventReference(btn, "").ToString, ";")
 
-        js = String.Concat(js, " }")
+        js = String.Concat(js, " } return false;")
 
         VoerJavaScriptUitOn(btn, js, "OnClick")
     End Sub
@@ -164,9 +165,14 @@ Public Class JavaScript
         JavaScript.VoegJavascriptToeAanEndRequest(pagina, "ShadowBoxLaderSluiten();")
     End Sub
 
-    Public Shared Sub ShadowBoxOpenen(ByRef pagina As System.Web.UI.Page, ByVal js As String)
+    Public Shared Sub ShadowBoxOpenen(ByRef page As Page, ByVal js As String)
         js = Regex.Replace(js, "[']", "\'")
-        JavaScript.VoegJavascriptToeAanEndRequest(pagina, String.Concat("ShadowBoxTonen('", js, "');"))
+        JavaScript.VoegJavascriptToeAanEndRequest(page, String.Concat("ShadowBoxTonen('", js, "');"))
+    End Sub
+
+    Public Shared Sub ShadowBoxOpenen(ByRef ctl As WebControl, ByVal js As String)
+        js = Regex.Replace(js, "[']", "\'")
+        JavaScript.VoegJavascriptToeAanEndRequest(ctl, String.Concat("ShadowBoxTonen('", js, "');"))
     End Sub
 
 End Class

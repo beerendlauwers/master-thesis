@@ -9,7 +9,7 @@
 	<tekst id="ZOEKENOP" text="Zoeken op:" />
 	<tekst id="CATEGORIEN" text="Categorie&#235;n" />
 	<tekst id="ZOEKRESULTATEN" text="Zoekresultaten" />
-	<tekst id="ZOEKEN_GEVONDENARTIKELS" text="Arëëëtikels die overeenkomen met uw zoektekst:" />
+	<tekst id="ZOEKEN_GEVONDENARTIKELS" text="Artikels die overeenkomen met uw zoektekst:" />
 	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Klik op &#233;&#233;n van de kolommen om de items volgens deze waarde te sorteren." />
 	<tekst id="ZOEKEN_TITEL" text="Titel" />
 	<tekst id="ZOEKEN_TAG" text="Tag" />

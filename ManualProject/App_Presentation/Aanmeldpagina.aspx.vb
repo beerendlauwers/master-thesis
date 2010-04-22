@@ -3,29 +3,30 @@ Partial Class App_Presentation_Aanmeldpagina
     Inherits System.Web.UI.Page
 
     Protected Sub btnAanmelden_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAanmelden.Click
+        Try
+            'Juiste paswoord en username ophalen
+            Dim login As String() = XML.GetBeheerLogin(Server.MapPath("~/App_Data/beheerlogin.xml")).Split(",")
+            Dim user As String = login(0)
+            Dim pass As String = login(1)
 
-        'Juiste paswoord en username ophalen
-        Dim login As String() = XML.GetBeheerLogin(Server.MapPath("~/App_Data/beheerlogin.xml")).Split(",")
-        Dim user As String = login(0)
-        Dim pass As String = login(1)
+            If txtGebruikersNaam.Text = user And txtPaswd.Text = pass Then
+                Session("login") = 1
+                divRes.Visible = True
 
-        If txtGebruikersNaam.Text = user And txtPaswd.Text = pass Then
-            Session("login") = 1
-            divRes.Visible = True
+                If Session("vorigePagina") IsNot Nothing Then
+                    Response.Redirect(Session("vorigePagina"))
+                Else
+                    Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+                End If
 
-            If Session("vorigePagina") IsNot Nothing Then
-                Response.Redirect(Session("vorigePagina"))
             Else
-                Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+                Session("login") = 0
+                divRes.Visible = True
+                Util.SetError("Verkeerde login.", lblRes, imgRes)
             End If
-
-        Else
-            Session("login") = 0
-            divRes.Visible = True
-            Util.SetError("Verkeerde login.", lblRes, imgRes)
-        End If
-
-
+        Catch ex As Exception
+            Util.OnverwachteFout(btnAanmelden, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnLogOut_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLogOut.Click
@@ -34,8 +35,10 @@ Partial Class App_Presentation_Aanmeldpagina
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        JavaScript.ZetButtonOpDisabledOnClick(btnAanmelden, "Aanmelden...")
-        JavaScript.ZetButtonOpDisabledOnClick(btnLogOut, "Afmelden...", True, True)
+        If Not IsPostBack Then
+            JavaScript.ZetButtonOpDisabledOnClick(btnAanmelden, "Aanmelden...", False)
+            JavaScript.ZetButtonOpDisabledOnClick(btnLogOut, "Afmelden...", False)
+        End If
 
         If Session("login") = 1 Then
             divWelAangemeld.Visible = True

@@ -24,15 +24,12 @@ Public Class BedrijfDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("id = " & id.ToString)
             ErrorLogger.WriteError(e)
-
         Finally
             c.Connection.Close()
         End Try
@@ -54,15 +51,11 @@ Public Class BedrijfDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
-            Return dt
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             ErrorLogger.WriteError(e)
-
         Finally
             c.Connection.Close()
         End Try
@@ -70,9 +63,7 @@ Public Class BedrijfDAL
         Return dt
     End Function
 
-    Public Function getBedrijfByNaamOrTag(ByVal naam As String, ByVal tag As String) As Data.DataTable
-
-
+    Public Function getBedrijfByNaamOrTag(ByVal naam As String, ByVal tag As String) As tblBedrijfDataTable
         Dim dt As New tblBedrijfDataTable
 
         Dim c As New SqlCommand("Check_getBedrijfByNaam_Tag")
@@ -84,32 +75,21 @@ Public Class BedrijfDAL
         Try
             Dim r As SqlDataReader
             c.Connection.Open()
-
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
-
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("naam = " & naam)
             e.Args.Add("tag = " & tag)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
+        Return dt
     End Function
 
-    Public Function getBedrijfByNaamTagID(ByVal naam As String, ByVal tag As String, ByVal ID As Integer) As Data.DataTable
-
-
+    Public Function getBedrijfByNaamTagID(ByVal naam As String, ByVal tag As String, ByVal ID As Integer) As tblBedrijfDataTable
         Dim dt As New tblBedrijfDataTable
 
         Dim c As New SqlCommand("Check_getBedrijfByNaam_Tag_ID")
@@ -124,27 +104,18 @@ Public Class BedrijfDAL
             c.Connection.Open()
 
             r = c.ExecuteReader
-            If (r.HasRows) Then
-                dt.Load(r)
-                Return dt
-            Else
-                Return Nothing
-            End If
-
-
+            If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
-
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("naam = " & naam)
             e.Args.Add("tag = " & tag)
             e.Args.Add("ID = " & ID.ToString)
             ErrorLogger.WriteError(e)
-            Return Nothing
         Finally
             c.Connection.Close()
         End Try
 
-        Return Nothing
+        Return dt
     End Function
 
     Public Function insertBedrijf(ByVal naam As String, ByVal tag As String) As Integer
@@ -171,7 +142,7 @@ Public Class BedrijfDAL
             e.Args.Add("naam = " & naam)
             e.Args.Add("tag = " & tag)
             ErrorLogger.WriteError(e)
-            Return Nothing
+            Return -1
         Finally
             c.Connection.Close()
         End Try
