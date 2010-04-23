@@ -135,6 +135,7 @@ Partial Class App_Presentation_page
 
         Me.lblTekst.Text = a.Tekst
         Me.lblTitel.Text = a.Titel
+        Me.lblTitel.Visible = True
 
         'Paginatitel veranderen
         Page.Title = a.Titel

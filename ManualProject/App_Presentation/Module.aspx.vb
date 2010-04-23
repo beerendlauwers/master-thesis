@@ -1,13 +1,14 @@
-﻿
+﻿Imports Manual
+Imports System.Data
+
 Partial Class App_Presentation_Module
     Inherits System.Web.UI.Page
 
+    Private moduledal As ModuleDAL = DatabaseLink.GetInstance.GetModuleFuncties
+    Private artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
+
     Protected Sub grdvmodule_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdvmodule.DataBound
         Util.LaadPaginering(grdvmodule)
-        JavaScript.ShadowBoxLaderSluiten(Me)
-    End Sub
-
-    Protected Sub grdvmodule_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdvmodule.RowCommand
         JavaScript.ShadowBoxLaderSluiten(Me)
     End Sub
 
@@ -20,65 +21,26 @@ Partial Class App_Presentation_Module
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        paslokalisatietoe()
-        Dim dt As Data.DataTable
-        Dim moduledal As New ModuleDAL
-        If Session("versie") IsNot Nothing And Session("bedrijf") IsNot Nothing And Session("taal") IsNot Nothing Then
-            Dim versie As Integer = Integer.Parse(Session("versie"))
-            Dim bedrijf As Integer = Integer.Parse(Session("bedrijf"))
-            Dim taal As Integer = Integer.Parse(Session("taal"))
-            dt = moduledal.GetModulesMetArtikels(taal, versie, bedrijf)
-            If dt.Rows.Count = 0 Then
-                verstoppen()
-            Else
-                zichtbaar_maken()
-                Dim control1 As String = Page.Request.Params.Get("__EVENTTARGET")
-                Dim arg As String = Page.Request.Params.Get("__EVENTARGUMENT")
-
-                If control1 IsNot Nothing And arg IsNot Nothing Then
-                    If Not control1.Contains("lnbPaginaNummer_") And Not control1.Contains("ddlModule") Then
-                        ddlModule.Items.Clear()
-                        If ckbModules.Checked Then
-                            For i As Integer = 0 To dt.Rows.Count - 1
-                                Dim li As New ListItem(dt.Rows(i)(0), dt.Rows(i)(0))
-                                ddlModule.Items.Add(li)
-                            Next
-                        Else
-                            grdvmodule.EmptyDataText = Lokalisatie.GetString("GEENDATAGEVONDEN")
-                            ddlModule.Attributes.Add("DataSourceID", "objdModule")
-                            ddlModule.DataTextField = "Module"
-                            ddlModule.DataValueField = "Module"
-                            ddlModule.DataBind()
-                        End If
-                    End If
-                End If
-            End If
-
-            If Not IsPostBack Then
-                If ckbModules.Checked Then
-                    If dt IsNot Nothing Then
-                        For i As Integer = 0 To dt.Rows.Count - 1
-                            Dim li As New ListItem(dt.Rows(i)(0), dt.Rows(i)(0))
-                            ddlModule.Items.Add(li)
-                        Next
-                    End If
-                Else
-                    ddlModule.Attributes.Add("DataSourceID", "objdModule")
-                    ddlModule.DataTextField = "Module"
-                    ddlModule.DataValueField = "Module"
-                End If
-            End If
+        If Not IsPostBack Then
+            UpdateModules()
         End If
-        grdvmodule.DataBind()
-        Dim control As String = Page.Request.Params.Get("__EVENTTARGET")
 
-        Util.LeesPaginaNummer(Me, grdvmodule)
+        If IsPostBack Then
+            UpdateModuleOverzicht()
+            Util.LeesPaginaNummer(Me, grdvmodule)
+        End If
+
+        grdvmodule.DataBind()
         GenereerGelokaliseerdeTekst()
         JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
     End Sub
 
     Private Sub GenereerGelokaliseerdeTekst()
         Master.CheckVoorTaalWijziging()
+
+        lblCkb.Text = Lokalisatie.GetString("MODULECHECKBOX")
+        Page.Title = Lokalisatie.GetString("MODPAGINATITEL")
+        lblTitel.Text = Lokalisatie.GetString("MODULETITEL")
         grdvmodule.EmptyDataText = Lokalisatie.GetString("GEENDATAGEVONDEN")
         Page.Title = Lokalisatie.GetString("MODPAGINATITEL")
         For Each d As DataControlField In grdvmodule.Columns
@@ -86,56 +48,120 @@ Partial Class App_Presentation_Module
         Next
     End Sub
 
-    Protected Sub ckbModules_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ckbModules.CheckedChanged
-        If ckbModules.Checked Then
-            ddlModule.Items.Clear()
-            Dim dt As Data.DataTable
-            Dim moduledal As New ModuleDAL
-            Dim versie As Integer = Integer.Parse(Session("versie"))
-            Dim bedrijf As Integer = Integer.Parse(Session("bedrijf"))
-            Dim taal As Integer = Integer.Parse(Session("taal"))
-            dt = moduledal.GetModulesMetArtikels(taal, versie, bedrijf)
-            If dt.Rows.Count = 0 Then
-                verstoppen()
-            Else
-                zichtbaar_maken()
-                For i As Integer = 0 To dt.Rows.Count - 1
-                    Dim li As New ListItem(dt.Rows(i)(0), dt.Rows(i)(0))
-                    ddlModule.Items.Add(li)
-                Next
-                ddlModule.Attributes.Remove("DataSourceID")
-                grdvmodule.DataBind()
+    Private Sub ModulesInlezen(ByRef dt As DataTable)
+        ddlModule.Items.Clear()
+        ddlModule.DataSource = dt
+        ddlModule.DataBind()
+    End Sub
+
+    Private Sub UpdateModuleOverzicht()
+        Dim moduletekst As String = ddlModule.SelectedValue
+        Dim versieID As Integer = Integer.Parse(Session("versie"))
+        Dim anderBedrijfID As Integer = Integer.Parse(Session("bedrijf"))
+        Dim taalID As Integer = Integer.Parse(Session("taal"))
+
+        Dim dt As tblArtikelDataTable
+
+        'Appligen
+        Dim appligen As Bedrijf = Bedrijf.GetBedrijf("AAAFinancials")
+        Dim appligendt As tblArtikelDataTable = artikeldal.GetArtikelsByModule(moduletekst, taalID, versieID, appligen.ID)
+
+        Dim anderbedrijf As Bedrijf = Bedrijf.GetBedrijf(anderBedrijfID)
+        Dim anderbedrijfdt As New tblArtikelDataTable
+        If anderbedrijf IsNot Nothing Then
+            anderbedrijfdt = artikeldal.GetArtikelsByModule(moduletekst, taalID, versieID, anderbedrijf.ID)
+        End If
+
+        dt = appligendt.Copy()
+        dt.Merge(anderbedrijfdt)
+
+        grdvmodule.DataSource = dt
+        grdvmodule.DataBind()
+    End Sub
+
+    Private Sub UpdateModules()
+        If Session("versie") IsNot Nothing And Session("bedrijf") IsNot Nothing And Session("taal") IsNot Nothing Then
+
+            'De modulegegevens ophalen.
+            Dim dt As DataTable
+
+            Dim versieID As Integer = Integer.Parse(Session("versie"))
+            Dim anderBedrijfID As Integer = Integer.Parse(Session("bedrijf"))
+            Dim taalID As Integer = Integer.Parse(Session("taal"))
+
+            If ckbModules.Checked Then 'enkel modules waar artikels onder zitten
+
+                'We moeten twee datatables ophalen: die van AAAFinancials en die van het bedrijf.
+                Dim appligen As Bedrijf = Bedrijf.GetBedrijf("AAAFinancials")
+                Dim anderBedrijf As Bedrijf = Bedrijf.GetBedrijf(anderBedrijfID)
+
+                If anderBedrijf Is Nothing Then 'er is geen ander bedrijf.
+
+                    dt = moduledal.GetModulesMetArtikels(taalID, versieID, appligen.ID)
+
+                Else
+                    Dim appligendt As tblArtikelDataTable = moduledal.GetModulesMetArtikels(taalID, versieID, appligen.ID)
+                    Dim anderbedrijfdt As tblArtikelDataTable = moduledal.GetModulesMetArtikels(taalID, versieID, anderBedrijf.ID)
+
+                    'Alles overkopiëren naar de hoofddatatable
+                    dt = appligendt.Copy()
+                    dt.Merge(anderbedrijfdt)
+                End If
+
+            Else 'alle modules
+                dt = moduledal.GetAllModules()
             End If
 
-        Else
-            ddlModule.Items.Clear()
-            ddlModule.DataTextField = "Module"
-            ddlModule.DataValueField = "Module"
-            ddlModule.DataSourceID = "objdModule"
-            ddlModule.DataBind()
-            grdvmodule.DataBind()
+
+            'Nakijken of er modulegegevens zijn.
+
+            If dt.Rows.Count = 0 Then 'geen modules voor deze taal
+
+                ModulesWeergeven(False)
+                lblDropdown.Text = Lokalisatie.GetString("MODULENOARTIKELS")
+
+            Else 'er zijn modules voor deze taal
+                ModulesWeergeven(True)
+
+                If IsPostBack Then
+
+                    'We moeten de dropdownlist herladen indien er een postback gebeurt van zowat elke control.
+                    Dim postbackControl As String = Page.Request.Params.Get("__EVENTTARGET")
+
+                    If postbackControl IsNot Nothing Then
+
+                        'Enkel deze controls zorgen niet voor een postback.
+                        If Not postbackControl.Contains("lnbPaginaNummer_") And Not postbackControl.Contains("ddlModule") Then
+                            ModulesInlezen(dt)
+                        End If
+
+                    End If
+
+                Else
+
+                    ModulesInlezen(dt)
+
+                End If
+
+                UpdateModuleOverzicht()
+            End If
         End If
     End Sub
 
-    Public Sub verstoppen()
-        lblDropdown.Visible = True
-        lblDropdown.Text = Lokalisatie.GetString("MODULENOARTIKELS")
-        ddlModule.Visible = False
-        ckbModules.Visible = False
-        lblCkb.Visible = False
-        grdvmodule.Visible = False
+    Protected Sub ckbModules_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ckbModules.CheckedChanged
+        UpdateModules()
+        grdvmodule.DataBind()
     End Sub
-    Public Sub zichtbaar_maken()
-        lblDropdown.Visible = False
-        ddlModule.Visible = True
-        ckbModules.Visible = True
-        lblCkb.Visible = True
-        grdvmodule.Visible = True
+
+    Private Sub ModulesWeergeven(ByVal waarde As Boolean)
+        lblDropdown.Visible = Not waarde
+        ddlModule.Visible = waarde
+        ckbModules.Visible = waarde
+        lblCkb.Visible = waarde
+        grdvmodule.Visible = waarde
     End Sub
-    Public Sub paslokalisatietoe()
-        Master.CheckVoorTaalWijziging()
-        lblCkb.Text = Lokalisatie.GetString("MODULECHECKBOX")
-        Page.Title = Lokalisatie.GetString("MODPAGINATITEL")
-        lblTitel.Text = Lokalisatie.GetString("MODULETITEL")
+
+    Protected Sub ddlModule_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.SelectedIndexChanged
+        UpdateModuleOverzicht()
     End Sub
 End Class

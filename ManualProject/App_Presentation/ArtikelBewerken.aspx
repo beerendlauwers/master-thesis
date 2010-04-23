@@ -373,7 +373,7 @@ tr.style.display="none";
 </div>
 <br />
 <div style="text-align:center;">
-        <asp:Button ID="btnUpdate" runat="server" Text="Artikel Wijzigen" Visible="false" ValidationGroup="bewerkTekst"/>
+        <asp:Button ID="btnUpdate" runat="server" Text="Artikel Wijzigen" style="display:none;" ValidationGroup="bewerkTekst"/>
     <asp:UpdateProgress ID="prgUpdaten" runat="server" AssociatedUpdatePanelID="updBewerken">
     <ProgressTemplate>
     <div class="update">
@@ -382,7 +382,7 @@ tr.style.display="none";
     </div>
     </ProgressTemplate>
     </asp:UpdateProgress>
-    <div runat="server" id="divFeedback" visible="false">
+    <div runat="server" id="divFeedback" style="display:none;">
         <asp:Image ID="imgResultaat" runat="server" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label ID="lblresultaat" runat="server"></asp:Label><br />
     </div>
 

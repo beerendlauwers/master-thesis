@@ -128,7 +128,7 @@ Partial Class App_Presentation_MasterPage
         'Bedrijven ophalen
 
         'De Appligen-structuur krijgen we altijd te zien
-        Dim appligen As Bedrijf = Bedrijf.GetBedrijf("Appligen")
+        Dim appligen As Bedrijf = Bedrijf.GetBedrijf("AAAFinancials")
 
         Dim anderBedrijfID As Integer
         'Kijken of we een geldige bedrijftag hadden binnengekregen

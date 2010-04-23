@@ -234,16 +234,19 @@ Partial Class App_Presentation_verwijderenTekst
 
     Protected Sub btnOK_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOK.Click
 
-        If Session("tag") Is Nothing Then
-            Dim row As GridViewRow = grdResultaten.Rows(hdnRowID.Value)
-
-            VerwijderArtikel(row)
+        If Session("rechtstreeksVerwijderen") IsNot Nothing Then
+            If Session("rechtstreeksVerwijderen") = 1 Then
+                Dim tag As String = Session("tag")
+                VerwijderArtikel(tag)
+                Session("rechtstreeksVerwijderen") = Nothing
+                Session("tag") = Nothing
+                Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+            End If
         Else
-            Dim tag As String = Session("tag")
-            VerwijderArtikel(tag)
-            Session("tag") = Nothing
-            Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+            Dim row As GridViewRow = grdResultaten.Rows(hdnRowID.Value)
+            VerwijderArtikel(row)
         End If
+
         HaalArtikelGegevensOp()
         JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
     End Sub
@@ -301,6 +304,7 @@ Partial Class App_Presentation_verwijderenTekst
     Protected Sub Page_LoadComplete(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.LoadComplete
         If Request.QueryString("tag") IsNot Nothing Then
             Session("tag") = Request.QueryString("tag")
+            Session("rechtstreeksVerwijderen") = 1
             If Not IsPostBack Then
                 mpeConfirmatie.Show()
             End If

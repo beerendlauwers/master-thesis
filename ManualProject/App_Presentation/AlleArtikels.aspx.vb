@@ -27,7 +27,7 @@ Partial Class App_Presentation_AlleArtikels
         End If
 
         JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
-        JavaScript.ZetButtonOpDisabledOnClick(btnFilter, "Filteren...", True, True)
+        JavaScript.ZetButtonOpDisabledOnClick(btnFilter, "Filteren...", True)
     End Sub
 
     Protected Sub btnFilter_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnFilter.Click

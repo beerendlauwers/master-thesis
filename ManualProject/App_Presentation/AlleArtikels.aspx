@@ -98,8 +98,8 @@
         </InsertParameters>
     </asp:ObjectDataSource>
     <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
-        ConnectionString="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" 
-        ProviderName="System.Data.SqlClient" SelectCommand="select A.titel, A.tag, B.naam, T.taaltag, V.versie 
+        
+        ConnectionString="<%$ ConnectionStrings:Reference_manualConnectionString %>" SelectCommand="select A.titel, A.tag, B.naam, T.taaltag, V.versie 
 from tblArtikel A, tblBedrijf B, tblTaal T, tblVersie V
 where A.Is_final=@Is_final and B.naam LIKE @naam and T.Taal LIKE @Taal AND V.versie LIKE @Versie AND A.FK_Bedrijf = B.BedrijfID AND A.FK_Taal = T.TaalID and
 A.FK_Versie=V.versieID ORDER BY A.Titel;" >

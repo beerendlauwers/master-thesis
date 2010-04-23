@@ -525,7 +525,7 @@ Public Class ArtikelDAL
         c.Parameters.Add("@titel", SqlDbType.VarChar).Value = titel
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
-        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
         c.Parameters.Add("@ID", SqlDbType.Int).Value = id
         c.Connection = New SqlConnection(conn)
 
@@ -677,12 +677,15 @@ Public Class ArtikelDAL
 
         Return tekst
     End Function
-    Public Function getArtikelsByModule(ByVal modul As String) As tblModuleDataTable
-        Dim dt As New tblModuleDataTable
+    Public Function GetArtikelsByModule(ByVal modul As String, ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
 
         Dim c As New SqlCommand("Manual_getArtikelsByModule")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@module", SqlDbType.VarChar).Value = modul
+        c.Parameters.Add("@FK_taal", SqlDbType.Int).Value = taal
+        c.Parameters.Add("@FK_versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@FK_Bedrijf", SqlDbType.Int).Value = bedrijf
         c.Connection = New SqlConnection(conn)
         Try
             Dim r As SqlDataReader

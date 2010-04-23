@@ -11,7 +11,7 @@
     </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel" runat="server">Artikel Toevoegen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-<div runat="server" id="divLoggedIn">
+    <div runat="server" id="divLoggedIn">
     
 <div id="divInvullen">
 
@@ -46,7 +46,7 @@
         </cc2:ValidatorCalloutExtender>
     <cc2:FilteredTextBoxExtender ID="fltTag" runat="server" 
         FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters" TargetControlID="txtTag" 
-        ValidChars=""></cc2:FilteredTextBoxExtender>
+        ValidChars="."></cc2:FilteredTextBoxExtender>
         <span id="lblTaalTag" runat="server" style="display:none;"></span>
         <script type="text/javascript">
     function wijzigLabel(field)

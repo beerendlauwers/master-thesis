@@ -44,8 +44,8 @@
 <asp:Label ID="lblZoekterm" runat="server" Text="" style="display:none;"></asp:Label>
     <asp:HiddenField ID="hiddenZoekterm" runat="server" />
     <asp:SqlDataSource ID="sqldsArtikel" runat="server" 
-        ConnectionString="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" 
-        ProviderName="System.Data.SqlClient" SelectCommand="Manual_theUltimateGet" 
+        
+    ConnectionString="<%$ ConnectionStrings:Reference_manualConnectionString %>" SelectCommand="Manual_theUltimateGet" 
         SelectCommandType="StoredProcedure">
         <SelectParameters>
             <asp:SessionParameter DefaultValue="0" Name="bedrijfID" SessionField="bedrijf" 

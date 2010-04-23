@@ -69,7 +69,9 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
     <img src="CSS/images/rodebalk.gif" />
     </div>
     <div id="logo">
-    <img src="CSS/images/APPLIGEN-LOGO-BASE-RGB.gif" />
+    <a href="Default.aspx">
+    <img src="CSS/images/APPLIGEN-LOGO-BASE-RGB.gif" border="0" />
+    </a>
     </div>
     <div>
     <div id="main">

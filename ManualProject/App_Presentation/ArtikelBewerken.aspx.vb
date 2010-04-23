@@ -44,10 +44,6 @@ Partial Class App_Presentation_ArtikelBewerken
 
         End If
 
-        If IsPostBack Then
-            JavaScript.VoegJavascriptToeAanEndRequest(Me, "if (CKEDITOR.instances['ctl00_ContentPlaceHolder1_EditorBewerken']) {CKEDITOR.remove(CKEDITOR.instances['ctl00_ContentPlaceHolder1_EditorBewerken']); CKEDITOR.replace('ctl00_ContentPlaceHolder1_EditorBewerken');CKFinder.SetupCKEditor( null, 'JS/ckfinder/' ); alert('en we zijn klaar'); }")
-        End If
-
         LaadZoekTooltips()
         LaadJavascript()
 
@@ -57,7 +53,7 @@ Partial Class App_Presentation_ArtikelBewerken
         Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
         str(1) = Trim(str(1))
         lblTaalTag.InnerHtml = str(1)
-        ddlModule.DataBind()
+
         lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
     End Sub
 
@@ -127,7 +123,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
         If Me.ddlCategorie.Items.Count = 0 Then
             Util.SetError("U dient een categorie op te geven.", lblresultaat, imgResultaat)
-            Me.divFeedback.Visible = True
+            Me.divFeedback.Style.Item("display") = "inline"
             Return
         End If
 
@@ -139,7 +135,7 @@ Partial Class App_Presentation_ArtikelBewerken
         artikel.Taal = ddlTaal.SelectedValue
         artikel.Versie = ddlVersie.SelectedValue
         artikel.Tag = lblTagvoorbeeld.InnerHtml
-        artikel.Tekst = EditorBewerken.Value
+        artikel.Tekst = HttpUtility.HtmlDecode(EditorBewerken.Value)
         artikel.Titel = txtTitel.Text
 
         If ckbFinal.Checked = True Then
@@ -151,14 +147,14 @@ Partial Class App_Presentation_ArtikelBewerken
         'Checken of een ander artikel reeds deze titel heeft
         If artikeldal.checkArtikelByTitelEnID(artikel.Titel, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
             Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze titel in deze structuur.", lblresultaat, imgResultaat)
-            Me.divFeedback.Visible = True
+            Me.divFeedback.Style.Item("display") = "inline"
             Return
         End If
 
         'Checken of een ander artikel niet dezelfde tag heeft
         If artikeldal.checkArtikelByTag(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
             Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze tag.", lblresultaat, imgResultaat)
-            Me.divFeedback.Visible = True
+            Me.divFeedback.Style.Item("display") = "inline"
             Return
         End If
         If rdbAlleTalen.Checked Then
@@ -192,7 +188,7 @@ Partial Class App_Presentation_ArtikelBewerken
             If node Is Nothing Then
                 Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
                 ArtikelFunctiesZichtbaar(False)
-                Me.divFeedback.Visible = True
+                Me.divFeedback.Style.Item("display") = "inline"
 
                 Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
                 Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
@@ -228,7 +224,7 @@ Partial Class App_Presentation_ArtikelBewerken
                     If nieuweparent Is Nothing Or oudeparent Is Nothing Then
                         Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
                         ArtikelFunctiesZichtbaar(False)
-                        Me.divFeedback.Visible = True
+                        Me.divFeedback.Style.Item("display") = "inline"
                         Return
                     Else
                         nieuweparent.AddChild(node)
@@ -240,14 +236,15 @@ Partial Class App_Presentation_ArtikelBewerken
             End If
 
             Util.SetOK("Update geslaagd.", lblresultaat, imgResultaat)
-            Me.divFeedback.Visible = True
+            Me.divFeedback.Style.Item("display") = "inline"
         Else
             Util.SetError("Update mislukt: Kon niet met de database verbinden.", lblresultaat, imgResultaat)
-            Me.divFeedback.Visible = True
+            Me.divFeedback.Style.Item("display") = "inline"
         End If
         ArtikelFunctiesZichtbaar(False)
         ZoekresultatenWeergeven()
-        Me.divFeedback.Visible = True
+        Me.divFeedback.Style.Item("display") = "inline"
+        Me.divResultatenTonen.Style.Item("display") = "inline"
 
     End Sub
 
@@ -324,9 +321,9 @@ Partial Class App_Presentation_ArtikelBewerken
         End If
 
         LaadBewerkToolTips()
-        updBewerken.Update()
 
-        Me.divFeedback.Visible = False
+        Me.divFeedback.Style.Item("display") = "none"
+        updBewerken.Update()
     End Sub
 
     Private Sub LaadCategorien()
@@ -352,9 +349,16 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Private Sub ArtikelFunctiesZichtbaar(ByVal zichtbaar As Boolean)
-        Me.divInvullen.Visible = zichtbaar
-        Me.divFeedback.Visible = False
-        Me.btnUpdate.Visible = zichtbaar
+        Dim waarde As String = String.Empty
+        If zichtbaar Then
+            waarde = "inline"
+        Else
+            waarde = "none"
+        End If
+
+        Me.divInvullen.Style.Item("display") = waarde
+        Me.divFeedback.Style.Item("display") = "none"
+        Me.btnUpdate.Style.Item("display") = waarde
     End Sub
 
 #End Region
@@ -408,6 +412,8 @@ Partial Class App_Presentation_ArtikelBewerken
         Next
 
         LaadCategorien()
+
+        ddlModule.DataBind()
 
     End Sub
 

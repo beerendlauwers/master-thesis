@@ -7,22 +7,24 @@
     <asp:Label ID="lblTitel" runat="server" Text=""></asp:Label>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-
+    <br/>
     <div id="gridview">
     <asp:UpdatePanel ID="updModuleOverzicht" runat="server">
    <ContentTemplate>
 
-    <asp:DropDownList ID="ddlModule" runat="server"  
+    <asp:DropDownList ID="ddlModule" runat="server" DataTextField="tag" DataValueField="tag"  
          AutoPostBack="true">
     </asp:DropDownList>
        <asp:Label ID="lblDropdown" runat="server" Text=""></asp:Label>
        &nbsp;&nbsp;
        <asp:CheckBox ID="ckbModules" runat="server" AutoPostBack="True" 
-           Checked="True" />
+           Checked="true" />
        <asp:Label ID="lblCkb" runat="server" 
            Text=""></asp:Label>
     <asp:GridView ID="grdvmodule" runat="server" AutoGenerateColumns="False" 
-        DataKeyNames="ArtikelID" DataSourceID="sqldsModule" AllowPaging="true" PagerStyle-CssClass="gridview_pager" AllowSorting="true" PageSize="30" Width="100%">
+        DataKeyNames="ArtikelID" AllowPaging="True" 
+           PagerStyle-CssClass="gridview_pager" AllowSorting="True" PageSize="30" 
+           Width="100%">
         <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="ArtikelID" HeaderText="ArtikelID" 
@@ -40,34 +42,5 @@
     </asp:GridView>    
     </ContentTemplate>
     </asp:UpdatePanel></div>
-    <asp:SqlDataSource ID="sqldsModule" runat="server" 
-        ConnectionString="Data Source=PC_VAN_FRANK\SQLEXPRESS;Initial Catalog=Reference_manual;Persist Security Info=True;User ID=beerend;Password=beerend!" 
-        ProviderName="System.Data.SqlClient" SelectCommand="Manual_getArtikelsByModule" 
-        SelectCommandType="StoredProcedure">
-        <SelectParameters>
-            <asp:ControlParameter ControlID="ddlModule" Name="Module" 
-                PropertyName="SelectedValue" Type="String" />
-            <asp:SessionParameter Name="FK_taal" SessionField="Taal" Type="Int32" />
-            <asp:SessionParameter DefaultValue="" Name="FK_versie" SessionField="Versie" 
-                Type="Int32" />
-            <asp:SessionParameter DefaultValue="" Name="FK_Bedrijf" SessionField="Bedrijf" 
-                Type="Int32" />
-        </SelectParameters>
-    </asp:SqlDataSource>
-    <asp:ObjectDataSource ID="objdModule" runat="server" 
-        DeleteMethod="Delete" InsertMethod="Insert" 
-        OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" 
-        TypeName="ManualTableAdapters.tblModuleTableAdapter" UpdateMethod="Update">
-        <DeleteParameters>
-            <asp:Parameter Name="Original_moduleID" Type="Int32" />
-        </DeleteParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="_module" Type="String" />
-            <asp:Parameter Name="Original_moduleID" Type="Int32" />
-        </UpdateParameters>
-        <InsertParameters>
-            <asp:Parameter Name="_module" Type="String" />
-        </InsertParameters>
-    </asp:ObjectDataSource>
-</asp:Content>
+   </asp:Content>
 
