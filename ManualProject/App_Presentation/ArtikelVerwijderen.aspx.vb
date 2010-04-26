@@ -135,8 +135,9 @@ Partial Class App_Presentation_verwijderenTekst
 
         grdResultaten.DataSource = dt
         grdResultaten.DataBind()
-        Me.grdResultaten.Visible = True
-        Me.lblSelecteerArtikel.Visible = True
+
+        Me.grdResultaten.Style.Item("display") = "inline"
+        Me.lblSelecteerArtikel.Style.Item("display") = "inline"
 
         If Me.grdResultaten.Rows.Count = 0 Then
             Me.lblSelecteerArtikel.Text = "Er werden geen artikels gevonden."
@@ -144,7 +145,7 @@ Partial Class App_Presentation_verwijderenTekst
             Me.lblSelecteerArtikel.Text = "Selecteer een artikel om te verwijderen."
         End If
 
-        Me.divFeedback.Visible = False
+        Me.divFeedback.Style.Item("display") = "none"
     End Sub
 
     Protected Sub grdResultaten_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdResultaten.RowCommand
@@ -221,14 +222,7 @@ Partial Class App_Presentation_verwijderenTekst
         End If
 
         HaalArtikelGegevensOp()
-        Me.divFeedback.Visible = True
-
-        'Dim javascript As String = String.Concat("function verwijderKind_", artikel.ID, "() { document.getElementById(child_", artikel.ID, ").style.display = ""none""; }")
-
-        'Page.ClientScript.RegisterStartupScript(Me.GetType(), String.Concat("verwijderKind_", artikel.ID), javascript, True)
-
-        'Dim body As HtmlGenericControl = Master.FindControl("MasterBody")
-        'body.Attributes.Add("onload", String.Concat("verwijderKind_", artikel.ID, "();"))
+        Me.divFeedback.Style.Item("display") = "inline"
 
     End Sub
 
@@ -298,7 +292,7 @@ Partial Class App_Presentation_verwijderenTekst
         End If
 
         HaalArtikelGegevensOp()
-        Me.divFeedback.Visible = True
+        Me.divFeedback.Style.Item("display") = "inline"
     End Sub
 
     Protected Sub Page_LoadComplete(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.LoadComplete

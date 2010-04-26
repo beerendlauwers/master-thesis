@@ -4,9 +4,6 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <title>Artikel Verwijderen</title>
-    <link href="CSS/prototip.css" rel="stylesheet" type="text/css" />
-    <script src="JS/prototype.js" language="javascript" type="text/javascript"></script>
-    <script src="js/prototip.js" language="javascript" type='text/javascript' ></script>
 </asp:Content>
 <asp:Content runat="server" ID="Content3" ContentPlaceHolderID="ContentPlaceHolderTitel">Artikel Verwijderen</asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
@@ -23,7 +20,7 @@
         <td colspan="2">Bent u zeker dat u het artikel "<asp:Label runat="server" ID="lblArtikeltitel"></asp:Label>" wilt verwijderen?</td>
         </tr>
         <tr>
-        <td><asp:Button ID="btnOK" runat="server" Text="Ja" /></td>
+        <td><asp:Button ID="btnOK" runat="server" Text="Ja" Width="50" /></td>
         <td><asp:Button ID="btnAnnuleer" runat="server" Text="Annuleren" /></td>
         </tr>
         </table>
@@ -52,7 +49,8 @@
 </tr>
 <tr>
 <td class="lbl"><asp:Label ID="lblTaal" runat="server" Text="Taal: "></asp:Label></td>
-<td class="ietd"><asp:DropDownList ID="ddlTaal" runat="server" Width="100%"></asp:DropDownList></td>
+<td class="ietd">
+    <asp:DropDownList ID="ddlTaal" runat="server" Width="100%"></asp:DropDownList></td>
 <td><span style="vertical-align:middle" id='tipTaalKeuze'><img src="CSS/images/help.png" alt=''/></span></td>
 </tr>
 <tr>
@@ -113,14 +111,15 @@
 <br />
 <div id="gridview" style="display:none">
 <div>
-    <asp:GridView ID="grdResultaten" runat="server" 
-        AutoGenerateColumns="False" Width="100%">
+    <asp:GridView ID="grdResultaten" runat="server" style="display:none" AutoGenerateColumns="False" 
+        Width="100%">
         <Columns>
             <asp:BoundField DataField="Titel" HeaderText="Titel" SortExpression="Titel" />
             <asp:BoundField DataField="Tag" HeaderText="Tag" SortExpression="Tag" />
             <asp:BoundField DataField="Versie" HeaderText="Versie" 
                 SortExpression="Versie" />
-            <asp:BoundField DataField="Naam" HeaderText="Bedrijf" SortExpression="Bedrijf" />
+            <asp:BoundField DataField="Naam" HeaderText="Bedrijf" 
+                SortExpression="Bedrijf" />
             <asp:BoundField DataField="Taal" HeaderText="Taal" SortExpression="Taal" />
             <asp:BoundField DataField="Is_final" HeaderText="Finale Versie" 
                 SortExpression="Is_final" />
@@ -132,9 +131,9 @@
 </div>
 </div>
 
-<asp:Label runat="server" ID="lblSelecteerArtikel" Text="Selecteer een artikel om te verwijderen." Visible="false"></asp:Label>
+<asp:Label runat="server" ID="lblSelecteerArtikel" Text="Selecteer een artikel om te verwijderen." style="display:none"></asp:Label>
 <br /><br />
-<div runat="server" id="divFeedback" visible="false" style="text-align:center;">
+<div runat="server" id="divFeedback" style="text-align:center;display:none">
         <asp:Image ID="imgResultaat" runat="server" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label ID="lblResultaat" runat="server"></asp:Label>
 </div>
 
