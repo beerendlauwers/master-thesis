@@ -70,7 +70,9 @@ Partial Class App_Presentation_invoerenTest
         If Me.ddlCategorie.Items.Count = 0 Then
             Me.ddlCategorie.Visible = False
             Me.lblGeenCategorie.Visible = True
+            Me.btnVoegtoe.Enabled = False
         Else
+            Me.btnVoegtoe.Enabled = True
             Me.ddlCategorie.Visible = True
             Me.lblGeenCategorie.Visible = False
         End If

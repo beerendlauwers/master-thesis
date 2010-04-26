@@ -90,8 +90,17 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
                     <li><a runat="server" id="AlleArtikels" href="AlleArtikels.aspx"><img src="CSS/images/doc_text_image.png" border="0"  /> Alle Artikels</a></li>
                     <li><a runat="server" id="OverzichtPerTaal" href="OverzichtPerTaal.aspx"><img src="CSS/images/doc_text_image.png" border="0"  /> Overzicht per Taal</a></li>
                 </ul></li>
-            <li runat="server" id="liBeheer"><a runat="server" href="Beheer.aspx" ><span class="l"></span><span class="r"></span>
+            <li runat="server" id="liBeheer"><a runat="server" href="aanmeldpagina.aspx" ><span class="l"></span><span class="r"></span>
                 <span class="t" runat="server" id="spanBeheer">Beheer </span></a>
+                 <ul runat="server" id="ulBeheer">
+                <li><a runat="server" id="aBedrijf" href="Beheer.aspx?index=0">Bedrijf</a> </li>
+                <li><a runat="server" id="aTaal" href="Beheer.aspx?index=1">Taal</a> </li>
+                <li><a runat="server" id="aVersie" href="Beheer.aspx?index=2">Versie</a> </li>
+                <li><a runat="server" id="aModule" href="Beheer.aspx?index=3">Module</a> </li>
+                <li><a runat="server" id="aCategorie" href="Beheer.aspx?index=4">Categorie</a> </li>
+                <li><a runat="server" id="avideo" href="Beheer.aspx?index=5">Video</a> </li>
+                <li><a runat="server" id="aApplicatie" href="Beheer.aspx?index=6">Applicatie Onderhoud</a> </li>
+            </ul>
                 
             </li>
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b><asp:Label ID="lblZoek" runat="server" Text=""></asp:Label>
@@ -111,8 +120,8 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
                 <span class="t" runat="server" id="spanBeheerAanmeld">Beheer </span></a>
             </li>
             <li>
-            <a runat="server" id="A1" href="Module.aspx"><span class="l"></span><span class="r"></span>
-                <span class="t" runat="server" id="span1">Modules </span></a>
+            <a runat="server" id="linkModule" href="Module.aspx"><span class="l"></span><span class="r"></span>
+                <span class="t" runat="server" id="spanModule">Modules </span></a>
             </li>
             <li runat="server" id="liTalen" visible="true" >
             <a id="lnkTalen" runat="server"><span class="l"></span><span class="r"></span><span class="t" runat="server" id="spanTalen">Talen/Languages</span></a>

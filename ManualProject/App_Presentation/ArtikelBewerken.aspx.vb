@@ -521,11 +521,11 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Protected Sub rdbAlleTalen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbAlleTalen.CheckedChanged
-        trRadio.Visible = False
+
     End Sub
 
     Protected Sub rdbEnkeleTaal_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbEnkeleTaal.CheckedChanged
-        trRadio.Visible = False
+
     End Sub
     Public Sub gettag()
         Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
