@@ -87,7 +87,7 @@ Partial Class App_Presentation_verwijderenTekst
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
         HaalArtikelGegevensOp()
-        JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
+        'JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
     End Sub
 
     Private Sub HaalArtikelGegevensOp()
@@ -158,7 +158,7 @@ Partial Class App_Presentation_verwijderenTekst
             updConfirmatie.Update()
 
             HaalArtikelGegevensOp()
-            JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
+            'sJavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
 
             mpeConfirmatie.Show()
 
@@ -242,7 +242,7 @@ Partial Class App_Presentation_verwijderenTekst
         End If
 
         HaalArtikelGegevensOp()
-        JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
+        'JavaScript.VoegJavascriptToeAanEndRequest(Me, "document.getElementById('gridview').style.display = 'inline';")
     End Sub
 
     Protected Sub btnAnnuleer_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAnnuleer.Click

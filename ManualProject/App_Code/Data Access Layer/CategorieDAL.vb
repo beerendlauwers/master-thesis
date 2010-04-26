@@ -52,7 +52,7 @@ Public Class CategorieDAL
         Dim c As New SqlCommand("Check_CategorieByBedrijf")
         c.CommandType = CommandType.StoredProcedure
 
-        c.Parameters.Add("@bedrijfID", SqlDbType.Int).Value = bedrijfID
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijfID
         c.Connection = New SqlConnection(conn)
 
         Try

@@ -21,10 +21,24 @@ Partial Class App_Presentation_invoerenTest
             ddlModule.DataBind()
             LaadDropdowns()
             LaadTemplates()
+
+            If Page.Request.QueryString("tag") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing Then
+                txtTag.Text = Page.Request.QueryString("tag")
+                Dim dr As Manual.tblTaalRow = taaldal.getTaalByNaam(Page.Request.QueryString("taal"))
+                Dim taalid As Integer = dr("taalID")
+                ddlTaal.SelectedValue = taalid
+                Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
+                strtag(1) = Trim(strtag(1))
+                lblTaalTag.InnerHtml = strtag(1)
+                ddlVersie.SelectedValue = Page.Request.QueryString("versie")
+                ddlBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
+
+                lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+
+            End If
         Else
             lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
         End If
-
 
     End Sub
 
@@ -121,9 +135,8 @@ Partial Class App_Presentation_invoerenTest
                 divNogEenArtikelToevoegen.Visible = False
                 Return
             End If
-
             'Checken of een ander artikel niet dezelfde tag heeft
-            If artikeldal.GetArtikelByTag(tag) IsNot Nothing Then
+            If artikeldal.checkArtikelByTag(tag, FK_Bedrijf, FK_versie, FK_taal).Count > 0 Then
                 Util.SetWarn("Toevoegen Mislukt: Er bestaat reeds een artikel met deze tag.", lblresultaat, imgResultaat)
                 divFeedback.Visible = True
                 divNogEenArtikelToevoegen.Visible = False

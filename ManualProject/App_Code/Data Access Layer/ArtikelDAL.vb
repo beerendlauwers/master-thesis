@@ -550,7 +550,7 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
-    Public Function checkArtikelByTag(ByVal tag As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal id As Integer) As tblArtikelDataTable
+    Public Function checkArtikelByTag(ByVal tag As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer) As tblArtikelDataTable
 
         Dim dt As New tblArtikelDataTable
         Dim c As New SqlCommand("Check_Artikel")
@@ -559,7 +559,6 @@ Public Class ArtikelDAL
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
         c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
-        c.Parameters.Add("@id", SqlDbType.Int).Value = id
         c.Connection = New SqlConnection(conn)
 
         Try
@@ -702,4 +701,131 @@ Public Class ArtikelDAL
 
         Return dt
     End Function
+
+    Public Function checkArtikelByTagByID(ByVal tag As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal ArtikelID As Integer) As tblArtikelDataTable
+
+        Dim dt As New tblArtikelDataTable
+        Dim c As New SqlCommand("Check_ArtikelByTagByID")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
+        c.Parameters.Add("@ArtikelID", SqlDbType.Int).Value = ArtikelID
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tag = " & tag)
+            e.Args.Add("versie = " & versie.ToString)
+            e.Args.Add("bedrijf = " & bedrijf.ToString)
+            e.Args.Add("taal = " & taal.ToString)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
+    Public Function updateArtikelTagMetModule(ByVal nieuwemodule As String, ByVal oudemodule As String) As Integer
+        Dim c As New SqlCommand("onUpdateModule")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@nieuweModule", SqlDbType.VarChar).Value = nieuwemodule
+        c.Parameters.Add("@oudeModule", SqlDbType.VarChar).Value = oudemodule
+
+        c.Connection = New SqlConnection(conn)
+        Dim r As Integer
+        Try
+            c.Connection.Open()
+            r = c.ExecuteNonQuery
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("nieuweModule = " & nieuwemodule)
+            e.Args.Add("oudeModule = " & oudemodule)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+        Return r
+    End Function
+
+    Public Function updateArtikelTagMetVersie(ByVal nieuweVersie As String, ByVal oudeVersie As String) As Integer
+        Dim c As New SqlCommand("onUpdateVersie")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@nieuweVersie", SqlDbType.VarChar).Value = nieuweVersie
+        c.Parameters.Add("@oudeVersie", SqlDbType.VarChar).Value = oudeVersie
+
+        c.Connection = New SqlConnection(conn)
+        Dim r As Integer
+        Try
+            c.Connection.Open()
+            r = c.ExecuteNonQuery
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("nieuweVersie = " & nieuweVersie)
+            e.Args.Add("oudeVersie = " & oudeVersie)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+        Return r
+    End Function
+
+
+    Public Function updateArtikelTagMetBedrijf(ByVal nieuwBedrijf As String, ByVal oudBedrijf As String) As Integer
+        Dim c As New SqlCommand("onUpdateBedrijf")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@nieuwBedrijf", SqlDbType.VarChar).Value = nieuwBedrijf
+        c.Parameters.Add("@oudBedrijf", SqlDbType.VarChar).Value = oudBedrijf
+
+        c.Connection = New SqlConnection(conn)
+        Dim r As Integer
+        Try
+            c.Connection.Open()
+            r = c.ExecuteNonQuery
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("nieuwBedrijf = " & nieuwBedrijf)
+            e.Args.Add("oudBedrijf = " & oudBedrijf)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+        Return r
+    End Function
+
+    Public Function updateArtikelTagMetTaalTag(ByVal nieuweTaalTag As String, ByVal oudeTaalTag As String) As Integer
+        Dim c As New SqlCommand("onUpdateTaalTag")
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@nieuweTaalTag", SqlDbType.VarChar).Value = nieuweTaalTag
+        c.Parameters.Add("@oudeTaalTag", SqlDbType.VarChar).Value = oudeTaalTag
+
+        c.Connection = New SqlConnection(conn)
+        Dim r As Integer
+        Try
+            c.Connection.Open()
+            r = c.ExecuteNonQuery
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("nieuwTaalTag = " & nieuweTaalTag)
+            e.Args.Add("oudTaalTag = " & oudeTaalTag)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+        Return r
+    End Function
+
+
 End Class

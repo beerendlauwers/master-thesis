@@ -26,6 +26,7 @@
             </asp:TemplateField>
         </Columns>  
     </asp:GridView>
+    <asp:Label ID="lblHiddenTalen" runat="server" Text="" style="display:none;"></asp:Label>
     <span style="vertical-align:middle" id='tipTaalKiezen'><img src="CSS/images/help.png" alt=''/></span>
     </div>
     Enkel tonen wanneer er artikels <br />ontbreken in één van de geselecteerd Talen: 

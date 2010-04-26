@@ -112,22 +112,27 @@ Partial Class App_Presentation_page
 
     Private Function CheckArtikel(ByRef a As Artikel) As Boolean
 
-        Dim ingelogdeVersie As Integer = Session("versie")
-        Dim ingelogdBedrijf As Integer = Session("bedrijf")
+        If Session("login") = 0 Then
 
-        If Not ingelogdeVersie = a.Versie Then
-            Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
-            Me.lblTitel.Visible = False
-            Return False
+            Dim ingelogdeVersie As Integer = Session("versie")
+            Dim ingelogdBedrijf As Integer = Session("bedrijf")
+
+            If Not ingelogdeVersie = a.Versie Then
+                Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+                Me.lblTitel.Visible = False
+                Return False
+            End If
+
+            If Not (ingelogdBedrijf = a.Bedrijf Or a.Bedrijf = 0) Then
+                Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+                Me.lblTitel.Visible = False
+                Return False
+            End If
+
+            Return True
+        Else
+            Return True
         End If
-
-        If Not (ingelogdBedrijf = a.Bedrijf Or a.Bedrijf = 0) Then
-            Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
-            Me.lblTitel.Visible = False
-            Return False
-        End If
-
-        Return True
 
     End Function
 

@@ -27,6 +27,7 @@ Partial Class App_Presentation_OverzichtPerTaal
     End Sub
 
     Public Function getsqlTextfiltered() As String
+        Dim voorlabel As String = "x,x,"
         Dim sqltextselect As String = "SELECT dbo.getTitelMetTag(tag)Titel,Tag"
         Dim sqltextwhere As String = "WHERE ("
         Dim sqltext As String
@@ -36,27 +37,34 @@ Partial Class App_Presentation_OverzichtPerTaal
                 Dim tekst As String = Server.HtmlDecode(row.Cells(0).Text)
                 sqltextselect = sqltextselect + "," + tekst
                 sqltextwhere = sqltextwhere + tekst + "=0" + " OR "
+                voorlabel = voorlabel + tekst + ","
             End If
         Next
 
         sqltextwhere = sqltextwhere.Remove(sqltextwhere.Length - 3)
-        sqltextwhere = sqltextwhere + ") AND Versie='" + ddlVersie.SelectedItem.Text + "' and bedrijf='" + ddlBedrijf.SelectedItem.Text + "'"
+        sqltextwhere = sqltextwhere + ") AND VersieID=" + ddlVersie.SelectedValue + " and bedrijfID=" + ddlBedrijf.SelectedValue + ""
         sqltext = sqltextselect + " FROM tblVglTaal " + sqltextwhere
+        voorlabel = voorlabel.Remove(voorlabel.Length - 1)
+        lblHiddenTalen.Text = voorlabel
         Return sqltext
     End Function
     Public Function getsqlunfiltered() As String
+        Dim voorlabel As String = "x,x,"
         Dim sqltextselect As String = "SELECT dbo.getTitelMetTag(tag) Titel,Tag"
-        Dim sqltextwhere As String = "Where Versie='" + ddlVersie.SelectedItem.Text + "' and bedrijf='" + ddlBedrijf.SelectedItem.Text + "'"
+        Dim sqltextwhere As String = "Where VersieID=" + ddlVersie.SelectedValue + " and bedrijfID=" + ddlBedrijf.SelectedValue + ""
         Dim sqltext As String
         For Each row As GridViewRow In GridView1.Rows
             Dim cb As CheckBox = row.FindControl("chkTaal")
             If cb.Checked = True Then
                 Dim tekst As String = Server.HtmlDecode(row.Cells(0).Text)
                 sqltextselect = sqltextselect + "," + tekst
+                voorlabel = voorlabel + tekst + ","
             End If
         Next
         sqltext = sqltextselect + " FROM tblVglTaal"
         sqltext = sqltext + " " + sqltextwhere
+        voorlabel = voorlabel.Remove(voorlabel.Length - 1)
+        lblHiddenTalen.Text = voorlabel
         Return sqltext
     End Function
 
@@ -106,6 +114,7 @@ Partial Class App_Presentation_OverzichtPerTaal
 
         GridView3.DataBind()
         LaadTooltips()
+        JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
     End Sub
 
     Private Sub LaadTooltips()
@@ -164,6 +173,7 @@ Partial Class App_Presentation_OverzichtPerTaal
             End If
         End If
 
+        JavaScript.ShadowBoxLaderSluiten(Me)
     End Sub
 
     Protected Sub GridView3_PageIndexChanging(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewPageEventArgs) Handles GridView3.PageIndexChanging
@@ -178,16 +188,22 @@ Partial Class App_Presentation_OverzichtPerTaal
         GridView3.DataSource = dt
         GridView3.PageIndex = e.NewPageIndex
         GridView3.DataBind()
+        JavaScript.ShadowBoxLaderSluiten(Me)
     End Sub
 
     Protected Sub GridView3_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles GridView3.RowCommand
         Dim str As String = e.CommandName
+        JavaScript.ShadowBoxLaderSluiten(Me)
     End Sub
 
     Protected Sub GridView3_RowDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles GridView3.RowDataBound
+        Dim label As String = lblHiddenTalen.Text
+        Dim talen() As String = label.Split(",")
+        Dim versie As Integer = ddlVersie.SelectedValue
+        Dim bedrijf As Integer = ddlBedrijf.SelectedValue
         GridView3.Visible = True
-        For i As Integer = 0 To e.Row.Cells.Count - 1
 
+        For i As Integer = 0 To e.Row.Cells.Count - 1
             If e.Row.Cells(i).Visible = True Then
                 Dim img As New ImageButton
                 If e.Row.Cells(i).Text = "1" Then
@@ -196,8 +212,10 @@ Partial Class App_Presentation_OverzichtPerTaal
                     img.Enabled = True
                     e.Row.Cells(i).Controls.Add(img)
                 ElseIf e.Row.Cells(i).Text = "0" Then
+                    Dim tag As String = e.Row.Cells(1).Text
+                    Dim splittag() As String = tag.Split("_")
                     img.ImageUrl = "~/App_Presentation/CSS/images/remove.png"
-                    img.PostBackUrl = "~/App_Presentation/ArtikelToevoegen.aspx"
+                    img.PostBackUrl = "~/App_Presentation/ArtikelToevoegen.aspx?tag=" + splittag(1) + "&taal=" + talen(i) + "&versie=" + versie.ToString + "&bedrijf=" + bedrijf.ToString
                     e.Row.Cells(i).Controls.Add(img)
                 End If
             End If
@@ -221,6 +239,7 @@ Partial Class App_Presentation_OverzichtPerTaal
         GridView3.DataSource = datv
         Session("sortexpression") = e.SortExpression.ToString + "_" + richting
         GridView3.DataBind()
+        JavaScript.ShadowBoxLaderSluiten(Me)
     End Sub
 
     Public Function ConvertSortDirectionToSql(ByVal sortDirection As SortDirection) As String

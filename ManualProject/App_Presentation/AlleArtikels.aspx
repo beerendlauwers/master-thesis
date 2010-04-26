@@ -19,7 +19,7 @@
     </asp:DropDownList>
     &nbsp;Finaal:
     <asp:CheckBox ID="CheckBox1" runat="server" />
-    <asp:Button ID="btnFilter" runat="server" Text="Filter" />
+    <asp:Button ID="btnFilter" runat="server" Text="Filter" Enabled="true" />
     <asp:Label ID="lblFinaal" runat="server" Visible="False"></asp:Label>
     <div id="gridview">
     <asp:GridView ID="grdArtikels" runat="server" PageSize="30" Width="100%" 

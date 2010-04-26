@@ -16,6 +16,8 @@ Public Class Util
         lbl.Text = tekst
         lbl.ForeColor = System.Drawing.ColorTranslator.FromHtml("#E3401E")
         img.ImageUrl = "~\App_Presentation\CSS\images\remove.png"
+        lbl.Style.Add("display", "")
+        img.Style.Add("display", "")
     End Sub
 
     ''' <summary>
@@ -28,6 +30,8 @@ Public Class Util
         lbl.Text = tekst
         lbl.ForeColor = System.Drawing.ColorTranslator.FromHtml("#86CC7C")
         img.ImageUrl = "~\App_Presentation\CSS\images\tick.gif"
+        lbl.Style.Add("display", "")
+        img.Style.Add("display", "")
     End Sub
 
     ''' <summary>
@@ -40,6 +44,13 @@ Public Class Util
         lbl.Text = tekst
         lbl.ForeColor = System.Drawing.ColorTranslator.FromHtml("#EAB600")
         img.ImageUrl = "~\App_Presentation\CSS\images\warning.png"
+        lbl.Style.Add("display", "")
+        img.Style.Add("display", "")
+    End Sub
+
+    Public Shared Sub SetHidden(ByRef lbl As Label, ByRef img As Image)
+        lbl.Style.Add("display", "none")
+        img.Style.Add("display", "none")
     End Sub
 
     ''' <summary>

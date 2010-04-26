@@ -8,7 +8,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="divLoggedIn" runat="server">
-        <cc1:TabContainer runat="server" ID="TabContainer" ActiveTabIndex="3">
+        <cc1:TabContainer runat="server" ID="TabBeheer" ActiveTabIndex="3">
             <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
                 <HeaderTemplate>
                     Bedrijf

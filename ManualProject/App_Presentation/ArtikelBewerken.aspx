@@ -251,8 +251,10 @@ function ValideerZoekTerm (source, args)
 </td></tr>    
    <tr ><td class="lbl">&nbsp</td>
    <td runat="server" id="trRadio" name="trRad">
-   <asp:RadioButton ID="rdbAlleTalen" runat="server" GroupName="Tag"  />Tag voor alle talen wijzigen<br />
-   <asp:RadioButton ID="rdbEnkeleTaal" runat="server" GroupName="Tag" Checked="true" />Alleen tag in deze taal wijzigen
+   <asp:RadioButton ID="rdbAlleTalen" runat="server" GroupName="Tag"  />Tag voor alle talen,alle bedrijven en alle versies wijzigen waar deze Tag voorkomt.<br />
+   <asp:RadioButton ID="rdbTalenperVersieBedrijf" runat="server" GroupName="Tag" />Tag voor Alle talen,alleen in deze versie en dit bedrijf.</br>
+   <asp:RadioButton ID="rdbEnkeleTaal" runat="server" GroupName="Tag" Checked="true" />Alleen tag in deze taal wijzigen.
+   
    </td></tr>         
     <tr>
     <td class="lbl"><asp:Label ID="lblModule" runat="server" Text="Module: "></asp:Label></td>

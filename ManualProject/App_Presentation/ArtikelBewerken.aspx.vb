@@ -127,6 +127,8 @@ Partial Class App_Presentation_ArtikelBewerken
             Return
         End If
 
+        Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(Session("artikelID"))
+
         Dim artikel As New Artikel
 
         artikel.ID = Session("artikelID")
@@ -152,7 +154,7 @@ Partial Class App_Presentation_ArtikelBewerken
         End If
 
         'Checken of een ander artikel niet dezelfde tag heeft
-        If artikeldal.checkArtikelByTag(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
+        If artikeldal.checkArtikelByTagByID(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
             Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze tag.", lblresultaat, imgResultaat)
             Me.divFeedback.Style.Item("display") = "inline"
             Return
@@ -161,19 +163,40 @@ Partial Class App_Presentation_ArtikelBewerken
             Dim taaldal As New TaalDAL
             Dim oudetag As String = Session("oudetag")
             Dim i As Integer
-            i = taaldal.updateTagTalen(oudetag, artikel.Tag)
+            i = taaldal.updateTagTalen(oudetag, artikel.Tag, -1, -1)
+            If i = 0 Then
+                lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
+            End If
+        ElseIf rdbTalenperVersieBedrijf.Checked Then
+            Dim taaldal As New TaalDAL
+            Dim oudetag As String = Session("oudetag")
+            Dim i As Integer
+            i = taaldal.updateTagTalen(oudetag, artikel.Tag, artikel.Bedrijf, artikel.Versie)
             If i = 0 Then
                 lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
             End If
         End If
+
         If artikeldal.updateArtikel(artikel) = True Then
 
             'Boomstructuur in het geheugen updaten.
 
             'We halen de tree op waar dit artikel in werd opgeslagen
-            Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+            Dim oudetree As Tree = Tree.GetTree(origineelArtikel.FK_Taal, origineelArtikel.FK_Versie, origineelArtikel.FK_Bedrijf)
 
-            If tree Is Nothing Then
+            If oudetree Is Nothing Then
+                Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
+                Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
+                err.Args.Add("Taal = " & origineelArtikel.FK_Taal.ToString)
+                err.Args.Add("Versie = " & origineelArtikel.FK_Versie.ToString)
+                err.Args.Add("Bedrijf = " & origineelArtikel.FK_Bedrijf.ToString)
+                ErrorLogger.WriteError(err)
+            End If
+
+            'We halen de nieuwe tree op
+            Dim nieuwetree As Tree = Tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+
+            If nieuwetree Is Nothing Then
                 Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
                 Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
                 err.Args.Add("Taal = " & artikel.Taal.ToString)
@@ -182,57 +205,62 @@ Partial Class App_Presentation_ArtikelBewerken
                 ErrorLogger.WriteError(err)
             End If
 
-            'We zoeken het artikel op en updaten het.
-            Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
+            'Nakijken of het artikel verplaatst is geweest
+            If Not oudetree.Naam = nieuwetree.Naam Then 'artikel is verplaatst
 
-            If node Is Nothing Then
-                Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
-                ArtikelFunctiesZichtbaar(False)
-                Me.divFeedback.Style.Item("display") = "inline"
+                'Artikel uit oude tree verwijderen
+                Dim oudenode As Node = oudetree.DoorzoekTreeVoorNode(origineelArtikel.ArtikelID, Global.ContentType.Artikel)
 
-                Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
-                err.Args.Add("ID = " & artikel.ID.ToString)
-                err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
-                ErrorLogger.WriteError(err)
-
-                Return
-            Else
-                node.Titel = artikel.Titel
-
-                Dim oudeparent As Node = tree.VindParentVanNode(node)
-                Dim nieuweparent As Node = tree.DoorzoekTreeVoorNode(artikel.Categorie, Global.ContentType.Categorie)
-
-                If nieuweparent IsNot oudeparent Then
-
-                    If oudeparent Is Nothing Then
-                        Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0003")
-                        err.Args.Add("ID = " & node.ID.ToString)
-                        err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
-                        ErrorLogger.WriteError(err)
-                    End If
-
-                    If nieuweparent Is Nothing Then
-                        Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0004")
-                        err.Args.Add("ID = " & artikel.Categorie.ToString)
-                        err.Args.Add("Type = " & Global.ContentType.Categorie.ToString)
-                        ErrorLogger.WriteError(err)
-                    End If
-
-                    If nieuweparent Is Nothing Or oudeparent Is Nothing Then
-                        Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
-                        ArtikelFunctiesZichtbaar(False)
-                        Me.divFeedback.Style.Item("display") = "inline"
-                        Return
-                    Else
-                        nieuweparent.AddChild(node)
-                        oudeparent.RemoveChild(node)
-                    End If
-
+                If oudenode Is Nothing Then
+                    Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
+                    err.Args.Add("ID = " & origineelArtikel.ArtikelID.ToString)
+                    err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+                    ErrorLogger.WriteError(err)
                 End If
 
+                oudetree.VindParentVanNode(oudenode).RemoveChild(oudenode)
+
+                'Artikel in nieuwe tree toevegen
+                Dim nieuwenode As New Node(artikel.ID, Global.ContentType.Artikel, artikel.Titel, 0)
+                Dim parent As Node = nieuwetree.DoorzoekTreeVoorNode(artikel.Categorie, Global.ContentType.Categorie)
+                parent.AddChild(nieuwenode)
+            Else 'het is niet verplaatst
+
+                'We zoeken het artikel op en updaten het.
+                Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+
+                If tree Is Nothing Then
+                    Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
+                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
+                    err.Args.Add("Taal = " & artikel.Taal.ToString)
+                    err.Args.Add("Versie = " & artikel.Versie.ToString)
+                    err.Args.Add("Bedrijf = " & artikel.Bedrijf.ToString)
+                    ErrorLogger.WriteError(err)
+
+                    Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
+                    ArtikelFunctiesZichtbaar(False)
+                    Me.divFeedback.Visible = True
+                    Return
+                End If
+
+                Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
+
+                If node Is Nothing Then
+                    Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
+                    ArtikelFunctiesZichtbaar(False)
+                    Me.divFeedback.Visible = True
+
+                    Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
+                    err.Args.Add("ID = " & artikel.ID.ToString)
+                    err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+                    ErrorLogger.WriteError(err)
+
+                    Return
+                Else
+                    node.Titel = artikel.Titel
+                End If
             End If
 
             Util.SetOK("Update geslaagd.", lblresultaat, imgResultaat)

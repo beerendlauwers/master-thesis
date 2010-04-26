@@ -369,6 +369,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub ddlEditCategorie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Util.SetHidden(lblResEdit, imgResEdit)
         Try
             Wijzigen_LaadCategorieDetails()
         Catch ex As Exception
@@ -560,6 +561,10 @@ Partial Class App_Presentation_Beheer
         End If
     End Sub
 
+    Protected Sub ddlCatVerwijder_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlCatVerwijder.SelectedIndexChanged
+        Util.SetHidden(lblResDelete, imgResDelete)
+    End Sub
+
 #End Region
 
     Private Sub LaadAlleCategorien()
@@ -634,29 +639,31 @@ Partial Class App_Presentation_Beheer
                 Dim taaltag As String = txtEditAfkorting.Text
                 Dim taalID As String = ddlBewerkTaal.SelectedValue
                 Dim taaltext As String = txtEditTaal.Text
-
+                Dim oudetaaltag As String = Session("oudataaltag")
                 If (taaldal.checkTaalByID(taaltext, taaltag, taalID).Count = 0) Then
-                    If (adapterTaal.Update(taaltext, taaltag, taalID) = 0) Then
-                        Util.SetError("Wijzigen mislukt.", lblEditTaalRes, imgEditTaalRes)
-                    Else
-
-                        'Geheugen updaten
-                        Dim t As Taal = Taal.GetTaal(taalID)
-
-                        If t Is Nothing Then
-                            Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblEditTaalRes, imgEditTaalRes)
+                    If (adapterTaal.Update(taaltext, taaltag, taalID) > 0) Then
+                        If artikeldal.updateArtikelTagMetTaalTag(taaltag, oudetaaltag) = 0 Then
+                            Util.SetError("Wijzigen mislukt.", lblEditTaalRes, imgEditTaalRes)
                         Else
-                            t.TaalNaam = taaltext
-                            t.TaalTag = taaltag
 
-                            Util.SetOK("Taal gewijzigd.", lblEditTaalRes, imgEditTaalRes)
+                            'Geheugen updaten
+                            Dim t As Taal = Taal.GetTaal(taalID)
+
+                            If t Is Nothing Then
+                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblEditTaalRes, imgEditTaalRes)
+                            Else
+                                t.TaalNaam = taaltext
+                                t.TaalTag = taaltag
+
+                                Util.SetOK("Taal gewijzigd.", lblEditTaalRes, imgEditTaalRes)
+                            End If
+
                         End If
 
+                        LaadTaalDropdowns()
+                    Else
+                        Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
                     End If
-
-                    LaadTaalDropdowns()
-                Else
-                    Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
                 End If
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblEditTaalRes, imgEditTaalRes)
@@ -700,7 +707,9 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub ddlBewerkTaal_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Util.SetHidden(lblEditTaalRes, imgEditTaalRes)
         LeesTaal(Taal.GetTaal(ddlBewerkTaal.SelectedValue))
+        Session("oudataaltag") = txtEditAfkorting.Text
     End Sub
 
     Private Sub LaadTaalDropdowns()
@@ -719,6 +728,10 @@ Partial Class App_Presentation_Beheer
             Me.txtEditTaal.Text = t.TaalNaam
             Me.txtEditAfkorting.Text = t.TaalTag
         End If
+    End Sub
+
+    Protected Sub ddlTaalDelete_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlTaalDelete.SelectedIndexChanged
+        Util.SetHidden(lblDeleteTaalRes, imgDeleteTaalRes)
     End Sub
 
 #End Region
@@ -770,22 +783,24 @@ Partial Class App_Presentation_Beheer
             If Not txtEditVersie.Text = String.Empty And ddlBewerkVersie.SelectedItem IsNot Nothing Then
                 Dim versietext As String = txtEditVersie.Text
                 Dim versieID As Integer = ddlBewerkVersie.SelectedValue
-
+                Dim oudeversie As String = ddlBewerkVersie.SelectedItem.Text
                 If (versiedal.CheckVersieByID(versietext, versieID).Count = 0) Then
-                    If adapterVersie.Update(versietext, versieID) = 0 Then
-                        Util.SetError("Wijzigen mislukt.", lblEditVersieRes, imgEditVersieRes)
-                    Else
-                        'Geheugen updaten
-                        Dim v As Versie = Versie.GetVersie(versieID)
-
-                        If v Is Nothing Then
-                            Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblEditVersieRes, imgEditVersieRes)
+                    If adapterVersie.Update(versietext, versieID) > 0 Then
+                        If artikeldal.updateArtikelTagMetVersie(versietext, oudeversie) = 0 Then
+                            Util.SetError("Wijzigen mislukt.", lblEditVersieRes, imgEditVersieRes)
                         Else
-                            v.VersieNaam = versietext
-                            Util.SetOK("Versie gewijzigd.", lblEditVersieRes, imgEditVersieRes)
-                        End If
+                            'Geheugen updaten
+                            Dim v As Versie = Versie.GetVersie(versieID)
 
-                        LaadVersieDropdowns()
+                            If v Is Nothing Then
+                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblEditVersieRes, imgEditVersieRes)
+                            Else
+                                v.VersieNaam = versietext
+                                Util.SetOK("Versie gewijzigd.", lblEditVersieRes, imgEditVersieRes)
+                            End If
+
+                            LaadVersieDropdowns()
+                        End If
                     End If
                 Else
                     Util.SetError("Een andere versie heeft dit versienummer al.", lblEditVersieRes, imgEditVersieRes)
@@ -958,6 +973,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub ddlBewerkVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Util.SetHidden(lblEditVersieRes, imgEditVersieRes)
         Try
             LeesVersie(Versie.GetVersie(ddlBewerkVersie.SelectedValue))
         Catch ex As Exception
@@ -966,6 +982,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub ddlVersiekopieren_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlVersiekopieren.SelectedIndexChanged
+        Util.SetHidden(lblVersieKopierenFeedback, imgVersieKopierenFeedback)
         Try
             LeesTeKopierenVersie(Versie.GetVersie(ddlVersiekopieren.SelectedValue))
         Catch ex As Exception
@@ -1036,6 +1053,11 @@ Partial Class App_Presentation_Beheer
 
     End Function
 
+    Protected Sub ddlDeletVersie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlDeletVersie.SelectedIndexChanged
+        Util.SetHidden(lblDeleteVersieRes, imgDeleteVersieRes)
+    End Sub
+
+
 #End Region
 
 #Region "Code voor Bedrijfbeheer"
@@ -1089,25 +1111,27 @@ Partial Class App_Presentation_Beheer
                 Dim bedrijfID As Integer = ddlBewerkBedrijf.SelectedValue
                 Dim bedrijfTag As String = txtEditTag.Text
                 Dim bedrijfnaam As String = txtEditBedrijf.Text
-
+                Dim oudbedrijf As String = ddlBewerkBedrijf.SelectedItem.Text
                 If (bedrijfdal.getBedrijfByNaamTagID(bedrijfnaam, bedrijfTag, bedrijfID).Count = 0) Then
-                    If (adapterBedrijf.Update(bedrijfnaam, bedrijfTag, bedrijfID) = 0) Then
-                        Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
-                    Else
-
-                        'Geheugen updaten
-                        Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
-
-                        If b Is Nothing Then
-                            Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblEditbedrijfRes, imgEditBedrijfRes)
+                    If (adapterBedrijf.Update(bedrijfnaam, bedrijfTag, bedrijfID) > 0) Then
+                        If artikeldal.updateArtikelTagMetBedrijf(bedrijfnaam, oudbedrijf) = 0 Then
+                            Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
                         Else
-                            b.Naam = bedrijfnaam
-                            b.Tag = bedrijfTag
-                            Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
+
+                            'Geheugen updaten
+                            Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
+
+                            If b Is Nothing Then
+                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblEditbedrijfRes, imgEditBedrijfRes)
+                            Else
+                                b.Naam = bedrijfnaam
+                                b.Tag = bedrijfTag
+                                Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
+                            End If
                         End If
+                    Else
+                        Util.SetError("Een ander bedrijf heeft reeds deze bedrijfsnaam of tag.", lblEditbedrijfRes, imgEditBedrijfRes)
                     End If
-                Else
-                    Util.SetError("Een ander bedrijf heeft reeds deze bedrijfsnaam of tag.", lblEditbedrijfRes, imgEditBedrijfRes)
                 End If
 
                 LaadBedrijfDropdowns()
@@ -1152,11 +1176,16 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub ddlBewerkBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+        Util.SetHidden(lblEditbedrijfRes, imgEditBedrijfRes)
         Try
             LeesBedrijf(Bedrijf.GetBedrijf(Integer.Parse(ddlBewerkBedrijf.SelectedValue)))
         Catch ex As Exception
             Util.OnverwachteFout(ddlBewerkBedrijf, ex.Message)
         End Try
+    End Sub
+
+    Protected Sub ddlDeleteBedrijf_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlDeleteBedrijf.SelectedIndexChanged
+        Util.SetHidden(lblDeleteBedrijfRes, imgDeleteBedrijfRes)
     End Sub
 
     Private Sub LaadBedrijfDropdowns()
@@ -1291,6 +1320,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub ddlModuleWijzigenKeuze_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModuleWijzigenKeuze.SelectedIndexChanged
+        Util.SetHidden(lblModuleWijzigenRes, imgModuleWijzigenRes)
         If Util.Valideer(ddlModuleWijzigenKeuze) Then
             Try
                 ModuleInladen()
@@ -1305,18 +1335,21 @@ Partial Class App_Presentation_Beheer
     Protected Sub btnModuleWijzigen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnModuleWijzigen.Click
         If Page.IsValid And Util.Valideer(txtModuleWijzigenNaam, ddlModuleWijzigenKeuze) Then
             Try
+                Dim oudemodule As String = ddlModuleWijzigenKeuze.SelectedItem.Text
                 Dim naam As String = txtModuleWijzigenNaam.Text.Trim
                 Dim moduleID As Integer = ddlModuleWijzigenKeuze.SelectedValue
 
                 If moduledal.checkModuleByNaamEnID(naam, moduleID).Count = 0 Then
                     If moduledal.StdAdapter.Update(naam, moduleID) Then
-                        Util.SetOK("Module gewijzigd.", lblModuleWijzigenRes, imgModuleWijzigenRes)
-                    Else
-                        Util.SetError("Wijzigen mislukt.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                        If artikeldal.updateArtikelTagMetModule(naam, oudemodule) > 0 Then
+                            Util.SetOK("Module gewijzigd.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                        Else
+                            Util.SetError("Wijzigen mislukt.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                        End If
                     End If
-                Else
-                    Util.SetError("Een andere module heeft reeds deze naam.", lblModuleWijzigenRes, imgModuleWijzigenRes)
-                End If
+                    Else
+                            Util.SetError("Een andere module heeft reeds deze naam.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                        End If
 
                 LaadModuleDropdowns()
                 ModuleInladen()
@@ -1332,13 +1365,15 @@ Partial Class App_Presentation_Beheer
         If Util.Valideer(ddlModuleVerwijderenKeuze) Then
             Try
                 Dim moduleID As Integer = ddlModuleVerwijderenKeuze.SelectedValue
-
-                If moduledal.StdAdapter.Delete(moduleID) Then
-                    Util.SetOK("Module verwijderd.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
+                If moduledal.checkArtikelsByModule(moduleID).Count = 0 Then
+                    If moduledal.StdAdapter.Delete(moduleID) Then
+                        Util.SetOK("Module verwijderd.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
+                    Else
+                        Util.SetError("Verwijderen mislukt.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
+                    End If
                 Else
-                    Util.SetError("Verwijderen mislukt.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
+                    Util.SetError("Er zijn nog Artikels die deze Module gebruiken.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
                 End If
-
                 LaadModuleDropdowns()
             Catch ex As Exception
                 Util.OnverwachteFout(btnModuleVerwijderen, ex.Message)
@@ -1365,6 +1400,9 @@ Partial Class App_Presentation_Beheer
             ddlModuleWijzigenKeuze.Items.Add(listitem)
             ddlModuleVerwijderenKeuze.Items.Add(listitem)
         Next rij
+    End Sub
+    Protected Sub ddlModuleVerwijderenKeuze_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModuleVerwijderenKeuze.SelectedIndexChanged
+        Util.SetHidden(lblModuleVerwijderenRes, imgModuleVerwijderenRes)
     End Sub
 
 #End Region
@@ -1396,7 +1434,11 @@ Partial Class App_Presentation_Beheer
 
                 LaadTreeGegevens()
                 LaadTooltipInfo()
-                LaadLokalisatieInfo()
+                'LaadLokalisatieInfo()
+            End If
+
+            If Page.Request.QueryString("index") IsNot Nothing Then
+                TabBeheer.ActiveTabIndex = Integer.Parse(Page.Request.QueryString("index"))
             End If
 
         Catch ex As Exception
@@ -1614,4 +1656,6 @@ Partial Class App_Presentation_Beheer
     End Sub
 
 #End Region
+
+   
 End Class

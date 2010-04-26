@@ -3,7 +3,6 @@ Imports System.Data
 
 Partial Class App_Presentation_Module
     Inherits System.Web.UI.Page
-
     Private moduledal As ModuleDAL = DatabaseLink.GetInstance.GetModuleFuncties
     Private artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
 
@@ -21,17 +20,15 @@ Partial Class App_Presentation_Module
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        If Not IsPostBack Then
-            UpdateModules()
-        End If
+        GenereerGelokaliseerdeTekst()
 
-        If IsPostBack Then
+        UpdateModules()
+
             UpdateModuleOverzicht()
             Util.LeesPaginaNummer(Me, grdvmodule)
-        End If
 
         grdvmodule.DataBind()
-        GenereerGelokaliseerdeTekst()
+
         JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
     End Sub
 
@@ -100,8 +97,8 @@ Partial Class App_Presentation_Module
                     dt = moduledal.GetModulesMetArtikels(taalID, versieID, appligen.ID)
 
                 Else
-                    Dim appligendt As tblArtikelDataTable = moduledal.GetModulesMetArtikels(taalID, versieID, appligen.ID)
-                    Dim anderbedrijfdt As tblArtikelDataTable = moduledal.GetModulesMetArtikels(taalID, versieID, anderBedrijf.ID)
+                    Dim appligendt As DataTable = moduledal.GetModulesMetArtikels(taalID, versieID, appligen.ID)
+                    Dim anderbedrijfdt As DataTable = moduledal.GetModulesMetArtikels(taalID, versieID, anderBedrijf.ID)
 
                     'Alles overkopiëren naar de hoofddatatable
                     dt = appligendt.Copy()

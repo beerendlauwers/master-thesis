@@ -163,12 +163,14 @@ Public Class TaalDAL
         Return dt
     End Function
 
-    Public Function updateTagTalen(ByVal oudetag As String, ByVal nieuweTag As String) As Integer
+    Public Function updateTagTalen(ByVal oudetag As String, ByVal nieuweTag As String, ByVal bedrijf As Integer, ByVal versie As Integer) As Integer
 
         Dim c As New SqlCommand("Manual_UpdateTagTalen")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@OudeTag", SqlDbType.VarChar).Value = oudetag
         c.Parameters.Add("@NieuweTag", SqlDbType.VarChar).Value = nieuweTag
+        c.Parameters.Add("@Versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@Bedrijf", SqlDbType.Int).Value = bedrijf
         c.Connection = New SqlConnection(conn)
         Dim i As Integer
         Try
@@ -179,6 +181,8 @@ Public Class TaalDAL
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("Oude_tag = " & oudetag)
             e.Args.Add("Nieuwe_tag = " & nieuweTag)
+            e.Args.Add("versie = " & versie.ToString)
+            e.Args.Add("bedrijf = " & bedrijf.ToString)
             Return -1
         Finally
             c.Connection.Close()

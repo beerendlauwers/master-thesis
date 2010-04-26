@@ -5,7 +5,7 @@ Partial Class _Default
     Inherits System.Web.UI.Page
 
     Dim dummyPass As String = String.Empty
-    Dim dummyTag As String = "Appligen"
+    Dim dummyTag As String = "AAAFinancials"
     Dim dummyTaal As String = "NL"
     Dim dummyVersie As String = "010302"
     Dim dummyModule As String = "BAS"
