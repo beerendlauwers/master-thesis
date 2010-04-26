@@ -1434,7 +1434,7 @@ Partial Class App_Presentation_Beheer
 
                 LaadTreeGegevens()
                 LaadTooltipInfo()
-                'LaadLokalisatieInfo()
+                LaadLokalisatieInfo()
             End If
 
             If Page.Request.QueryString("index") IsNot Nothing Then
@@ -1510,6 +1510,12 @@ Partial Class App_Presentation_Beheer
         lijst.Add(New Tooltip("lbltipCatDelVersiekeuze"))
         lijst.Add(New Tooltip("tipCatDelBedrijfkeuze"))
         lijst.Add(New Tooltip("tipCatVerwijder"))
+
+        'Modulebeheer
+        lijst.Add(New Tooltip("tipModuleToevoegenNaam"))
+        lijst.Add(New Tooltip("tipModuleWijzigenKeuze"))
+        lijst.Add(New Tooltip("tipModuleWijzigenNaam"))
+        lijst.Add(New Tooltip("tipModuleVerwijderenKeuze"))
 
         'Videobeheer
         lijst.Add(New Tooltip("tipVideoBeheren"))
@@ -1651,7 +1657,9 @@ Partial Class App_Presentation_Beheer
         ddlTaalWeergeven.Items.Add(New ListItem("-- Talen --", -1000))
         For Each lokalisatie As Lokalisatie In lokalisatie.Talen
             Dim t As Taal = Taal.GetTaal(lokalisatie.TaalID)
-            ddlTaalWeergeven.Items.Add(New ListItem(t.TaalNaam, lokalisatie.TaalID))
+            If t IsNot Nothing Then
+                ddlTaalWeergeven.Items.Add(New ListItem(t.TaalNaam, lokalisatie.TaalID))
+            End If
         Next lokalisatie
     End Sub
 

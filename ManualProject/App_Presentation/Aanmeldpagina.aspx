@@ -20,7 +20,7 @@ Vul de juiste gebruikersnaam en wachtwoord in om Beheerder te worden.
 <tr>
     <td><asp:Label ID="lblGebruikersnaam" runat="server" Text="Gebruikersnaam: "></asp:Label></td>
 
-    <td><asp:TextBox ID="txtGebruikersNaam" runat="server"></asp:TextBox>
+    <td><asp:TextBox ID="txtGebruikersNaam" runat="server" Width="150"></asp:TextBox>
         <asp:RequiredFieldValidator ControlToValidate="txtGebruikersNaam" ID="vleGebruikersNaam" runat="server" DIsplay="None" ValidationGroup="valInloggen" ErrorMessage="Gelieve een gebruikersnaam in te geven."></asp:RequiredFieldValidator>
         <cc1:ValidatorCalloutExtender ID="extGebruikersNaam" TargetControlID="vleGebruikersNaam" runat="server">
         </cc1:ValidatorCalloutExtender>
@@ -29,7 +29,7 @@ Vul de juiste gebruikersnaam en wachtwoord in om Beheerder te worden.
    <tr>
     <td><asp:Label ID="lblPaswd" runat="server" Text="Paswoord: "></asp:Label></td>
     
-    <td><asp:TextBox ID="txtPaswd" runat="server" TextMode="Password"></asp:TextBox>
+    <td><asp:TextBox ID="txtPaswd" runat="server" TextMode="Password" Width="150"></asp:TextBox>
             <asp:RequiredFieldValidator ID="vlePaswd" ControlToValidate="txtPaswd" runat="server" DIsplay="None" ValidationGroup="valInloggen" ErrorMessage="Gelieve een paswoord in te geven."></asp:RequiredFieldValidator>
         <cc1:ValidatorCalloutExtender ID="extPaswd" TargetControlID="vlePaswd" runat="server">
         </cc1:ValidatorCalloutExtender></td></tr>

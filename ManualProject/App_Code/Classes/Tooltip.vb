@@ -68,7 +68,19 @@ Public Class Tooltip
     ''' Voeg een enkele tip toe aan het AJAX-Request.
     ''' </summary>
     Public Shared Sub VoegTipToeAanEndRequest(ByRef pagina As System.Web.UI.Page, ByRef tip As Tooltip)
-        ScriptManager.RegisterClientScriptBlock(pagina, pagina.GetType, String.Concat("EndRequest", tip.Naam), tip.ToString, True)
+        Try
+            Dim control As Control = pagina.FindControl(tip.Naam)
+            If control IsNot Nothing Then
+                If control.Visible = True Then
+                    ScriptManager.RegisterClientScriptBlock(pagina, pagina.GetType, String.Concat("EndRequest", tip.Naam), tip.ToString, True)
+                End If
+            Else
+                Dim e As New ErrorLogger("Kon tooltip """ & tip.Naam & """ niet op pagina """ & pagina.Request.Url.AbsolutePath & """ vinden.")
+                ErrorLogger.WriteError(e)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(pagina, ex.Message)
+        End Try
     End Sub
 
     ''' <summary>

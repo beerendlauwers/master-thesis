@@ -629,7 +629,7 @@
                                                         <asp:Label ID="lblModuleToevoegenNaam" runat="server" Text="Naam: "></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:TextBox ID="txtModuleToevoegenNaam" runat="server" Width="100%"></asp:TextBox><asp:RequiredFieldValidator
+                                                        <asp:TextBox ID="txtModuleToevoegenNaam" runat="server" Width="200"></asp:TextBox><asp:RequiredFieldValidator
                                                             ID="vleModuleToevoegenNaam" runat="server" ErrorMessage="Gelieve een naam in te geven." ControlToValidate="txtModuleToevoegenNaam"
                                                             Display="None" ValidationGroup="moduleToevoegen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extModuleToevoegenNaam" runat="server" TargetControlID="vleModuleToevoegenNaam">
@@ -646,7 +646,7 @@
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnModuleToevoegen" runat="server" Text="Toevoegen" ValidationGroup="moduleToevoegen"
-                                                            Width="100%" />
+                                                            Width="200" />
                                                     </td>
                                                     <td>
                                                         <asp:Image runat="server" ID="imgModuleToevoegenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label

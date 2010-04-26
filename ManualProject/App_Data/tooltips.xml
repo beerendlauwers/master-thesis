@@ -86,6 +86,12 @@
 	<tip id="tipCatDelBedrijfkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />
 	<tip id="tipCatVerwijder" text="De categorie die u wilt verwijderen." />
 	
+	<!-- Modulebeheer -->
+	<tip id="tipModuleToevoegenNaam" text="De naam van de nieuwe module." />
+	<tip id="tipModuleWijzigenKeuze" text="De module die u wilt wijzigen." />
+	<tip id="tipModuleWijzigenNaam" text="De naam van de module." />
+	<tip id="tipModuleVerwijderenKeuze" text="De module die u wilt verwijderen." />
+	
 	<!-- Videobeheer -->
 	<tip id="tipVideoBeheren" text="Klik op de knop 'Video's Beheren' om het videobeheermenu te openen." />
 	<tip id="tipVideoPreviewKiezen" text="Klik op de knop 'Video Selecteren' om het videobeheermenu te openen, en dubbelklik dan op de video die u wenst te testen. Klik hierna op de 'Preview'-link." />
