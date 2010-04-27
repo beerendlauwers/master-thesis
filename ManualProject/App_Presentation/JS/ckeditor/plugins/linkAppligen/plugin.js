@@ -13,7 +13,7 @@ CKEDITOR.plugins.add('linkAppligen',
 		editor.addCommand( pluginName, new CKEDITOR.dialogCommand( pluginName ) );
         editor.ui.addButton('linkAppligen',
             {
-                label: 'Image Toevoegen',
+                label: 'Link Toevoegen',
                 command: pluginName,
 				icon: this.path + 'images/view.png'
             });
