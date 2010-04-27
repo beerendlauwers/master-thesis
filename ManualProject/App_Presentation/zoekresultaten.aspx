@@ -54,7 +54,7 @@
                 Type="Int32" />
             <asp:SessionParameter DefaultValue="0" Name="TaalID" SessionField="taal" 
                 Type="Int32" />
-            <asp:SessionParameter DefaultValue="" Name="tekst" SessionField="tag" 
+            <asp:QueryStringParameter DefaultValue="" Name="tekst" QueryStringField="term" 
                 Type="String" />
         </SelectParameters>
     </asp:SqlDataSource>

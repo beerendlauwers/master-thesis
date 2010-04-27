@@ -154,8 +154,10 @@ Public Class TaalDAL
             r = c.ExecuteReader
             If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
+
             Dim e As New ErrorLogger(ex.Message)
             e.Args.Add("query = " & text)
+            Throw ex
         Finally
             c.Connection.Close()
         End Try

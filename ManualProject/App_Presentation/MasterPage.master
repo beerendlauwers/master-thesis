@@ -104,17 +104,14 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
                 
             </li>
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b><asp:Label ID="lblZoek" runat="server" Text=""></asp:Label>
-            </b><asp:TextBox ID="txtZoek" runat="server" onmouseover="SetButtonStatus(this)" onmouseout="SetButtonStatus(this)" onmouseup="SetButtonStatus(this)" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
+            </b><asp:TextBox ID="txtZoek" runat="server" onmouseover="SetButtonStatus(this)" onmouseout="SetButtonStatus(this)" onmouseup="SetButtonStatus(this)" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;" onkeypress="onEnter(event,this.form);"></asp:TextBox><span class="imgbutton">
                 <asp:ImageButton ID="lnkZoeken" runat="server" BackColor="Transparent" 
                     Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
-                    Width="16px" class="zoekLinkUit" PostBackUrl="~/App_Presentation/zoekresultaten.aspx" /></span></span></div>
+                    Width="16px" class="zoekLinkUit"  /></span></span></div>
                    
               </li>
                     
-            <li style="float:right;" runat="server" id="liArtikelBewerken" visible="false">
-                <asp:HyperLink ID="hrefArtikelBewerken" runat="server"><span class="l"></span><span class="r"></span><span class="t">Dit artikel bewerken</span></asp:HyperLink></li>
-             
-
+           
             <li runat="server" id="liAanmeld">
             <a runat="server" id="BeheerLink" href="Aanmeldpagina.aspx"><span class="l"></span><span class="r"></span>
                 <span class="t" runat="server" id="spanBeheerAanmeld">Beheer </span></a>
@@ -129,6 +126,9 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
             
             </ul>
             </li>
+             <li runat="server" id="liArtikelBewerken" style="float:right;" visible="false">
+                <a runat="server" id="hrefArtikelBewerken"><span class="l"></span><span class="r"></span><span class="t">Dit artikel bewerken</span></a></li>
+            
         </ul>
     </div>
     <div id="blok">
@@ -176,6 +176,25 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
             link.className = "zoekLinkUit";
             link.disabled = true;
         }
+    }
+    function onEnter(evt,frm)
+    {
+        var link = document.getElementById('<%=lnkZoeken.ClientID %>');
+        var keyCode = null;
+        if( evt.which ) 
+        {
+           keyCode = evt.which;
+        } 
+        else if( evt.keyCode ) 
+        {
+            keyCode = evt.keyCode;
+        }
+        if( 13 == keyCode ) 
+        {
+            link.click();
+            return false;
+        }
+        return true;
     }
     
     function genericPopup(href, width, height, scrollbars)

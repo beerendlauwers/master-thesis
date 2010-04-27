@@ -553,12 +553,12 @@ Public Class ArtikelDAL
     Public Function checkArtikelByTag(ByVal tag As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer) As tblArtikelDataTable
 
         Dim dt As New tblArtikelDataTable
-        Dim c As New SqlCommand("Check_Artikel")
+        Dim c As New SqlCommand("Check_ArtikelByTag")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@tag", SqlDbType.VarChar).Value = tag
         c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijf
         c.Parameters.Add("@versie", SqlDbType.Int).Value = versie
-        c.Parameters.Add("@taal", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taal
         c.Connection = New SqlConnection(conn)
 
         Try

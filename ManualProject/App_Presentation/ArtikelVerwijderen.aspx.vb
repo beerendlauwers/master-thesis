@@ -87,7 +87,7 @@ Partial Class App_Presentation_verwijderenTekst
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
         HaalArtikelGegevensOp()
-        'JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
+        JavaScript.VoegJavascriptToeAanEndRequest(Me, "Effect.toggle('gridview', 'slide');")
     End Sub
 
     Private Sub HaalArtikelGegevensOp()
@@ -110,22 +110,40 @@ Partial Class App_Presentation_verwijderenTekst
             Dim dttitel As Data.DataTable = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTitel(zoekTitel, isFInaal, versies, bedrijven, talen)
             Dim dttekst As Data.DataTable = DatabaseLink.GetInstance.GetArtikelFuncties.GetArtikelGegevensByTekst(zoekTekst, isFInaal, versies, bedrijven, talen)
 
+
+
             If dttitel.Rows.Count > 0 Then
                 dt = dttitel.Clone
             ElseIf dttekst.Rows.Count > 0 Then
                 dt = dttekst.Clone
             End If
-
+            Dim bool As Boolean = True
             For i As Integer = 0 To dttitel.Rows.Count - 1
                 Dim dr As Data.DataRow = dt.NewRow
                 dr = dttitel.Rows(i)
-                dt.ImportRow(dr)
+                For x As Integer = 0 To dt.Rows.Count - 1
+                    If dt.Rows(x)("ArtikelID") = dr("ArtikelID") Then
+                        bool = False
+                    End If
+                Next
+                If bool = True Then
+                    dt.ImportRow(dr)
+                End If
+                bool = True
             Next
             If dttekst.Rows.Count > 0 Then
                 For i As Integer = 0 To dttekst.Rows.Count - 1
                     Dim dr As Data.DataRow = dt.NewRow
                     dr = dttekst.Rows(i)
-                    dt.ImportRow(dr)
+                    For q As Integer = 0 To dt.Rows.Count - 1
+                        If dt.Rows(q)("ArtikelID") = dr("ArtikelID") Then
+                            bool = False
+                        End If
+                    Next
+                    If bool = True Then
+                        dt.ImportRow(dr)
+                    End If
+                    bool = True
                 Next
             End If
         ElseIf zoekTag.Length > 0 Then

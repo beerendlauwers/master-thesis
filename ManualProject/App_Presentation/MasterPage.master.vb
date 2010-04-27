@@ -216,5 +216,9 @@ Partial Class App_Presentation_MasterPage
     End Function
 
 #End Region
+
+    Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles lnkZoeken.Click
+        Response.Redirect("~/App_Presentation/Zoekresultaten.aspx?term=" + txtZoek.Text)
+    End Sub
 End Class
 

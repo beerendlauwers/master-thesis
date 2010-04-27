@@ -147,8 +147,8 @@ Partial Class App_Presentation_page
 
         'Link 'Dit artikel bewerken' zichtbaar maken en link invullen
         Master.FindControl("liArtikelBewerken").Visible = True
-        Dim linkArtikelBewerken As HyperLink = Master.FindControl("hrefArtikelBewerken")
-        linkArtikelBewerken.NavigateUrl = String.Concat("ArtikelBewerken.aspx?id=", a.ID)
+        Dim linkArtikelBewerken As HtmlAnchor = Master.FindControl("hrefArtikelBewerken")
+        linkArtikelBewerken.Attributes.Add("href", String.Concat("ArtikelBewerken.aspx?id=", a.ID))
 
         'De boomstructuur uitklappen
         Dim tree As Tree = tree.GetTree(a.Taal, a.Versie, a.Bedrijf)

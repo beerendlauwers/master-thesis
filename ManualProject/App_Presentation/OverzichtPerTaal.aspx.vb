@@ -5,24 +5,24 @@ Partial Class App_Presentation_OverzichtPerTaal
 
     Protected Sub btnVergelijk_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVergelijk.Click
         Session("sortexpression") = Nothing
-        Dim sqltext As String
-        If ckbOntbreek.Checked = True Then
-            sqltext = getsqlTextfiltered()
-            Dim dt As New Data.DataTable
-            dt = taaldal.getVglTalen(sqltext)
-            GridView3.PageIndex = 0
-            GridView3.DataSource = dt
-            GridView3.DataBind()
-            GridView3.Visible = True
-        Else
-            Dim dt As New Data.DataTable
-            sqltext = getsqlunfiltered()
-            dt = taaldal.getVglTalen(sqltext)
-            GridView3.PageIndex = 0
-            GridView3.DataSource = dt
-            GridView3.DataBind()
-            GridView3.Visible = True
-        End If
+        'Dim sqltext As String
+        'If ckbOntbreek.Checked = True Then
+        '    sqltext = getsqlTextfiltered()
+        '    Dim dt As New Data.DataTable
+        '    dt = taaldal.getVglTalen(sqltext)
+        '    GridView3.PageIndex = 0
+        '    GridView3.DataSource = dt
+        '    GridView3.DataBind()
+        '    GridView3.Visible = True
+        'Else
+        '    Dim dt As New Data.DataTable
+        '    sqltext = getsqlunfiltered()
+        '    dt = taaldal.getVglTalen(sqltext)
+        '    GridView3.PageIndex = 0
+        '    GridView3.DataSource = dt
+        '    GridView3.DataBind()
+        '    GridView3.Visible = True
+        'End If
 
     End Sub
 
@@ -47,6 +47,7 @@ Partial Class App_Presentation_OverzichtPerTaal
         voorlabel = voorlabel.Remove(voorlabel.Length - 1)
         lblHiddenTalen.Text = voorlabel
         Return sqltext
+
     End Function
     Public Function getsqlunfiltered() As String
         Dim voorlabel As String = "x,x,"
@@ -66,6 +67,7 @@ Partial Class App_Presentation_OverzichtPerTaal
         voorlabel = voorlabel.Remove(voorlabel.Length - 1)
         lblHiddenTalen.Text = voorlabel
         Return sqltext
+
     End Function
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -113,20 +115,7 @@ Partial Class App_Presentation_OverzichtPerTaal
         End If
 
         GridView3.DataBind()
-        LaadTooltips()
         JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
-    End Sub
-
-    Private Sub LaadTooltips()
-
-        'Nieuwe lijst van tooltips definiëren
-        Dim lijst As New List(Of Tooltip)
-
-        'Alle tooltips voor onze pagina toevoegen
-        lijst.Add(New Tooltip("tipTaalKiezen"))
-        lijst.Add(New Tooltip("tipOverzicht"))
-        Util.TooltipsToevoegen(Me, lijst)
-
     End Sub
 
     Protected Sub GridView3_DataBinding(ByVal sender As Object, ByVal e As System.EventArgs) Handles GridView3.DataBinding

@@ -5,48 +5,34 @@ Partial Class App_Presentation_zoekresultaten
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         If Not IsPostBack Then
-            Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
-
+            ' Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
+            Dim zoekterm As String = Page.Request.QueryString("term")
             If zoekterm IsNot Nothing Then
                 zoekterm = zoekterm.Trim
 
-                If Not Session("tag") = zoekterm Then
-                    hiddenZoekterm.Value = zoekterm
-                    lblZoekterm.Text = zoekterm
-                End If
-
-                If Not zoekterm = "%%" Then Session("tag") = zoekterm
             End If
         End If
 
-        If Page.Request.Form("ctl00$lnkZoeken.x") IsNot Nothing Then
-            Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
+        If Page.Request.QueryString("term") IsNot Nothing Then
+            Dim zoekterm As String = Page.Request.QueryString("term")
             If zoekterm IsNot Nothing Then
                 zoekterm = zoekterm.Trim
                 If Not zoekterm = "%%" Then
-                    If Not Session("tag") = zoekterm Then
-                        hiddenZoekterm.Value = zoekterm
-                        lblZoekterm.Text = zoekterm
-                    End If
-                    Session("tag") = zoekterm
+                    
                     JavaScript.ShadowBoxLaderSluiten(Me)
                 End If
             End If
         End If
 
         If Util.LeesPaginaNummer(Me, grdResultaten) Then
-            Session("tag") = hiddenZoekterm.Value
-            Session("tag") = lblZoekterm.Text
             grdResultaten.DataBind()
             JavaScript.ShadowBoxLaderSluiten(Me)
         End If
 
         If grdResultaten.Rows.Count > 0 Then lblSort.Visible = True
 
-        If lblZoekterm.Text IsNot String.Empty Then
-            Page.Title = String.Concat("Zoekresultaten voor de term '", lblZoekterm.Text, "'")
-        ElseIf Session("tag") IsNot Nothing Then
-            Page.Title = String.Concat("Zoekresultaten voor de term '", Session("tag"), "'")
+        If Page.Request.QueryString("term") IsNot Nothing Then
+            Page.Title = String.Concat("Zoekresultaten voor de term '", Page.Request.QueryString("term"), "'")
         End If
 
         JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
@@ -83,7 +69,7 @@ Partial Class App_Presentation_zoekresultaten
         If e.Row.Cells.Count > 2 Then
             If e.Row.Cells(1).Text = "Tag" Or e.Row.Cells(1).Text = "" Then
             Else
-                Dim zoekterm As String = Session("tag")
+                Dim zoekterm As String = Page.Request.QueryString("term")
                 Dim artikelTag As String = e.Row.Cells(1).Text
 
                 e.Row.Cells(2).Text = artikeldal.getArtikelTekst(zoekterm, artikelTag)
