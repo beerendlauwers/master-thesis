@@ -1,0 +1,1 @@
+'img.cke_video{background-image: url('+ this.path + 'images/view.png' +' ); '+'background-position: center center;'+'background-repeat: no-repeat;'+'border: 1px solid #a9a9a9;'+'width: 18px;'+'height: 18px;'+'}\n'

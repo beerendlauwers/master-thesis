@@ -1,19 +1,20 @@
-CKEDITOR.plugins.add('video',
+CKEDITOR.plugins.add('imageAppligen',
 {
     init: function(editor)
     {
-        var pluginName = 'video';
+        var pluginName = 'imageAppligen';
 		var a= {
 			exec:function(editor)
 			{
 				var theSelectedText = editor.getSelection().getNative();
 			}
 		}
-        CKEDITOR.dialog.add( pluginName, this.path + 'dialogs/video.js' );
+        CKEDITOR.dialog.add( pluginName, this.path + 'dialogs/imageAppligen.js' );
 		editor.addCommand( pluginName, new CKEDITOR.dialogCommand( pluginName ) );
-        editor.ui.addButton('Video',
+
+        editor.ui.addButton('imageAppligen',
             {
-                label: 'Video Toevoegen',
+                label: 'Image Toevoegen',
                 command: pluginName,
 				icon: this.path + 'images/view.png'
             });
