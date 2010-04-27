@@ -23,7 +23,7 @@ CKEDITOR.dialog.add( 'video', function( editor )
 	return {
 		title : 'Video Toevoegen',
 		minWidth : 300,
-		minHeight : 60,
+		minHeight : 400,
 		onOk : function()
 		{
 

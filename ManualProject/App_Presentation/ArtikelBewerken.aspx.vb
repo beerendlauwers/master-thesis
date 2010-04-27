@@ -127,11 +127,11 @@ Partial Class App_Presentation_ArtikelBewerken
             Return
         End If
 
-        Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(Session("artikelID"))
+        Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
 
         Dim artikel As New Artikel
 
-        artikel.ID = Session("artikelID")
+        artikel.ID = ViewState("artikelID")
         artikel.Bedrijf = ddlBedrijf.SelectedValue
         artikel.Categorie = ddlCategorie.SelectedValue
         artikel.Taal = ddlTaal.SelectedValue
@@ -324,7 +324,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
         ArtikelFunctiesZichtbaar(True)
 
-        Session("artikelID") = artikel.ID
+        ViewState("artikelID") = artikel.ID
         txtTitel.Text = artikel.Titel
 
         lblTagvoorbeeld.InnerHtml = artikel.Tag

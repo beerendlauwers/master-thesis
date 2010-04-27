@@ -131,6 +131,12 @@ Partial Class App_Presentation_MasterPage
         'De Appligen-structuur krijgen we altijd te zien
         Dim appligen As Bedrijf = Bedrijf.GetBedrijf("AAAFinancials")
 
+        If appligen Is Nothing Then
+            Dim e As New ErrorLogger("Het bedrijf dat altijd zichtbaar dient te zijn, werd niet gevonden in de database. Wijzig de naam van het bedrijf in de Masterpage of in de database zodat deze overeenkomen.")
+            ErrorLogger.WriteError(e)
+            Return
+        End If
+
         Dim anderBedrijfID As Integer
         'Kijken of we een geldige bedrijftag hadden binnengekregen
         If Not Session("bedrijf") = -1000 Then
@@ -205,6 +211,7 @@ Partial Class App_Presentation_MasterPage
     End Function
 
     Protected Function GenereerLaadTekst() As String
+        CheckVoorTaalWijziging()
         Return Lokalisatie.GetString("LAADSCHERMTEKST")
     End Function
 

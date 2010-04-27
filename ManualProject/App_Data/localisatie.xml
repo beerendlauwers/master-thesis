@@ -28,6 +28,8 @@
   <tekst id="MODULECHECKBOX" text="Enkel modules tonen waar artikels in staan."/>
   <tekst id="PAGINANIETGEVONDEN" text="De opgevraagde pagina werd niet gevonden." />
   <tekst id="PAGINANIETGEVONDENTITEL" text="Pagina Niet Gevonden (404)" />
+  <tekst id="FOUTTIJDENSUITVOERENPAGINA" text="De pagina kon niet geladen worden wegens een interne fout." />
+  <tekst id="FOUTTIJDENSUITVOERENPAGINATITEL" text="Interne fout." />
 </taal>
 <taal id="5">
 	<tekst id="WELKOMTEKST" text="Bienvenue sur le Reference Manual de Appligen. Utilisez le structure &#224; gauche ou recherchez un article." />
@@ -56,6 +58,8 @@
   <tekst id="MODULECHECKBOX" text="Seulement montrer les modules auxquelles appartiennent des articles."/>
   <tekst id="PAGINANIETGEVONDEN" text="De opgevraagde pagina werd niet gevonden." />
   <tekst id="PAGINANIETGEVONDENTITEL" text="Pagina Niet Gevonden (404)" />
+    <tekst id="FOUTTIJDENSUITVOERENPAGINA" text="De pagina kon niet geladen worden wegens een interne fout." />
+  <tekst id="FOUTTIJDENSUITVOERENPAGINATITEL" text="Interne fout." />
 </taal>
 <taal id="10">
 	<tekst id="WELKOMTEKST" text="Welcome to the Appligen Reference Manual. Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
@@ -84,5 +88,7 @@
   <tekst id="MODULECHECKBOX" text="Only show modules that have articles."/>
   <tekst id="PAGINANIETGEVONDEN" text="De opgevraagde pagina werd niet gevonden." />
   <tekst id="PAGINANIETGEVONDENTITEL" text="Pagina Niet Gevonden (404)" />
+    <tekst id="FOUTTIJDENSUITVOERENPAGINA" text="De pagina kon niet geladen worden wegens een interne fout." />
+  <tekst id="FOUTTIJDENSUITVOERENPAGINATITEL" text="Interne fout." />
 </taal>
 </talen>
