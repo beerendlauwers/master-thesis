@@ -139,18 +139,18 @@
 		type.AllowedExtensions = new string[] { "bmp", "gif", "jpeg", "jpg", "png" };
 		type.DeniedExtensions = new string[] { };
 
-		type = ResourceType.Add( "Flash" );
-		type.Url = BaseUrl + "flash/";
-		type.Dir = BaseDir == "" ? "" : BaseDir + "flash/";
-		type.MaxSize = 0;
-		type.AllowedExtensions = new string[] { "swf", "flv" };
-		type.DeniedExtensions = new string[] { };
+		//type = ResourceType.Add( "Flash" );
+		//type.Url = BaseUrl + "flash/";
+		//type.Dir = BaseDir == "" ? "" : BaseDir + "flash/";
+		//type.MaxSize = 0;
+		//type.AllowedExtensions = new string[] { "swf", "flv" };
+		//type.DeniedExtensions = new string[] { };
 		
 		type = ResourceType.Add( "Video" );
 		type.Url = BaseUrl + "video/";
 		type.Dir = BaseDir == "" ? "" : BaseDir + "video/";
 		type.MaxSize = 0;
-		type.AllowedExtensions = new string[] { "wmv", "mov" };
+		type.AllowedExtensions = new string[] { "wmv", "mov", "flv" };
 		type.DeniedExtensions = new string[] { };
 	}
 
