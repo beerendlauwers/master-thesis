@@ -993,13 +993,13 @@ Partial Class App_Presentation_Beheer
                 Dim a As New Artikel(artikeldal.GetArtikelByID(kind.ID))
 
                 'Nieuwe tag opbouwen
-                Dim v As Versie = Versie.GetVersie(a.Versie)
+                Dim v As Versie = Versie.GetVersie(versieID)
                 If v Is Nothing Then Return False
 
-                Dim ta As Taal = Taal.GetTaal(a.Taal)
+                Dim ta As Taal = Taal.GetTaal(tree.Taal.ID)
                 If ta Is Nothing Then Return False
 
-                Dim b As Bedrijf = Bedrijf.GetBedrijf(a.Bedrijf)
+                Dim b As Bedrijf = Bedrijf.GetBedrijf(tree.Bedrijf.ID)
                 If b Is Nothing Then Return False
 
                 Dim modulesplit() As String = a.Tag.Split("_")
