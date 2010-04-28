@@ -173,7 +173,7 @@
                                                 </tr>
                                                 <tr>
                                                 <td>
-                                                Alles Artikels onder dit Bedrijf verwijderen: 
+                                                Alle Artikels onder dit Bedrijf verwijderen: 
                                                 </td>
                                                 <td>
                                                     <asp:CheckBox ID="ckbAlleBedrijf" runat="server" />
