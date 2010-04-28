@@ -1652,9 +1652,9 @@ Partial Class App_Presentation_Beheer
             End If
             Dim querystring As String
             If Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing Then
-                ddlAddCatTaal.SelectedValue = Page.Request.QueryString("taal")
-                ddlAddCatVersie.SelectedValue = Page.Request.QueryString("versie")
-                ddlAddCatBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
+                ddlAddCatTaal.SelectedValue = Integer.Parse(Page.Request.QueryString("taal"))
+                ddlAddCatVersie.SelectedValue = Integer.Parse(Page.Request.QueryString("versie"))
+                ddlAddCatBedrijf.SelectedValue = Integer.Parse(Page.Request.QueryString("bedrijf"))
                 Toevoegen_LaadParentCategorie()
                 querystring = "?taal=" + Page.Request.QueryString("taal") + "&versie=" + Page.Request.QueryString("versie") + "&bedrijf=" + Page.Request.QueryString("bedrijf")
                 If Page.Request.QueryString("module") IsNot Nothing Then
