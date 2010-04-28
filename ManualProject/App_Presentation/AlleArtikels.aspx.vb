@@ -45,21 +45,22 @@ Partial Class App_Presentation_AlleArtikels
         Else
             Dim count As Integer = grdartikels.rows.count
             Dim row As GridViewRow = grdArtikels.Rows(e.CommandArgument)
-            If e.CommandName = "Select" Then
 
-                Dim tag As String = row.Cells(1).Text
+            Dim tag As String = row.Cells(1).Text
+
+            If e.CommandName = "Select" Then
                 Dim qst As String = "~/App_Presentation/page.aspx?tag=" + tag
-                Response.Redirect(qst)
+                Response.Redirect(qst, False)
             End If
+
             If e.CommandName = "Delete" Then
-                Dim tag As String = row.Cells(1).Text
                 Dim qst As String = "~/App_Presentation/ArtikelVerwijderen.aspx?tag=" + tag
-                Response.Redirect(qst)
+                Response.Redirect(qst, False)
             End If
+
             If e.CommandName = "Edit" Then
-                Dim tag As String = row.Cells(1).Text
                 Dim qst As String = "~/App_Presentation/ArtikelBewerken.aspx?tag=" + tag
-                Response.Redirect(qst)
+                Response.Redirect(qst, False)
             End If
         End If
         JavaScript.ShadowBoxLaderSluiten(Me)

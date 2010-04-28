@@ -35,6 +35,11 @@ Partial Class App_Presentation_Beheer
 
                 'Parent categorie ophalen uit database
                 Dim parentCategorierij As tblCategorieRow = categoriedal.getCategorieByID(parentCategorieID)
+				
+				If parentCategorierij Is Nothing Then
+					Util.OnverwachteFout(ddlEditCatVersie, String.Concat( "De opgevraagde categorie """, parentCategorieID ,"""werd niet gevonden in de database.") )
+					Return
+				End If
 
                 'Hoogte van parent categorie opslaan
                 Dim parentHoogte As Integer = parentCategorierij.Hoogte
@@ -83,9 +88,9 @@ Partial Class App_Presentation_Beheer
                         End If
                         If Session("query") IsNot Nothing Then
                             If Request.QueryString("Add") IsNot Nothing Then
-                                Response.Redirect("ArtikelToevoegen.aspx" + Session("query") + "&categorieID=" + categorieID.ToString)
+                                Response.Redirect("ArtikelToevoegen.aspx" + Session("query") + "&categorieID=" + categorieID.ToString, False)
                             ElseIf Request.QueryString("Edit") IsNot Nothing Then
-                                Response.Redirect("ArtikelBewerken.aspx" + Session("query") + "&categorieID=" + categorieID.ToString)
+                                Response.Redirect("ArtikelBewerken.aspx" + Session("query") + "&categorieID=" + categorieID.ToString, False)
                             End If
                         End If
                     Else
@@ -275,8 +280,19 @@ Partial Class App_Presentation_Beheer
                 nieuwecategorie.FK_Parent = ddlEditCatParent.SelectedValue
 
                 Dim origineleCategorie As tblCategorieRow = categoriedal.getCategorieByID(nieuwecategorie.CategorieID)
+				
+				If origineleCategorie Is Nothing Then
+					Util.OnverwachteFout(ddlEditCatVersie, String.Concat( "De opgevraagde categorie """, nieuwecategorie.CategorieID ,"""werd niet gevonden in de database.") )
+					Return
+				End If
 
                 Dim parentCategorierij As tblCategorieRow = categoriedal.getCategorieByID(nieuwecategorie.FK_Parent)
+				
+				If parentCategorierij Is Nothing Then
+					Util.OnverwachteFout(ddlEditCatVersie, String.Concat( "De opgevraagde categorie """, nieuwecategorie.FK_Parent ,"""werd niet gevonden in de database.") )
+					Return
+				End If
+				
                 nieuwecategorie.Diepte = parentCategorierij.Diepte + 1
 
                 nieuwecategorie.FK_Taal = ddlEditCatTaal.SelectedValue
@@ -453,6 +469,12 @@ Partial Class App_Presentation_Beheer
         Dim versieID As Integer = ddlAddCatVersie.SelectedValue
 
         Dim dr As tblCategorieRow = categoriedal.getCategorieByID(ddlEditCategorie.SelectedValue)
+		
+		If dr Is Nothing Then
+			Util.OnverwachteFout(ddlEditCatVersie, String.Concat( "De opgevraagde categorie """, ddlEditCategorie.SelectedValue ,"""werd niet gevonden in de database.") )
+			Return
+		End If
+		
         Dim parenthoogte As Integer = dr.Hoogte
         Dim hoogte As Integer
         If parenthoogte = Nothing Then
@@ -475,6 +497,11 @@ Partial Class App_Presentation_Beheer
 
                 'Categoriegegevens ophalen
                 Dim categorieRij As tblCategorieRow = categoriedal.getCategorieByID(categorieID)
+				
+				If categorieRij Is Nothing Then
+					Util.OnverwachteFout(ddlEditCatVersie, String.Concat( "De opgevraagde categorie """, categorieID ,""" werd niet gevonden in de database.") )
+					Return
+				End If
 
                 'Categoriegegevens inlezen
                 txtCatbewerknaam.Text = categorieRij.Categorie
@@ -997,6 +1024,8 @@ Partial Class App_Presentation_Beheer
             Else
                 Dim a As New Artikel(artikeldal.GetArtikelByID(kind.ID))
 
+                If a Is Nothing Then Continue For
+
                 'Nieuwe tag opbouwen
                 Dim v As Versie = Versie.GetVersie(versieID)
                 If v Is Nothing Then Return False
@@ -1110,10 +1139,10 @@ Partial Class App_Presentation_Beheer
                 Dim versieID As Integer = ddlDeletVersie.SelectedValue
                 If ckbAllesOnderVersie.Checked Then
                     If versiedal.DeleteArtikelsVoorVersie(versieID) = -1 Then
-                        Util.SetError("Artikels onder deze zijn niet verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
+                        Util.SetError("Artikels onder deze versie zijn niet verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
                     Else
                         If (adapterVersie.Delete(versieID) = 0) Then
-                            Util.SetError("Verwijderen mislukt.", lblDeleteVersieRes, imgDeleteVersieRes)
+                            Util.SetError("Verwijderen mislukt: kon de versie niet verwijderen.", lblDeleteVersieRes, imgDeleteVersieRes)
                         Else
 
                             'Geheugen updaten
@@ -1123,7 +1152,7 @@ Partial Class App_Presentation_Beheer
                                 Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblDeleteVersieRes, imgDeleteVersieRes)
                             Else
                                 Versie.RemoveVersie(v)
-                                Util.SetOK("Versie verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
+                                Util.SetOK("Versie verwijderd: kon de versie niet verwijderen.", lblDeleteVersieRes, imgDeleteVersieRes)
                             End If
 
                             LaadVersieDropdowns()
@@ -1341,10 +1370,10 @@ Partial Class App_Presentation_Beheer
                 Dim bedrijfID As Integer = ddlDeleteBedrijf.SelectedValue
                 If ckbAlleBedrijf.Checked Then
                     If bedrijfdal.DeleteArtikelsOnderbedrijf(bedrijfID) = -1 Then
-                        Util.SetError("Artikels onder Bedrijf zijn niet verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                        Util.SetError("Artikels onder bedrijf zijn niet verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                     Else
                         If (adapterBedrijf.Delete(bedrijfID) = 0) Then
-                            Util.SetError("Verwijderen mislukt.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                            Util.SetError("Verwijderen mislukt: kon het bedrijf niet verwijderen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                         Else
 
                             'Geheugen updaten
@@ -1373,7 +1402,7 @@ Partial Class App_Presentation_Beheer
                                 Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                             Else
                                 Bedrijf.RemoveBedrijf(b)
-                                Util.SetOK("Bedrijf verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                                Util.SetOK("Bedrijf verwijderd: kon het bedrijf niet verwijderen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                             End If
 
                             LaadBedrijfDropdowns()

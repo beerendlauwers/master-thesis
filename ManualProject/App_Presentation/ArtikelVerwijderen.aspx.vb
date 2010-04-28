@@ -201,14 +201,8 @@ Partial Class App_Presentation_verwijderenTekst
         End If
 
     End Sub
-
-    Private Sub VerwijderArtikel(ByRef row As GridViewRow)
-
-        Dim artikeltag As String = row.Cells(1).Text
-        Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
-
-        'Artikel ophalen en in object opslaan
-        Dim artikel As New Artikel(artikeldal.GetArtikelByTag(artikeltag))
+	
+	Private Sub ArtikelVerwijderen(ByRef artikel as Artikel)
 
         'Artikel verwijderen uit database
         If artikeldal.verwijderArtikel(artikel.ID) = True Then
@@ -241,7 +235,36 @@ Partial Class App_Presentation_verwijderenTekst
 
         HaalArtikelGegevensOp()
         Me.divFeedback.Style.Item("display") = "inline"
+	
+	End Sub
+	
+	Private Sub VerwijderArtikel(ByVal tag As String)
+        Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
 
+        'Artikel ophalen en in object opslaan
+        Dim artikel As New Artikel(artikeldal.GetArtikelByTag(tag))
+
+        If artikel Is Nothing Then
+            Util.OnverwachteFout(btnZoek, String.Concat("Het te verwijderen artikel met de tag """, tag, """ werd niet teruggevonden in de database."))
+            Return
+        End If
+
+		ArtikelVerwijderen(artikel)
+    End Sub
+
+    Private Sub VerwijderArtikel(ByRef row As GridViewRow)
+        Dim artikeltag As String = row.Cells(1).Text
+        Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
+
+        'Artikel ophalen en in object opslaan
+        Dim artikel As New Artikel(artikeldal.GetArtikelByTag(artikeltag))
+
+        If artikel Is Nothing Then
+            Util.OnverwachteFout(btnZoek, String.Concat("Het te verwijderen artikel met de tag """, artikeltag, """ werd niet teruggevonden in de database."))
+            Return
+        End If
+		
+		ArtikelVerwijderen(artikel)
     End Sub
 
     Protected Sub btnOK_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOK.Click
@@ -252,7 +275,7 @@ Partial Class App_Presentation_verwijderenTekst
                 VerwijderArtikel(tag)
                 Session("rechtstreeksVerwijderen") = Nothing
                 Session("tag") = Nothing
-                Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+                Response.Redirect("~/App_Presentation/AlleArtikels.aspx", False)
             End If
         Else
             Dim row As GridViewRow = grdResultaten.Rows(hdnRowID.Value)
@@ -269,50 +292,10 @@ Partial Class App_Presentation_verwijderenTekst
         mpeConfirmatie.Hide()
         Dim str As String = Session("alleArtikels")
         If str = "/ReferenceManual/App_Presentation/AlleArtikels.aspx" Then
-            Response.Redirect("AlleArtikels.aspx")
+            Response.Redirect("AlleArtikels.aspx", False)
         End If
     End Sub
-    Private Sub VerwijderArtikel(ByVal tag As String)
-        Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
-
-        'Artikel ophalen en in object opslaan
-        Dim artikel As New Artikel(artikeldal.GetArtikelByTag(tag))
-
-        'Artikel verwijderen uit database
-        If artikeldal.verwijderArtikel(artikel.ID) = True Then
-
-            'Artikel verwijderen uit de boomstructuur
-            'We halen de tree op waar dit artikel in werd opgeslagen
-            Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
-
-            Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
-
-            If (node Is Nothing) Then
-                Util.SetWarn("Verwijderen geslaagd met waarschuwing: Het artikel komt niet voor in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren.", lblResultaat, imgResultaat)
-                HaalArtikelGegevensOp()
-                Return
-            End If
-
-            Dim parent As Node = tree.VindParentVanNode(node)
-
-            If (parent Is Nothing) Then
-                Util.SetWarn("Verwijderen geslaagd met waarschuwing: Het artikel staat niet onder een categorie in de boomstructuur. Herbouw de boomstructuur als u klaar bent met wijzigingen door te voeren.", lblResultaat, imgResultaat)
-                HaalArtikelGegevensOp()
-                Return
-            End If
-
-            parent.VerwijderKind(node)
-            Util.SetOK("Verwijderen Geslaagd.", lblResultaat, imgResultaat)
-            Dim str As String = "Verwijderen geslaagd"
-            'MsgBox(str, MsgBoxStyle.OkOnly)
-        Else
-            Util.SetError("Verwijderen mislukt: Kon niet verbinden met de database.", lblResultaat, imgResultaat)
-        End If
-
-        HaalArtikelGegevensOp()
-        Me.divFeedback.Style.Item("display") = "inline"
-    End Sub
-
+	
     Protected Sub Page_LoadComplete(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.LoadComplete
         If Request.QueryString("tag") IsNot Nothing Then
             Session("tag") = Request.QueryString("tag")

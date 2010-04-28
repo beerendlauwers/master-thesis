@@ -78,7 +78,7 @@ Public Class Util
                 HttpContext.Current.Session("vorigePagina") = pagina
             End If
         Else
-            HttpContext.Current.Response.Redirect("Aanmeldpagina.aspx")
+            HttpContext.Current.Response.Redirect("Aanmeldpagina.aspx", False)
         End If
     End Sub
 

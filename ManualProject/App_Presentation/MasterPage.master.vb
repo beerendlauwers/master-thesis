@@ -21,7 +21,7 @@ Partial Class App_Presentation_MasterPage
     Private Sub CheckOfIngelogd()
         If Session("isIngelogd") Is Nothing Or Session("isIngelogd") = False Then
             Session("vorigePagina") = Page.Request.Url.AbsolutePath
-            Response.Redirect("~/Default.aspx")
+            Response.Redirect("~/Default.aspx", False)
         End If
     End Sub
 
@@ -219,7 +219,7 @@ Partial Class App_Presentation_MasterPage
 #End Region
 
     Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkZoek.Click
-        Response.Redirect("~/App_Presentation/Zoekresultaten.aspx?term=" + txtZoek.Text)
+        Response.Redirect("~/App_Presentation/Zoekresultaten.aspx?term=" + txtZoek.Text, False)
     End Sub
 End Class
 

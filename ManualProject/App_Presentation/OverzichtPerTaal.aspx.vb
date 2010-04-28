@@ -78,7 +78,7 @@ Partial Class App_Presentation_OverzichtPerTaal
         Else
             divLoggedIn.Visible = False
             Session("vorigePagina") = Page.Request.Url.AbsolutePath
-            Response.Redirect("Aanmeldpagina.aspx")
+            Response.Redirect("Aanmeldpagina.aspx", False)
         End If
         If Not IsPostBack Then
             For i As Integer = 0 To GridView1.Rows.Count - 1

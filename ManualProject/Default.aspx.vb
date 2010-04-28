@@ -216,12 +216,12 @@ Partial Class _Default
 
                 'Oneindige loops zijn slecht, mkay
                 If Not Session("vorigePagina") = Page.Request.Url.AbsolutePath Then
-                    Response.Redirect(Session("vorigePagina"))
+                    Response.Redirect(Session("vorigePagina"), False)
                 End If
 
             End If
 
-            Response.Redirect("~/App_presentation/")
+            Response.Redirect("~/App_presentation/", False)
             Return
         End If
 
@@ -232,7 +232,7 @@ Partial Class _Default
         Dim paginatag As String = Page.Request.QueryString("Paginatag")
         paginatag = paginatag.Trim
 
-        Response.Redirect(String.Concat("page.aspx?tag=", paginatag))
+        Response.Redirect(String.Concat("page.aspx?tag=", paginatag), False)
 
     End Sub
 

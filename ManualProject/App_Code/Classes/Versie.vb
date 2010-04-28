@@ -38,14 +38,15 @@ Public Class Versie
     ''' </summary>
     ''' <param name="row">Een versierij vanuit de database</param>
     Public Sub New(ByRef row As tblVersieRow)
-        Try
-            _ID = row.VersieID
-            _versie = row.Versie
-        Catch ex As Exception
-            Dim e As New ErrorLogger(ex.Message)
-            e.Args.Add("_ID = " & row.VersieID.ToString)
-            e.Args.Add("_versie = " & row.Versie)
-        End Try
+
+        If row Is Nothing Then
+            Dim e As New ErrorLogger("De constructor van klasse Versie kreeg een ongeldige rij binnen van tblVersie.", "VERSIE0001")
+            ErrorLogger.WriteError(e)
+            Return
+        End If
+
+        _ID = row.VersieID
+        _versie = row.Versie
     End Sub
 
     ''' <summary>

@@ -9,7 +9,7 @@ Partial Class App_Presentation_Aanmeldpagina
             Dim user As String = login(0)
             Dim pass As String = login(1)
 
-            If txtGebruikersNaam.Text = user And txtPaswd.Text = pass Then
+            If txtGebruikersNaam.Text.Trim = user And txtPaswd.Text = pass Then
                 Session("login") = 1
                 divRes.Visible = True
 
@@ -17,14 +17,9 @@ Partial Class App_Presentation_Aanmeldpagina
                     Dim str As String = lblVorige.Text
                     Dim st() As String = Split(str, "/")
                     Dim link As String = String.Concat("~", "/", st(2), "/", st(3))
-                    Response.Redirect(link)
+                    Response.Redirect(link, False)
                 Else
-                    Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
-                    'If Session("vorigePagina") IsNot Nothing Then
-                    '    Response.Redirect(Session("vorigePagina"))
-                    'Else
-                    '    Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
-                    'End If
+                    Response.Redirect("~/App_Presentation/AlleArtikels.aspx", False)
                 End If
 
             Else
@@ -39,7 +34,7 @@ Partial Class App_Presentation_Aanmeldpagina
 
     Protected Sub btnLogOut_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLogOut.Click
         Session("login") = Nothing
-        Response.Redirect("~/App_Presentation/Default.aspx")
+        Response.Redirect("~/App_Presentation/Default.aspx", False)
     End Sub
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
