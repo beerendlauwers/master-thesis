@@ -585,39 +585,73 @@ Partial Class App_Presentation_Beheer
 
 #Region "Code: Categorie Verwijderen"
 
+    Private Sub CategorieRecursiefVerwijderen(ByRef parent As Node, ByRef t As Tree)
+
+        'Zo diep mogelijk gaan
+        If parent.GetChildCount > 0 Then
+            For Each kind As Node In parent.GetChildren
+
+                If kind.Type = Global.ContentType.Categorie Then
+                    CategorieRecursiefVerwijderen(kind, t)
+                End If
+
+                If kind.Type = Global.ContentType.Artikel Then
+                    If artikeldal.StdAdapter.Delete(kind.ID) Then
+                        Dim previousparent As Node = t.VindParentVanNode(kind)
+                        previousparent.RemoveChild(kind)
+                    End If
+                End If
+
+            Next kind
+        End If
+
+        If categoriedal.StdAdapter.Delete(parent.ID) Then
+            Dim previousparent As Node = t.VindParentVanNode(parent)
+            previousparent.RemoveChild(parent)
+        End If
+
+
+    End Sub
+
     Protected Sub btnCatDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatDelete.Click
         Try
             If Util.Valideer(ddlCatVerwijder) Then
                 Dim categorieID As Integer = ddlCatVerwijder.SelectedValue
 
-                'Nakijken of er nog artikels of categorieën onder deze categorie staan
-                If (artikeldal.GetArtikelsByParent(categorieID).Count = 0) And (categoriedal.getCategorieByParent(categorieID).Count = 0) Then
-                    'Alles ok, categorie verwijderen
-                    If Not adapterCat.Delete(categorieID) = 0 Then
+                If ckbAllesCategorie.Checked Then
+                    Dim t As Tree = Tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
+                    Dim parent As Node = t.DoorzoekTreeVoorNode(categorieID, Global.ContentType.Categorie)
+                    CategorieRecursiefVerwijderen(parent, t)
+                Else
+                    'Nakijken of er nog artikels of categorieën onder deze categorie staan
+                    If (artikeldal.GetArtikelsByParent(categorieID).Count = 0) And (categoriedal.getCategorieByParent(categorieID).Count = 0) Then
+                        'Alles ok, categorie verwijderen
+                        If Not adapterCat.Delete(categorieID) = 0 Then
 
-                        'Geheugen updaten
-                        Dim tree As Tree = tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
-                        Dim node As Node = tree.DoorzoekTreeVoorNode(categorieID, Global.ContentType.Categorie)
+                            'Geheugen updaten
+                            Dim tree As Tree = tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
+                            Dim node As Node = tree.DoorzoekTreeVoorNode(categorieID, Global.ContentType.Categorie)
 
-                        If node Is Nothing Then
-                            Util.SetWarn("Categorie verwijderd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResDelete, imgResDelete)
-                        Else
-                            Dim parent As Node = tree.VindParentVanNode(node)
-
-                            If parent Is Nothing Then
+                            If node Is Nothing Then
                                 Util.SetWarn("Categorie verwijderd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResDelete, imgResDelete)
                             Else
-                                parent.RemoveChild(node)
-                                Util.SetOK("Categorie verwijderd.", lblResDelete, imgResDelete)
+                                Dim parent As Node = tree.VindParentVanNode(node)
+
+                                If parent Is Nothing Then
+                                    Util.SetWarn("Categorie verwijderd met waarschuwing: kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met uw wijzigingen.", lblResDelete, imgResDelete)
+                                Else
+                                    parent.RemoveChild(node)
+                                    Util.SetOK("Categorie verwijderd.", lblResDelete, imgResDelete)
+                                End If
                             End If
+
+                        Else
+                            Util.SetError("Verwijderen mislukt.", lblResDelete, imgResDelete)
                         End If
 
                     Else
-                        Util.SetError("Verwijderen mislukt.", lblResDelete, imgResDelete)
+                        Util.SetError("Er staan nog artikels of andere categorieën onder deze categorie.", lblResDelete, imgResDelete)
                     End If
-
-                Else
-                    Util.SetError("Er staan nog artikels of andere categorieën onder deze categorie.", lblResDelete, imgResDelete)
                 End If
 
                 LaadAlleCategorien()
@@ -1500,9 +1534,9 @@ Partial Class App_Presentation_Beheer
                             Util.SetError("Wijzigen mislukt.", lblModuleWijzigenRes, imgModuleWijzigenRes)
                         End If
                     End If
-                    Else
-                            Util.SetError("Een andere module heeft reeds deze naam.", lblModuleWijzigenRes, imgModuleWijzigenRes)
-                        End If
+                Else
+                    Util.SetError("Een andere module heeft reeds deze naam.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                End If
 
                 LaadModuleDropdowns()
                 ModuleInladen()
