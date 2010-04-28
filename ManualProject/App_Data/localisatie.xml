@@ -31,6 +31,7 @@
   <tekst id="FOUTTIJDENSUITVOERENPAGINA" text="De pagina kon niet geladen worden wegens een interne fout." />
   <tekst id="FOUTTIJDENSUITVOERENPAGINATITEL" text="Interne fout." />
     <tekst id="ONGELDIGARTIKELVERSIE" text="De opgevraagde pagina is niet in dezelfde versie die u heeft opgegeven." />
+<tekst id="LNKZOEK" text="Zoeken"/>
 </taal>
 <taal id="5">
 	<tekst id="WELKOMTEKST" text="Bienvenue sur le Reference Manual de Appligen. Utilisez le structure &#224; gauche ou recherchez un article." />
@@ -62,6 +63,7 @@
     <tekst id="FOUTTIJDENSUITVOERENPAGINA" text="De pagina kon niet geladen worden wegens een interne fout." />
   <tekst id="FOUTTIJDENSUITVOERENPAGINATITEL" text="Interne fout." />
   <tekst id="ONGELDIGARTIKELVERSIE" text="De opgevraagde pagina is niet in dezelfde versie die u heeft opgegeven." />
+<tekst id="LNKZOEK" text="Chercher"/>
 </taal>
 <taal id="10">
 	<tekst id="WELKOMTEKST" text="Welcome to the Appligen Reference Manual. Use the menu structure to the left to navigate to an article or use the search bar in the top right." />
@@ -93,5 +95,6 @@
     <tekst id="FOUTTIJDENSUITVOERENPAGINA" text="De pagina kon niet geladen worden wegens een interne fout." />
   <tekst id="FOUTTIJDENSUITVOERENPAGINATITEL" text="Interne fout." />
     <tekst id="ONGELDIGARTIKELVERSIE" text="De opgevraagde pagina is niet in dezelfde versie die u heeft opgegeven." />
+<tekst id="LNKZOEK" text="Search"/>
 </taal>
 </talen>
