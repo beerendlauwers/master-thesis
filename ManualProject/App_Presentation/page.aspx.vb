@@ -112,7 +112,7 @@ Partial Class App_Presentation_page
 
     Private Function CheckArtikel(ByRef a As Artikel) As Boolean
 
-        If Session("login") = 0 Then
+        If Session("isIngelogd") = True Then
 
             Dim ingelogdeVersie As Integer = Session("versie")
             Dim ingelogdBedrijf As Integer = Session("bedrijf")
@@ -131,7 +131,7 @@ Partial Class App_Presentation_page
 
             Return True
         Else
-            Return True
+            Return False
         End If
 
     End Function

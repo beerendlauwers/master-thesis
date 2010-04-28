@@ -158,6 +158,12 @@ Partial Class App_Presentation_ArtikelBewerken
             End If
 
             Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
+            If origineelArtikel Is Nothing Then
+                Util.OnverwachteFout(btnUpdate, "Het opgevraagde artikel lijkt niet meer te bestaan in de database.")
+                Util.SetError("Update mislukt: Kon niet met de database verbinden.", lblresultaat, imgResultaat)
+                Me.divFeedback.Style.Item("display") = "inline"
+                Return
+            End If
 
             Dim artikel As New Artikel
 
@@ -189,6 +195,7 @@ Partial Class App_Presentation_ArtikelBewerken
                 Me.divFeedback.Style.Item("display") = "inline"
                 Return
             End If
+
             If rdbAlleTalen.Checked Then
                 Dim taaldal As New TaalDAL
                 Dim oudetag As String = Session("oudetag")
