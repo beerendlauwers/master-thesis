@@ -464,7 +464,10 @@ Public Class Tree
     Public Sub VulCategorieDropdown(ByRef ddl As DropDownList, ByRef parent As Node, ByVal diepte As Integer)
         Dim huidigediepte As Integer = diepte + 1
 
-        For Each n As Node In parent.GetChildren
+        Dim huidigeLijst As List(Of Node) = parent.GetChildren
+        huidigeLijst.Sort()
+
+        For Each n As Node In huidigeLijst
 
             'We willen enkel categorieën
             If n.Type = ContentType.Artikel Then Continue For
@@ -491,7 +494,6 @@ Public Class Tree
     End Sub
 
     Public Function LeesTree(ByVal htmlcode As String, ByVal parent As Node, ByVal diepte As Integer) As String
-
         Dim huidigediepte As Integer = diepte + 1
 
         If Not parent.GetChildCount = 0 Then
@@ -502,7 +504,10 @@ Public Class Tree
             End If
         End If
 
-        For Each kind As Node In parent.GetChildren
+        Dim huidigeLijst As List(Of Node) = parent.GetChildren
+        huidigeLijst.Sort()
+
+        For Each kind As Node In huidigeLijst
 
             For i As Integer = 0 To huidigediepte
                 htmlcode = String.Concat(htmlcode, "&nbsp;&nbsp;&nbsp;")
@@ -547,7 +552,10 @@ Public Class Tree
             End If
         End If
 
-        For Each kind As Node In parent.GetChildren
+        Dim huidigeLijst As List(Of Node) = parent.GetChildren
+        huidigeLijst.Sort()
+
+        For Each kind As Node In huidigeLijst
 
             For i As Integer = 0 To huidigediepte
                 htmlcode = String.Concat(htmlcode, "&nbsp;&nbsp;")

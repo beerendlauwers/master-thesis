@@ -81,6 +81,11 @@
 	<tip id="tipEditCatVersiekeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op versie." />
 	<tip id="tipEditCatBedrijfkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />
 	
+	<tip id="tipCatPositieVersie" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op versie." />
+	<tip id="tipCatPositieTaal" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op taal." />
+	<tip id="tipCatPositieBedrijf" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />
+	<tip id="tipCatPositieCategorie" text="Selecteer een categorie om de subcategorieën te positioneren." />
+	
 	<tip id="tipCatDelTaalkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op taal." />
 	<tip id="lbltipCatDelVersiekeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op versie." />
 	<tip id="tipCatDelBedrijfkeuze" text="Selecteer een optie en klik op de filterknop om het categorieaanbod te filteren op bedrijf." />

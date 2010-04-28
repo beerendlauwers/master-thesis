@@ -118,7 +118,7 @@ Partial Class App_Presentation_page
             Dim ingelogdBedrijf As Integer = Session("bedrijf")
 
             If Not ingelogdeVersie = a.Versie Then
-                Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
+                Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKELVERSIE")
                 Me.lblTitel.Visible = False
                 Return False
             End If

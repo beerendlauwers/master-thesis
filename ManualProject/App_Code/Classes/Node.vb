@@ -6,6 +6,8 @@ Public Enum ContentType
 End Enum
 
 Public Class Node
+    Implements IComparable
+
     Private _ID As Integer
     Private _type As ContentType
     Private _titel As String
@@ -75,6 +77,14 @@ Public Class Node
             _hoogte = value
         End Set
     End Property
+
+    Public Overloads Function CompareTo(ByVal obj As Object) As Integer Implements IComparable.CompareTo
+        Dim anderobject As Node = TryCast(obj, Node)
+        If anderobject IsNot Nothing Then
+            Return Me.Hoogte.CompareTo(anderobject.Hoogte)
+        End If
+    End Function
+
 
     ''' <summary>
     ''' Haal de kinderen op van deze node.
