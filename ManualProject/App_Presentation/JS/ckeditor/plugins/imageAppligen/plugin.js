@@ -14,7 +14,7 @@ CKEDITOR.plugins.add('imageAppligen',
 
         editor.ui.addButton('imageAppligen',
             {
-                label: 'Image Toevoegen',
+                label: 'Imagelink Toevoegen',
                 command: pluginName,
 				icon: this.path + 'images/view.png'
             });

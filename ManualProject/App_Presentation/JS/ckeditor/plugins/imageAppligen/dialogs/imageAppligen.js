@@ -21,7 +21,7 @@ CKEDITOR.dialog.add( 'imageAppligen', function( editor )
 	};
 
 	return {
-		title : 'Image Toevoegen',
+		title : 'Imagelink Toevoegen',
 		minWidth : 300,
 		minHeight : 400,
 		onOk : function()
@@ -126,7 +126,7 @@ CKEDITOR.dialog.add( 'imageAppligen', function( editor )
 										{
 											if ( !this.getValue() )
 											{
-												alert( 'Gelieve een videobestand op te geven.' );
+												alert( 'Gelieve een image op te geven.' );
 												return false;
 											}
 											return true;
