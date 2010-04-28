@@ -53,7 +53,7 @@ Partial Class App_Presentation_zoekresultaten
             Dim row As GridViewRow = grdResultaten.Rows(e.CommandArgument)
             Dim tag As String = row.Cells(1).Text
             Dim qst As String = "~/App_Presentation/page.aspx?tag=" + tag
-            Response.Redirect(qst)
+            Response.Redirect(qst, False)
         End If
 
         JavaScript.ShadowBoxLaderSluiten(Me)

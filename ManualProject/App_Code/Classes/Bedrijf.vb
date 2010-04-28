@@ -42,9 +42,15 @@ Public Class Bedrijf
     End Sub
 
     Public Sub New(ByRef row As tblBedrijfRow)
-        _ID = row.BedrijfID
-        _naam = row.Naam
-        _tag = row.Tag
+		Try
+			_ID = row.BedrijfID
+			_naam = row.Naam
+			_tag = row.Tag
+		Catch ex as Exception
+			Dim e as new ErrorLogger("De constructor van klasse Bedrijf kreeg een ongeldige rij binnen van tblBedrijf.","BEDRIJF0001")
+			ErrorLogger.WriteError( e )
+		End Try
+
     End Sub
 
     Public Shared Function GetBedrijven() As List(Of Bedrijf)

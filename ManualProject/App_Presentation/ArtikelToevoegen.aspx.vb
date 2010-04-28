@@ -82,6 +82,7 @@ Partial Class App_Presentation_invoerenTest
     Private Sub LaadCategorien()
 
         Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
+			
         strtag(1) = Trim(strtag(1))
         lblTaalTag.InnerHtml = strtag(1)
         lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
@@ -144,15 +145,14 @@ Partial Class App_Presentation_invoerenTest
                 Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
 
                 Dim tekst As String = EditorToevoegen.Value
-                Dim tag As String = txtTag.Text.Trim
                 Dim titel As String = txtTitel.Text.Trim
 
                 Dim FK_versie As Integer = ddlVersie.SelectedValue
                 Dim FK_Bedrijf As Integer = ddlBedrijf.SelectedValue
                 Dim FK_categorie As Integer = ddlCategorie.SelectedValue
                 Dim FK_taal As Integer = ddlTaal.SelectedValue
-                Dim str As String = lblTagvoorbeeld.InnerHtml
-                tag = str
+                Dim tag As String = lblTagvoorbeeld.InnerHtml
+				
                 Dim finaal As Integer
                 If ckbFinaal.Checked = True Then
                     finaal = 1
@@ -182,6 +182,15 @@ Partial Class App_Presentation_invoerenTest
 
                     'We halen de tree op waar dit artikel in werd opgeslagen
                     Dim tree As Tree = tree.GetTree(FK_taal, FK_versie, FK_Bedrijf)
+					
+					If oudetree Is Nothing Then
+						Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
+						Dim err As New ErrorLogger(fout, "ARTIKELTOEVOEGEN_0001")
+						err.Args.Add("Taal = " & FK_taal.ToString)
+						err.Args.Add("Versie = " & FK_versie.ToString)
+						err.Args.Add("Bedrijf = " & FK_Bedrijf.ToString)
+						ErrorLogger.WriteError(err)
+					End If
 
                     'We proberen het artikel toe te voegen.
                     Dim boodschap As String = tree.VoegArtikelToeAanCategorie(tag, FK_categorie)
@@ -254,7 +263,7 @@ Partial Class App_Presentation_invoerenTest
     Protected Sub ddlModule_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.SelectedIndexChanged
         Try
             Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
-            strtag(1) = Trim(strtag(1))
+			strtag(1) = Trim(strtag(1))
             lblTaalTag.InnerHtml = strtag(1)
             lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
         Catch ex As Exception

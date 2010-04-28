@@ -47,6 +47,7 @@ Partial Class App_Presentation_ArtikelBewerken
                     LaadCategorien()
                     ddlCategorie.SelectedValue = Page.Request.QueryString("CategorieID")
                     ArtikelFunctiesZichtbaar(True)
+					
                 ElseIf Page.Request.QueryString("tag") IsNot Nothing Then
                     Dim tag As String = Page.Request.QueryString("tag")
                     LaadArtikel(tag)
@@ -159,7 +160,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
             Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
             If origineelArtikel Is Nothing Then
-                Util.OnverwachteFout(btnUpdate, "Het opgevraagde artikel lijkt niet meer te bestaan in de database.")
+                Util.OnverwachteFout(btnUpdate, "Het opgevraagde artikel kon niet gevonden worden in de database.")
                 Util.SetError("Update mislukt: Kon niet met de database verbinden.", lblresultaat, imgResultaat)
                 Me.divFeedback.Style.Item("display") = "inline"
                 Return
@@ -359,12 +360,23 @@ Partial Class App_Presentation_ArtikelBewerken
 
     Private Sub LaadArtikel(ByVal id As Integer)
         Dim artikel As New Artikel(artikeldal.GetArtikelByID(id))
+
+        If artikel Is Nothing Then
+            Util.OnverwachteFout(btnUpdate, String.Concat("Het opgevraagde artikel """, id, """ werd niet in de database gevonden."))
+            Return
+        End If
+
         ArtikelInladen(artikel)
     End Sub
 
     Private Sub LaadArtikel(ByVal tag As String)
-
         Dim artikel As New Artikel(artikeldal.GetArtikelByTag(tag))
+
+        If artikel Is Nothing Then
+            Util.OnverwachteFout(btnUpdate, String.Concat("Het opgevraagde artikel met de tag """, tag, """ werd niet in de database gevonden."))
+            Return
+        End If
+
         ArtikelInladen(artikel)
     End Sub
 
@@ -489,7 +501,6 @@ Partial Class App_Presentation_ArtikelBewerken
         ddlIsFInaalVerfijnen.Items.Add(New ListItem("Nee", "0"))
 
         Util.LeesBedrijven(ddlBedrijf)
-        'Util.LeesTalen(ddlTaal)
         Util.LeesVersies(ddlVersie)
 
         Me.ddlTaal.Items.Clear()

@@ -1,0 +1,4 @@
+FOUT: "De opgevraagde tree (zie parameters) bestaat niet in het geheugen."
+
+OPLOSSING: Deze fout betekent dat er iets is misgelopen tijdens het updaten van de boomstructuren in het geheugen. Herbouw de boomstructuren om deze fout te verhelpen. Indien deze fout blijft voorkomen, zit er mogelijk nog een bug in het programma of is er een inconsistentie in de database.
+

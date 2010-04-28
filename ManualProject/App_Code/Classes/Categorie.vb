@@ -112,16 +112,7 @@ Public Class Categorie
             _FK_Versie = c.FK_versie
             _FK_Bedrijf = c.FK_bedrijf
         Catch ex As Exception
-
-            Dim e As New ErrorLogger(ex.Message)
-            e.Args.Add("_CategorieID =" & c.CategorieID.ToString)
-            e.Args.Add("_Categorie =" & c.Categorie)
-            e.Args.Add("_Hoogte =" & c.Hoogte.ToString)
-            e.Args.Add("_Diepte =" & c.Diepte.ToString)
-            e.Args.Add("_FK_Parent =" & c.FK_parent.ToString)
-            e.Args.Add("_FK_Taal =" & c.FK_taal.ToString)
-            e.Args.Add("_FK_Versie =" & c.FK_versie.ToString)
-            e.Args.Add("_FK_Bedrijf =" & c.FK_bedrijf.ToString)
+            Dim e As New ErrorLogger("Kon een categorie niet aanmaken omdat de gevraagde rij niet werd gevonden in de database.")
             ErrorLogger.WriteError(e)
         End Try
     End Sub
