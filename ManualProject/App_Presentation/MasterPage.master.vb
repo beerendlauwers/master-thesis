@@ -117,6 +117,7 @@ Partial Class App_Presentation_MasterPage
         spanBeheer.InnerText = Lokalisatie.GetString("BEHEER")
         spanBeheerAanmeld.InnerHtml = Lokalisatie.GetString("BEHEER")
         spanTalen.InnerHtml = Lokalisatie.GetString("TALEN")
+        lnkZoek.Text = Lokalisatie.GetString("LNKZOEK")
     End Sub
 
     Private Sub GenereerZijbalk()
@@ -217,7 +218,7 @@ Partial Class App_Presentation_MasterPage
 
 #End Region
 
-    Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles lnkZoeken.Click
+    Protected Sub lnkZoeken_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkZoek.Click
         Response.Redirect("~/App_Presentation/Zoekresultaten.aspx?term=" + txtZoek.Text)
     End Sub
 End Class

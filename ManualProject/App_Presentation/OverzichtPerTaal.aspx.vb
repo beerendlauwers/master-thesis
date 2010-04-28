@@ -204,7 +204,7 @@ Partial Class App_Presentation_OverzichtPerTaal
                     Dim tag As String = e.Row.Cells(1).Text
                     Dim splittag() As String = tag.Split("_")
                     img.ImageUrl = "~/App_Presentation/CSS/images/remove.png"
-                    img.PostBackUrl = "~/App_Presentation/ArtikelToevoegen.aspx?tag=" + splittag(1) + "&taal=" + talen(i) + "&versie=" + versie.ToString + "&bedrijf=" + bedrijf.ToString
+                    img.PostBackUrl = "~/App_Presentation/ArtikelToevoegen.aspx?tag=" + splittag(1) + "&taal=" + HttpUtility.UrlEncode(talen(i)) + "&versie=" + versie.ToString + "&bedrijf=" + bedrijf.ToString + "&module=" + splittag(0)
                     e.Row.Cells(i).Controls.Add(img)
                 End If
             End If

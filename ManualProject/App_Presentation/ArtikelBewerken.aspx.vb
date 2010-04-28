@@ -34,12 +34,21 @@ Partial Class App_Presentation_ArtikelBewerken
 
                     Dim id As Integer = Page.Request.QueryString("id")
                     LaadArtikel(id)
-                    JavaScript.VoegJavascriptToeAanBody(Master.FindControl("MasterBody"), "VeranderEditorScherm(200);")
                 End If
+
+            ElseIf Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing And Page.Request.QueryString("titel") IsNot Nothing And Page.Request.QueryString("Artikeltag") IsNot Nothing Then
+                txtTitel.Text = Page.Request.QueryString("titel")
+                txtTag.Text = Page.Request.QueryString("Artikeltag")
+                ddlBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
+                ddlVersie.SelectedValue = Page.Request.QueryString("versie")
+                ddlModule.SelectedValue = Page.Request.QueryString("module")
+                ddlTaal.SelectedValue = Page.Request.QueryString("taal")
+                LaadCategorien()
+                ddlCategorie.SelectedValue = Page.Request.QueryString("CategorieID")
+                ArtikelFunctiesZichtbaar(True)
             ElseIf Page.Request.QueryString("tag") IsNot Nothing Then
                 Dim tag As String = Page.Request.QueryString("tag")
                 LaadArtikel(tag)
-                JavaScript.VoegJavascriptToeAanBody(Master.FindControl("MasterBody"), "VeranderEditorScherm(200);")
             End If
 
         End If
@@ -47,9 +56,6 @@ Partial Class App_Presentation_ArtikelBewerken
         LaadZoekTooltips()
         LaadJavascript()
 
-        'txtTag.Attributes.Add("onClick", "trVisible()")
-        'rdbAlleTalen.Attributes.Add("onClick", "trInvisible()")
-        'rdbEnkeleTaal.Attributes.Add("onClick", "trInvisible()")
         Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
         str(1) = Trim(str(1))
         lblTaalTag.InnerHtml = str(1)
@@ -379,10 +385,19 @@ Partial Class App_Presentation_ArtikelBewerken
             Me.ddlCategorie.Visible = False
             Me.lblGeenCategorie.Visible = True
             Me.btnUpdate.Enabled = False
+            Me.hplAddCategorie.NavigateUrl = "~/App_Presentation/Beheer.aspx?index=4&versie=" + ddlVersie.SelectedValue + "&bedrijf=" + ddlBedrijf.SelectedValue + "&taal=" + ddlTaal.SelectedValue + "&module=" + ddlModule.SelectedValue + "&tag=" + txtTag.Text + "&titel=" + txtTitel.Text + "&Edit=1"
+            Me.hplAddCategorie.Visible = True
+            EditorEditDiv.visible = False
+            updContent.Update()
+
         Else
             Me.ddlCategorie.Visible = True
             Me.lblGeenCategorie.Visible = False
             Me.btnUpdate.Enabled = True
+            Me.hplAddCategorie.Visible = False
+            EditorEditDiv.visible = True
+
+            updContent.Update()
 
             Try
                 Dim categorieWaarde As Integer = Session("categorieWaarde")

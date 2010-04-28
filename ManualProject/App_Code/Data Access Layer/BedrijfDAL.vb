@@ -149,4 +149,29 @@ Public Class BedrijfDAL
 
     End Function
 
+
+
+    Public Function DeleteArtikelsOnderbedrijf(ByVal BedrijfID As Integer) As Integer
+
+        Dim c As New SqlCommand("DeleteAllArtikelsForBedrijf", New SqlConnection(conn))
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@BedrijfID", SqlDbType.VarChar).Value = BedrijfID
+        Dim r As Integer
+        Try
+
+            c.Connection.Open()
+
+            r = c.ExecuteScalar
+            
+        Catch ex As Exception
+
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("BedrijfID = " & BedrijfID)
+            ErrorLogger.WriteError(e)
+            Return -1
+        Finally
+            c.Connection.Close()
+        End Try
+        Return r
+    End Function
 End Class

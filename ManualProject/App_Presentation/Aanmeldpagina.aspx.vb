@@ -13,10 +13,18 @@ Partial Class App_Presentation_Aanmeldpagina
                 Session("login") = 1
                 divRes.Visible = True
 
-                If Session("vorigePagina") IsNot Nothing Then
-                    Response.Redirect(Session("vorigePagina"))
+                If lblVorige.Text IsNot Nothing And Not lblVorige.Text = String.Empty Then
+                    Dim str As String = lblVorige.Text
+                    Dim st() As String = Split(str, "/")
+                    Dim link As String = String.Concat("~", "/", st(2), "/", st(3))
+                    Response.Redirect(link)
                 Else
                     Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+                    'If Session("vorigePagina") IsNot Nothing Then
+                    '    Response.Redirect(Session("vorigePagina"))
+                    'Else
+                    '    Response.Redirect("~/App_Presentation/AlleArtikels.aspx")
+                    'End If
                 End If
 
             Else
@@ -46,6 +54,12 @@ Partial Class App_Presentation_Aanmeldpagina
         Else
             divNietAangemeld.Visible = True
             divWelAangemeld.Visible = False
+        End If
+
+        If Not Request.UrlReferrer Is Nothing Then
+            If Not Request.UrlReferrer.LocalPath = "/ReferenceManual/App_Presentation/Aanmeldpagina.aspx" Then
+                lblVorige.Text = Request.UrlReferrer.LocalPath
+            End If
         End If
     End Sub
 End Class

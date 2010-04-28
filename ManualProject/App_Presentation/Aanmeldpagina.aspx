@@ -66,6 +66,7 @@ Vul de juiste gebruikersnaam en wachtwoord in om Beheerder te worden.
 </ContentTemplate>
     </asp:UpdatePanel>
 </div>
+    <asp:Label ID="lblVorige" runat="server" Text="" style="display:none;"></asp:Label>
 <div runat="server" id="divWelAangemeld" visible="false">U bent reeds aangemeld.
 <br />
 <asp:Button ID="btnLogOut" runat="server" Text="Afmelden" /></div>
