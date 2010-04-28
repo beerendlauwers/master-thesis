@@ -4,6 +4,8 @@ Partial Class App_Presentation_zoekresultaten
     Dim artikeldal As New ArtikelDAL
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+        Page.Title = Lokalisatie.GetString("ZOEKRESULTATEN")
+
         If Not IsPostBack Then
             ' Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
             Dim zoekterm As String = Page.Request.QueryString("term")
