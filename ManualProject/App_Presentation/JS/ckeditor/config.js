@@ -19,7 +19,7 @@ CKEDITOR.editorConfig = function( config )
 		['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
 		['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv','PageBreak'],
 		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-		['Link','Unlink','Anchor'],
+		['Image','Link','Unlink','Anchor'],
 		['linkAppligen','imageAppligen','Video','Table','HorizontalRule','SpecialChar'],
 		'/',
 		['Styles','Format','Font','FontSize'],
