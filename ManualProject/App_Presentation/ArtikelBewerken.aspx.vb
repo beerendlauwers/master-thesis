@@ -11,60 +11,68 @@ Partial Class App_Presentation_ArtikelBewerken
  
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        'Paginatitel
-        Page.Title = "Artikel Bewerken"
+        Try
+            'Paginatitel
+            Page.Title = "Artikel Bewerken"
 
-        Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
+            Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
 
-        'Als de pagina de eerste keer laadt
-        If Not Page.IsPostBack Then
+            'Als de pagina de eerste keer laadt
+            If Not Page.IsPostBack Then
 
-            'Dropdowns laden
-            LaadDropdowns()
+                'Dropdowns laden
+                LaadDropdowns()
 
-            'Templates laden
-            LaadTemplates()
+                'Templates laden
+                LaadTemplates()
 
-            'Artikelcontrols verstoppen
-            ArtikelFunctiesZichtbaar(False)
+                'Artikelcontrols verstoppen
+                ArtikelFunctiesZichtbaar(False)
 
-            'Checken voor een meegegeven ID
-            If Page.Request.QueryString("id") IsNot Nothing Then
-                If IsNumeric(Page.Request.QueryString("id")) = True Then
+                'Checken voor een meegegeven ID
+                If Page.Request.QueryString("id") IsNot Nothing Then
+                    If IsNumeric(Page.Request.QueryString("id")) = True Then
 
-                    Dim id As Integer = Page.Request.QueryString("id")
-                    LaadArtikel(id)
+                        Dim id As Integer = Page.Request.QueryString("id")
+                        LaadArtikel(id)
+                    End If
+
+                ElseIf Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing And Page.Request.QueryString("titel") IsNot Nothing And Page.Request.QueryString("Artikeltag") IsNot Nothing Then
+                    txtTitel.Text = Page.Request.QueryString("titel")
+                    txtTag.Text = Page.Request.QueryString("Artikeltag")
+                    ddlBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
+                    ddlVersie.SelectedValue = Page.Request.QueryString("versie")
+                    ddlModule.SelectedValue = Page.Request.QueryString("module")
+                    ddlTaal.SelectedValue = Page.Request.QueryString("taal")
+                    LaadCategorien()
+                    ddlCategorie.SelectedValue = Page.Request.QueryString("CategorieID")
+                    ArtikelFunctiesZichtbaar(True)
+                ElseIf Page.Request.QueryString("tag") IsNot Nothing Then
+                    Dim tag As String = Page.Request.QueryString("tag")
+                    LaadArtikel(tag)
                 End If
 
-            ElseIf Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing And Page.Request.QueryString("titel") IsNot Nothing And Page.Request.QueryString("Artikeltag") IsNot Nothing Then
-                txtTitel.Text = Page.Request.QueryString("titel")
-                txtTag.Text = Page.Request.QueryString("Artikeltag")
-                ddlBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
-                ddlVersie.SelectedValue = Page.Request.QueryString("versie")
-                ddlModule.SelectedValue = Page.Request.QueryString("module")
-                ddlTaal.SelectedValue = Page.Request.QueryString("taal")
-                LaadCategorien()
-                ddlCategorie.SelectedValue = Page.Request.QueryString("CategorieID")
-                ArtikelFunctiesZichtbaar(True)
-            ElseIf Page.Request.QueryString("tag") IsNot Nothing Then
-                Dim tag As String = Page.Request.QueryString("tag")
-                LaadArtikel(tag)
             End If
 
-        End If
+            LaadZoekTooltips()
+            LaadJavascript()
 
-        LaadZoekTooltips()
-        LaadJavascript()
+            Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
+            str(1) = Trim(str(1))
+            lblTaalTag.InnerHtml = str(1)
 
-        Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
-        str(1) = Trim(str(1))
-        lblTaalTag.InnerHtml = str(1)
-
-        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+            lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
     End Sub
 
     Protected Sub btnZoek_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnZoek.Click
-        ZoekresultatenWeergeven()
+        Try
+            ZoekresultatenWeergeven()
+        Catch ex As Exception
+            Util.OnverwachteFout(btnZoek, ex.Message)
+        End Try
     End Sub
 
     Private Sub ZoekresultatenWeergeven()
@@ -142,189 +150,200 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Protected Sub btnUpdate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnUpdate.Click
-
-        If Me.ddlCategorie.Items.Count = 0 Then
-            Util.SetError("U dient een categorie op te geven.", lblresultaat, imgResultaat)
-            Me.divFeedback.Style.Item("display") = "inline"
-            Return
-        End If
-
-        Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
-
-        Dim artikel As New Artikel
-
-        artikel.ID = ViewState("artikelID")
-        artikel.Bedrijf = ddlBedrijf.SelectedValue
-        artikel.Categorie = ddlCategorie.SelectedValue
-        artikel.Taal = ddlTaal.SelectedValue
-        artikel.Versie = ddlVersie.SelectedValue
-        artikel.Tag = lblTagvoorbeeld.InnerHtml
-        artikel.Tekst = HttpUtility.HtmlDecode(EditorBewerken.Value)
-        artikel.Titel = txtTitel.Text
-
-        If ckbFinal.Checked = True Then
-            artikel.IsFinal = 1
-        Else
-            artikel.IsFinal = 0
-        End If
-
-        'Checken of een ander artikel reeds deze titel heeft
-        If artikeldal.checkArtikelByTitelEnID(artikel.Titel, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
-            Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze titel in deze structuur.", lblresultaat, imgResultaat)
-            Me.divFeedback.Style.Item("display") = "inline"
-            Return
-        End If
-
-        'Checken of een ander artikel niet dezelfde tag heeft
-        If artikeldal.checkArtikelByTagByID(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
-            Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze tag.", lblresultaat, imgResultaat)
-            Me.divFeedback.Style.Item("display") = "inline"
-            Return
-        End If
-        If rdbAlleTalen.Checked Then
-            Dim taaldal As New TaalDAL
-            Dim oudetag As String = Session("oudetag")
-            Dim i As Integer
-            i = taaldal.updateTagTalen(oudetag, artikel.Tag, -1, -1)
-            If i = 0 Then
-                lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
-            End If
-        ElseIf rdbTalenperVersieBedrijf.Checked Then
-            Dim taaldal As New TaalDAL
-            Dim oudetag As String = Session("oudetag")
-            Dim i As Integer
-            i = taaldal.updateTagTalen(oudetag, artikel.Tag, artikel.Bedrijf, artikel.Versie)
-            If i = 0 Then
-                lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
-            End If
-        End If
-
-        If artikeldal.updateArtikel(artikel) = True Then
-
-            'Boomstructuur in het geheugen updaten.
-
-            'We halen de tree op waar dit artikel in werd opgeslagen
-            Dim oudetree As Tree = Tree.GetTree(origineelArtikel.FK_Taal, origineelArtikel.FK_Versie, origineelArtikel.FK_Bedrijf)
-
-            If oudetree Is Nothing Then
-                Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
-                Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
-                err.Args.Add("Taal = " & origineelArtikel.FK_Taal.ToString)
-                err.Args.Add("Versie = " & origineelArtikel.FK_Versie.ToString)
-                err.Args.Add("Bedrijf = " & origineelArtikel.FK_Bedrijf.ToString)
-                ErrorLogger.WriteError(err)
+        Try
+            If Me.ddlCategorie.Items.Count = 0 Then
+                Util.SetError("U dient een categorie op te geven.", lblresultaat, imgResultaat)
+                Me.divFeedback.Style.Item("display") = "inline"
+                Return
             End If
 
-            'We halen de nieuwe tree op
-            Dim nieuwetree As Tree = Tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+            Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
 
-            If nieuwetree Is Nothing Then
-                Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
-                Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
-                err.Args.Add("Taal = " & artikel.Taal.ToString)
-                err.Args.Add("Versie = " & artikel.Versie.ToString)
-                err.Args.Add("Bedrijf = " & artikel.Bedrijf.ToString)
-                ErrorLogger.WriteError(err)
+            Dim artikel As New Artikel
+
+            artikel.ID = ViewState("artikelID")
+            artikel.Bedrijf = ddlBedrijf.SelectedValue
+            artikel.Categorie = ddlCategorie.SelectedValue
+            artikel.Taal = ddlTaal.SelectedValue
+            artikel.Versie = ddlVersie.SelectedValue
+            artikel.Tag = lblTagvoorbeeld.InnerHtml
+            artikel.Tekst = HttpUtility.HtmlDecode(EditorBewerken.Value)
+            artikel.Titel = txtTitel.Text
+
+            If ckbFinal.Checked = True Then
+                artikel.IsFinal = 1
+            Else
+                artikel.IsFinal = 0
             End If
 
-            'Nakijken of het artikel verplaatst is geweest
-            If Not oudetree.Naam = nieuwetree.Naam Then 'artikel is verplaatst
+            'Checken of een ander artikel reeds deze titel heeft
+            If artikeldal.checkArtikelByTitelEnID(artikel.Titel, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
+                Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze titel in deze structuur.", lblresultaat, imgResultaat)
+                Me.divFeedback.Style.Item("display") = "inline"
+                Return
+            End If
 
-                'Artikel uit oude tree verwijderen
-                Dim oudenode As Node = oudetree.DoorzoekTreeVoorNode(origineelArtikel.ArtikelID, Global.ContentType.Artikel)
+            'Checken of een ander artikel niet dezelfde tag heeft
+            If artikeldal.checkArtikelByTagByID(artikel.Tag, artikel.Bedrijf, artikel.Versie, artikel.Taal, artikel.ID).Count > 0 Then
+                Util.SetError("Update mislukt: Er bestaat reeds een artikel met deze tag.", lblresultaat, imgResultaat)
+                Me.divFeedback.Style.Item("display") = "inline"
+                Return
+            End If
+            If rdbAlleTalen.Checked Then
+                Dim taaldal As New TaalDAL
+                Dim oudetag As String = Session("oudetag")
+                Dim i As Integer
+                i = taaldal.updateTagTalen(oudetag, artikel.Tag, -1, -1)
+                If i = 0 Then
+                    lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
+                End If
+            ElseIf rdbTalenperVersieBedrijf.Checked Then
+                Dim taaldal As New TaalDAL
+                Dim oudetag As String = Session("oudetag")
+                Dim i As Integer
+                i = taaldal.updateTagTalen(oudetag, artikel.Tag, artikel.Bedrijf, artikel.Versie)
+                If i = 0 Then
+                    lblresultaat.Text = "De tags zijn misschien niet correct aangepast."
+                End If
+            End If
 
-                If oudenode Is Nothing Then
-                    Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
-                    err.Args.Add("ID = " & origineelArtikel.ArtikelID.ToString)
-                    err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+            If artikeldal.updateArtikel(artikel) = True Then
+
+                'Boomstructuur in het geheugen updaten.
+
+                'We halen de tree op waar dit artikel in werd opgeslagen
+                Dim oudetree As Tree = Tree.GetTree(origineelArtikel.FK_Taal, origineelArtikel.FK_Versie, origineelArtikel.FK_Bedrijf)
+
+                If oudetree Is Nothing Then
+                    Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
+                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
+                    err.Args.Add("Taal = " & origineelArtikel.FK_Taal.ToString)
+                    err.Args.Add("Versie = " & origineelArtikel.FK_Versie.ToString)
+                    err.Args.Add("Bedrijf = " & origineelArtikel.FK_Bedrijf.ToString)
                     ErrorLogger.WriteError(err)
                 End If
 
-                oudetree.VindParentVanNode(oudenode).RemoveChild(oudenode)
+                'We halen de nieuwe tree op
+                Dim nieuwetree As Tree = Tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
 
-                'Artikel in nieuwe tree toevegen
-                Dim nieuwenode As New Node(artikel.ID, Global.ContentType.Artikel, artikel.Titel, 0)
-                Dim parent As Node = nieuwetree.DoorzoekTreeVoorNode(artikel.Categorie, Global.ContentType.Categorie)
-                parent.AddChild(nieuwenode)
-            Else 'het is niet verplaatst
-
-                'We zoeken het artikel op en updaten het.
-                Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
-
-                If tree Is Nothing Then
+                If nieuwetree Is Nothing Then
                     Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
                     Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
                     err.Args.Add("Taal = " & artikel.Taal.ToString)
                     err.Args.Add("Versie = " & artikel.Versie.ToString)
                     err.Args.Add("Bedrijf = " & artikel.Bedrijf.ToString)
                     ErrorLogger.WriteError(err)
-
-                    Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
-                    ArtikelFunctiesZichtbaar(False)
-                    Me.divFeedback.Visible = True
-                    Return
                 End If
 
-                Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
+                'Nakijken of het artikel verplaatst is geweest
+                If Not oudetree.Naam = nieuwetree.Naam Then 'artikel is verplaatst
 
-                If node Is Nothing Then
-                    Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
-                    ArtikelFunctiesZichtbaar(False)
-                    Me.divFeedback.Visible = True
+                    'Artikel uit oude tree verwijderen
+                    Dim oudenode As Node = oudetree.DoorzoekTreeVoorNode(origineelArtikel.ArtikelID, Global.ContentType.Artikel)
 
-                    Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
-                    err.Args.Add("ID = " & artikel.ID.ToString)
-                    err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
-                    ErrorLogger.WriteError(err)
+                    If oudenode Is Nothing Then
+                        Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
+                        err.Args.Add("ID = " & origineelArtikel.ArtikelID.ToString)
+                        err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+                        ErrorLogger.WriteError(err)
+                    End If
 
-                    Return
-                Else
-                    node.Titel = artikel.Titel
+                    oudetree.VindParentVanNode(oudenode).RemoveChild(oudenode)
+
+                    'Artikel in nieuwe tree toevegen
+                    Dim nieuwenode As New Node(artikel.ID, Global.ContentType.Artikel, artikel.Titel, 0)
+                    Dim parent As Node = nieuwetree.DoorzoekTreeVoorNode(artikel.Categorie, Global.ContentType.Categorie)
+                    parent.AddChild(nieuwenode)
+                Else 'het is niet verplaatst
+
+                    'We zoeken het artikel op en updaten het.
+                    Dim tree As Tree = tree.GetTree(artikel.Taal, artikel.Versie, artikel.Bedrijf)
+
+                    If tree Is Nothing Then
+                        Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
+                        err.Args.Add("Taal = " & artikel.Taal.ToString)
+                        err.Args.Add("Versie = " & artikel.Versie.ToString)
+                        err.Args.Add("Bedrijf = " & artikel.Bedrijf.ToString)
+                        ErrorLogger.WriteError(err)
+
+                        Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
+                        ArtikelFunctiesZichtbaar(False)
+                        Me.divFeedback.Visible = True
+                        Return
+                    End If
+
+                    Dim node As Node = tree.DoorzoekTreeVoorNode(artikel.ID, Global.ContentType.Artikel)
+
+                    If node Is Nothing Then
+                        Util.SetWarn("Update geslaagd met waarschuwing: Kon de boomstructuur niet updaten. Herbouw de boomstructuur als u klaar bent met wijzigingen te maken.", lblresultaat, imgResultaat)
+                        ArtikelFunctiesZichtbaar(False)
+                        Me.divFeedback.Visible = True
+
+                        Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
+                        err.Args.Add("ID = " & artikel.ID.ToString)
+                        err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+                        ErrorLogger.WriteError(err)
+
+                        Return
+                    Else
+                        node.Titel = artikel.Titel
+                    End If
                 End If
+
+                Util.SetOK("Update geslaagd.", lblresultaat, imgResultaat)
+                Me.divFeedback.Style.Item("display") = "inline"
+            Else
+                Util.SetError("Update mislukt: Kon niet met de database verbinden.", lblresultaat, imgResultaat)
+                Me.divFeedback.Style.Item("display") = "inline"
             End If
-
-            Util.SetOK("Update geslaagd.", lblresultaat, imgResultaat)
+            ArtikelFunctiesZichtbaar(False)
+            ZoekresultatenWeergeven()
             Me.divFeedback.Style.Item("display") = "inline"
-        Else
-            Util.SetError("Update mislukt: Kon niet met de database verbinden.", lblresultaat, imgResultaat)
-            Me.divFeedback.Style.Item("display") = "inline"
-        End If
-        ArtikelFunctiesZichtbaar(False)
-        ZoekresultatenWeergeven()
-        Me.divFeedback.Style.Item("display") = "inline"
-        Me.divResultatenTonen.Style.Item("display") = "inline"
+            Me.divResultatenTonen.Style.Item("display") = "inline"
 
+        Catch ex As Exception
+            Util.OnverwachteFout(btnUpdate, ex.Message)
+        End Try
     End Sub
 
 #Region "Gridview Event Handlers"
 
     Protected Sub grdvLijst_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdvLijst.RowCommand
-        If e.CommandName = "Select" Then
+        Try
+            If e.CommandName = "Select" Then
 
-            Dim row As GridViewRow = grdvLijst.Rows(e.CommandArgument)
-            Dim artikeltag As String = row.Cells(1).Text
-            Dim artikelID As Integer = Integer.Parse(row.Cells(7).Text)
-            LaadArtikel(artikelID)
-        End If
+                Dim row As GridViewRow = grdvLijst.Rows(e.CommandArgument)
+                Dim artikeltag As String = row.Cells(1).Text
+                Dim artikelID As Integer = Integer.Parse(row.Cells(7).Text)
+                LaadArtikel(artikelID)
+            End If
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
     End Sub
 
     Protected Sub grdvLijst_RowDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles grdvLijst.RowDataBound
-        If (e.Row.Cells(0).Text = "Titel" And e.Row.Cells(1).Text = "Tag" And e.Row.Cells(2).Text = "Versie" And e.Row.Cells(3).Text = "Bedrijf" And e.Row.Cells(4).Text = "Taal") Then
-            e.Row.Cells(6).Text = "Artikel Wijzigen"
-        End If
-
-        If e.Row.Cells.Count > 1 Then
-            e.Row.Cells(0).Text = HtmlDecode(e.Row.Cells(0).Text)
-
-            If e.Row.Cells(5).Text = "1" Then
-                e.Row.Cells(5).Text = "Ja"
-            ElseIf e.Row.Cells(5).Text = "0" Then
-                e.Row.Cells(5).Text = "Nee"
+        Try
+            If (e.Row.Cells(0).Text = "Titel" And e.Row.Cells(1).Text = "Tag" And e.Row.Cells(2).Text = "Versie" And e.Row.Cells(3).Text = "Bedrijf" And e.Row.Cells(4).Text = "Taal") Then
+                e.Row.Cells(6).Text = "Artikel Wijzigen"
             End If
-        End If
-        e.Row.Cells(7).Visible = False
+
+            If e.Row.Cells.Count > 1 Then
+                e.Row.Cells(0).Text = HtmlDecode(e.Row.Cells(0).Text)
+
+                If e.Row.Cells(5).Text = "1" Then
+                    e.Row.Cells(5).Text = "Ja"
+                ElseIf e.Row.Cells(5).Text = "0" Then
+                    e.Row.Cells(5).Text = "Nee"
+                End If
+            End If
+            e.Row.Cells(7).Visible = False
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
     End Sub
 
 #End Region
@@ -542,24 +561,21 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Protected Sub btnSjablonen_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnSjablonen.Click
-        If lstSjablonen.SelectedItem IsNot Nothing Then
-            If Not lstSjablonen.SelectedItem.Text = String.Empty Then
+        Try
+            If lstSjablonen.SelectedItem IsNot Nothing Then
+                If Not lstSjablonen.SelectedItem.Text = String.Empty Then
 
-                Dim template As String = lstSjablonen.SelectedItem.Text
-                Dim x As New XML(String.Concat(Server.MapPath("~/Templates/"), template, ".xml"), String.Concat(Server.MapPath("~/Templates/"), template, ".xsl"))
-                EditorBewerken.Value = String.Concat(EditorBewerken.Value, XML.LeesXMLFile(x))
+                    Dim template As String = lstSjablonen.SelectedItem.Text
+                    Dim x As New XML(String.Concat(Server.MapPath("~/Templates/"), template, ".xml"), String.Concat(Server.MapPath("~/Templates/"), template, ".xsl"))
+                    EditorBewerken.Value = String.Concat(EditorBewerken.Value, XML.LeesXMLFile(x))
 
+                End If
             End If
-        End If
+        Catch ex As Exception
+            Util.OnverwachteFout(btnSjablonen, ex.Message)
+        End Try
     End Sub
 
-    Protected Sub rdbAlleTalen_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbAlleTalen.CheckedChanged
-
-    End Sub
-
-    Protected Sub rdbEnkeleTaal_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rdbEnkeleTaal.CheckedChanged
-
-    End Sub
     Public Sub gettag()
         Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
         strtag(1) = Trim(strtag(1))
@@ -568,10 +584,18 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Protected Sub ddlModule_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.DataBound
-        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+        Try
+            lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
     End Sub
 
     Protected Sub ddlModule_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.SelectedIndexChanged
-        gettag()
+        Try
+            gettag()
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
     End Sub
 End Class
