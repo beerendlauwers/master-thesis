@@ -991,6 +991,29 @@ Partial Class App_Presentation_Beheer
                 End If
             Else
                 Dim a As New Artikel(artikeldal.GetArtikelByID(kind.ID))
+
+                'Nieuwe tag opbouwen
+                Dim v As Versie = Versie.GetVersie(a.Versie)
+                If v Is Nothing Then Return False
+
+                Dim ta As Taal = Taal.GetTaal(a.Taal)
+                If ta Is Nothing Then Return False
+
+                Dim b As Bedrijf = Bedrijf.GetBedrijf(a.Bedrijf)
+                If b Is Nothing Then Return False
+
+                Dim modulesplit() As String = a.Tag.Split("_")
+                Dim moduletag As String = modulesplit(3)
+                If moduletag Is Nothing Then Return False
+
+                Dim artikeltag As String = modulesplit(4)
+                If artikeltag Is Nothing Then Return False
+
+                a.Tag = String.Concat(v.VersieNaam, "_", ta.TaalNaam, "_", b.Naam, "_", moduletag, "_", artikeltag)
+
+                'De categorie updaten (we willen de nieuwe categorie gebruiken)
+                a.Categorie = categorieID
+
                 resultaat = adapterArtikel.Insert(a.Titel, a.Categorie, a.Taal, a.Bedrijf, versieID, a.Tekst, a.Tag, a.IsFinal)
 
                 If resultaat = False Then 'kon een artikel niet kopiëren
