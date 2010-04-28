@@ -756,6 +756,7 @@ Partial Class App_Presentation_Beheer
                     End If
 
                     LaadTaalDropdowns()
+                    LaadTreeGegevens()
                 Else
                     Util.SetError("Deze taal is reeds toegvoegd.", lblAddTaalRes, imgAddTaalRes)
                 End If
@@ -795,6 +796,7 @@ Partial Class App_Presentation_Beheer
                         End If
 
                         LaadTaalDropdowns()
+                        LaadTreeGegevens()
                     Else
                         Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
                     End If
@@ -828,6 +830,7 @@ Partial Class App_Presentation_Beheer
                         End If
 
                         LaadTaalDropdowns()
+                        LaadTreeGegevens()
                     End If
                 Else
                     Util.SetError("Er bestaan nog artikels of categorieën onder deze taal.", lblDeleteTaalRes, imgDeleteTaalRes)
@@ -902,6 +905,7 @@ Partial Class App_Presentation_Beheer
                     End If
 
                     LaadVersieDropdowns()
+                    LaadTreeGegevens()
                 Else
                     Util.SetWarn("Deze versie bestaat reeds.", lblAddVersieRes, imgAddVersieRes)
                 End If
@@ -935,6 +939,7 @@ Partial Class App_Presentation_Beheer
                             End If
 
                             LaadVersieDropdowns()
+                            LaadTreeGegevens()
                         End If
                     End If
                 Else
@@ -1089,6 +1094,7 @@ Partial Class App_Presentation_Beheer
                 End If
 
                 LaadVersieDropdowns()
+                LaadTreeGegevens()
                 Me.txtNaamNieuweVersieKopie.Text = String.Empty
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
@@ -1277,6 +1283,7 @@ Partial Class App_Presentation_Beheer
                     End If
 
                     LaadBedrijfDropdowns()
+                    LaadTreeGegevens()
                 Else
                     Util.SetError("Dit bedrijf bestaat al, of een ander bedrijf heeft reeds dezelfde tag.", lblAddBedrijfRes, imgAddBedrijfRes)
                 End If
@@ -1319,6 +1326,7 @@ Partial Class App_Presentation_Beheer
                 End If
 
                 LaadBedrijfDropdowns()
+                LaadTreeGegevens()
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblEditbedrijfRes, imgEditBedrijfRes)
             End If
@@ -1349,6 +1357,7 @@ Partial Class App_Presentation_Beheer
                             End If
 
                             LaadBedrijfDropdowns()
+                            LaadTreeGegevens()
                         End If
                     End If
 
@@ -1368,6 +1377,7 @@ Partial Class App_Presentation_Beheer
                             End If
 
                             LaadBedrijfDropdowns()
+                            LaadTreeGegevens()
                         End If
                     Else
                         Util.SetError("Er staan nog artikels of categorieën onder dit bedrijf.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
@@ -1864,6 +1874,7 @@ Partial Class App_Presentation_Beheer
 
         lblTreesAantal.Text = Tree.GetTrees.Count
 
+        ddlTreesWeergeven.Items.Clear()
         ddlTreesWeergeven.Items.Add(New ListItem("-- Boomstructuur --", -1000))
 
         Dim aantalCats As Integer = 0
