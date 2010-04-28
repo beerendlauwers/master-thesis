@@ -1014,7 +1014,7 @@ Partial Class App_Presentation_Beheer
                 Dim artikeltag As String = modulesplit(4)
                 If artikeltag Is Nothing Then Return False
 
-                a.Tag = String.Concat(v.VersieNaam, "_", ta.TaalNaam, "_", b.Naam, "_", moduletag, "_", artikeltag)
+                a.Tag = String.Concat(v.VersieNaam, "_", ta.TaalTag, "_", b.Naam, "_", moduletag, "_", artikeltag)
 
                 'De categorie updaten (we willen de nieuwe categorie gebruiken)
                 a.Categorie = categorieID
