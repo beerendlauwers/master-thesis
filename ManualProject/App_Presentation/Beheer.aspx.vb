@@ -1038,10 +1038,14 @@ Partial Class App_Presentation_Beheer
 
                     Dim nieuweVersieID As Integer = versiedal.insertVersie(versietext)
                     If nieuweVersieID = -1 Then
-                        Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                        Util.SetError("Kopiëren mislukt: Kon niet met de database verbinden.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
                     Else
                         Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf()
                         Dim talen As tblTaalDataTable = taaldal.GetAllTaal()
+
+                        'Versie in geheugen toevoegen
+                        Dim nieuweversie As New Versie(nieuweVersieID, versietext)
+                        Versie.AddVersie(nieuweversie)
 
                         'Alle categorieën van deze versie recursief kopiëren
                         For Each t As tblTaalRow In talen
@@ -1049,7 +1053,7 @@ Partial Class App_Presentation_Beheer
                                 Dim oudeversietree As Tree = Tree.GetTree(t.TaalID, versieID, b.BedrijfID)
 
                                 If oudeversietree Is Nothing Then
-                                    Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                                    Util.SetError("Kopiëren mislukt. Kon de boomstructuur van de oude versie niet vinden.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
 
                                     Dim fout As String = "De opgevraagde tree (zie parameters) bestaat niet in het geheugen."
                                     fout = String.Concat(fout, " Refereer naar de documentatie om dit probleem op te lossen.")
@@ -1063,15 +1067,12 @@ Partial Class App_Presentation_Beheer
                                 End If
 
                                 If Not Kopieren_KopieerCategorieRecursief(oudeversietree.RootNode, oudeversietree, nieuweVersieID, oudeversietree.RootNode.ID) Then
-                                    Util.SetError("Kopiëren mislukt.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
+                                    Util.SetError("Kopiëren mislukt. Kon niet alle categorieën of artikels kopiëren.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
                                     Return
                                 End If
 
                             Next b
                         Next t
-
-                        'Geheugen updaten
-                        Versie.AddVersie(New Versie(nieuweVersieID, versietext))
 
                         Dim v As tblVersieRow = versiedal.GetVersieByID(nieuweVersieID)
                         Dim gelukt As String = Tree.BouwTreesVoorVersie(bedrijven, v, talen)
