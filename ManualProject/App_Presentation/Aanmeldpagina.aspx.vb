@@ -28,7 +28,7 @@ Partial Class App_Presentation_Aanmeldpagina
                 End If
 
             Else
-                Session("login") = 0
+                Session("login") = Nothing
                 divRes.Visible = True
                 Util.SetError("Verkeerde login.", lblRes, imgRes)
             End If
@@ -52,6 +52,7 @@ Partial Class App_Presentation_Aanmeldpagina
             divWelAangemeld.Visible = True
             divNietAangemeld.Visible = False
         Else
+            Session("login") = Nothing
             divNietAangemeld.Visible = True
             divWelAangemeld.Visible = False
         End If
