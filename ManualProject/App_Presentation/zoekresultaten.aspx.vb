@@ -4,7 +4,7 @@ Partial Class App_Presentation_zoekresultaten
     Dim artikeldal As New ArtikelDAL
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        Page.Title = Lokalisatie.GetString("ZOEKRESULTATEN")
+        GenereerGelokaliseerdeTekst()
 
         If Not IsPostBack Then
             ' Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
@@ -98,6 +98,8 @@ Partial Class App_Presentation_zoekresultaten
 
     Private Sub GenereerGelokaliseerdeTekst()
         Master.CheckVoorTaalWijziging()
+        lblZoekResultatenTitel.Text = Lokalisatie.GetString("ZOEKRESULTATEN")
+        Page.Title = Lokalisatie.GetString("ZOEKRESULTATEN")
         headerArtikels.InnerHtml = Lokalisatie.GetString("ZOEKEN_GEVONDENARTIKELS")
         lblSort.Text = Lokalisatie.GetString("ZOEKEN_UITLEGKOLOMMEN")
         grdResultaten.EmptyDataText = Lokalisatie.GetString("GEENDATAGEVONDEN")
