@@ -2,9 +2,9 @@
 CKEDITOR.dialog.add( 'linkAppligen', function( editor )
 {
 
-	var lblInfoTekst = '<br/><strong>OPMERKING:</strong> Als u deze imagelink wil verplaatsen, dient u eerst<br/>'
+	var lblInfoTekst = '<br/><strong>OPMERKING:</strong> Als u deze link wil verplaatsen, dient u eerst<br/>'
 					   + 'op de link te klikken, en hierna op het <strong>"a"</strong>-veldje te klikken in de onderste balk.'
-					   + '<br/>Enkel dan zal de volledige imagelink geselecteerd zijn,<br/> waarna u hem kan knippen en plakken naarwaar u wilt.<br/><br/>' 
+					   + '<br/>Enkel dan zal de volledige link geselecteerd zijn,<br/> waarna u hem kan knippen en plakken naarwaar u wilt.<br/><br/>' 
 					   + '<i>Voorbeeld van onderste balk:</i> <img style="vertical-align:middle;" src="' + CKEDITOR.plugins.getPath( 'linkAppligen' ) + 'images/infoelement.png" />';
 			
 	// Function called in onShow to load selected element.
