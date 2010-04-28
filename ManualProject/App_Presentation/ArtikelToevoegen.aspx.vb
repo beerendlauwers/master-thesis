@@ -24,7 +24,10 @@ Partial Class App_Presentation_invoerenTest
 
             If Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing Then
                 ddlModule.SelectedValue = Page.Request.QueryString("module")
-                txtTag.Text = Page.Request.QueryString("tag")
+                If Page.Request.QueryString("Artikeltag") IsNot Nothing Then
+                    txtTag.Text = Page.Request.QueryString("Artikeltag")
+                End If
+
                 If IsNumeric(Page.Request.QueryString("taal")) Then
                     Dim taalID = Integer.Parse(Page.Request.QueryString("taal"))
                     ddlTaal.SelectedValue = taalID
@@ -41,7 +44,6 @@ Partial Class App_Presentation_invoerenTest
                 ddlBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
                 If Page.Request.QueryString("tag") IsNot Nothing Then
                     txtTag.Text = Page.Request.QueryString("tag")
-                    lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
                 End If
                 LaadCategorien()
                 If Page.Request.QueryString("titel") IsNot Nothing Then
@@ -50,6 +52,8 @@ Partial Class App_Presentation_invoerenTest
                 If Page.Request.QueryString("categorie") IsNot Nothing Then
                     ddlCategorie.SelectedValue = Page.Request.QueryString("categorie")
                 End If
+                lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+
             End If
         Else
             lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
