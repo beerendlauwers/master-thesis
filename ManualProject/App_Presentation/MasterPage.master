@@ -37,7 +37,7 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
 </head>
 
 <body id="MasterBody" runat="server">
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" defaultbutton="lnkZoek">
      <asp:scriptmanager ID="Scriptmanager2" runat="server" EnablePartialRendering="true"></asp:scriptmanager>
      
          <script language="javascript" type="text/javascript">
@@ -104,10 +104,8 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
                 
             </li>
             <li style="float:right;" runat="server" id="zoeken" visible="true"><div style="padding-left:10px;padding-right:10px;"><span class="l"></span><span class="r"></span><span class="t"><b><asp:Label ID="lblZoek" runat="server" Text=""></asp:Label>
-            </b><asp:TextBox ID="txtZoek" runat="server" onmouseover="SetButtonStatus(this)" onmouseout="SetButtonStatus(this)" onmouseup="SetButtonStatus(this)" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;" onkeypress="onEnter(event,this.form);"></asp:TextBox><span class="imgbutton">
-                <asp:ImageButton ID="lnkZoeken" runat="server" BackColor="Transparent" 
-                    Height="16px" ImageUrl="~/App_Presentation/CSS/images/magnify.png" 
-                    Width="16px" class="zoekLinkUit"  /></span></span></div>
+            </b><asp:TextBox ID="txtZoek" runat="server" onmouseover="SetButtonStatus(this)" onmouseout="SetButtonStatus(this)" onmouseup="SetButtonStatus(this)" onkeyup="SetButtonStatus(this)" style="vertical-align:middle;"></asp:TextBox><span class="imgbutton">
+                <asp:Button name="lnkZoek" ID="lnkZoek" runat="server" Text="Zoek" /></span></span></div>
                    
               </li>
                     
@@ -164,7 +162,7 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
     <script type="text/javascript">
     function SetButtonStatus(field)
     {
-        var link = document.getElementById('<%=lnkZoeken.ClientID %>');
+        var link = document.getElementById('<%=lnkZoek.ClientID %>');
     
         if ( field.value.length >= 2 )
         {
@@ -177,25 +175,31 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
             link.disabled = true;
         }
     }
-    function onEnter(evt,frm)
-    {
-        var link = document.getElementById('<%=lnkZoeken.ClientID %>');
-        var keyCode = null;
-        if( evt.which ) 
-        {
-           keyCode = evt.which;
-        } 
-        else if( evt.keyCode ) 
-        {
-            keyCode = evt.keyCode;
-        }
-        if( 13 == keyCode ) 
-        {
-            link.click();
-            return false;
-        }
-        return true;
-    }
+//    function onEnter(evt,frm)
+//    {
+//        
+//        var link = document.getElementById('<%=lnkZoek.ClientID %>');
+//        var keyCode = null;
+//        var zoekterm = null;
+//        zoekterm = "../App_Presentation/Zoekresultaten.aspx?term=" + document.getElementById('<%=txtZoek.ClientID %>').value;
+//        
+//        if( evt.which ) 
+//        {
+//           keyCode = evt.which;
+//        } 
+//        else if( evt.keyCode ) 
+//        {
+//            keyCode = evt.keyCode;
+//        }
+//        if( 13 == keyCode ) 
+//        {
+//            if (zoekterm.length>=2)
+//            {
+//                
+//              
+//            }
+//        }
+//    }
     
     function genericPopup(href, width, height, scrollbars)
     {

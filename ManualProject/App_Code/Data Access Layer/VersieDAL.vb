@@ -147,4 +147,27 @@ Public Class VersieDAL
 
     End Function
 
+    Public Function DeleteArtikelsVoorVersie(ByVal versieID As Integer) As Integer
+
+        Dim c As New SqlCommand("deleteAllArtikelsForVersie", New SqlConnection(conn))
+        c.CommandType = CommandType.StoredProcedure
+        c.Parameters.Add("@VersieID", SqlDbType.VarChar).Value = versieID
+        Dim r As Integer
+        Try
+
+            c.Connection.Open()
+
+            r = c.ExecuteScalar
+
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("versieID = " & versieID)
+            ErrorLogger.WriteError(e)
+            Return -1
+        Finally
+            c.Connection.Close()
+        End Try
+        Return r
+    End Function
+
 End Class

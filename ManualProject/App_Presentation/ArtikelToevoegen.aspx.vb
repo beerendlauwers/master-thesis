@@ -22,19 +22,34 @@ Partial Class App_Presentation_invoerenTest
             LaadDropdowns()
             LaadTemplates()
 
-            If Page.Request.QueryString("tag") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing Then
+            If Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing Then
+                ddlModule.SelectedValue = Page.Request.QueryString("module")
                 txtTag.Text = Page.Request.QueryString("tag")
-                Dim dr As Manual.tblTaalRow = taaldal.getTaalByNaam(Page.Request.QueryString("taal"))
-                Dim taalid As Integer = dr("taalID")
-                ddlTaal.SelectedValue = taalid
+                If IsNumeric(Page.Request.QueryString("taal")) Then
+                    Dim taalID = Integer.Parse(Page.Request.QueryString("taal"))
+                    ddlTaal.SelectedValue = taalID
+                Else
+                    Dim taal As String = HttpUtility.UrlDecode(Page.Request.QueryString("taal"))
+                    Dim dr As Manual.tblTaalRow = taaldal.getTaalByNaam(taal)
+                    Dim taalid As Integer = dr("taalID")
+                    ddlTaal.SelectedValue = taalid
+                End If
                 Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
                 strtag(1) = Trim(strtag(1))
                 lblTaalTag.InnerHtml = strtag(1)
                 ddlVersie.SelectedValue = Page.Request.QueryString("versie")
                 ddlBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
-
-                lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
-
+                If Page.Request.QueryString("tag") IsNot Nothing Then
+                    txtTag.Text = Page.Request.QueryString("tag")
+                    lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+                End If
+                LaadCategorien()
+                If Page.Request.QueryString("titel") IsNot Nothing Then
+                    txtTitel.Text = Page.Request.QueryString("titel")
+                End If
+                If Page.Request.QueryString("categorie") IsNot Nothing Then
+                    ddlCategorie.SelectedValue = Page.Request.QueryString("categorie")
+                End If
             End If
         Else
             lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
@@ -45,7 +60,7 @@ Partial Class App_Presentation_invoerenTest
     Private Sub LaadDropdowns()
 
         Util.LeesVersies(ddlVersie)
-        'Util.LeesTalen(ddlTaal)
+
         Util.LeesBedrijven(ddlBedrijf)
 
         Me.ddlTaal.Items.Clear()
@@ -71,10 +86,17 @@ Partial Class App_Presentation_invoerenTest
             Me.ddlCategorie.Visible = False
             Me.lblGeenCategorie.Visible = True
             Me.btnVoegtoe.Enabled = False
+            Me.hplAddCategorie.Visible = True
+            Me.hplAddCategorie.NavigateUrl = "~/App_Presentation/Beheer.aspx?index=4&versie=" + ddlVersie.SelectedValue + "&bedrijf=" + ddlBedrijf.SelectedValue + "&taal=" + ddlTaal.SelectedValue + "&module=" + ddlModule.SelectedValue + "&tag=" + txtTag.Text + "&titel=" + txtTitel.Text + "&Add=1"
+            Me.Editortoevoegendiv.Style.Add("display", "none")
+            updContent.Update()
         Else
             Me.btnVoegtoe.Enabled = True
             Me.ddlCategorie.Visible = True
             Me.lblGeenCategorie.Visible = False
+            Me.hplAddCategorie.Visible = False
+            Me.Editortoevoegendiv.Style.Add("display", "")
+            updContent.Update()
         End If
 
     End Sub

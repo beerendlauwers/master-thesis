@@ -81,6 +81,13 @@ Partial Class App_Presentation_Beheer
                             txtAddCatnaam.Text = String.Empty
                             txtAddhoogte.Text = String.Empty
                         End If
+                        If Session("query") IsNot Nothing Then
+                            If Request.QueryString("Add") IsNot Nothing Then
+                                Response.Redirect("ArtikelToevoegen.aspx" + Session("query") + "&categorieID=" + categorieID.ToString)
+                            ElseIf Request.QueryString("Edit") IsNot Nothing Then
+                                Response.Redirect("ArtikelBewerken.aspx" + Session("query") + "&categorieID=" + categorieID.ToString)
+                            End If
+                        End If
                     Else
                         Util.SetError("Toevoegen mislukt.", lblResAdd, imgResAdd)
                     End If
@@ -164,7 +171,8 @@ Partial Class App_Presentation_Beheer
     Private Function Wijzigen_CheckCategorieRecursief(ByVal catnaam As String, ByVal bedrijf As Integer, ByVal versie As Integer, ByVal taal As Integer, ByVal parentCategorieID As Integer) As Boolean
 
         'Check of deze categorie een dubbele naam heeft
-        If (categoriedal.checkCategorieByID(catnaam, bedrijf, versie, taal, parentCategorieID).Count = 0) Then
+        Dim checkdt As tblCategorieDataTable = categoriedal.checkCategorieByID(catnaam, bedrijf, versie, taal, parentCategorieID)
+        If (checkdt.Count > 0) Then
             Return False
         Else
 
@@ -191,7 +199,8 @@ Partial Class App_Presentation_Beheer
                 'Elk artikel van deze parentcategorie checken
                 For Each artikel As tblArtikelRow In artikeldt
 
-                    If artikeldal.checkArtikelByTitel(artikel.Titel, bedrijf, versie, taal).Count > 0 Then
+                    Dim checkartikeldt As tblArtikelDataTable = artikeldal.checkArtikelByTitel(artikel.Titel, bedrijf, versie, taal)
+                    If checkartikeldt.Count > 0 Then
                         Return False 'Dit artikel heeft een dubbele titel
                     End If
 
@@ -1035,27 +1044,50 @@ Partial Class App_Presentation_Beheer
         Try
             If ddlDeletVersie.SelectedItem IsNot Nothing Then
                 Dim versieID As Integer = ddlDeletVersie.SelectedValue
-
-                If (artikeldal.getArtikelsByVersie(versieID).Count = 0 And categoriedal.GetCategorieByVersie(versieID).Count = 0) Then
-                    If (adapterVersie.Delete(versieID) = 0) Then
-                        Util.SetError("Verwijderen mislukt.", lblDeleteVersieRes, imgDeleteVersieRes)
+                If ckbAllesOnderVersie.Checked Then
+                    If versiedal.DeleteArtikelsVoorVersie(versieID) = -1 Then
+                        Util.SetError("Artikels onder deze zijn niet verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
                     Else
-
-                        'Geheugen updaten
-                        Dim v As Versie = Versie.GetVersie(versieID)
-
-                        If v Is Nothing Then
-                            Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblDeleteVersieRes, imgDeleteVersieRes)
+                        If (adapterVersie.Delete(versieID) = 0) Then
+                            Util.SetError("Verwijderen mislukt.", lblDeleteVersieRes, imgDeleteVersieRes)
                         Else
-                            Versie.RemoveVersie(v)
-                            Util.SetOK("Versie verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
-                        End If
 
-                        LaadVersieDropdowns()
+                            'Geheugen updaten
+                            Dim v As Versie = Versie.GetVersie(versieID)
+
+                            If v Is Nothing Then
+                                Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblDeleteVersieRes, imgDeleteVersieRes)
+                            Else
+                                Versie.RemoveVersie(v)
+                                Util.SetOK("Versie verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
+                            End If
+
+                            LaadVersieDropdowns()
+                        End If
                     End If
                 Else
-                    Util.SetError("Deze versie heeft nog artikels of categorieën onder zich.", lblDeleteVersieRes, imgDeleteVersieRes)
+                    If (artikeldal.getArtikelsByVersie(versieID).Count = 0 And categoriedal.GetCategorieByVersie(versieID).Count = 0) Then
+                        If (adapterVersie.Delete(versieID) = 0) Then
+                            Util.SetError("Verwijderen mislukt.", lblDeleteVersieRes, imgDeleteVersieRes)
+                        Else
+
+                            'Geheugen updaten
+                            Dim v As Versie = Versie.GetVersie(versieID)
+
+                            If v Is Nothing Then
+                                Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblDeleteVersieRes, imgDeleteVersieRes)
+                            Else
+                                Versie.RemoveVersie(v)
+                                Util.SetOK("Versie verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
+                            End If
+
+                            LaadVersieDropdowns()
+                        End If
+                    Else
+                        Util.SetError("Deze versie heeft nog artikels of categorieën onder zich.", lblDeleteVersieRes, imgDeleteVersieRes)
+                    End If
                 End If
+
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteVersieRes, imgDeleteVersieRes)
             End If
@@ -1208,9 +1240,8 @@ Partial Class App_Presentation_Beheer
                 If (bedrijfdal.getBedrijfByNaamTagID(bedrijfnaam, bedrijfTag, bedrijfID).Count = 0) Then
                     If (adapterBedrijf.Update(bedrijfnaam, bedrijfTag, bedrijfID) > 0) Then
                         If artikeldal.updateArtikelTagMetBedrijf(bedrijfnaam, oudbedrijf) = 0 Then
-                            Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
+                            Util.SetError("Wijzigen mislukt: kijk na of stored procedure 'onUpdateBedrijf' wel bestaat.", lblEditbedrijfRes, imgEditBedrijfRes)
                         Else
-
                             'Geheugen updaten
                             Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
 
@@ -1223,8 +1254,10 @@ Partial Class App_Presentation_Beheer
                             End If
                         End If
                     Else
-                        Util.SetError("Een ander bedrijf heeft reeds deze bedrijfsnaam of tag.", lblEditbedrijfRes, imgEditBedrijfRes)
+                        Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
                     End If
+                Else
+                    Util.SetError("Een ander bedrijf heeft reeds deze bedrijfsnaam of tag.", lblEditbedrijfRes, imgEditBedrijfRes)
                 End If
 
                 LaadBedrijfDropdowns()
@@ -1240,25 +1273,48 @@ Partial Class App_Presentation_Beheer
         Try
             If ddlDeleteBedrijf.SelectedItem IsNot Nothing Then
                 Dim bedrijfID As Integer = ddlDeleteBedrijf.SelectedValue
-
-                If (artikeldal.getArtikelsByBedrijf(bedrijfID).Count = 0 And categoriedal.GetCategorieByBedrijf(bedrijfID).Count = 0) Then
-                    If (adapterBedrijf.Delete(bedrijfID) = 0) Then
-                        Util.SetError("Verwijderen mislukt.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                If ckbAlleBedrijf.Checked Then
+                    If bedrijfdal.DeleteArtikelsOnderbedrijf(bedrijfID) = -1 Then
+                        Util.SetError("Artikels onder Bedrijf zijn niet verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                     Else
-
-                        'Geheugen updaten
-                        Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
-                        If b Is Nothing Then
-                            Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                        If (adapterBedrijf.Delete(bedrijfID) = 0) Then
+                            Util.SetError("Verwijderen mislukt.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                         Else
-                            Bedrijf.RemoveBedrijf(b)
-                            Util.SetOK("Bedrijf verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
-                        End If
 
-                        LaadBedrijfDropdowns()
+                            'Geheugen updaten
+                            Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
+                            If b Is Nothing Then
+                                Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                            Else
+                                Bedrijf.RemoveBedrijf(b)
+                                Util.SetOK("Bedrijf verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                            End If
+
+                            LaadBedrijfDropdowns()
+                        End If
                     End If
+
                 Else
-                    Util.SetError("Er staan nog artikels of categorieën onder dit bedrijf.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                    If (artikeldal.getArtikelsByBedrijf(bedrijfID).Count = 0 And categoriedal.GetCategorieByBedrijf(bedrijfID).Count = 0) Then
+                        If (adapterBedrijf.Delete(bedrijfID) = 0) Then
+                            Util.SetError("Verwijderen mislukt.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                        Else
+
+                            'Geheugen updaten
+                            Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
+                            If b Is Nothing Then
+                                Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                            Else
+                                Bedrijf.RemoveBedrijf(b)
+                                Util.SetOK("Bedrijf verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                            End If
+
+                            LaadBedrijfDropdowns()
+                        End If
+                    Else
+                        Util.SetError("Er staan nog artikels of categorieën onder dit bedrijf.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                    End If
+
                 End If
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
@@ -1320,6 +1376,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub btnOk_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOk.Click
+        mpeTreesHerbouwen.Hide()
         Try
             Dim resultaat As String = Tree.BouwTrees()
             If resultaat = "OK" Then
@@ -1332,6 +1389,8 @@ Partial Class App_Presentation_Beheer
         Catch ex As Exception
             Util.OnverwachteFout(btnOk, ex.Message)
         End Try
+        'JavaScript.ShadowBoxLaderSluiten(Me)
+
     End Sub
 
     Protected Sub btnHerlaadTooltips_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnHerlaadTooltips.Click
@@ -1534,7 +1593,24 @@ Partial Class App_Presentation_Beheer
             If Page.Request.QueryString("index") IsNot Nothing Then
                 TabBeheer.ActiveTabIndex = Integer.Parse(Page.Request.QueryString("index"))
             End If
-
+            Dim querystring As String
+            If Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing Then
+                ddlAddCatTaal.SelectedValue = Page.Request.QueryString("taal")
+                ddlAddCatVersie.SelectedValue = Page.Request.QueryString("versie")
+                ddlAddCatBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
+                Toevoegen_LaadParentCategorie()
+                querystring = "?taal=" + Page.Request.QueryString("taal") + "&versie=" + Page.Request.QueryString("versie") + "&bedrijf=" + Page.Request.QueryString("bedrijf")
+                If Page.Request.QueryString("module") IsNot Nothing Then
+                    querystring = querystring + "&module=" + Page.Request.QueryString("module")
+                    If Page.Request.QueryString("tag") IsNot Nothing Then
+                        querystring = querystring + "&Artikeltag=" + Page.Request.QueryString("tag")
+                        If Page.Request.QueryString("titel") IsNot Nothing Then
+                            querystring = querystring + "&titel=" + Page.Request.QueryString("titel")
+                        End If
+                    End If
+                End If
+                Session("query") = querystring
+            End If
         Catch ex As Exception
             Util.OnverwachteFout(Me, ex.Message)
         End Try

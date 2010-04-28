@@ -299,7 +299,10 @@ function ValideerZoekTerm (source, args)
 <tr>
 <td class="lbl"><asp:Label ID="lblCategorie" runat="server" Text="Categorie:"></asp:Label></td>
 <td class="ietd"><asp:DropDownList ID="ddlCategorie" runat="server" Width="100%"></asp:DropDownList>
+    
+    
     <asp:Label ID="lblGeenCategorie" runat="server" Text="Er zijn geen categorieën beschikbaar." Visible="false"></asp:Label>
+<asp:HyperLink ID="hplAddCategorie" runat="server" Visible="false">Categorie toevoegen</asp:HyperLink>
 </td>
 <td>
 <span style="vertical-align:middle" id='tipCategorie'><img src="CSS/images/help.png" alt=''/></span>
@@ -366,10 +369,11 @@ tr.style.display="none";
 </tr>
 </table>
 <br />
+<div runat="server" id="EditorEditDiv">
     <FredCK:CKEditor runat="server" ID="EditorBewerken" Height="600"></FredCK:CKEditor>
     <script type="text/javascript">
     CKFinder.SetupCKEditor( null, 'JS/ckfinder/' );
-    </script>
+    </script></div>
 </ContentTemplate>
 </asp:UpdatePanel>
 

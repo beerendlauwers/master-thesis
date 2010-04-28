@@ -39,7 +39,7 @@
 <td class="lbl"><asp:Label ID="lblTag" runat="server" Text="Tag:" ></asp:Label></td>
 <td><asp:TextBox ID="txtTag" runat="server" Width="100%" onkeyup="wijzigLabel(this)"></asp:TextBox><asp:RequiredFieldValidator
         ID="vleTag" runat="server" Display="None" 
-        ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters, nummers en een underscore ( _ ) bevatten." 
+        ErrorMessage="Gelieve een tag in te geven. Deze mag enkel letters en nummers bevatten." 
         ControlToValidate="txtTag"></asp:RequiredFieldValidator>
     <cc2:ValidatorCalloutExtender
             ID="extTag" runat="server" TargetControlID="vleTag">
@@ -131,7 +131,9 @@
 <td class="ietd"><asp:DropDownList ID="ddlCategorie" runat="server" 
         DataTextField="Categorie" DataValueField="CategorieID" Width="100%">
 </asp:DropDownList>
+
 <asp:Label runat="server" ID="lblGeenCategorie" Visible="false" Text="Er zijn geen categorieën beschikbaar."></asp:Label>
+    <asp:HyperLink ID="hplAddCategorie" runat="server" Visible="false">Categorie toevoegen</asp:HyperLink>
 </td>
 <td>
 <span style="vertical-align:middle" id='tipCategorieArtikelToevoegen'><img src="CSS/images/help.png" alt=''/></span>
@@ -176,11 +178,12 @@
 </tr>
 </table>
 <br />
+<div runat="server" id="Editortoevoegendiv">
     <FredCK:CKEditor runat="server" ID="EditorToevoegen" Height="600"></FredCK:CKEditor>
     <script type="text/javascript">
     CKFinder.SetupCKEditor( null, 'JS/ckfinder/' );
     </script>
-			
+	</div>		
 
 
 

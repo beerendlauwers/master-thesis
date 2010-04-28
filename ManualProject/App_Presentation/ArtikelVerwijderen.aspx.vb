@@ -3,7 +3,7 @@
 
 Partial Class App_Presentation_verwijderenTekst
     Inherits System.Web.UI.Page
-
+    Private artikeldal As New ArtikelDAL
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Artikel Verwijderen"
         Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
@@ -318,6 +318,8 @@ Partial Class App_Presentation_verwijderenTekst
             Session("tag") = Request.QueryString("tag")
             Session("rechtstreeksVerwijderen") = 1
             If Not IsPostBack Then
+                Dim dr As Manual.tblArtikelRow = artikeldal.GetArtikelByTag(Request.QueryString("tag"))
+                lblArtikeltitel.Text = dr("titel")
                 mpeConfirmatie.Show()
             End If
         End If

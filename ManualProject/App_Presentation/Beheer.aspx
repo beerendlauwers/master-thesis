@@ -34,6 +34,9 @@
                                                             ControlToValidate="txtAddbedrijf" Display="None" ValidationGroup="bedrijfToevoegen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extAddBedrijf" runat="server" TargetControlID="vleAddBedrijf">
                                                             </cc1:ValidatorCalloutExtender>
+                                                            <cc1:FilteredTextBoxExtender ID="fltbedrijfaddnaam" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtAddbedrijf" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipAddBedrijf'>
@@ -105,6 +108,9 @@
                                                             ControlToValidate="txtEditBedrijf" Display="None" ValidationGroup="bedrijfWijzigen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extEditBedrijf" runat="server" TargetControlID="vleEditBedrijf">
                                                             </cc1:ValidatorCalloutExtender>
+                                                            <cc1:FilteredTextBoxExtender ID="ftlBedrijfEdit" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtEditBedrijf" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipEditBedrijf'>
@@ -166,6 +172,14 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
+                                                <td>
+                                                Alles Artikels onder dit Bedrijf verwijderen: 
+                                                </td>
+                                                <td>
+                                                    <asp:CheckBox ID="ckbAlleBedrijf" runat="server" />
+                                                </td>
+                                                </tr>
+                                                <tr>
                                                     <td>
                                                         &#160;&nbsp;
                                                     </td>
@@ -219,6 +233,9 @@
                                                             Display="None" ValidationGroup="taalToevoegen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extAddTaal" runat="server" TargetControlID="vleAddTaal">
                                                             </cc1:ValidatorCalloutExtender>
+                                                             <cc1:FilteredTextBoxExtender ID="FilteredTextBoxExtender1" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtAddTaal" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipAddTaal'>
@@ -233,6 +250,9 @@
                                                         <asp:TextBox ID="txtTaalAfkorting" runat="server" Width="100%"></asp:TextBox><asp:RequiredFieldValidator
                                                             ID="vleTaalAfkorting" runat="server" ErrorMessage="Gelieve een afkorting in te geven."
                                                             ControlToValidate="txtTaalAfkorting" Display="None" ValidationGroup="taalToevoegen"></asp:RequiredFieldValidator>
+                                                    <cc1:FilteredTextBoxExtender ID="FilteredTextBoxExtender2" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtTaalAfkorting" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipTaalAfkorting'>
@@ -285,6 +305,9 @@
                                                             ControlToValidate="txtEditTaal" Display="None" ValidationGroup="taalWijzigen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extEditTaal" runat="server" TargetControlID="vleEditTaal">
                                                             </cc1:ValidatorCalloutExtender>
+                                                             <cc1:FilteredTextBoxExtender ID="FilteredTextBoxExtender3" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtEditTaal" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipEditTaal'>
@@ -301,6 +324,9 @@
                                                             ControlToValidate="txtEditAfkorting" Display="None" ValidationGroup="taalWijzigen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extEditAfkorting" runat="server" TargetControlID="vleEditAfkorting">
                                                             </cc1:ValidatorCalloutExtender>
+                                                             <cc1:FilteredTextBoxExtender ID="FilteredTextBoxExtender4" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtEditAfkorting" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipEditAfkorting'>
@@ -580,6 +606,15 @@
                                                             <img src="CSS/images/help.png" alt='' /></span>
                                                     </td>
                                                 </tr>
+                                                
+                                                <tr>
+                                                
+                                                <td>Alle Artikels en Categoriën onder deze versie ook verwijderen: </td>
+                                                <td>
+                                                    <asp:CheckBox ID="ckbAllesOnderVersie" runat="server" /></td>
+                                                </tr>
+                                                
+                                                
                                                 <tr>
                                                     <td>
                                                         &#160;&nbsp;
@@ -634,6 +669,9 @@
                                                             Display="None" ValidationGroup="moduleToevoegen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extModuleToevoegenNaam" runat="server" TargetControlID="vleModuleToevoegenNaam">
                                                             </cc1:ValidatorCalloutExtender>
+                                                             <cc1:FilteredTextBoxExtender ID="FilteredTextBoxExtender5" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtModuleToevoegenNaam" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipModuleToevoegenNaam'>
@@ -685,6 +723,9 @@
                                                             ControlToValidate="txtModuleWijzigenNaam" Display="None" ValidationGroup="moduleWijzigen"></asp:RequiredFieldValidator><cc1:ValidatorCalloutExtender
                                                                 ID="extModuleWijzigenNaam" runat="server" TargetControlID="vleModuleWijzigenNaam">
                                                             </cc1:ValidatorCalloutExtender>
+                                                             <cc1:FilteredTextBoxExtender ID="FilteredTextBoxExtender6" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
+                                                            TargetControlID="txtModuleWijzigenNaam" ValidChars=".">
+                                                        </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipModuleWijzigenNaam'>
@@ -1296,6 +1337,13 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
+                                                <td>
+                                                Alle Artikels onder deze Categorie verwijderen: 
+                                                </td>
+                                                <td><asp:CheckBox ID="ckbAllesCategorie" runat="server" /></td>
+                                                    
+                                                </tr>
+                                                <tr>
                                                     <td>
                                                         &#160;&#160;
                                                     </td>
@@ -1523,7 +1571,7 @@ Video
                                                                 <br></br>
                                                                 <asp:UpdatePanel runat="server" ID="updHerbouwTreesConfirmatie" UpdateMode="Conditional">
                                                                     <ContentTemplate>
-                                                                        <asp:Button runat="server" ID="btnOk" Text="Ja" /><asp:Button runat="server" ID="btnCancel"
+                                                                        <asp:Button runat="server" ID="btnOk" Text="Ja" OnClientClick="hide()"/><asp:Button runat="server" ID="btnCancel"
                                                                             Text="Annuleer" /></ContentTemplate>
                                                                 </asp:UpdatePanel>
                                                             </div>
