@@ -114,6 +114,10 @@ Partial Class App_Presentation_page
 
         If Session("isIngelogd") = True Then
 
+            If Session("login") = 1 Then
+                Return True
+            End If
+
             Dim ingelogdeVersie As Integer = Session("versie")
             Dim ingelogdBedrijf As Integer = Session("bedrijf")
 
