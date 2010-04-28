@@ -1571,7 +1571,7 @@ Video
                                                                 <br></br>
                                                                 <asp:UpdatePanel runat="server" ID="updHerbouwTreesConfirmatie" UpdateMode="Conditional">
                                                                     <ContentTemplate>
-                                                                        <asp:Button runat="server" ID="btnOk" Text="Ja" OnClientClick="hide()"/><asp:Button runat="server" ID="btnCancel"
+                                                                        <asp:Button runat="server" ID="btnOk" Text="Ja"/><asp:Button runat="server" ID="btnCancel"
                                                                             Text="Annuleer" /></ContentTemplate>
                                                                 </asp:UpdatePanel>
                                                             </div>
