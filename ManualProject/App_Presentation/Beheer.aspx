@@ -8,7 +8,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="divLoggedIn" runat="server">
-        <cc1:TabContainer runat="server" ID="TabBeheer" ActiveTabIndex="3">
+        <cc1:TabContainer runat="server" ID="TabBeheer" ActiveTabIndex="4">
             <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
                 <HeaderTemplate>
                     Bedrijf
@@ -790,7 +790,7 @@
                                                             <img src="CSS/images/help.png" alt='' /></span>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style="display:none">
                                                     <td class="lbl">
                                                         <asp:Label ID="lblAddHoogte" runat="server" Text="Kies een hoogte: "></asp:Label>
                                                     </td>
@@ -988,7 +988,7 @@
                                                             <img src="CSS/images/help.png" alt='' /></span>
                                                     </td>
                                                 </tr>
-                                                <tr runat="server" id="trBewerkCatHoogte">
+                                                <tr runat="server" id="trBewerkCatHoogte" style="display:none">
                                                     <td class="lbl">
                                                         <asp:Label ID="lblBewerkHCatoogte" runat="server" Text="Kies een hoogte: "></asp:Label>
                                                     </td>
@@ -1086,6 +1086,128 @@
                                                 </tr>
                                             </table>
                                         </Content>
+                                    </cc1:AccordionPane>
+                                    <cc1:AccordionPane runat="server" ID="PaneCategoriePositioneren">
+                                    <Header>Categorie Positioneren</Header>
+                                    <Content>
+                                    <asp:SqlDataSource ID="sqlReOrderList" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:Reference_manualConnectionString %>" 
+                                SelectCommand="Manual_getCategorieByParentVersieTaalBedrijf" 
+                                SelectCommandType="StoredProcedure"
+                                UpdateCommand="UPDATE tblCategorie SET Hoogte = @Hoogte WHERE CategorieID = @CategorieID">
+                                <SelectParameters>
+                                    <asp:ControlParameter ControlID="ddlCatPositieCategorie" Name="FK_Parent" 
+                                        PropertyName="SelectedValue" Type="Int32" />
+                                    <asp:ControlParameter ControlID="ddlCatPositieTaal" Name="FK_Taal" 
+                                        PropertyName="SelectedValue" Type="Int32" />
+                                    <asp:ControlParameter ControlID="ddlCatPositieVersie" Name="FK_Versie" 
+                                        PropertyName="SelectedValue" Type="Int32" />
+                                    <asp:ControlParameter ControlID="ddlCatPositieBedrijf" Name="FK_Bedrijf" 
+                                        PropertyName="SelectedValue" Type="Int32" />
+                                </SelectParameters>
+                                <UpdateParameters>
+                                    <asp:Parameter Name="@Hoogte" />
+                                    <asp:Parameter Name="@CategorieID" />
+                                </UpdateParameters>
+                            </asp:SqlDataSource>
+                                    <table>
+                                                <tr>
+                                                    <th align="left">
+                                                        Categoriekeuze verfijnen
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblCatPositieVersie" runat="server" Text="Filter op versie: "></asp:Label>
+                                                    </td>
+                                                    <td class="ietd">
+                                                        <asp:DropDownList ID="ddlCatPositieVersie" runat="server" DataTextField="Versie"
+                                                            DataValueField="VersieID" Width="100%">
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipCatPositieVersie'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>&#160;
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblCatPositieTaal" runat="server" Text="Filter op taal: "></asp:Label>
+                                                    </td>
+                                                    <td class="ietd">
+                                                        <asp:DropDownList ID="ddlCatPositieTaal" runat="server" DataTextField="Taal" DataValueField="TaalID"
+                                                            Width="100%">
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipCatPositieTaal'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblCatPositieBedrijf" runat="server" Text="Filter op bedrijf: "></asp:Label>
+                                                    </td>
+                                                    <td class="ietd">
+                                                        <asp:DropDownList ID="ddlCatPositieBedrijf" runat="server" DataTextField="naam"
+                                                            DataValueField="bedrijfID" Width="100%">
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipCatPositieBedrijf'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        &#160;&#160;
+                                                    </td>
+                                                    <td>
+                                                        <asp:Button ID="btnCatPositieFilteren" runat="server" Text="Filteren" Width="100%" UseSubmitBehavior="false" /></asp:Button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="lbl">
+                                                        <asp:Label ID="lblCatPositieCategorie" runat="server" Text="Categorie: "></asp:Label>
+                                                    </td>
+                                                    <td class="ietd">
+                                                        <asp:DropDownList ID="ddlCatPositieCategorie" runat="server" DataTextField="categorie"
+                                                            DataValueField="categorieID" Width="100%" AutoPostBack="true">
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td>
+                                                        <span style="vertical-align: middle" id='tipCatPositieCategorie'>
+                                                            <img src="CSS/images/help.png" alt='' /></span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        &#160;&#160;
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th align="left">
+                                                        Categorie Positioneren
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        Gebruik de icoontjes aan de linkerzijde om een categorie te positioneren.<br />
+                                                        Gelieve enkele seconden te wachten na elke verplaatsing om de gegevens te laten updaten.
+                                                        <div class="reorderlist">
+                                                        <cc1:ReorderList OnItemReorder="PostioneerCategorieInCode" ID="ReOrderCategorie" runat="server" DataSourceID="sqlReOrderList" DataKeyField="CategorieID" SortOrderField="Hoogte" AllowReorder="true" >
+                                                        <ItemTemplate><div class="reorderitem"><asp:HiddenField runat="server" ID='hdnItemCategorieID' Value='<%#Eval("CategorieID")%>' /><%#Eval("Categorie")%></div></ItemTemplate>
+                                                        <EmptyListTemplate>Er zijn geen categorieën beschikbaar.</EmptyListTemplate>
+                                                        <ReorderTemplate><div class="reorderitem"><asp:HiddenField runat="server" ID='hdnReOrderCategorieID' Value='<%#Eval("CategorieID")%>' /><%#Eval("Categorie")%></div></ReorderTemplate>
+                                                        <EditItemTemplate>&nbsp;</EditItemTemplate>
+                                                        <InsertItemTemplate>&nbsp;</InsertItemTemplate>
+                                                        <DragHandleTemplate><img src="CSS/images/pin.png" /></DragHandleTemplate>
+                                                        </cc1:ReorderList>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                    </Content>
                                     </cc1:AccordionPane>
                                     <cc1:AccordionPane ID="PaneCategorieVerwijderen" runat="server">
                                         <Header>

@@ -20,11 +20,6 @@ Partial Class _Default
 
             Dim versie As Integer = VersieValideren()
 
-            '-1000 betekent dat het geen geldige versie is
-            If versie = -1000 Then
-                Return
-            End If
-
             Dim bedrijf As Integer = TagOpzoeken()
 
             Dim taal As Integer = TaalOpzoeken()
@@ -49,7 +44,7 @@ Partial Class _Default
         Dim encoder As New UTF8Encoding
 
         Dim dt1 As Date = DateAndTime.Now
-        Dim huidigeTijd1 As String = String.Concat(dt1.Minute, ":", dt1.Hour, " ", dt1.Day, "/", dt1.Month, "/", dt1.Year)
+        Dim huidigeTijd1 As String = String.Concat(dt1.Day, "/", dt1.Month, "/", dt1.Year)
 
         Dim cleartext As String = "!AppligenS_J_W_X_W_J_SnegilppA!"
 
@@ -63,27 +58,28 @@ Partial Class _Default
 
     Private Function PaswoordValideren() As Boolean
 
-        'If Page.Request.Form("Paswoord") Is Nothing Then
+        'If Page.Request.QueryString("Paswoord") Is Nothing Then
         If dummyPass Is Nothing Then
             Me.lblInfo.Text = "Ongeldig paswoord."
             Return False
         End If
+        'End If
 
-        'If TryCast(Page.Request.Form("Paswoord"), String) Is Nothing Then
+        'If TryCast(Page.Request.QueryString("Paswoord"), String) Is Nothing Then
         If dummyPass Is Nothing Then
             Me.lblInfo.Text = "Ongeldig paswoord."
             Return False
         End If
+        'End If
 
         'Paswoord vergelijken
         Dim md5Hasher As New MD5CryptoServiceProvider
         Dim encoder As New UTF8Encoding
-        Dim enc As New ASCIIEncoding
 
         Dim dt1 As Date = DateAndTime.Now
-        Dim dt2 As Date = DateAdd(DateInterval.Minute, 1, dt1)
-        Dim huidigeTijd1 As String = String.Concat(dt1.Minute, ":", dt1.Hour, " ", dt1.Day, "/", dt1.Month, "/", dt1.Year)
-        Dim huidigeTijd2 As String = String.Concat(dt2.Minute, ":", dt2.Hour, " ", dt2.Day, "/", dt2.Month, "/", dt2.Year)
+        Dim dt2 As Date = DateAdd(DateInterval.Hour, 1, dt1)
+        Dim huidigeTijd1 As String = String.Concat(dt1.Day, "/", dt1.Month, "/", dt1.Year)
+        Dim huidigeTijd2 As String = String.Concat(dt2.Day, "/", dt2.Month, "/", dt2.Year)
 
         Dim cleartext As String = "!AppligenS_J_W_X_W_J_SnegilppA!"
 
@@ -103,7 +99,7 @@ Partial Class _Default
             lokaalpass2String += b.ToString("x2")
         Next
 
-        'Dim remoteHash As Byte() = encoder.GetBytes(Page.Request.Form("Paswoord"))
+        'Dim remoteHashString = Page.Request.QueryString("Paswoord")
         Dim remoteHashString As String = dummyPass
 
         If Not lokaalpass1String = remoteHashString Then
@@ -119,18 +115,21 @@ Partial Class _Default
 
     Private Function VersieValideren() As Integer
 
-        'If Page.Request.Form("Versie") Is Nothing Then
+        'If Page.Request.QueryString("Versie") Is Nothing Then
         If dummyVersie Is Nothing Then
             Me.lblInfo.Text = "Ongeldige versie."
-            Return -1000
+            Return 0
         End If
+        'End if
 
-        'If TryCast(Page.Request.Form("Versie"), String) Is Nothing Then
+        'If TryCast(Page.Request.QueryString("Versie"), String) Is Nothing Then
         If dummyVersie Is Nothing Then
             Me.lblInfo.Text = "Ongeldige versie."
-            Return -1000
+            Return 0
         End If
+        'End if
 
+        'Dim versie as string = Page.Request.QueryString("Versie")
         Dim versie As String = dummyVersie
 
         Dim dt As tblVersieDataTable = DatabaseLink.GetInstance.GetVersieFuncties.GetAllVersie
@@ -142,7 +141,7 @@ Partial Class _Default
 
         Next row
 
-        Return -1000
+        Return 0
 
 
     End Function
@@ -150,7 +149,7 @@ Partial Class _Default
     Private Function TagOpzoeken() As Integer
 
         'Tag opzoeken
-        'Dim tag As String = Page.Request.Form("Tag")
+        'Dim tag As String = Page.Request.QueryString("Tag")
         Dim tag As String = dummyTag
 
         Dim dt As tblBedrijfDataTable = DatabaseLink.GetInstance.GetBedrijfFuncties.GetAllBedrijf
@@ -180,41 +179,36 @@ Partial Class _Default
 
         Dim taal As String = dummyTaal
 
-        If Page.Request.Form("Taal") IsNot Nothing Then
-            If TryCast(Page.Request.Form("Taal"), String) IsNot Nothing Then
-                taal = Page.Request.Form("Taal")
+        If Page.Request.QueryString("Taal") IsNot Nothing Then
+            If TryCast(Page.Request.QueryString("Taal"), String) IsNot Nothing Then
+                taal = Page.Request.QueryString("Taal")
+            Else
+                Return 0
             End If
+        Else
+            Return 0
         End If
 
         Dim dt As tblTaalDataTable = DatabaseLink.GetInstance.GetTaalFuncties.GetAllTaal
 
         Dim taalGevonden As Boolean = False
         Dim taalID As Integer
-        Dim nederlands As Integer
         For Each row As tblTaalRow In dt
-
-            If row.Taal = "Nederlands" Then
-                nederlands = row.TaalID
-            End If
 
             If row.TaalTag = taal Then
                 taalGevonden = True
                 taalID = row.TaalID
-                Exit For
+                Return taalID
             End If
         Next row
 
-        If Not taalGevonden Then
-            Return nederlands
-        Else
-            Return taalID
-        End If
+        Return 0
 
     End Function
 
     Private Sub PaginaTagBekijken()
 
-        If Page.Request.Form("Paginatag") Is Nothing Then
+        If Page.Request.QueryString("Paginatag") Is Nothing Then
 
             'Het kan zijn dat we werden teruggestuurd naar hier om te valideren.
             'Als we succesvol waren, kunnen we worden teruggestuurd.
@@ -231,11 +225,11 @@ Partial Class _Default
             Return
         End If
 
-        If TryCast(Page.Request.Form("Paginatag"), String) Is Nothing Then
+        If TryCast(Page.Request.QueryString("Paginatag"), String) Is Nothing Then
             Return
         End If
 
-        Dim paginatag As String = Page.Request.Form("Paginatag")
+        Dim paginatag As String = Page.Request.QueryString("Paginatag")
         paginatag = paginatag.Trim
 
         Response.Redirect(String.Concat("page.aspx?tag=", paginatag))

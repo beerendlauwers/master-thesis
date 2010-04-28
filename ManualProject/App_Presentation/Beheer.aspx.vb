@@ -489,6 +489,91 @@ Partial Class App_Presentation_Beheer
 
 #End Region
 
+#Region "Code: Categorie Positioneren"
+
+    Protected Sub btnCatPositieFilteren_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatPositieFilteren.Click
+        Try
+            Dim t As Tree = Tree.GetTree(ddlCatPositieTaal.SelectedValue, ddlCatPositieVersie.SelectedValue, ddlCatPositieBedrijf.SelectedValue)
+            Util.LeesCategorien(ddlCatPositieCategorie, t, True, True)
+            LaadReorderlist()
+        Catch ex As Exception
+            Util.OnverwachteFout(btnCatPositieFilteren, ex.Message)
+        End Try
+    End Sub
+
+    Private Sub LaadReorderlist()
+        ReOrderCategorie.DataBind()
+    End Sub
+
+    Protected Sub PostioneerCategorieInCode(ByVal sender As Object, ByVal e As AjaxControlToolkit.ReorderListItemReorderEventArgs)
+        Try
+            Dim listitem As AjaxControlToolkit.ReorderListItem = e.Item
+            If listitem IsNot Nothing Then
+
+                Dim tbl As Table = listitem.Controls.Item(0)
+                If tbl IsNot Nothing Then
+
+                    Dim tr As TableRow = tbl.Controls.Item(0)
+                    If tr IsNot Nothing Then
+
+                        Dim td As TableCell = tr.Controls.Item(1)
+                        If td IsNot Nothing Then
+
+                            Dim hiddenfield As HiddenField = Nothing
+                            For Each ctl As Control In td.Controls
+                                If ctl.GetType.ToString.Contains("HiddenField") Then
+                                    hiddenfield = ctl
+                                End If
+                            Next ctl
+
+                            If hiddenfield IsNot Nothing Then
+                                Dim categorieID As Integer = hiddenfield.Value
+
+                                Dim t As Tree = Tree.GetTree(ddlCatPositieTaal.SelectedValue, ddlCatPositieVersie.SelectedValue, ddlCatPositieBedrijf.SelectedValue)
+                                Dim categorie As Node = t.DoorzoekTreeVoorNode(categorieID, Global.ContentType.Categorie)
+                                Dim parent As Node = t.VindParentVanNode(categorie)
+
+                                Dim nieuwegegevens As tblCategorieDataTable = categoriedal.getCategorieByParent(parent.ID)
+
+                                For kindindex As Integer = 0 To parent.GetChildCount - 1
+                                    Dim kind As Node = parent.GetChildren(kindindex)
+
+                                    If kind.Type = Global.ContentType.Artikel Then Continue For
+
+                                    For rijindex As Integer = 0 To nieuwegegevens.Count - 1
+                                        Dim rij As tblCategorieRow = nieuwegegevens.Rows(rijindex)
+
+                                        If kind.ID = rij.CategorieID Then
+                                            kind.Hoogte = rij.Hoogte
+                                            Exit For
+                                        End If
+
+                                    Next rijindex
+
+                                Next kindindex
+
+                            End If
+                        End If
+                    End If
+                End If
+
+            End If
+
+        Catch ex As Exception
+            Util.OnverwachteFout(btnCatPositieFilteren, ex.Message)
+        End Try
+    End Sub
+
+    Protected Sub ddlCatPositieCategorie_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlCatPositieCategorie.SelectedIndexChanged
+        Try
+            LaadReorderlist()
+        Catch ex As Exception
+            Util.OnverwachteFout(btnCatPositieFilteren, ex.Message)
+        End Try
+    End Sub
+
+#End Region
+
 #Region "Code: Categorie Verwijderen"
 
     Protected Sub btnCatDelete_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatDelete.Click
@@ -582,10 +667,16 @@ Partial Class App_Presentation_Beheer
         Util.LeesCategorien(ddlEditCategorie, t)
         Wijzigen_LaadKeuzeCategorie()
 
+        'Categorie Positioneren
+        t = Tree.GetTree(ddlCatPositieTaal.SelectedValue, ddlCatPositieVersie.SelectedValue, ddlCatPositieBedrijf.SelectedValue)
+        Util.LeesCategorien(ddlCatPositieCategorie, t, True, True)
+        LaadReorderlist()
+
         'Categorie Verwijderen - Te verwijderen categorie
         t = Tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
         Util.LeesCategorien(ddlCatVerwijder, t)
         Verwijderen_LaadParentCategorie()
+
     End Sub
 
 #End Region
@@ -721,6 +812,7 @@ Partial Class App_Presentation_Beheer
         Util.LeesTalen(ddlEditCatTaal)
         Util.LeesTalen(ddlCatDelTaalkeuze)
         Util.LeesTalen(ddlEditCatTaalkeuze)
+        Util.LeesTalen(ddlCatPositieTaal)
     End Sub
 
     Private Sub LeesTaal(ByRef t As Taal)
@@ -1006,6 +1098,7 @@ Partial Class App_Presentation_Beheer
         Util.LeesVersies(ddlAddCatVersie)
         Util.LeesVersies(ddlEditCatVersie)
         Util.LeesVersies(ddlEditCatVersiekeuze)
+        Util.LeesVersies(ddlCatPositieVersie)
     End Sub
 
     Private Sub LeesVersie(ByRef v As Versie)
@@ -1199,6 +1292,7 @@ Partial Class App_Presentation_Beheer
         Util.LeesBedrijven(ddlEditCatBedrijf)
         Util.LeesBedrijven(ddlEditCatBedrijfkeuze)
         Util.LeesBedrijven(ddlCatDelBedrijfkeuze)
+        Util.LeesBedrijven(ddlCatPositieBedrijf)
     End Sub
 
     Private Sub LeesBedrijf(ByRef b As Bedrijf)
@@ -1506,6 +1600,11 @@ Partial Class App_Presentation_Beheer
         lijst.Add(New Tooltip("tipEditCatVersiekeuze"))
         lijst.Add(New Tooltip("tipEditCatBedrijfkeuze"))
 
+        lijst.Add(New Tooltip("tipCatPositieVersie"))
+        lijst.Add(New Tooltip("tipCatPositieTaal"))
+        lijst.Add(New Tooltip("tipCatPositieBedrijf"))
+        lijst.Add(New Tooltip("tipCatPositieCategorie"))
+
         lijst.Add(New Tooltip("tipCatDelTaalkeuze"))
         lijst.Add(New Tooltip("lbltipCatDelVersiekeuze"))
         lijst.Add(New Tooltip("tipCatDelBedrijfkeuze"))
@@ -1665,5 +1764,4 @@ Partial Class App_Presentation_Beheer
 
 #End Region
 
-   
 End Class

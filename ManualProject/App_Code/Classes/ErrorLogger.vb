@@ -78,6 +78,10 @@ Public Class ErrorLogger
             Dim trace As New StackTrace(True)
             Dim fr As StackFrame = trace.GetFrame(1)
 
+            If fr.GetMethod.ToString = "Void OnverwachteFout(System.Web.UI.Page ByRef, System.String)" Then
+                fr = trace.GetFrame(2)
+            End If
+
             Dim split As String() = fr.GetFileName.Split("\")
             e.Locatie = split(split.Length - 1)
             e.Locatie = String.Concat(e.Locatie, "::", fr.GetMethod)
@@ -85,6 +89,8 @@ Public Class ErrorLogger
             If e.Code = String.Empty Then
                 e.Code = "ONBEKENDE FOUT"
             End If
+
+            If e.Boodschap = "Thread was being aborted." Then Return
 
             SyncLock _errorLock
 
