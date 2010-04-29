@@ -64,8 +64,10 @@ Partial Class App_Presentation_ArtikelBewerken
             Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
             str(1) = Trim(str(1))
             lblTaalTag.InnerHtml = str(1)
-
-            lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+            Dim bedrijfdal As New BedrijfDAL
+            Dim drbedrijf As tblBedrijfRow = bedrijfdal.GetBedrijfByID(ddlBedrijf.SelectedValue)
+            Dim bedrijftag As String = drbedrijf("tag")
+            lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + bedrijftag + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
         Catch ex As Exception
             Util.OnverwachteFout(Me, ex.Message)
         End Try
@@ -418,7 +420,7 @@ Partial Class App_Presentation_ArtikelBewerken
     End Sub
 
     Private Sub LaadCategorien()
-
+        gettag()
         Dim t As Tree = Tree.GetTree(Me.ddlTaal.SelectedValue, Me.ddlVersie.SelectedValue, Me.ddlBedrijf.SelectedValue)
         Util.LeesCategorien(ddlCategorie, t)
 
@@ -601,12 +603,16 @@ Partial Class App_Presentation_ArtikelBewerken
         Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
         strtag(1) = Trim(strtag(1))
         lblTaalTag.InnerHtml = strtag(1)
-        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+        Dim bedrijfdal As New BedrijfDAL
+        Dim dr As tblBedrijfRow = bedrijfdal.GetBedrijfByID(ddlBedrijf.SelectedValue)
+        Dim bedrijftag As String = dr("tag")
+        lblBedrijftag.InnerHtml = bedrijftag
+        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + bedrijftag + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
     End Sub
 
     Protected Sub ddlModule_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.DataBound
         Try
-            lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+            gettag()
         Catch ex As Exception
             Util.OnverwachteFout(Me, ex.Message)
         End Try

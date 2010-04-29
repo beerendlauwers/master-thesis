@@ -53,11 +53,11 @@ Partial Class App_Presentation_invoerenTest
                     If Page.Request.QueryString("categorie") IsNot Nothing Then
                         ddlCategorie.SelectedValue = Page.Request.QueryString("categorie")
                     End If
-                    lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+                    gettag()
 
                 End If
             Else
-                lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+                gettag()
             End If
         Catch ex As Exception
             Util.OnverwachteFout(Me, ex.Message)
@@ -81,12 +81,7 @@ Partial Class App_Presentation_invoerenTest
 
     Private Sub LaadCategorien()
 
-        Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
-			
-        strtag(1) = Trim(strtag(1))
-        lblTaalTag.InnerHtml = strtag(1)
-        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
-
+        gettag()
         Dim t As Tree = Tree.GetTree(Me.ddlTaal.SelectedValue, Me.ddlVersie.SelectedValue, Me.ddlBedrijf.SelectedValue)
         Util.LeesCategorien(ddlCategorie, t)
 
@@ -262,12 +257,19 @@ Partial Class App_Presentation_invoerenTest
 
     Protected Sub ddlModule_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ddlModule.SelectedIndexChanged
         Try
-            Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
-			strtag(1) = Trim(strtag(1))
-            lblTaalTag.InnerHtml = strtag(1)
-            lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + ddlBedrijf.SelectedItem.Text + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+            gettag()
         Catch ex As Exception
             Util.OnverwachteFout(Me, ex.Message)
         End Try
+    End Sub
+    Public Sub gettag()
+        Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
+        strtag(1) = Trim(strtag(1))
+        lblTaalTag.InnerHtml = strtag(1)
+        Dim bedrijfdal As New BedrijfDAL
+        Dim dr As tblBedrijfRow = bedrijfdal.GetBedrijfByID(ddlBedrijf.SelectedValue)
+        Dim bedrijftag As String = dr("tag")
+        lblBedrijftag.InnerHtml = bedrijftag
+        lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + bedrijftag + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
     End Sub
 End Class
