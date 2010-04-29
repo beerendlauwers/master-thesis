@@ -125,7 +125,7 @@ Public Class ModuleDAL
         Return dt
     End Function
 
-    Public Function checkArtikelsByModule(ByVal moduleID As Int16) As tblArtikelDataTable
+    Public Function checkArtikelsByModule(ByVal moduleID As Integer) As tblArtikelDataTable
         Dim dt As New tblArtikelDataTable
         Dim c As New SqlCommand("Check_ArtikelsbyModule")
         c.CommandType = CommandType.StoredProcedure
@@ -138,7 +138,7 @@ Public Class ModuleDAL
             If (r.HasRows) Then dt.Load(r)
         Catch ex As Exception
             Dim e As New ErrorLogger(ex.Message)
-            e.Args.Add("FK_taal = " & moduleID.ToString)
+            e.Args.Add("moduleID = " & moduleID.ToString)
         Finally
             c.Connection.Close()
         End Try

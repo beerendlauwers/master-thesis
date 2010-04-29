@@ -1640,11 +1640,17 @@ Partial Class App_Presentation_Beheer
 
                 If moduledal.checkModuleByNaamEnID(naam, moduleID).Count = 0 Then
                     If moduledal.StdAdapter.Update(naam, moduleID) Then
-                        If artikeldal.updateArtikelTagMetModule(naam, oudemodule) > 0 Then
-                            Util.SetOK("Module gewijzigd.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                        If moduledal.checkArtikelsByModule(moduleID).Count > 0 Then
+                            If artikeldal.updateArtikelTagMetModule(naam, oudemodule) > 0 Then
+                                Util.SetOK("Module gewijzigd.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                            Else
+                                Util.SetError("Wijzigen mislukt.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                            End If
                         Else
-                            Util.SetError("Wijzigen mislukt.", lblModuleWijzigenRes, imgModuleWijzigenRes)
+                            Util.SetOK("Module gewijzigd.", lblModuleWijzigenRes, imgModuleWijzigenRes)
                         End If
+                    Else
+                        Util.SetError("Wijzigen mislukt.", lblModuleWijzigenRes, imgModuleWijzigenRes)
                     End If
                 Else
                     Util.SetError("Een andere module heeft reeds deze naam.", lblModuleWijzigenRes, imgModuleWijzigenRes)
