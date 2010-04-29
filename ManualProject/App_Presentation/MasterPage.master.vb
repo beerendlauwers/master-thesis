@@ -15,7 +15,7 @@ Partial Class App_Presentation_MasterPage
 
         'Rest van Masterpagecontent genereren
         GenereerContent()
-        'txtZoek.Attributes.Add("onkeyup", "if(event.which || event.keyCode){if ((event.which == 13) || (event.keyCode == 13)) {document.getElementById('ctl00_lnkZoeken').click();return false;}} else {SetButtonStatus(this);} ")
+
     End Sub
 
     Private Sub CheckOfIngelogd()
