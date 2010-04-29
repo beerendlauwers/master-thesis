@@ -8,12 +8,28 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="divLoggedIn" runat="server">
-        <cc1:TabContainer runat="server" ID="TabBeheer" ActiveTabIndex="4">
+        <cc1:TabContainer runat="server" ID="TabBeheer" ActiveTabIndex="2">
             <cc1:TabPanel runat="server" HeaderText="Bedrijf" ID="tabBedrijf">
                 <HeaderTemplate>
                     Bedrijf
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </HeaderTemplate>
-                <ContentTemplate>
+                
+
+<ContentTemplate>
                     <asp:UpdatePanel ID="updBedrijf" runat="server">
                         <ContentTemplate>
                             <cc1:Accordion ID="AccordionBedrijf" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -54,7 +70,7 @@
                                                                 ID="extAddTag" runat="server" TargetControlID="vleAddTag">
                                                             </cc1:ValidatorCalloutExtender>
                                                         <cc1:FilteredTextBoxExtender ID="fltAddTag" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
-                                                            TargetControlID="txtAddTag" ValidChars="_">
+                                                            TargetControlID="txtAddTag" ValidChars=".">
                                                         </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
@@ -206,11 +222,34 @@
                             </asp:UpdateProgress>
                         </ContentTemplate>
                     </asp:UpdatePanel>
+            
+            
+            
+            
+            
+            
             </ContentTemplate>
+
+
+
 </cc1:TabPanel>
             <cc1:TabPanel runat="server" HeaderText="Taal" ID="tabTaal">
                 <HeaderTemplate>
                     Taal
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </HeaderTemplate>
 <ContentTemplate>
                     <asp:UpdatePanel ID="updTaal" runat="server">
@@ -392,15 +431,42 @@
                             </asp:UpdateProgress>
                         </ContentTemplate>
                     </asp:UpdatePanel>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </ContentTemplate>
 </cc1:TabPanel>
             <cc1:TabPanel runat="server" HeaderText="Versie" ID="tabVersie">
                 <HeaderTemplate>
                     Versie
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </HeaderTemplate>
 <ContentTemplate>
-                    <asp:UpdatePanel ID="updVersie" runat="server">
-                        <ContentTemplate>
+                    <asp:UpdatePanel ID="updVersie" runat="server"><ContentTemplate>
                             <cc1:Accordion ID="AccordionVersie" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
                                 ContentCssClass="art-content">
                                 <Panes>
@@ -571,9 +637,9 @@
                                                             <img src="CSS/images/help.png" alt='' /></span>
                                                     </td>
                                                 </tr>
+                                                <tr><td></td><td><img src="CSS/images/warning.png" /><asp:Label runat="server" ID="Label1" Text="voor het kopieren van ongeveer 1500 artikels duurt het ongeveer 4 minuten. Na 5 minuten moet u de pagina verversen om het resultaat te zien."></asp:Label></td></tr>
                                                 <tr>
                                                     <td>
-                                                        &#160;&nbsp;
                                                     </td>
                                                     <td>
                                                         <asp:Button ID="btnVersieKopieren" runat="server" Text="Kopiëren" ValidationGroup="versieKopieren"
@@ -640,13 +706,51 @@
                                     </div>
                                 </ProgressTemplate>
                             </asp:UpdateProgress>
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
+                        
+    
+    
+    </ContentTemplate>
+</asp:UpdatePanel>
+            
+
+            
+            
+
+            
+
+            
+            
+            
+
+            
+
+            
+            
+
+            
+
+            
+            
+            
             </ContentTemplate>
 </cc1:TabPanel>
 <cc1:TabPanel runat="server" HeaderText="Taal" ID="tabModule">
                 <HeaderTemplate>
                     Module
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </HeaderTemplate>
 <ContentTemplate>
                     <asp:UpdatePanel ID="updModule" runat="server">
@@ -687,7 +791,8 @@
                                                             Width="200" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgModuleToevoegenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                        <asp:Image runat="server" ID="imgModuleToevoegenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />
+                                                        &nbsp;&nbsp;<asp:Label
                                                             ID="lblModuleToevoegenRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
@@ -741,7 +846,8 @@
                                                             Width="100%" />
                                                     </td>
                                                     <td>
-                                                        <asp:Image runat="server" ID="imgModuleWijzigenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />&nbsp;<asp:Label
+                                                        <asp:Image runat="server" ID="imgModuleWijzigenRes" ImageUrl="~/App_Presentation/CSS/images/spacer.gif" />
+                                                        &nbsp;&nbsp;<asp:Label
                                                             ID="lblModuleWijzigenRes" runat="server" Text=""></asp:Label>
                                                     </td>
                                                 </tr>
@@ -794,11 +900,39 @@
                             </asp:UpdateProgress>
                         </ContentTemplate>
                     </asp:UpdatePanel>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </ContentTemplate>
 </cc1:TabPanel>
             <cc1:TabPanel runat="server" HeaderText="Categorie" ID="TabCategorie">
                 <HeaderTemplate>
                     Categorie
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </HeaderTemplate>
 <ContentTemplate>
                     <asp:UpdatePanel ID="updCategorie" runat="server"><ContentTemplate>
@@ -1145,11 +1279,13 @@
                                         PropertyName="SelectedValue" Type="Int32" />
                                     <asp:ControlParameter ControlID="ddlCatPositieBedrijf" Name="FK_Bedrijf" 
                                         PropertyName="SelectedValue" Type="Int32" />
-                                </SelectParameters>
+                                
+                                        </SelectParameters>
                                 <UpdateParameters>
                                     <asp:Parameter Name="@Hoogte" />
                                     <asp:Parameter Name="@CategorieID" />
-                                </UpdateParameters>
+                                
+                                        </UpdateParameters>
                             </asp:SqlDataSource>
                                     <table>
                                                 <tr>
@@ -1372,11 +1508,39 @@
                             </asp:UpdateProgress>
     </ContentTemplate>
 </asp:UpdatePanel>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </ContentTemplate>
 </cc1:TabPanel>
             <cc1:TabPanel runat="server"  ID="tabVideo" HeaderText="Video">
             <HeaderTemplate>
 Video
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </HeaderTemplate>
 <ContentTemplate>
             <asp:UpdatePanel ID="updVideo" runat="server">
@@ -1457,11 +1621,39 @@ Video
                             </asp:UpdateProgress>
                         </ContentTemplate>
                     </asp:UpdatePanel>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </ContentTemplate>
 </cc1:TabPanel>
             <cc1:TabPanel runat="server" ID="tabOnderhoud" HeaderText="Applicatie-Onderhoud">
                 <HeaderTemplate>
                     Applicatie-Onderhoud
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </HeaderTemplate>
 <ContentTemplate>
                     <asp:UpdatePanel ID="updOnderhoud" runat="server">
@@ -1782,8 +1974,67 @@ Video
                 
                 
             
+            
+                
+                
+            
+                
+                
+            
+            
+            
+                
+                
+            
+                
+                
+            
+            
+                
+                
+            
+                
+                
+            
+            
+            
+            
+                
+                
+            
+                
+                
+            
+            
+                
+                
+            
+                
+                
+            
+            
+            
+                
+                
+            
+                
+                
+            
+            
+                
+                
+            
+                
+                
+            
+            
+            
+            
             </ContentTemplate>
             
+
+
+
 
 
 

@@ -50,17 +50,17 @@ Partial Class App_Presentation_AlleArtikels
 
             If e.CommandName = "Select" Then
                 Dim qst As String = "~/App_Presentation/page.aspx?tag=" + tag
-                Response.Redirect(qst, False)
+                Response.Redirect(qst)
             End If
 
             If e.CommandName = "Delete" Then
                 Dim qst As String = "~/App_Presentation/ArtikelVerwijderen.aspx?tag=" + tag
-                Response.Redirect(qst, False)
+                Response.Redirect(qst)
             End If
 
             If e.CommandName = "Edit" Then
                 Dim qst As String = "~/App_Presentation/ArtikelBewerken.aspx?tag=" + tag
-                Response.Redirect(qst, False)
+                Response.Redirect(qst)
             End If
         End If
         JavaScript.ShadowBoxLaderSluiten(Me)
