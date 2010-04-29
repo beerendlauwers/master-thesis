@@ -11,30 +11,33 @@ Partial Class _Default
     Dim dummyModule As String = "BAS"
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Try
+            Page.Title = "Gebruikersvalidatie"
 
-        Page.Title = "Gebruikersvalidatie"
+            VoerTestWaardesIn()
 
-        VoerTestWaardesIn()
+            If PaswoordValideren() Then
 
-        If PaswoordValideren() Then
+                Dim versie As Integer = VersieValideren()
 
-            Dim versie As Integer = VersieValideren()
+                Dim bedrijf As Integer = TagOpzoeken()
 
-            Dim bedrijf As Integer = TagOpzoeken()
+                Dim taal As Integer = TaalOpzoeken()
 
-            Dim taal As Integer = TaalOpzoeken()
+                'Alles is ok, we gaan alles in de sessievariabele schrijven
+                Session("isIngelogd") = True
+                Session("versie") = versie
+                Session("bedrijf") = bedrijf
+                Session("taal") = taal
 
-            'Alles is ok, we gaan alles in de sessievariabele schrijven
-            Session("isIngelogd") = True
-            Session("versie") = versie
-            Session("bedrijf") = bedrijf
-            Session("taal") = taal
+                'Als we ook een paginatag meekregen, gaan we die onderzoeken
+                PaginaTagBekijken()
 
-            'Als we ook een paginatag meekregen, gaan we die onderzoeken
-            PaginaTagBekijken()
-
-        End If
-
+            End If
+        Catch ex As Exception
+            Dim err As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(err)
+        End Try
     End Sub
 
     Private Sub VoerTestWaardesIn()
@@ -58,19 +61,17 @@ Partial Class _Default
 
     Private Function PaswoordValideren() As Boolean
 
-        'If Page.Request.QueryString("Paswoord") Is Nothing Then
-        If dummyPass Is Nothing Then
-            Me.lblInfo.Text = "Ongeldig paswoord."
-            Return False
-        End If
-        'End If
+        'De hashstring uitlezen die we hebben binnengekregen
+        Dim remoteHashString As String = String.Empty
 
-        'If TryCast(Page.Request.QueryString("Paswoord"), String) Is Nothing Then
-        If dummyPass Is Nothing Then
+        If Page.Request.QueryString("Paswoord") IsNot Nothing Then
+            remoteHashString = Page.Request.QueryString("Paswoord")
+        ElseIf dummyPass IsNot Nothing Then
+            remoteHashString = dummyPass
+        Else
             Me.lblInfo.Text = "Ongeldig paswoord."
             Return False
         End If
-        'End If
 
         'Paswoord vergelijken
         Dim md5Hasher As New MD5CryptoServiceProvider
@@ -99,9 +100,6 @@ Partial Class _Default
             lokaalpass2String += b.ToString("x2")
         Next
 
-        'Dim remoteHashString = Page.Request.QueryString("Paswoord")
-        Dim remoteHashString As String = dummyPass
-
         If Not lokaalpass1String = remoteHashString Then
             If Not lokaalpass2String = remoteHashString Then
                 Me.lblInfo.Text = "Ongeldig paswoord."
@@ -115,22 +113,16 @@ Partial Class _Default
 
     Private Function VersieValideren() As Integer
 
-        'If Page.Request.QueryString("Versie") Is Nothing Then
-        If dummyVersie Is Nothing Then
-            Me.lblInfo.Text = "Ongeldige versie."
-            Return 0
-        End If
-        'End if
+        Dim versie As String = String.Empty
 
-        'If TryCast(Page.Request.QueryString("Versie"), String) Is Nothing Then
-        If dummyVersie Is Nothing Then
-            Me.lblInfo.Text = "Ongeldige versie."
-            Return 0
+        If Page.Request.QueryString("Versie") IsNot Nothing Then
+            versie = Page.Request.QueryString("Versie")
+        ElseIf dummyVersie IsNot Nothing Then
+        versie = dummyVersie
+        Else
+        Me.lblInfo.Text = "Ongeldige versie."
+        Return 0
         End If
-        'End if
-
-        'Dim versie as string = Page.Request.QueryString("Versie")
-        Dim versie As String = dummyVersie
 
         Dim dt As tblVersieDataTable = DatabaseLink.GetInstance.GetVersieFuncties.GetAllVersie
         For Each row As tblVersieRow In dt
@@ -148,9 +140,15 @@ Partial Class _Default
 
     Private Function TagOpzoeken() As Integer
 
-        'Tag opzoeken
-        'Dim tag As String = Page.Request.QueryString("Tag")
-        Dim tag As String = dummyTag
+        Dim tag As String = String.Empty
+
+        If Page.Request.QueryString("Tag") IsNot Nothing Then
+            tag = Page.Request.QueryString("Tag")
+        ElseIf dummyTag IsNot Nothing Then
+            tag = dummyTag
+        Else
+            Return -1000
+        End If
 
         Dim dt As tblBedrijfDataTable = DatabaseLink.GetInstance.GetBedrijfFuncties.GetAllBedrijf
 
@@ -177,14 +175,12 @@ Partial Class _Default
 
     Private Function TaalOpzoeken() As Integer
 
-        Dim taal As String = dummyTaal
+        Dim taal As String = String.Empty
 
         If Page.Request.QueryString("Taal") IsNot Nothing Then
-            If TryCast(Page.Request.QueryString("Taal"), String) IsNot Nothing Then
-                taal = Page.Request.QueryString("Taal")
-            Else
-                Return 0
-            End If
+            taal = Page.Request.QueryString("Taal")
+        ElseIf dummyTaal IsNot Nothing Then
+            taal = dummyTaal
         Else
             Return 0
         End If
