@@ -150,7 +150,7 @@ Public Class VersieDAL
     Public Function DeleteArtikelsVoorVersie(ByVal versieID As Integer) As Integer
 
         Dim c As New SqlCommand("deleteAllArtikelsForVersie", New SqlConnection(conn))
-        c.CommandTimeout = 0
+        c.CommandTimeout = 1200
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@VersieID", SqlDbType.VarChar).Value = versieID
         Dim r As Integer
