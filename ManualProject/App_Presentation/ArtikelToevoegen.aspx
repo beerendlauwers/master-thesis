@@ -88,7 +88,7 @@
 </td>
 <td>
     <asp:DropDownList ID="ddlModule" runat="server" DataSourceID="objdModule" 
-        DataTextField="module" DataValueField="module" AutoPostBack="true">
+        DataTextField="module" DataValueField="module" AutoPostBack="true" Width="100%">
     </asp:DropDownList>
 </td>
 <td>

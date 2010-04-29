@@ -262,7 +262,7 @@ function ValideerZoekTerm (source, args)
     <td class="lbl"><asp:Label ID="lblModule" runat="server" Text="Module: "></asp:Label></td>
     <td>
         <asp:DropDownList ID="ddlModule" runat="server" DataSourceID="objdModule" 
-            DataTextField="module" DataValueField="module" AutoPostBack="true">
+            DataTextField="module" DataValueField="module" AutoPostBack="true" Width="100%">
         </asp:DropDownList>
     </td>
     </tr>
@@ -316,7 +316,7 @@ function ValideerZoekTerm (source, args)
     <ProgressTemplate>
     <div class="update">
     <img src="CSS/Images/ajaxloader.gif" />
-    Bezig met ophalen van categoriëen...
+    Even wachten aub...
     </div>
     </ProgressTemplate>
     </asp:UpdateProgress>

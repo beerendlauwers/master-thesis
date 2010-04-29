@@ -128,7 +128,7 @@
                                                                 ID="extEditTag" runat="server" TargetControlID="vleEditTag">
                                                             </cc1:ValidatorCalloutExtender>
                                                         <cc1:FilteredTextBoxExtender ID="fltEditTag" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
-                                                            TargetControlID="txtEditTag" ValidChars="_">
+                                                            TargetControlID="txtEditTag" ValidChars=".">
                                                         </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
@@ -1006,7 +1006,7 @@
                                                             </asp:DropDownList>
                                                         </div>
                                                         <asp:Label runat="server" ID="ddlEditCategorieGeenCats" Text="Er zijn geen categorieën beschikbaar."
-                                                            Visible="false"></asp:Label>
+                                                            style="display:none;"></asp:Label>
                                                     </td>
                                                     <td>
                                                         <span style="vertical-align: middle" id='tipEditCategorie'>
@@ -1234,7 +1234,9 @@
                                                 <tr>
                                                     <td colspan="2">
                                                         Gebruik de icoontjes aan de linkerzijde om een categorie te positioneren.<br />
-                                                        Gelieve enkele seconden te wachten na elke verplaatsing om de gegevens te laten updaten.
+                                                        Gelieve enkele seconden te wachten na elke verplaatsing om de gegevens te laten updaten.<br />
+                                                        <strong>OPMERKING: </strong> De boomstructuur in de linkerzijde wordt slechts geüpdatet nadat de pagina is herladen.<br />
+                                                        Om de dropdownlijst hierboven te updaten klikt u terug op de filterknop.
                                                         <div class="reorderlist">
                                                         <cc1:ReorderList OnItemReorder="PostioneerCategorieInCode" ID="ReOrderCategorie" runat="server" DataSourceID="sqlReOrderList" DataKeyField="CategorieID" SortOrderField="Hoogte" AllowReorder="true" >
                                                         <ItemTemplate><div class="reorderitem"><asp:HiddenField runat="server" ID='hdnItemCategorieID' Value='<%#Eval("CategorieID")%>' /><%#Eval("Categorie")%></div></ItemTemplate>
