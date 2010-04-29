@@ -251,7 +251,7 @@ Partial Class _Default
 
         Dim standaardrow As tblArtikelRow = artikeldal.getArtikelBySimpleTagTaalVersieBedrijf(standaardbedrijf.ID, versieID, taalID, paginatag)
         If standaardrow IsNot Nothing Then
-            Response.Redirect(String.Concat("page.aspx?tag=", standaardrow.Tag), False)
+            Response.Redirect(String.Concat("~/App_Presentation/page.aspx?tag=", standaardrow.Tag), False)
             Return
         End If
 
@@ -259,7 +259,7 @@ Partial Class _Default
             Dim extrabedrijfrow As tblArtikelRow = artikeldal.getArtikelBySimpleTagTaalVersieBedrijf(anderbedrijf.ID, versieID, taalID, paginatag)
 
             If extrabedrijfrow IsNot Nothing Then
-                Response.Redirect(String.Concat("page.aspx?tag=", extrabedrijfrow.Tag), False)
+                Response.Redirect(String.Concat("~/App_Presentation/page.aspx?tag=", extrabedrijfrow.Tag), False)
                 Return
             End If
         End If

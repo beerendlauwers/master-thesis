@@ -1011,7 +1011,7 @@ Partial Class App_Presentation_Beheer
                     LaadVersieDropdowns()
                     LaadTreeGegevens()
                 Else
-                    Util.SetWarn("Deze versie bestaat reeds.", lblAddVersieRes, imgAddVersieRes)
+                    Util.SetError("Deze versie bestaat reeds.", lblAddVersieRes, imgAddVersieRes)
                 End If
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblAddVersieRes, imgAddVersieRes)
