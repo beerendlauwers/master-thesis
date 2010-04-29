@@ -5,27 +5,15 @@ Partial Class App_Presentation_OverzichtPerTaal
 
     Protected Sub btnVergelijk_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVergelijk.Click
         Session("sortexpression") = Nothing
-        'Dim sqltext As String
-        'If ckbOntbreek.Checked = True Then
-        '    sqltext = getsqlTextfiltered()
-        '    Dim dt As New Data.DataTable
-        '    dt = taaldal.getVglTalen(sqltext)
-        '    GridView3.PageIndex = 0
-        '    GridView3.DataSource = dt
-        '    GridView3.DataBind()
-        '    GridView3.Visible = True
-        'Else
-        '    Dim dt As New Data.DataTable
-        '    sqltext = getsqlunfiltered()
-        '    dt = taaldal.getVglTalen(sqltext)
-        '    GridView3.PageIndex = 0
-        '    GridView3.DataSource = dt
-        '    GridView3.DataBind()
-        '    GridView3.Visible = True
-        'End If
 
     End Sub
-
+    ''' <summary>
+    ''' gaat een string opbouwen dat dient als sqlcommando op basis van de selecties op de pagina, 
+    ''' maw voor elke aangevinkte taal gaat hij de kolom in tblVglTaal opvragen
+    ''' dit is de filtered functie dus gaan enkel de rijen opgehaald worden waar een nul instaat, voor de geselecteerde talen.
+    ''' </summary>
+    ''' <returns>string dat wordt gebruikt als sql-commando</returns>
+    ''' <remarks></remarks>
     Public Function getsqlTextfiltered() As String
         Dim voorlabel As String = "x,x,"
         Dim sqltextselect As String = "SELECT dbo.getTitelMetTag(tag)Titel,Tag"
@@ -49,6 +37,13 @@ Partial Class App_Presentation_OverzichtPerTaal
         Return sqltext
 
     End Function
+    ''' <summary>
+    ''' gaat een string opbouwen dat dient als sqlcommando op basis van de selecties op de pagina, 
+    ''' maw voor elke aangevinkte taal gaat hij de kolom in tblVglTaal opvragen
+    ''' dit is de unfiltered functie dus gaan alle rijen opgehaald worden voor de geselecteerde talen.
+    ''' </summary>
+    ''' <returns>string die wordt gebruikt als sql-commando</returns>
+    ''' <remarks></remarks>
     Public Function getsqlunfiltered() As String
         Dim voorlabel As String = "x,x,"
         Dim sqltextselect As String = "SELECT dbo.getTitelMetTag(tag) Titel,Tag"
@@ -72,50 +67,50 @@ Partial Class App_Presentation_OverzichtPerTaal
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Page.Title = "Overzicht Per Taal"
+        Try
 
-        If Session("login") = 1 Then
-            divLoggedIn.Visible = True
-        Else
-            divLoggedIn.Visible = False
-            Session("vorigePagina") = Page.Request.Url.AbsolutePath
-            Response.Redirect("Aanmeldpagina.aspx", False)
-        End If
-        If Not IsPostBack Then
-            For i As Integer = 0 To GridView1.Rows.Count - 1
-                Dim r As GridViewRow = GridView1.Rows(i)
-                Dim str As String = r.Cells(0).Text
-                If r.Cells(0).Text = "Nederlands" Or r.Cells(0).Text = "fran&#231;ais" Then
-                    Dim cb As CheckBox = r.FindControl("chkTaal")
-                    cb.Checked = True
-                End If
-            Next
-        End If
-        If Not IsPostBack Then
-            ddlBedrijf.DataBind()
-            ddlVersie.DataBind()
-        End If
-        Dim sqltext As String
-        If ckbOntbreek.Checked Then
-            sqltext = getsqlTextfiltered()
-        Else
-            sqltext = getsqlunfiltered()
-        End If
-        Dim dt As Data.DataTable
-        dt = taaldal.getVglTalen(sqltext)
-        GridView3.DataSource = dt
-
-        Dim control As String = Page.Request.Params.Get("__EVENTTARGET")
-
-        If control IsNot Nothing And Not control = String.Empty Then
-            GridView3.DataBind()
-            If TryCast(Page.FindControl(control), LinkButton) IsNot Nothing Then
-                Dim ctl As LinkButton = Page.FindControl(control)
-                GridView3.PageIndex = Integer.Parse(ctl.Text) - 1
+        
+            Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
+            If Not IsPostBack Then
+                For i As Integer = 0 To GridView1.Rows.Count - 1
+                    Dim r As GridViewRow = GridView1.Rows(i)
+                    Dim str As String = r.Cells(0).Text
+                    If r.Cells(0).Text = "Nederlands" Or r.Cells(0).Text = "fran&#231;ais" Then
+                        Dim cb As CheckBox = r.FindControl("chkTaal")
+                        cb.Checked = True
+                    End If
+                Next
             End If
-        End If
+            If Not IsPostBack Then
+                ddlBedrijf.DataBind()
+                ddlVersie.DataBind()
+            End If
+            Dim sqltext As String
+            If ckbOntbreek.Checked Then
+                sqltext = getsqlTextfiltered()
+            Else
+                sqltext = getsqlunfiltered()
+            End If
+            Dim dt As Data.DataTable
+            dt = taaldal.getVglTalen(sqltext)
+            GridView3.DataSource = dt
 
-        GridView3.DataBind()
-        JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
+            Dim control As String = Page.Request.Params.Get("__EVENTTARGET")
+
+            If control IsNot Nothing And Not control = String.Empty Then
+                GridView3.DataBind()
+                If TryCast(Page.FindControl(control), LinkButton) IsNot Nothing Then
+                    Dim ctl As LinkButton = Page.FindControl(control)
+                    GridView3.PageIndex = Integer.Parse(ctl.Text) - 1
+                End If
+            End If
+
+            GridView3.DataBind()
+            JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
+        Catch ex As Exception
+            ErrorLogger.WriteError(New ErrorLogger(ex.Message))
+
+        End Try
     End Sub
 
     Protected Sub GridView3_DataBinding(ByVal sender As Object, ByVal e As System.EventArgs) Handles GridView3.DataBinding
@@ -191,6 +186,9 @@ Partial Class App_Presentation_OverzichtPerTaal
         Dim versie As Integer = ddlVersie.SelectedValue
         Dim bedrijf As Integer = ddlBedrijf.SelectedValue
         GridView3.Visible = True
+        'gaat voor elke cell in die row kijken of die cell waarde 1 of 0 is,
+        'bij 0 gaat hij kruisje zetten en linken naar artikelToevoegen om dat ontbrekende artikel aan te kunnen maken
+        'kruisjes doen niks.
 
         For i As Integer = 0 To e.Row.Cells.Count - 1
             If e.Row.Cells(i).Visible = True Then
@@ -230,7 +228,18 @@ Partial Class App_Presentation_OverzichtPerTaal
         GridView3.DataBind()
         JavaScript.ShadowBoxLaderSluiten(Me)
     End Sub
-
+    ''' <summary>
+    ''' hier worden de sorteer-richtingen geälterneerd, 
+    ''' dus elke keer er op een kolomnaam geklikt wordt verwacht de gebruiker dat de sorteerrichting wijzigt
+    ''' dit wordt gerealiseerd door sessions 
+    ''' elke keer als er geklikt wordt verandert de session en daarmee de sorteerrichting die dan wordt gebruikt in de gridview3_sorting
+    ''' </summary>
+    ''' <param name="sortDirection"></param>
+    ''' <returns>sorteer-richting</returns>
+    ''' <remarks>het kan dus zijn dat als de admin de overzichts-pagina verlaat,
+    '''  de session onthoude wordt en als hij terugkomt de sorteer-richting nog altijd onthouden is,
+    '''  maar dit kan geen kwaad want een klik op de kolom-header wijzigt de richting weer naar wens
+    ''' </remarks>
     Public Function ConvertSortDirectionToSql(ByVal sortDirection As SortDirection) As String
         Dim newsortdirection As String
         Dim str As String = Session("sort")
@@ -248,7 +257,12 @@ Partial Class App_Presentation_OverzichtPerTaal
         End If
         Return newsortdirection
     End Function
-
+    ''' <summary>
+    ''' een apparte sorteerfunctie om de gridview te sorteren,
+    ''' omdat de gridview zijn sorting verliest als de gebruiker bijvoorbeeld op een paginanummer klikt.
+    ''' dan wordt deze sorteerfunctie aangeroepen om de data terug te sorteren zodat de gebruiker nog steeds de weergave krijgt die hij verwachtte
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Sub sorteer()
         Dim sortstring As String
         sortstring = Session("sortexpression")

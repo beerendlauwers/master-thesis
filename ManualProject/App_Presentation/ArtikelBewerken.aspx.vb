@@ -18,7 +18,7 @@ Partial Class App_Presentation_ArtikelBewerken
             Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
 
             'Als de pagina de eerste keer laadt
-            If Not Page.IsPostBack Then
+            If Not IsPostBack Then
 
                 'Dropdowns laden
                 LaadDropdowns()
@@ -36,7 +36,10 @@ Partial Class App_Presentation_ArtikelBewerken
                         Dim id As Integer = Page.Request.QueryString("id")
                         LaadArtikel(id)
                     End If
-
+                    'hier gaan we kijken of de beheerder terugkomt van de beheerpagina waar hij net een categorie toevoegde omdat er nog geen
+                    'was voor zijn gewenste versie, bedrijf en taal.
+                    'nadeel is hier opnieuw dat wanneer de beheerder al tekst heeft ingevoerd in de editor die verloren gaat bij het gaan naar de beheerpagina.
+                    'Maar de beheerder wordt van dit gevaar op de hoogte gebracht zodat hij zijn content eerst kan opslagen.
                 ElseIf Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing And Page.Request.QueryString("titel") IsNot Nothing And Page.Request.QueryString("Artikeltag") IsNot Nothing And Page.Request.QueryString("ArtikelID") IsNot Nothing Then
                     ViewState("artikelID") = Page.Request.QueryString("ArtikelID")
                     Dim dr As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
@@ -50,7 +53,7 @@ Partial Class App_Presentation_ArtikelBewerken
                     LaadCategorien()
                     ddlCategorie.SelectedValue = Page.Request.QueryString("CategorieID")
                     ArtikelFunctiesZichtbaar(True)
-					
+
                 ElseIf Page.Request.QueryString("tag") IsNot Nothing Then
                     Dim tag As String = Page.Request.QueryString("tag")
                     LaadArtikel(tag)
@@ -60,14 +63,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
             LaadZoekTooltips()
             LaadJavascript()
-
-            Dim str() As String = Split(ddlTaal.SelectedItem.Text, "-")
-            str(1) = Trim(str(1))
-            lblTaalTag.InnerHtml = str(1)
-            Dim bedrijfdal As New BedrijfDAL
-            Dim drbedrijf As tblBedrijfRow = bedrijfdal.GetBedrijfByID(ddlBedrijf.SelectedValue)
-            Dim bedrijftag As String = drbedrijf("tag")
-            lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + lblTaalTag.InnerHtml + "_" + bedrijftag + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
+            gettag()
         Catch ex As Exception
             Util.OnverwachteFout(Me, ex.Message)
         End Try
@@ -430,15 +426,15 @@ Partial Class App_Presentation_ArtikelBewerken
             Me.btnUpdate.Enabled = False
             Me.hplAddCategorie.NavigateUrl = "~/App_Presentation/Beheer.aspx?index=4&versie=" + ddlVersie.SelectedValue + "&bedrijf=" + ddlBedrijf.SelectedValue + "&taal=" + ddlTaal.SelectedValue + "&module=" + ddlModule.SelectedValue + "&tag=" + txtTag.Text + "&titel=" + txtTitel.Text + "&ArtikelID=" + ViewState("artikelID").ToString + "&Edit=1"
             Me.hplAddCategorie.Visible = True
-            EditorEditDiv.visible = False
             updContent.Update()
+            Me.warning.Visible = True
 
         Else
             Me.ddlCategorie.Visible = True
             Me.lblGeenCategorie.Visible = False
             Me.btnUpdate.Enabled = True
             Me.hplAddCategorie.Visible = False
-            EditorEditDiv.visible = True
+            Me.warning.Visible = False
 
             updContent.Update()
 
@@ -513,10 +509,10 @@ Partial Class App_Presentation_ArtikelBewerken
             Dim item As New ListItem(t.TaalNaam + " - " + t.TaalTag, t.ID)
             Me.ddlTaal.Items.Add(item)
         Next
-
+        ddlModule.DataBind()
         LaadCategorien()
 
-        ddlModule.DataBind()
+
 
     End Sub
 
@@ -598,7 +594,12 @@ Partial Class App_Presentation_ArtikelBewerken
             Util.OnverwachteFout(btnSjablonen, ex.Message)
         End Try
     End Sub
-
+    ''' <summary>
+    ''' hier wordt het label waarin een voorbeeld van de tag te zien is gevuld met de nodige waarden.
+    ''' Dit wordt uitgevoerd elke keer er een dropdown van waarde verandert
+    ''' Als er in de textbox voor de tag iets getypt wordt, wordt er javascript code uitgevoerd.
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Sub gettag()
         Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
         strtag(1) = Trim(strtag(1))

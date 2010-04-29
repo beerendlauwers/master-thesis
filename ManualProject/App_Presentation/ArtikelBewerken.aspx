@@ -27,7 +27,7 @@
         }
         else
         {
-        alert('iets is niet gevonden');
+        alert('Label is niet gevonden, tag zal dus niet correct worden opgeslagen.');
         }
     }
     </script>
@@ -238,7 +238,7 @@ function ValideerZoekTerm (source, args)
         }
         else
         {
-        alert('iets is niet gevonden');
+        alert('Label is niet gevonden, tag zal dus niet correct worden opgeslagen.');
         }
     }
     </script>
@@ -304,6 +304,9 @@ function ValideerZoekTerm (source, args)
     
     <asp:Label ID="lblGeenCategorie" runat="server" Text="Er zijn geen categorieën beschikbaar." Visible="false"></asp:Label>
 <asp:HyperLink ID="hplAddCategorie" runat="server" Visible="false">Categorie toevoegen</asp:HyperLink>
+<div id="warning" runat="server" visible="false">
+        <img src="CSS/images/warning.png" /><asp:Label ID="lblEditorWaarschuwing" runat="server" Text="Opgelet: indien u al tekst bewerkte in de Editor moet u wijzigingen eerst ergens opslagen want dit wordt niet voor u bijgehouden tijdens het aanmaken van een nieuwe categorie."></asp:Label>
+    </div>
 </td>
 <td>
 <span style="vertical-align:middle" id='tipCategorie'><img src="CSS/images/help.png" alt=''/></span>

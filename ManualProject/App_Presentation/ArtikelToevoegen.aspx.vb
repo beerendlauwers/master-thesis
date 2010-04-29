@@ -22,7 +22,10 @@ Partial Class App_Presentation_invoerenTest
                 ddlModule.DataBind()
                 LaadDropdowns()
                 LaadTemplates()
-
+                'Hier gaan we kijken of de beheerder terugkomt van Beheer waar hij een categorie heeft toegevoegd omdat die mankeerde.
+                'we gaan, indien dit klopt, ook direct alle velden terug juist zetten.
+                'wat hier wel kan mislopen is dat als je tekst in de editor invult en dan pas categorie aanpast en een nieuwe categorie wil aanmaken
+                'is dat je je tekst kwijt bent. de beheerder wordt hier wel voor gewaarschuwd.
                 If Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing Then
                     ddlModule.SelectedValue = Page.Request.QueryString("module")
                     If Page.Request.QueryString("Artikeltag") IsNot Nothing Then
@@ -91,7 +94,8 @@ Partial Class App_Presentation_invoerenTest
             Me.btnVoegtoe.Enabled = False
             Me.hplAddCategorie.Visible = True
             Me.hplAddCategorie.NavigateUrl = "~/App_Presentation/Beheer.aspx?index=4&versie=" + ddlVersie.SelectedValue + "&bedrijf=" + ddlBedrijf.SelectedValue + "&taal=" + ddlTaal.SelectedValue + "&module=" + ddlModule.SelectedValue + "&tag=" + txtTag.Text + "&titel=" + txtTitel.Text + "&Add=1"
-            Me.Editortoevoegendiv.Style.Add("display", "none")
+            Me.Editortoevoegendiv.Style.Add("display", "")
+            Me.warning.Visible = True
             updContent.Update()
         Else
             Me.btnVoegtoe.Enabled = True
@@ -99,6 +103,7 @@ Partial Class App_Presentation_invoerenTest
             Me.lblGeenCategorie.Visible = False
             Me.hplAddCategorie.Visible = False
             Me.Editortoevoegendiv.Style.Add("display", "")
+            Me.warning.Visible = False
             updContent.Update()
         End If
 
@@ -262,6 +267,12 @@ Partial Class App_Presentation_invoerenTest
             Util.OnverwachteFout(Me, ex.Message)
         End Try
     End Sub
+    ''' <summary>
+    ''' gaat de tag weergeven in een label zodat de gebruiker kan zien hoe zijn eigenlijke tag er gaat uitzien
+    ''' label wordt gevuld met versie, taal, bedrijf, module en de eigenlijke tag, deze functie wordt enkel gebruikt bij laden van pagina en selectie van een item in een dropdown
+    ''' bij het typen in de textbox voor tag gebeurt er javascript op de achtergrond.
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Sub gettag()
         Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
         strtag(1) = Trim(strtag(1))

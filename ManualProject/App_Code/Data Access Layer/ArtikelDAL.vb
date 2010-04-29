@@ -430,8 +430,8 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
-    Public Function getArtikelsByBedrijf(ByVal bedrijfID As Integer) As tblBedrijfDataTable
-        Dim dt As New tblBedrijfDataTable
+    Public Function getArtikelsByBedrijf(ByVal bedrijfID As Integer) As tblArtikelDataTable
+        Dim dt As New tblArtikelDataTable
         Dim c As New SqlCommand("[Manual_getArtikelsByBedrijf]")
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@BedrijfID", SqlDbType.Int).Value = bedrijfID
