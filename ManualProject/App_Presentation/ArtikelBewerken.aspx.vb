@@ -37,7 +37,10 @@ Partial Class App_Presentation_ArtikelBewerken
                         LaadArtikel(id)
                     End If
 
-                ElseIf Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing And Page.Request.QueryString("titel") IsNot Nothing And Page.Request.QueryString("Artikeltag") IsNot Nothing Then
+                ElseIf Page.Request.QueryString("taal") IsNot Nothing And Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("module") IsNot Nothing And Page.Request.QueryString("titel") IsNot Nothing And Page.Request.QueryString("Artikeltag") IsNot Nothing And Page.Request.QueryString("ArtikelID") IsNot Nothing Then
+                    ViewState("artikelID") = Page.Request.QueryString("ArtikelID")
+                    Dim dr As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
+                    EditorBewerken.Value = dr("Tekst")
                     txtTitel.Text = Page.Request.QueryString("titel")
                     txtTag.Text = Page.Request.QueryString("Artikeltag")
                     ddlBedrijf.SelectedValue = Page.Request.QueryString("bedrijf")
@@ -157,7 +160,7 @@ Partial Class App_Presentation_ArtikelBewerken
                 Me.divFeedback.Style.Item("display") = "inline"
                 Return
             End If
-
+            Dim artikelIDtest As Integer = ViewState("artikelID")
             Dim origineelArtikel As tblArtikelRow = artikeldal.GetArtikelByID(ViewState("artikelID"))
             If origineelArtikel Is Nothing Then
                 Util.OnverwachteFout(btnUpdate, "Het opgevraagde artikel kon niet gevonden worden in de database.")
@@ -423,7 +426,7 @@ Partial Class App_Presentation_ArtikelBewerken
             Me.ddlCategorie.Visible = False
             Me.lblGeenCategorie.Visible = True
             Me.btnUpdate.Enabled = False
-            Me.hplAddCategorie.NavigateUrl = "~/App_Presentation/Beheer.aspx?index=4&versie=" + ddlVersie.SelectedValue + "&bedrijf=" + ddlBedrijf.SelectedValue + "&taal=" + ddlTaal.SelectedValue + "&module=" + ddlModule.SelectedValue + "&tag=" + txtTag.Text + "&titel=" + txtTitel.Text + "&Edit=1"
+            Me.hplAddCategorie.NavigateUrl = "~/App_Presentation/Beheer.aspx?index=4&versie=" + ddlVersie.SelectedValue + "&bedrijf=" + ddlBedrijf.SelectedValue + "&taal=" + ddlTaal.SelectedValue + "&module=" + ddlModule.SelectedValue + "&tag=" + txtTag.Text + "&titel=" + txtTitel.Text + "&ArtikelID=" + ViewState("artikelID").ToString + "&Edit=1"
             Me.hplAddCategorie.Visible = True
             EditorEditDiv.visible = False
             updContent.Update()
