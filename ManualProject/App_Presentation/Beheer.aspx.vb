@@ -659,21 +659,34 @@ Partial Class App_Presentation_Beheer
     Private Sub CategorieRecursiefVerwijderen(ByRef parent As Node, ByRef t As Tree)
 
         'Zo diep mogelijk gaan
+
         If parent.GetChildCount > 0 Then
-            For Each kind As Node In parent.GetChildren
 
-                If kind.Type = Global.ContentType.Categorie Then
-                    CategorieRecursiefVerwijderen(kind, t)
-                End If
+            Dim aantalKinderen As Integer = parent.GetChildCount - 1
 
-                If kind.Type = Global.ContentType.Artikel Then
-                    If artikeldal.StdAdapter.Delete(kind.ID) Then
-                        Dim previousparent As Node = t.VindParentVanNode(kind)
-                        previousparent.RemoveChild(kind)
+            For index As Integer = 0 To aantalKinderen
+
+                Try
+                    Dim kind As Node = parent.GetChildren(index)
+                    If kind IsNot Nothing Then
+
+                        If kind.Type = Global.ContentType.Categorie Then
+                            CategorieRecursiefVerwijderen(kind, t)
+                        End If
+
+                        'Alle artikels verwijderen
+                        If kind.Type = Global.ContentType.Artikel Then
+                            If artikeldal.StdAdapter.Delete(kind.ID) Then
+                                parent.RemoveChild(kind)
+                            End If
+                        End If
+
                     End If
-                End If
+                Catch
+                    'Niets doen
+                End Try
 
-            Next kind
+            Next index
         End If
 
         If categoriedal.StdAdapter.Delete(parent.ID) Then
@@ -715,7 +728,6 @@ Partial Class App_Presentation_Beheer
                                     Util.SetOK("Categorie verwijderd.", lblResDelete, imgResDelete)
                                 End If
                             End If
-
                         Else
                             Util.SetError("Verwijderen mislukt.", lblResDelete, imgResDelete)
                         End If
@@ -727,6 +739,7 @@ Partial Class App_Presentation_Beheer
 
                 LaadAlleCategorien()
                 Verwijderen_LaadParentCategorie()
+                ckbAllesCategorie.Checked = False
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblResDelete, imgResDelete)
             End If

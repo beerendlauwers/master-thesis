@@ -46,6 +46,36 @@ Public Class CategorieDAL
         Return dt
     End Function
 
+    Public Function GetCategorieByParentTaalVersieBedrijf(ByVal bedrijf As Integer, ByVal taal As Integer, ByVal versie As Integer, ByVal parent As Integer) As tblCategorieDataTable
+        Dim dt As New tblCategorieDataTable
+
+        Dim c As New SqlCommand("Manual_GetCategorieByParentTaalVersieBedrijfNotByHoogte")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@FK_Taal", SqlDbType.Int).Value = taal
+        c.Parameters.Add("@FK_Bedrijf", SqlDbType.Int).Value = bedrijf
+        c.Parameters.Add("@FK_Versie", SqlDbType.Int).Value = versie
+        c.Parameters.Add("@FK_Parent", SqlDbType.Int).Value = parent
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("Taal = " & taal.ToString)
+            e.Args.Add("Bedrijf = " & bedrijf.ToString)
+            e.Args.Add("Versie = " & versie.ToString)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
     Public Function GetCategorieByBedrijf(ByVal bedrijfID As Integer) As tblCategorieDataTable
         Dim dt As New tblCategorieDataTable
 

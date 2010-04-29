@@ -5,6 +5,14 @@ Imports System.Xml.Xsl
 Imports System.Xml.XPath
 Imports System.Web.HttpContext
 
+Public Structure XMLDoorsteekGegevens
+    Public DefaultVersie As String
+    Public DefaultTaal As String
+    Public DefaultBedrijf As String
+    Public Paswoord As String
+    Public IsApplicatieLive As Boolean
+End Structure
+
 Public Structure XMLTooltip
     Public ID As String
     Public Text As String
@@ -15,7 +23,9 @@ Public Class XML
     Private _xsl As String
     Private Shared _parseLock As New Object
     Private Shared FTooltips As List(Of XMLTooltip)
-
+    Private Shared _doorsteekLock As New Object
+    Private Shared FDoorsteekGegevens As New XMLDoorsteekGegevens
+    Private Shared DoorsteekGegevensGeladen As Boolean = False
     Public Shared Function GetTooltips() As List(Of XMLTooltip)
 
         'Als de lijst niet bestaat, maken we deze aan
@@ -82,6 +92,45 @@ Public Class XML
         Next tip
 
         Return String.Empty
+    End Function
+
+    Public Shared Sub ParseDoorsteekGegevens()
+
+        SyncLock _doorsteekLock
+
+            'XML-bestand laden
+            Dim xml As New XmlDocument()
+            xml.Load(HttpContext.Current.Server.MapPath("~/App_Data/doorsteeklogin.xml"))
+
+            'Root node vinden
+            Dim root As XmlNode = xml.DocumentElement
+
+            'Gegevens inladen
+            FDoorsteekGegevens = New XMLDoorsteekGegevens
+            FDoorsteekGegevens.DefaultVersie = root.SelectSingleNode("defaultVersie").ChildNodes(0).Value
+            FDoorsteekGegevens.DefaultTaal = root.SelectSingleNode("defaultTaal").ChildNodes(0).Value
+            FDoorsteekGegevens.DefaultBedrijf = root.SelectSingleNode("defaultBedrijf").ChildNodes(0).Value
+            FDoorsteekGegevens.Paswoord = root.SelectSingleNode("password").ChildNodes(0).Value
+
+            Dim applicatielive As String = root.SelectSingleNode("applicatieLive").ChildNodes(0).Value
+
+            If applicatielive = 1 Then
+                FDoorsteekGegevens.IsApplicatieLive = True
+            Else
+                FDoorsteekGegevens.IsApplicatieLive = False
+            End If
+
+        End SyncLock
+    End Sub
+
+    Public Shared Function Doorsteek() As XMLDoorsteekGegevens
+
+        If Not DoorsteekGegevensGeladen Then
+            ParseDoorsteekGegevens()
+            DoorsteekGegevensGeladen = True
+        End If
+
+        Return FDoorsteekGegevens
     End Function
 
     Public Shared Sub GetTemplates(ByRef lst As ListBox)

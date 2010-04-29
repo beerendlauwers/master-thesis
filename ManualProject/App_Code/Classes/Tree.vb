@@ -334,6 +334,78 @@ Public Class Tree
 
     End Function
 
+    Private Shared Function BouwCategorienEnArtikelsOnderParent(ByRef parent As tblCategorieRow, ByRef t As Tree) As Boolean
+        Dim dbcategorie As CategorieDAL = DatabaseLink.GetInstance.GetCategorieFuncties
+        Dim dbartikel As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
+
+        'Parent toevoegen
+        Dim parentnode As Node = New Node(parent.CategorieID, ContentType.Categorie, parent.Categorie, parent.Hoogte)
+
+        'De grandparent is reeds toegevoegd in de vorige recursie
+        Dim grandparent As Node = t.DoorzoekTreeVoorNode(parent.FK_parent, ContentType.Categorie)
+
+        grandparent.AddChild(parentnode)
+
+        'Alle categoriëen ophalen onder deze parent
+        Dim categoriedt As tblCategorieDataTable = dbcategorie.GetCategorieByParentTaalVersieBedrijf(parent.FK_bedrijf, parent.FK_taal, parent.FK_versie, parent.CategorieID)
+        Dim artikeldt As Data.DataTable
+
+        For Each categorie As tblCategorieRow In categoriedt
+
+            'De root node heeft geen parent, dus in dit geval kunnen we gewoon verdergaan.
+            If categorie.FK_parent = categorie.CategorieID Then Continue For
+
+            'Maak een kind aan
+            Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie, categorie.Hoogte)
+
+            'Plaats het kind onder de parent
+            parentnode.AddChild(kind)
+
+            'De categoriëen onder deze categorie toevoegen
+            Dim gelukt As Boolean = BouwCategorienEnArtikelsOnderParent(categorie, t)
+
+            If Not gelukt Then Return False
+
+        Next categorie
+
+        'Nu dat alle categoriëen zijn toegevoegd, voegen we de artikels toe
+
+        'Artikels onder parent ophalen
+        artikeldt = dbartikel.GetArtikelKeysByParent(parent.CategorieID)
+
+        Dim hoogte As Integer = 0
+
+        For index As Integer = 0 To artikeldt.Rows.Count - 1
+            Dim artikel As Data.DataRow = artikeldt.Rows(index)
+
+            Dim art As New Node(artikel.Item("ArtikelID"), ContentType.Artikel, artikel.Item("Titel"), hoogte)
+
+            If (parent.FK_taal = artikel.Item("FK_Taal")) And (parent.FK_versie = artikel.Item("FK_Versie")) And (parent.FK_bedrijf = artikel.Item("FK_Bedrijf")) Then
+                parentnode.AddChild(art)
+                hoogte = hoogte + 1
+            Else
+                Dim fout As String = String.Concat("Waarschuwing: Het artikel """, artikel.Item("Titel"), """ (artikelID: ", artikel.Item("ArtikelID"), ") heeft andere foreign keys dan de categorie waaronder ze staat (zie parameters).")
+                Dim e As New ErrorLogger(fout, "TREE_0006")
+                e.Args.Add("Treenaam: " & t.Naam)
+                e.Args.Add("Categoriegegevens:")
+                e.Args.Add("CategorieID: " & parent.CategorieID)
+                e.Args.Add("VersieID: " & parent.FK_versie.ToString)
+                e.Args.Add("BedrijfID: " & parent.FK_bedrijf.ToString)
+                e.Args.Add("TaalID:" & parent.FK_taal.ToString)
+                e.Args.Add("Artikelgegevens:")
+                e.Args.Add("ArtikelID: " & artikel.Item("ArtikelID").ToString)
+                e.Args.Add("VersieID: " & artikel.Item("FK_Versie").ToString)
+                e.Args.Add("BedrijfID: " & artikel.Item("FK_Bedrijf").ToString)
+                e.Args.Add("TaalID:" & artikel.Item("FK_Taal").ToString)
+                ErrorLogger.WriteError(e)
+            End If
+        Next index
+
+        'Alles is gelukt!
+        Return True
+
+    End Function
+
     ''' <summary>
     ''' Bouwt de tree voor de gegeven unieke combinatie van versie, taal en bedrijf.
     ''' </summary>
@@ -352,9 +424,6 @@ Public Class Tree
         Dim dbbedrijf As BedrijfDAL = dblink.GetBedrijfFuncties
         Dim dbversie As VersieDAL = dblink.GetVersieFuncties
         Dim dbartikel As ArtikelDAL = dblink.GetArtikelFuncties
-
-        Dim categoriedt As tblCategorieDataTable
-        Dim artikeldt As tblArtikelDataTable
 
         'Root node ophalen en aanmaken
         Dim rootnode As Node
@@ -383,74 +452,24 @@ Public Class Tree
 
         Dim treenaam As String = String.Concat("TREE_", versie.Versie, "_", taal.Taal, "_", bedrijf.Naam)
         Dim t As New Tree(treenaam, taal.TaalID, versie.VersieID, bedrijf.BedrijfID, rootnode)
-        Dim huidigeParent As Node
 
-        categoriedt = dbcategorie.GetAllCategorieBy(taal.TaalID, bedrijf.BedrijfID, versie.VersieID)
+        Dim parentnode As Node = rootnode
+
+        'Alle categoriëen ophalen onder de root node
+        Dim categoriedt As tblCategorieDataTable = dbcategorie.GetCategorieByParentTaalVersieBedrijf(bedrijf.BedrijfID, taal.TaalID, versie.VersieID, rootnoderij.CategorieID)
 
         For Each categorie As tblCategorieRow In categoriedt
 
-            'De root node heeft geen parent, dus in dit geval kunnen we gewoon verdergaan.
-            If categorie.FK_parent = categorie.CategorieID Then Continue For
+            'De categoriëen onder deze categorie toevoegen
+            Dim gelukt As Boolean = BouwCategorienEnArtikelsOnderParent(categorie, t)
 
-            'Haal de juiste parent op van dit kind.
-            huidigeParent = t.DoorzoekTreeVoorNode(categorie.FK_parent, ContentType.Categorie)
-
-            'Check of huidigeParent geldig is
-            If (huidigeParent Is Nothing) Then
-
-                Dim fout As String = String.Concat("Fout tijdens genereren van de categoriestructuren: De parent met nummer ", categorie.FK_parent, " bestaat niet in deze tree.")
-                Dim e As New ErrorLogger(fout, "TREE_0003")
-                e.Args.Add("Treenaam: " & treenaam)
-                e.Args.Add("CategorieID van de kindcategorie wiens parent niet bestaat: " & categorie.CategorieID)
-                e.Args.Add("VersieID van de kindcategorie: " & categorie.FK_versie.ToString)
-                e.Args.Add("BedrijfID van de kindcategorie: " & categorie.FK_bedrijf.ToString)
-                e.Args.Add("TaalID van de kindcategorie:" & categorie.FK_taal.ToString)
-                ErrorLogger.WriteError(e)
-                Return e.Boodschap
-            End If
-
-            'Maak een kind aan
-            Dim kind As New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie, categorie.Hoogte)
-
-            'Plaats het kind onder de parent
-            huidigeParent.AddChild(kind)
-
-            'En nu alle artikels die onder deze categorie staan ophalen
-            artikeldt = dbartikel.GetArtikelsByParent(categorie.CategorieID)
-
-            'De huidige parent wordt nu het kind
-            huidigeParent = kind
-            Dim hoogte As Integer = 0
-            For Each artikel As tblArtikelRow In artikeldt
-                Dim art As New Node(artikel.ArtikelID, ContentType.Artikel, artikel.Titel, hoogte)
-
-                If (categorie.FK_taal = artikel.FK_Taal) And (categorie.FK_versie = artikel.FK_Versie) And (categorie.FK_bedrijf = artikel.FK_Bedrijf) Then
-                    huidigeParent.AddChild(art)
-                    hoogte = hoogte + 1
-                Else
-                    Dim fout As String = String.Concat("Waarschuwing: Het artikel """, artikel.Titel, """ (artikelID: ", artikel.ArtikelID, ") heeft andere foreign keys dan de categorie waaronder ze staat (zie parameters).")
-                    Dim e As New ErrorLogger(fout, "TREE_0006")
-                    e.Args.Add("Treenaam: " & treenaam)
-                    e.Args.Add("Categoriegegevens:")
-                    e.Args.Add("CategorieID: " & categorie.CategorieID)
-                    e.Args.Add("VersieID: " & categorie.FK_versie.ToString)
-                    e.Args.Add("BedrijfID: " & categorie.FK_bedrijf.ToString)
-                    e.Args.Add("TaalID:" & categorie.FK_taal.ToString)
-                    e.Args.Add("Artikelgegevens:")
-                    e.Args.Add("ArtikelID: " & artikel.ArtikelID.ToString)
-                    e.Args.Add("VersieID: " & artikel.FK_Versie.ToString)
-                    e.Args.Add("BedrijfID: " & artikel.FK_Bedrijf.ToString)
-                    e.Args.Add("TaalID:" & artikel.FK_Taal.ToString)
-                    ErrorLogger.WriteError(e)
-                End If
-
-            Next artikel
+            If Not gelukt Then Return String.Concat("Kon de boomstructuur ", treenaam, " niet bouwen.")
 
         Next categorie
 
         Tree.AddTree(t)
-
         Return "OK"
+
 
     End Function
 
