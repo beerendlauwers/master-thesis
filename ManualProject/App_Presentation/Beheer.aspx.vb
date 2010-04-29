@@ -985,6 +985,12 @@ Partial Class App_Presentation_Beheer
         'Parentgegevens ophalen
         Dim parentrij As tblCategorieRow = categoriedal.getCategorieByID(parent.ID)
 
+        If parentrij Is Nothing Then
+            Dim err As New ErrorLogger(String.Concat("De categorie ", parent.ID, " werd niet gevonden in de database."))
+            ErrorLogger.WriteError(err)
+            Return False
+        End If
+
         'Parent kopiëren
         Dim cat As New Categorie
 
@@ -1024,24 +1030,59 @@ Partial Class App_Presentation_Beheer
             Else
                 Dim a As New Artikel(artikeldal.GetArtikelByID(kind.ID))
 
-                If a Is Nothing Then Continue For
+                If a Is Nothing Then
+                    Dim e As New ErrorLogger(String.Concat("Kon het artikel ", kind.ID, " niet vinden in de database."))
+                    ErrorLogger.WriteError(e)
+                    Continue For
+                End If
 
                 'Nieuwe tag opbouwen
                 Dim v As Versie = Versie.GetVersie(versieID)
-                If v Is Nothing Then Return False
+                If v Is Nothing Then
+                    Dim e As New ErrorLogger(String.Concat("Kon de versie ", versieID, " niet vinden in het geheugen."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End If
 
                 Dim ta As Taal = Taal.GetTaal(tree.Taal.ID)
-                If ta Is Nothing Then Return False
+                If ta Is Nothing Then
+                    Dim e As New ErrorLogger(String.Concat("Kon de taal ", tree.Taal.ID, " niet vinden in het geheugen."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End If
 
-                Dim b As Bedrijf = Bedrijf.GetBedrijf(tree.Bedrijf.ID)
-                If b Is Nothing Then Return False
+            Dim b As Bedrijf = Bedrijf.GetBedrijf(tree.Bedrijf.ID)
+                If b Is Nothing Then
+                    Dim e As New ErrorLogger(String.Concat("Kon het bedrijf ", tree.Bedrijf.ID, " niet vinden in het geheugen."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End If
 
                 Dim modulesplit() As String = a.Tag.Split("_")
-                Dim moduletag As String = modulesplit(3)
-                If moduletag Is Nothing Then Return False
 
-                Dim artikeltag As String = modulesplit(4)
-                If artikeltag Is Nothing Then Return False
+                Dim moduletag As String = String.Empty
+                Try
+                    moduletag = modulesplit(3)
+                    If moduletag Is Nothing Then
+                        Throw New Exception
+                    End If
+                Catch
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End Try
+
+                Dim artikeltag As String = String.Empty
+                Try
+                    artikeltag = modulesplit(4)
+                    If artikeltag Is Nothing Then
+                        Throw New Exception
+                    End If
+                Catch ex As Exception
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End Try
 
                 a.Tag = String.Concat(v.VersieNaam, "_", ta.TaalTag, "_", b.Naam, "_", moduletag, "_", artikeltag)
 
@@ -1071,21 +1112,12 @@ Partial Class App_Presentation_Beheer
                 Dim versietext As String = txtNaamNieuweVersieKopie.Text
                 Dim versieID As Integer = ddlVersiekopieren.SelectedValue
 
-                errorloglol = New ErrorLogger("Checkpoint 1")
-                ErrorLogger.WriteError(errorloglol)
-
                 If (versiedal.CheckVersieByID(versietext, versieID).Count = 0) Then
-
-                    errorloglol = New ErrorLogger("Checkpoint 2")
-                    ErrorLogger.WriteError(errorloglol)
 
                     Dim nieuweVersieID As Integer = versiedal.insertVersie(versietext)
                     If nieuweVersieID = -1 Then
                         Util.SetError("Kopiëren mislukt: Kon niet met de database verbinden.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
                     Else
-
-                        errorloglol = New ErrorLogger("Checkpoint 3")
-                        ErrorLogger.WriteError(errorloglol)
 
                         Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf()
                         Dim talen As tblTaalDataTable = taaldal.GetAllTaal()
@@ -1121,14 +1153,8 @@ Partial Class App_Presentation_Beheer
                             Next b
                         Next t
 
-                        errorloglol = New ErrorLogger("Checkpoint 4")
-                        ErrorLogger.WriteError(errorloglol)
-
                         Dim v As tblVersieRow = versiedal.GetVersieByID(nieuweVersieID)
                         Dim gelukt As String = Tree.BouwTreesVoorVersie(bedrijven, v, talen)
-
-                        errorloglol = New ErrorLogger("Checkpoint 5")
-                        ErrorLogger.WriteError(errorloglol)
 
                         If Not gelukt = "OK" Then
                             Util.SetWarn("Kopiëren gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
