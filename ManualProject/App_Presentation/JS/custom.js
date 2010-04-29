@@ -25,7 +25,7 @@ function ShadowBoxLaderTonen()
 {
     // open a message
     Shadowbox.open({
-        content:    '<div style="padding-top:40px;text-align:center;vertical-align:middle;color:#FFFFFF;font-family:arial,verdana;"><img src="CSS/images/loading.gif" style="vertical-align:middle;"/> Even wachten aub...</div>',
+        content:    '<div style="padding-top:40px;text-align:center;vertical-align:middle;color:#FFFFFF;font-family:arial,verdana;"><img src="CSS/images/loading.gif" style="vertical-align:middle;"/> ' + wachtenlaadtekst + '</div>',
         player:     "html",
         height: 100,
         width: 200

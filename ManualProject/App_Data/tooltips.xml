@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tooltips>
 	<!-- Artikel Toevoegen -->
-	<tip id="tipTagArtikelToevoegen" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het nieuwe artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="tipTagArtikelToevoegen" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het nieuwe artikel. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
 	<tip id="tipTitelArtikelToevoegen" text="De titel van het nieuwe artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
 	<tip id="tipBedrijfArtikelToevoegen" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
 	<tip id="tipTaalArtikelToevoegen" text="De taal van het nieuwe artikel." />
@@ -18,7 +18,7 @@
 	<tip id="tipTaalVerfijnen" text="De taal waarin u wilt zoeken." />
 	<tip id="tipVersieVerfijnen" text="De versie waarin u wilt zoeken." />
 	<tip id="tipIsFinaalVerfijnen" text="Kies of het artikel gefinaliseerd is of niet." />
-	<tip id="tipTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="tipTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
 	<tip id="tipTitel" text="De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
 	<tip id="tipTaal" text="De taal van het artikel." />
 	<tip id="tipBedrijf" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
@@ -29,7 +29,7 @@
 	<tip id="tipSjabloon" text="Selecteer een sjabloon uit de lijst en druk op de knop ''Sjabloon Toevoegen'' om deze toe te voegen aan het einde van uw artikel." />
 
 	<!-- Artikel Verwijderen -->
-	<tip id="tipZoekTitelVerwijderen" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken. Of typ '%%' om alle Artikels weer te geven."/>
+	<tip id="tipZoekTitelVerwijderen" text="Een (gedeelte van een) titel of een trefwoord waarop u wilt zoeken. Of typ '%%' om alle artikels weer te geven."/>
 	<tip id="tipZoekTagVerwijderen" text="Een (gedeelte van een) tag waarop u wilt zoeken." />
 	<tip id="tipBedrijfKeuze" text="Het bedrijf waarin u wilt zoeken." />
 	<tip id="tipTaalKeuze" text="De taal waarin u wilt zoeken." />
@@ -38,8 +38,8 @@
 	
 	<!-- Bedrijfbeheer -->
 	<tip id="tipAddBedrijf" text="De bedrijfsnaam van het bedrijf." />
-	<tip id="tipAddTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
-	<tip id="tipEditTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en een underscore ( _ ) bevatten." />
+	<tip id="tipAddTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
+	<tip id="tipEditTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
 	<tip id="tipEditBedrijf" text="De bedrijfsnaam van het bedrijf." />
 	<tip id="tipDeleteBedrijf" text="Het bedrijf dat u wilt verwijderen." />
 	<tip id="tipBewerkBedrijf" text="Het bedrijf dat u wilt wijzigen." />
@@ -55,9 +55,9 @@
 	<!-- Versiebeheer -->
 	<tip id="tipAddVersie" text="Het versienummer van de nieuwe versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
 	<tip id="tipEditVersie" text="Het versienummer van de versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
-	<tip id="tipVersieKopieren" text="De versie die u wilt kopiëren. Alle artikels en categorien van elk bedrijf onder deze versie worden meegekopieerd." />
+	<tip id="tipVersieKopieren" text="De versie die u wilt kopiëren. Alle artikels en categorie&#235;n van elk bedrijf onder deze versie worden meegekopieerd." />
 	<tip id="tipNaamVersieKopie" text="Het versienummer van de nieuwe versie. Mag enkel nummers en stoptekens ( . ) bevatten." />
-	<tip id="tipAantalCategorien" text="Het aantal categorien dat gekopieerd zal worden." />
+	<tip id="tipAantalCategorien" text="Het aantal categorie&#235;n dat gekopieerd zal worden." />
 	<tip id="tipAantalArtikels" text="Het aantal artikels dat gekopieerd zal worden." />
 	<tip id="tipBewerkVersie" text="De versie die u wilt wijzigen." />
 	<tip id="tipDeleteVersie" text="De versie die u wilt verwijderen." />

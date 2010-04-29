@@ -13,6 +13,7 @@
 	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Klik op &#233;&#233;n van de kolommen om de items volgens deze waarde te sorteren." />
 	<tekst id="ZOEKEN_TITEL" text="Titel" />
 	<tekst id="ZOEKEN_TAG" text="Tag" />
+	<tekst id="ZOEKEN_TEKST" text="Tekst" />
 	<tekst id="ZOEKEN_PAGINA" text="Pagina:" />
 	<tekst id="ONGELDIGID" text="Ongeldig ID." />
 	<tekst id="ONGELDIGARTIKEL" text="Ongeldig artikel." />
@@ -45,6 +46,7 @@
 	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Cliquez sur le titre d'une colonne pour organiser les lignes en fonction de cette valeur." />
 	<tekst id="ZOEKEN_TITEL" text="Titre" />
 	<tekst id="ZOEKEN_TAG" text="Tag" />
+	<tekst id="ZOEKEN_TEKST" text="Texte" />
 	<tekst id="ZOEKEN_PAGINA" text="Page:" />
 	<tekst id="ONGELDIGID" text="ID invalide." />
 	<tekst id="ONGELDIGARTIKEL" text="Article invalide." />
@@ -77,6 +79,7 @@
 	<tekst id="ZOEKEN_UITLEGKOLOMMEN" text="Click on one of the column titles to sort the items according to that value." />
 	<tekst id="ZOEKEN_TITEL" text="Title" />
 	<tekst id="ZOEKEN_TAG" text="Tag" />
+	<tekst id="ZOEKEN_TEKST" text="Text" />
 	<tekst id="ZOEKEN_PAGINA" text="Page:" />
 	<tekst id="ONGELDIGID" text="Invalid ID." />
 	<tekst id="ONGELDIGARTIKEL" text="Invalid article." />

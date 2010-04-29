@@ -1,4 +1,4 @@
-﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" AutoEventWireup="false" CodeFile="page.aspx.vb" Inherits="App_Presentation_page" title="Untitled Page" %>
+﻿<%@ Page Language="VB" MasterPageFile="~/App_Presentation/MasterPage.master" EnableViewStateMac="False" viewStateEncryptionMode ="Never" AutoEventWireup="false" CodeFile="page.aspx.vb" Inherits="App_Presentation_page" title="Untitled Page" EnableEventValidation="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

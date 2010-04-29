@@ -121,6 +121,7 @@ Partial Class App_Presentation_zoekresultaten
         For Each d As DataControlField In grdResultaten.Columns
             If d.SortExpression = "titel" Then d.HeaderText = Lokalisatie.GetString("ZOEKEN_TITEL")
             If d.SortExpression = "tag" Then d.HeaderText = Lokalisatie.GetString("ZOEKEN_TAG")
+            If d.SortExpression = "Tekst" Then d.HeaderText = Lokalisatie.GetString("ZOEKEN_TEKST")
         Next
     End Sub
 End Class

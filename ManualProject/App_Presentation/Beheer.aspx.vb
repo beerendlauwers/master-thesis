@@ -270,6 +270,30 @@ Partial Class App_Presentation_Beheer
 
     End Function
 
+    Private Function Wijzigen_CheckOfCategorieVerplaatstWordtInSubcategorie(ByRef originelecategorie As Categorie, ByRef nieuwecategorie As Categorie) As Boolean
+
+        Dim oudetree As Tree = Tree.GetTree(originelecategorie.FK_Taal, originelecategorie.Versie, originelecategorie.Bedrijf)
+        Dim nieuwetree As Tree = Tree.GetTree(nieuwecategorie.FK_Taal, nieuwecategorie.Versie, nieuwecategorie.Bedrijf)
+
+        'Als de trees verschillen, dan kan de categorie sowieso niet in een subcategorie van zichzelf verplaatst worden.
+        If Not oudetree.Naam = nieuwetree.Naam Then Return False
+
+        'Diepte ophalen van de twee categorieën
+        Dim nieuwecat As Node = nieuwetree.DoorzoekTreeVoorNode(nieuwecategorie.CategorieID, Global.ContentType.Categorie)
+
+        'De categorie proberen op te zoeken
+        Dim kindcategorie As Node = nieuwecat.GetChildBy(nieuwecategorie.FK_Parent, Global.ContentType.Categorie)
+
+        'Als de categorie niet gevonden werd, dan is deze geen subcategorie van de te verplaatsen categorie
+        If kindcategorie Is Nothing Then Return False
+
+        'Als de categorie gevonden werd, is deze een subcategorie van de te verplaatsen categorie. Dit mag niet!
+        If kindcategorie.ID = nieuwecategorie.FK_Parent Then Return True
+
+        Return True
+
+    End Function
+
     Protected Sub btnCatEdit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCatEdit.Click
         Try
             Dim val() As WebControl = {txtCatbewerknaam, txtEditCathoogte, ddlEditCategorie, ddlEditCatParent, ddlEditCatTaal, ddlEditCatBedrijf, ddlEditCatVersie}
@@ -282,7 +306,7 @@ Partial Class App_Presentation_Beheer
                 nieuwecategorie.FK_Parent = ddlEditCatParent.SelectedValue
 
                 Dim origineleCategorie As tblCategorieRow = categoriedal.getCategorieByID(nieuwecategorie.CategorieID)
-				
+
 				If origineleCategorie Is Nothing Then
 					Util.OnverwachteFout(ddlEditCatVersie, String.Concat( "De opgevraagde categorie """, nieuwecategorie.CategorieID ,"""werd niet gevonden in de database.") )
 					Return
@@ -305,6 +329,12 @@ Partial Class App_Presentation_Beheer
                 'Nagaan of de gewenste categorienaam reeds in gebruik is door een andere categorie, 
                 'en ook voor alle namen van de subcategorieën
                 If Wijzigen_CheckCategorieRecursief(nieuwecategorie.Categorie, nieuwecategorie.Bedrijf, nieuwecategorie.Versie, nieuwecategorie.FK_Taal, nieuwecategorie.CategorieID) = True Then
+
+                    'En nu nakijken of de categorie niet wordt verplaatst in een subcategorie
+                    If Wijzigen_CheckOfCategorieVerplaatstWordtInSubcategorie(New Categorie(origineleCategorie), nieuwecategorie) Then
+                        Util.SetError(String.Concat("Wijzigen mislukt: De categorie """, parentCategorierij.Categorie, """ is een subcategorie van """, nieuwecategorie.Categorie, """.", vbCrLf, "Verplaats de subcategorie eerst op dezelfde hoogte als de hoofdcategorie, en verplaats dan de hoofdcategorie in de subcategorie."), lblResEdit, imgResEdit)
+                        Return
+                    End If
 
                     'Alles ok, categorie en categoriëën daaronder updaten
                     If (Wijzigen_UpdateCategorieRecursief(nieuwecategorie)) Then
@@ -350,7 +380,7 @@ Partial Class App_Presentation_Beheer
                         Util.SetError("Wijzigen mislukt.", lblResEdit, imgResEdit)
                     End If
                 Else
-                    Util.SetError("Een andere categorie in deze combinate van taal, versie en bedrijf heeft reeds dezelfde naam.", lblResEdit, imgResEdit)
+                    Util.SetError("Een andere categorie of artikel in deze combinate van taal, versie en bedrijf heeft reeds dezelfde naam of titel.", lblResEdit, imgResEdit)
                 End If
 
                 LaadAlleCategorien()
@@ -419,30 +449,27 @@ Partial Class App_Presentation_Beheer
             Util.LeesCategorien(ddlEditCategorie, t)
 
             If ddlEditCategorie.Items.Count = 0 Then
-                ddlEditCategorieGeenCats.Visible = True
+                ddlEditCategorieGeenCats.Style.Item("display") = ""
 
-                divEditCategorie.Visible = False
-                trCatBewerkNaam.Visible = False
-                trBewerkCatHoogte.Visible = False
-                trBewerkCatTaal.Visible = False
-                trBewerkCatVersie.Visible = False
-                trBewerkCatBedrijf.Visible = False
-                trBewerkParentCat.Visible = False
-                trCatEditButton.Visible = False
+                divEditCategorie.Style.Item("display") = "none"
+                trCatBewerkNaam.Style.Item("display") = "none"
+                trBewerkCatTaal.Style.Item("display") = "none"
+                trBewerkCatVersie.Style.Item("display") = "none"
+                trBewerkCatBedrijf.Style.Item("display") = "none"
+                trBewerkParentCat.Style.Item("display") = "none"
+                trCatEditButton.Style.Item("display") = "none"
             Else
                 Wijzigen_LaadCategorieDetails()
-                ddlEditCategorieGeenCats.Visible = False
+                ddlEditCategorieGeenCats.Style.Item("display") = "none"
 
-                divEditCategorie.Visible = True
-                trCatBewerkNaam.Visible = True
-                trBewerkCatHoogte.Visible = True
-                trBewerkCatTaal.Visible = True
-                trBewerkCatVersie.Visible = True
-                trBewerkCatBedrijf.Visible = True
-                trBewerkParentCat.Visible = True
-                trCatEditButton.Visible = True
+                divEditCategorie.Style.Item("display") = ""
+                trCatBewerkNaam.Style.Item("display") = ""
+                trBewerkCatTaal.Style.Item("display") = ""
+                trBewerkCatVersie.Style.Item("display") = ""
+                trBewerkCatBedrijf.Style.Item("display") = ""
+                trBewerkParentCat.Style.Item("display") = ""
+                trCatEditButton.Style.Item("display") = ""
 
-                LaadTooltipsCategorieBewerken()
             End If
 
         End If
@@ -1810,21 +1837,6 @@ Partial Class App_Presentation_Beheer
         End Try
     End Sub
 
-    Private Sub LaadTooltipsCategorieBewerken()
-        'Nieuwe lijst van tooltips definiëren
-        Dim lijst As New List(Of Tooltip)
-
-        lijst.Add(New Tooltip("tipEditCategorie"))
-        lijst.Add(New Tooltip("tipCatbewerknaam"))
-        lijst.Add(New Tooltip("tipEditCatHoogte"))
-        lijst.Add(New Tooltip("tipEditCatTaal"))
-        lijst.Add(New Tooltip("tipEditCatVersie"))
-        lijst.Add(New Tooltip("tipEditCatBedrijf"))
-        lijst.Add(New Tooltip("tipEditCatParent"))
-
-        Util.TooltipsToevoegen(Me, lijst)
-    End Sub
-
     Private Sub LaadTooltips()
 
         'Nieuwe lijst van tooltips definiëren
@@ -1869,6 +1881,14 @@ Partial Class App_Presentation_Beheer
         lijst.Add(New Tooltip("tipEditCatTaalkeuze"))
         lijst.Add(New Tooltip("tipEditCatVersiekeuze"))
         lijst.Add(New Tooltip("tipEditCatBedrijfkeuze"))
+
+        lijst.Add(New Tooltip("tipEditCategorie"))
+        lijst.Add(New Tooltip("tipCatbewerknaam"))
+        lijst.Add(New Tooltip("tipEditCatHoogte"))
+        lijst.Add(New Tooltip("tipEditCatTaal"))
+        lijst.Add(New Tooltip("tipEditCatVersie"))
+        lijst.Add(New Tooltip("tipEditCatBedrijf"))
+        lijst.Add(New Tooltip("tipEditCatParent"))
 
         lijst.Add(New Tooltip("tipCatPositieVersie"))
         lijst.Add(New Tooltip("tipCatPositieTaal"))
@@ -1971,6 +1991,11 @@ Partial Class App_Presentation_Beheer
         JavaScript.VoerJavaScriptUitOn(ddlEditCatVersie, JavaScript.DisableCode(btnCatEdit) & altijdDisabled & JavaScript.DisableCode(ddlEditCatBedrijf) & JavaScript.DisableCode(ddlEditCatParent) & JavaScript.DisableCode(ddlEditCatTaal) & JavaScript.DisableCode(ddlEditCategorie), "onchange")
 
         JavaScript.VoerJavaScriptUitOn(ddlEditCatParent, altijdDisabled & JavaScript.DisableCode(ddlEditCatBedrijf) & JavaScript.DisableCode(ddlEditCatVersie) & JavaScript.DisableCode(ddlEditCatTaal) & JavaScript.DisableCode(ddlEditCategorie), "onchange")
+
+        'Positioneren
+        JavaScript.VoerJavaScriptUitOn(btnCatPositieFilteren, JavaScript.DisableCode(ddlCatPositieCategorie), "onchange")
+        JavaScript.ZetButtonOpDisabledOnClick(btnCatPositieFilteren, "Filteren...", True)
+        JavaScript.VoerJavaScriptUitOn(ddlCatPositieCategorie, JavaScript.DisableCode(ddlCatPositieBedrijf) & JavaScript.DisableCode(ddlCatPositieVersie) & JavaScript.DisableCode(ddlCatPositieTaal) & JavaScript.DisableCode(btnCatPositieFilteren), "onchange")
 
         'Verwijderen
         JavaScript.ZetButtonOpDisabledOnClick(btnCatDelete, "Verwijderen...", True)
