@@ -41,6 +41,32 @@ Public Class ArtikelDAL
         Return dt
     End Function
 
+    Public Function GetArtikelKeysByParent(ByVal categorieID As Integer) As DataTable
+        Dim dt As New DataTable
+
+        Dim c As New SqlCommand("Manual_GetArtikelKeysByParent")
+        c.CommandType = CommandType.StoredProcedure
+        c.Connection = New SqlConnection(conn)
+        c.Parameters.Add("@categorieID", SqlDbType.VarChar).Value = categorieID
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("categorieID = " & categorieID.ToString)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+
+        Return dt
+    End Function
+
     Public Function GetArtikelByID(ByVal ID As Integer) As tblArtikelRow
         Dim dt As New tblArtikelDataTable
 
@@ -348,7 +374,7 @@ Public Class ArtikelDAL
         c.Parameters.Add("@artikelID", SqlDbType.Int).Value = artikel.ID
         c.Parameters.Add("@Titel", SqlDbType.VarChar).Value = artikel.Titel
         c.Parameters.Add("@FK_Categorie", SqlDbType.Int).Value = artikel.Categorie
-        c.Parameters.Add("@FK_Taal", SqlDbType.Int).Value = artikel.taal
+        c.Parameters.Add("@FK_Taal", SqlDbType.Int).Value = artikel.Taal
         c.Parameters.Add("@FK_Bedrijf", SqlDbType.Int).Value = artikel.Bedrijf
         c.Parameters.Add("@FK_Versie", SqlDbType.Int).Value = artikel.Versie
         c.Parameters.Add("@Tekst", SqlDbType.NVarChar).Value = artikel.Tekst
@@ -579,6 +605,40 @@ Public Class ArtikelDAL
         End Try
 
         Return dt
+    End Function
+
+    Public Function getArtikelBySimpleTagTaalVersieBedrijf(ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer, ByVal tag As String) As tblArtikelRow
+        Dim dt As New tblArtikelDataTable
+        Dim c As New SqlCommand("Manual_GetArtikelByTag_Versie_Bedrijf_Taal")
+        c.CommandType = CommandType.StoredProcedure
+
+        c.Parameters.Add("@bedrijf", SqlDbType.Int).Value = bedrijfID
+        c.Parameters.Add("@versie", SqlDbType.Int).Value = versieID
+        c.Parameters.Add("@taal", SqlDbType.Int).Value = taalID
+        c.Parameters.Add("@tag", SqlDbType.VarChar).Value = String.Concat("%", tag, "%")
+        c.Connection = New SqlConnection(conn)
+
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            e.Args.Add("tag = " & tag)
+            e.Args.Add("versie = " & versieID.ToString)
+            e.Args.Add("bedrijf = " & bedrijfID.ToString)
+            e.Args.Add("taal = " & taalID.ToString)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+
+        If dt.Count > 0 Then
+            Return dt.Rows(0)
+        Else
+            Return Nothing
+        End If
     End Function
 
     Public Function getArtikelsByTitelTaalVersieBedrijf(ByVal bedrijfID As Integer, ByVal versieID As Integer, ByVal taalID As Integer, ByVal titel As String) As Data.DataTable

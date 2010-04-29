@@ -60,7 +60,7 @@ Partial Class App_Presentation_Module
         Dim dt As tblArtikelDataTable
 
         'Appligen
-        Dim appligen As Bedrijf = Bedrijf.GetBedrijf("AAAFinancials")
+        Dim appligen As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
         Dim appligendt As tblArtikelDataTable = artikeldal.GetArtikelsByModule(moduletekst, taalID, versieID, appligen.ID)
 
         Dim anderbedrijf As Bedrijf = Bedrijf.GetBedrijf(anderBedrijfID)
@@ -89,7 +89,7 @@ Partial Class App_Presentation_Module
             If ckbModules.Checked Then 'enkel modules waar artikels onder zitten
 
                 'We moeten twee datatables ophalen: die van AAAFinancials en die van het bedrijf.
-                Dim appligen As Bedrijf = Bedrijf.GetBedrijf("AAAFinancials")
+                Dim appligen As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
                 Dim anderBedrijf As Bedrijf = Bedrijf.GetBedrijf(anderBedrijfID)
 
                 If anderBedrijf Is Nothing Then 'er is geen ander bedrijf.

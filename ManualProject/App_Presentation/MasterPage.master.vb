@@ -130,7 +130,7 @@ Partial Class App_Presentation_MasterPage
         'Bedrijven ophalen
 
         'De Appligen-structuur krijgen we altijd te zien
-        Dim appligen As Bedrijf = Bedrijf.GetBedrijf("AAAFinancials")
+        Dim appligen As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
 
         If appligen Is Nothing Then
             Dim e As New ErrorLogger("Het bedrijf dat altijd zichtbaar dient te zijn, werd niet gevonden in de database. Wijzig de naam van het bedrijf in de Masterpage of in de database zodat deze overeenkomen.")

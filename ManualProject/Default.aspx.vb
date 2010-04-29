@@ -6,21 +6,21 @@ Partial Class _Default
 
     Dim dummyPass As String = String.Empty
     Dim dummyTag As String = "AAAFinancials"
-    Dim dummyTaal As String = "NL"
-    Dim dummyVersie As String = "010302"
-    Dim dummyModule As String = "BAS"
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
         Try
             Page.Title = "Gebruikersvalidatie"
 
-            VoerTestWaardesIn()
+            If XML.Doorsteek.IsApplicatieLive = False Then
+                VoerTestWaardesIn()
+            End If
 
             If PaswoordValideren() Then
 
                 Dim versie As Integer = VersieValideren()
 
-                Dim bedrijf As Integer = TagOpzoeken()
+                Dim bedrijf As Integer = BedrijfOpzoeken()
 
                 Dim taal As Integer = TaalOpzoeken()
 
@@ -49,7 +49,7 @@ Partial Class _Default
         Dim dt1 As Date = DateAndTime.Now
         Dim huidigeTijd1 As String = String.Concat(dt1.Day, "/", dt1.Month, "/", dt1.Year)
 
-        Dim cleartext As String = "!AppligenS_J_W_X_W_J_SnegilppA!"
+        Dim cleartext As String = XML.Doorsteek.Paswoord
 
         Dim paswoord As String = String.Concat(cleartext, huidigeTijd1)
         Dim lokaalPaswoord1 As Byte() = md5Hasher.ComputeHash(encoder.GetBytes(paswoord))
@@ -66,7 +66,7 @@ Partial Class _Default
 
         If Page.Request.QueryString("Paswoord") IsNot Nothing Then
             remoteHashString = Page.Request.QueryString("Paswoord")
-        ElseIf dummyPass IsNot Nothing Then
+        ElseIf dummyPass IsNot String.Empty Then
             remoteHashString = dummyPass
         Else
             Me.lblInfo.Text = "Ongeldig paswoord."
@@ -117,8 +117,8 @@ Partial Class _Default
 
         If Page.Request.QueryString("Versie") IsNot Nothing Then
             versie = Page.Request.QueryString("Versie")
-        ElseIf dummyVersie IsNot Nothing Then
-        versie = dummyVersie
+        ElseIf XML.Doorsteek.DefaultVersie IsNot String.Empty Then
+            versie = XML.Doorsteek.DefaultVersie
         Else
         Me.lblInfo.Text = "Ongeldige versie."
         Return 0
@@ -138,7 +138,7 @@ Partial Class _Default
 
     End Function
 
-    Private Function TagOpzoeken() As Integer
+    Private Function BedrijfOpzoeken() As Integer
 
         Dim tag As String = String.Empty
 
@@ -179,8 +179,8 @@ Partial Class _Default
 
         If Page.Request.QueryString("Taal") IsNot Nothing Then
             taal = Page.Request.QueryString("Taal")
-        ElseIf dummyTaal IsNot Nothing Then
-            taal = dummyTaal
+        ElseIf XML.Doorsteek.DefaultTaal IsNot String.Empty Then
+            taal = XML.Doorsteek.DefaultTaal
         Else
             Return 0
         End If
@@ -228,7 +228,41 @@ Partial Class _Default
         Dim paginatag As String = Page.Request.QueryString("Paginatag")
         paginatag = paginatag.Trim
 
-        Response.Redirect(String.Concat("page.aspx?tag=", paginatag), False)
+        'Juiste artikel ophalen op basis van tag, versie, taal en bedrijf
+        Dim artikeldal As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
+
+        'Bedrijven in geheugen al inladen
+        Bedrijf.BouwBedrijfLijst()
+
+        'Standaardbedrijf ophalen, alsook extra bedrijf
+        Dim standaardbedrijf As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
+
+        Dim anderbedrijfID As Integer = Session("bedrijf")
+        Dim anderbedrijf As Bedrijf = Bedrijf.GetBedrijf(anderbedrijfID)
+
+        Dim versieID As Integer = Session("versie")
+        Dim taalID As Integer = Session("taal")
+
+        'Standaardbedrijf ophalen
+        If standaardbedrijf Is Nothing Then
+            Util.OnverwachteFout(Me, "Het bedrijf dat altijd zichtbaar is, werd niet gevonden in het geheugen! Kijk na of u de naam van het bedrijf juist heeft ingevuld in doorsteeklogin.xml.")
+            Return
+        End If
+
+        Dim standaardrow As tblArtikelRow = artikeldal.getArtikelBySimpleTagTaalVersieBedrijf(standaardbedrijf.ID, versieID, taalID, paginatag)
+        If standaardrow IsNot Nothing Then
+            Response.Redirect(String.Concat("page.aspx?tag=", standaardrow.Tag), False)
+            Return
+        End If
+
+        If anderbedrijf IsNot Nothing Then
+            Dim extrabedrijfrow As tblArtikelRow = artikeldal.getArtikelBySimpleTagTaalVersieBedrijf(anderbedrijf.ID, versieID, taalID, paginatag)
+
+            If extrabedrijfrow IsNot Nothing Then
+                Response.Redirect(String.Concat("page.aspx?tag=", extrabedrijfrow.Tag), False)
+                Return
+            End If
+        End If
 
     End Sub
 

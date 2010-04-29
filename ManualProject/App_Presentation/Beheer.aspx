@@ -1340,7 +1340,7 @@
                                                 </tr>
                                                 <tr>
                                                 <td>
-                                                Alle Artikels onder deze Categorie verwijderen: 
+                                                Alle artikels en subcategoriëen onder deze categorie verwijderen: 
                                                 </td>
                                                 <td><asp:CheckBox ID="ckbAllesCategorie" runat="server" /></td>
                                                     
