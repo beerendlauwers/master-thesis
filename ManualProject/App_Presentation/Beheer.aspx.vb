@@ -1065,27 +1065,27 @@ Partial Class App_Presentation_Beheer
     Protected Sub btnVersieKopieren_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVersieKopieren.Click
         Try
 
-            Dim err As ErrorLogger
+            Dim errorloglol As ErrorLogger
 
             If Not txtNaamNieuweVersieKopie.Text = String.Empty And ddlVersiekopieren.SelectedItem IsNot Nothing Then
                 Dim versietext As String = txtNaamNieuweVersieKopie.Text
                 Dim versieID As Integer = ddlVersiekopieren.SelectedValue
 
-                err = New ErrorLogger("Checkpoint 1")
-                ErrorLogger.WriteError(err)
+                errorloglol = New ErrorLogger("Checkpoint 1")
+                ErrorLogger.WriteError(errorloglol)
 
                 If (versiedal.CheckVersieByID(versietext, versieID).Count = 0) Then
 
-                    err = New ErrorLogger("Checkpoint 2")
-                    ErrorLogger.WriteError(err)
+                    errorloglol = New ErrorLogger("Checkpoint 2")
+                    ErrorLogger.WriteError(errorloglol)
 
                     Dim nieuweVersieID As Integer = versiedal.insertVersie(versietext)
                     If nieuweVersieID = -1 Then
                         Util.SetError("Kopiëren mislukt: Kon niet met de database verbinden.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
                     Else
 
-                        err = New ErrorLogger("Checkpoint 3")
-                        ErrorLogger.WriteError(err)
+                        errorloglol = New ErrorLogger("Checkpoint 3")
+                        ErrorLogger.WriteError(errorloglol)
 
                         Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf()
                         Dim talen As tblTaalDataTable = taaldal.GetAllTaal()
@@ -1121,14 +1121,14 @@ Partial Class App_Presentation_Beheer
                             Next b
                         Next t
 
-                        err = New ErrorLogger("Checkpoint 4")
-                        ErrorLogger.WriteError(err)
+                        errorloglol = New ErrorLogger("Checkpoint 4")
+                        ErrorLogger.WriteError(errorloglol)
 
                         Dim v As tblVersieRow = versiedal.GetVersieByID(nieuweVersieID)
                         Dim gelukt As String = Tree.BouwTreesVoorVersie(bedrijven, v, talen)
 
-                        err = New ErrorLogger("Checkpoint 5")
-                        ErrorLogger.WriteError(err)
+                        errorloglol = New ErrorLogger("Checkpoint 5")
+                        ErrorLogger.WriteError(errorloglol)
 
                         If Not gelukt = "OK" Then
                             Util.SetWarn("Kopiëren gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
@@ -1145,8 +1145,8 @@ Partial Class App_Presentation_Beheer
                 LaadTreeGegevens()
                 Me.txtNaamNieuweVersieKopie.Text = String.Empty
 
-                err = New ErrorLogger("Checkpoint 6")
-                ErrorLogger.WriteError(err)
+                errorloglol = New ErrorLogger("Checkpoint 6")
+                ErrorLogger.WriteError(errorloglol)
 
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
