@@ -13,7 +13,7 @@
                 <HeaderTemplate>
                     Bedrijf
             </HeaderTemplate>
-<ContentTemplate>
+                <ContentTemplate>
                     <asp:UpdatePanel ID="updBedrijf" runat="server">
                         <ContentTemplate>
                             <cc1:Accordion ID="AccordionBedrijf" runat="server" SelectedIndex="0" HeaderCssClass="art-BlockHeaderStrong"
@@ -35,7 +35,7 @@
                                                                 ID="extAddBedrijf" runat="server" TargetControlID="vleAddBedrijf">
                                                             </cc1:ValidatorCalloutExtender>
                                                             <cc1:FilteredTextBoxExtender ID="fltbedrijfaddnaam" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
-                                                            TargetControlID="txtAddbedrijf" ValidChars=".">
+                                                            TargetControlID="txtAddbedrijf" ValidChars=". ">
                                                         </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>
@@ -109,7 +109,7 @@
                                                                 ID="extEditBedrijf" runat="server" TargetControlID="vleEditBedrijf">
                                                             </cc1:ValidatorCalloutExtender>
                                                             <cc1:FilteredTextBoxExtender ID="ftlBedrijfEdit" runat="server" FilterType="Custom, Numbers, UppercaseLetters, LowercaseLetters"
-                                                            TargetControlID="txtEditBedrijf" ValidChars=".">
+                                                            TargetControlID="txtEditBedrijf" ValidChars=". ">
                                                         </cc1:FilteredTextBoxExtender>
                                                     </td>
                                                     <td>

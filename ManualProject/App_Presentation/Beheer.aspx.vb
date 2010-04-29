@@ -1522,7 +1522,7 @@ Partial Class App_Presentation_Beheer
     End Sub
 
     Protected Sub btnOk_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnOk.Click
-        mpeTreesHerbouwen.Hide()
+        Util.SetHidden(lblHerbouwTreesRes, imgHerbouwTreesRes)
         Try
             Dim resultaat As String = Tree.BouwTrees()
             If resultaat = "OK" Then
@@ -1996,4 +1996,7 @@ Partial Class App_Presentation_Beheer
 
 #End Region
 
+    Protected Sub btnCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCancel.Click
+        Util.SetHidden(lblHerbouwTreesRes, imgHerbouwTreesRes)
+    End Sub
 End Class

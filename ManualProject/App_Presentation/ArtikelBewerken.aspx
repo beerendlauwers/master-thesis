@@ -17,7 +17,7 @@
         var dropdownIndextaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal').selectedIndex;
         var dropdownValueTaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal')[dropdownIndextaal].text;
         var dropdownIndexBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf').selectedIndex;
-        var dropdownValueBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf')[dropdownIndexBedrijf].text;
+        var dropdownValueBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_lblBedrijftag').innerHTML;
         var dropdownIndexModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule').selectedIndex;
         var dropdownValueModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule')[dropdownIndexModule].text;
         var taaltag = document.getElementById("ctl00_ContentPlaceHolder1_lblTaalTag").innerHTML;
@@ -227,8 +227,8 @@ function ValideerZoekTerm (source, args)
         var dropdownValueversie = document.getElementById('ctl00_ContentPlaceHolder1_ddlVersie')[dropdownIndexversie].text;
         var dropdownIndextaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal').selectedIndex;
         var dropdownValueTaal = document.getElementById('ctl00_ContentPlaceHolder1_ddlTaal')[dropdownIndextaal].text;
-        var dropdownIndexBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf').selectedIndex;
-        var dropdownValueBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf')[dropdownIndexBedrijf].text;
+        //var dropdownIndexBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_ddlBedrijf').selectedIndex;
+        var dropdownValueBedrijf = document.getElementById('ctl00_ContentPlaceHolder1_lblBedrijftag').innerHTML;
         var dropdownIndexModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule').selectedIndex;
         var dropdownValueModule = document.getElementById('ctl00_ContentPlaceHolder1_ddlModule')[dropdownIndexModule].text;
         var taaltag = document.getElementById("ctl00_ContentPlaceHolder1_lblTaalTag").innerHTML;
@@ -246,7 +246,8 @@ function ValideerZoekTerm (source, args)
    <td>
    <span style="vertical-align:middle" id='tipTag'><img src="CSS/images/help.png" alt=''/></span>
    </td></tr> 
-   <tr><td></td><td>
+   <tr><td>    <span runat="server" ID="lblBedrijftag"  style="display:none;"></span>
+</td><td>
 <span id="lblTagvoorbeeld" name="Tagvoorbeeld" runat="server"></span>
 </td></tr>    
    <tr ><td class="lbl">&nbsp</td>
