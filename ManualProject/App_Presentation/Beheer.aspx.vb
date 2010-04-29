@@ -1703,6 +1703,9 @@ Partial Class App_Presentation_Beheer
                         querystring = querystring + "&Artikeltag=" + Page.Request.QueryString("tag")
                         If Page.Request.QueryString("titel") IsNot Nothing Then
                             querystring = querystring + "&titel=" + Page.Request.QueryString("titel")
+                            If Page.Request.QueryString("artikelID") IsNot Nothing Then
+                                querystring = querystring + "&artikelID=" + Page.Request.QueryString("ArtikelID")
+                            End If
                         End If
                     End If
                 End If
