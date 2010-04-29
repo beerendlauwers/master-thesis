@@ -1068,12 +1068,19 @@ Partial Class App_Presentation_Beheer
                 Dim versietext As String = txtNaamNieuweVersieKopie.Text
                 Dim versieID As Integer = ddlVersiekopieren.SelectedValue
 
+                MsgBox("Checkpoint 1")
+
                 If (versiedal.CheckVersieByID(versietext, versieID).Count = 0) Then
+
+                    MsgBox("Checkpoint 2")
 
                     Dim nieuweVersieID As Integer = versiedal.insertVersie(versietext)
                     If nieuweVersieID = -1 Then
                         Util.SetError("Kopiëren mislukt: Kon niet met de database verbinden.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
                     Else
+
+                        MsgBox("Checkpoint 3")
+
                         Dim bedrijven As tblBedrijfDataTable = bedrijfdal.GetAllBedrijf()
                         Dim talen As tblTaalDataTable = taaldal.GetAllTaal()
 
@@ -1108,8 +1115,12 @@ Partial Class App_Presentation_Beheer
                             Next b
                         Next t
 
+                        MsgBox("Checkpoint 4")
+
                         Dim v As tblVersieRow = versiedal.GetVersieByID(nieuweVersieID)
                         Dim gelukt As String = Tree.BouwTreesVoorVersie(bedrijven, v, talen)
+
+                        MsgBox("Checkpoint 5")
 
                         If Not gelukt = "OK" Then
                             Util.SetWarn("Kopiëren gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
@@ -1125,6 +1136,9 @@ Partial Class App_Presentation_Beheer
                 LaadVersieDropdowns()
                 LaadTreeGegevens()
                 Me.txtNaamNieuweVersieKopie.Text = String.Empty
+
+                MsgBox("Checkpoint 6")
+
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
             End If
