@@ -183,14 +183,14 @@ Partial Class App_Presentation_invoerenTest
                     'We halen de tree op waar dit artikel in werd opgeslagen
                     Dim tree As Tree = tree.GetTree(FK_taal, FK_versie, FK_Bedrijf)
 					
-					If oudetree Is Nothing Then
-						Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
-						Dim err As New ErrorLogger(fout, "ARTIKELTOEVOEGEN_0001")
-						err.Args.Add("Taal = " & FK_taal.ToString)
-						err.Args.Add("Versie = " & FK_versie.ToString)
-						err.Args.Add("Bedrijf = " & FK_Bedrijf.ToString)
-						ErrorLogger.WriteError(err)
-					End If
+                    If tree Is Nothing Then
+                        Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
+                        Dim err As New ErrorLogger(fout, "ARTIKELTOEVOEGEN_0001")
+                        err.Args.Add("Taal = " & FK_taal.ToString)
+                        err.Args.Add("Versie = " & FK_versie.ToString)
+                        err.Args.Add("Bedrijf = " & FK_Bedrijf.ToString)
+                        ErrorLogger.WriteError(err)
+                    End If
 
                     'We proberen het artikel toe te voegen.
                     Dim boodschap As String = tree.VoegArtikelToeAanCategorie(tag, FK_categorie)
