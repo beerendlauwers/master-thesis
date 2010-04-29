@@ -3,49 +3,64 @@ Partial Class App_Presentation_zoekresultaten
     Inherits System.Web.UI.Page
     Dim artikeldal As New ArtikelDAL
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Try
+            GenereerGelokaliseerdeTekst()
 
-        GenereerGelokaliseerdeTekst()
+            If Not IsPostBack Then
+                ' Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
+                Dim zoekterm As String = Page.Request.QueryString("term")
+                If zoekterm IsNot Nothing Then
+                    zoekterm = zoekterm.Trim
 
-        If Not IsPostBack Then
-            ' Dim zoekterm As String = Page.Request.Form("ctl00$txtZoek")
-            Dim zoekterm As String = Page.Request.QueryString("term")
-            If zoekterm IsNot Nothing Then
-                zoekterm = zoekterm.Trim
-
-            End If
-        End If
-
-        If Page.Request.QueryString("term") IsNot Nothing Then
-            Dim zoekterm As String = Page.Request.QueryString("term")
-            If zoekterm IsNot Nothing Then
-                zoekterm = zoekterm.Trim
-                If Not zoekterm = "%%" Then
-                    
-                    JavaScript.ShadowBoxLaderSluiten(Me)
                 End If
             End If
-        End If
 
-        If Util.LeesPaginaNummer(Me, grdResultaten) Then
-            grdResultaten.DataBind()
-            JavaScript.ShadowBoxLaderSluiten(Me)
-        End If
+            If Page.Request.QueryString("term") IsNot Nothing Then
+                Dim zoekterm As String = Page.Request.QueryString("term")
+                If zoekterm IsNot Nothing Then
+                    zoekterm = zoekterm.Trim
+                    If Not zoekterm = "%%" Then
 
-        If grdResultaten.Rows.Count > 0 Then lblSort.Visible = True
+                        JavaScript.ShadowBoxLaderSluiten(Me)
+                    End If
+                End If
+            End If
 
-        If Page.Request.QueryString("term") IsNot Nothing Then
-            Page.Title = String.Concat("Zoekresultaten voor de term '", Page.Request.QueryString("term"), "'")
-        End If
+            If Util.LeesPaginaNummer(Me, grdResultaten) Then
+                grdResultaten.DataBind()
+                JavaScript.ShadowBoxLaderSluiten(Me)
+            End If
 
-        JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
+            If grdResultaten.Rows.Count > 0 Then lblSort.Visible = True
+
+            If Page.Request.QueryString("term") IsNot Nothing Then
+                Page.Title = String.Concat("Zoekresultaten voor de term '", Page.Request.QueryString("term"), "'")
+            End If
+
+            JavaScript.ShadowBoxLaderTonenBijElkePostback(Me)
+        Catch ex As Exception
+            Dim err As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(err)
+        End Try
+        
     End Sub
 
     Protected Sub grdResultaten_DataBinding(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdResultaten.DataBinding
-        GenereerGelokaliseerdeTekst()
+        Try
+            GenereerGelokaliseerdeTekst()
+        Catch ex As Exception
+            Dim err As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(err)
+        End Try
     End Sub
 
     Protected Sub grdResultaten_DataBound(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdResultaten.DataBound
-        Util.LaadPaginering(grdResultaten)
+        Try
+            Util.LaadPaginering(grdResultaten)
+        Catch ex As Exception
+            Dim err As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(err)
+        End Try
     End Sub
 
     Protected Sub grdResultaten_RowCommand(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.GridViewCommandEventArgs) Handles grdResultaten.RowCommand

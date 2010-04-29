@@ -785,7 +785,7 @@ Partial Class App_Presentation_Beheer
                     LaadTaalDropdowns()
                     LaadTreeGegevens()
                 Else
-                    Util.SetError("Deze taal is reeds toegvoegd.", lblAddTaalRes, imgAddTaalRes)
+                    Util.SetError("Deze taal is reeds toegevoegd.", lblAddTaalRes, imgAddTaalRes)
                 End If
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblAddTaalRes, imgAddTaalRes)
@@ -1152,7 +1152,7 @@ Partial Class App_Presentation_Beheer
                                 Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblDeleteVersieRes, imgDeleteVersieRes)
                             Else
                                 Versie.RemoveVersie(v)
-                                Util.SetOK("Versie verwijderd: kon de versie niet verwijderen.", lblDeleteVersieRes, imgDeleteVersieRes)
+                                Util.SetOK("Versie verwijderd.", lblDeleteVersieRes, imgDeleteVersieRes)
                             End If
 
                             LaadVersieDropdowns()
@@ -1161,7 +1161,7 @@ Partial Class App_Presentation_Beheer
                 Else
                     If (artikeldal.getArtikelsByVersie(versieID).Count = 0 And categoriedal.GetCategorieByVersie(versieID).Count = 0) Then
                         If (adapterVersie.Delete(versieID) = 0) Then
-                            Util.SetError("Verwijderen mislukt.", lblDeleteVersieRes, imgDeleteVersieRes)
+                            Util.SetError("Verwijderen mislukt: kon de versie niet verwijderen.", lblDeleteVersieRes, imgDeleteVersieRes)
                         Else
 
                             'Geheugen updaten
@@ -1370,7 +1370,7 @@ Partial Class App_Presentation_Beheer
                 Dim bedrijfID As Integer = ddlDeleteBedrijf.SelectedValue
                 If ckbAlleBedrijf.Checked Then
                     If bedrijfdal.DeleteArtikelsOnderbedrijf(bedrijfID) = -1 Then
-                        Util.SetError("Artikels onder bedrijf zijn niet verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                        Util.SetError("Artikels onder het bedrijf zijn niet verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                     Else
                         If (adapterBedrijf.Delete(bedrijfID) = 0) Then
                             Util.SetError("Verwijderen mislukt: kon het bedrijf niet verwijderen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
@@ -1393,7 +1393,7 @@ Partial Class App_Presentation_Beheer
                 Else
                     If (artikeldal.getArtikelsByBedrijf(bedrijfID).Count = 0 And categoriedal.GetCategorieByBedrijf(bedrijfID).Count = 0) Then
                         If (adapterBedrijf.Delete(bedrijfID) = 0) Then
-                            Util.SetError("Verwijderen mislukt.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                            Util.SetError("Verwijderen mislukt: Kon het bedrijf niet verwijderen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                         Else
 
                             'Geheugen updaten
@@ -1402,7 +1402,7 @@ Partial Class App_Presentation_Beheer
                                 Util.SetWarn("Verwijderen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                             Else
                                 Bedrijf.RemoveBedrijf(b)
-                                Util.SetOK("Bedrijf verwijderd: kon het bedrijf niet verwijderen.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
+                                Util.SetOK("Bedrijf verwijderd.", lblDeleteBedrijfRes, imgDeleteBedrijfRes)
                             End If
 
                             LaadBedrijfDropdowns()

@@ -4,28 +4,32 @@ Partial Class App_Presentation_page
     Inherits System.Web.UI.Page
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Try
 
-        'Titel bepalen
-        Page.Title = Lokalisatie.GetString("ONGELDIGARTIKEL")
+            'Titel bepalen
+            Page.Title = Lokalisatie.GetString("ONGELDIGARTIKEL")
 
-        'Querystring checken op geldigheid
-        Dim type As Integer = CheckQueryString()
+            'Querystring checken op geldigheid
+            Dim type As Integer = CheckQueryString()
 
-        If type = 0 Then 'Geen geldige ID of tag!
-            Return
-        Else
-            'Artikel uitlezen
-            Dim artikel As Artikel = LeesArtikel(type)
-            If artikel Is Nothing Then 'Geen artikel gevonden!
+            If type = 0 Then 'Geen geldige ID of tag!
                 Return
             Else
-                'Checken of de gebruiker dit artikel wel mag zien
-                If CheckArtikel(artikel) Then
-                    ToonArtikel(artikel)
+                'Artikel uitlezen
+                Dim artikel As Artikel = LeesArtikel(type)
+                If artikel Is Nothing Then 'Geen artikel gevonden!
+                    Return
+                Else
+                    'Checken of de gebruiker dit artikel wel mag zien
+                    If CheckArtikel(artikel) Then
+                        ToonArtikel(artikel)
+                    End If
                 End If
             End If
-        End If
 
+        Catch ex As Exception
+            Util.OnverwachteFout(Me, ex.Message)
+        End Try
     End Sub
 
     Private Function LeesArtikel(ByVal type As Integer) As Artikel
