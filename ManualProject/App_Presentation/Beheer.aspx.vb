@@ -863,13 +863,12 @@ Partial Class App_Presentation_Beheer
                 Dim taaltext As String = txtEditTaal.Text
                 Dim oudetaaltag As String = Session("oudataaltag")
                 'checken of er al een artikel met ingevoerde naam of tag bestaat
-                If (taaldal.checkTaalByID(taaltext, taaltag, taalID).Count = 0) Then
-                    Dim dt As New tblArtikelDataTable
-                    dt = artikeldal.getArtikelsByTaal(taalID)
-                    If (dt.Rows.Count = 0) Then
-                    Else
-                        If (adapterTaal.Update(taaltext, taaltag, taalID) > 0) Then
-                            'we gaan proberen om de tags ook overal aan te passen indien nodig
+                If (taaldal.checkTaalByID(taaltext, taaltag, taalID).Count = 0) Then  
+                    If (adapterTaal.Update(taaltext, taaltag, taalID) > 0) Then
+                        'we gaan proberen om de tags ook overal aan te passen indien nodig
+                        Dim dt As New tblArtikelDataTable
+                        dt = artikeldal.getArtikelsByTaal(taalID)
+                        If dt.Rows.Count > 0 Then
                             If artikeldal.updateArtikelTagMetTaalTag(taaltag, oudetaaltag) = 0 Then
                                 Util.SetError("Wijzigen mislukt. Kijk na of de stored procedure onUpdateTaaltag wel bestaat in de database.", lblEditTaalRes, imgEditTaalRes)
                             Else
@@ -886,13 +885,25 @@ Partial Class App_Presentation_Beheer
                                 End If
 
                             End If
-
-                            LaadTaalDropdowns()
-                            LaadTreeGegevens()
                         Else
-                            Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
+                            Dim t As Taal = Taal.GetTaal(taalID)
+
+                            If t Is Nothing Then
+                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblEditTaalRes, imgEditTaalRes)
+                            Else
+                                t.TaalNaam = taaltext
+                                t.TaalTag = taaltag
+
+                                Util.SetOK("Taal gewijzigd.", lblEditTaalRes, imgEditTaalRes)
+                            End If
                         End If
+
+                        LaadTaalDropdowns()
+                        LaadTreeGegevens()
+
                     End If
+                Else
+                    Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
                 End If
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblEditTaalRes, imgEditTaalRes)
@@ -1037,6 +1048,18 @@ Partial Class App_Presentation_Beheer
                                 LaadVersieDropdowns()
                                 LaadTreeGegevens()
                             End If
+                        Else
+                            Dim v As Versie = Versie.GetVersie(versieID)
+
+                            If v Is Nothing Then
+                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblEditVersieRes, imgEditVersieRes)
+                            Else
+                                v.VersieNaam = versietext
+                                Util.SetOK("Versie gewijzigd.", lblEditVersieRes, imgEditVersieRes)
+                            End If
+
+                            LaadVersieDropdowns()
+                            LaadTreeGegevens()
                         End If
                     End If
                 Else
@@ -1470,6 +1493,16 @@ Partial Class App_Presentation_Beheer
                                     Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
                                 End If
                             End If
+                        Else
+                            Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
+
+                            If b Is Nothing Then
+                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblEditbedrijfRes, imgEditBedrijfRes)
+                            Else
+                                b.Naam = bedrijfnaam
+                                b.Tag = bedrijfTag
+                                Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
+                            End If
                         End If
                     Else
                         Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
@@ -1718,7 +1751,7 @@ Partial Class App_Presentation_Beheer
 
                 If moduledal.checkModuleByNaamEnID(naam, moduleID).Count = 0 Then
                     If moduledal.StdAdapter.Update(naam, moduleID) Then
-                        If moduledal.checkArtikelsByModule(moduleID).Count > 0 Then
+                        If moduledal.checkArtikelsByModule(oudemodule).Count > 0 Then
                             If artikeldal.updateArtikelTagMetModule(naam, oudemodule) > 0 Then
                                 Util.SetOK("Module gewijzigd.", lblModuleWijzigenRes, imgModuleWijzigenRes)
                             Else
@@ -1748,7 +1781,7 @@ Partial Class App_Presentation_Beheer
         If Util.Valideer(ddlModuleVerwijderenKeuze) Then
             Try
                 Dim moduleID As Integer = ddlModuleVerwijderenKeuze.SelectedValue
-                If moduledal.checkArtikelsByModule(moduleID).Count = 0 Then
+                If moduledal.checkArtikelsByModule(ddlModuleVerwijderenKeuze.SelectedItem.Text).Count = 0 Then
                     If moduledal.StdAdapter.Delete(moduleID) Then
                         Util.SetOK("Module verwijderd.", lblModuleVerwijderenRes, imgModuleVerwijderenRes)
                     Else

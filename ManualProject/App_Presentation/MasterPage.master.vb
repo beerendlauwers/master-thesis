@@ -197,17 +197,22 @@ Partial Class App_Presentation_MasterPage
     End Sub
 
     Private Function Genereerstructuur(ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByRef html As String) As String
+        Try
+            Dim t As Tree = Tree.GetTree(taal, versie, bedrijf)
+            Dim root As Node = t.RootNode
 
-        Dim t As Tree = Tree.GetTree(taal, versie, bedrijf)
-        Dim root As Node = t.RootNode
+            Dim oudehtml As String = html
+            html = String.Concat(oudehtml, "<br/><div><strong>", t.Bedrijf.Naam, "</strong></div>")
+            Dim originelehtml As String = String.Concat(oudehtml, "<br/><div><strong>", t.Bedrijf.Naam, "</strong></div>")
 
-        Dim oudehtml As String = html
-        html = String.Concat(oudehtml, "<br/><div><strong>", t.Bedrijf.Naam, "</strong></div>")
-        Dim originelehtml As String = String.Concat(oudehtml, "<br/><div><strong>", t.Bedrijf.Naam, "</strong></div>")
+            html = t.BeginNieuweLijst(html, root, -1)
+            If html = originelehtml Then html = String.Concat(html, Lokalisatie.GetString("GEENCATEGORIEN"))
 
-        html = t.BeginNieuweLijst(html, root, -1)
-        If html = originelehtml Then html = String.Concat(html, Lokalisatie.GetString("GEENCATEGORIEN"))
 
+
+        Catch ex As Exception
+            ErrorLogger.WriteError(New ErrorLogger(ex.Message))
+        End Try
         Return html
     End Function
 
