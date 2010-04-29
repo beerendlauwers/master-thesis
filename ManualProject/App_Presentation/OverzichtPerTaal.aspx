@@ -7,7 +7,6 @@
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 
-    <div runat="server" id="divLoggedIn">
 <div id="gridview">
     <table>
    <tr><td>Versie</td><td>Bedrijf</td></tr><tr>
@@ -67,8 +66,6 @@
     </Triggers>
     </asp:UpdatePanel>
     
-    
-    </div>
     
     <asp:ObjectDataSource ID="objdTaal" runat="server" DeleteMethod="Delete" 
         InsertMethod="Insert" OldValuesParameterFormatString="original_{0}" 

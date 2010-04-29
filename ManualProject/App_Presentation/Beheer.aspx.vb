@@ -86,6 +86,8 @@ Partial Class App_Presentation_Beheer
                             txtAddCatnaam.Text = String.Empty
                             txtAddhoogte.Text = String.Empty
                         End If
+                        'indien bij de pageload bemerkt werd dat we van artikelBewerken of artikeToevoegen kwamen,
+                        ' gaan we de gebruiker nu terugsturen naar die respectievelijke pagina met al de gegevens die hij al had ingevuld.
                         If Session("query") IsNot Nothing Then
                             If Request.QueryString("Add") IsNot Nothing Then
                                 Response.Redirect("ArtikelToevoegen.aspx" + Session("query") + "&categorieID=" + categorieID.ToString, False)
@@ -446,7 +448,10 @@ Partial Class App_Presentation_Beheer
         End If
 
     End Sub
-
+    ''' <summary>
+    ''' gaat de mogelijke parentcategorien ophalen op basis van geselecteerde versie, bedrijf en taal
+    ''' </summary>
+    ''' <remarks></remarks>
     Private Sub Wijzigen_LaadParentCategorie()
         If ddlEditCatBedrijf.Items.Count > 0 And ddlEditCatTaal.Items.Count > 0 And ddlEditCatVersie.Items.Count > 0 Then
             Dim t As Tree = Tree.GetTree(ddlEditCatTaal.SelectedValue, ddlEditCatVersie.SelectedValue, ddlEditCatBedrijf.SelectedValue)
@@ -459,7 +464,11 @@ Partial Class App_Presentation_Beheer
             Wijzigen_LaadCategorieHoogte()
         End If
     End Sub
-
+    ''' <summary>
+    ''' wordt niet meer gebruikt
+    ''' werd vroeger gebruikt om de gewenste hoogte aan een categorie te geven, maar dit wordt nu anders gedaan
+    ''' </summary>
+    ''' <remarks></remarks>
     Private Sub Wijzigen_LaadCategorieHoogte()
 
         'CategorieID ophalen van gewenste categorie
@@ -486,7 +495,10 @@ Partial Class App_Presentation_Beheer
         txtEditCathoogte.Text = hoogte
 
     End Sub
-
+    ''' <summary>
+    ''' alle eigenschappen van de categorie worden in de controls ingelezen
+    ''' </summary>
+    ''' <remarks></remarks>
     Private Sub Wijzigen_LaadCategorieDetails()
 
         If ddlEditCatBedrijf.Items.Count > 0 And ddlEditCatTaal.Items.Count > 0 And ddlEditCatVersie.Items.Count > 0 Then
@@ -540,7 +552,12 @@ Partial Class App_Presentation_Beheer
     Private Sub LaadReorderlist()
         ReOrderCategorie.DataBind()
     End Sub
-
+    ''' <summary>
+    ''' gaat delistitems herordenen en de categorien daaronder recursief aanpassen zodat deze ook juist staan
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    ''' <remarks></remarks>
     Protected Sub PostioneerCategorieInCode(ByVal sender As Object, ByVal e As AjaxControlToolkit.ReorderListItemReorderEventArgs)
         Try
             Dim listitem As AjaxControlToolkit.ReorderListItem = e.Item
@@ -698,7 +715,10 @@ Partial Class App_Presentation_Beheer
             Util.OnverwachteFout(btnCatDelFilteren, ex.Message)
         End Try
     End Sub
-
+    ''' <summary>
+    ''' gaat de dropdown voor de mogelijk te verwijderen categorien laden aan de hand van de gefilterde dropdowns
+    ''' </summary>
+    ''' <remarks></remarks>
     Private Sub Verwijderen_LaadParentCategorie()
         If ddlCatDelBedrijfkeuze.Items.Count > 0 And ddlCatDelTaalkeuze.Items.Count > 0 And ddlCatDelVersiekeuze.Items.Count > 0 Then
             Dim t As Tree = Tree.GetTree(ddlCatDelTaalkeuze.SelectedValue, ddlCatDelVersiekeuze.SelectedValue, ddlCatDelBedrijfkeuze.SelectedValue)
@@ -758,7 +778,7 @@ Partial Class App_Presentation_Beheer
             If Not txtAddTaal.Text = String.Empty And Not txtTaalAfkorting.Text = String.Empty Then
                 Dim taaltext As String = txtAddTaal.Text
                 Dim taaltag As String = txtTaalAfkorting.Text
-
+                'checken of er al een taal met die naam of tag bestaat
                 If (taaldal.checkTaal(taaltext, taaltag).Count = 0) Then
                     Dim taalID As Integer = taaldal.insertTaal(taaltext, taaltag)
                     If taalID = -1 Then
@@ -802,30 +822,36 @@ Partial Class App_Presentation_Beheer
                 Dim taalID As String = ddlBewerkTaal.SelectedValue
                 Dim taaltext As String = txtEditTaal.Text
                 Dim oudetaaltag As String = Session("oudataaltag")
+                'checken of er al een artikel met ingevoerde naam of tag bestaat
                 If (taaldal.checkTaalByID(taaltext, taaltag, taalID).Count = 0) Then
-                    If (adapterTaal.Update(taaltext, taaltag, taalID) > 0) Then
-                        If artikeldal.updateArtikelTagMetTaalTag(taaltag, oudetaaltag) = 0 Then
-                            Util.SetError("Wijzigen mislukt.", lblEditTaalRes, imgEditTaalRes)
-                        Else
-
-                            'Geheugen updaten
-                            Dim t As Taal = Taal.GetTaal(taalID)
-
-                            If t Is Nothing Then
-                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblEditTaalRes, imgEditTaalRes)
+                    Dim dt As New tblArtikelDataTable
+                    dt = artikeldal.getArtikelsByTaal(taalID)
+                    If (dt.Rows.Count = 0) Then
+                    Else
+                        If (adapterTaal.Update(taaltext, taaltag, taalID) > 0) Then
+                            'we gaan proberen om de tags ook overal aan te passen indien nodig
+                            If artikeldal.updateArtikelTagMetTaalTag(taaltag, oudetaaltag) = 0 Then
+                                Util.SetError("Wijzigen mislukt. Kijk na of de stored procedure onUpdateTaaltag wel bestaat in de database.", lblEditTaalRes, imgEditTaalRes)
                             Else
-                                t.TaalNaam = taaltext
-                                t.TaalTag = taaltag
+                                'Geheugen updaten
+                                Dim t As Taal = Taal.GetTaal(taalID)
 
-                                Util.SetOK("Taal gewijzigd.", lblEditTaalRes, imgEditTaalRes)
+                                If t Is Nothing Then
+                                    Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de taalstructuur niet updaten. Herbouw de taalstructuur als u klaar bent met uw wijzigingen.", lblEditTaalRes, imgEditTaalRes)
+                                Else
+                                    t.TaalNaam = taaltext
+                                    t.TaalTag = taaltag
+
+                                    Util.SetOK("Taal gewijzigd.", lblEditTaalRes, imgEditTaalRes)
+                                End If
+
                             End If
 
+                            LaadTaalDropdowns()
+                            LaadTreeGegevens()
+                        Else
+                            Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
                         End If
-
-                        LaadTaalDropdowns()
-                        LaadTreeGegevens()
-                    Else
-                        Util.SetError("Een andere taal heeft deze naam al.", lblEditTaalRes, imgEditTaalRes)
                     End If
                 End If
             Else
@@ -952,21 +978,25 @@ Partial Class App_Presentation_Beheer
                 Dim oudeversie As String = ddlBewerkVersie.SelectedItem.Text
                 If (versiedal.CheckVersieByID(versietext, versieID).Count = 0) Then
                     If adapterVersie.Update(versietext, versieID) > 0 Then
-                        If artikeldal.updateArtikelTagMetVersie(versietext, oudeversie) = 0 Then
-                            Util.SetError("Wijzigen mislukt.", lblEditVersieRes, imgEditVersieRes)
-                        Else
-                            'Geheugen updaten
-                            Dim v As Versie = Versie.GetVersie(versieID)
-
-                            If v Is Nothing Then
-                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblEditVersieRes, imgEditVersieRes)
+                        Dim dt As New tblArtikelDataTable
+                        dt = artikeldal.getArtikelsByVersie(versieID)
+                        If dt.Rows.Count > 0 Then
+                            If artikeldal.updateArtikelTagMetVersie(versietext, oudeversie) = 0 Then
+                                Util.SetError("Wijzigen mislukt. Kijk na of de procedure onUpdateVersie wel bestaat in de database. Alle artikelTags zijn nu waarschijnlijk ook verkeerd. Daarom moet u de versie nu terug hernoemen naar hoe ze hiervoor heette. Indien u dit vergeten bent, kijk naar de artikelTags.", lblEditVersieRes, imgEditVersieRes)
                             Else
-                                v.VersieNaam = versietext
-                                Util.SetOK("Versie gewijzigd.", lblEditVersieRes, imgEditVersieRes)
-                            End If
+                                'Geheugen updaten
+                                Dim v As Versie = Versie.GetVersie(versieID)
 
-                            LaadVersieDropdowns()
-                            LaadTreeGegevens()
+                                If v Is Nothing Then
+                                    Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de versiestructuur niet updaten. Herbouw de versiestructuur als u klaar bent met uw wijzigingen.", lblEditVersieRes, imgEditVersieRes)
+                                Else
+                                    v.VersieNaam = versietext
+                                    Util.SetOK("Versie gewijzigd.", lblEditVersieRes, imgEditVersieRes)
+                                End If
+
+                                LaadVersieDropdowns()
+                                LaadTreeGegevens()
+                            End If
                         End If
                     End If
                 Else
@@ -1379,26 +1409,32 @@ Partial Class App_Presentation_Beheer
                 Dim bedrijfID As Integer = ddlBewerkBedrijf.SelectedValue
                 Dim bedrijfTag As String = txtEditTag.Text
                 Dim bedrijfnaam As String = txtEditBedrijf.Text
-                Dim oudbedrijf As String = ddlBewerkBedrijf.SelectedItem.Text
+                Dim dr As tblBedrijfRow = bedrijfdal.GetBedrijfByID(bedrijfID)
+                Dim oudbedrijf As String = dr("tag")
                 If (bedrijfdal.getBedrijfByNaamTagID(bedrijfnaam, bedrijfTag, bedrijfID).Count = 0) Then
                     If (adapterBedrijf.Update(bedrijfnaam, bedrijfTag, bedrijfID) > 0) Then
-                        If artikeldal.updateArtikelTagMetBedrijf(bedrijfnaam, oudbedrijf) = 0 Then
-                            Util.SetError("Wijzigen mislukt: kijk na of stored procedure 'onUpdateBedrijf' wel bestaat.", lblEditbedrijfRes, imgEditBedrijfRes)
-                        Else
-                            'Geheugen updaten
-                            Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
-
-                            If b Is Nothing Then
-                                Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblEditbedrijfRes, imgEditBedrijfRes)
+                        Dim dt As New tblArtikelDataTable
+                        dt = artikeldal.getArtikelsByBedrijf(bedrijfID)
+                        If dt.Rows.Count > 0 Then
+                            If artikeldal.updateArtikelTagMetBedrijf(bedrijfTag, oudbedrijf) = 0 Then
+                                Util.SetError("Wijzigen mislukt: kijk na of stored procedure 'onUpdateBedrijf' wel bestaat. De ArtikelTags zijn nu incorrect, daarom moet u de bedrijfsnaam terug wijzigen en naar zijn originele naam terugzetten.", lblEditbedrijfRes, imgEditBedrijfRes)
                             Else
-                                b.Naam = bedrijfnaam
-                                b.Tag = bedrijfTag
-                                Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
+                                'Geheugen updaten
+                                Dim b As Bedrijf = Bedrijf.GetBedrijf(bedrijfID)
+
+                                If b Is Nothing Then
+                                    Util.SetWarn("Wijzigen gelukt met waarschuwing: kon de bedrijfstructuur niet updaten. Herbouw de bedrijfstructuur als u klaar bent met uw wijzigingen.", lblEditbedrijfRes, imgEditBedrijfRes)
+                                Else
+                                    b.Naam = bedrijfnaam
+                                    b.Tag = bedrijfTag
+                                    Util.SetOK("Bedrijf gewijzigd.", lblEditbedrijfRes, imgEditBedrijfRes)
+                                End If
                             End If
                         End If
                     Else
                         Util.SetError("Wijzigen mislukt.", lblEditbedrijfRes, imgEditBedrijfRes)
                     End If
+
                 Else
                     Util.SetError("Een ander bedrijf heeft reeds deze bedrijfsnaam of tag.", lblEditbedrijfRes, imgEditBedrijfRes)
                 End If
@@ -1589,7 +1625,9 @@ Partial Class App_Presentation_Beheer
             Util.OnverwachteFout(Me, ex.Message)
         End Try
     End Sub
-
+    Protected Sub btnCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCancel.Click
+        Util.SetHidden(lblHerbouwTreesRes, imgHerbouwTreesRes)
+    End Sub
 #End Region
 
 #Region "Code voor Modulebeheer"
@@ -1745,6 +1783,7 @@ Partial Class App_Presentation_Beheer
             If Page.Request.QueryString("index") IsNot Nothing Then
                 TabBeheer.ActiveTabIndex = Integer.Parse(Page.Request.QueryString("index"))
             End If
+            'Het nakijken van deze querystrings is nodig voor als de beheerder van artikelToevoegen of artikelBewerken naar de beheerpagina komt om een categorie toe te voegen omdat die nog niet bestond voor die versie, bedrijf en taal
             Dim querystring As String
             If Page.Request.QueryString("versie") IsNot Nothing And Page.Request.QueryString("bedrijf") IsNot Nothing And Page.Request.QueryString("taal") IsNot Nothing Then
                 ddlAddCatTaal.SelectedValue = Integer.Parse(Page.Request.QueryString("taal"))
@@ -1996,7 +2035,5 @@ Partial Class App_Presentation_Beheer
 
 #End Region
 
-    Protected Sub btnCancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnCancel.Click
-        Util.SetHidden(lblHerbouwTreesRes, imgHerbouwTreesRes)
-    End Sub
+
 End Class

@@ -43,7 +43,7 @@ Partial Class App_Presentation_AlleArtikels
         Dim str As String = e.CommandName
         If str = "Page" Or str = "Sort" Then
         Else
-            Dim count As Integer = grdartikels.rows.count
+            Dim count As Integer = grdArtikels.Rows.Count
             Dim row As GridViewRow = grdArtikels.Rows(e.CommandArgument)
 
             Dim tag As String = row.Cells(1).Text
@@ -70,6 +70,7 @@ Partial Class App_Presentation_AlleArtikels
         If e.Row.Cells.Count = 1 Then
             Return
         Else
+            'ervoor zorgen dat speciale tekens juist worden weergegevn in de gridview
             e.Row.Cells(1).Visible = False
             If e.Row.Cells(0).Text = "" Then Return
             Dim titel As String = e.Row.Cells(0).Text
