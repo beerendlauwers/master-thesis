@@ -142,8 +142,8 @@ Partial Class _Default
 
         Dim tag As String = String.Empty
 
-        If Page.Request.QueryString("Tag") IsNot Nothing Then
-            tag = Page.Request.QueryString("Tag")
+        If Page.Request.QueryString("Bedrijf") IsNot Nothing Then
+            tag = Page.Request.QueryString("Bedrijf")
         ElseIf dummyTag IsNot Nothing Then
             tag = dummyTag
         Else
