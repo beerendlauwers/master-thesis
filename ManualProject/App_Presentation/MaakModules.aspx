@@ -5,7 +5,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolderTitel" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-Klik op de knop alle modules aan te maken.<asp:GridView ID="GridView1" 
+    Klik op de knop alle modules aan te maken.<asp:GridView ID="GridView1" 
         runat="server" AutoGenerateColumns="False" DataSourceID="AccessDataSource1">
         <Columns>
             <asp:BoundField DataField="MDUL14" HeaderText="MDUL14" 
