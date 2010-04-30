@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tooltips>
 	<!-- Artikel Toevoegen -->
-	<tip id="tipTagArtikelToevoegen" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het nieuwe artikel. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
+	<tip id="tipTagArtikelToevoegen" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het nieuwe artikel. Mag enkel letters, nummers en stoptekens ( . ) bevatten, alsook geen speciale karakters ( bv. &#235; , &#224; ). " />
 	<tip id="tipTitelArtikelToevoegen" text="De titel van het nieuwe artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
 	<tip id="tipBedrijfArtikelToevoegen" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
 	<tip id="tipTaalArtikelToevoegen" text="De taal van het nieuwe artikel." />
@@ -18,7 +18,7 @@
 	<tip id="tipTaalVerfijnen" text="De taal waarin u wilt zoeken." />
 	<tip id="tipVersieVerfijnen" text="De versie waarin u wilt zoeken." />
 	<tip id="tipIsFinaalVerfijnen" text="Kies of het artikel gefinaliseerd is of niet." />
-	<tip id="tipTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
+	<tip id="tipTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het artikel. Mag enkel letters, nummers en stoptekens ( . ) bevatten, alsook geen speciale karakters ( bv. &#235; , &#224; )." />
 	<tip id="tipTitel" text="De titel van het artikel. Moet uniek zijn binnen de combinatie van taal, versie en bedrijf." />
 	<tip id="tipTaal" text="De taal van het artikel." />
 	<tip id="tipBedrijf" text="Het bedrijf waaronder dit artikel zal worden gepubliceerd." />
@@ -38,16 +38,16 @@
 	
 	<!-- Bedrijfbeheer -->
 	<tip id="tipAddBedrijf" text="De bedrijfsnaam van het bedrijf." />
-	<tip id="tipAddTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
-	<tip id="tipEditTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en stoptekens ( . ) bevatten." />
+	<tip id="tipAddTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en stoptekens ( . ) bevatten, alsook geen speciale karakters ( bv. &#235; , &#224; )." />
+	<tip id="tipEditTag" text="De &lt;b&gt;unieke&lt;/b&gt; tag van het bedrijf. Mag enkel letters, nummers en stoptekens ( . ) bevatten, alsook geen speciale karakters ( bv. &#235; , &#224; )." />
 	<tip id="tipEditBedrijf" text="De bedrijfsnaam van het bedrijf." />
 	<tip id="tipDeleteBedrijf" text="Het bedrijf dat u wilt verwijderen." />
 	<tip id="tipBewerkBedrijf" text="Het bedrijf dat u wilt wijzigen." />
 	
 	<!-- Taalbeheer -->
 	<tip id="tipAddTaal" text="De naam van de taal." />
-	<tip id="tipTaalAfkorting" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers." />
-	<tip id="tipEditAfkorting" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers." />
+	<tip id="tipTaalAfkorting" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers en in de artikeltags. Mag geen speciale karakters bevatten ( bv. &#235; , &#224; )." />
+	<tip id="tipEditAfkorting" text="De afkorting van de taal. Deze wordt gebruikt bij de taalkeuze voor gebruikers en in de artikeltags. Mag geen speciale karakters bevatten ( bv. &#235; , &#224; )." />
 	<tip id="tipEditTaal" text="De naam van de taal." />
 	<tip id="tipBewerkTaal" text="De taal die u wilt wijzigen." />
 	<tip id="tipTaalDelete" text="De taal die u wilt verwijderen." />

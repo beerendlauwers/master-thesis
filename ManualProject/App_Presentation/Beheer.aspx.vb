@@ -257,6 +257,57 @@ Partial Class App_Presentation_Beheer
                 a.Bedrijf = parent.Bedrijf
                 a.Versie = parent.Versie
                 a.Taal = parent.FK_Taal
+
+                'Tag updaten
+                Dim v As Versie = Versie.GetVersie(parent.Versie)
+                If v Is Nothing Then
+                    Dim e As New ErrorLogger(String.Concat("Kon de versie ", parent.Versie, " niet vinden in het geheugen."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End If
+
+                Dim ta As Taal = Taal.GetTaal(parent.FK_Taal)
+                If ta Is Nothing Then
+                    Dim e As New ErrorLogger(String.Concat("Kon de taal ", parent.FK_Taal, " niet vinden in het geheugen."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End If
+
+                Dim b As Bedrijf = Bedrijf.GetBedrijf(parent.Bedrijf)
+                If b Is Nothing Then
+                    Dim e As New ErrorLogger(String.Concat("Kon het bedrijf ", parent.Bedrijf, " niet vinden in het geheugen."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End If
+
+                Dim modulesplit() As String = a.Tag.Split("_")
+
+                Dim moduletag As String = String.Empty
+                Try
+                    moduletag = modulesplit(3)
+                    If moduletag Is Nothing Then
+                        Throw New Exception
+                    End If
+                Catch
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module of artikeltag."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End Try
+
+                Dim artikeltag As String = String.Empty
+                Try
+                    artikeltag = modulesplit(4)
+                    If artikeltag Is Nothing Then
+                        Throw New Exception
+                    End If
+                Catch ex As Exception
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module of artikeltag."))
+                    ErrorLogger.WriteError(e)
+                    Return False
+                End Try
+
+                a.Tag = String.Concat(v.VersieNaam, "_", ta.TaalTag, "_", b.Tag, "_", moduletag, "_", artikeltag)
+
                 resultaat = artikeldal.updateArtikel(a)
 
                 If resultaat = False Then 'kon een artikel niet updaten
@@ -1199,8 +1250,6 @@ Partial Class App_Presentation_Beheer
     Protected Sub btnVersieKopieren_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnVersieKopieren.Click
         Try
 
-            Dim errorloglol As ErrorLogger
-
             If Not txtNaamNieuweVersieKopie.Text = String.Empty And ddlVersiekopieren.SelectedItem IsNot Nothing Then
                 Dim versietext As String = txtNaamNieuweVersieKopie.Text
                 Dim versieID As Integer = ddlVersiekopieren.SelectedValue
@@ -1263,9 +1312,6 @@ Partial Class App_Presentation_Beheer
                 LaadVersieDropdowns()
                 LaadTreeGegevens()
                 Me.txtNaamNieuweVersieKopie.Text = String.Empty
-
-                errorloglol = New ErrorLogger("Checkpoint 6")
-                ErrorLogger.WriteError(errorloglol)
 
             Else
                 Util.SetError("Gelieve alle velden correct in te vullen.", lblVersieKopierenFeedback, imgVersieKopierenFeedback)
