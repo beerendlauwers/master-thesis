@@ -74,10 +74,8 @@ Public Class Lokalisatie
             Dim taalID As Integer = Talen.Item(0).TaalID
             If Current.Session("taal") IsNot Nothing Then
                 taalID = Current.Session("taal")
-                If taalID = 0 Or taalID = 5 Then
-                Else
-                    taalID = 10
-                End If
+            Else
+                taalID = XML.Doorsteek.DefaultLokalisatie
             End If
 
             For Each lijst As Lokalisatie In Talen
@@ -101,6 +99,21 @@ Public Class Lokalisatie
                     End If
                 End If
             Next lijst
+
+            'NOG STEEDS NIKS GEVONDEN?! ENGELS FOR YOU
+            taalID = XML.Doorsteek.DefaultLokalisatie
+
+            For Each lijst As Lokalisatie In Talen
+                If lijst.TaalID = taalID Then
+                    Dim key As String = lijst.Keys.Item(id)
+                    If key IsNot Nothing Then
+                        Return HttpUtility.HtmlDecode(key)
+                    Else
+                        Return String.Empty
+                    End If
+                End If
+            Next lijst
+
         End If
         Return String.Empty
     End Function
