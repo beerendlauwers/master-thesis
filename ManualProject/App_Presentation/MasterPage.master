@@ -38,7 +38,7 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
 
 <body id="MasterBody" runat="server">
     <form id="form1" runat="server" defaultbutton="lnkZoek">
-     <asp:scriptmanager ID="Scriptmanager2" runat="server" EnablePartialRendering="true"></asp:scriptmanager>
+     <asp:scriptmanager ID="Scriptmanager2" runat="server" EnablePartialRendering="true" AsyncPostBackTimeout="600"></asp:scriptmanager>
      
          <script language="javascript" type="text/javascript">
        <!--
