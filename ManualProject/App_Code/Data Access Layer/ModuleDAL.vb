@@ -165,4 +165,23 @@ Public Class ModuleDAL
         Return dt
     End Function
 
+    Public Function vulontbrekendemodulesaan() As Integer
+
+        Dim c As New SqlCommand("Manual_VulontbrekendeModules")
+        c.Connection = New SqlConnection(conn)
+        Dim r As Integer
+        Try
+
+            c.Connection.Open()
+            r = c.ExecuteScalar
+
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+        Return r
+    End Function
+
 End Class
