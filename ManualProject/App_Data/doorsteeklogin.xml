@@ -14,4 +14,7 @@
 	
 	<!-- Of de applicatie live is of niet. Kan 1 of 0 zijn. -->
 	<applicatieLive>0</applicatieLive>
+	
+	<!-- De default taal voor de lokalisatie. Gebruikt het TaalID in localisatie.xml. -->
+	<defaultLokalisatieTaal>10</defaultLokalisatieTaal>
 </logindata>

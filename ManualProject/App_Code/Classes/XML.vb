@@ -11,6 +11,7 @@ Public Structure XMLDoorsteekGegevens
     Public DefaultBedrijf As String
     Public Paswoord As String
     Public IsApplicatieLive As Boolean
+    Public DefaultLokalisatie As Integer
 End Structure
 
 Public Structure XMLTooltip
@@ -111,6 +112,7 @@ Public Class XML
             FDoorsteekGegevens.DefaultTaal = root.SelectSingleNode("defaultTaal").ChildNodes(0).Value
             FDoorsteekGegevens.DefaultBedrijf = root.SelectSingleNode("defaultBedrijf").ChildNodes(0).Value
             FDoorsteekGegevens.Paswoord = root.SelectSingleNode("password").ChildNodes(0).Value
+            FDoorsteekGegevens.DefaultLokalisatie = Integer.Parse(root.SelectSingleNode("defaultLokalisatieTaal").ChildNodes(0).Value)
 
             Dim applicatielive As String = root.SelectSingleNode("applicatieLive").ChildNodes(0).Value
 
