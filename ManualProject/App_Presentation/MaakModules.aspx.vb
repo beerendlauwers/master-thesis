@@ -11,7 +11,7 @@ Partial Class App_Presentation_MaakModules
         Dim dt As Manual.tblModuleDataTable
         dt = dal.GetAllModules()
         If dt.Rows.Count > 0 Then
-            MsgBox("Insert is gelukt.")
+            lblRes.Text = "Modules zijn toegvoegd."
         End If
 
     End Sub
@@ -20,7 +20,7 @@ Partial Class App_Presentation_MaakModules
         Dim r As Integer
         r = dal.vulontbrekendemodulesaan()
         If Not r = -1 Then
-            MsgBox("Modules zijn toegvoegd of alles was al aanwezig")
+            lblRes.Text = "Modules zijn toegvoegd."
         End If
     End Sub
 End Class

@@ -12,6 +12,7 @@
                 SortExpression="MDUL14" />
         </Columns>
     </asp:GridView>
+    <asp:Label ID="lblRes" runat="server" Text=""></asp:Label>
 &nbsp;<asp:Button ID="btnMaakAan" runat="server" Text="Maak aan" />
 
 
