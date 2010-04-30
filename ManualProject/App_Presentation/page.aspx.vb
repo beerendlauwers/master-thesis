@@ -133,6 +133,12 @@ Partial Class App_Presentation_page
 
             Dim defaultBedrijf As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
 
+            If defaultBedrijf Is Nothing Then
+                Dim fouteke As New ErrorLogger(String.Concat("Het bedrijf ", XML.Doorsteek.DefaultBedrijf, " werd niet gevonden"))
+                ErrorLogger.WriteError(fouteke)
+                Return False
+            End If
+
             If Not (ingelogdBedrijf = a.Bedrijf Or a.Bedrijf = defaultBedrijf.ID) Then
                 Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
                 Me.lblTitel.Visible = False
