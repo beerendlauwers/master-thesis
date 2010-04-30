@@ -6,7 +6,9 @@ Partial Class App_Presentation_MaakModules
     Protected Sub btnMaakAan_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnMaakAan.Click
         For i As Integer = 0 To GridView1.Rows.Count - 1
             Dim modu As String = GridView1.Rows(i).Cells(0).Text
-            adapter.Insert(modu)
+            If dal.getmoduleByNaam(modu).Count = 0 Then
+                adapter.Insert(modu)
+            End If
         Next
         Dim dt As Manual.tblModuleDataTable
         dt = dal.GetAllModules()
