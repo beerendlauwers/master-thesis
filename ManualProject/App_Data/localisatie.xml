@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- Speciale karakters dienen te worden HTML-geencodeerd. Zie http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references voor een lijst. -->
 <talen>
-<taal id="0">
+<taal id="13">
 	<tekst id="WELKOMTEKST" text="Welkom op de Appligen Reference Manual. Gebruik de menustructuur in de linkerzijbalk of de zoekbalk rechtsboven om een artikel te bezichtigen." />
 	<tekst id="LAADSCHERMTEKST" text="Even wachten aub..." />
 	<tekst id="BEHEER" text="Beheer" />
@@ -34,7 +34,7 @@
     <tekst id="ONGELDIGARTIKELVERSIE" text="De opgevraagde pagina is niet in dezelfde versie die u heeft opgegeven." />
 <tekst id="LNKZOEK" text="Zoeken"/>
 </taal>
-<taal id="5">
+<taal id="15">
 	<tekst id="WELKOMTEKST" text="Bienvenue sur le Reference Manual de Appligen. Utilisez le structure &#224; gauche ou recherchez un article." />
 	<tekst id="LAADSCHERMTEKST" text="Un instant svp..." />
 	<tekst id="BEHEER" text="Gestion" />

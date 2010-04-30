@@ -431,19 +431,7 @@ Public Class Tree
             Return e.Boodschap
         End If
 
-        If rootnoderij.Categorie = "root_node" And rootnoderij.FK_versie = 0 And rootnoderij.FK_taal = 0 And rootnoderij.FK_bedrijf = 0 Then
-            rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam, 0)
-        Else
-            Dim fout As String = "Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De basis (of root node) van de boomstructuur is incorrect (zie parameters)."
-            Dim e As New ErrorLogger(fout, "TREE_0002")
-            e.Args.Add("Titel van de root node (moet 'root_node' zijn): " & rootnoderij.Categorie)
-            e.Args.Add("VersieID van de root node (moet 0 zijn): " & rootnoderij.FK_versie.ToString)
-            e.Args.Add("BedrijfID van de root node (moet 0 zijn): " & rootnoderij.FK_bedrijf.ToString)
-            e.Args.Add("TaalID van de root node (moet 0 zijn):" & rootnoderij.FK_taal.ToString)
-            ErrorLogger.WriteError(e)
-            'Return e.Boodschap
-            rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam, 0)
-        End If
+        rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam, 0)
 
         Dim treenaam As String = String.Concat("TREE_", versie.Versie, "_", taal.Taal, "_", bedrijf.Naam)
         Dim t As New Tree(treenaam, taal.TaalID, versie.VersieID, bedrijf.BedrijfID, rootnode)

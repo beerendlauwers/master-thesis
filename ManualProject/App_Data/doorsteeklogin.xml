@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <logindata>
 	<!-- Als er geen versie in de querystring werd meegegeven, wordt deze versie gekozen. -->
-	<defaultVersie>030789</defaultVersie>
+	<defaultVersie>010302</defaultVersie>
 	
 	<!-- Als er geen taal in de querystring werd meegegeven, wordt deze taal gekozen. -->
-	<defaultTaal>Nederlands</defaultTaal>
+	<defaultTaal>NL</defaultTaal>
 	
 	<!-- Het bedrijf waarvaan de boomstructuur altijd zichtbaar is. -->
 	<defaultBedrijf>AAAFinancials</defaultBedrijf>
