@@ -206,7 +206,7 @@ Partial Class App_Presentation_Beheer
                 'Elk artikel van deze parentcategorie checken
                 For Each artikel As tblArtikelRow In artikeldt
 
-                    Dim checkartikeldt As tblArtikelDataTable = artikeldal.checkArtikelByTitel(artikel.Titel, bedrijf, versie, taal)
+                    Dim checkartikeldt As tblArtikelDataTable = artikeldal.checkArtikelByTitelEnID(artikel.Titel, bedrijf, versie, taal, artikel.ArtikelID)
                     If checkartikeldt.Count > 0 Then
                         Return False 'Dit artikel heeft een dubbele titel
                     End If
