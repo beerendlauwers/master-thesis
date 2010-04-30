@@ -357,12 +357,7 @@ Public Class CategorieDAL
             If (r.HasRows) Then
                 dt.Load(r)
                 Dim row As tblCategorieRow = dt.Rows(0)
-
-                If row.FK_versie = 0 And row.FK_taal = 0 And row.FK_bedrijf = 0 Then
-                    Return row
-                Else
-                    Return Nothing
-                End If
+				Return row
             Else
                 Return Nothing
             End If

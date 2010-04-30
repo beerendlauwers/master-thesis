@@ -2140,7 +2140,7 @@ Partial Class App_Presentation_Beheer
     Private Sub LaadLokalisatieInfo()
         lblAantalStrings.Text = Lokalisatie.GetTekstCount
         lblAantalTalen.Text = Lokalisatie.Talen.Count
-
+		ddlTaalWeergeven.items.clear()
         ddlTaalWeergeven.Items.Add(New ListItem("-- Talen --", -1000))
         For Each lokalisatie As Lokalisatie In lokalisatie.Talen
             Dim t As Taal = Taal.GetTaal(lokalisatie.TaalID)
