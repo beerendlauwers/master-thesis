@@ -131,7 +131,9 @@ Partial Class App_Presentation_page
                 Return False
             End If
 
-            If Not (ingelogdBedrijf = a.Bedrijf Or a.Bedrijf = 0) Then
+            Dim defaultBedrijf As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
+
+            If Not (ingelogdBedrijf = a.Bedrijf Or a.Bedrijf = defaultBedrijf.ID) Then
                 Me.lblTekst.Text = Lokalisatie.GetString("ONGELDIGARTIKEL")
                 Me.lblTitel.Visible = False
                 Return False
