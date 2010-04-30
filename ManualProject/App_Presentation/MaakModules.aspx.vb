@@ -25,4 +25,8 @@ Partial Class App_Presentation_MaakModules
             lblRes.Text = "Modules zijn toegvoegd."
         End If
     End Sub
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Util.CheckOfBeheerder(Page.Request.Url.AbsolutePath)
+    End Sub
 End Class
