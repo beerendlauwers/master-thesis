@@ -37,7 +37,9 @@
           <ContentTemplate>
           <asp:Button ID="btnVergelijk" runat="server" Text="Vergelijk" />
           <br />
-          
+          <p>
+              <img src="CSS/images/warning.png" />Opgelet: indien er al verschillende versies en meerdere talen zijn, is er een mogelijkheid tot timeout van de applicatie. Er wordt daarom aangeraden om wanneer mogelijk enkel de ontbrekende artikels weer te geven, door een vinkje te zetten in de checkbox hierboven.
+          </p>
           <p>Hier krijgt u een overzicht van uw selectie. Een kruisje betekent dat er geen artikel aanwezig is voor die taal. Als u op het kruisje klikt kan u een artikel toevoegen voor die taal (waarbij de meeste gegevens voor u automatisch zullen worden ingevuld).</p>
           
              <div id="gridview" style="width:100%;text-align:center;">
