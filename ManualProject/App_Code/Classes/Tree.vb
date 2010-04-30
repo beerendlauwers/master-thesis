@@ -441,15 +441,12 @@ Public Class Tree
             e.Args.Add("BedrijfID van de root node (moet 0 zijn): " & rootnoderij.FK_bedrijf.ToString)
             e.Args.Add("TaalID van de root node (moet 0 zijn):" & rootnoderij.FK_taal.ToString)
             ErrorLogger.WriteError(e)
-            Return e.Boodschap
+            'Return e.Boodschap
+            rootnode = New Node(rootnoderij.CategorieID, ContentType.Categorie, bedrijf.Naam, 0)
         End If
 
         Dim treenaam As String = String.Concat("TREE_", versie.Versie, "_", taal.Taal, "_", bedrijf.Naam)
         Dim t As New Tree(treenaam, taal.TaalID, versie.VersieID, bedrijf.BedrijfID, rootnode)
-
-        If taal.TaalID = 0 And versie.VersieID = 41 And bedrijf.BedrijfID = 0 Then
-            Dim test As Integer = 0
-        End If
 
         'Alle categoriëen ophalen onder de root node
         Dim categoriedt As tblCategorieDataTable = dbcategorie.GetCategorieByParentTaalVersieBedrijf(bedrijf.BedrijfID, taal.TaalID, versie.VersieID, rootnoderij.CategorieID)
