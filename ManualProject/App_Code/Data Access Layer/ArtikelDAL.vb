@@ -819,6 +819,7 @@ Public Class ArtikelDAL
 
     Public Function updateArtikelTagMetVersie(ByVal nieuweVersie As String, ByVal oudeVersie As String) As Integer
         Dim c As New SqlCommand("onUpdateVersie")
+        c.CommandTimeout = 600
         c.CommandType = CommandType.StoredProcedure
         c.Parameters.Add("@nieuweVersie", SqlDbType.VarChar).Value = nieuweVersie
         c.Parameters.Add("@oudeVersie", SqlDbType.VarChar).Value = oudeVersie
