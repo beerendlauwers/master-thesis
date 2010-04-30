@@ -52,28 +52,32 @@ Partial Class App_Presentation_Module
     End Sub
 
     Private Sub UpdateModuleOverzicht()
-        Dim moduletekst As String = ddlModule.SelectedValue
-        Dim versieID As Integer = Integer.Parse(Session("versie"))
-        Dim anderBedrijfID As Integer = Integer.Parse(Session("bedrijf"))
-        Dim taalID As Integer = Integer.Parse(Session("taal"))
 
-        Dim dt As tblArtikelDataTable
+        If Session("versie") IsNot Nothing And Session("bedrijf") IsNot Nothing And Session("taal") IsNot Nothing Then
+            Dim moduletekst As String = ddlModule.SelectedValue
+            Dim versieID As Integer = Integer.Parse(Session("versie"))
+            Dim anderBedrijfID As Integer = Integer.Parse(Session("bedrijf"))
+            Dim taalID As Integer = Integer.Parse(Session("taal"))
 
-        'Appligen
-        Dim appligen As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
-        Dim appligendt As tblArtikelDataTable = artikeldal.GetArtikelsByModule(moduletekst, taalID, versieID, appligen.ID)
 
-        Dim anderbedrijf As Bedrijf = Bedrijf.GetBedrijf(anderBedrijfID)
-        Dim anderbedrijfdt As New tblArtikelDataTable
-        If anderbedrijf IsNot Nothing Then
-            anderbedrijfdt = artikeldal.GetArtikelsByModule(moduletekst, taalID, versieID, anderbedrijf.ID)
+            Dim dt As tblArtikelDataTable
+
+            'Appligen
+            Dim appligen As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
+            Dim appligendt As tblArtikelDataTable = artikeldal.GetArtikelsByModule(moduletekst, taalID, versieID, appligen.ID)
+
+            Dim anderbedrijf As Bedrijf = Bedrijf.GetBedrijf(anderBedrijfID)
+            Dim anderbedrijfdt As New tblArtikelDataTable
+            If anderbedrijf IsNot Nothing Then
+                anderbedrijfdt = artikeldal.GetArtikelsByModule(moduletekst, taalID, versieID, anderbedrijf.ID)
+            End If
+
+            dt = appligendt.Copy()
+            dt.Merge(anderbedrijfdt)
+
+            grdvmodule.DataSource = dt
+            grdvmodule.DataBind()
         End If
-
-        dt = appligendt.Copy()
-        dt.Merge(anderbedrijfdt)
-
-        grdvmodule.DataSource = dt
-        grdvmodule.DataBind()
     End Sub
 
     Private Sub UpdateModules()
