@@ -146,6 +146,7 @@ Public Class TaalDAL
     Public Function getVglTalen(ByVal text As String) As Data.DataTable
         Dim dt As New Data.DataTable
         Dim c As New SqlCommand(text)
+        c.CommandTimeout = 600
         c.CommandType = CommandType.Text
         c.Connection = New SqlConnection(conn)
         Try
