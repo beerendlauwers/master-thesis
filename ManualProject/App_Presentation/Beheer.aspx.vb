@@ -1144,7 +1144,7 @@ Partial Class App_Presentation_Beheer
                     Return False
                 End If
 
-            Dim b As Bedrijf = Bedrijf.GetBedrijf(tree.Bedrijf.ID)
+                Dim b As Bedrijf = Bedrijf.GetBedrijf(tree.Bedrijf.ID)
                 If b Is Nothing Then
                     Dim e As New ErrorLogger(String.Concat("Kon het bedrijf ", tree.Bedrijf.ID, " niet vinden in het geheugen."))
                     ErrorLogger.WriteError(e)

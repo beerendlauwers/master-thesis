@@ -391,8 +391,22 @@ Partial Class App_Presentation_ArtikelBewerken
         lblTagvoorbeeld.InnerHtml = artikel.Tag
         Dim tag() As String = Split(artikel.Tag, "_")
 
-        txtTag.Text = tag(tag.Count - 1)
-        ddlModule.SelectedValue = tag(tag.Count - 2)
+        Try
+            txtTag.Text = tag(tag.Count - 1)
+        Catch ex As Exception
+            Dim err As New ErrorLogger(String.Concat("Het laatste gedeelte van de tag """, artikel.Tag, """ van artikel #", artikel.ID, " kon niet geladen worden."))
+            ErrorLogger.WriteError(err)
+            Return
+        End Try
+
+        Try
+            ddlModule.SelectedValue = tag(tag.Count - 2)
+        Catch ex As Exception
+            Dim err As New ErrorLogger(String.Concat("Het modulegedeelte van de tag """, artikel.Tag, """ van artikel #", artikel.ID, " kon niet geladen worden."))
+            ErrorLogger.WriteError(err)
+            Return
+        End Try
+
         EditorBewerken.Value = artikel.Tekst
 
         ddlBedrijf.SelectedValue = artikel.Bedrijf
@@ -601,11 +615,33 @@ Partial Class App_Presentation_ArtikelBewerken
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub gettag()
+
+        If ddlTaal.SelectedItem Is Nothing Then
+            Dim err As New ErrorLogger("De dropdownlist voor taal was leeg.")
+            ErrorLogger.WriteError(err)
+            Return
+        End If
+
         Dim strtag() As String = Split(ddlTaal.SelectedItem.Text, "-")
-        strtag(1) = Trim(strtag(1))
-        lblTaalTag.InnerHtml = strtag(1)
+
+        Try
+            strtag(1) = Trim(strtag(1))
+            lblTaalTag.InnerHtml = strtag(1)
+        Catch ex As Exception
+            Dim err As New ErrorLogger(String.Concat("De waarde in de dropdownlist taal kon niet worden opgesplitst op het teken ""-"". Waarde: ", ddlTaal.SelectedItem.Text))
+            ErrorLogger.WriteError(err)
+            Return
+        End Try
+
         Dim bedrijfdal As New BedrijfDAL
         Dim dr As tblBedrijfRow = bedrijfdal.GetBedrijfByID(ddlBedrijf.SelectedValue)
+
+        If dr Is Nothing Then
+            Dim err As New ErrorLogger(String.Concat("Het bedrijf met ID ", ddlBedrijf.SelectedValue, " werd niet gevonden in de database."))
+            ErrorLogger.WriteError(err)
+            Return
+        End If
+
         Dim bedrijftag As String = dr("tag")
         lblBedrijftag.InnerHtml = bedrijftag
         lblTagvoorbeeld.InnerHtml = ddlVersie.SelectedItem.Text + "_" + strtag(1) + "_" + bedrijftag + "_" + ddlModule.SelectedItem.Text + "_" + txtTag.Text
