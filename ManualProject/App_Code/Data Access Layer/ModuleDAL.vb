@@ -183,5 +183,24 @@ Public Class ModuleDAL
         End Try
         Return r
     End Function
+    Public Function getmoduleByNaam(ByVal modul As String) As tblModuleDataTable
+        Dim dt As New tblModuleDataTable
 
+        Dim c As New SqlCommand("getModuleByModule")
+        c.Parameters.Add("@Module", SqlDbType.NVarChar).Value = modul
+        c.Connection = New SqlConnection(conn)
+        Try
+            Dim r As SqlDataReader
+            c.Connection.Open()
+            r = c.ExecuteReader
+            If (r.HasRows) Then dt.Load(r)
+
+        Catch ex As Exception
+            Dim e As New ErrorLogger(ex.Message)
+            ErrorLogger.WriteError(e)
+        Finally
+            c.Connection.Close()
+        End Try
+        Return dt
+    End Function
 End Class
