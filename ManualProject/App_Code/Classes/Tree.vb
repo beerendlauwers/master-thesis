@@ -338,13 +338,7 @@ Public Class Tree
         Dim dbcategorie As CategorieDAL = DatabaseLink.GetInstance.GetCategorieFuncties
         Dim dbartikel As ArtikelDAL = DatabaseLink.GetInstance.GetArtikelFuncties
 
-        'Parent toevoegen
-        Dim parentnode As Node = New Node(parent.CategorieID, ContentType.Categorie, parent.Categorie, parent.Hoogte)
-
-        'De grandparent is reeds toegevoegd in de vorige recursie
-        Dim grandparent As Node = t.DoorzoekTreeVoorNode(parent.FK_parent, ContentType.Categorie)
-
-        grandparent.AddChild(parentnode)
+        Dim parentnode As Node = t.DoorzoekTreeVoorNode(parent.CategorieID, ContentType.Categorie)
 
         'Alle categoriëen ophalen onder deze parent
         Dim categoriedt As tblCategorieDataTable = dbcategorie.GetCategorieByParentTaalVersieBedrijf(parent.FK_bedrijf, parent.FK_taal, parent.FK_versie, parent.CategorieID)
@@ -453,12 +447,18 @@ Public Class Tree
         Dim treenaam As String = String.Concat("TREE_", versie.Versie, "_", taal.Taal, "_", bedrijf.Naam)
         Dim t As New Tree(treenaam, taal.TaalID, versie.VersieID, bedrijf.BedrijfID, rootnode)
 
-        Dim parentnode As Node = rootnode
+        If taal.TaalID = 0 And versie.VersieID = 41 And bedrijf.BedrijfID = 0 Then
+            Dim test As Integer = 0
+        End If
 
         'Alle categoriëen ophalen onder de root node
         Dim categoriedt As tblCategorieDataTable = dbcategorie.GetCategorieByParentTaalVersieBedrijf(bedrijf.BedrijfID, taal.TaalID, versie.VersieID, rootnoderij.CategorieID)
 
         For Each categorie As tblCategorieRow In categoriedt
+
+            'Parent toevoegen
+            Dim parentnode As Node = New Node(categorie.CategorieID, ContentType.Categorie, categorie.Categorie, categorie.Hoogte)
+            rootnode.AddChild(parentnode)
 
             'De categoriëen onder deze categorie toevoegen
             Dim gelukt As Boolean = BouwCategorienEnArtikelsOnderParent(categorie, t)
