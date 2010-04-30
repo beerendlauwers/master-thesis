@@ -1177,7 +1177,7 @@ Partial Class App_Presentation_Beheer
                     Return False
                 End Try
 
-                a.Tag = String.Concat(v.VersieNaam, "_", ta.TaalTag, "_", b.Naam, "_", moduletag, "_", artikeltag)
+                a.Tag = String.Concat(v.VersieNaam, "_", ta.TaalTag, "_", b.Tag, "_", moduletag, "_", artikeltag)
 
                 'De categorie updaten (we willen de nieuwe categorie gebruiken)
                 a.Categorie = categorieID
