@@ -58,6 +58,12 @@ var wachtenlaadtekst = '<%# GenereerLaadTekst()%>';
        function EndRequest( sender, args)
        {
             //alert( 'einde');
+             if( args.get_error() )
+             {
+                ShadowBoxTonen("Er is een fout gebeurd tijdens het communiceren met de server. <br/> Technische informatie: " + args.get_error().description );
+                document.getElementById("errorMessageLabel").innerText = 
+                args.set_errorHandled(true);
+             }
        }
        
        
