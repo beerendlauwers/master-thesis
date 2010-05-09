@@ -23,7 +23,7 @@ $ENKEL_DIT_BEDRIJF = 0;
 // Testtabel
 //$TABEL_ART = "tblArtikelTest";
 
-// Met MSSQL Connecten, root id ophalen
+// Met MSSQL Connecten
 include('inc\db_open.php');
 
 if (!isset( $TABEL_ART )) { $TABEL_ART = "tblArtikel"; }
