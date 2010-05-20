@@ -403,6 +403,11 @@ Partial Class App_Presentation_ArtikelBewerken
             ddlModule.SelectedValue = tag(tag.Count - 2)
         Catch ex As Exception
             Dim err As New ErrorLogger(String.Concat("Het modulegedeelte van de tag """, artikel.Tag, """ van artikel #", artikel.ID, " kon niet geladen worden."))
+            Try
+                err.Args.Add("Module die werd geprobeerd: " & tag(tag.Count - 2))
+            Catch
+                'We konden het argument niet meegeven, niets doen
+            End Try
             ErrorLogger.WriteError(err)
             Return
         End Try

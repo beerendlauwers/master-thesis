@@ -199,6 +199,16 @@ Partial Class App_Presentation_MasterPage
     Private Function Genereerstructuur(ByVal taal As Integer, ByVal versie As Integer, ByVal bedrijf As Integer, ByRef html As String) As String
         Try
             Dim t As Tree = Tree.GetTree(taal, versie, bedrijf)
+
+            If t Is Nothing Then
+                Dim err As New ErrorLogger("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.", "MASTERPAGE0001")
+                err.Args.Add("Taal = " & taal.ToString)
+                err.Args.Add("Versie = " & versie.ToString)
+                err.Args.Add("Bedrijf = " & bedrijf.ToString)
+                ErrorLogger.WriteError(err)
+                Return Lokalisatie.GetString("GEENCATEGORIEN")
+            End If
+
             Dim root As Node = t.RootNode
 
             Dim oudehtml As String = html
@@ -207,8 +217,6 @@ Partial Class App_Presentation_MasterPage
 
             html = t.BeginNieuweLijst(html, root, -1)
             If html = originelehtml Then html = String.Concat(html, Lokalisatie.GetString("GEENCATEGORIEN"))
-
-
 
         Catch ex As Exception
             ErrorLogger.WriteError(New ErrorLogger(ex.Message))
