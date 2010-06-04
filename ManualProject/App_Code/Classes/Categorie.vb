@@ -112,7 +112,7 @@ Public Class Categorie
             _FK_Versie = c.FK_versie
             _FK_Bedrijf = c.FK_bedrijf
         Catch ex As Exception
-            Dim e As New ErrorLogger("Kon een categorie niet aanmaken omdat de gevraagde rij niet werd gevonden in de database.")
+            Dim e As New ErrorLogger("Kon een categorie niet aanmaken omdat de gevraagde rij niet werd gevonden in de database.","CATEGORIE_0001")
             ErrorLogger.WriteError(e)
         End Try
     End Sub

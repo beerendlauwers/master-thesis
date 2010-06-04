@@ -237,7 +237,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
                 If nieuwetree Is Nothing Then
                     Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
-                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
+                    Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
                     err.Args.Add("Taal = " & artikel.Taal.ToString)
                     err.Args.Add("Versie = " & artikel.Versie.ToString)
                     err.Args.Add("Bedrijf = " & artikel.Bedrijf.ToString)
@@ -252,9 +252,10 @@ Partial Class App_Presentation_ArtikelBewerken
 
                     If oudenode Is Nothing Then
                         Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0003")
                         err.Args.Add("ID = " & origineelArtikel.ArtikelID.ToString)
                         err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+						err.Args.Add("Tree = " & oudetree.Naam)
                         ErrorLogger.WriteError(err)
                     End If
 
@@ -271,7 +272,7 @@ Partial Class App_Presentation_ArtikelBewerken
 
                     If tree Is Nothing Then
                         Dim fout As String = String.Concat("De opgevraagde tree (zie parameters) bestaat niet in het geheugen.")
-                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0001")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0004")
                         err.Args.Add("Taal = " & artikel.Taal.ToString)
                         err.Args.Add("Versie = " & artikel.Versie.ToString)
                         err.Args.Add("Bedrijf = " & artikel.Bedrijf.ToString)
@@ -291,9 +292,10 @@ Partial Class App_Presentation_ArtikelBewerken
                         Me.divFeedback.Visible = True
 
                         Dim fout As String = String.Concat("De opgevraagde node (zie parameters) bestaat niet in het geheugen.")
-                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0002")
+                        Dim err As New ErrorLogger(fout, "ARTIKELBEWERKEN_0005")
                         err.Args.Add("ID = " & artikel.ID.ToString)
                         err.Args.Add("Type = " & Global.ContentType.Artikel.ToString)
+						err.Args.Add("Tree = " & tree.Naam)
                         ErrorLogger.WriteError(err)
 
                         Return
@@ -394,7 +396,7 @@ Partial Class App_Presentation_ArtikelBewerken
         Try
             txtTag.Text = tag(tag.Count - 1)
         Catch ex As Exception
-            Dim err As New ErrorLogger(String.Concat("Het laatste gedeelte van de tag """, artikel.Tag, """ van artikel #", artikel.ID, " kon niet geladen worden."))
+            Dim err As New ErrorLogger(String.Concat("Het laatste gedeelte van de tag """, artikel.Tag, """ van artikel #", artikel.ID, " kon niet geladen worden."),"ARTIKELBEWERKEN_0006")
             ErrorLogger.WriteError(err)
             Return
         End Try
@@ -402,7 +404,7 @@ Partial Class App_Presentation_ArtikelBewerken
         Try
             ddlModule.SelectedValue = tag(tag.Count - 2)
         Catch ex As Exception
-            Dim err As New ErrorLogger(String.Concat("Het modulegedeelte van de tag """, artikel.Tag, """ van artikel #", artikel.ID, " kon niet geladen worden."))
+            Dim err As New ErrorLogger(String.Concat("Het modulegedeelte van de tag """, artikel.Tag, """ van artikel #", artikel.ID, " kon niet geladen worden."),"ARTIKELBEWERKEN_0007")
             Try
                 err.Args.Add("Module die werd geprobeerd: " & tag(tag.Count - 2))
             Catch
@@ -622,7 +624,7 @@ Partial Class App_Presentation_ArtikelBewerken
     Public Sub gettag()
 
         If ddlTaal.SelectedItem Is Nothing Then
-            Dim err As New ErrorLogger("De dropdownlist voor taal was leeg.")
+            Dim err As New ErrorLogger("De dropdownlist voor taal was leeg.","ARTIKELBEWERKEN_0008")
             ErrorLogger.WriteError(err)
             Return
         End If
@@ -633,7 +635,7 @@ Partial Class App_Presentation_ArtikelBewerken
             strtag(1) = Trim(strtag(1))
             lblTaalTag.InnerHtml = strtag(1)
         Catch ex As Exception
-            Dim err As New ErrorLogger(String.Concat("De waarde in de dropdownlist taal kon niet worden opgesplitst op het teken ""-"". Waarde: ", ddlTaal.SelectedItem.Text))
+            Dim err As New ErrorLogger(String.Concat("De waarde in de dropdownlist taal kon niet worden opgesplitst op het teken ""-"". Waarde: ", ddlTaal.SelectedItem.Text),"ARTIKELBEWERKEN_0009")
             ErrorLogger.WriteError(err)
             Return
         End Try
@@ -642,7 +644,7 @@ Partial Class App_Presentation_ArtikelBewerken
         Dim dr As tblBedrijfRow = bedrijfdal.GetBedrijfByID(ddlBedrijf.SelectedValue)
 
         If dr Is Nothing Then
-            Dim err As New ErrorLogger(String.Concat("Het bedrijf met ID ", ddlBedrijf.SelectedValue, " werd niet gevonden in de database."))
+            Dim err As New ErrorLogger(String.Concat("Het bedrijf met ID ", ddlBedrijf.SelectedValue, " werd niet gevonden in de database."),"ARTIKELBEWERKEN_0009")
             ErrorLogger.WriteError(err)
             Return
         End If

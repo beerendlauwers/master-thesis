@@ -75,7 +75,7 @@ Public Class Tooltip
                     ScriptManager.RegisterClientScriptBlock(pagina, pagina.GetType, String.Concat("EndRequest", tip.Naam), tip.ToString, True)
                 End If
             Else
-                Dim e As New ErrorLogger("Kon tooltip """ & tip.Naam & """ niet op pagina """ & pagina.Request.Url.AbsolutePath & """ vinden.")
+                Dim e As New ErrorLogger("Kon tooltip """ & tip.Naam & """ niet op pagina """ & pagina.Request.Url.AbsolutePath & """ vinden.","TOOLTIP_0001")
                 ErrorLogger.WriteError(e)
             End If
         Catch ex As Exception

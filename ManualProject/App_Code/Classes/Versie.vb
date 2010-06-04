@@ -40,7 +40,7 @@ Public Class Versie
     Public Sub New(ByRef row As tblVersieRow)
 
         If row Is Nothing Then
-            Dim e As New ErrorLogger("De constructor van klasse Versie kreeg een ongeldige rij binnen van tblVersie.", "VERSIE0001")
+            Dim e As New ErrorLogger("De constructor van klasse Versie kreeg een ongeldige rij binnen van tblVersie.", "VERSIE_0001")
             ErrorLogger.WriteError(e)
             Return
         End If

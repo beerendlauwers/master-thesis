@@ -47,7 +47,7 @@ Public Class Bedrijf
 			_naam = row.Naam
 			_tag = row.Tag
 		Catch ex as Exception
-			Dim e as new ErrorLogger("De constructor van klasse Bedrijf kreeg een ongeldige rij binnen van tblBedrijf.","BEDRIJF0001")
+			Dim e as new ErrorLogger("De constructor van klasse Bedrijf kreeg een ongeldige rij binnen van tblBedrijf.","BEDRIJF_0001")
 			ErrorLogger.WriteError( e )
 		End Try
 

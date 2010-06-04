@@ -58,7 +58,7 @@ Public Class Taal
             _taal = row.Taal
             _taalTag = row.TaalTag
         Catch ex As Exception
-            Dim e As New ErrorLogger("De constructor van klasse Taal kreeg een ongeldige rij binnen van tblTaal.", "TAAL0001")
+            Dim e As New ErrorLogger("De constructor van klasse Taal kreeg een ongeldige rij binnen van tblTaal.", "TAAL_0001")
             ErrorLogger.WriteError(e)
         End Try
 

@@ -261,21 +261,21 @@ Partial Class App_Presentation_Beheer
                 'Tag updaten
                 Dim v As Versie = Versie.GetVersie(parent.Versie)
                 If v Is Nothing Then
-                    Dim e As New ErrorLogger(String.Concat("Kon de versie ", parent.Versie, " niet vinden in het geheugen."))
+                    Dim e As New ErrorLogger(String.Concat("Kon de versie ", parent.Versie, " niet vinden in het geheugen."),"BEHEER_0001")
                     ErrorLogger.WriteError(e)
                     Return False
                 End If
 
                 Dim ta As Taal = Taal.GetTaal(parent.FK_Taal)
                 If ta Is Nothing Then
-                    Dim e As New ErrorLogger(String.Concat("Kon de taal ", parent.FK_Taal, " niet vinden in het geheugen."))
+                    Dim e As New ErrorLogger(String.Concat("Kon de taal ", parent.FK_Taal, " niet vinden in het geheugen."),"BEHEER_0002")
                     ErrorLogger.WriteError(e)
                     Return False
                 End If
 
                 Dim b As Bedrijf = Bedrijf.GetBedrijf(parent.Bedrijf)
                 If b Is Nothing Then
-                    Dim e As New ErrorLogger(String.Concat("Kon het bedrijf ", parent.Bedrijf, " niet vinden in het geheugen."))
+                    Dim e As New ErrorLogger(String.Concat("Kon het bedrijf ", parent.Bedrijf, " niet vinden in het geheugen."),"BEHEER_0003")
                     ErrorLogger.WriteError(e)
                     Return False
                 End If
@@ -289,7 +289,7 @@ Partial Class App_Presentation_Beheer
                         Throw New Exception
                     End If
                 Catch
-                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module of artikeltag."))
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module of artikeltag."),"BEHEER_0004")
                     ErrorLogger.WriteError(e)
                     Return False
                 End Try
