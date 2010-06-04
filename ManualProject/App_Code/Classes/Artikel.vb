@@ -126,7 +126,7 @@ Public Class Artikel
     ''' <param name="row">Een artikelrij vanuit de database.</param>
     Public Sub New(ByRef row As Manual.tblArtikelRow)
         If row Is Nothing Then
-            Dim e As New ErrorLogger("Kon een artikel niet aanmaken omdat de gevraagde rij niet werd gevonden in de database.")
+            Dim e As New ErrorLogger("Kon een artikel niet aanmaken omdat de gevraagde rij niet werd gevonden in de database.","ARTIKEL_0001")
             ErrorLogger.WriteError(e)
         Else
             _ID = row.ArtikelID

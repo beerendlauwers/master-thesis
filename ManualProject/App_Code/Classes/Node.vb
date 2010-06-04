@@ -37,7 +37,7 @@ Public Class Node
     ''' </summary>
     Public Sub New(ByRef artikel As Artikel)
         If artikel Is Nothing Then
-            Dim e As New ErrorLogger("Kon een node niet aanmaken omdat het gegeven artikel niet bestaat in de database.", "NODE0001")
+            Dim e As New ErrorLogger("Kon een node niet aanmaken omdat het gegeven artikel niet bestaat in de database.", "NODE_0001")
         End If
         _ID = artikel.ID
         _type = ContentType.Artikel
