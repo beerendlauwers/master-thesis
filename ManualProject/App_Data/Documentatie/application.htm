@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Reference Manual handleiding</title>
+<link href="link/style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="link/shadowbox/shadowbox.css">
+<link rel="stylesheet" type="text/css" href="link/prototip.css" />
+<script type='text/javascript' src='link/prototype.js'></script>
+<script type='text/javascript' src='link/prototip.js'></script>
+<script type="text/javascript" src="link/shadowbox/shadowbox.js"></script>
+<script type="text/javascript">
+Shadowbox.init();
+</script>
+</head>
+<body>
+	<div id="mainbody">
+		<div id="sidebar">
+			<p style="text-align:center;">Overzicht</p>
+			<img src="img/import.png" border="0"/> <a href="import.htm">Importeerdocumentatie<br/></a>
+			<img src="img/database.png" border="0"/> <a href="database.htm">Databasedocumentatie<br/></a>
+			<img src="img/application.png" border="0"/> Applicatiedocumentatie<br/>
+			<div class="suboptions">
+				- <a href="#geheugen">Geheugen</a><br/>
+				<div class="suboptions">
+				*<a href="#boomstructuren">Boomstructuren</a><br/>
+				*<a href="#versies">Versies</a><br/>
+				*<a href="#talen">Talen</a><br/>
+				*<a href="#bedrijven">Bedrijven</a><br/>
+				</div>
+				- <a href="#lokalisatie">Lokalisatie</a><br/>
+				- <a href="#tooltips">Tooltips</a><br/>
+				- <a href="#doorsteek">Doorsteek</a><br/>
+				- <a href="#beheerpagina">Logingegevens beheerpagina</a><br/>
+				- <a href="#logging">Logging</a><br/>
+				- <a href="#werkingaspnet">Werking ASP.Net</a><br/>
+				- <a href="#troubleshooting">Troubleshooting</a><br/>
+				<div class="suboptions">
+				*<a href="#klasseconstructors">Klasseconstructors</a><br/>
+				*<a href="#tooltipstrouble">Tooltips</a><br/>
+				*<a href="#artikelbewerken">Artikel Bewerken</a><br/>
+				*<a href="#artikeltoevoegen">Artikel Toevoegen</a><br/>
+				*<a href="#beheer">Beheer</a><br/>
+				*<a href="#masterpage">Masterpage</a><br/>
+				*<a href="#artikelpagina">Artikelpagina</a><br/>
+				</div>
+			</div>
+			<p>&nbsp;</p>
+		</div>
+		<div id="content">
+		<h1>Applicatiedocumentatie</h1>
+		<h2><a name="geheugen">Geheugen</a></h2>
+		<p>Er worden verschillende databasegegevens opgeslagen in het geheugen om zo snel te kunnen worden weergegeven. Deze gegevens worden één keer opgeslagen in het geheugen, namelijk de eerste keer dat er een pagina wordt geladen die de Masterpage gebruikt. Hieronder vindt u een overzicht hoe deze in het geheugen worden geladen en hoe ze worden gebruikt.</p>
+		<h3><a name="boomstructuren">Boomstructuren</a></h3>
+		<p>Een boomstructuur is het overzicht van alle categorieën en artikels in boomstructuurvorm van een bepaalde combinatie van taal, versie en bedrijf. Voor elke combinatie van taal, versie en bedrijf wordt er een boomstructuur aangemaakt in het geheugen. Hierdoor kan het aantal boomstructuren snel oplopen, maar de meesten zullen leeg zijn (en dus amper geheugen innemen).</p>
+		<p>De boomstructuren worden als volgt ingelezen:</p>
+		<p>
+		1.	Alle versies, talen en bedrijven worden opgehaald vanuit de database.<br/>
+		2.	Er wordt een versierij ingelezen.<br/>
+		3.	Er wordt een taalrij ingelezen. Als er geen rijen (meer) zijn, ga naar stap 2.<br/>
+		4.	Er wordt een bedrijfrij ingelezen. Als er geen rijen (meer) zijn, ga naar stap 3.<br/>
+		5.	Er wordt een boomstructuur aangemaakt met de naam TREE_naamVersie_naamTaal_naamBedrijf.<br/>
+		6.	De root node wordt opgehaald en opgeslagen in de boomstructuur.<br/>
+		7.	De categorieën onder de root node worden opgehaald.<br/>
+		8.	Er wordt een categorierij ingelezen. Als er geen rijen (meer) zijn, ga naar stap 4.<br/>
+		9.	De categorie wordt opgeslagen in de boomstructuur.<br/>
+		10.	Alle categorieën onder de zojuist opgeslagen categorie worden opgehaald.<br/>
+		11.	Volg de stappen van 8 – 11 voor elke opgehaalde rij. Ga verder met stap 12 wanneer klaar.<br/>
+		12.	Alle artikels onder de ingelezen categorie worden opgehaald.<br/>
+		13.	Er wordt een artikelrij opgehaald. Als er geen rijen (meer) zijn, ga naar stap 8.<br/>
+		14.	Het opgehaalde artikel wordt opgeslagen in de boomstructuur.<br/>
+		15.	Ga naar stap 13.<br/>
+		</p>
+		<p>De boomstructuren kunnen herbouwd worden (wegens een manuele databasewijziging of een versiekopieeractie die is misgelopen) via de beheerpagina, onder de tab “Applicatie-Onderhoud”.</p>
+		
+		<p><strong>Troubleshooting:</strong></p>
+		<p>Er kunnen veel dingen verkeerd lopen bij het opbouwen van de boomstructuren. Hier is een overzicht van de mogelijke fouten (en hoe deze op te lossen):</p>
+		
+		<p><strong>Fout:</strong> Er is een fout gebeurd tijdens het genereren van de categoriestructuren: De basis (of root node) van de boomstructuur bestaat niet in de database.</p>
+		<p><strong>Foutcode:</strong> TREE_0001</p>
+		<p><strong>Oorzaak:</strong> De root node bestaat niet. Deze categorie staat aan de basis van elke boomstructuur. De stored procedure <span class="code">Manual_GetRootNode</span> zoekt naar een categorie op basis van de categorienaam ‘root_node’. Indien deze niet wordt gevonden in de tabel tblCategorie, kan het opbouwen van de boomstructuren niet doorgaan.</p>
+		<p><strong>Oplossing:</strong> Voeg de root node manueel toe aan de tabel tblCategorie met het volgende INSERT-statement:<br/>
+		<p class="code">INSERT INTO tblCategorie ( CategorieID, Categorie, Diepte, Hoogte, Fk_parent, FK_taal, FK_versie, FK_bedrijf ) VALUES( 0, 'root_node','-1','0',0, $CONST_TAALID, $CONST_VERSIEID, $CONST_BEDRIJFID);</p></p>
+		<p class="opm"><strong>OPMERKING:</strong> De waardes <span class="code">$CONST_TAALID</span>, <span class="code">$CONST_VERSIEID</span> en <span class="code">$CONST_BEDRIJFID</span> zijn de primary key waardes van de eerst ingevoerde taal, versie en bedrijf.</p>
+		
+		<hr/>
+		
+		<p><strong>Fout:</strong> Waarschuwing: Het artikel &lt;ARTIKELTITEL&gt; (artikelID: &lt;ARTIKELID&gt; ) heeft andere foreign keys dan de categorie waaronder ze staat (zie parameters).</p>
+		<p><strong>Foutcode:</strong> TREE_0006</p>
+		<p><strong>Oorzaak:</strong> Wegens een vreemde reden is er een artikel uit een bepaalde combinatie van versie, taal en bedrijf geplaatst geweest onder een categorie met een andere combinatie van versie, taal en bedrijf. Dit zou normaal gezien niet mogen gebeuren, maar is mogelijk wegens een timeout, onopgeloste bug of manuele wijzigingen in de database.</p>
+		<p><strong>Oplossing:</strong> Wijzig het artikel om dezelfde combinatie van versie, taal en bedrijf te gebruiken als die van de categorie waaronder het artikel staat. Gebruik het volgende UPDATE-statement en de gegevens uit de meegegeven parameters onder de footboodschap om het artikel te wijzigen:</p>
+		<p class="code">UPDATE tblArtikel SET FK_taal = $CONST_TAALID, FK_versie = $CONST_VERSIEID, FK_bedrijf = $CONST_BEDRIJFID WHERE artikelID = $CONST_ARTIKELID;</span>
+		<p class="opm"><strong>OPMERKING:</strong> De waardes <span class="code">$CONST_TAALID</span>, <span class="code">$CONST_VERSIEID</span> en <span class="code">$CONST_BEDRIJFID</span> zijn de waardes die de categorie gebruikt, en <span class="code">$CONST_ARTIKELID</span> is de waarde die in de foutboodschap stond.</p>
+		
+		<h3><a name="versies">Versies</a></h3>
+		<p>Versies worden opgeslagen in het geheugen om sneller dropdown lists te populeren en bepaalde acties die zeer veel databaseopzoekingen maken sneller te maken.</p>
+		
+		<h3><a name="talen">Talen</a></h3>
+		<p>Talen worden opgeslagen in het geheugen om sneller dropdown lists te populeren en bepaalde acties die zeer veel databaseopzoekingen maken sneller te maken.</p>
+		
+		<h3><a name="bedrijven">Bedrijven</a></h3>
+		<p>Bedrijven worden opgeslagen in het geheugen om sneller dropdown lists te populeren en bepaalde acties die zeer veel databaseopzoekingen maken sneller te maken.</p>
+		
+		<h2><a name="lokalisatie">Lokalisatie</a></h2>
+		<p>Bepaalde teksten worden gelokaliseerd (=vertaald) naar de taal van de gebruiker. Deze lokalisatie gebeurt op basis van een XML-bestand genaamd <span class="code">localisatie.xml</span>, dat alle gelokaliseerde teksten bevat. Deze teksten worden ingeladen in het geheugen de eerste keer dat er een pagina wordt geladen de Masterpage gebruikt. Ze kunnen manueel herladen worden in de beheerpagina, onder de tab “Applicatie-Onderhoud”.</p>
+		<p>Bij de doorsteek geeft de gebruiker een taalafkorting door. Deze wordt dan opgezocht in de tabel tblTaal en omgezet naar een ID. Dit ID wordt dan opgeslagen in de sessievariabele “taal”. Dit ID wordt opgezocht in de opgeslagen teksten in het geheugen. Indien het ID wordt gevonden, gebruikt het de gelokaliseerde teksten van die taal. Indien het ID niet wordt gevonden, gebruikt de applicatie het ID van de standaard gelokaliseerde taal, die kan worden gespecifieerd in <span class="code">doorsteeklogin.xml</span> (zie hoofdstuk <a href="#doorsteek">“Doorsteek”</a> voor meer informatie). Indien dat ID ook niet kan worden gevonden, wordt er een lege string teruggegeven.</p>
+		<p>In <span class="code">localisatie.xml</span> wordt elke taal als volgt omschreven:</p>
+		<p class="code">
+		&lt;taal id="TAALID"&gt;<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;&lt;tekst&gt;&lt;/tekst&gt;<br/>
+		&lt;/taal&gt;<br/>
+		</p>
+		<p>Waarbij <span class="code">TAALID</span> de primary key is van de taal zoals omschreven in de tabel tblTaal.</p>
+		
+		<p>Voor een preview te zien van de in het geheugen geladen teksten van elke taal gaat u naar de beheerpagina onder de tab “Applicatie-Onderhoud”, klikt op de accordeontab “Lokalisatie” en selecteert u een taal uit de dropdownlist.</p>
+		<p class="opm"><strong>OPMERKING:</strong> Enkel de talen die zowel bestaan in de database als in <span class="code">localisatie.xml</span> EN correct gelinkt zijn, worden hier weergegeven!</p>
+		
+		<h2><a name="tooltips">Tooltips</a></h2>
+		<p>De applicatie gebruikt verschillende tooltips (meestal gebruikt met een blauw bolletje met een vraagteken erin) om de gebruiker meer informatie te verschaffen over een bepaalde functie. Deze tooltips worden tevens ingeladen in het geheugen via een XML-bestand genaamd <span class="code">tooltips.xml</span>. Ze worden ingeladen de eerste keer dat er een pagina wordt weergegeven die de MasterPage gebruikt. Ook kunnen ze manueel worden herladen in de beheerpagina onder de tab “Applicatie-Onderhoud”. Hier vindt u ook de mogelijkheid om een overzicht op te vragen van de reeds ingeladen tooltips.</p>
+		<p class="opm"><strong>OPMERKING:</strong> Na het herladen van de tooltips die gebruikt worden in de beheerpagina dient u ook de beheerpagina te herladen. </p>
+		<p>Een tooltip wordt als volgt opgebouwd:</p>
+		<p>
+		1.	Er wordt in de HTML-markup van de pagina een <span class="code">&lt;span&gt;</span> gezet met een uniek ID (bv. ‘tipWijzigen’).<br/>
+		2.	In de opgeslagen tooltips in het geheugen wordt er gezocht naar een tooltip met het unieke ID van de span.<br/>
+		3.	In de code wordt er met behulp van de Tooltip-klasse JavaScript-code aangemaakt om de tooltip weer te geven.<br/>
+		4.	De JavaScript-code wordt toegevoegd aan de body-tag (wanneer de pagina de eerste keer laadt) of als een extra scriptblok onderaan de HTML-markup (telkens wanneer er een postback gebeurt).<br/>
+		</p>
+		
+		<h2><a name="doorsteek">Doorsteek</a></h2>
+		<p>Een gebruiker kan via een simpele link naar onze applicatie gaan, maar dient ook enkele doorsteekvariabelen in de querystring (of GET-statement) mee te geven. Aan de server-kant worden de (default) doorsteekvariabelen in het geheugen gelezen uit het XML-bestand <span class="code">doorsteeklogin.xml</span>.</p>
+		<p><strong>[VERPLICHT]</strong> MD5-hash van paswoord. Dit paswoord bestaat uit een shared secret en de huidige dag, maand en jaar in de vorm “DD/MM/JJJJ”. Aan de serverkant wordt de shared secret bepaald door de tags &lt;password&gt;&lt;/password&gt; in <span class="code">doorsteeklogin.xml</span>.
+		<p>In de querystring wordt deze verwacht achter de variabele “Paswoord” (vb. Paswoord=MD5HASH).</p>
+		<p class="opm"><strong>OPMERKING:</strong> Bij het testen kan deze paswoordcheck uitgezet worden. Dit doet men door tussen de tags &lt;applicatieLive&gt;&lt;/applicatieLive&gt; de waarde 0 te zetten. Vergeet dus niet deze waarde terug op 1 te zetten bij het live gaan of bij het testen van het doorgestoken paswoord!</p>
+		<hr/>
+		<p><strong>[OPTIONEEL]</strong> Versie van de reference manual. Deze versie wordt opgezocht in de database in de tabel tblVersie, in de kolom “Versie”. Indien deze wordt gevonden, wordt deze versie gebruikt bij het gebruiken van de applicatie. Indien deze niet wordt gevonden, wordt de standaardversie gebruikt, die omschreven wordt tussen de tags &lt;defaultVersie&gt;&lt;/defaultVersie&gt;. Als ook deze niet wordt gevonden, wordt 0 teruggegeven.</p>
+		<p>Om een versie door te geven, vult u de versie in na de variabele “Versie” (bv. Versie=010302).</p>
+		<p><strong>[OPTIONEEL]</strong> Taal van de reference manual. Deze taal wordt opgezocht in de database in de tabel tblTaal, in de kolom “TaalAfkorting”. Indien deze wordt gevonden, wordt deze taal gebruikt bij het gebruiken van de applicatie (de gebruiker kan wel nog van taal wijzigen). Indien de taal niet wordt gevonden, wordt de standaardtaal gebruikt, die omschreven wordt tussen de tags &lt;defaultTaal&gt;&lt;/defaultTaal&gt;. Als ook deze niet wordt gevonden, wordt 0 teruggegeven.</p>
+		<p>Om een taal door te geven, vult u de taalafkorting in na de variabele “Taal” (bv. Taal=NL).</p>
+		<hr/>
+		<p><strong>[OPTIONEEL]</strong> Extra bedrijf voor de reference manual. Dit bedrijf wordt opgezocht in de database in de tabel tblBedrijf, in de kolom “Bedrijf”. Indien deze wordt gevonden, wordt er een extra boomstructuur weergegeven onder de standaardboomstructuur. Indien het bedrijf niet wordt gevonden, wordt -1000 teruggegeven (dit betekent dat er geen extra boomstructuur dient te worden weergegeven).</p>
+		<p>Om een extra bedrijf door te geven, vult u de naam van het bedrijf in na de variabele “Bedrijf” (bv. Bedrijf=AAAChrisCarremans).</p>
+		<p>Hiernaast wordt ook nog  het standaardbedrijf waarvan de boomstructuur altijd wordt getoond bijgehouden in het geheugen. Deze wordt gedefinieerd tussen de tags &lt;defaultBedrijf&gt; &lt;/defaultBedrijf&gt;.</p>
+		
+		<h2><a name="beheerpagina">Logingegevens beheerpagina</a></h2>
+		<p>De logingegevens van de beheerpagina worden uitgelezen uit het XML-bestand <span class="code">beheerlogin.xml</span>. Hierin bevinden zich twee XML-tags, namelijk &lt;username&gt; &lt;/username&gt; en &lt;password&gt;&lt;/password&gt;. Deze gegevens worden uitgelezen telkens als iemand de inlogpagina bezoekt.</p>
+		
+		<h2><a name="logging">Logging</a></h2>
+		<p>In de applicatie wordt veel gebruikt maakt van errorhandling om zoveel mogelijk onverwachte (en verwachte) fouten op te vangen. Deze gegevens worden in de folder “Logs” bijgehouden. Indien er een fout optreedt, wordt er nagekeken of er reeds een logbestand voor de huidige dag bestaat. Indien niet wordt er een logbestand aangemaakt in de vorm van “DD-MM-JJJJ.txt”.</p>
+		<p>De logs in een logbestand hebben de volgende structuur:</p>
+		<p>[ DATUM EN MOMENT VAN FOUT ]<br/>
+			[FOUTTYPE] Fout in [FOUTLOCATIE] : [FOUTBOODSCHAP]<br/>
+			Meegekregen argumenten:<br/>
+			[ARGUMENTLIJST]<br/>
+			<br/>
+			Stack trace:<br/>
+			[STACK TRACE]<br/>
+		</p>
+		<hr/>
+		<p><strong>[FOUTTYPE]</strong> Een unieke foutcode die aanduidt waar het is misgelopen in de code. Indien het om een onverwachte fout gaat, wordt hier “ONBEKENDE FOUT” getoond.</p>
+		<p><strong>[FOUTLOCATIE]</strong> Het bestand waarin de fout is gebeurd, alsook de naam van de functie of subroutine.</p>
+		<p><strong>[FOUTBOODSCHAP]</strong> Een omschrijving van de fout.</p>
+		<p><strong>[ARGUMENTLIJST]</strong> Een lijst met meegegeven argumenten. Meestal zijn deze in de vorm van “Argument: Waarde”.</p>
+		<p><strong>[STACK TRACE]</strong> Een stack trace genomen op het moment van de fout. Opgelet: deze houdt ook de calls in naar de ErrorLogger klasse en, in het geval van een onbekende fout, de calls naar de functie Util::OnverwachteFout. De plaats van de eigenlijke fout is dan hieronder. Refereer naar de [FOUTLOCATIE] om verwarring te vermijden. Een lijn van de stack trace heeft de volgende vorm: “Bestand: [BESTANDSNAAM] | Method: [METHODNAAM] | Lijn: [LIJNNUMMER]”.</p>
+		<p class="opm"><strong>OPMERKING:</strong> Vaak is het lijnnummer niet het nummer van de lijn waarop de fout gebeurde, maar de lijn waarop de fout opgevangen werd. In het geval van onverwachte fouten is het daarom interessant om gevoelige code op te breken in meerdere <span class="code">try…catch</span> blokken om de fout gemakkelijker te lokaliseren.</p>
+		
+		<h2><a name="werkingaspnet">Werking ASP.Net</a></h2>
+		<p>ASP.Net gebruikt JIT-compilatie om pagina’s te compileren wanneer ze nodig zijn. Hierna wordt de gecompileerde code gecached en uitgevoerd wanneer gevraagd. Wanneer een pagina gewijzigd wordt, wordt de pagina opnieuw gecompileerd vooraleer weergegeven te worden. De sessiegegevens kunnen hierbij verdwijnen. Bij het wijzigen van een klasse moet elke pagina die deze klasse gebruikt of erop steunt opnieuw gecompileerd worden. Daarom is het in het algemeen een goed idee om, na wijzigingen te hebben doorgevoerd, elke pagina eens te bezoeken om ze te cachen.</p>
+
+		<h2><a name="troubleshooting">Troubleshooting</a></h2>
+		<p>Hieronder vindt u een overzicht van gekende fouten, en wat te doen wanneer deze gebeuren.</p>
+		
+		<h3><a name="klasseconstructors">Klasseconstructors</a></h3>
+		<p><strong>Fout:</strong> “Kon een artikel niet aanmaken omdat de gevraagde rij niet werd gevonden in de database.”</p>
+		<p><strong>Foutcode:</strong> ARTIKEL_0001</p>
+		<p><strong>Oorzaak:</strong> De constructor van de klasse Artikel heeft een ongeldige rij (Nothing) binnengekregen. Dit betekent dat de SELECT-statement om het artikel op te halen uit de database, niets heeft teruggegeven.</p>
+		<p><strong>Oplossing:</strong> Vind de code die het artikel ophaalt uit de database en onderzoek waarom het artikel niet wordt gevonden. Plaats een <span clas="code">if…else</span> blok om een foutboodschap weg te schrijven (met het gevraagde artikelID als argument) als er geen rij wordt teruggegeven uit de database.</p>
+		<hr/>
+		<p><strong>Fout:</strong> “De constructor van klasse Bedrijf kreeg een ongeldige rij binnen van tblBedrijf.”</p>
+		<p><strong>Foutcode:</strong> BEDRIJF_0001</p>
+		<p><strong>Oorzaak:</strong> De constructor van de klasse Bedrijf heeft een ongeldige rij (Nothing) binnengekregen. Dit betekent dat de SELECT-statement om het bedrijf op te halen uit de database, niets heeft teruggegeven.</p>
+		<p><strong>Oplossing:</strong>  Vind de code die het bedrijf ophaalt uit de database en onderzoek waarom het bedrijf niet wordt gevonden. Plaats een <span clas="code">if…else</span> blok om een foutboodschap weg te schrijven (met het gevraagde bedrijfID als argument) als er geen rij wordt teruggegeven uit de database.</p>
+		<hr/>
+		<p><strong>Fout:</strong> “Kon een categorie niet aanmaken omdat de gevraagde rij niet werd gevonden in de database.”</p>
+		<p><strong>Foutcode:</strong> CATEGORIE_0001</p>
+		<p><strong>Oorzaak:</strong> De constructor van de klasse Categorie heeft een ongeldige rij (Nothing) binnengekregen. Dit betekent dat de SELECT-statement om de categorie op te halen uit de database, niets heeft teruggegeven.</p>
+		<p><strong>Oplossing:</strong> Vind de code die de categorie ophaalt uit de database en onderzoek waarom de categorie niet wordt gevonden. Plaats een <span clas="code">if…else</span> blok om een foutboodschap weg te schrijven (met het gevraagde categorieID als argument) als er geen rij wordt teruggegeven uit de database.</p>
+		<hr/>
+		<p><strong>Fout:</strong> “Kon een node niet aanmaken omdat het gegeven artikel niet bestaat in de database.”</p>
+		<p><strong>Foutcode:</strong> NODE_0001</p>
+		<p><strong>Oorzaak:</strong> De constructor van de klasse Node heeft een ongeldige rij (Nothing) binnengekregen. Dit betekent dat de SELECT-statement om het artikel dat de node zal gebruiken, op te halen uit de database, niets heeft teruggegeven.</p>
+		<p><strong>Oplossing:</strong> Vind de code die het artikel ophaalt uit de database en onderzoek waarom het artikel niet wordt gevonden. Plaats een <span clas="code">if…else</span> blok om een foutboodschap weg te schrijven (met het gevraagde artikelID als argument) als er geen rij wordt teruggegeven uit de database.</p>
+		<hr/>
+		<p><strong>Fout:</strong> “De constructor van klasse Taal kreeg een ongeldige rij binnen van tblTaal.”</p>
+		<p><strong>Foutcode:</strong> TAAL_0001</p>
+		<p><strong>Oorzaak:</strong> De constructor van de klasse Taal heeft een ongeldige rij (Nothing) binnengekregen. Dit betekent dat de SELECT-statement om de taal op te halen uit de database, niets heeft teruggegeven.</p>
+		<p><strong>Oplossing:</strong> Vind de code die de taal ophaalt uit de database en onderzoek waarom de taal niet wordt gevonden. Plaats een <span clas="code">if…else</span> blok om een foutboodschap weg te schrijven (met het gevraagde taalID als argument) als er geen rij wordt teruggegeven uit de database.</p>
+		<hr/>
+		<p><strong>Fout:</strong> “De constructor van klasse Versie kreeg een ongeldige rij binnen van tblVersie.”</p>
+		<p><strong>Foutcode:</strong> VERSIE_0001</p>
+		<p><strong>Oorzaak:</strong> : De constructor van de klasse Versie heeft een ongeldige rij (Nothing) binnengekregen. Dit betekent dat de SELECT-statement om de versie op te halen uit de database, niets heeft teruggegeven.</p>
+		<p><strong>Oplossing:</strong> Vind de code die de versie ophaalt uit de database en onderzoek waarom de versie niet wordt gevonden. Plaats een <span clas="code">if…else</span> om een foutboodschap weg te schrijven (met het gevraagde versieID als argument) als er geen rij wordt teruggegeven uit de database.</p>
+		
+		<h3><a name="tooltipstrouble">Tooltips</a></h3>
+
+		<p><strong>Fout:</strong> “Kon tooltip [TOOLTIPNAAM] niet op pagina [PAGINA] vinden.”</p>
+		<p><strong>Foutcode:</strong> TOOLTIP_0001</p>
+		<p><strong>Oorzaak:</strong> Er werd op de pagina [PAGINA] geen &lt;span&gt;&lt;/span&gt; tag gevonden die als ID [TOOLTIPNAAM] heeft.</p>
+		<p><strong>Oplossing:</strong><br/>
+		A.	Voeg een &lt;span&gt;&lt;/span&gt; tag toe met de juiste tooltipnaam.<br/>
+		B.	Kijk de code van de pagina na om te onderzoeken of er een ongebruikte tooltip gedefinieerd staat.<br/>
+		</p>
+		
+		<h3><a name="artikelbewerken">Artikel Bewerken</a></h3>
+		
+		<p><strong>Fout:</strong> “De opgevraagde tree (zie parameters) bestaat niet in het geheugen.”</p>
+		<p><strong>Foutcode:</strong> ARTIKELBEWERKEN_0001, ARTIKELBEWERKEN_0002, ARTIKELBEWERKEN_0004</p>
+		<p><strong>Meegekregen argumenten:</strong> TaalID, VersieID, BedrijfID</p>
+		<p><strong>Oorzaak:</strong> De boomstructuur waarin een bepaald artikel dient te zitten (in de vorm van een Node), bestaat niet in het geheugen.</p>
+		<p><strong>Oplossing:</strong> Herbouw de boomstructuren. Indien dit probleem zich dan nog steeds voordoet, betekent dit dat het artikel hoogstwaarschijnlijk onder een verkeerde categorie (= een categorie met een andere combinatie van versie, taal en bedrijf) zit. In dit geval zullen er bij het herbouwen van de boomstructuren enkele foutmeldingen  van het type “TREE_0006” zullen zijn opgedoken. Los deze dan op. Indien er geen foutmeldingen van het type “TREE_0006” voorkomen en het probleem nog steeds voorkomt, is het best dat u het artikel manueel backupt en dan verwijdert uit de database. </p>
+		<hr/>
+		<p><strong>Fout:</strong> “De opgevraagde node (zie parameters) bestaat niet in het geheugen.”</p>
+		<p><strong>Foutcode:</strong> ARTIKELBEWERKEN_0003, ARTIKELBEWERKEN_0005</p>
+		<p><strong>Meegekregen argumenten:</strong> ID, nodetype (Artikel of Categorie), naam van boomstructuur</p>
+		<p><strong>Oorzaak:</strong> Er werd een boomstructuur doorzocht voor een bepaalde Node. Deze werd niet gevonden.</p>
+		<p><strong>Oplossing:</strong> Herbouw de boomstructuren. Indien dit probleem zich dan nog steeds voordoet, betekent dit dat het artikel hoogstwaarschijnlijk onder een verkeerde categorie (= een categorie met een andere combinatie van versie, taal en bedrijf) zit. In dit geval zullen er bij het herbouwen van de boomstructuren enkele foutmeldingen  van het type “TREE_0006” zullen zijn opgedoken. Los deze dan op. Indien er geen foutmeldingen van het type “TREE_0006” voorkomen en het probleem nog steeds voorkomt, is het best dat u het artikel manueel backupt en dan verwijdert uit de database. </p>
+		<hr/>
+		<p><strong>Fout:</strong> “Het laatste gedeelte van de tag [ARTIKELTAG] van artikel #[ARTIKELID] kon niet geladen worden.”</p>
+		<p><strong>Foutcode:</strong> ARTIKELBEWERKEN_0006</p>
+		<p><strong>Oorzaak:</strong> De vorm van de artikeltag is incorrect, en het laatste gedeelte (het eigenlijke artikelgedeelte) kon niet geladen worden.</p>
+		<p><strong>Oplossing:</strong> Vul het artikelgedeelte manueel aan in de database. Gebruik het artikelID om het juiste artikel te vinden.</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> “Het modulegedeelte van de tag [ARTIKELTAG] van artikel #[ARTIKELID] kon niet geladen worden.”</p>
+		<p><strong>Foutcode:</strong> ARTIKELBEWERKEN_0007</p>
+		<p><strong>Oorzaak:</strong> De vorm van de artikeltag is incorrect, en het modulegedeelte kon niet geladen worden.</p>
+		<p><strong>Oplossing:</strong><br/>
+		A.	Vul het artikelgedeelte manueel aan in de database. Gebruik het artikelID om het juiste artikel te vinden.<br/>
+		B.	Voer de stored procedure <span class="code">Manual_HerstelTags</span> uit.<br/>
+		</p>
+		<hr/>
+		<p><strong>Fout:</strong> “De dropdownlist voor taal was leeg.”</p>
+		<p><strong>Foutcode:</strong> ARTIKELBEWERKEN_0008</p>
+		<p><strong>Oorzaak:</strong> De dropdownlist voor het selecteren van een taal was leeg.</p>
+		<p><strong>Oplossing:</strong> Kijk na of er talen in de database zitten. Zoja, herlaad dan de applicatie volledig door IIS server uit en aan te zetten.</p>
+		<hr/>
+		<p><strong>Fout:</strong> "De waarde in de dropdownlist taal kon niet worden opgesplitst op het teken "-". Waarde: [WAARDE UIT DROPDOWNLIST].”</p>
+		<p><strong>Foutcode:</strong> ARTIKELBEWERKEN_0008</p>
+		<p><strong>Oorzaak:</strong> De dropdownlist taal bevat normaal items in de vorm van “TAAL – TAALAFKORTING”. Om deze afkorting te verkrijgen, wordt dit item opgesplitst op het teken “-“, maar dit is niet gelukt.</p>
+		<p><strong>Oplossing:</strong> Dit zou normaal gezien nooit mogen gebeuren, maar kijk na of er in de database een taal is met een liggend streepje en wijzig indien nodig.</p>
+		<hr/>
+		<p><strong>Fout:</strong> “Het bedrijf met ID [BEDRIJFID] werd niet gevonden in de database.”</p>
+		<p><strong>Foutcode:</strong> ARTIKELBEWERKEN_0009</p>
+		<p><strong>Oorzaak:</strong> Het opgevraagde bedrijf werd niet gevonden in de database.</p>
+		<p><strong>Oplossing:</strong> Kijk na of dit bedrijf in de database bestaat. </p>
+		
+		<h3><a name="artikeltoevoegen">Artikel Toevoegen</a></h3>
+		<p><strong>Fout:</strong> “De opgevraagde tree (zie parameters) bestaat niet in het geheugen.”</p>
+		<p><strong>Foutcode:</strong> ARTIKELTOEVOEGEN_0001</p>
+		<p><strong>Meegekregen argumenten:</strong> TaalID, VersieID, BedrijfID</p>
+		<p><strong>Oorzaak:</strong> De boomstructuur waarin een bepaald artikel dient te zitten (in de vorm van een Node), bestaat niet in het geheugen.</p>
+		<p><strong>Oplossing:</strong> Herbouw de boomstructuren. Indien dit probleem zich dan nog steeds voordoet, betekent dit dat het artikel hoogstwaarschijnlijk onder een verkeerde categorie (= een categorie met een andere combinatie van versie, taal en bedrijf) zit. In dit geval zullen er bij het herbouwen van de boomstructuren enkele foutmeldingen  van het type “TREE_0006” zullen zijn opgedoken. Los deze dan op. Indien er geen foutmeldingen van het type “TREE_0006” voorkomen en het probleem nog steeds voorkomt, is het best dat u het artikel manueel backupt en dan verwijdert uit de database. </p>
+		
+		<h3><a name="beheer">Beheer</a></h3>
+		<p><strong>Fout:</strong> "Kon de versie [VERSIENAAM] niet vinden in het geheugen."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0001, BEHEER_0008</p>
+		<p><strong>Oorzaak:</strong> De versie werd niet gevonden in het geheugen.</p>
+		<p><strong>Oplossing:</strong> Kijk na of de versie bestaat in de database en herstart de server.</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "Kon de taal [TAAL] niet vinden in het geheugen."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0002, BEHEER_0009</p>
+		<p><strong>Oorzaak:</strong> De taal werd niet gevonden in het geheugen.</p>
+		<p><strong>Oplossing:</strong> Kijk na of de taal bestaat in de database en herstart de server.</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "Kon het bedrijf [BEDRIJFNAAM] niet vinden in het geheugen."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0003, BEHEER_0010</p>
+		<p><strong>Oorzaak:</strong> Het bedrijf werd niet gevonden in het geheugen.</p>
+		<p><strong>Oplossing:</strong> Kijk na of het bedrijf bestaat in de database en herstart de server.</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "Het artikel [ARTIKELID] heeft een ongeldige tag ([TAG]) want deze bevat geen module of artikeltag."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0004, BEHEER_0005</p>
+		<p><strong>Oorzaak:</strong> De vorm van de artikeltag is incorrect, en kon niet geladen correct worden.</p>
+		<p><strong>Oplossing:</strong> Wijzig de artikeltag manueel in de database (correcte vorm: VERSIE_TAAL_BEDRIJF_MODULE_ARTIKEL). Gebruik het artikelID om het juiste artikel te vinden.</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "De categorie [CATEGORIEID] werd niet gevonden in de database."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0006</p>
+		<p><strong>Oorzaak:</strong> De opgevraagde categorie was niet aanwezig in de database.</p>
+		<p><strong>Oplossing:</strong> Controleer of de categorie in de database zit; mogelijk werd deze (manueel) verwijderd door iemand anders. Artikels onder de niet-bestaande categorie kan men manueel verplaatsen door in de database het veld <span class="code">FK_Categorie</span> van de artikelrijen in de tabel <span class="code">tblArtikel</span> te wijzigen en de boomstructuren te herbouwen.</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "Kon het artikel [ARTIKELID] niet vinden in de database."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0007</p>
+		<p><strong>Oorzaak:</strong> Het opgevraagde artikel was niet aanwezig in de database.</p>
+		<p><strong>Oplossing:</strong> Controleer of het artikel in de database zit; mogelijk werd deze (manueel) verwijderd door iemand anders. Herbouw de boomstructuren om de referenties naar het niet-bestaande artikel te verwijderen.</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "Het artikel [ARTIKELID] heeft een ongeldige tag ([ARTIKELTAG]) want deze bevat geen module."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0011, BEHEER_0012</p>
+		<p><strong>Oorzaak:</strong> De vorm van de artikeltag is incorrect, en het modulegedeelte kon niet geladen worden.</p>
+		<p><strong>Oplossing:</strong><br/>
+		A.	Vul het artikelgedeelte manueel aan in de database. Gebruik het artikelID om het juiste artikel te vinden.<br/>
+		B.	Voer de stored procedure <span class="code">Manual_HerstelTags</span> uit.<br/>
+		</p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "De opgevraagde tree (zie parameters) bestaat niet in het geheugen. Refereer naar de documentatie om dit probleem op te lossen."</p>
+		<p><strong>Foutcode:</strong> BEHEER_0013</p>
+		<p><strong>Meegekregen argumenten:</strong> TaalID, VersieID, BedrijfID</p>
+		<p><strong>Oorzaak:</strong> De boomstructuur waarin een bepaald artikel dient te zitten (in de vorm van een Node), bestaat niet in het geheugen.</p>
+		<p><strong>Oplossing:</strong> Herbouw de boomstructuren. Indien dit probleem zich dan nog steeds voordoet, betekent dit dat het artikel hoogstwaarschijnlijk onder een verkeerde categorie (= een categorie met een andere combinatie van versie, taal en bedrijf) zit. In dit geval zullen er bij het herbouwen van de boomstructuren enkele foutmeldingen  van het type “TREE_0006” zullen zijn opgedoken. Los deze dan op. Indien er geen foutmeldingen van het type “TREE_0006” voorkomen en het probleem nog steeds voorkomt, is het best dat u het artikel manueel backupt en dan verwijdert uit de database. </p>
+
+		<h3><a name="masterpage">Masterpage</a></h3>
+						
+		<p><strong>Fout:</strong> "De opgevraagde tree (zie parameters) bestaat niet in het geheugen."</p>
+		<p><strong>Foutcode:</strong> MASTERPAGE0001</p>
+		<p><strong>Meegekregen argumenten:</strong> TaalID, VersieID, BedrijfID</p>
+		<p><strong>Oorzaak:</strong> De boomstructuur waarin een bepaald artikel dient te zitten (in de vorm van een Node), bestaat niet in het geheugen.</p>
+		<p><strong>Oplossing:</strong> Herbouw de boomstructuren. Indien dit probleem zich dan nog steeds voordoet, betekent dit dat het artikel hoogstwaarschijnlijk onder een verkeerde categorie (= een categorie met een andere combinatie van versie, taal en bedrijf) zit. In dit geval zullen er bij het herbouwen van de boomstructuren enkele foutmeldingen  van het type “TREE_0006” zullen zijn opgedoken. Los deze dan op. Indien er geen foutmeldingen van het type “TREE_0006” voorkomen en het probleem nog steeds voorkomt, is het best dat u het artikel manueel backupt en dan verwijdert uit de database. </p>
+		
+				<hr/>
+		<p><strong>Fout:</strong> "Het bedrijf dat altijd zichtbaar dient te zijn ([BEDRIJFNAAM]), werd niet gevonden in de database. Wijzig de naam van het bedrijf in doorsteeklogin.xml of in de database zodat deze overeenkomen.</p>
+		<p><strong>Foutcode:</strong> MASTERPAGE0002</p>
+		<p><strong>Oorzaak:</strong> Het standaardbedrijf in <span class="code">doorsteeklogin.xml</span> komt niet voor in de database.</p>
+		<p><strong>Oplossing:</strong> Controleer of het correcte bedrijf tussen de <span class="code">&lt;defaultBedrijf&gt;&lt;/defaultBedrijf&gt;</span> tags staat, let op typfouten. Indien het bedrijf correct is ingevoerd, controleer dan of dit bedrijf bestaat in de database.</p>
+		
+		<h3><a name="artikelpagina">Artikelpagina</a></h3>
+
+		<p><strong>Fout:</strong> "Het bedrijf dat altijd zichtbaar dient te zijn ([BEDRIJFNAAM]), werd niet gevonden in de database. Wijzig de naam van het bedrijf in doorsteeklogin.xml of in de database zodat deze overeenkomen.</p>
+		<p><strong>Foutcode:</strong> ARTIKELPAGINA0001</p>
+		<p><strong>Oorzaak:</strong> Het standaardbedrijf in <span class="code">doorsteeklogin.xml</span> komt niet voor in de database.</p>
+		<p><strong>Oplossing:</strong> Controleer of het correcte bedrijf tussen de <span class="code">&lt;defaultBedrijf&gt;&lt;/defaultBedrijf&gt;</span> tags staat, let op typfouten. Indien het bedrijf correct is ingevoerd, controleer dan of dit bedrijf bestaat in de database.</p>	
+		</div>
+	</div>
+</body>
+</html>
