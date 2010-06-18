@@ -1,1 +1,0 @@
-Waar dient elke folder voor (templates, logs, enz)
