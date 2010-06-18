@@ -134,7 +134,7 @@ Partial Class App_Presentation_page
             Dim defaultBedrijf As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
 
             If defaultBedrijf Is Nothing Then
-                Dim fouteke As New ErrorLogger(String.Concat("Het bedrijf ", XML.Doorsteek.DefaultBedrijf, " werd niet gevonden"))
+                Dim fouteke As New ErrorLogger(String.Concat("Het bedrijf dat altijd zichtbaar dient te zijn (",XML.Doorsteek.DefaultBedrijf,"), werd niet gevonden in de database. Wijzig de naam van het bedrijf in doorsteeklogin.xml of in de database zodat deze overeenkomen."),"ARTIKELPAGINA0001")
                 ErrorLogger.WriteError(fouteke)
                 Return False
             End If

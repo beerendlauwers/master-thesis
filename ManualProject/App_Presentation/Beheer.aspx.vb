@@ -301,7 +301,7 @@ Partial Class App_Presentation_Beheer
                         Throw New Exception
                     End If
                 Catch ex As Exception
-                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module of artikeltag."))
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module of artikeltag."),"BEHEER_0005")
                     ErrorLogger.WriteError(e)
                     Return False
                 End Try
@@ -1130,7 +1130,7 @@ Partial Class App_Presentation_Beheer
         Dim parentrij As tblCategorieRow = categoriedal.getCategorieByID(parent.ID)
 
         If parentrij Is Nothing Then
-            Dim err As New ErrorLogger(String.Concat("De categorie ", parent.ID, " werd niet gevonden in de database."))
+            Dim err As New ErrorLogger(String.Concat("De categorie ", parent.ID, " werd niet gevonden in de database."),"BEHEER_0006")
             ErrorLogger.WriteError(err)
             Return False
         End If
@@ -1175,7 +1175,7 @@ Partial Class App_Presentation_Beheer
                 Dim a As New Artikel(artikeldal.GetArtikelByID(kind.ID))
 
                 If a Is Nothing Then
-                    Dim e As New ErrorLogger(String.Concat("Kon het artikel ", kind.ID, " niet vinden in de database."))
+                    Dim e As New ErrorLogger(String.Concat("Kon het artikel ", kind.ID, " niet vinden in de database."),"BEHEER_0007")
                     ErrorLogger.WriteError(e)
                     Continue For
                 End If
@@ -1183,21 +1183,21 @@ Partial Class App_Presentation_Beheer
                 'Nieuwe tag opbouwen
                 Dim v As Versie = Versie.GetVersie(versieID)
                 If v Is Nothing Then
-                    Dim e As New ErrorLogger(String.Concat("Kon de versie ", versieID, " niet vinden in het geheugen."))
+                    Dim e As New ErrorLogger(String.Concat("Kon de versie ", versieID, " niet vinden in het geheugen."),"BEHEER_0008")
                     ErrorLogger.WriteError(e)
                     Return False
                 End If
 
                 Dim ta As Taal = Taal.GetTaal(tree.Taal.ID)
                 If ta Is Nothing Then
-                    Dim e As New ErrorLogger(String.Concat("Kon de taal ", tree.Taal.ID, " niet vinden in het geheugen."))
+                    Dim e As New ErrorLogger(String.Concat("Kon de taal ", tree.Taal.ID, " niet vinden in het geheugen."),"BEHEER_0009")
                     ErrorLogger.WriteError(e)
                     Return False
                 End If
 
                 Dim b As Bedrijf = Bedrijf.GetBedrijf(tree.Bedrijf.ID)
                 If b Is Nothing Then
-                    Dim e As New ErrorLogger(String.Concat("Kon het bedrijf ", tree.Bedrijf.ID, " niet vinden in het geheugen."))
+                    Dim e As New ErrorLogger(String.Concat("Kon het bedrijf ", tree.Bedrijf.ID, " niet vinden in het geheugen."),"BEHEER_0010")
                     ErrorLogger.WriteError(e)
                     Return False
                 End If
@@ -1211,7 +1211,7 @@ Partial Class App_Presentation_Beheer
                         Throw New Exception
                     End If
                 Catch
-                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module."))
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module."),"BEHEER_0011")
                     ErrorLogger.WriteError(e)
                     Return False
                 End Try
@@ -1223,7 +1223,7 @@ Partial Class App_Presentation_Beheer
                         Throw New Exception
                     End If
                 Catch ex As Exception
-                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module."))
+                    Dim e As New ErrorLogger(String.Concat("Het artikel ", a.ID, " heeft een ongeldige tag (", a.Tag, ") want deze bevat geen module."),"BEHEER_0012")
                     ErrorLogger.WriteError(e)
                     Return False
                 End Try
@@ -1278,7 +1278,7 @@ Partial Class App_Presentation_Beheer
 
                                     Dim fout As String = "De opgevraagde tree (zie parameters) bestaat niet in het geheugen."
                                     fout = String.Concat(fout, " Refereer naar de documentatie om dit probleem op te lossen.")
-                                    Dim err As New ErrorLogger(fout, "BEHEER_0001")
+                                    Dim err As New ErrorLogger(fout, "BEHEER_0013")
                                     err.Args.Add("Taal = " & t.TaalID.ToString)
                                     err.Args.Add("Versie = " & versieID.ToString)
                                     err.Args.Add("Bedrijf = " & b.BedrijfID.ToString)

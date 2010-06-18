@@ -133,7 +133,7 @@ Partial Class App_Presentation_MasterPage
         Dim appligen As Bedrijf = Bedrijf.GetBedrijf(XML.Doorsteek.DefaultBedrijf)
 
         If appligen Is Nothing Then
-            Dim e As New ErrorLogger("Het bedrijf dat altijd zichtbaar dient te zijn, werd niet gevonden in de database. Wijzig de naam van het bedrijf in de Masterpage of in de database zodat deze overeenkomen.")
+            Dim e As New ErrorLogger(String.Concat("Het bedrijf dat altijd zichtbaar dient te zijn (",XML.Doorsteek.DefaultBedrijf,"), werd niet gevonden in de database. Wijzig de naam van het bedrijf in doorsteeklogin.xml of in de database zodat deze overeenkomen."),"MASTERPAGE0002")
             ErrorLogger.WriteError(e)
             Return
         End If
