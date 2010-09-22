@@ -1,0 +1,799 @@
+
+Algoritmiek college 5.
+Union-Find datastructuur en Amortisering.
+
+Doel van dit college is tweeledig: Union-Find is niet alleen een
+voorbeeld bij amortisering, en amortisering niet alleen een mooie
+techniek om iets over Union-Find te zeggen.  Beide onderwerpen zijn
+voor dit vak van belang, ze passen alleen toevallig samen.
+
+1. De ADS Union-Find                      (08 min)
+2. Implementatie van Union-Find: Lijsten  (08 min)
+3. Implementatie van Union-Find: Woud     (17 min)
+4. Amortisering: middelen over reeksen    (10 min)
+-----
+5. Drie methoden voor Amortisering        (15 min)
+6. Vierde methode: Omslag                 (08 min)
+7. Analyse van Union-Find met Omslag      (15 min)
+8. Conclusies                             ( 5 min)
+
+
+1. Definitie en toepassing van de Union-Find ADS.
+-------------------------------------------------
+
+Een Union-Find structuur is een abstracte datastructuur om een
+collectie disjuncte verzamelingen te manipuleren onder het samenvoegen.  
+Er zijn drie operaties; x en y zijn pointers naar objecten:
+	Make(x)  	Voeg het singleton {x} toe
+	Union(x,y)	Vervang de TWEE verzamelingen van x en y door
+			hun vereniging
+	Find(x) 	Geef de verzameling waar x in zit.
+
+Spel Quoridor: je mag muurtjes zetten om je tegenstander van zijn
+doel weg te houden, maar je mag 'm nooit helemaal afsnijden.  Bij elk
+muurtje checken of hij nog bij z'n doel kan is duur.  Beter: check
+alleen als je een vlak van het speelveld splijt, dwz als de eindpunten
+van het nieuwe muurtje al via via verbonden waren.
+
+Een nieuw punt x wordt in het systeem gebracht met de operatie Make(x).
+Het plaatsen van een muur (x,y) maakt alle punten die eerst met x waren
+verbonde, ook verbonden met alle punten die eerst met y waren verbonden;
+de twee componenten vloeien samen en we voeren dus uit Union(x,y).
+
+Maar wat levert Find(x) eigenlijk precies op?  Een cluster zal bekend
+staan onder de naam van een van de leden, de REPRESENTANT!  Welk punt
+als representant wordt opgegeven laten we aan de implementatie vrij.  
+Dus na de operaties
+	Make(x) ; Make(y) ; Union (x,y)
+zou een Find(x) best x mogen opleveren, en een Find(y) zou best y
+mogen opleveren.... maar dit mag niet allebei.  Je kunt zeggen dat de
+component onder een van de twee namen x of y in het systeem mag staan,
+maar de naam moet wel eenduidig zijn zodat een eventuele test
+	Find(x) = Find(y)
+ons vertelt of de componenten gelijk zijn.  Na een Union mag een nieuwe
+representant worden aangeleverd door de datastructuur.  Dus met
+   a = Find(y)
+   b = Find(x)
+   Union(x,y)
+   c = Find(x)
+MAG c gelijk zijn aan a of b, maar het hoeft niet.
+
+Het aantal elementen in de structuur noemen we n; dit aantal komt
+overeen met het aantal keren dat de Make operatie is uitgevoerd.
+Het totale aantal operaties noemen we m; omdat Make's meetellen is
+m>=n.
+Omdat elke Union het aantal verzamelingen doet afnemen komen er ten
+hoogste n-1 Unions voor (zodra n>0).  Finds veranderen de opgeslagen
+partitiestructuur niet en kunnen willekeurig vaak voorkomen.
+
+
+2. Implementatie: gelinkte lijsten
+----------------------------------
+
+Elke verzameling wordt gerepresenteerd door een gelinkte lijst,
+waarbij de voorste de representant is en elke knoop een pointer naar
+deze representant heeft; de representant heeft een pointer naar de
+achterste knoop in de rij.  PLAATJE van twee lijsten.
+
+Make(x):  rep[x] <-- x ; last[x] <-- x ;
+	  Next[x] <-- nil
+
+Find(x):  return rep[x]
+
+Union(x,y): t <-- rep[y] ; s <-- rep[x] ;
+
+        next[last[s]] <-- t ; last[s] <-- last[t] ;
+
+	while t /= nil do rep[t] <-- s ; t <-- next[t]
+
+De last van een knoop die geen rep is is betekenisloos en we doen dan
+ook geen moeite deze op nul te zetten.  Make en Find zijn O(1) maar
+Union neemt tijd lineair in de grootte van y's verzameling want er
+worden k+2 pointers in de structuur verzet als er k elementen in zitten.
+
+De totale tijd kan Theta(m + n^2) zijn; doe maar eens:
+	Make(1) ; Make(2) ; ... ; Make(n) ;
+	Union(n-1,n) ;
+	Union(n-2,n) ;
+	Union(n-3,n) ;
+	....
+	Union( 1 ,n)  !!
+
+De i-de Union moet de pointers verzetten in een lijst van lengte i
+en de totale tijd is dus SOM i=1 TOT n-1 (i+2) = (n+1)(n+2)/2 -3
+ofwel circa n^2/2.
+
+
+De gemiddelde tijd is dus ongeveer Theta(n) per operatie en dit blijkt
+beter te kunnen!  We gebruiken het idee om de KLEINSTE
+groep om te namen; hiertoe wordt de grootte van de groep in de
+representant opgeslagen.
+
+Make(x):  rep[x] <-- x ; last[x] <-- x ;
+	  Next[x] <-- nil ; size[x] <-- 1
+
+Find(x):  return rep[x]
+
+Union(x,y): t <-- rep[y] ; s <-- rep[x] ;
+        IF size[t] > size[s] then s,t <-- t,s ;
+        next[last[s]] <-- t ; last[s] <-- last[t] ;
+        size[s] <-- size[s] + size[t]
+	while t /= nil do rep[t] <-- s ; t <-- next[t]
+
+De verandering in het programma is vrij eenvoudig en we spreken hier
+van de GEWOGEN UNION regel.
+Wat is de prijs van een UNION?  Het effect op de worst-case tijd van
+een Union is gering, want het is mogelijk dat de twee sets allebei
+ongeveer n/2 elementen hebben en de Union kost dan n/2.
+Maar de operaties samen kosten gemiddeld maar lgn.
+
+STELLING: Met deze aanpassing kost elke reeks van m operaties slechts
+	O(m+nlgn) tijd.
+Bewijs: Ten eerste wordt van elk object x hoogstens lgn keer de rep
+pointer veranderd.  Immers, bij elke verandering ervan komt x in een
+minstens tweemaal zo grote verzameling terecht!  Omdat x nooit in een
+verzameling van meer dan n elementen komt, wordt de pointer ten
+hoogste lgn keer veranderd.
+De totale prijs van het pointer-verzetten in de Unions samen is dus
+nlgn.  Voor de rest is alles O(1) per operatie.  []
+
+Merk op, dat we van elke verzameling een lijst maken om hem te kunnen
+doorlopen, en dat is weer nodig om de rep pointers te veranderen bij
+een Union.  Elke x heeft een directe pointer naar zijn representant.
+
+
+3. De Woud-representatie
+------------------------
+
+We gaan nu de Unions goedkoper maken ten nadele van de Find.  Later
+zullen we zien, dat zo'n duurdere Find pas kan gebeuren als er eerst
+een flink aantal goedkopere Unions zijn geweest, en daardoor springen
+we er in het totaal heel goed uit.
+Immers, het is niet nodig om alle rep in een verzameling te veranderen,
+zolang je maar kunt zien of een individu representant is of niet!!  Idee
+is dat je "oude" representant misschien geen representant meer is, maar
+dan volg je de pointers naar zijn representant.
+
+Stel een aantal individuen hebben rep=x en de verzameling wordt
+geUniond met een andere.  Zet dan rep[x] op de nieuwe rep (dus
+ongelijk x vanaf nu!).  Kom je bij een Find in een individu dat geen
+representant is, dan ga je gewoon verder!
+
+Make(x): rep[x] <-- x
+
+Find(x): t <-- x;
+	 while t /= rep[t] do t <-- rep[t]
+	 return t
+
+(Of recursief:   if x=rep[x] f=x else f=Find(rep[x]) ;  return f .)
+
+Union(x,y) : s <-- Find(x) ; t <-- Find(y)
+	     rep[t] <-- s
+
+(Je kunt ook rep[t]<--x schrijven, dat werkt, maar rep[y]<--t niet!)
+In feite wordt nu elke verzameling als een gerichte boom
+gerepresenteerd.  We hebben alleen geen pointers omlaag, doch slechts
+omhoog!  Je kunt dan ook `niet', althans moeilijk, een overzicht
+krijgen van de inhoud van een verzameling.  Gelukkig is dat ook geen
+operatie van de structuur.
+
+De efficientie van de methode kan worden verbeterd met twee regels.
+ 1. Een soort gewogen union, alleen blijkt dat we hem kunnen maken
+    zonder het gewicht van elke verzameling precies bij te houden.
+ 2. Pad compressie bij het aflopen (bij Find dus).
+
+
+EERSTE REGEL: UNION MET RANG.
+Houdt voor elke representant een rang bij.  (Vergelijkbaar met size.)
+  - Een singleton heeft rang 0.
+  - Als twee verzamelingen van ongelijke rang worden samengevoegd
+    komt de kleinste onder de grootste te hangen, en de rangen blijven
+    gelijk.
+  - Als verzamelingen van gelijke rang worden samengevoegd krijgt de
+    combinatie een rang die 1 hoger is.
+
+Make(x):  rep[x] <-- x ; rang[x] <-- 0.
+
+Find(x):  t <-- x;
+	  while t /= rep[t] do t <-- rep[t]
+	  return t
+ 
+Union(x,y) : s <-- Find(x) ; t <-- Find(y)
+             if rang[t] > rang[s] then s,t <-- t,s
+	     if rang[s] = rang[t] then rang[s] <--rang[s]+1
+	     rep[t] <-- s
+
+
+Stelling: Elke operatie kost hoogstens O(lgn).
+BEWIJS: Een eerste cruciale eigenschap is dat de deelboom van een
+knoop met rang k  minstens 2^k individuen heeft.  Initieel klopt dit
+want een singleton heeft rang 0, en bij samenvoegen komt het ook uit
+want je krijgt rang k+1 alleen als je twee van rang k, dus minstens
+tweemaal 2^k, samenvoegt.
+Dit bewijst dat rangen nooit hoger dan lgn worden.
+Verder heeft de rep van x altijd een hogere rang dan x, hetgeen (met
+de grens op de rang) bewijst dat elke find hoogstens lgn pointers
+afloopt. []
+
+
+TWEEDE REGEL: PADCOMPRESSIE.
+De structuur van de boom is eigenlijk nauwelijks van belang: alleen het
+eindpunt van een pad naar boven is van belang voor de antwoorden!
+Als je een find doet kom je een aantal knopen tegen waarvan je
+uiteindelijk ook de representant vindt (het eindantwoord).  De diepte
+van deze knopen, en dus de tijd van latere zoekacties, wordt verkleind
+als we deze knopen een tweede maal langslopen en alle rep pointers
+verzetten naar de representant van de verzameling!  Dus bv zo:
+
+Find(x):  t <-- x;
+	  while t /= rep[t] do t <-- rep[t]
+	   > Ga nu de padcompressie doen:
+	     u <-- x ;
+	     while u /= t do rep[u],u <-- t,rep[u]
+	  return t
+
+Ook padcompressie geeft, in isolatie, een heel aardige verbetering van
+de looptijd; de gemiddelde looptijd van finds wordt beter naarmate er
+meer plaatsvinden, immers elke find die meer dan 1 pointer moet
+aflopen versnelt daaropvolgende finds.  Bedenk wel, dat padcompressie
+automatisch ook in Unions plaatsvindt, omdat deze van Find gebruik
+maakt.
+
+Wij verkrijgen de snelst bekende implementatie van de Union-Find ADS
+als we de beide regels invoeren: dus zowel union-by-rank en
+padcompressie.  Het boek geeft een complete implementatie waarin de
+find recursief is en de pointer naar de vader in de boom gewoon p
+heet:
+
+Make(x):   p[x] <-- x  ;  rank[x] <-- 0
+
+Find(x):   if x /= p[x] then p[x] <-- Find( p[x] )
+           return p[x]
+
+Union(x,y):Link(Find(x), Find(y) )
+
+met Link(x,y):  if rank[x] > rank[y]
+                then p[y] <-- x
+                else p[x] <-- y
+                     if rank[x] = rank[y]
+                     then rank[y] <-- rank[y]+1
+
+Deze implementatie is echt enorm snel:
+STELLING: Een reeks van m operaties kost niet meer dan
+	O( m. alpha(m,n) ) tijd.
+
+alpha is de uitzonderlijk langzaam groeiende INVERSE ACKERMANN
+functie, die voor alle practische waarden constant is.
+
+
+4. Amortisering
+---------------
+
+Korte introductie:  Hoeveel zakgeld geef je een kabouter?
+(Dit is een mythisch wezen met een antropomorf voorkomen maar subhumane
+proporties.)
+Onder het motto: je mag sparen maar niet lenen.
+
+Je hoeft niet elke dag evenveel uit te geven, dus je zou denken dat een
+kabouter genoeg heeft als zakgeld aan zijn gemiddelde uitgaven.  Kijk
+eens naar deze twee kabouters die allebei eens per vijf dagen een
+flinke uitspatting maken:
+  Kabouter1   75   75   75   75  200   75   75   75   75  200
+  Kabouter2  200   75   75   75   75  200   75   75   75   75
+Het lijkt alsof beide kabouters gemiddeld 100 uitgeven, toch heeft de
+eerste aan 100 euro zakgeld genoeg en heeft de tweede 200 nodig.
+Wat we verder gaan doen is het uitrekenen van gemiddelden, maar dan
+zo dat je een overschot alleen "naar achteren" mag uitmiddelen en niet
+"naar voren".
+Waarom doen wij dit?  Kabouters zijn irritante wezentjes van subhumane
+morele proporties en ze zijn slecht in terugbetalen.  Ze hebben
+antropomorfe eigenschappen zoals sterfelijkheid, en een kabouter kan
+makkelijk 's nachts doodgaan.
+
+Na deze sprookjesachtige intro: Gemiddelde complexiteit in 3 varianten.
+Meestal kijken we voor een algoritme naar de Worst Case: voordeel is
+dat de WC grens altijd geldt, dwz je algoritme is altijd, zeker, op
+elke input binnen die tijd klaar.  Maar het geeft soms een wat on-
+flatteus beeld en dan wil je een "gemiddelde" kunnen uitdrukken.
+
+Average Case:  Een algoritme is goed op sommige INPUTs en slecht op
+   andere.  Bereken het gemiddelde over alle invoeren.
+Expected Case:  Je algoritme randomiseert, en afhankelijk van hoe de
+   random trekkingen uitvallen werkt het goed of minder goed.  Je
+   berekent het gemiddelde over alle trekkingen.
+In beide gevallen middel je dus uit over verschillende executies: een
+feitelijke executie kan slechter uitvallen dan het gemiddelde.
+Amortisering:  Kijk naar snelle en minder snelle operaties BINNEN EEN
+   EXECUTIE en neem daarover het gemiddelde.
+
+De geamortiseerde complexiteit van een reeks operaties is de gemiddelde
+tijd van elke operatie binnen die reeks.  Een enkele executie van een
+algoritme kan dus nooit slechter uitvallen dan wordt aangegeven door de
+geamortiseerde complexiteit.
+
+We kijken hierbij wel naar de slechtst mogelijke reeks, dwz tussen de
+verschillende mogelijke reeksen berekenen we het hoogste gemiddelde.
+En daarom mag een kabouter niet lenen!  De kabouter die met 200 75 ..
+begint, heeft namelijk een BEGINREEKS (gerekend vanaf de eerste dag)
+van "200".  Het gemiddelde, genomen over die reeks van 1 stap is 200
+voor die kabouter.  Zijn kleine vriend kabouter 1 heeft beginreeksen
+"75", "75 75" etc, en niet alleen de hele reeks, maar ook alle begin-
+stukken ervan hebben een gemiddelde <= 100.
+
+We kunnen dus de geamortiseerde kosten zo omschrijven:
+   Een operatie heeft geamortiseerde prijs c,
+   als ELKE reeks van m van deze operaties ten hoogste m.c kost.
+De reeksen waarover we spreken, moeten uitgaan van de beginsituatie.
+Je kunt met geamortiseerde kosten dus NOOIT voor de verrassing komen 
+te staan dat de executie van je algoritme als geheel opeens meer kost.
+
+
+5. Drie rekenmethoden voor Amortiseren
+--------------------------------------
+
+Het boek geeft drie manieren om geamortiseerde kosten te bewijzen:
+Methode 1: De Verzamelmethode.
+Methode 2: De Kredietmethode.
+Methode 3: De Potentiaalmethode.
+en je kijgt er van mij nog eentje bij waarmee we straks de Union-Find
+structuur te lijf gaan:
+Methode 4: De omslagmethode.
+
+Een voorbeeld voor de drie boek-methoden: de binaire counter.
+Een getal wordt gerepresenteerd als een rij van k bits A[0] - A[k-1]
+die binair natuurlijk voorstellen het getal SOM i A[i].2^i.  De
+start-waarde van de counter is 0 (0,0,0,..,0).
+We hebben een operatie: increment, die de waarde van het getal met 1
+verhoogt.  Je doet dat door alle staart-enen op nul te zetten en de
+laatste 0 op 1:
+
+  Inc:  i = 0
+	while ( i<k && A[i]==1)
+	   { A[i] = 0 ;  i = i+1 }
+	if (i<k) { A[i] <-- 1 }
+
+De prijs van de increment is het aantal elementaire bit-veranderingen.
+Voor elke j <= k is het mogelijk dat de Increment j bits moet
+veranderen; immers de achterste 0 kan op positie A[j] staan.  Er zijn
+dus operaties die 1, 2, .. k bits omkeren en die wisselen elkaar af.
+
+1. De Verzamel-methode (aggregate method)
+
+De verzamelmethode werkt erg rechtstreeks, namelijk door een reeks van
+aanroepen (vanaf de beginsituatie) te beschouwen.
+De hogere bits worden maar zelden veranderd, en omdat de counter bij 0 
+begint, leven de hogere bits een beetje als onze zuinge kabouter 1.
+
+Bit nr i wordt eens in de 2^i keer veranderd, maar de eerste 2^i-1 incs
+niet.  In een reeks van n operaties gebeurt het floor(n/2^i) keer.  Zo
+is het totale aantal omkeringen in (de eerste) n increments:
+  Cn
+     =  { Definitie van prijs en kosten }
+  SOM j=1 tot n     aantal flips in increment nr j
+     =  { Verwissel sommatie }
+  SOM i=0 tot k-1   aantal flips van bit i
+     =  { zie boven}
+  SOM i=0 tot k-1   floor(n/2^i)
+     <  { eigenschap floor, factor n eruit, uitbreiden somdomein }
+  n . SOM i=0 to infty  1/2^i
+     =  { Meetkundige reeks }
+  2n
+
+Omdat een reeks van n increments minder dan 2n bitflips kost, kunnen we
+zeggen dat de geamortiseerde kosten van de inc, 2 zijn.
+Omdat ik heb gekeken naar een complete reeks, lijkt het alsof ik stiekem
+ook het verschuiven van kosten naar achteren (lenen ipv sparen) heb
+toegestaan.  Echter, de berekening geldt voor elke n, dus impliciet heb
+ik het slechtste geval te pakken over lengtes van de reeks.
+
+Bij een datstructuur heb je meestal verschillende operaties en dan kan
+het leuk zijn, ook per operatie de kosten te differentieren.  De verza-
+melmethode is dan niet zo geschikt.
+
+2. De kredietmethode
+Bij de tweede methode maken we het sparen expliciet door een soort wet
+aan te nemen die bepaalt dat er op zekere plaatsen in de datastructuur
+moet worden gespaard voor latere operaties.  Een ding is heel belangrijk
+om te beseffen: deze krediet-registratie is GEEN onderdeel van je
+programma!  Het is puur een hersenspinsel om iets uit te rekenen over
+je programma.
+
+Nu ga ik met de kredietmethode een bovengrens bewijzen op het aantal
+bits dat we moeten omkeren in een reeks van n increments.
+In deze methode rekenen we elk type operatie een bepaald bedrag toe, dat
+kan verschillen van de daadwerkelijke kosten van het uitvoeren ervan.
+Zo sparen de goedkope uitvoeringen van de operatie voor de dure.
+Het toegerekende bedrag is voor een bepaalde operatie steeds
+hetzelfde, maar heb je verschillende operaties (bv Insert en Delete)
+dan mag het voor verschillende operaties anders zijn.
+Blijft er wat over (dus: je rekent meer dan de kosten) dan wordt het
+overschot opgespaard in de datastructuur door het bij bepaalde
+objecten neer te leggen.  Een LATERE dure aanroep kan dan toch voor
+het toegerekende bedrag worden uitgevoerd door wat van het gespaarde
+geld te gebruiken.
+
+Voor elke j <= k is het mogelijk dat de Increment j bits moet
+veranderen; immers de achterste 0 kan op positie A[j] staan.  Er zijn
+dus operaties die 1, 2, .. k bits omkeren en die wisselen elkaar af.
+
+Stelling: Uitgaande van de initiele toestand van de counter wordt in
+	een reeks van n aanroepen van increment hoogstens 2.n malen
+	een bit omgeklapt.
+Bewijs: Om dit te bewijzen doen we net alsof we voor het omklappen van
+de bits aan het geheugen moeten betalen, namelijk 1 Flippo voor elke
+bit-update.  Door voor elke aanroep van increment 2 Flippo in rekening
+te brengen zullen wij steeds genoeg gespaard hebben om voor elke
+aanroep de benodigde bitoperaties te bekostigen!!
+We zorgen ervoor dat er ten allen tijde BIJ ELKE 1 IN DE BIT-RIJ
+een Flippo klaar ligt om te kunnen betalen om hem op 0 te zetten.  Dat
+er initieel nog niets gespaard is geeft niet want alles staat op 0!
+
+INV: Na elke operatie ligt bij elke 1 in de datastructuur een flippo.
+
+Elke aanroep zet (hoogstens) een bit van 0 op 1; gebruik een Flippo 
+om die omslag te betalen en leg de andere bij dat element van A
+neer.  Het op nul zetten van de andere bits betalen we van de Flippos
+die bij de enen liggen (eerder opgespaard).
+In een reeks van n aanroepen moeten 2n Flippo aan de initieel arme
+structuur worden toegevoegd, en elke bit-omslag wordt toch vanuit de
+structuur betaald.  Hieruit volgt dat er hoogstens 2n bit-omslagen
+zijn in die reeks.  []
+
+Misschien lijkt het gespeel met geld een beetje kunstmatig in dit
+verband.  Maar met Flippo-rekening kun je deze vragen vrij gemakkelijk
+beantwoorden.
+ - Wat is het aantal bitoperaties in een reeks van n increments
+   startend in een counter met waarde 7 (ipv nul)?
+ - Vind het exacte aantal bit-operaties in een reeks van n1
+   increments startend in een counter met waarde n2.
+
+3. De potentiaal-methode
+De potentiaalmethode is op twee manieren een soort uitbreiding van de
+kredietmethode.
+1. Het is niet altijd vanzelfsprekend hoe je het gespaarde krediet
+   moet koppelen aan objecten in je datastructuur.  De potentiaal-
+   methode beschrijft globaal hoeveel krediet er in de datastructuur
+   is opgeslagen, zonder die aan elementen van de structuur te koppelen.
+2. Tot dusverre lijkt het een beetje alsof de geamortiseerde kosten een
+   bestaand begrip zijn, dat we alleen nog maar hoeven te bepalen.  In
+   feite hebben wij een KEUZE om de kosten al dan niet over bepaalde
+   operaties te middelen.  In zekere zin kun je de gewenste kosten van 
+   verschillende operaties tegen elkaar afwegen, en die keuze voor de
+   uitkomst van de berekening wordt zichtbaar in het idee van een zelf
+   te bepalen potentiaalfunctie.
+
+De centrale spaarpot wordt uitgedrukt in termen van een potentiaalfunctie 
+   PHI: datastructuur --> RR.
+Let erop dat deze PHI in principe weer GEEN bijgehouden waarde is, maar
+een gedefinieerde functie.
+Het compenseren van dure met goedkope aanroepen gaat nu door de
+werkelijke kosten van de aanroep (gedeeltelijk) te verhalen op de
+aanroep zelf, en gedeeltelijk op de potentiaal.
+Stel een aanroep KOST c en VERANDERT de DS van Doud in Dnieuw.  Dan
+onderscheiden we
+ 1. De werkelijke kosten van de aanroep: c
+ 2. De geamortiseerde kosten MET BETREKKING TOT PHI:
+                   ^c  =  c +  (PHI(Dnieuw) - PHI(Doud))
+    Let even op: we relativeren de geamortiseerde kosten dus aan de
+    potentiaalfunctie.
+
+Natuurlijk is er een relatie tussen de geamortiseerde kosten en de
+kosten van een reeks operaties; dit lemma maakt van de
+potentiaalmethode een echte theorie.
+
+Lemma:  Stel een reeks updates u1...un met geamortiseerde kosten
+	^c1..^cn verandert de DS van D0 naar Dn; dus zo:
+
+	       u1       u2             ui            un
+	   D0 ----> D1 ----> ... Di-1 ----> Di .... ----> Dn
+
+	De werkelijke kosten van deze reeks bedragen
+		(SOM i : ^ci) + ( PHI(D0) - PHI(Dn) )
+
+Je kunt zeggen: de kosten van de reeks bedragen datgene wat we hebben
+doorberekend (SOM) plus wat we op de spaarpot hebben ingeteerd
+(PHI0-PHIn).
+
+BEWIJS: Uit	^c  =  c +  (PHI(Dnieuw) - PHI(Doud))   volgt dat
+	c = ^c  +  PHI(Doud) - PHI(Dnieuw)
+en dus is
+	SOM i=1 TOT n	c
+    =	SOM i=1 TOT n	( ^ci  +  PHI(D_i-1) - PHI (Di) )
+    =  (SOM i=1 TOT n   ^ci) + ( PHI(Do) - PHI(Dn) )   []
+
+Merk op, dat in dit hele lemma PHI nog een volstrekt willekeurige
+functie is!!  Er zijn geen eigenschappen van PHI gebruikt.  Over het
+algemeen ga je PHI zo kiezen, dat PHI(Do) - PHI(Dn) altijd negatief is,
+bv doordat PHI(D0) = 0 en PHI non-negatief.  Het lemma zegt dan, dat de
+werkelijke kosten van een reeks vanaf de beginsituatie, begrensd is door
+de geamortiseerde kosten van die reeks.
+
+Deze potentiaalmethode is een generalisatie van de kredietmethode,
+immers we vervangen de per object gespaarde Flippo door een centrale
+spaarpot!  Inderdaad kun je berekeningen met de kredietmethode
+op een soort standaardmanier omzetten in de potentiaalmethode door
+de functie PHI te definieren als: de som van al je kredieten in je
+kredietbewijs.  Neem bv. de binaire counter:
+
+Definieer PHI(counter) == Het aantal bits dat op 1 staat.
+
+Stelling: De geamortiseerde prijs van een increment mbt PHI is 2.
+
+BEWIJS: Stel increment verandert de DS van Doud naar Dnieuw door t
+bits te verzetten; de werkelijke prijs is dan t.  Er zijn t-1 bits op
+0 gezet en een bit is naar 1 gezet, er zijn dus t-2 meer 1-bits in
+Doud dan in Dnieuw.  Dus
+   ^c	=  c + (PHI(Dnieuw) - PHI(Doud))
+	=  t + (-  (t-2))  = 2.   []
+
+Dit bewijst dus opnieuw een bovengrens op de tijd van een reeks
+operaties.  Meestal (en zeker in de kredietmethode!!) richt je de
+potentiaal zo in dat je bij 0 begint en altijd positief blijft, en
+dan kun je de kosten van een reeks dus weer afschatten als de som
+van geamortiseerde kosten.
+Wat je kunt doen met potentiaal maar niet met krediet:
+ - een functie die ook negatieve waarden kan aannemen, of al met
+   een flink positieve waarde beginnen.
+ - een waardetoekenning die je niet zo makkelijk kunt splitsen over
+   de objecten.  Bijvoorbeeld in de hashtabel is dat zo (zie boek).
+
+
+6. De Omslag-Methode
+--------------------
+
+Als voorbereiding op de aanpag van de Union-Find structuur presenteer ik
+hier een vierde methode, in feite een nadere uitwerking van de verzamel-
+methode omdat je kijkt naar alle operaties in een reeks: De Omslag-Methode.
+
+Bij de Omslag-methode worden de kosten van een operatie verdeeld over
+de objecten die er aan meedoen; hopelijk doen aan duurdere operaties ook
+meer objecten mee.  Dan kijken we naar een reeks en gaan iets slims zeggen
+over het aantal operaties waarbij een object betrokken was.
+Om het omslaan wat te visualiseren, doen we alsof er een soort potje
+bestaat, waar objecten geld in moeten gooien als ze bij een operatie
+betrokken zijn.  Aan het eind legen we dan de spaarpot en kijken hoeveel
+erin zit.  Dit is dus net andersom als bij de kredietmethode!!!!  Daar
+onttrek je geld aan potten bij dure operaties, hier stop je geld in potten
+bij dure operaties, om de kosten inzichtelijk te maken.
+
+Voorbeeld 3: De Megafusie.
+Je wilt een bedrijf van n werknemers maken door n eenmansbedrijfjes
+door n-1 fusies samen te voegen.  Hoe die verlopen weet je niet precies
+en de kosten van de fusie zijn het overschilderen van alle logo's in een
+van de bedrijven (plus het hertrainen van de secretaresses).
+
+Bewering 1:  Er zijn n-1 fusies.
+Bewijs: Je begint met n bedrijven, elke fusie doet er 1 verdwijnen,
+en je eindigt met 1.  []
+
+Bewering 2:  De WC kosten van de fusie zijn n/2.
+Bewijs: kan voorkomen als je aan het eind twee even grote bedrijven
+hebt.  []
+
+Als je bij een fusie willekeurig een van de bedrijven overschildert in
+de kleur van de andere dan kunnen de kosten kwadratisch zijn, nl
+  1 + 2 + ... + (n-1)   =  n(n-1)/2.
+Slimmer is het, bij een fusie steeds het kleinste bedrijf over te
+schilderen met de kleur van het grotere (en de secretaresses met de
+haarkleur van het grotere).  Om te bewijzen dat de kosten in totaal
+niet groter dan nlgn worden, bepalen we dat een persoon die overgeverfd
+wordt een flippo moet deponeren in, jawel, de VERF-pot (schrijnend
+slechte woordgrap, maar wel erg duidelijk!).
+
+Fusie: Neem twee bedrijven,
+       Schilder het kleinste over in de kleur van het grotere,
+       Elke overgeschilderde persoon doet een flippo in de VERF-pot.
+
+Bewering: Aan het eind bevat de VERF-pot hoogstens n.lgn Flippo's.
+Bewijs: Door de "gewogen-schilder-regel" is gegarandeerd dat iemand
+   die betaalt, deel gaat uitmaken van een minstens tweemaal zo groot
+   bedrijf!  Iedereen begint in een eenmansbedrijf, en maakt dus na het
+   betalen van i flippos deel uit van een bedrijf met grootte minstens
+   2^i.  Geen bedrijven groter dan n zijn mogelijk, dus niemand betaalt
+   vaker dan lgn keer.  Daarmee is de totale storting in de VERFpot
+   begrensd door 
+      n (aantal werknemers) . lgn (max betaling per persoon). []
+
+Je ziet in het voorbeeld al een beetje de contouren van Union-Find en
+de gewogen Union voorkomen, maar dat probleem is natuurlijk heel anders
+omdat wij de Union feitelijk uitvoeren met constante kosten.
+
+
+7. Analyse van de Union-Find structuur
+--------------------------------------
+
+We gaan bewijzen dat een reeks van m operaties in mlg*n tijd, dus
+geamortiseerd lg*n per operatie, wordt uitgevoerd.  Lg*n: het aantal
+keren dat je lg moet doen om iets <=1 te krijgen.  Als je eens naar
+die lg*n kijkt zien wij een groot verschil tussen de theoretische en
+de practische informatica!!
+
+THEORIE: Voor elke k is er een n zdd lg*n = k.
+BEWIJS:  Er is een getal n0 met lg* n0 = 0, namelijk 1.
+Stel er is een getal nk met lg* nk = k.  Neem dan n_{k+1} = 2^nk, dan
+is lg* n_{k+1} = lg* nk + 1, dus = k+1. []
+
+PRAKTIJK: Voor elke n is lg*n waarschijnlijk <=4 maar zeker <= 5.
+BEWIJS: In onze toepassingen is n waarschijnlijk <= 65536 en dan is de
+lg* n <= 4.
+Omdat er slechts 10^80 atomen in het heelal voorkomen is het volstrekt
+onmogelijk ooit meer dan 10^80 individuen in de datastructuur te
+hebben, dus is n <= 10^80 < 2^65536, en dus is lg*n <= 5.  []
+
+Een algoritme met lg*n tijd per operatie is dus practisch constant.
+Ben je theoretisch aangelegd en hiermee nog niet tevreden: er is
+een nog beter bewijs van hetzelfde algoritme.  In feite is de
+werking dus nog een stuk beter dan we hier voorrekenen; zie boek.
+
+Eerst even de relevante eigenschapjes van rangen op een rijtje.
+Merk op dat elke knoop eerst representant is maar dat een
+niet-representant nooit weer representant kan worden.
+
+1. Als p[x] /= x dan is rank[p[x]] > rank[x].
+Bewijs:  Zodra x ophoudt representant te zijn gaat hij wijzen naar een
+knoop met hogere rang.  p[x] kan dan door padcompressie nog worden
+verzet, maar dat is naar knopen nog hoger in de boom en die hebben dus
+nog hogere rang.
+
+2. Rank[x] begint op 0 en kan toenemen totdat x/=p[x]; 
+   daarna blijft hij gelijk.
+BEWIJS:  Als een verzameling een Union krijgt met een grotere rang dan
+houdt zijn representant op representant te zijn en met de andere
+representant gebeurt niets.  Bij een Union van gelijke rangen houdt
+een representant op representant te zijn (waarna zijn rang niet meer
+verandert) en van de andere neemt de rang toe. []
+
+3. Voor elke x kan rank[p[x]] slechts toe-, maar niet afnemen.
+BEWIJS: In principe kan rank[p[x]] op twee manieren veranderen:
+ a. de rang van de knoop p[x] verandert;
+    we hebben al gezien dat die alleen kan toenemen.
+ b. de p van x gaat naar een andere knoop wijzen (padcompressie);
+    we hebben gezien dat die dan hoger in de boom zit, dus gaat p
+    wijzen naar een knoop met hogere rang. []
+
+4. Als x een wortel is (representant dus) bevat zijn verzameling
+   minstens 2^rank[x] knopen.
+
+NB. Door padcompressie is het niet voor alle knopen zo dat x minstens
+2^rank[x] knopen "onder zich" heeft.
+
+BEWIJS.  Met inductie naar de rang.
+Een wortel van rang 0 bevat zichzelf, dus minstens een knoop.
+Een wortel van rang k+1 is gevormd bij de union van twee verzamelingen
+met rang k, dus minstens 2^k knopen erin elk.
+AL DEZE 2^(k+1) KNOPEN ZITTEN NOG ONDER DE WORTEL.  (Dit ondanks 
+padcompressie; er krijgen wel knopen een andere vader maar natuurlijk 
+altijd zo, dat ze wel onder dezelfde wortel blijven zitten.)  []
+
+Er volgt natuurlijk dat er hoogstens n/2^r wortels van rang r kunnen
+zijn, maar ook het totale aantal knopen van die rang is begrensd.
+
+5. Er zijn hoogstens n/2^r knopen die ooit rang r krijgen.
+BEWIJS.  Als er een knoop van rang r wordt gevormd (die is dan wortel)
+kleuren we alle knopen in die boom rood.  Elke knoop wordt slechts
+eenmaal gekleurd! Immers als de wortel van de boom verandert, heeft
+deze een hogere rang.  Ergo er wordt hoogstens n/2^r keer een knoop
+van rang r gevormd.  []
+
+Uit dit punt komt de grote boekhoudtruuk voort die we gaan gebruiken.
+Truuk: Ik kan een knoop van rang r, kosten 2^r laten betalen en dat
+lijkt veel, maar geeft slechts een totaal van n.
+
+6. De rang is door floor lgn begrensd.
+BEWIJS. Voor een getal r groter dan lgn zijn er hoogstens n/2^r, dus
+minder dan 1, knopen van die rang. []
+
+
+Beschouw nu een reeks van m Make, Find, en Link operaties; de laatste
+op wortels natuurlijk.  De Make en Link kosten O(1) tijd zodat we ons
+slechts over de begrenzing van de Find kosten druk hoeven te maken.  We
+zullen met de Omslag-methode de kosten van die Find omslaan over de reeks
+knopen op het bezochte pad.
+
+Noem de reeks knopen die je bezoekt in een find
+	x0, x1, x2, .....  xi, x{i+1},       x{l-1}, xl.
+waarbij je natuurlijk een Find(x0) deed en uitkomt in de WORTEL xl.
+We gaan nu voor elke knoop een Euro sparen, hier dus l+1 stuks, en
+door ze uiterst subtiel over enkele potjes te verdelen, kunnen we een
+grens bewijzen op het uiteindelijk totaal gespaarde bedrag.
+
+Wij verdelen de voorkomende rangen in BLOKKEN, waarbij rang r terecht
+komt in BLOK nummer lg*r:
+Dus BLOK 0 heeft rangen 0,1
+         1              2
+         2              3 en 4
+         3              5 t/m 16
+         4              17 t/m 65536
+Hogere blokken komen in theorie wel, maar in de praktijk niet voor.  Omdat
+de hoogste RANG lgn is, is het hoogste BLOK lg*(lgn) = lg*n - 1.
+
+Bekijk nu de rangen van de knopen op het gevolgde pad; uit 1 weten we
+dat dit een OPLOPENDE rij is:
+	r0, r1, r2, .....  ri, r{i+1},       r{l-1}, rl.
+en je kunt hem verdelen in stukken van rangen in gelijk blok:
+        ......|     |         |         |
+
+De Euro van knoop xi wordt als volgt gespaard.  We hebben lg*n PAD-potten
+en een BLOK-pot.  We gebruiken de BLOK-pot als xi een VEEL hogere rang als
+vader krijgt, of juist als zijn p niet verandert:
+Als - x{i+1} in een ANDER blok zit OF
+    - x{i+1} is de wortel          OF
+    - xi is zelf de wortel
+dan gaat xi zijn euro in de BLOK-pot.
+Dan hebben we nog de Euro's van de xi waarvoor ri en r{i+1} in het
+zelfde blok zitten.  Die gaan in een PAD-pot, en wel PAD_pot(j) als het in
+blok j zit.
+
+Hoeveel Euro's zitten er na m operaties in de potten samen?
+
+De BLOK-pot: Er zijn hoogstens lg*n blokken, en bij elke Find gaan er
+hoogstens twee Euros voor het laatste blok in de pot en hoogstens een
+voor elk ander blok.  Dus de BLOK-pot bevat hoogstens m.(lg*n+1)
+Euros.
+
+Elke knoop die een Euro in een PAD pot doet krijgt een andere parent
+door de padcompressie, en die nieuwe parent heeft een grotere rang dan
+de vorige.  Zodra x een zo grote parent-rang krijgt dat deze in een
+ander blok zit, doet x nooit meer mee aan de PAD-pot.  Heeft x ooit
+iets in een PAD-pot gegooid, dan is hij geen wortel meer, zijn rang
+verandert nooit meer, en hij komt zelf dus nooit meer in een ander
+blok.
+
+Knoop x kan dus hoogstens zovaak aan PAD-pot(j) bijdragen als hij een
+parent van hogere rang IN BLOK j kan krijgen.
+Schrijf B(0) = 1, B(j+1) = 2^B(j), dan is B(j) de bovengrens van Blok j.
+Blok j bestaat uit rangen van B(j-1)+1 tot B(j), en dus kan knoop x
+dat minder dan B(j) keren doen: hij heeft dan zelf de laagste rang in
+het blok, B(j-1)+1, en krijgt parents van oplopende rangen B(j-1)+2,
+B(j-1)+3, etc.
+Een knoop betaalt hoogstens B(j) aan PAD-pot(j).
+
+Hoeveel knopen, N(j), gooien ooit iets in PAD-pot(j)?  
+Blok 0 bevat 0 en 1, en n knopen bereiken rang 0, en n/2 kunnen er rang
+1 bereiken, zo is N(0) <= 3/2 n.  In dit blok kun je hoogstens 1 keer
+een hogere parent-rang krijgen binnen het blok.
+
+Het aantal knopen dat ooit een rang in blok j>0 krijgt is begrensd
+door over de rangen in het blok te sommeren hoeveel knopen die rang
+bereiken:
+  N(j) <=  SOM r=B(j-1)+1 TOT B(j)  n/2^r
+        <  n/2^B(j-1) . SOM r=1 TOT INFTY 1/2^r
+        =  n/2^B(j-1) = n/B(j)   !!
+
+En zo zien we dat PAD-pot(0) ten hoogste 3/2n Euro's bevat, en de
+PAD-pot(j) hoogstens n/B(j) . B(j) = n Euros.
+
+Alle potten bij elkaar bevatten dus minder dan
+   BLOK   +   PAD(0)   +   SOM j>0  PAD(j)
+=  m.(lg*n+1) + 3/2.n  +  (lg*n -1).n
+=  O(m.lg*n)  omdat m natuurlijk >= n is.
+
+
+Stelling:  Een reeks van m Make/Union/Find instructies, waaronder n
+	Make instructies, wordt in O(m.lg*n) tijd  uitgevoerd.
+BEWIJS: Je kunt elke Union uitschrijven in twee Finds en een Link en
+de vorige berekening gebruiken.  []
+
+
+8. Conclusies
+-------------
+
+We hebben een mooie snelle datastructuur gezien en een methodiek om
+kosten van operaties uit te middelen over een reeks.
+1. De geamortiseerde kosten van een operatie geven een bovengrens op
+   elke reeks van die operaties.
+2. Methoden voor het berekenen: Verzamel, Krediet, Potentiaal, Omslag.
+3. Soms is het niet helemaal zinvol om kosten uit te middelen, bv bij
+   interactief gebruikte datastructuren.  Reactietijd van individuele
+   operaties is van belang.  ANEKDOTE: Tafeltennismachine.
+4.    Uitmiddelen over                  Heet
+     Operaties in een reeks           Amortiseren
+     Verschillende invoeren           Gemiddelde kosten
+     Random keuzes                    Verwachte kosten
+5. Een Union-Find ADS kun je maken met een boom-representatie, waarbij
+   er alleen pointers zijn naar boven.
+6. Je kunt hem versnellen met union-by-rank en pad-compressie en verkrijgt
+   dan een zo goed als lineaire tijd voor een reeks operaties.
+7. Als je wel union-by-rank gebruikt maar geen pad-compressie, kun je de
+   UF-structuur redelijk makkelijk uitbreiden met een Split, die de
+   laatste Union ongedaan maakt.

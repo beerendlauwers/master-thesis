@@ -1,0 +1,65 @@
+
+Opgaven bij Algoritmiek: Asserties
+
+Opgave 1: Het gat
+Gegeven is een gesorteerd array A[1..n] van integers,
+waarbij gegeven is dat A[1]=1 en A[n]>n.
+Bedenk een algoritme dat een getal tussen 1 en A[n]
+bepaalt, dat niet voorkomt in A.
+Dit kan in O(lg n) tijd!
+
+Opgave 2: De dubbele
+Gegeven is een gesorteerd array A[1..n] van integers,
+waarbij gegeven is dat A[1]=1 en A[n]<n.
+Bedenk een algoritme dat een getal tussen 1 en A[n]
+(inclusief) bepaalt, dat dubbel voorkomt in A.
+Dit kan in O(lg n) tijd!
+
+Opgave 3: Verjaardagstaart
+Voor je verjaardag heb je K taarten gebakken die qua smaak 
+gelijk zijn, maar afmetingen s1 t/m sK hebben.  
+Dan komen op je feest L vrienden.  Je wilt ze een evengroot
+stuk taart geven, zo groot mogelijk, waarbij elke portie
+uit een enkele taart gesneden is.
+Je zoekt dus het grootste getal M, zo dat je de K taarten 
+kunt snijden in enkele stukken van grootte M plus wat afval,
+en dan L stukken krijgt.
+Bedenk een algoritme om M te benaderen met 0.1% nauwkeurigheid.
+
+Opgave 4: Randomized Binary Search
+We gaan binair zoeken, maar in        i = 0 ; j=n+1 ;
+plaats van h steeds midden tussen     while (j-1 > 1)
+i en j te kiezen, nemen we h daar       { h = Rand(i+1,j-1)
+random tussen.	                          if (A[h]<x) i=h
+Bewijs dat het VERWACHTE aantal               else j=h }
+ronden begrensd is door 4lg(n)        if A[j]==x ...
+
+Opgave 5: Split
+Gegeven is een ongesorteerd array-segment A[p..q]  (waar p<=q)
+en een pivot P die staat op positie r, p <= r <= q.
+Split(p,q,r) verplaatst elementen in A, en levert op een
+s en t, zo dat na afloop geldt:
+  elementen A[ p ] t/m A[s] zijn KLEINER dan P
+  elementen A[s+1] t/m A[t] zijn GELIJK  aan P
+  elementen A[t+1] t/m A[r] zijn GROTER  dan P.
+Geef een invariant die A beschrijft als bestaande uit een
+"kleiner", "gelijk", "onbekend" en "groter" deel.
+Geef de initialisatie die de invariant waar maakt.
+Geef een loop body die de invariant bewaart en het onbekende
+deel verkleint.
+
+Opgave 6: Slaven
+Op een rij staan n personen, elk Tsjechen, Polen of Slowaken.
+Je weet alleen dat persoon 1 een Tsjech is en persoon n een 
+Slowaak.
+Hoeveel personen moet je hun nationaliteit vragen om twee
+buren te lokaliseren uit verschillende landen?  Geef je
+invariant.
+
+Opgave 7: Assertioneel QuickSelect
+Beschrijf de werking van Split(p,q,piv) in termen van
+asserties die gelden voor en na uitvoering.  Gebruik
+het predicaat Com(i,j) met betekenis:
+   Segment A[i..j] bevat de elementen met rangen i t/m j.
+Schrijf QuickSelect( , , ) op basis van de invariant
+  Com(p,q) & p <= k <= q

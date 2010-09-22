@@ -1,0 +1,46 @@
+
+Opgaven bij Algoritmiek: Dynamisch Programmeren 2
+
+Opgave 1: Integer knapsack.
+Bedenk een algoritme voor de Integer-Knapsack, waarbij je elk
+van de beschikbare objecten meerdere malen kunt kiezen.
+Input: M, p1 tm pn, w1 tm wn.
+Gevraagd een vector x1 tm xn van integers, >= 0.
+Waarbij SOM xi.wi <= M
+     en SOM xi.pi zo groot mogelijk.
+
+Opgave 2: Fractionele knapsack.
+Bedenk een algoritme voor de Fractionele Knapsack, waarbij je elk
+van de beschikbare objecten kunt doorsnijden en deels meenemen.
+Input: M, p1 tm pn, w1 tm wn.
+Gevraagd een vector x1 tm xn van reele getallen in [0..1].
+Waarbij SOM xi.wi <= M
+     en SOM xi.pi zo groot mogelijk.
+
+Opgave 3: Disk controller.
+Waarom is de afstands-matrix van het TSP probleem asymmetrisch 
+als je TSP gebruikt om een verzameling pagina's van een disk te
+halen?
+
+Opgave 4: Beladingen tellen.
+Een smokkelaar heeft een rugzak van omvang M, keuze uit objecten
+1 tm n van gewicht w1 tm wn, en wil weten op hoeveel manieren
+hij zijn rugzak kan beladen.  Laat zien hoe je het AANTAL
+deelverzamelingen met gewicht <= M kunt bepalen in O(n.M) tijd.
+
+Opgave 5: Totale Extra Leeropbrengst.
+Een informaticadocent moet n algoritmen A1..An uitleggen aan zijn
+studenten.  Hij heeft ontdekt dat er sprake kan zijn van een Extra
+Leeropbrengst van een onderwerp Aj als onderwerp Ai eerst is
+behandeld (door didactische synergie).  Op de manier waarop deze
+leeropbrengst wordt gequantificeerd gaan we hier niet in, maar we
+volstaan te stellen dat er aan het gehele vak een Extra 
+Leeropbrengst Mij wordt TOEGEVOEGD als Ai voor Aj wordt behandeld.
+(a) Geef een wiskundige formule die de Totale Extra Leeropbrengst
+    (TEL) weergeeft wanneer de algoritmen in volgorde i1...in
+    worden behandeld.
+(b) Geef een DP algoritme dat de volgorde met hoogste TEL
+    bepaalt.  Wat is de complexiteit van je algoritme (tijd en
+    geheugen).
+(c) Kun je je algoritme verbeteren indien de meeropbrengst
+    SYMMETRISCH is, dwz., Mij = Mji?

@@ -1,0 +1,719 @@
+Algoritmiek, college 3
+Dynamisch Programmeren 2.
+
+Inhoud van vandaag:
+(05 min) 1. Korte reprise van Dynamisch Programmeren
+(10 min) 2. Voorbeeld: Longest Common Subsequence
+(25 min) 3. Succesvol DP kan toch duur zijn: Traveling Salesman
+
+(20 min) 4. Een grillige verzameling subproblemen: Knapsack
+(20 min) 5. Memoizatie
+(05 min) 6. Conclusie, samenvatting
+
+
+1. Dynamisch Programmeren, reprise.
+-----------------------------------
+
+Vorige keer: Van A naar B, Stoksnijden, Matrix-keten.
+Aanpak: 1 Probleem, 2 DEELVRAAG, 3 OSS, 
+        4 Recursieve karakterisering, 
+        5 OSP, 6 ORDENEN, 7 DP-algoritme.
+
+Cruciaal punt is de Optimal SubStructure.  Het gaat erom, de
+waarde van een optimale oplossing te karakteriseren, zoiets
+als BESTE(invoer) = ...
+Je redeneert daarom over hoe de beste oplossing eruitziet, wat
+verklaart waarom je bij de OSS aanneemt dat je een optimale
+oplossing Z hebt.  Abstract gesproken luidt je OSS:
+  Een optimale Z bestaat uit 
+     een topkeuze a plus 
+     een optimale oplossing Z' van een gereduceerd probleem.
+Voor een concreet probleem moet je deze uitspraak NIET
+overschrijven, maar concretiseren!!
+Het bewijs redeneert met vier oplossingen Z Z' Z" en Z"'
+ongeveer zo:
+  Bekijk Z, deze bestaat uit a en Z'.
+  De waarde van Z is dus f(a)+W(Z').
+  Z' lost een kleiner probleem op.
+  Z' is de beste strategie voor dat deel.
+  Stel namelijk dat Z" het beter doet.
+  Dus W(Z") > W(Z').
+  Dan kun je Z" ook met a combineren tot Z"'.
+  Omdat W(Z"') = f(a)+W(Z") is dat beter dan Z.
+  Tegenspraak met aangenomen optimaliteit van Z.
+Je moet er bij het uitwerken met name op letten dat
+ - elke oplossing voor het deelprobleem te combineren is met a
+ - elke oplossing voor het deelprobleem daarbij dezelfde
+   meerkosten cq opbrengst genereert.
+
+Een belangrijke observatie is die van Overlapping SubProblems:
+de recursieboom heeft VEEL knopen maar WEINIG VERSCHILLENDE.
+Hieruit komt het idee naar voren om de verzameling van alle
+gebruikte instanties te tabelleren en alles een maal uit te
+rekenen in een volgorde van "klein" naar "groot".
+
+Let ook op het probleem van het CONSTRUEREN van de oplossing.
+Hiervoor kun je in elke instantie de gemaakte KEUZE opslaan,
+of die later reconstrueren uit je tabel met WAARDEN.  Vanuit
+de top-instantie vind je uiteindelijk de gemaakte keuzen
+van achteren naar voren.  (Soort stap 8...)
+
+Om het allemaal goed te begrijpen is oefenen erg belangrijk.  
+Ik beveel bestudering van Secties 15.4 en 15.5 hartelijk aan, 
+maar qua technieken zijn die secties een herhaling van zetten
+uit 15.1 tm 15.3.
+Daarom behandel ik KORT het LCS probleem wat je vaak tegenkomt
+in de biologie voor DNA-matching.
+Twee klassiekers in optimaliseringsland zijn: TSP en Knapsack. 
+Ik behandel een aanpak van TSP omdat het aantoont dat een DP
+oplossing niet altijd heel snel is, en om het belang van de
+juiste deelvraag te onderstrepen.
+Ik behandel Knapsack om te laten zien dat je tegen problemen
+kunt lopen bij het bepalen van de verzameling deelinstanties,
+wat tot memoizatie leidt.
+
+
+2. Longest Common Subsequence.
+------------------------------
+
+In veel toepassingen is het een relevante vraag, hoe zeer twee
+strings op elkaar lijken.  Dit is bv. het geval als je muziek
+of tekst wilt koppelen aan een componist of schrijver waar je
+al stukken van hebt.  Of bij onderzoek naar evolutie of
+afstamming, waarbij je wilt kijken in hoeverre het DNA van
+een vis (COELACANTH) lijkt op dat van een vogel (PELICAN).
+Als je ervan uitgaat dat er bij biologische processen tekens
+kunnen verdwijnen of bijkomen, kun je vragen naar de langst
+mogelijke deelrij: in ons geval komt ELCAN in beide dieren
+voor zodat een COELACANTH in een PELICAN kan evolueren door
+het verdwijnen van vijf letters plus het introduceren van twee.
+
+(Als je na het matchen van E en L de volgende A van COELACANTH
+matcht met de A van PELICAN, kom je maar op een match van 4.)
+Terminologie:
+  String X is x1..xn, hier n=10
+  String Y is y1..ym, hier m=7
+  String Z, z1..zk is een SUBSEQUENCE van X als hij kan
+    worden ingebed als een stijgende rij indices i1..ik
+    zdd zj = xij.
+    De inbedding van ELCAN in X: 3,4,6,7,8
+                           in Y: 2,3,5,6,7
+                     ELAN  in X: 3,4,5,8 of 3,4,7,8.
+
+Hoe is, gegeven X en Y, een Longest Common Subsequence Z te
+berekenen?  Laten we hem eerst karakteriseren.
+
+Als X en Y dezelfde slotletter hebben, heeft Z die ook.
+Voorbeeld: COELACAN en PELICAN, een Z zonder slot-N kan hier niet!
+LEMMA 1:  Als xn = ym, 
+          dan is zk=xn
+              en z{1..k-1} een LCS van x{1..n-1} en y{1..m-1}.
+BEWIJS: Een gemeenschappelijke subsequence van COELACAN en
+PELICAN die niet op een N eindigt, kun je uitbreiden met een
+N en is dus niet optimaal!
+Dus inderdaad, de optimale is te schrijven als z{1..k-1}N.
+Maar, dat z{1..k-1}N een subsequence is van X, impliceert
+dat z{1..k-1} een substring is van x{1..n-1}.
+Dito is z{1..k-1} een substring van y{1..m-1}.
+Dus is z{1..k-1} een gemeenschappelijke subsequence van 
+x{1..n-1} en y{1..m-1}.
+Kan er een langere gemeenschappelijke subsequence Z' van
+x{1..n-1} en y{1..m-1} zijn?  Z'N is dan een subsequence van
+X en van Y, die langer is dan Z.  Tegenspraak met aanname,
+dus Z is de langste gemeenschappelijke subsequence.  []
+
+Als X en Y een verschillende slotletter hebben, kan Z niet
+een slotletter hebben die aan allebei gelijk is, dus de
+slotletter van Z verschilt van de slotletter van X of 
+van die van Y (van allebei kan natuurlijk ook).
+
+LEMMA 2: Als xn /= ym en zk /= xn,
+         dan is Z een LCS van x{1..n-1} en Y.
+Voorbeeld: COELACANTH en PELICAN, met Z = ELCAN
+BEWIJS: Z is subsequence van X en Y, maar zk /= xn.  Voor de
+inbedding ik van Z in X geldt dus ik /= n, dus <n, wat
+aantoont dat Z een subsequence van x{1..n-1} is.  Z is (nog 
+steeds) een subsequence van Y, dus een common sub van X{1..n-1}
+en Y.  Zou er een langere common sub Z' van x{1..n-1} en Y
+kunnen zijn?  Nee, want die is ook common sub van X en Y en
+we weten dat Z een langste common sub van X en Y is, er is
+dus geen langere.  []
+
+Onder de premisse xn /= ym, geldt minstens een van zk /= xn
+of zk /= ym.  Conclusie: als de slotletters verschillen, is Z 
+een LCS van x{1..n-1} en Y, of van X en y{1..m-1}.  Uiteraard
+van deze twee mogelijkheden de langste.
+We zien hier (vergelijkbaar met het bierbrouwen) een recursie
+op een PREFIX, zodat alle subinstanties ook over prefixen van
+X en Y zullen zijn.  
+
+Neem c[i,j] als de lengte van de LCS van X{1..i} en Y{1..j}.
+             { 0                      als i=0 of j=0
+Dan c[i,j] = { 1 + c[i-1,j-1]         als xi = yj
+             { max(c[i-1,j],c[i,j-1]) als xi /= yj
+
+Voor het veranderen van X in Y kun je de diverse keuzen
+laten corresponderen met het verwijderen van een x, het 
+toevoegen van een y, of het overnemen van een x.
+
+
+3. Traveling Salesman Problem: Handelsreiziger
+----------------------------------------------
+
+De klassieke handelsreiziger zit in stad S0 en moet steden
+S1 tm Sn bezoeken.  Reistijd/kosten van Si naar Sj: dij.
+Meestal wil je weer thuis slapen, dus reken je de kosten
+van een round-trip, dwz met het traject van de laatste stad
+naar S0 erbij.  Modernere toepassing: 
+   Printplaten solderen, 
+   Blokken data van een disk halen (asymmetrisch!), 
+   Order picking (bv bij bol.com).
+
+Er zijn heel veel varianten van dit probleem; wij nemen
+geen symmetrie aan, het kan ons niet schelen als hij langs 
+een al bezochte plaats komt, en laten de handelsreiziger 
+lekker zitten bij zijn laatste klant.
+Gegeven: n, een (n+1)*(n+1) afstandstabel d[0..n, 0..n].
+Gevraagd: Een volgorde v1 .. vn (van de steden 1..n)
+          die SOM i=0 tot n: d[v{i-1},vi] minimaliseert.
+
+Een simpele aanpak die alle volgordes probeert kost n! tijd.
+
+Kan het met Dynamisch Programmeren?  Idee is dat ik na
+het bezoeken van een aantal steden niet alle volgordes van
+die steden hoef te onthouden, maar alleen de beste.  Om aan
+te geven dat OSS niet vanzelf komt, bekijken we eerst een 
+paar aanpakjes die niet werken.
+
+Poging 1: aantal bezochte steden (Epic Failure!)
+Voordat je n steden hebt bezocht, moet je er n-1 bezoeken,
+en daarvoor n-2.  Gedachte is, dat je die steden ook op
+een zo goed mogelijke manier bezoekt, zoiets als OSS.
+
+Definieer, voor i <= n, T(i) als: de minimale kosten van 
+   een rijtje van i verschillende steden.
+
+Uiteindelijke kosten: T(n).
+Makkelijk te vinden beginwaarde: T(0), namelijk 0.
+
+Maar nu komen we bedrogen uit als we de OSS proberen te 
+bewijzen.  Stel dat S0,v1, .. v{i-1}, vi de snelste manier
+is om i steden te bezoeken.  Is dan altijd S0,v1, .. v{i-1}
+de snelste manier om i-1 steden te bezoeken?
+NEE!  Misschien is er wel een alternatief S0,w1, .. w{i-1}
+dat met MINDER moeite dan het v-pad, i-1 steden bezoekt, MAAR
+het nadeel heeft dat vi daar al in zit.
+(Dit kan echt B---------S------A------C )
+De kortste (i-1)-route kan dus helemaal niet met vi worden
+gecombineerd.
+
+Met de aanpak om te kijken naar de minimale kosten van het
+bezoeken van een AANTAL steden heet TSP dus niet de OSS.
+Blijkbaar is het niet voldoende om te kijken naar hoeveel
+steden er zijn bezocht, maar is het, met het oog op de 
+combineerbaarheid van deeloplossingen, ook van belang welke
+dat zijn.  
+
+Poging 2: Verzameling bezochte steden (minder epische faal).
+
+Definieer, voor R deelvan {1,..,n}, U(R) als de minimale
+   kosten van een rijtje dat alle steden in R bevat.
+Nu geldt U(leeg) = 0, eindoplossing is U({1,..,n}).
+
+Ook nu komen we bedrogen uit met de OSS.  De gedachte achter
+de definite is als volgt.  Stel dat je een optimaal pad langs
+de steden van R hebt.  Noem de laatste stad: k.  Dan bestaat
+het pad uit: een pad door R-k = R min {k}, plus de afstand
+van de laatste stad op dat pad naar k.  Dat pad door R-k zal
+op de een of andere manier een optimaal pad door die steden
+moeten zijn.
+
+Helaas, de gedachte is leuk, maar niet juist.
+Ook hier geldt weer: misschien is er wel een beter pad door
+R-k, maar eindigt dat weer verder van stad k af.  Als ik kijk
+naar de meerkosten die ik moet maken om een rondritje door
+Rk te verlengen met k, dan hangen die kosten af van waar
+de deelroute is geeindigd.
+
+Blijkbaar is het niet voldoende om van bekeken paden te
+onthouden welke steden ze bezocht hebben, maar ook welke stad
+het eindpunt is.  Bekijk nu alle combinaties van (R,k) waar
+R deelvan {1,..n} nietleeg, k in R, en definieer
+  V(R,k) als minimale kosten van een rijtje dat alles
+             uit R bevat en eindigt in k.
+
+Nu geldt dat V(leeg,_) niet bestaat,
+             V({k},k)  = d[0,k]
+	  en min_k V({1,..n}, k) is de gezochte oplossing.
+
+Nu hebben we WEL de OSS.
+Lemma: Stel (voor |R| >= 2, k in R),
+   P = S0,....,l,k is een kortste pad door R met einde k.
+   Dan is P' = S0,....,l een kortst pad door R-k met einde l.
+Bewijs: Dat P' in l eindigt en de hele R-k bevat volgt
+   uit de aanname over P.
+   Lengte van P is lengte(P') + d(l,k).
+   Als er een korter pad P" is dat R-k bevat en eindigt in l,
+   dus er geldt lengte(P") < lengte(P'),
+   dan is P"' = P",k een korter pad door R met einde k.
+   want lengte(P"') = lengte(P") + d(l,k) 
+                    < lengte(P') + d(l,k)
+		    = lengte(P)
+   Tegenspraak met veronderstelde optimaliteit van P.  []
+
+Je ziet aan dit bewijs en de voorgaande discussie iets wat 
+uit het boek helemaal niet zo goed naar voren komt: het
+BEWIJZEN van de OSS is eigenlijk helemaal niet zo moeilijk;
+moeilijk is het, je probleem zo te formuleren dat je de 
+eigenschap HEBT.  OSS is dus geen "bewijs" probleem, maar
+een "modellerings", of "ontwerp" probleem.
+
+Maar goed, uit de OSS krijgen we onmiddelijk:
+            { d[0,k]             als R een singleton {k}
+  V(R,k) =  { min_{l in R\{k} }  V(R\{k},l) + d[l,k]
+            {                    als |R| > 1
+
+Even een ruwe berekening van de kosten.
+Een verzameling met n steden heeft 2^n deelverzamelingen R.
+Een R met i elementen genereert i deelinstanties (R,k).
+Het aantal deelinstanties is dus 
+  A = SOM_i (n boven i).i .
+Het berekenen van zo'n deelinstantie vereist het bekijken
+van i-i alternatieven (voor het voorlaatste punt) dus
+  W = SOM_i (n boven i).i(i-1) .
+
+Wat gaan we doen?  
+TomTom met kroegentochtapp mag 10^12 stappen rekenen (miljard
+per seconde, kwartier de tijd).
+Naief: probeer alle n! routes; als je tot 10^12 stappen mag 
+gebruiken, kun je n! aan tot n=14.
+Als je geen wiskunde hebt gedaan, schat je W af op
+  W < SOM_i (n boven i).n . n 
+je vindt W <= 2^n.n^2, waarmee je kunt gaan tot n=33.
+Heb je goed opgelet bij Wiskundige Technieken:
+  W = SOM_i (n boven i).i(i-1)
+    = SOM_i (n-2 boven i-2).n.(n-1)    (2x Absorptie)
+    = n(n-1). 2^{n-2}
+waaruit blijkt dat je ook een instantie van grootte 34 aankunt.
+Krijg je je baast zover dat hij voor de klant 1024 seconden
+in een kwartier stopt ipv 1000 dan kun je zelfs 35 aan.
+
+Dit voorbeeld laat zien, dat DP niet alleen helpt bij problemen
+die uiteindelijk "makkelijk" blijken te zijn.  TSP is een erg
+moeilijk probleem, dat ook met deze aanpak nog exponentiele tijd
+en ruimte nodig heeft!
+
+
+4. De 0/1-Knapsack.
+-------------------
+
+Het Rugzakprobleem: optimaal vullen van een eindige rugzak.
+
+In ons bestaan heeft elk ding een "zuur" en een "zoet".
+Chips is lekker, maar je wordt er dik van.
+Een extra implementeren op PO1 levert een hoger cijfer,
+  maar je moet er ook voor werken.
+Een zachte stoel op trekkersvakantie zit fijn, maar je moet
+  'm wel meesjouwen.
+Geld geven voor Pakistan betekent minder bierzuipen, maar
+  wel fijn voor de mensen daar.
+Wat doe je wel en wat doe je niet?  Je wilt een keuze maken 
+met zoveel mogelijk ZOET en zo weinig mogelijk ZUUR.
+Echter, je kunt bij het optimaliseren maar op EEN parameter
+"sturen", je zult dus een van de dimensies HARD moeten maken 
+in een RESTRICTIE en de andere ZACHT jaten in een functie
+die te optimaliseren is.
+
+Klassieke omschrijving:
+Een smokkelaar wil de grens over met een rugzak vol smokkelwaar.  
+Hij  kan een selectie maken uit een collectie artikelen om te 
+smokkelen,  maar hij is beperkt door het maximale gewicht van 
+de rugzak.  Het  is de bedoeling de winst te maximaliseren.
+
+De volledige naam van het probleem waar we naar gaan kijken is:
+	0/1-Knapsack
+0/1 betekent dat elk object wel of niet meegenomen kan worden: 0 keer
+OF 1 keer.  Het nemen van een deel van een object is niet mogelijk.
+
+De instantie bestaat uit:
+	M,n		Maximaal gewicht rugzak, aantal keuze-objecten.
+	w1 w2 ... wn	wi is gewicht object i (ZUUR).
+	p1 p2 ... pn	pi is winst (profit) op object i (ZOET).
+Er moet een deel X van {1,..,n} worden bepaald, die voldoet aan
+	W(X) = (SOM i in X : wi) <= M,
+dus de ZUUR-hoeveelheid is HARD begrensd op M.
+De opbrengst P(X), gegeven door
+	P(X) = (SOM i in X : pi),
+willen we maximaal.  (W is weight, P is profit.)  Zo'n deel-
+verzameling noemen we een 
+  OPTIMALE BELADING van de rugzak van grootte M met {1,..,n}.
+
+Modern gebruik: planning van Software releases.
+Er is een keuze uit 1..n features die je aan je programma kunt
+toevoegen.  Feature i kost wi uur programmeerwerk, verhoogt de
+waarde van je release met pi, maar je hebt M mensuren beschikbaar.
+
+Soms is het handiger X als vector te noteren:
+zeg xi = 0 als i notin X en 1 als i in X.
+
+Dus xi in {0,1}, vandaar de naam van het probleem.  Aanverwante
+problemen:
+   -  De integer knapsack, xi in NN.  Hier kun je van elk object
+      meerdere exemplaren meenemen.
+   -  De [0,1] (of: fractionele) knapsack.  Hier kun je de objecten
+      doorknippen en een deel ervan kiezen.
+   -  DUALE KNAPSACK: Je eist een minimumhoeveelheid P van
+      profit en probeert die met zo weinig mogelijk gewicht
+      te realiseren.
+
+Dan gaat het erom een 0/1 vector X te bepalen die voldoet aan
+	(SOM i=1 TOT n: xi.wi)  <=  M
+(de oplossing is HAALBAAR) en die 
+	(SOM i=1 TOT n: xi.pi)
+maximaliseert, dus: alle Y: Y haalbaar ==> P(Y) <= P(X).
+Duidelijk dat dit hetzelfde is?
+
+Voorbeeld	M =	10
+		n =	4
+	    obj i:      1  2  3  4
+		w =	2  3  4  5
+		p =     3  2  5  4
+De deelverzameling {1,2,4} wordt weergegeven als vector 1101.  
+Deze heeft gewicht 10 en past dus precies in de knapsack.  (Dat 
+de zak vol is impliceert overigens niet dat de oplossing optimaal 
+is, omdat winsten verschillen van gewichten.)
+
+4A. OPTIMALE SUBSTRUCTUUR.
+Als n=0, zijn we snel klaar: je kunt de lege verzameling kiezen, 
+die past in elke rugzak maar levert niets op.
+Als n > 0, zijn er twee soorten verzamelingen, namelijk die waar
+object n WEL in zit en die waar object n NIET in zit.  Anders 
+gezegd, xn heeft waarde 0 of 1.  (Merk op dat er meerdere 
+optimale beladingen kunnen zijn; we fixeren EEN optimale belading.)
+
+Lemma:	Zij X een optimale belading van een rugzak van
+        grootte M met objecten uit 1..n.
+        Dan is vector X' = (x1..x{n-1}) een optimale belading
+        van een rugzak van grootte M' = M- xn.wn 
+	met objecten 1 tem n-1.
+Bewijs: Van het gewicht van belading X' kun je zeggen
+      W(X') = SOM i=1 tot n-1 xi.wi
+            = SOM i=1 tot n   xi.wi   -   xn.wn
+           <= M         -   xn.wn    { X is HAALBAAR }
+dus X' past in een rugzak van omvang M - xn.wn.	
+De winst van X' is SOM i=1 tot n-1 xi pi = W(X)-xn.pn.
+
+We moeten de optimaliteit bewijzen; stel er is een BETERE
+belading: er een vector Y' = (y1 ... y{n-1}) is zdd
+(SOM i=1 tot n-1:  yi wi) <=  M - xn.wn.
+en (SOM i=1 tot n-1: yi wi) > P(X').
+Dan is de oplossing Y = Y',xn haalbaar voor de oorspronkelijke
+instantie (want 't gewicht is kleiner dan M) en heeft grotere
+winst dan P(X).  Tegenspraak met optimaliteit van X.  []
+
+De karakterisering van een optimale oplossing geeft aan dat het
+probleem voldoet aan de `optimal substructure' eis.  Het komt dus
+neer op: kiezen of je object n meeneemt of niet (xn is 0 of 1).
+En dan je rugzak met omvang M-xn.pn optimaal beladen met een 
+keuze uit objecten 1 tm n-1.
+Maar om die keuze te maken moet je natuurlijk wel weten, 
+hoeveel winst je met beide soorten deelbelading kunt maken.
+Je kunt de maximale winst berekenen met:
+  P(X) = max (winst optimale belading {1,..,n-1} in M,
+  [en evt.]   winst optimale belading {1,..,n-1} in (M-wn) + pn )
+(mits M-wn >= 0; zoniet, dan komt alleen de eerste keuze in
+aanmerking.)  Immers, een optimale belading zal object n wel 
+of niet hebben.  De tweede waarde is de best mogelijke met, de
+eerste de best mogelijke waarde zonder object n.
+
+4B. OVERLAPPENDE DEELPROBLEMEN:
+Op het aantonen hiervan kom ik straks nog terug!!
+
+4C. TABULERING VAN DEEL-INSTANTIES.
+Merk op dat er in de recursie telkens het laatste object wordt
+afgepeuterd en naar een kleinergelijke rugzak wordt overgegaan; 
+de deelinstanties betreffen dus allemaal een belading van een 
+rugzak met grootte in [0,M] met objecten 1,..,i voor zekere i.  
+We kunnen de deelinstanties dus beschrijven met een paar (i,m), 
+waar i zit in 0..n  en m in 0..M.
+
+Stel de tabel op van de optimale winst P[i,m], zijnde de winst 
+van een optimale belading van een rugzak van grootte m met 
+{1,..,i}.
+
+Compute(i,m):
+	if (i==0)
+	    { pim = 0 }
+	else
+	    { pim = P[i-1,m} ; x[i,m] <-- 0
+	      if (m >= wi}
+	         { alt <-- P[i-1,m-wi] + pi
+		  if  (alt > pim)
+		      { pim = alt ; x[i,m] <-- 1 }
+            }
+        P[i,m] = pim
+
+Nu even kijken: welke instanties zijn er en wat is een goede
+volgorde!  Volledige berekening van de tabel:
+	for i=0 to n do
+	    for m=0 to M do
+		Compute(i,m)
+
+... en 't antwoord staat in P[n,M]!! 
+Berekening van bovengenoemd voorbeeld:
+				   m
+   P:x  w p |  0    1    2    3    4    5    6    7    8    9   10    
+   ---------+-------------------------------------------------------
+   0        | 0:-  0:-  0:-  0:-  0:-  0:-  0:-  0:-  0:-  0:-  0:-
+   1    2 3 | 0:0  0:0  3:1  3:1  3:1  3:1  3:1  3:1  3:1  3:1  3:1
+ i 2    3 2 | 0:0  0:0  3:0  3:0  3:0  5:1  5:1  5:1  5:1  5:1  5:1
+   3    4 5 | 0:0  0:0  3:0  3:0  5:1  5:0  8:1  8:1  8:1 10:1 10:1
+   4    5 4 | 0:0  0:0  3:0  3:0  5:0  5:0  8:0  8:0  8:0 10:0 10:0
+
+Zo zie je dat de maximale winst gelijk is aan 10.  P[i,m] is 
+steeds de grootste uit het getal er recht boven en het getal 
+erboven, wi plaatsen naar links, vermeerderd met pi. 
+
+4D CONSTRUCTIE VAN DE OPLOSSING
+Je rekent de tabel uit van links naar rechts en van boven naar 
+beneden.  Maar het is aan de rechterbovenkant totaal niet te zien 
+hoe de oplossing er uit ziet.  De optimale oplossing kan worden 
+geconstrueerd uit de keuzes 0 of 1 in x[i,m].
+In plaats [4,10] lezen we de optimale winst 10 en de bijbehorende 
+keuze 0 voor xn, dwz, om de maximale winst te behalen kiezen we 
+object 4 NIET.  Dat betekent dat de optimale belading alleen 
+objecten 1 tm 3 gebruikt, en daarvoor is ruimte 10 beschikbaar, 
+dus zoek verder in [3,10].  Daar lezen we dat winst 10 te halen 
+is door object 3 WEL te kiezen.  Daarna is nog ruimte 10-w3 = 6 
+over en die vullen we met een subset van 1..2.
+
+Merk op dat x[i,m] gelijk is aan 0 als je het getal erboven 
+koos, 1 anders.  In dit geval zou je daarom ook de opslag 
+ervan achterwege kunnen laten.  Want gegeven de P, kun je elke 
+x in constante tijd vinden.
+
+4B. OVERLAPPENDE DEELINSTANTIES, COMPLEXITEIT.
+De complexiteit van een DP oplossing hangt samen met de hoeveelheid
+waarden in de tabel; die van een D&C oplossing van de omvang van de
+recursieboom.
+
+De tabel wordt ingevuld met (n+1)(M+1) aanroepen van Compute.
+
+Laten we dit eens gaan vergelijken met de D&C oplossing, die 
+dus geen tabel maakt maar direct de recursieve vergelijking
+implementeert.
+
+Lemma: De recursieboom bevat hoogstens 2^{n+1}-1 instanties
+	(meervoudig voorkomenden dubbel geteld).
+Bewijs: Een instantie voor 0 objecten genereert geen deelinstanties
+(dus, is atomair), en van i>0 objecten genereert er een of
+twee, dus hoogstens twee, voor i-1 objecten.  Er zit in de
+recursieboom dus 1 instantie van grootte n, <=2 van n-1, etc,
+en <=2^n van grootte 0.  Totaal hoogstens 2^{n+1}-1 (waarvan
+2^n atomair, dus met antwoord 0).  []
+
+We kunnen ook nog beredeneren wanneer het aantal (flink?) 
+kleiner zou kunnen worden dan het beredeneerde maximum.
+Als je kijk naar de recursieboom, dan zie je dat instantie 
+(i,m) vertakt in (i-1,m) en (i-1,m-wi), MITS DIT GROTERGELIJK 
+0 IS.  Het aantal instanties in deze boom kan dus kleiner 
+zijn, wanneer er om deze reden veel afvallen.
+
+Passen alle objecten erin, dan valt er geen af en heb je dus
+inderdaad 2^{n+1}-1 instanties.  Stel even dat dit het geval is.
+
+Wat nu beter is, D&C of DP, hangt dus af van M en n!
+  n.M > 2^n	dus  DP is slechter dan D&C
+  n.M < 2^n	het aantal instanties dat DP uitrekent
+		is kleiner dan het aantal in de boom; dit
+		"bewijst" dat er OSP zijn!!
+
+Laten we nu eens iets preciezer gaan bekijken welke waarden worden
+uitgerekend.  Het DP programma berekent elke waarde, dus precies 55
+maal wordt Compute aangeroepen.
+Door de aanroepen van het D&C algoritme te volgen, kun je erachter
+komen welke instanties eigenlijk nodig zijn voor de opbouw van de
+optimale oplossing van (10,4):
+
+				   m
+   W:x |  0    1    2    3    4    5    6    7    8    9   10
+   ----+-------------------------------------------------------
+   0   |  X    XX   X    XX   X    XX   X    X    X    .    X   
+   1   |  .    X    X    X    .    X    X    X    .    .    X   
+ i 2   |  .    X    .    .    .    X    X    .    .    .    X   
+   3   |  .    .    .    .    .    X    .    .    .    .    X   
+   4   |  .    .    .    .    .    .    .    .    .    .    X   
+
+Van de 55 instanties in de tabel komen er slechts 24 voor in de
+recursieboom!  De overlap is hier overigens gering, er zijn slechts
+drie instanties die dubbel voorkomen en deze zijn alle atomair.
+Dat de overlap gering is, is `toeval': het is een eigenschap van deze
+instantie, bij andere instanties is de overlap groter.  We moeten dus
+even afzien van het kwantitatieve aspect van deze tabel en de volgende
+observatie maken.
+
+  +----------------------------------------------------------------+
+  |  Niet alleen het D&C algoritme berekent overbodige instanties  |
+  |  (nl. de meervoudig in de recursieboom voorkomende), maar OOK  |
+  |  HET DYNAMISCH PROGRAMMEER ALGORITME BEREKENT OVERBODIGE       |
+  |  INSTANTIES, nl. die welke NIET in de recursieboom voorkomen.  |
+  +----------------------------------------------------------------+
+
+5. Memoizatie.
+--------------
+
+Memoizatie is een techniek die de voordelen van beide alternatieven in
+zich verenigt;  een Memoizatie-algoritme berekent ALLEEN instanties
+die daadwerkelijk in de boom voorkomen en elke instantie hoogstens een
+keer, ongeacht de multipliciteit in de boom.
+
+De structuur van een memoizatie-algoritme is Top-Down, net als bij
+Divide en Conquer; immers, door van de gegeven instanties naar de
+deelinstanties te werken kom je er achter welke instanties in de boom
+voorkomen.  Herhaalde berekening wordt voorkomen door eenmaal
+berekende waarden in een tabel op te slaan.
+
+VOORBEELD:
+Het algoritme voor binomiaal coefficienten:
+
+	FUNCTION Over(n,k):
+	   IF k=0 or k=n
+	   THEN return 1
+	   ELSE return Over(n-1,k-1) + Over(n-1,k)
+
+wordt:
+	FUNCTION Mem.Over(n,k):
+	   if C[n,k] <> undef
+	   then return C[n,k]
+	   else IF k=0 or k=n
+		THEN y <-- 1
+		ELSE y <-- Mem.Over(n-1,k-1) + Mem.Over(n-1,k)
+		C[n,k] := y
+		return y
+
+De MemCompute komt er zo uit te zien:
+
+MemComp(i,m):
+    if m[i,m] is undefined
+      { IF i=0
+	THEN result <-- 0
+	ELSE result <-- MemComp(i-1,m)
+	     IF m >= wi
+	     THEN alt <-- MemComp(i-1,m-wi) + pi
+		  IF alt > result
+		  THEN result <-- alt
+        m[i,m] <-- result
+      }
+    return m[i,m]
+
+Om het effect van de drie verschillende methoden te quantificeren
+heb ik een programmaatje gemaakt dat het knapsack probleem op de drie
+manieren berekent en afdrukt hoeveel instanties zijn berekend.
+
+Instantie 1: Het kleintje hierboven.
+
+Instantie 2, 3, en 4 hebben alle n=10 en M=100; dus de DP oplossing
+	rekent 1111 instanties door.  We gaan dus kijken hoe D&C en
+	Memoizatie zich verhouden.
+Instantie 2: Alle objecten passen in de rugzak, dus D&C rekent
+	2^{n+1} - 1 instanties door.  Memo profiteert van overlap in
+	de recursieboom.
+Instantie 3:  Er passen maar weinig objecten in de zak: D&C kan dan 
+	flink hakken in de boom en blijkt opeens veel efficienter!
+Instantie 4:  Instantie is ongeveer hetzelfde, maar met minder over-
+	lap in de boom.
+
+		DP		D&C		Memo
+	+-----------------------------------------------+
+  1	|	55		27		24	|
+  2	|	1111		2047		369	|
+  3	|	1111		199		109	|
+  4	|	1111		185		169	|
+	+-----------------------------------------------+
+
+Je ziet (instanties 2, 3 en 4 vergelijkend) dat
+  1. de rekentijd van DP niet afhangt van de winsten en gewichten,
+     maar constant is voor gegeven n en M.
+  2. de rekentijd van D&C wel beinvloed wordt door winsten en
+     gewichten.
+  3. de strijd tussen DP en D&C zowel in het voordeel van de een als
+     van de ander kan uitpakken (zelfs voor een bepaald probleem dus).
+  4. Memoizatie het altijd wint!  Dit is natuurlijk de uitkomst van
+     onze overweging om in een techniek de voordelen van beide andere
+     te combineren.
+  5. Fuctionele programmeertalen passen vaak automatische memoizatie
+     toe.  Dit kan omdat een procedure geen zij-effecten heeft.
+  6. Recursie kan wel zorgen voor een iets hogere overhead per
+     berekende instantie.  Zeker als (zoals in ons voorbeeld) het werk
+     in de Compute gering is.
+
+Zit je met een probleem dat de eigenschap van geneste instanties heeft,
+gebruik dan
+    Recursie	indien er GEEN sprake is van meervoudig voorkomende 
+                geneste instanties.
+		VOORBEELD: MergeSort, immers elke deelrij is anders.
+    Dynamisch Programmeren	indien je de verzameling daadwerke-
+		lijk voorkomende instanties kunt bepalen, danwel
+		redelijk benaderen.
+		VOORBEELD: Matrix-Chain, Bin-Coef.
+    Memoizatie	indien er overlap is en je de voorkomende instanties
+		niet kunt overzien. 
+		VOORBEELD: Knapsack.
+
+6. Conclusies.
+--------------
+
+ - Algoritmen in de computationele biologie, mn. DNA sequencing
+   en uitlijning, zijn gebaseerd op Dynamisch Programmeren 
+   (zie LCS).
+ - Tekstverwerken: ook het formatteren van een alinea tekst
+   kan je met een DP doen.
+ - OSS is geen inherente, al dan niet aanwezige eigenschap van
+   je probleem, maar een structuur die je moet zoeken om tot
+   een geschikte oplossing te komen (zie TSP).
+ - Dynamisch Programmeren kan ook aanleiding geven tot een
+   exponentieel grote verzameling deelinstanties.  Management
+   van tijd en geheugen blijft dus ook bij een DP aanpak 
+   belangrijk!  (Zie TSP).
+ - Berekenen van de waarde van de oplossing gaat bottom-up;
+   Constructie van de beste oplossing gaat top-down.
+ - Hiervoor moet je per instantie onthouden (of reconstrueren)
+   welke keuze je hebt gemaakt.
+ - Welke deelinstanties voorkomen, hangt soms niet alleen af
+   van de grootte van je probleem, maar ook van de actuele
+   waarden van getallen in je invoer (zie Knapsack).
+ - Als je moeite hebt om de verzameling voorkomende instanties
+   van te voren te overzien, kun je memoizatie gebruiken.
+
+Nu eventueel nog LCS (sectie 2).
+
+Als er tijd is, nog even iets over het formatteren van tekst.
+- Een stukje tekst bestaat uit n woorden van breedte w1 tm wn. 
+  Dit wil je afdrukken op een pagina met breedte R.   (Invoer)
+- Elke regelovergang genereert een lelijkheids-boete die afhangt
+  van (in ieder geval) de hoeveelheid overgebleven ruimte.
+- Als je de woorden wj tm wk op de regel zet, met een spatie, 
+  gebruik je (SOM i=j..k wj) + (k-j-1)
+  dus je hebt over: S = R - (SOM i=j..k wi) - (k-j-1).
+- Straf voor deze regel is een functie van S, dus f(S) 
+  (en soms ook: aantal woorden, of welke regel).
+- Lelijkheid van de hele alinea: som van straf per regel.
+- Voor de laatste, ongevulde regel, krijg je meestal GEEN straf!
+- OSS: Heb je eenmaal een bepaalde regel-splitspositie gekozen,
+  dan is het het gunstigst, om de rest van de alinea weer "zo
+  goed mogelijk" te verdelen, omdat de TOTALE lelijkheid als SOM
+  is gedefinieerd en er dus geen onderlinge afhankelijkheden 
+  tussen de regels zijn.
+- Omdat de laatste regel geen straf oplevert, is de formulering
+  het mooist als je de "keuze" definieert als welke woorden
+  staan op de eerste regel.
+- Definieer P(r) als: de minimale straf die je krijgt bij
+  het formatten van de woorden wr tm wn.
+- Uiteindelijk wil je weten: P(1).
+- P(r) = 0 indien (SOM i=r..n  wi) < R.
+- Als de rest van de alinea niet op een regel past, heb je
+  als keuze: elke k waarvoor (SOM i=r..k  wi) < R.
+  Een keuze van k geeft je een bepaalde straf voor de eerste
+  regel, namelijk f( R - (SOM i=r..k  wi) - (k - r - 1)),
+  plus een lelijkheid van de rest van de alinea: P(k+1).
+
