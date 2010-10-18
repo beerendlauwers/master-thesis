@@ -20,7 +20,7 @@ main :: IO ()
 main =
   do
     s <- generateSolution -- initialization
-    loop s                -- game loop
+    loop s 0              -- game loop
 
 -- The following function is given. It generates a random solution of the
 -- given width, and using the given number of colors.
@@ -33,20 +33,21 @@ generateSolution =
 -- The loop function is supposed to perform a single interaction. It
 -- reads an input, compares it with the solution, produces output to
 -- the user, and if the guess of the player was incorrect, loops.
-loop :: Solution -> IO ()
-loop solution =
+loop :: Solution -> Int -> IO ()
+loop solution guesscount =
   do
     guess <- input            -- read (and parse) the user input
     processGuess guess
   where
    processGuess :: Solution -> IO ()
-   processGuess [-50] = putStrLn ("The solution was: " ++ show solution ++ "\nBetter luck next time.")
-   processGuess [-60] = putStrLn ("The solution was: " ++ show solution ++ "\nCome back soon!")
+   processGuess [-50] = putStrLn ("The solution was: " ++ show solution ++ "\nBetter luck next time.\nYou guessed " ++ show guesscount ++ " time(s).")
+   processGuess [-60] = putStrLn ("The solution was: " ++ show solution ++ "\nCome back soon!\nYou guessed " ++ show guesscount ++ " time(s).")
    processGuess guess = do
             let checkedInput = check solution guess
             report checkedInput
-            if lst3 checkedInput == False then loop solution else return ()
+            if lst3 checkedInput == False then loop solution (guesscount + 1) else putStrLn ("\nYou guessed " ++ show guesscount ++ " time(s).")
 
+-- Takes the last element of a 3-Tuple
 lst3 :: (a,b,c) -> c
 lst3 (_,_,c) = c
 
@@ -55,12 +56,7 @@ black, white :: Solution -> Guess -> Int
 black [] [] = 0
 black solution guess = if (take 1 solution) == (take 1 guess) then 1 + nextGuess else nextGuess
                        where nextGuess = black (drop 1 solution) (drop 1 guess)
-					   
-					   
---getPos :: Int -> Row -> Int
---getPos x y = if calculatePos == length y then -1 else calculatePos
---             where calculatePos = length( takeWhile (\n -> x /= n) y )
-
+                       
 -- This function is called to filter input for the 'white' function, as numbers on the same
 -- position are not eligible for selection in the 'white' function.
 removeNumbersOnSamePosition :: Row -> Row -> Row
@@ -69,25 +65,21 @@ removeNumbersOnSamePosition (x:xs) [] = []
 removeNumbersOnSamePosition (x:xs) (y:ys) = if x == y
                                             then removeNumbersOnSamePosition xs ys
 											else x : removeNumbersOnSamePosition xs ys
-					   
---comparePos :: Row -> Row -> Row
---comparePos solution guess = map (\n -> getPos n solution) guess
-
+                                            
 -- Removes a number from a Row. This is used in the 'white' function to prevent inputs such as
 -- [1,4,4,1] [4,1,4,4] returning erroneous values: Every time a number from the guess is found
--- in the solution, the numbers is removed in the solution to prevent the number giving back positive
+-- in the solution, the number is removed in the solution to prevent the number giving back positive
 -- values multiple times.
 removeNumber :: Int -> Row -> Row
 removeNumber number [] = []
 removeNumber number (x:xs) = if number == x then xs else x : removeNumber number xs 
 
-white solution guess = let solveWhite shortSolution shortGuess = if shortGuess == []
-                                                         then 0
-														 else if elem (head shortGuess) shortSolution
-														 then 1 + nextGuess
-														 else nextGuess
-														 where nextGuess = solveWhite (removeNumber (head shortGuess) shortSolution ) (drop 1 shortGuess)
-					   in solveWhite (removeNumbersOnSamePosition solution guess) (removeNumbersOnSamePosition guess solution)
+white solution guess = 
+ let solveWhite shortSolution shortGuess | shortGuess == [] = 0
+                                         | elem (head shortGuess) shortSolution = 1 + nextGuess
+                                         | otherwise = nextGuess
+										 where nextGuess = solveWhite (removeNumber (head shortGuess) shortSolution ) (drop 1 shortGuess)
+ in solveWhite (removeNumbersOnSamePosition solution guess) (removeNumbersOnSamePosition guess solution)
 					   
 check :: Solution -> Guess -> (Int,   -- number of black points,
                                Int,   -- number of white points
@@ -95,12 +87,13 @@ check :: Solution -> Guess -> (Int,   -- number of black points,
 check solution guess = let
                         checkBlack = black solution guess
                         checkWhite = white solution guess
-                       in
-                        (checkBlack, checkWhite, if checkBlack == 4 && checkWhite == 0 then True else False)
+                        allCorrect = if checkBlack == 4 && checkWhite == 0 then True
+                                                                           else False
+                       in (checkBlack, checkWhite, allCorrect)
 
 -- report is supposed to take the result of calling check, and
 -- produces a descriptive string to report to the player.
-report :: (Int, Int, Bool) -> IO()
+report :: (Int, Int, Bool) -> IO() -- Changed this to IO() for easier integration
 report (black, white, correct) = let showResults = show black ++ " black, " ++ show white ++ " white"
                                  in if black == 4
 								    then putStrLn (showResults ++ "\nCongratulations!")
