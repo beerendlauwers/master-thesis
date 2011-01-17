@@ -42,10 +42,33 @@ pExprSimple =  ExprConst <$> sConst
            <|> ExprVar   <$> sLowerId
            <|> parenthesised pExpr
            
-pExpr :: Parser Token Expr
-pExpr = chainr pExprSimple (ExprOper <$> sOperator)
+--pExpr :: Parser Token Expr
+--pExpr = chainr pExprSimple (ExprOper <$> sOperator)
      
+pExpr :: Parser Token Expr
+pExpr = doPrecs (reverse precedences) (chainr pExprSimple (ExprOper <$> sOperator))
 
+pOp x = ExprOper <$> symbol (Operator x)
+pOperList = choice . map pOp
+
+--pOperList (x:xs) = ExprOper <$> symbol ( Operator x ) <|> pOperList xs
+
+p1 = chainl p2 (ExprOper <$> symbol ( Operator "*" ) )
+p2 = chainr p3 (ExprOper <$> symbol ( Operator "+" ) )
+p3 = chainr pExprSimple (ExprOper <$> sOperator )
+
+doPrecs ((list,chainfunction):xs) prevPrec = let nextPrec = chainfunction prevPrec (pOperList list)
+                                             in doPrecs xs nextPrec
+doPrecs [] prevPrec = prevPrec
+
+precedences = [ (["*","/","%"],chainl), 
+                (["+", "-"],chainr), 
+                (["<=", "<", ">=", ">"], chainl),
+                (["==","!="], chainl),
+                (["^"], chainl),
+                (["&&"], chainl),
+                (["||"], chainl),
+                (["="], chainr) ]
 
 pMember :: Parser Token Member
 pMember =   MemberD <$> pDeclSemi
