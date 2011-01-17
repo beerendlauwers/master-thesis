@@ -3,6 +3,7 @@ module JavaLex where
 import Data.Char
 import Control.Monad
 import ParseLib.Abstract
+import Data.Char
 
 data Token = POpen    | PClose        -- parentheses     ()
            | SOpen    | SClose        -- square brackets []
@@ -17,6 +18,7 @@ data Token = POpen    | PClose        -- parentheses     ()
            | UpperId   String         -- uppercase identifiers
            | LowerId   String         -- lowercase identifiers
            | ConstInt  Int
+           | ConstChar Char
            | ConstBool Bool
            deriving (Eq, Show)
 
@@ -68,6 +70,12 @@ lexUpperId =  (\x xs -> UpperId (x:xs))
 lexConstInt :: Parser Char Token
 lexConstInt = (ConstInt . read) <$> greedy1 (satisfy isDigit)
 
+lexConstChar :: Parser Char Token
+lexConstChar = ConstChar <$ symbol '\'' <*> satisfy isAlpha <* symbol '\''
+
+lexConstBool :: Parser Char Token
+lexConstBool = ConstBool True <$ token "true" <|> ConstBool False <$ token "false";
+
 lexEnum :: (String -> Token) -> [String] -> Parser Char Token
 lexEnum f xs = f <$> choice (map keyword xs)
 
@@ -90,6 +98,8 @@ lexToken = greedyChoice
              , lexEnum StdType stdTypes
              , lexEnum Operator operators
              , lexConstInt
+             , lexConstBool
+             , lexConstChar
              , lexLowerId
              , lexUpperId
              ]
@@ -116,6 +126,7 @@ sLowerId = satisfy isLowerId
 sConst :: Parser Token Token
 sConst  = satisfy isConst
        where isConst (ConstInt  _) = True
+             isConst (ConstChar _) = True
              isConst (ConstBool _) = True            
              isConst _             = False
              
