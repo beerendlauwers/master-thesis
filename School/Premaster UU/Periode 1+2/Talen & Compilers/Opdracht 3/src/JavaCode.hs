@@ -6,6 +6,7 @@ import JavaLex
 import JavaGram
 import JavaAlgebra
 import SSM
+import Data.Char
 
 data ValueOrAddress = Value | Address
   deriving Show
@@ -42,6 +43,9 @@ codeAlgebra = ( (fClas)
  
  fExprCon    c        va = case c of
                              ConstInt n -> [LDC n]
+                             ConstBool b -> let boolean = if b == True then 1 else 0
+                                            in [LDC boolean]
+                             ConstChar x -> [LDC (ord x)]
  fExprVar    v        va = case v of
                              LowerId x -> let loc = 37
                                           in  case va of

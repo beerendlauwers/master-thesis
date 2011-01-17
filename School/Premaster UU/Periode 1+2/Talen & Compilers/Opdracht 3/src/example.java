@@ -8,6 +8,45 @@ class Hello
         b = 1;
     }
     
+    int correct()
+    {
+        return (5 * 2) + 10;
+    }
+    
+    int withoutQuotesPlus()
+    {
+        return 5 * 2 + 10; 
+    }
+    
+    int modulus()
+    {
+        return 8 % 2 + 8;
+    }
+    
+    boolean booleanTest()
+    {
+        return 0 && true || 1; 
+    }
+    
+    boolean assignBoolean()
+    {
+        boolean b;
+        b = true;
+        return 0 || b;
+    }
+    
+    boolean assignChar()
+    {
+        char c;
+        c = 'a';
+        return c;
+    }
+    
+    int withoutQuotesMinus()
+    {
+        return 5 * 2 + 10; 
+    }
+    
     int square( int x )
     {
         int y;
