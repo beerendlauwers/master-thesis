@@ -46,7 +46,7 @@ pExprSimple =  ExprConst <$> sConst
 --pExpr = chainr pExprSimple (ExprOper <$> sOperator)
      
 pExpr :: Parser Token Expr
-pExpr = doPrecs (reverse precedences) (chainr pExprSimple (ExprOper <$> sOperator))
+pExpr = doPrecs (reverse precedences) (chainl pExprSimple (ExprOper <$> sOperator))
 
 pOp x = ExprOper <$> symbol (Operator x)
 pOperList = choice . map pOp
@@ -62,7 +62,7 @@ doPrecs ((list,chainfunction):xs) prevPrec = let nextPrec = chainfunction prevPr
 doPrecs [] prevPrec = prevPrec
 
 precedences = [ (["*","/","%"],chainl), 
-                (["+", "-"],chainr), 
+                (["+", "-"],chainl), 
                 (["<=", "<", ">=", ">"], chainl),
                 (["==","!="], chainl),
                 (["^"], chainl),
