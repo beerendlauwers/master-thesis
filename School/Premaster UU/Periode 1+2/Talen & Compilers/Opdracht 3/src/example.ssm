@@ -1,11 +1,33 @@
 	Bsr main
 	HALT
 main:
-	LDC 1
+	LDC 2
 	LDS 0
 	LDLA 37
 	STA 0
 	AJS -1
+	LDC 2
+	LDL 37
+	ADD
+	LDLA 37
+	STA 0
+	AJS -1
+	LDC 2
+	LDL 37
+	SUB
+	LDLA 37
+	STA 0
+	AJS -1
+	LDL 37
+	LDL 37
+	MUL
+	LDS 0
+	LDLA 37
+	STA 0
+	AJS -1
+	LDL 37
+	STR R3
+	RET
 	RET
 correct:
 	LDC 5

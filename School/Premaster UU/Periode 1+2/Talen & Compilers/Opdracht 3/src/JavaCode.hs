@@ -53,9 +53,8 @@ codeAlgebra = ( (fClas)
                                                 Address  ->  [LDLA loc] 
  fExprOp     o e1 e2  va = case o of
                              Operator "=" -> e2 Value ++ [LDS 0] ++ e1 Address  ++ [STA 0]
-                             Operator "+=" -> e2 Value ++ e1 Address ++ ADD ++ [STA 0]
-                             Operator "-=" -> e2 Value ++ e1 Address ++ ADD ++ [SUB 0]
-                             Operator "-=" -> e2 Value ++ e1 Address ++ ADD ++ [SUB 0]
+                             Operator "+=" -> e2 Value ++ e1 Value ++ [ADD] ++ e1 Address  ++ [STA 0]
+                             Operator "-=" -> e2 Value ++ e1 Value ++ [SUB] ++ e1 Address  ++ [STA 0]
                              Operator op  -> e1 Value ++ e2 Value ++ [opCodes ! op]
 
 opCodes :: Map String Instr

@@ -105,7 +105,7 @@ stdTypes = ["int", "long", "double", "float",
             "byte", "short", "boolean", "char"]
 
 operators :: [String]
-operators = ["+", "-", "*", "/", "%", "&&", "||",
+operators = ["+=","-=","+", "-", "*", "/", "%", "&&", "||",
              "^", "<=", "<", ">=", ">", "==",
              "!=", "="]
 
