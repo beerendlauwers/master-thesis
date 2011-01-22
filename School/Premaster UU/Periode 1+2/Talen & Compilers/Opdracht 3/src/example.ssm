@@ -34,27 +34,6 @@ modulus:
 	AJS -1
 	RET
 	RET
-booleanTest:
-	LDC 0
-	LDC 1
-	AND
-	LDC 1
-	OR
-	AJS -1
-	RET
-	RET
-assignBoolean:
-	LDC 1
-	LDS 0
-	LDLA 37
-	STA 0
-	AJS -1
-	LDC 0
-	LDL 37
-	OR
-	AJS -1
-	RET
-	RET
 assignChar:
 	LDC 97
 	LDS 0
