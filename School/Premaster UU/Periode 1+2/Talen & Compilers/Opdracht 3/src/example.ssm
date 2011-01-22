@@ -7,6 +7,73 @@ main:
 	STA 0
 	AJS -1
 	RET
+correct:
+	LDC 5
+	LDC 2
+	MUL
+	LDC 10
+	ADD
+	AJS -1
+	RET
+	RET
+withoutQuotesPlus:
+	LDC 5
+	LDC 2
+	MUL
+	LDC 10
+	ADD
+	AJS -1
+	RET
+	RET
+modulus:
+	LDC 8
+	LDC 2
+	MOD
+	LDC 8
+	ADD
+	AJS -1
+	RET
+	RET
+booleanTest:
+	LDC 0
+	LDC 1
+	AND
+	LDC 1
+	OR
+	AJS -1
+	RET
+	RET
+assignBoolean:
+	LDC 1
+	LDS 0
+	LDLA 37
+	STA 0
+	AJS -1
+	LDC 0
+	LDL 37
+	OR
+	AJS -1
+	RET
+	RET
+assignChar:
+	LDC 97
+	LDS 0
+	LDLA 37
+	STA 0
+	AJS -1
+	LDL 37
+	AJS -1
+	RET
+	RET
+withoutQuotesMinus:
+	LDC 5
+	LDC 2
+	MUL
+	LDC 10
+	ADD
+	AJS -1
+	RET
+	RET
 square:
 	LDL 37
 	LDL 37
@@ -23,7 +90,7 @@ abs:
 	LDL 37
 	LDC 0
 	LT
-	BRF 13
+	BRF 15
 	LDC 0
 	LDL 37
 	SUB

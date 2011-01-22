@@ -55,7 +55,13 @@ terminals =
 
 
 lexWhiteSpace :: Parser Char String
+--lexWhiteSpace = greedy (satisfy (\x -> isSpace x && (x /= '\n') ) )
 lexWhiteSpace = greedy (satisfy isSpace)
+lexWhiteSpaceWithoutNewline = greedy (satisfy (\x -> isSpace x && (x /= '\n') ) )
+
+-- Doet nog altijd lastig
+lexComment :: Parser Char String
+lexComment = const "" <$> token "//" <* lexWhiteSpaceWithoutNewline <* greedy (satisfy $ not.(=='\n')) <* token "\n"
 
 lexLowerId :: Parser Char Token
 lexLowerId =  (\x xs -> LowerId (x:xs))
@@ -104,8 +110,33 @@ lexToken = greedyChoice
              , lexUpperId
              ]
 
-lexicalScanner :: Parser Char [Token]
+lexicalScanner :: Parser Char [Token] 
+--lexicalScanner = lexWhiteSpace *> greedy ( lexWhiteSpace *> lexComment `option` "" *> lexToken <* lexWhiteSpace <* lexComment `option` "" ) <* eof
 lexicalScanner = lexWhiteSpace *> greedy (lexToken <* lexWhiteSpace) <* eof
+
+lexicalScannerTest :: Parser Char [Token] 
+lexicalScannerTest = lexWhiteSpace *> greedy ( lexComment *> lexToken <* lexWhiteSpace ) <* eof
+
+lexOneLine :: Parser Char (Maybe Token)
+--lexOneLine = (const Nothing <$> lexComment) `optional` (Just <$ lexWhiteSpace <*> lexToken <* lexWhiteSpace)
+lexOneLine = (const Nothing <$> lexComment) <<|> (Just <$ lexWhiteSpace <*> lexToken <* lexWhiteSpace)   
+
+--lexLines xs = let list = parse (greedy lexOneLine) xs
+--                  filtered = filter (null.snd) list
+--                  onlyTokens = filter (concat.toTokens.fst) filtered
+--              in onlyTokens
+              
+toTokens (Just x) = [x]
+toTokens Nothing = []
+
+--lexLines :: Parser Char [Token]
+--lexLines = filter (/=Nothing) <$> (greedy lexOneLine)
+
+lexTokensOrComments = greedy (lexToken <* lexWhiteSpace) <* eof
+
+
+--tests
+test1 = parse lexicalScannerTest "//boolean testBoolean()\n//{\n\t//boolean b;\n\t//char c;\n\t//return true;\n//}\ntestenmaar"
 
 
 sStdType :: Parser Token Token
