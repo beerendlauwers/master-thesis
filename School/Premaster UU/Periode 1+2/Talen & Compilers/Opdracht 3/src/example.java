@@ -8,6 +8,9 @@ class Hello
         b = 1;
     }
     
+    // BOSNEGERS
+       // dap
+    
     int correct()
     {
         return (5 * 2) + 10;
@@ -23,18 +26,18 @@ class Hello
         return 8 % 2 + 8;
     }
     
-    boolean booleanTest()
+   /* boolean booleanTest()
     {
         return 0 && true || 1; 
-    }
+    } *  /**/ */
     
-    // DIKKE SHIT
-    boolean assignBoolean()
-    {
-        boolean b; // fdgffvdgffg
-        b = true;
-        return 0 || b;
-    }
+    /*// DIKKE SHIT
+    //boolean assignBoolean()
+    //{
+    //    boolean b; // fdgffvdgffg
+    //    b = true;
+    //    return 0 || b;
+    //}*/
     
     boolean assignChar()
     {

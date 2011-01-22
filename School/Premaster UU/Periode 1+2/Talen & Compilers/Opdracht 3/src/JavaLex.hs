@@ -55,13 +55,25 @@ terminals =
 
 
 lexWhiteSpace :: Parser Char String
---lexWhiteSpace = greedy (satisfy (\x -> isSpace x && (x /= '\n') ) )
 lexWhiteSpace = greedy (satisfy isSpace)
+
+-- Task 6: Discard Java Comments
+
+lexWhiteSpaceWithoutNewline :: Parser Char String
 lexWhiteSpaceWithoutNewline = greedy (satisfy (\x -> isSpace x && (x /= '\n') ) )
 
--- Doet nog altijd lastig
-lexComment :: Parser Char String
-lexComment = const "" <$> token "//" <* lexWhiteSpaceWithoutNewline <* greedy (satisfy $ not.(=='\n')) <* token "\n"
+lexSingleComment :: Parser Char String
+lexSingleComment = pack (token "//") (lexWhiteSpaceWithoutNewline <* greedy (satisfy $ not.(=='\n')) ) (token "\n")
+
+lexCommentBlock :: Parser Char String
+lexCommentBlock = pack (token "/*") (many anySymbol) (token "*/")
+
+lexComment = const [] <$> (lexCommentBlock <<|> lexSingleComment)
+
+-- This is given to the lexicalScanner function
+lexLines = concat <$> (greedy lexOneLine)
+
+-- End Of Task 6
 
 lexLowerId :: Parser Char Token
 lexLowerId =  (\x xs -> LowerId (x:xs))
@@ -111,32 +123,10 @@ lexToken = greedyChoice
              ]
 
 lexicalScanner :: Parser Char [Token] 
---lexicalScanner = lexWhiteSpace *> greedy ( lexWhiteSpace *> lexComment `option` "" *> lexToken <* lexWhiteSpace <* lexComment `option` "" ) <* eof
-lexicalScanner = lexWhiteSpace *> greedy (lexToken <* lexWhiteSpace) <* eof
+lexicalScanner = lexLines
 
-lexicalScannerTest :: Parser Char [Token] 
-lexicalScannerTest = lexWhiteSpace *> greedy ( lexComment *> lexToken <* lexWhiteSpace ) <* eof
-
-lexOneLine :: Parser Char (Maybe Token)
---lexOneLine = (const Nothing <$> lexComment) `optional` (Just <$ lexWhiteSpace <*> lexToken <* lexWhiteSpace)
-lexOneLine = (const Nothing <$> lexComment) <<|> (Just <$ lexWhiteSpace <*> lexToken <* lexWhiteSpace)   
-
---lexLines xs = let list = parse (greedy lexOneLine) xs
---                  filtered = filter (null.snd) list
---                  onlyTokens = filter (concat.toTokens.fst) filtered
---              in onlyTokens
-              
-toTokens (Just x) = [x]
-toTokens Nothing = []
-
---lexLines :: Parser Char [Token]
---lexLines = filter (/=Nothing) <$> (greedy lexOneLine)
-
-lexTokensOrComments = greedy (lexToken <* lexWhiteSpace) <* eof
-
-
---tests
-test1 = parse lexicalScannerTest "//boolean testBoolean()\n//{\n\t//boolean b;\n\t//char c;\n\t//return true;\n//}\ntestenmaar"
+lexOneLine :: Parser Char [Token]
+lexOneLine = (const [] <$> lexWhiteSpace <* lexComment) <<|> ( (:[]) <$ lexWhiteSpace <*> lexToken <* lexWhiteSpace)
 
 
 sStdType :: Parser Token Token
