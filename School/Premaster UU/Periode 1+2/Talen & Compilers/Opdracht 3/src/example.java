@@ -4,8 +4,12 @@ class Hello
 
     void main()
     {
-        int b;
-        b = 1;
+        int y;
+        y = 2;
+        y += 2;
+        y -= 2;
+        y = x*x;
+        return y; 
     }
     
     // BOSNEGERS
