@@ -28,9 +28,10 @@ class Hello
         return 0 && true || 1; 
     }
     
+    // DIKKE SHIT
     boolean assignBoolean()
     {
-        boolean b;
+        boolean b; // fdgffvdgffg
         b = true;
         return 0 || b;
     }
@@ -38,6 +39,7 @@ class Hello
     boolean assignChar()
     {
         char c;
+        //return 5;
         c = 'a';
         return c;
     }
