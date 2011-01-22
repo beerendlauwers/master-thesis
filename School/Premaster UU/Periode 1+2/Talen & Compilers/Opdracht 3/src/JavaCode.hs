@@ -38,7 +38,7 @@ codeAlgebra = ( (fClas)
                             n = codeSize s1
                             k = codeSize c
                         in  [BRA n] ++ s1 ++ c ++ [BRT (-(n + k + 2))] 
- fStatReturn e        = e Value ++ [pop] ++ [RET]
+ fStatReturn e        = e Value ++ [STR R3] ++ [RET]
  fStatBlock  ss       = concat ss
  
  fExprCon    c        va = case c of
@@ -53,6 +53,9 @@ codeAlgebra = ( (fClas)
                                                 Address  ->  [LDLA loc] 
  fExprOp     o e1 e2  va = case o of
                              Operator "=" -> e2 Value ++ [LDS 0] ++ e1 Address  ++ [STA 0]
+                             Operator "+=" -> e2 Value ++ e1 Address ++ ADD ++ [STA 0]
+                             Operator "-=" -> e2 Value ++ e1 Address ++ ADD ++ [SUB 0]
+                             Operator "-=" -> e2 Value ++ e1 Address ++ ADD ++ [SUB 0]
                              Operator op  -> e1 Value ++ e2 Value ++ [opCodes ! op]
 
 opCodes :: Map String Instr

@@ -13,7 +13,7 @@ correct:
 	MUL
 	LDC 10
 	ADD
-	AJS -1
+	STR R3
 	RET
 	RET
 withoutQuotesPlus:
@@ -22,7 +22,7 @@ withoutQuotesPlus:
 	MUL
 	LDC 10
 	ADD
-	AJS -1
+	STR R3
 	RET
 	RET
 modulus:
@@ -31,7 +31,7 @@ modulus:
 	MOD
 	LDC 8
 	ADD
-	AJS -1
+	STR R3
 	RET
 	RET
 assignChar:
@@ -41,7 +41,7 @@ assignChar:
 	STA 0
 	AJS -1
 	LDL 37
-	AJS -1
+	STR R3
 	RET
 	RET
 withoutQuotesMinus:
@@ -50,7 +50,7 @@ withoutQuotesMinus:
 	MUL
 	LDC 10
 	ADD
-	AJS -1
+	STR R3
 	RET
 	RET
 square:
@@ -62,7 +62,7 @@ square:
 	STA 0
 	AJS -1
 	LDL 37
-	AJS -1
+	STR R3
 	RET
 	RET
 abs:
@@ -79,7 +79,7 @@ abs:
 	AJS -1
 	BRA 0
 	LDL 37
-	AJS -1
+	STR R3
 	RET
 	RET
 fac:
@@ -113,6 +113,6 @@ fac:
 	LE
 	BRT -33
 	LDL 37
-	AJS -1
+	STR R3
 	RET
 	RET
