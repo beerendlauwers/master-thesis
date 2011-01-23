@@ -15,6 +15,7 @@ data Token = POpen    | PClose        -- parentheses     ()
            | KeyClass | KeyVoid
            | StdType   String         -- the 8 standard types
            | Operator  String         -- the 15 operators
+           | Incrementor String
            | UpperId   String         -- uppercase identifiers
            | LowerId   String         -- lowercase identifiers
            | ConstInt  Int
@@ -109,10 +110,13 @@ operators = ["+=","-=","+", "-", "*", "/", "%", "&&", "||",
              "^", "<=", "<", ">=", ">", "==",
              "!=", "="]
 
-
+incrementors :: [String]
+incrementors = ["++","--"]
+             
 lexToken :: Parser Char Token
 lexToken = greedyChoice
              [ lexTerminal
+             , lexEnum Incrementor incrementors
              , lexEnum StdType stdTypes
              , lexEnum Operator operators
              , lexConstInt
@@ -156,6 +160,10 @@ sOperator = satisfy isOperator
        where isOperator (Operator _) = True
              isOperator _            = False
              
+sIncrementor :: Parser Token Token
+sIncrementor = satisfy isIncrementor
+       where isIncrementor (Incrementor _) = True
+             isIncrementor _               = False
 
 sSemi :: Parser Token Token
 sSemi =  symbol Semicolon
