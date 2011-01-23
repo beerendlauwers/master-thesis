@@ -104,6 +104,15 @@ abs:
 	STR R3
 	RET
 	RET
+singleIncrement:
+	LDL 37
+	LDC 1
+	ADD
+	LDS 0
+	LDLA 37
+	STA 0
+	AJS -1
+	RET
 fac:
 	LDC 1
 	LDS 0

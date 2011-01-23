@@ -19,7 +19,7 @@ codeAlgebra :: JavaAlgebra Code
 codeAlgebra = ( (fClas)
               , (fMembDecl,fMembMeth)
               , (fStatDecl,fStatExpr,fStatIf,fStatWhile,fStatReturn,fStatBlock)
-              , (fExprCon,fExprVar,fExprOp) 
+              , (fExprCon,fExprVar,fExprOp,fExprInc) 
               )
  where
  fClas       c ms     = [Bsr "main", HALT] ++ concat ms
@@ -37,7 +37,13 @@ codeAlgebra = ( (fClas)
  fStatWhile  e s1     = let c = e Value
                             n = codeSize s1
                             k = codeSize c
-                        in  [BRA n] ++ s1 ++ c ++ [BRT (-(n + k + 2))] 
+                        in  [BRA n] ++ s1 ++ c ++ [BRT (-(n + k + 2))]
+                        
+ fStatFor    e s1     = let c = e Value
+                            n = codeSize s1
+                            k = codeSize c
+                        in  [BRA n] ++ s1 ++ c ++ [BRT (-(n + k + 2))]
+                        
  fStatReturn e        = e Value ++ [STR R3] ++ [RET]
  fStatBlock  ss       = concat ss
  
@@ -47,7 +53,7 @@ codeAlgebra = ( (fClas)
                                             in [LDC boolean]
                              ConstChar x -> [LDC (ord x)]
  fExprVar    v        va = case v of
-                             LowerId x -> let loc = 37
+                             LowerId x -> let loc = 37 -- Lookup in map here
                                           in  case va of
                                                 Value    ->  [LDL  loc]
                                                 Address  ->  [LDLA loc] 
@@ -56,7 +62,16 @@ codeAlgebra = ( (fClas)
                              Operator "+=" -> e2 Value ++ e1 Value ++ [ADD] ++ e1 Address  ++ [STA 0]
                              Operator "-=" -> e2 Value ++ e1 Value ++ [SUB] ++ e1 Address  ++ [STA 0]
                              Operator op  -> e1 Value ++ e2 Value ++ [opCodes ! op]
+                             
+ fExprInc    e1 op    va = [LDC 1] ++ e1 Value ++ [LDS 0] ++ [incCodes ! op] ++ e1 Address ++ [STA 0]
 
+incCodes :: Map String Instr
+incCodes
+ = fromList
+    [ ( "++" , ADD )
+    , ( "--" , SUB )
+    ]
+ 
 opCodes :: Map String Instr
 opCodes
  = fromList

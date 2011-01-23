@@ -70,6 +70,12 @@ class Hello
         return x;
     }
     
+    int singleIncrement()
+    {
+        int t;
+        t = t + 1;
+    }
+    
     int fac(int x)
     {
         int r; int t;
