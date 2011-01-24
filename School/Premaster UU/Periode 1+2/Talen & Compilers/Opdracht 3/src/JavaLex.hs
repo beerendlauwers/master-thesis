@@ -58,7 +58,9 @@ terminals =
 lexWhiteSpace :: Parser Char String
 lexWhiteSpace = greedy (satisfy isSpace)
 
--- Task 6: Discard Java Comments
+-------------------------------------
+{- TASK SIX: Discard Java comments -}
+-------------------------------------
 
 lexWhiteSpaceWithoutNewline :: Parser Char String
 lexWhiteSpaceWithoutNewline = greedy (satisfy (\x -> isSpace x && (x /= '\n') ) )
@@ -69,12 +71,19 @@ lexSingleComment = pack (token "//") (lexWhiteSpaceWithoutNewline <* greedy (sat
 lexCommentBlock :: Parser Char String
 lexCommentBlock = pack (token "/*") (many anySymbol) (token "*/")
 
+lexComment :: Parser Char String
 lexComment = const [] <$> (lexCommentBlock <<|> lexSingleComment)
 
+lexOneLine :: Parser Char [Token]
+lexOneLine = (const [] <$> lexWhiteSpace <* lexComment) <<|> ( (:[]) <$ lexWhiteSpace <*> lexToken <* lexWhiteSpace)
+
 -- This is given to the lexicalScanner function
+lexLines :: Parser Char [Token]
 lexLines = concat <$> (greedy lexOneLine)
 
--- End Of Task 6
+---------------------
+{- END OF TASK SIX -}
+---------------------
 
 lexLowerId :: Parser Char Token
 lexLowerId =  (\x xs -> LowerId (x:xs))
@@ -128,10 +137,6 @@ lexToken = greedyChoice
 
 lexicalScanner :: Parser Char [Token] 
 lexicalScanner = lexLines
-
-lexOneLine :: Parser Char [Token]
-lexOneLine = (const [] <$> lexWhiteSpace <* lexComment) <<|> ( (:[]) <$ lexWhiteSpace <*> lexToken <* lexWhiteSpace)
-
 
 sStdType :: Parser Token Token
 sStdType = satisfy isStdType

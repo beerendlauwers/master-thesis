@@ -32,12 +32,12 @@ class Hello
         return 8 % 2 + 8;
     }
     
-   /* boolean booleanTest()
+   /* /* boolean booleanTest()
     {
         return 0 && true || 1; 
-    } *  /**/ */
+    } *  /**/ */ */
     
-    /*// DIKKE SHIT
+    /*
     //boolean assignBoolean()
     //{
     //    boolean b; // fdgffvdgffg

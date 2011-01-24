@@ -10,11 +10,8 @@ import Data.Char
 
 data VariableType = Local | Argument deriving (Show,Eq)
 type VarData = (Int,VariableType)
-type Env = [(String,VarData)] -- [(Variabelenaam, (Plaats t.o.v. MP, Type))]
+type Env = [(String,VarData)]
 type EnvVars = Env -> (Code, [String])
-
---type Env = Map String VarData -- Mapt een variabelenaam naar zijn data
-
 
 data ValueOrAddress = Value | Address
   deriving Show
@@ -34,23 +31,25 @@ codeAlgebra = ( (fClas)
 
  fMembDecl   d        = []
  getVarName (Decl _ (LowerId name) ) = name
- cleanUpFunction n = let minusN = negate n  -- Gekregen van Rutger
+ cleanUpFunction n = let minusN = negate n
                      in [ UNLINK, STS minusN, AJS (minusN+1), RET]
  fMembMeth   t m ps s = case m of
-                          LowerId x -> let argumentLength = length ps
+                          LowerId x -> let -- Construct arguments
+                                           argumentLength = length ps
                                            offsetBy val = 0 + (3 - argumentLength + val)
                                            toData decl pos = (getVarName decl, (offsetBy pos, Argument))
-                                           argList = zipWith toData ps [1..argumentLength] -- Maak lijst van argumenten
-                                           --argMap = map (\(k,v) -> map insert k v) argList -- Steek ze in een map
+                                           argList = zipWith toData ps [1..argumentLength]
+                                           
+                                           -- Construct locals
                                            toLocal name pos = (name, (pos, Local))
                                            localsList list = zipWith toLocal list [1..localsLength]
                                            (body, localVars) = s $ (localsList localVars) ++ argList
                                            localsLength = length localVars
                                         in [LABEL x, LINK localsLength, LDR MP] ++ body ++ cleanUpFunction argumentLength
                         
- fStatDecl   d        env = ([], [getVarName d]) -- Geen code, wel lokale variabele gedeclareerd
+ fStatDecl   d        env = ([], [getVarName d])
  
- fStatExpr   e        env = (e Value env ++ [pop], []) -- 1 stukje code, geen declaratie
+ fStatExpr   e        env = (e Value env ++ [pop], [])
  
  fStatIf     e s1 s2  env = let c  = e Value env
                                 (thenCode,thenVars) = s1 env
@@ -75,7 +74,8 @@ codeAlgebra = ( (fClas)
                                 allCode = e Value env ++ [STR R3] ++ cleanUpFunction argumentLength
                             in (allCode, [])
 
- fStatBlock  ss      env = foldl merge ([],[]) $ map (\f -> f env) ss -- Gekregen van Rutger
+ -- Got this function from Rutger.
+ fStatBlock  ss      env = foldl merge ([],[]) $ map (\f -> f env) ss
                            where merge (a,b) (c,d) = (a++c,b++d)
  
  fExprCon    c        va env = case c of
@@ -84,7 +84,7 @@ codeAlgebra = ( (fClas)
                                                in [LDC boolean]
                                 ConstChar x -> [LDC (ord x)]
  fExprVar    v        va env = case v of
-                                LowerId x -> let (pos,vartype) = env ? x
+                                LowerId x -> let (pos,vartype) = simply x $ lookup x env
                                              in  case va of
                                                   Value    ->  [LDL  pos]
                                                   Address  ->  [LDLA pos] 
@@ -93,10 +93,10 @@ codeAlgebra = ( (fClas)
                                 Operator (x:"=") -> let isAssignOp = elem x assignOps
                                                         actualOp = [x]
                                                     in if isAssignOp == True
-                                                        then e2 Value env ++ e1 Value env ++ [opCodes ! actualOp] ++ [LDS 0] ++ e1 Address env ++ [STA 0]
+                                                        then e2 Value env ++ e1 Value env ++ [getOp actualOp] ++ [LDS 0] ++ e1 Address env ++ [STA 0]
                                                         else otherOps (x:"=")
                                 Operator op  -> otherOps op
-                                where otherOps op = e1 Value env ++ e2 Value env ++ [opCodes ! op]
+                                where otherOps op = e1 Value env ++ e2 Value env ++ [getOp op]
                              
  fExprMethod na vars  va env = case na of
                                 LowerId name -> concat [x va env | x <- vars] ++ [LDL 0, Bsr name, LDR R3]
@@ -111,13 +111,14 @@ codeAlgebra = ( (fClas)
 
 assignOps = ['+','-','/','*','%','$']
 
-simply :: Maybe a -> a
-simply (Just x) = x
-simply Nothing = error "Item not found!"
+simply :: String -> Maybe a -> a
+simply _ (Just x) = x
+simply search Nothing = error ("The variable " ++ search ++ " was not found in the environment!")
 
-(?) :: Eq a => [(a,b)] -> a -> b
-((a,b):ts) ? x | x==a      = b
-               | otherwise = ts ? x
+getOp :: String -> Instr
+getOp op = if op `member` opCodes
+           then opCodes ! op
+           else error ("The operator " ++ op ++ " is not defined!")
       
 opCodes :: Map String Instr
 opCodes
