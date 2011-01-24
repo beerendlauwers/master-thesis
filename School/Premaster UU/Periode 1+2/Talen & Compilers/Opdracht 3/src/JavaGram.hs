@@ -19,10 +19,12 @@ data Stat = StatDecl   Decl
           | StatBlock  [Stat]
           deriving Show
 
+data Position = LHS | RHS deriving (Show,Eq)
 data Expr = ExprConst  Token
           | ExprVar    Token
           | ExprOper   Token Expr Expr
           | ExprMethod Token [Expr]
+          | ExprIncr   Expr Token Position
           deriving Show
           
 data Decl = Decl       Type Token
@@ -39,16 +41,26 @@ bracketed     p = pack (symbol SOpen) p (symbol SClose)
 braced        p = pack (symbol COpen) p (symbol CClose)
 
 pExprSimple :: Parser Token Expr
-pExprSimple =  ExprConst <$> sConst
+pExprSimple =  ExprConst  <$> sConst
            <|> ExprMethod <$> sLowerId <*> parenthesised ( many pExpr )
-           <|> ExprVar   <$> sLowerId
+           <|> ExprVar    <$> sLowerId
            <|> parenthesised pExpr
+
+          
+toExprIncr pos x y = ExprIncr x y pos
            
 --pExpr :: Parser Token Expr
 --pExpr = chainr pExprSimple (ExprOper <$> sOperator)
      
 pExpr :: Parser Token Expr
-pExpr = doPrecs (reverse precedences) (chainl pExprSimple (ExprOper <$> sOperator))
+pExpr = doPrecs (reverse precedences) (chainl pExprIncr (ExprOper <$> sOperator))
+
+--ptest = chainl pExprIncr $ (ExprOper <$> sOperator)
+--pExprIncr = makeExprIncr
+
+pExprIncr = toExprIncr RHS <$> pExprSimple <*> sIncrementor
+            <|> pExprSimple
+            <|> flip (toExprIncr LHS) <$> sIncrementor <*> pExprSimple
 
 pOp x = ExprOper <$> symbol (Operator x)
 pOperList = choice . map pOp
