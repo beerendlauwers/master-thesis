@@ -19,7 +19,7 @@ codeAlgebra :: JavaAlgebra Code
 codeAlgebra = ( (fClas)
               , (fMembDecl,fMembMeth)
               , (fStatDecl,fStatExpr,fStatIf,fStatWhile,fStatReturn,fStatBlock)
-              , (fExprCon,fExprVar,fExprOp,fExprInc) 
+              , (fExprCon,fExprVar,fExprOp{-,fExprInc-}) 
               )
  where
  fClas       c ms     = [Bsr "main", HALT] ++ concat ms
@@ -63,7 +63,7 @@ codeAlgebra = ( (fClas)
                              Operator "-=" -> e2 Value ++ e1 Value ++ [SUB] ++ e1 Address  ++ [STA 0]
                              Operator op  -> e1 Value ++ e2 Value ++ [opCodes ! op]
                              
- fExprInc    e1 op    va = [LDC 1] ++ e1 Value ++ [LDS 0] ++ [incCodes ! op] ++ e1 Address ++ [STA 0]
+ --fExprInc    e1 op    va = [LDC 1] ++ e1 Value ++ [LDS 0] ++ [incCodes ! op] ++ e1 Address ++ [STA 0]
 
 incCodes :: Map String Instr
 incCodes
