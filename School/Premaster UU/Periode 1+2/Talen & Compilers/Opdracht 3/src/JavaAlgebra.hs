@@ -19,13 +19,12 @@ type JavaAlgebra clas memb stat expr
     ,  ( Token                           -> expr
        , Token                           -> expr
        , Token -> expr -> expr           -> expr
-       --, Token -> Token                  -> expr
        )
     )
 
 
 foldJava :: JavaAlgebra clas memb stat expr -> Class -> clas
-foldJava ((c1),(m1,m2),(s1,s2,s3,s4,s5,s6),(e1,e2,e3{-,e4-})) = fClas
+foldJava ((c1),(m1,m2),(s1,s2,s3,s4,s5,s6),(e1,e2,e3)) = fClas
  where fClas (Class      c ms)     = c1 c (map fMemb ms)
        fMemb (MemberD    d)        = m1 d
        fMemb (MemberM    t m ps s) = m2 t m ps (fStat s)
@@ -38,4 +37,3 @@ foldJava ((c1),(m1,m2),(s1,s2,s3,s4,s5,s6),(e1,e2,e3{-,e4-})) = fClas
        fExpr (ExprConst  con)      = e1 con
        fExpr (ExprVar    var)      = e2 var
        fExpr (ExprOper   op e1 e2) = e3 op (fExpr e1) (fExpr e2)
-       --fExpr (ExprInc    var op)   = e4 var op

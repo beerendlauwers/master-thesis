@@ -75,6 +75,17 @@ withoutQuotesMinus:
 	STR R3
 	RET
 	RET
+divideAssign:
+	LDC 2
+	LDL 37
+	DIV
+	LDLA 37
+	STA 0
+	AJS -1
+	LDL 37
+	STR R3
+	RET
+	RET
 square:
 	LDL 37
 	LDL 37
@@ -103,15 +114,6 @@ abs:
 	LDL 37
 	STR R3
 	RET
-	RET
-singleIncrement:
-	LDL 37
-	LDC 1
-	ADD
-	LDS 0
-	LDLA 37
-	STA 0
-	AJS -1
 	RET
 fac:
 	LDC 1

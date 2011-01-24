@@ -22,7 +22,6 @@ data Stat = StatDecl   Decl
 data Expr = ExprConst  Token
           | ExprVar    Token
           | ExprOper   Token Expr Expr
-          | ExprInc    Token Token -- ++ and -- code
           deriving Show
           
 data Decl = Decl       Type Token
@@ -40,8 +39,7 @@ braced        p = pack (symbol COpen) p (symbol CClose)
 
 pExprSimple :: Parser Token Expr
 pExprSimple =  ExprConst <$> sConst
-           <|> ExprInc <$> sLowerId <*> sIncrementor
-           <|> ExprVar  <$> sLowerId
+           <|> ExprVar   <$> sLowerId
            <|> parenthesised pExpr
            
 --pExpr :: Parser Token Expr
