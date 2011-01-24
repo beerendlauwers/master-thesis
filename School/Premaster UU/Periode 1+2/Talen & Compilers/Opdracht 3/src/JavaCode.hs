@@ -19,7 +19,7 @@ codeAlgebra :: JavaAlgebra Code
 codeAlgebra = ( (fClas)
               , (fMembDecl,fMembMeth)
               , (fStatDecl,fStatExpr,fStatIf,fStatWhile,fStatReturn,fStatBlock)
-              , (fExprCon,fExprVar,fExprOp{-,fExprInc-}) 
+              , (fExprCon,fExprVar,fExprOp) 
               )
  where
  fClas       c ms     = [Bsr "main", HALT] ++ concat ms
@@ -37,13 +37,7 @@ codeAlgebra = ( (fClas)
  fStatWhile  e s1     = let c = e Value
                             n = codeSize s1
                             k = codeSize c
-                        in  [BRA n] ++ s1 ++ c ++ [BRT (-(n + k + 2))]
-                        
- fStatFor    e s1     = let c = e Value
-                            n = codeSize s1
-                            k = codeSize c
-                        in  [BRA n] ++ s1 ++ c ++ [BRT (-(n + k + 2))]
-                        
+                        in  [BRA n] ++ s1 ++ c ++ [BRT (-(n + k + 2))] 
  fStatReturn e        = e Value ++ [STR R3] ++ [RET]
  fStatBlock  ss       = concat ss
  
@@ -53,25 +47,22 @@ codeAlgebra = ( (fClas)
                                             in [LDC boolean]
                              ConstChar x -> [LDC (ord x)]
  fExprVar    v        va = case v of
-                             LowerId x -> let loc = 37 -- Lookup in map here
+                             LowerId x -> let loc = 37
                                           in  case va of
                                                 Value    ->  [LDL  loc]
                                                 Address  ->  [LDLA loc] 
  fExprOp     o e1 e2  va = case o of
                              Operator "=" -> e2 Value ++ [LDS 0] ++ e1 Address  ++ [STA 0]
-                             Operator "+=" -> e2 Value ++ e1 Value ++ [ADD] ++ e1 Address  ++ [STA 0]
-                             Operator "-=" -> e2 Value ++ e1 Value ++ [SUB] ++ e1 Address  ++ [STA 0]
-                             Operator op  -> e1 Value ++ e2 Value ++ [opCodes ! op]
-                             
- --fExprInc    e1 op    va = [LDC 1] ++ e1 Value ++ [LDS 0] ++ [incCodes ! op] ++ e1 Address ++ [STA 0]
+                             Operator (x:"=") -> let isAssignOp = elem x assignOps
+                                                     actualOp = (:[]) x
+                                                  in if isAssignOp == True
+                                                      then e2 Value ++ e1 Value ++ [opCodes ! actualOp] ++ e1 Address ++ [STA 0]
+                                                      else otherOps (x:"=")
+                             Operator op  -> otherOps op
+                             where otherOps op = e1 Value ++ e2 Value ++ [opCodes ! op]
 
-incCodes :: Map String Instr
-incCodes
- = fromList
-    [ ( "++" , ADD )
-    , ( "--" , SUB )
-    ]
- 
+assignOps = ['+','-','/','*','%','$']
+                              
 opCodes :: Map String Instr
 opCodes
  = fromList

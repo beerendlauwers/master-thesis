@@ -35,7 +35,7 @@ class Hello
         return 0 && true || 1; 
     } *  /**/ */
     
-    /*
+    /*// DIKKE SHIT
     //boolean assignBoolean()
     //{
     //    boolean b; // fdgffvdgffg
@@ -56,6 +56,13 @@ class Hello
         return 5 * 2 + 10; 
     }
     
+    int divideAssign()
+    {
+        int v;
+        v /= 2;
+        return v;
+    }
+    
     int square( int x )
     {
         int y;
@@ -68,12 +75,6 @@ class Hello
         if (x<0)
             x = 0-x;
         return x;
-    }
-    
-    int singleIncrement()
-    {
-        int t;
-        t = t + 1;
     }
     
     int fac(int x)
