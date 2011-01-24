@@ -76,6 +76,11 @@ withoutQuotesMinus:
 	RET
 	RET
 divideAssign:
+	LDC 5
+	LDL 0
+	Bsr withoutQuotesMinus
+	LDR R3
+	AJS -1
 	LDC 2
 	LDL 37
 	DIV

@@ -19,7 +19,7 @@ codeAlgebra :: JavaAlgebra Code
 codeAlgebra = ( (fClas)
               , (fMembDecl,fMembMeth)
               , (fStatDecl,fStatExpr,fStatIf,fStatWhile,fStatReturn,fStatBlock)
-              , (fExprCon,fExprVar,fExprOp) 
+              , (fExprCon,fExprVar,fExprOp,fExprMethod) 
               )
  where
  fClas       c ms     = [Bsr "main", HALT] ++ concat ms
@@ -60,6 +60,9 @@ codeAlgebra = ( (fClas)
                                                       else otherOps (x:"=")
                              Operator op  -> otherOps op
                              where otherOps op = e1 Value ++ e2 Value ++ [opCodes ! op]
+                             
+ fExprMethod na vars  va = case na of
+                            LowerId name -> concat [x va | x <- vars] ++ [LDL 0, Bsr name, LDR R3]
 
 assignOps = ['+','-','/','*','%','$']
                               
