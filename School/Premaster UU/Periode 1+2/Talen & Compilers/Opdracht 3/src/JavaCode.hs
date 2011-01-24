@@ -27,7 +27,7 @@ codeAlgebra :: JavaAlgebra Code
 codeAlgebra = ( (fClas)
               , (fMembDecl,fMembMeth)
               , (fStatDecl,fStatExpr,fStatIf,fStatWhile,fStatReturn,fStatBlock)
-              , (fExprCon,fExprVar,fExprOp,fExprMethod) 
+              , (fExprCon,fExprVar,fExprOp,fExprMethod,fExprIncr) 
               )
  where
  fClas       c ms     = [Bsr "main", HALT] ++ concat ms
@@ -100,6 +100,9 @@ codeAlgebra = ( (fClas)
                              
  fExprMethod na vars  va env = case na of
                                 LowerId name -> concat [x va env | x <- vars] ++ [LDL 0, Bsr name, LDR R3]
+                                
+ fExprIncr var inc p  va env = let actualVar = var Value env
+                               in actualVar ++ actualVar ++ [LDC 1] ++ var Address env ++ [STA 0]
 
 assignOps = ['+','-','/','*','%','$']
 
@@ -110,7 +113,7 @@ simply Nothing = error "Item not found!"
 (?) :: Eq a => [(a,b)] -> a -> b
 ((a,b):ts) ? x | x==a      = b
                | otherwise = ts ? x
-                              
+      
 opCodes :: Map String Instr
 opCodes
  = fromList

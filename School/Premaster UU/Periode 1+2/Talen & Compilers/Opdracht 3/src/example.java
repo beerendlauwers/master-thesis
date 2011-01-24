@@ -5,6 +5,8 @@ class Hello
     void main()
     {
         int y;
+        y++;
+        ++y;
         y = 2;
         y += 2;
         y -= 2;
