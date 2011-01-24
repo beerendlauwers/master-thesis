@@ -8,7 +8,7 @@ class Hello
         y = 2;
         y += 2;
         y -= 2;
-        y = x*x;
+        //y = x*x;
         return y; 
     }
     
