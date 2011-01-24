@@ -35,7 +35,7 @@ class Hello
         return 0 && true || 1; 
     } *  /**/ */
     
-    /*// DIKKE SHIT
+    /*
     //boolean assignBoolean()
     //{
     //    boolean b; // fdgffvdgffg
