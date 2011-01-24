@@ -1,156 +1,232 @@
 	Bsr main
 	HALT
 main:
+	LINK 1
+	LDR MP
 	LDC 2
 	LDS 0
-	LDLA 37
+	LDLA 1
 	STA 0
 	AJS -1
 	LDC 2
-	LDL 37
+	LDL 1
 	ADD
-	LDLA 37
+	LDS 0
+	LDLA 1
 	STA 0
 	AJS -1
 	LDC 2
-	LDL 37
+	LDL 1
 	SUB
-	LDLA 37
-	STA 0
-	AJS -1
-	LDL 37
-	LDL 37
-	MUL
 	LDS 0
-	LDLA 37
+	LDLA 1
 	STA 0
 	AJS -1
-	LDL 37
+	LDL 1
 	STR R3
+	UNLINK
+	STS 0
+	AJS 1
 	RET
+	UNLINK
+	STS 0
+	AJS 1
 	RET
 correct:
+	LINK 0
+	LDR MP
 	LDC 5
 	LDC 2
 	MUL
 	LDC 10
 	ADD
 	STR R3
+	UNLINK
+	STS 0
+	AJS 1
 	RET
+	UNLINK
+	STS 0
+	AJS 1
 	RET
 withoutQuotesPlus:
+	LINK 0
+	LDR MP
 	LDC 5
 	LDC 2
 	MUL
 	LDC 10
 	ADD
 	STR R3
+	UNLINK
+	STS 0
+	AJS 1
 	RET
+	UNLINK
+	STS 0
+	AJS 1
 	RET
 modulus:
+	LINK 0
+	LDR MP
 	LDC 8
 	LDC 2
 	MOD
 	LDC 8
 	ADD
 	STR R3
+	UNLINK
+	STS 0
+	AJS 1
 	RET
+	UNLINK
+	STS 0
+	AJS 1
 	RET
 assignChar:
+	LINK 1
+	LDR MP
 	LDC 97
 	LDS 0
-	LDLA 37
+	LDLA 1
 	STA 0
 	AJS -1
-	LDL 37
+	LDL 1
 	STR R3
+	UNLINK
+	STS 0
+	AJS 1
 	RET
+	UNLINK
+	STS 0
+	AJS 1
 	RET
 withoutQuotesMinus:
+	LINK 0
+	LDR MP
 	LDC 5
 	LDC 2
 	MUL
 	LDC 10
 	ADD
 	STR R3
+	UNLINK
+	STS 0
+	AJS 1
 	RET
+	UNLINK
+	STS 0
+	AJS 1
 	RET
 divideAssign:
+	LINK 1
+	LDR MP
 	LDC 5
 	LDL 0
 	Bsr withoutQuotesMinus
 	LDR R3
 	AJS -1
 	LDC 2
-	LDL 37
+	LDL 1
 	DIV
-	LDLA 37
+	LDS 0
+	LDLA 1
 	STA 0
 	AJS -1
-	LDL 37
+	LDL 1
 	STR R3
+	UNLINK
+	STS 0
+	AJS 1
 	RET
+	UNLINK
+	STS 0
+	AJS 1
 	RET
 square:
-	LDL 37
-	LDL 37
+	LINK 1
+	LDR MP
+	LDL 3
+	LDL 3
 	MUL
 	LDS 0
-	LDLA 37
+	LDLA 1
 	STA 0
 	AJS -1
-	LDL 37
+	LDL 1
 	STR R3
+	UNLINK
+	STS -1
+	AJS 0
 	RET
+	UNLINK
+	STS -1
+	AJS 0
 	RET
 abs:
-	LDL 37
+	LINK 0
+	LDR MP
+	LDL 3
 	LDC 0
 	LT
 	BRF 15
 	LDC 0
-	LDL 37
+	LDL 3
 	SUB
 	LDS 0
-	LDLA 37
+	LDLA 3
 	STA 0
 	AJS -1
 	BRA 0
-	LDL 37
+	LDL 3
 	STR R3
+	UNLINK
+	STS -1
+	AJS 0
 	RET
+	UNLINK
+	STS -1
+	AJS 0
 	RET
 fac:
+	LINK 2
+	LDR MP
 	LDC 1
 	LDS 0
-	LDLA 37
+	LDLA 2
 	STA 0
 	AJS -1
 	LDC 1
 	LDS 0
-	LDLA 37
+	LDLA 1
 	STA 0
 	AJS -1
 	BRA 26
-	LDL 37
-	LDL 37
+	LDL 1
+	LDL 2
 	MUL
 	LDS 0
-	LDLA 37
+	LDLA 1
 	STA 0
 	AJS -1
-	LDL 37
+	LDL 2
 	LDC 1
 	ADD
 	LDS 0
-	LDLA 37
+	LDLA 2
 	STA 0
 	AJS -1
-	LDL 37
-	LDL 37
+	LDL 2
+	LDL 3
 	LE
 	BRT -33
-	LDL 37
+	LDL 1
 	STR R3
+	UNLINK
+	STS -1
+	AJS 0
 	RET
+	UNLINK
+	STS -1
+	AJS 0
 	RET
