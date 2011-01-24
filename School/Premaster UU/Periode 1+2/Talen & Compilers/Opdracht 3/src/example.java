@@ -58,6 +58,7 @@ class Hello
     
     int divideAssign()
     {
+        withoutQuotesMinus( 5 );
         int v;
         v /= 2;
         return v;
