@@ -20,6 +20,7 @@ data Stat = StatDecl   Decl
           deriving Show
 
 data Position = LHS | RHS deriving (Show,Eq)
+
 data Expr = ExprConst  Token
           | ExprVar    Token
           | ExprOper   Token Expr Expr
@@ -45,31 +46,29 @@ pExprSimple =  ExprConst  <$> sConst
            <|> ExprMethod <$> sLowerId <*> parenthesised ( many pExpr )
            <|> ExprVar    <$> sLowerId
            <|> parenthesised pExpr
-
-          
-toExprIncr pos x y = ExprIncr x y pos
            
---pExpr :: Parser Token Expr
---pExpr = chainr pExprSimple (ExprOper <$> sOperator)
-     
-pExpr :: Parser Token Expr
-pExpr = doPrecs (reverse precedences) (chainl pExprIncr (ExprOper <$> sOperator))
-
---ptest = chainl pExprIncr $ (ExprOper <$> sOperator)
---pExprIncr = makeExprIncr
-
+-------------------------------------
+{- TASK 7: Add Increment Operators -}
+-------------------------------------
+           
 pExprIncr = toExprIncr RHS <$> pExprSimple <*> sIncrementor
             <|> pExprSimple
             <|> flip (toExprIncr LHS) <$> sIncrementor <*> pExprSimple
+            where toExprIncr pos x y = ExprIncr x y pos
+            
+-------------------
+{- END OF TASK 7 -}
+-------------------
+
+-------------------------------------------------
+{- TASK 2: Fix the priorities of the operators -}
+-------------------------------------------------
+
+pExpr :: Parser Token Expr
+pExpr = doPrecs (reverse precedences) (chainl pExprIncr (ExprOper <$> sOperator))
 
 pOp x = ExprOper <$> symbol (Operator x)
 pOperList = choice . map pOp
-
---pOperList (x:xs) = ExprOper <$> symbol ( Operator x ) <|> pOperList xs
-
-p1 = chainl p2 (ExprOper <$> symbol ( Operator "*" ) )
-p2 = chainr p3 (ExprOper <$> symbol ( Operator "+" ) )
-p3 = chainr pExprSimple (ExprOper <$> sOperator )
 
 doPrecs ((list,chainfunction):xs) prevPrec = let nextPrec = chainfunction prevPrec (pOperList list)
                                              in doPrecs xs nextPrec
@@ -83,6 +82,10 @@ precedences = [ (["*","/","%"],chainl),
                 (["&&"], chainl),
                 (["||"], chainl),
                 (["="], chainr) ]
+                
+-------------------
+{- END OF TASK 2 -}
+-------------------
 
 pMember :: Parser Token Member
 pMember =   MemberD <$> pDeclSemi

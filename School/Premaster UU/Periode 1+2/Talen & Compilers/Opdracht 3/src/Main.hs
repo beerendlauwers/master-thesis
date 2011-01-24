@@ -39,14 +39,3 @@ processFile (infile, outfile) =
                 . foldJava codeAlgebra
                 . start (pClass <* eof)
                 . start lexicalScanner
-                
--- processFile compiles one file; it take the name of the input
--- file and the name of the output file as arguments
-processFile2 :: (FilePath, FilePath) -> IO ()
-processFile2 (infile, outfile) =
-  do
-    xs <- readFile infile
-    writeFile outfile (process xs)
-    putStrLn (outfile ++ " written")
-  where process xs = show $ start lexicalScanner xs
-
