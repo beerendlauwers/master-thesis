@@ -102,7 +102,12 @@ codeAlgebra = ( (fClas)
                                 LowerId name -> concat [x va env | x <- vars] ++ [LDL 0, Bsr name, LDR R3]
                                 
  fExprIncr var inc p  va env = let actualVar = var Value env
-                               in actualVar ++ actualVar ++ [LDC 1] ++ var Address env ++ [STA 0]
+                                   opCode = case inc of Incrementor x -> x
+                                   action = [opCodes ! [head opCode] ]
+                                   extraCommand = case p of
+                                                   LHS -> []
+                                                   RHS -> [LDS 0]
+                               in actualVar ++ [LDC 1] ++ extraCommand ++ action ++ var Address env ++ [STA 0]
 
 assignOps = ['+','-','/','*','%','$']
 

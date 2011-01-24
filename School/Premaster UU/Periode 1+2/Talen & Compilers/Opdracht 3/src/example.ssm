@@ -4,14 +4,15 @@ main:
 	LINK 1
 	LDR MP
 	LDL 1
-	LDL 1
 	LDC 1
+	LDS 0
+	ADD
 	LDLA 1
 	STA 0
 	AJS -1
 	LDL 1
-	LDL 1
 	LDC 1
+	ADD
 	LDLA 1
 	STA 0
 	AJS -1
