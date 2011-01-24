@@ -117,8 +117,8 @@ simply search Nothing = error ("The variable " ++ search ++ " was not found in t
 
 getOp :: String -> Instr
 getOp op = if op `member` opCodes
-           then opCodes ! op
-           else error ("The operator " ++ op ++ " is not defined!")
+            then opCodes ! op
+            else error ("The operator " ++ op ++ " is not defined!")
       
 opCodes :: Map String Instr
 opCodes

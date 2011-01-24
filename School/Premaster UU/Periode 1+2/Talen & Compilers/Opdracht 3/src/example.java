@@ -14,8 +14,7 @@ class Hello
         return y; 
     }
     
-    // BOSNEGERS
-       // dap
+    // test
     
     int correct()
     {
