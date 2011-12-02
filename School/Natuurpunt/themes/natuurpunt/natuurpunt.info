@@ -12,8 +12,8 @@
 ; page at admin/appearance.
 
 screenshot  = screenshot.png
-name        = Natuurpunt Theme
-description = Het Natuurpunt thema.
+name        = Natuurstek Theme
+description = Het Natuurstek thema.
 
 
 
@@ -65,7 +65,7 @@ stylesheets-conditional[lte IE 6][all][]  = css/ie6.css
 
 ; Optionally add some JavaScripts to your theme.
 
-;scripts[] = js/script.js
+scripts[] = js/closeTree.js
 
 
 
@@ -91,6 +91,11 @@ regions[bottom]         = Page bottom
 regions[page_top]       = Page top
 regions[page_bottom]    = Page bottom
 
+; extra regions
+regions[topleftcontent] = Top left content
+regions[toprightcontent] = Top right content
+regions[lowerleftcontent] = Lower left content
+regions[lowerrightcontent] = Lower right content 
 
 
 ; Various page elements output by the theme can be toggled on and off. The

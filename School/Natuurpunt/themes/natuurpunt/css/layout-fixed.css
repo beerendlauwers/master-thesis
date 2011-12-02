@@ -35,6 +35,7 @@ body {
 }
 
 #page {
+margin-top: 5em;
 }
 
 /*
@@ -62,7 +63,13 @@ body {
 /*
  * Content
  */
+ 
 #content,
+#topleftcontent,
+#toprightcontent,
+#lowerleftcontent,
+#lowerrightcontent,
+#logo-area,
 .no-sidebars #content {
   float: left; /* LTR */
   width: 960px;
@@ -72,9 +79,9 @@ body {
 }
 
 .sidebar-first #content {
-  width: 760px;
-  margin-left: 200px; /* LTR */ /* The width of .region-sidebar-first. */
-  margin-right: -960px; /* LTR */ /* Negative value of #content's width + left margin. */
+  width: 640px;
+  margin-left: 201px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -841px; /* LTR */ /* Negative value of #content's width + left margin. */
 }
 
 .sidebar-second #content {
@@ -89,9 +96,22 @@ body {
   margin-right: -760px; /* LTR */ /* Negative value of #content's width + left margin. */
 }
 
+#topleftcontent .section,
+#toprightcontent .section,
+#lowerleftcontent .section,
+#lowerrightcontent .section,
+#logo-area .section,
 #content .section {
   margin: 0;
   padding: 0;
+}
+
+#content
+{
+  border: 2px solid #FF9933;
+  min-height: 560px;
+  padding: 20px;
+  color: #FF9933;
 }
 
 /*
@@ -103,15 +123,19 @@ body {
   margin-left: 0; /* LTR */
   margin-right: -100%; /* LTR */ /* Negative value of #navigation's width + left margin. */
   padding: 0; /* DO NOT CHANGE. Add padding or margin to #navigation .section. */
-  height: 3em; /* The navigation can have any arbritrary height. We picked one
+  height: 5.6em; /* The navigation can have any arbritrary height. We picked one
                     that is the line-height plus 1em: 1.3 + 1 = 2.3
                     Set this to the same value as the margin-top below. */
 }
 
-.with-navigation #content,
+.with-navigation #content
+{
+    margin-top: 6.1em; 
+}
+
 .with-navigation .region-sidebar-first,
 .with-navigation .region-sidebar-second {
-  margin-top: 3em; /* Set this to the same value as the navigation height above. */
+  margin-top: 4.7em; /* Set this to the same value as the navigation height above. */
 }
 
 #navigation .section {
@@ -167,6 +191,11 @@ body {
 #header,
 #content,
 #navigation,
+#topleftcontent,
+#toprightcontent,
+#lowerleftcontent,
+#lowerrightcontent,
+#logo-area,
 .region-sidebar-first,
 .region-sidebar-second,
 .region-footer,
@@ -188,3 +217,321 @@ body {
   overflow-y: hidden;
 }
 */
+
+/* Extra CSS */
+
+/* Bovenste menu */
+
+.menu-knop
+{
+    padding-top: 2em;
+    text-align: center;
+    vertical-align: middle;
+    float: left;
+}
+
+#menu-knop-home
+{
+    width: 150px;
+    height: 78px;
+    background-image: url('../images/menu-home.png');
+    background-repeat: no-repeat;
+}
+
+#menu-knop-biodiversiteit
+{
+    margin-left: 0.5em;
+    width: 158px;
+    height: 78px;
+    background-image: url('../images/menu-biodiversiteit.png');
+    background-repeat: no-repeat;
+}
+
+#menu-knop-nieuws
+{
+    margin-left: 0.65em;
+    width: 155px;
+    height: 78px;
+    background-image: url('../images/menu-nieuws.png');
+    background-repeat: no-repeat;
+}
+
+#menu-knop-tipsenweetjes
+{
+    margin-left: 0.5em;
+    width: 186px;
+    height: 78px;
+    background-image: url('../images/menu-tipsenweetjes.png');
+    background-repeat: no-repeat;
+}
+
+#menu-knop-contact
+{
+    margin-left: 0.5em;
+    width: 161px;
+    height: 78px;
+    background-image: url('../images/menu-contact.png');
+    background-repeat: no-repeat;
+}
+
+.with-navigation #topleftcontent,
+.with-navigation #toprightcontent
+{
+  margin-top: 7.1em; /* Set this to the same value as the navigation height above. */
+}
+
+/* Top left content */
+#topleftcontent
+{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #FF9933;
+    color: white;
+}
+
+#topleftcontent a:link {color: white; text-decoration: underline; }
+#topleftcontent a:active {color: white; text-decoration: underline; }
+#topleftcontent a:visited {color: white; text-decoration: underline; }
+#topleftcontent a:hover {color: white; text-decoration: underline; }
+
+.sidebar-first #topleftcontent
+{
+  line-height: 1em;
+  font-size: 12px;
+  width: 302px;
+  height: 233px;
+  margin-left: 244px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -546px; /* LTR */ /* Negative value of #content's width + left margin. */
+}
+
+/* Top right content */
+#toprightcontent
+{
+    border: 2px solid #FF9933;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.sidebar-first #toprightcontent
+{
+  line-height: 1em;
+  font-size: 12px;
+  width: 330px;
+  height: 147px;
+  margin-left: 554px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -884px; /* LTR */ /* Negative value of #content's width + left margin. */
+}
+
+/* Lower left content */
+
+.with-navigation #lowerleftcontent
+{
+  margin-top: 28em; /* Set this to the same value as the navigation height above. */
+}
+
+#lowerleftcontent
+{
+    border: 2px solid #FF9933;
+    color: #FF9933;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#lowerleftcontent a:link {color: #FF9933; text-decoration: underline; }
+#lowerleftcontent a:active {color: #FF9933; text-decoration: underline; }
+#lowerleftcontent a:visited {color: #FF9933; text-decoration: underline; }
+#lowerleftcontent a:hover {color: #FF9933; text-decoration: underline; }
+
+.sidebar-first #lowerleftcontent
+{
+  line-height: 1em;
+  font-size: 12px;
+  width: 298px;
+  height: 266px;
+  margin-left: 200px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -498px; /* LTR */ /* Negative value of #content's width + left margin. */
+}
+
+/* Lower right content */
+
+.with-navigation #lowerrightcontent
+{
+  margin-top: 21.3em; /* Set this to the same value as the navigation height above. */
+}
+
+#lowerrightcontent
+{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #478136;
+    color: white;
+    background-image: url('../images/menu-rechts.png');
+    background-position: bottom right;
+    background-repeat: no-repeat;
+}
+
+#lowerrightcontent a:link {color: white; text-decoration: underline; }
+#lowerrightcontent a:active {color: white; text-decoration: underline; }
+#lowerrightcontent a:visited {color: white; text-decoration: underline; }
+#lowerrightcontent a:hover {color: white; text-decoration: underline; }
+
+.sidebar-first #lowerrightcontent
+{
+  line-height: 1em;
+  font-size: 12px;
+  width: 334px;
+  height: 280px;
+  margin-left: 506px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -840px; /* LTR */ /* Negative value of #content's width + left margin. */
+}
+
+.with-navigation #logo-area
+{
+  margin-top: 39.8em; /* Set this to the same value as the navigation height above. */
+}
+
+#logo-area
+{
+}
+
+.sidebar-first #logo-area
+{
+  width: 354px;
+  height: 52px;
+  margin-left: 486px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -840px; /* LTR */ /* Negative value of #content's width + left margin. */
+}
+
+#logo-natuurstek-image
+{
+  width: 354px;
+  height: 52px;
+}
+
+/* Doel van de site op frontpage */
+
+#block-views-doel-van-de-site-block h2
+{
+    color: #FF9933;
+}
+
+.doel_van_de_site_tekst
+{
+    color: #FF9933;
+}
+
+/* "Te Doen Deze Week" foto op frontpage */
+
+.te_doen_deze_week_foto_frontpage
+{
+    float:right;
+    padding: 2px;
+}
+
+.te_doen_deze_week_titel_frontpage
+{
+    font-weight: 800; 
+}
+
+#block-views-te-doen-deze-week-block h2
+{
+    color: white;
+    margin-bottom: 10px;
+}
+
+/* Recentste nieuws */
+
+.recent_nieuws_titel
+{
+    margin-bottom: 5px;
+}
+
+.recent_nieuws_tekst
+{
+    margin-bottom: 1em;
+}
+
+.recent_nieuws_datum
+{
+   margin-bottom: 5px;
+}
+
+.recent_nieuws_foto
+{
+    float: right;
+}
+
+/* Nieuwsbericht content type */
+
+.node-nieuwsbericht
+{
+  font-size: 14px;
+}
+
+.field-name-field-nieuwsbericht-teaser
+{
+    font-weight: 800;
+}
+
+.field-name-field-foto
+{
+    float: left;
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+.field-name-field-nieuwsbericht-tekst
+{
+    clear: both;
+    padding-top: 10px;
+}
+
+/* Achtergrondartikel content type */
+
+.node-achtergrondartikel a:link {color: #FF9933; text-decoration: underline; }
+.node-achtergrondartikel a:active {color: #FF9933; text-decoration: underline; }
+.node-achtergrondartikel a:visited {color: #FF9933; text-decoration: underline; }
+.node-achtergrondartikel a:hover {color: #FF9933; text-decoration: underline; }
+
+/* Menu voor categorie van achtergrondartikels */
+.menu-name-menu-categories
+{
+    width: 150px;
+    padding-bottom: 10px;
+    background-color: #8CC63F;
+    background-image: url('../images/menu-links.png');
+    background-position: bottom left;
+    background-repeat: no-repeat;
+}
+
+/* Standaard: enkel top-level elementen tonen */
+.menu-name-menu-categories ul ul
+{
+    display: none;
+}
+
+
+.menu-name-menu-categories ul li
+{
+    color: white;
+    list-style-type: none;
+    list-style-image: none;
+}
+
+.menu-name-menu-categories > ul
+{
+    font-weight: 800;
+}
+
+.menu-name-menu-categories a:link {color: #FFF; text-decoration: none; }
+.menu-name-menu-categories a:active {color: #FFF; text-decoration: none; }
+.menu-name-menu-categories a:visited {color: #FFF; text-decoration: none; }
+.menu-name-menu-categories a:hover {color: #EEE; text-decoration: underline; }
+
+.menu-name-menu-categories ul li ul li
+{
+    margin-left: -1em;
+}
