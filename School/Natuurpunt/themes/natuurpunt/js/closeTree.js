@@ -1,6 +1,11 @@
 (function ($) {
 
      $(window).load(function(){
+        
+        // Hide content border if there are other content divs
+        if ($("#topleftcontent").length > 0){
+            $("#content").css("border", "solid 2px white");
+        }
      
         // Wrap <a> tags in a temporary class to find them more easily
         $(".menu-block-wrapper").find('li > a[href*="taxonomy/term"]').wrap('<div class="temporaryclass" />');
