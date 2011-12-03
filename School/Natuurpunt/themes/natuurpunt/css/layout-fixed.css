@@ -65,8 +65,6 @@ margin-top: 5em;
  */
  
 #content,
-#topleftcontent,
-#toprightcontent,
 #lowerleftcontent,
 #lowerrightcontent,
 #logo-area,
@@ -76,6 +74,33 @@ margin-top: 5em;
   margin-left: 0; /* LTR */
   margin-right: -960px; /* LTR */ /* Negative value of #content's width + left margin. */
   padding: 0; /* DO NOT CHANGE. Add padding or margin to #content .section. */
+}
+
+.sidebar-first #topleftcontent
+{
+  float: left; /* LTR */
+  margin-left: 0; /* LTR */
+  padding: 0; /* DO NOT CHANGE. Add padding or margin to #content .section. */
+  width: 640px;
+  margin-left: 201px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -841px; /* LTR */ /* Negative value of #content's width + left margin. */
+}
+
+#topleftcontent .section
+{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.sidebar-first #toprightcontent
+{
+  float: left; /* LTR */
+  margin-left: 0; /* LTR */
+  padding: 0; /* DO NOT CHANGE. Add padding or margin to #content .section. */
+  width: 640px;
+  margin-left: 201px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -841px; /* LTR */ /* Negative value of #content's width + left margin. */
 }
 
 .sidebar-first #content {
@@ -96,7 +121,6 @@ margin-top: 5em;
   margin-right: -760px; /* LTR */ /* Negative value of #content's width + left margin. */
 }
 
-#topleftcontent .section,
 #toprightcontent .section,
 #lowerleftcontent .section,
 #lowerrightcontent .section,
@@ -283,9 +307,6 @@ margin-top: 5em;
 /* Top left content */
 #topleftcontent
 {
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
     background-color: #FF9933;
     color: white;
 }
@@ -301,8 +322,8 @@ margin-top: 5em;
   font-size: 12px;
   width: 302px;
   height: 233px;
-  margin-left: 244px; /* LTR */ /* The width of .region-sidebar-first. */
-  margin-right: -546px; /* LTR */ /* Negative value of #content's width + left margin. */
+  margin-left: 160px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -462px; /* LTR */ /* Negative value of #content's width + left margin. */
 }
 
 /* Top right content */
@@ -321,7 +342,7 @@ margin-top: 5em;
   width: 330px;
   height: 147px;
   margin-left: 554px; /* LTR */ /* The width of .region-sidebar-first. */
-  margin-right: -884px; /* LTR */ /* Negative value of #content's width + left margin. */
+  margin-right: -888px; /* LTR */ /* Negative value of #content's width + left margin. */
 }
 
 /* Lower left content */
