@@ -1,7 +1,7 @@
 (function ($) {
 
      $(window).load(function(){
-        
+     
         // Hide content border if there are other content divs
         if ($("#topleftcontent").length > 0){
             $("#content").css("border", "solid 2px white");
@@ -15,9 +15,12 @@
           var link =  $(this).find('a');
           return link.contents();
         });
+        
+        // Absolute path for images
+        var absolutepathimages = "http://" + document.location.host + "/natuurpunt/themes/natuurpunt/images/";
 
         // Add <img> tags
-        $(".menu-block-wrapper").find('li').not('.leaf').prepend('<img src="themes/natuurpunt/images/plus-sign.png"/>');
+        $(".menu-block-wrapper").find('li').not('.leaf').prepend('<img src="' + absolutepathimages + 'bullet_right.png"/>');
 
         // Add clicking functionality to images
         $(".menu-block-wrapper").find('li').not('.leaf > img').click(
@@ -25,11 +28,11 @@
             $('ul', this).first().toggle();
 
            var ul = $('ul', this).first();
-
+           
         if (ul.is(":hidden")) {
-               $('img', this).first().attr( "src", "themes/natuurpunt/images/plus-sign.png" );
+               $('img', this).first().attr( "src", absolutepathimages + "bullet_right.png" );
             } else {
-               $('img', this).first().attr( "src", "themes/natuurpunt/images/minus-sign.png" );
+               $('img', this).first().attr( "src", absolutepathimages + "bullet_down.png" );
             }
 
             event.stopPropagation();
@@ -47,9 +50,9 @@
         var ul = $('ul', this).first();
 
         if (ul.is(":hidden")) {
-               $('img', this).first().attr( "src", "themes/natuurpunt/images/plus-sign.png" );
+               $('img', this).first().attr( "src", absolutepathimages + "bullet_right.png" );
             } else {
-               $('img', this).first().attr( "src", "themes/natuurpunt/images/minus-sign.png" );
+               $('img', this).first().attr( "src", absolutepathimages + "bullet_down.png" );
             }
         });
 
