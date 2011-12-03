@@ -98,6 +98,7 @@
     
     <?php if ($page['topleftcontent']): ?>
     <div id="topleftcontent" class="column region-topleftcontent"><div class="section">
+        <img src="themes/natuurpunt/images/nnof.png" width="68" height="30" align="right" style="margin-bottom:5px;"/>
         <?php print render($page['topleftcontent']); ?>
       </div></div> <!-- /.section, /#topleftcontent -->
     <?php endif; ?>
@@ -107,6 +108,27 @@
         <?php print render($page['toprightcontent']); ?>
       </div></div> <!-- /.section, /#toprightcontent -->
     <?php endif; ?>
+    
+    <?php if ($page['lowerleftcontent']): ?>
+    <div id="lowerleftcontent" class="column region-lowerleftcontent"><div class="section">
+        <?php print render($page['lowerleftcontent']); ?>
+      </div></div> <!-- /.section, /#lowerleftcontent -->
+    <?php endif; ?>
+    
+    <?php if ($page['lowerrightcontent']): ?>
+    <div id="lowerrightcontent" class="column region-lowerrightcontent"><div class="section">
+        <?php print render($page['lowerrightcontent']); ?>
+      </div></div> <!-- /.section, /#lowerrightcontent -->
+    <?php endif; ?>
+    
+    <?php if ($page['lowerrightcontent']): ?>
+    <div id="logo-area" class="column region-logo-area"><div class="section">
+        <?php if ($logo): ?>
+      <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo"><img id="logo-natuurstek-image" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" /></a>
+        <?php endif; ?>
+      </div></div> <!-- /.section, /#lowerrightcontent -->
+    <?php endif; ?>
+    
     
     <div id="navigation"><div class="section clearfix">
     <div id="menu-knop-home" class="menu-knop">Home</div>
