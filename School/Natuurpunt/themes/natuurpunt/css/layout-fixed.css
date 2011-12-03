@@ -168,6 +168,7 @@ margin-top: 5em;
 
 #content
 {
+  margin-top: 6.1em; 
   border: 2px solid #FF9933;
   min-height: 560px;
   padding: 20px;
@@ -215,6 +216,7 @@ margin-top: 5em;
 .region-sidebar-first {
   float: left; /* LTR */
   width: 200px;
+  margin-top: 4.7em;
   margin-left: 0; /* LTR */
   margin-right: -200px; /* LTR */ /* Negative value of .region-sidebar-first's width + left margin. */
   padding: 0; /* DO NOT CHANGE. Add padding or margin to .region-sidebar-first .section. */
@@ -462,6 +464,15 @@ margin-top: 5em;
 {
 }
 
+.sidebar-first #logo-area-under-content
+{
+  margin-top: 1em;
+  width: 354px;
+  height: 52px;
+  margin-left: 526px; /* LTR */ /* The width of .region-sidebar-first. */
+  margin-right: -880px; /* LTR */ /* Negative value of #content's width + left margin. */
+}
+
 .sidebar-first #logo-area
 {
   width: 354px;
@@ -588,6 +599,8 @@ margin-top: 5em;
 
 .menu-name-menu-categories > ul
 {
+    padding-left: 0;
+    margin-left: 3px;
     font-weight: 800;
 }
 

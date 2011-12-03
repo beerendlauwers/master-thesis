@@ -75,6 +75,7 @@
 
   <div id="main-wrapper"><div id="main" class="clearfix<?php if ($main_menu || $page['navigation']) { print ' with-navigation'; } ?>">
 
+    <?php if ($page['lowerrightcontent'] || $page['content']): ?>
     <div id="content" class="column"><div class="section">
       <?php print render($page['highlighted']); ?>
       <a id="main-content"></a>
@@ -94,6 +95,7 @@
       <?php print render($page['content']); ?>
       <?php print $feed_icons; ?>
     </div></div><!-- /.section, /#content -->
+    <?php endif; ?>
 
     
     <?php if ($page['topleftcontent']): ?>
@@ -121,6 +123,8 @@
       </div></div> <!-- /.section, /#lowerrightcontent -->
     <?php endif; ?>
     
+    
+    <!-- // Natuurstek Logo, Main Page -->
     <?php if ($page['lowerrightcontent']): ?>
     <div id="logo-area" class="column region-logo-area"><div class="section">
         <?php if ($logo): ?>
@@ -128,7 +132,6 @@
         <?php endif; ?>
       </div></div> <!-- /.section, /#lowerrightcontent -->
     <?php endif; ?>
-    
     
     <div id="navigation"><div class="section clearfix">
     <div id="menu-knop-home" class="menu-knop">Home</div>
@@ -147,6 +150,15 @@
 
   <?php print render($page['footer']); ?>
 
+  
+    <!-- // Natuurstek Logo, Under Content -->
+    <?php if (!$page['lowerrightcontent'] && $page['content']): ?>
+    <div id="logo-area-under-content">
+        <?php if ($logo): ?>
+      <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo"><img id="logo-natuurstek-image" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" /></a>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 
 </div></div><!-- /#page, /#page-wrapper -->
 
