@@ -75,8 +75,6 @@
 
   <div id="main-wrapper"><div id="main" class="clearfix<?php if ($main_menu || $page['navigation']) { print ' with-navigation'; } ?>">
 
-  
-    <?php if ($page['content']): ?>
     <div id="content" class="column"><div class="section">
       <?php print render($page['highlighted']); ?>
       <a id="main-content"></a>
@@ -96,7 +94,7 @@
       <?php print render($page['content']); ?>
       <?php print $feed_icons; ?>
     </div></div><!-- /.section, /#content -->
-    <?php endif; ?>
+
     
     <?php if ($page['topleftcontent']): ?>
     <div id="topleftcontent" class="column region-topleftcontent"><div class="section">
@@ -104,30 +102,10 @@
       </div></div> <!-- /.section, /#topleftcontent -->
     <?php endif; ?>
     
-    <?php if ($page['topleftcontent']): ?>
+    <?php if ($page['toprightcontent']): ?>
     <div id="toprightcontent" class="column region-toprightcontent"><div class="section">
         <?php print render($page['toprightcontent']); ?>
       </div></div> <!-- /.section, /#toprightcontent -->
-    <?php endif; ?>
-    
-    <?php if ($page['lowerleftcontent']): ?>
-    <div id="lowerleftcontent" class="column region-lowerleftcontent"><div class="section">
-        <?php print render($page['lowerleftcontent']); ?>
-      </div></div> <!-- /.section, /#lowerleftcontent -->
-    <?php endif; ?>
-    
-    <?php if ($page['lowerrightcontent']): ?>
-    <div id="lowerrightcontent" class="column region-lowerrightcontent"><div class="section">
-        <?php print render($page['lowerrightcontent']); ?>
-      </div></div> <!-- /.section, /#lowerrightcontent -->
-    <?php endif; ?>
-    
-    <?php if ($page['lowerrightcontent']): ?>
-    <div id="logo-area" class="column region-logo-area"><div class="section">
-        <?php if ($logo): ?>
-      <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo"><img id="logo-natuurstek-image" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" /></a>
-        <?php endif; ?>
-      </div></div> <!-- /.section, /#lowerrightcontent -->
     <?php endif; ?>
     
     <div id="navigation"><div class="section clearfix">
