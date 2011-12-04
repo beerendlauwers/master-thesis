@@ -134,7 +134,7 @@
     <?php endif; ?>
     
     <div id="navigation"><div class="section clearfix">
-    <div id="menu-knop-home" class="menu-knop">Home</div>
+    <div id="menu-knop-home" class="menu-knop"><a href="<?php print $front_page; ?>">Home</a></div>
     <div id="menu-knop-biodiversiteit" class="menu-knop">&nbsp;</div>
     <div id="menu-knop-nieuws" class="menu-knop">Nieuws</div>
     <div id="menu-knop-tipsenweetjes" class="menu-knop">&nbsp;</div>

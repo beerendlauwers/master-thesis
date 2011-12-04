@@ -120,7 +120,6 @@ margin-top: 5em;
 
 #lowerleftcontent .section
 {
-    padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -298,7 +297,15 @@ margin-top: 5em;
     text-align: center;
     vertical-align: middle;
     float: left;
+    font-weight: 800;
+    padding-top: 1.5em;
+    font-size: 150%;
 }
+
+.menu-knop a:link {color: darkgreen; text-decoration: none; }
+.menu-knop a:active {color: darkgreen; text-decoration: none; }
+.menu-knop a:visited {color: darkgreen; text-decoration: none; }
+.menu-knop a:hover {color: darkgreen; text-decoration: none; }
 
 #menu-knop-home
 {
@@ -310,7 +317,7 @@ margin-top: 5em;
 
 #menu-knop-biodiversiteit
 {
-    margin-left: 0.5em;
+    margin-left: 0.37em;
     width: 158px;
     height: 78px;
     background-image: url('../images/menu-biodiversiteit.png');
@@ -319,7 +326,7 @@ margin-top: 5em;
 
 #menu-knop-nieuws
 {
-    margin-left: 0.65em;
+    margin-left: 0.5em;
     width: 155px;
     height: 78px;
     background-image: url('../images/menu-nieuws.png');
@@ -328,7 +335,7 @@ margin-top: 5em;
 
 #menu-knop-tipsenweetjes
 {
-    margin-left: 0.5em;
+    margin-left: 0.35em;
     width: 186px;
     height: 78px;
     background-image: url('../images/menu-tipsenweetjes.png');
@@ -337,7 +344,7 @@ margin-top: 5em;
 
 #menu-knop-contact
 {
-    margin-left: 0.5em;
+    margin-left: 0.35em;
     width: 161px;
     height: 78px;
     background-image: url('../images/menu-contact.png');
@@ -349,6 +356,13 @@ margin-top: 5em;
 {
   margin-top: 7.1em; /* Set this to the same value as the navigation height above. */
 }
+
+/* Algemene content */
+
+#content a:link {color: #FF9933; text-decoration: underline; }
+#content a:active {color: #FF9933; text-decoration: underline; }
+#content a:visited {color: #FF9933; text-decoration: underline; }
+#content a:hover {color: #FF9933; text-decoration: underline; }
 
 /* Top left content */
 #topleftcontent
@@ -390,6 +404,11 @@ margin-top: 5em;
   margin-left: 486px; /* LTR */ /* The width of .region-sidebar-first. */
   margin-right: -841px; /* LTR */ /* Negative value of #content's width + left margin. */
 }
+
+#toprightcontent a:link {color: #FF9933; text-decoration: underline; }
+#toprightcontent a:active {color: #FF9933; text-decoration: underline; }
+#toprightcontent a:visited {color: #FF9933; text-decoration: underline; }
+#toprightcontent a:hover {color: #FF9933; text-decoration: underline; }
 
 /* Lower left content */
 
@@ -501,6 +520,12 @@ margin-top: 5em;
 
 /* "Te Doen Deze Week" foto op frontpage */
 
+.views-field-field-tedoendezeweek-teaser
+{
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
 .te_doen_deze_week_foto_frontpage
 {
     float:right;
@@ -509,7 +534,14 @@ margin-top: 5em;
 
 .te_doen_deze_week_titel_frontpage
 {
+    font-size: 125%;
     font-weight: 800; 
+    margin-bottom: 3px;
+}
+
+.te_doen_deze_week_datum_gewijzigd_frontpage
+{
+    margin-bottom: 5px;
 }
 
 #block-views-te-doen-deze-week-block h2
@@ -565,12 +597,79 @@ margin-top: 5em;
     padding-top: 10px;
 }
 
+/* Te Doen Deze week content type */
+
+.field-name-field-event-foto
+{
+    float: left;
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+.field-name-field-tedoendezeweek-teaser
+{
+    font-weight: 800;
+}
+
+.field-name-body
+{
+    clear: both;
+    padding-top: 10px;
+}
+
+.field-name-field-event-locatie
+{
+    margin-bottom: 1em;
+}
+
 /* Achtergrondartikel content type */
 
 .node-achtergrondartikel a:link {color: #FF9933; text-decoration: underline; }
 .node-achtergrondartikel a:active {color: #FF9933; text-decoration: underline; }
 .node-achtergrondartikel a:visited {color: #FF9933; text-decoration: underline; }
 .node-achtergrondartikel a:hover {color: #FF9933; text-decoration: underline; }
+
+/* Menu voor te doen deze week archief */
+
+.te-doen-deze-week-archief-block-view
+{
+    width: 150px;
+    padding-bottom: 10px;
+    background-color: #8CC63F;
+    background-image: url('../images/menu-links.png');
+    background-position: bottom left;
+    background-repeat: no-repeat;
+}
+
+.te-doen-deze-week-archief-block-view ul li
+{
+    color: white;
+    list-style-type: none;
+    list-style-image: none;
+}
+
+.te-doen-deze-week-archief-block-view > ul
+{
+    padding-left: 0;
+    margin-left: 3px;
+    font-weight: 800;
+}
+
+.te-doen-deze-week-archief-block-view ul li
+{
+    margin-left: -1.7em;
+}
+
+.te-doen-deze-week-archief-block-view a:link {color: #FFF; text-decoration: none; }
+.te-doen-deze-week-archief-block-view a:active {color: #FFF; text-decoration: none; }
+.te-doen-deze-week-archief-block-view a:visited {color: #FFF; text-decoration: none; }
+.te-doen-deze-week-archief-block-view a:hover {color: #EEE; text-decoration: underline; }
+
+/* Menu voor nieuwsarchief */
+
+.nieuwsarchief-view
+{
+}
 
 /* Menu voor categorie van achtergrondartikels */
 .menu-name-menu-categories
@@ -612,4 +711,10 @@ margin-top: 5em;
 .menu-name-menu-categories ul li ul li
 {
     margin-left: -1em;
+}
+
+/* Te Doen Deze Week Archief */
+
+.tedoendezeweek_archief_item
+{
 }
