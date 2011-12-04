@@ -669,7 +669,37 @@ margin-top: 5em;
 
 .nieuwsarchief-view
 {
+    width: 150px;
+    padding-bottom: 10px;
+    background-color: #8CC63F;
+    background-image: url('../images/menu-links.png');
+    background-position: bottom left;
+    background-repeat: no-repeat;
 }
+
+.nieuwsarchief-view ul li
+{
+    color: white;
+    list-style-type: none;
+    list-style-image: none;
+}
+
+.nieuwsarchief-view > ul
+{
+    padding-left: 0;
+    margin-left: 3px;
+    font-weight: 800;
+}
+
+.nieuwsarchief-view ul li
+{
+    margin-left: -1.7em;
+}
+
+.nieuwsarchief-view a:link {color: #FFF; text-decoration: none; }
+.nieuwsarchief-view a:active {color: #FFF; text-decoration: none; }
+.nieuwsarchief-view a:visited {color: #FFF; text-decoration: none; }
+.nieuwsarchief-view a:hover {color: #EEE; text-decoration: underline; }
 
 /* Menu voor categorie van achtergrondartikels */
 .menu-name-menu-categories
