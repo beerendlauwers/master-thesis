@@ -25,22 +25,22 @@
         var absolutepathimages = "http://" + document.location.host + "/natuurpunt/themes/natuurpunt/images/";
 
         // Add <img> tags
-        $(".menu-block-wrapper").find('li').not('.leaf').prepend('<img src="' + absolutepathimages + 'bullet_right.png"/>');
+        $(".menu-block-wrapper").find('li').not('.leaf').prepend('<img src="' + absolutepathimages + 'bullet_right.png" class="categorie-icon-button"/>');
 
         // Add clicking functionality to images
-        $(".menu-block-wrapper").find('li').not('.leaf > img').click(
+        $(".menu-block-wrapper").find('li').not('.leaf').find('img').click(
                 function(event) {
-            $('ul', this).first().toggle();
 
-           var ul = $('ul', this).first();
+                    var ul = $(this).parent().find('ul').first();
+                    ul.toggle();
            
-        if (ul.is(":hidden")) {
-               $('img', this).first().attr( "src", absolutepathimages + "bullet_right.png" );
-            } else {
-               $('img', this).first().attr( "src", absolutepathimages + "bullet_down.png" );
-            }
+                    if (ul.is(":hidden")) {
+                        $(this).attr( "src", absolutepathimages + "bullet_right.png" );
+                    } else {
+                        $(this).attr( "src", absolutepathimages + "bullet_down.png" );
+                    }
 
-            event.stopPropagation();
+                    event.stopPropagation();
               });
 
         // Hide entire structure
