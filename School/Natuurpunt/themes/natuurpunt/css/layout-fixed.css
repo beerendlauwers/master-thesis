@@ -393,6 +393,7 @@ margin-top: 5em;
     padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
+    color: #FF9933;
 }
 
 .sidebar-first #toprightcontent
@@ -631,14 +632,22 @@ margin-top: 5em;
 
 /* Menu voor te doen deze week archief */
 
-.te-doen-deze-week-archief-block-view
+#block-views-te-doen-deze-week-archief-block
 {
+    margin-top: 1.5em;
     width: 150px;
     padding-bottom: 10px;
     background-color: #8CC63F;
     background-image: url('../images/menu-links.png');
     background-position: bottom left;
     background-repeat: no-repeat;
+}
+
+#block-views-te-doen-deze-week-archief-block h2
+{
+    padding-left: 5px;
+    font-size:90%;
+    color: white;
 }
 
 .te-doen-deze-week-archief-block-view ul li
@@ -667,14 +676,22 @@ margin-top: 5em;
 
 /* Menu voor nieuwsarchief */
 
-.nieuwsarchief-view
+#block-views-nieuwsbericht-archief-block
 {
+    margin-top: 1.5em;
     width: 150px;
     padding-bottom: 10px;
     background-color: #8CC63F;
     background-image: url('../images/menu-links.png');
     background-position: bottom left;
     background-repeat: no-repeat;
+}
+
+#block-views-nieuwsbericht-archief-block h2
+{
+    padding-left: 5px;
+    font-size:100%;
+    color: white;
 }
 
 .nieuwsarchief-view ul li
@@ -747,4 +764,16 @@ margin-top: 5em;
 
 .tedoendezeweek_archief_item
 {
+}
+
+/* Nieuwsoverzicht */
+
+.view-id-tweede_recente_nieuwsbericht
+{
+    margin-top: -15px;
+}
+
+.view-id-eerste_meest_recente_nieuwsberic
+{
+    margin-top: -15px;
 }

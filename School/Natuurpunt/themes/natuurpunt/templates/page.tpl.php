@@ -84,7 +84,6 @@
         <h1 class="title" id="page-title"><?php print $title; ?></h1>
       <?php endif; ?>
       <?php print render($title_suffix); ?>
-      <?php print $messages; ?>
       <?php if ($tabs = render($tabs)): ?>
         <div class="tabs"><?php print $tabs; ?></div>
       <?php endif; ?>
@@ -100,7 +99,7 @@
     
     <?php if ($page['topleftcontent']): ?>
     <div id="topleftcontent" class="column region-topleftcontent"><div class="section">
-        <img src="themes/natuurpunt/images/nnof.png" width="68" height="30" align="right" style="margin-bottom:5px;"/>
+        <img src="themes/natuurpunt/images/nnof.png" id="nnof-logo" width="68" height="30" align="right" style="margin-bottom:5px;"/>
         <?php print render($page['topleftcontent']); ?>
       </div></div> <!-- /.section, /#topleftcontent -->
     <?php endif; ?>
@@ -136,9 +135,9 @@
     <div id="navigation"><div class="section clearfix">
     <div id="menu-knop-home" class="menu-knop"><a href="<?php print $front_page; ?>">Home</a></div>
     <div id="menu-knop-biodiversiteit" class="menu-knop">&nbsp;</div>
-    <div id="menu-knop-nieuws" class="menu-knop">Nieuws</div>
+    <div id="menu-knop-nieuws" class="menu-knop"><a href="<?php print $base_path . 'nieuws'; ?>">Nieuws</a></div>
     <div id="menu-knop-tipsenweetjes" class="menu-knop">&nbsp;</div>
-    <div id="menu-knop-contact" class="menu-knop">Contact</div>
+    <div id="menu-knop-contact" class="menu-knop"><a href="<?php print $base_path . 'contact'; ?>">Contact</a></div>
     </div></div>
 
     <?php print render($page['sidebar_first']); ?>
@@ -150,7 +149,6 @@
 
   <?php print render($page['footer']); ?>
 
-  
     <!-- // Natuurstek Logo, Under Content -->
     <?php if (!$page['lowerrightcontent'] && $page['content']): ?>
     <div id="logo-area-under-content">
@@ -159,6 +157,8 @@
         <?php endif; ?>
     </div>
     <?php endif; ?>
+    
+    <?php print $messages; ?>
 
 </div></div><!-- /#page, /#page-wrapper -->
 

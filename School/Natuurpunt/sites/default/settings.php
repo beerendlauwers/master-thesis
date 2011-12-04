@@ -257,6 +257,8 @@ $drupal_hash_salt = 'Rd7n8r0R9NxermMwgKr0fFpwBKsRokrT2vJ918_mBns';
  * runtime settings and the .htaccess file for non-runtime settings. Settings
  * defined there should not be duplicated here so as to avoid conflict issues.
  */
+ 
+ini_set('max_execution_time', 0);
 
 /**
  * Some distributions of Linux (most notably Debian) ship their PHP
