@@ -760,6 +760,12 @@ margin-top: 5em;
     margin-left: -1em;
 }
 
+.categorie-icon-button
+{
+    cursor:pointer;
+    cursor:hand;
+}
+
 /* Te Doen Deze Week Archief */
 
 .tedoendezeweek_archief_item
