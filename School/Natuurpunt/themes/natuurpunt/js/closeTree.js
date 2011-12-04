@@ -6,9 +6,14 @@
         if ($("#topleftcontent").length > 0){
             $("#content").css("border", "solid 2px white");
         }
-     
+        
+        // Remove NNOF logo if necessary
+        if ($(".view-id-eerste_meest_recente_nieuwsberic").length > 0){
+            $("#nnof-logo").hide();
+        }
+        
         // Wrap <a> tags in a temporary class to find them more easily
-        $(".menu-block-wrapper").find('li > a[href*="taxonomy/term"]').wrap('<div class="temporaryclass" />');
+        $(".menu-block-wrapper").find('li > a[href*="/categorie%C3%ABn/"]').wrap('<div class="temporaryclass" />');
 
         // Replace <a> tags with just their contents
         $('.temporaryclass').replaceWith(function() {
