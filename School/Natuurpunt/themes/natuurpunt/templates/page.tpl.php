@@ -129,7 +129,11 @@
         <?php if ($logo): ?>
       <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" id="logo"><img id="logo-natuurstek-image" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" /></a>
         <?php endif; ?>
-      </div></div> <!-- /.section, /#lowerrightcontent -->
+      </div>
+      <div id="powered-by-nnof" align="right">
+    Powered by <img src="<?php print $base_path . 'themes/natuurpunt/images/nnof.png'; ?>" id="powered-by-nnof-logo" width="68" height="30" valign="center" />
+    </div>
+      </div> <!-- /.section, /#lowerrightcontent -->
     <?php endif; ?>
     
     <div id="navigation"><div class="section clearfix">
@@ -143,7 +147,7 @@
     <?php print render($page['sidebar_first']); ?>
 
     <?php print render($page['sidebar_second']); ?>
-    
+      
 
   </div></div><!-- /#main, /#main-wrapper -->
 

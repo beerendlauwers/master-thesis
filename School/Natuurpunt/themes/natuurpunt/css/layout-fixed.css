@@ -783,3 +783,18 @@ margin-top: 5em;
 {
     margin-top: -15px;
 }
+
+/* Powered By NNOF Logo ¨*/
+
+#powered-by-nnof-logo
+{
+    width: 68;
+    height: 30;
+    vertical-align: middle;
+}
+
+#powered-by-nnof
+{
+    vertical-align: middle;
+    color: #FF9933;
+}
