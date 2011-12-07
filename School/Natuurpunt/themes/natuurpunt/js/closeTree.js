@@ -22,8 +22,23 @@
         });
         
         // Absolute path for images
-        var absolutepathimages = "http://" + document.location.host + "/natuurpunt/themes/natuurpunt/images/";
+        var absolutepathimages = "http://" + document.location.host + "/natuurstek/themes/natuurpunt/images/";
 
+
+        var cache = [];
+        // Arguments are image paths relative to the current page.
+        $.preLoadImages = function() {
+            var args_len = arguments.length;
+            for (var i = args_len; i--;) {
+                var cacheImage = document.createElement('img');
+                cacheImage.src = arguments[i];
+                cache.push(cacheImage);
+            }
+        }
+
+        $.preLoadImages( absolutepathimages + 'bullet_right.png', absolutepathimages + 'bullet_down.png' );
+        
+        
         // Add <img> tags
         $(".menu-block-wrapper").find('li').not('.leaf').prepend('<img src="' + absolutepathimages + 'bullet_right.png" class="categorie-icon-button"/>');
 
