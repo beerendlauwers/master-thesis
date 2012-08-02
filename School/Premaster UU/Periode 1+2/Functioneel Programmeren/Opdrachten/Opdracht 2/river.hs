@@ -1,7 +1,9 @@
+import Debug.Trace
 import Data.MultiSet (MultiSet)
 import qualified Data.MultiSet as MS
+import Problem
 
-combs :: Int -> MultiSet Person -> [MultiSet Person]
+combs :: Int -> Group -> [Group]
 combs 0 ms = [MS.empty]
 combs (n + 1) ms | ms == MS.empty = []
                  | otherwise = map (\set -> MS.insert firstElem set) (combs n restElems) ++ combs (n + 1) restElems
@@ -11,18 +13,20 @@ combs (n + 1) ms | ms == MS.empty = []
 remdup :: MultiSet a -> MultiSet a
 remdup ms = MS.fromSet (MS.toSet ms)
 
-data Position = Links | Rechts deriving (Eq)
-data Person = Father | Mother | Son | Daughter | Cop | Thief deriving (Eq, Ord, Show)
+isIn :: (Ord a) => a -> MultiSet a -> Bool
+isIn x ms = MS.member x ms
 
-data River = River { links :: MultiSet Person, rechts :: MultiSet Person, schip :: Position } deriving (Eq)
+data RoseTree a = RoseLeaf | RoseNode a [RoseTree a]
 
-instance Show River where
-    show (River links rechts schip) = "\n" ++ "Links: " ++ show links ++ "\n" ++ "Rechts: " ++ show rechts ++ "\n"
+instance Show (RoseTree a) where
+	show (RoseLeaf) = "Leaf"
+	show (RoseNode x (y:ys)) = "Node\n" ++ showTree y ys
+	
+showTree x [] = " " ++ (show x)
+showTree x (y:ys) = " " ++ (show x) ++ (showTree y ys)
 
-config = MS.insert Thief( MS.insert Cop (MS.insertMany Daughter 2 ( MS.insertMany Son 2 ( (MS.insert Mother (MS.singleton Father) ) ) ) ) )
-
-initial :: River 
-initial = River { links = config, rechts = MS.empty, schip = Links }
+initialr :: River 
+initialr = River { links = config, rechts = MS.empty, schip = Links }
 
 desired :: River
 desired = River { links = MS.empty, rechts = config, schip = Rechts }
@@ -33,65 +37,96 @@ isSolution a = if a == desired then True else False
 admissible :: River -> Bool
 admissible (River li re sch) = admissible' li && admissible' re
 
-admissible' :: MultiSet Person -> Bool
-admissible' loc =
+hasFather = isIn Father
+hasDaughter = isIn Daughter
+hasSon = isIn Son
+hasMother = isIn Mother
+hasThief = isIn Thief
+hasCop = isIn Cop
+
+admissible' :: Group -> Bool
+admissible' set =
                  let
-                  son = (MS.occur Son loc > 0)
-                  dau = (MS.occur Daughter loc > 0)
-                  fat = (MS.occur Father loc > 0)
-                  mot = (MS.occur Mother loc > 0)
-                  cop = (MS.occur Cop loc > 0)
-                  thi = (MS.occur Thief loc > 0)
-                 in if (( thi && not cop && MS.size loc > 1) ||
+                  son = hasSon set
+                  dau = hasDaughter set
+                  fat = hasFather set
+                  mot = hasMother set
+                  cop = hasCop set
+                  thi = hasThief set
+                 in if (( thi && not cop && MS.size set > 1) ||
                         ( fat && dau && not mot ) ||
                         ( mot && son && not fat )) then False else True
 
-isIn :: MultiSet Person -> Person -> Bool
-isIn ms x = MS.member x ms
-                                                      
-raftadmissible :: MultiSet Person -> Bool
-raftadmissible ms = if ((isIn ms Father && isIn ms Daughter) ||
-                        (isIn ms Mother && isIn ms Son) ||
-                        (isIn ms Thief && not (isIn ms Cop) ) ) then False else True
 
-selectDrivers :: MultiSet Person -> MultiSet Person
+                                                      
+admissibleRivers :: River -> [River]
+admissibleRivers riv = admissibleRivers' riv (goodRafts riv)
+                       where goodRafts x = filter raftadmissible (generateRafts x)
+					   
+raftadmissible :: Group -> Bool
+raftadmissible set = if (( hasFather set && hasDaughter set) ||
+                        (  hasMother set && hasSon set) ||
+                        (  hasThief set && (not . hasCop) set ) ) then False else True
+
+selectDrivers :: Group -> Group
 selectDrivers ms =  MS.filter (\n -> n == Cop || n == Father || n == Mother) ms
 
---successors :: River -> [River]
---successors riv = filter admissible successors' riv
-
-generateRafts :: River -> [MultiSet Person]
-generateRafts (River li re sch) = if sch == Links then genRaft li ++ drivercombos li else genRaft re ++ drivercombos re
-                                  where genRaft ms = [ MS.insert x (MS.singleton y) | x <- MS.toList (drivers ms), y <- MS.toList (MS.difference (remdup ms) (drivers ms)) ]
+generateRafts :: River -> [Group]
+generateRafts (River li re sch) = if sch == Links then genRafts li else genRafts re
+                                  where genRafts ms = genRaft ms ++ drivercombos ms
+                                        genRaft ms = [ MS.insert x (MS.singleton y) | x <- MS.toList (drivers ms), y <- MS.toList (MS.difference (remdup ms) (drivers ms)) ]
                                         drivercombos ms = combs 2 (drivers ms) ++ (map MS.singleton (MS.toList (drivers ms) ) )
                                         drivers ms = selectDrivers ms
 
-goodRafts x = filter raftadmissible (generateRafts x) 
+admissibleRivers' :: River -> [Group] -> [River] 
+admissibleRivers' riv [] = []
+admissibleRivers' (River links rechts sch) (x:xs) = if sch == Links
+                                              then if links `zonder_X_en_X_met` rechts
+                                                    then River { links = (links MS.\\ x), rechts = MS.union x rechts, schip = Rechts } : rest
+                                                    else rest
+                                              else if rechts `zonder_X_en_X_met` links
+                                                    then River { links = MS.union x links, rechts = (rechts MS.\\ x), schip = Links } : rest
+                                                    else rest
+                                             where zonder_X_en_X_met s1 s2 = s1 `zonder` x && s2 `samenmet` x
+                                                   zonder side x = admissible' (side MS.\\ x)
+                                                   samenmet side x = admissible' (MS.union x side)
+                                                   rest = admissibleRivers' (River links rechts sch) xs
 
-admissibleRivers :: River -> [River]
-admissibleRivers riv = admissibleRivers' riv (goodRafts riv)
+		   
+generateTree :: [River] -> River -> RoseTree River
+generateTree prev x = RoseNode x (generateNode' prev (successors' prev x) )
 
-admissibleRivers' :: River -> [MultiSet Person] -> [River] 
-admissibleRivers' (River li re sch) [] = []
-admissibleRivers' (River li re sch) (x:xs) = if sch == Links
-                                              then if admissible' (li MS.\\ x)
-                                                    then River { links = (li MS.\\ x), rechts = MS.union x re, schip = Rechts } : admissibleRivers' (River li re sch) xs
-                                                    else admissibleRivers' (River li re sch) xs
-                                              else if admissible' (re MS.\\ x)
-                                                    then River { links = MS.union x li, rechts = (re MS.\\ x), schip = Links } : admissibleRivers' (River li re sch) xs
-                                                    else admissibleRivers' (River li re sch) xs
-                                        
-                                        
+generateNode' :: [River] -> [River] -> [RoseTree River]
+generateNode' prev [] = [RoseLeaf]
+generateNode' prev (x:xs) = RoseNode x [(generateTree (x:prev) x)] : generateNode' (x:prev) xs
 
-init1li = MS.insertMany Daughter 2 ( MS.insertMany Son 2 ( (MS.insert Mother (MS.singleton Father) ) ) )
-init1re = MS.insert Thief( MS.insert Cop MS.empty)
---successors' :: River -> [River]
---successors' (River li re sch) =
 
-testlol = MS.intersection config testen
+searchTree :: Eq a => RoseTree a -> a -> Bool
+searchTree (RoseLeaf) search = False
+searchTree (RoseNode x (y:ys)) search = if x == search
+                                        then True
+										else True `elem` (searchTree' y ys search)
 
-testen = MS.insert Thief( MS.insert Cop (MS.insertMany Daughter 2 ( MS.insertMany Son 2 MS.empty ) ) )
+searchTree' :: Eq a => RoseTree a -> [RoseTree a] -> a -> [Bool]
+searchTree' (RoseLeaf) [] search = [False]
+searchTree' (RoseNode x (y:ys)) [] search = searchTree' y ys search
+searchTree' (RoseNode x (y:ys)) (z:zs) search = if x == search
+                                                 then [True]
+												 else if True `elem` (searchTree' y ys search)
+												       then [True]
+													   else (searchTree' z zs search)
 
-testriver = River { links = testen, rechts = MS.insert Mother (MS.singleton Father), schip = Rechts }
+zoeken :: [River] -> [River] -> Bool
+zoeken [] [] = trace ("Nope!") False
+zoeken vorige [] = zoeken vorige (tail vorige) -- Ga 1 niveau omhoog!
+zoeken vorige (x:xs) = if isSolution x
+                          then True
+						  else
+                           let result = successors' (x:vorige) x
+                           in if result == [] 
+							   then zoeken (x:vorige) xs
+						       else zoeken (x:vorige) result -- B. zoeken in resultaat, MET prevState van result
 
-badtestriver = River { links = MS.insert Thief( MS.insertMany Daughter 2 ( MS.insertMany Son 2 MS.empty ) ), rechts = MS.insert Mother (MS.singleton Father), schip = Rechts }
+							   
+successors' :: [River] -> River -> [River]
+successors' prevStates riv = filter (\n -> not (n `elem` prevStates) ) (admissibleRivers riv)
