@@ -121,6 +121,8 @@ sortC = ctrue <@> ctrue >-> cord <@> ctrue
 
 --- Real Haskell experiment
 
+writeContractedCode = do writeFile "contractedCodeExample" ((show . pprint) isortMkCtrd)
+
 cfoldr_sort = cf C.>>-> (\f -> sorted [] C.>>-> (\b -> C.true C.<@> C.true C.>>-> (\i -> sorted i)))
   where cf = C.true C.>>-> (\x -> C.true C.<@> C.true C.>>-> (\xs -> sorted (x:xs)))
         sorted rs = (C.ord C.& perms rs) C.<@> C.true
