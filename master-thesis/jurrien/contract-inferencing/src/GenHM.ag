@@ -1,0 +1,225 @@
+data Constraint
+  |  Later      c1 :: Contract  c2 :: Contract
+  |  EInstance  c1 :: Contract  c2 :: Contract
+  |  IInstance  c1 :: Contract  m :: {Set Contract} c2 :: Contract
+
+deriving Constraint : Show
+deriving Constraint : Eq
+deriving Constraint : Ord
+
+{
+type Assumptions  = Map String Contract
+type CEnv'        = Map String Contract
+}
+
+type Constraints  = [ Constraint ]
+
+attr Expr Alts Alt
+  inh  mvars  :: {Set Contract}
+  syn  buinf  :: Contract
+  syn  assumps  use {`DM.union`} {DM.empty} :: Assumptions
+  syn  constrs  use {++} {[]} :: Constraints
+
+attr Expr
+  syn patvars use {`DS.union`} {DS.empty} :: {Set String}
+
+attr Constraint Constraints
+  chn  varcnt :: Int
+  syn  copy :: self
+  inh  env :: CEnv
+
+attr Constraint
+  syn activevars use {`DS.union`} {DS.empty}:: {Set Contract}
+
+attr Alts Alt
+  syn patinf :: Contract
+
+sem Expr
+  | EVar
+      lhs  .buinf    =   @loc.avar
+           .assumps  =   @loc.assump
+
+      loc  .assump   =   DM.singleton @nm @loc.avar
+           .avar     =   mkVar @loc.anum
+      loc  .anum     ::  uniqueref varcnt
+
+  | EApp
+      lhs  .buinf    =   @loc.ncv
+           .constrs  =   @loc.newcs
+
+      loc  .e1i      =   @e1.buinf
+           .e1a      =   @e1.assumps
+           .e1c      =   @e1.constrs
+           .e2i      =   @e2.buinf
+           .e2a      =   @e2.assumps
+           .e2c      =   @e2.constrs
+           .nappc    =   Later @loc.e1i (@loc.e2i >-> @loc.ncv)
+           .newcs    =   @loc.nappc : @e1.constrs ++ @e2.constrs
+           .ncv      =   mkVar @loc.ncvnum
+      loc  .ncvnum   ::  uniqueref varcnt
+
+  | ELam
+      lhs  .buinf    =   @loc.newctr
+           .assumps  =   @loc.assump
+           .constrs  =   @loc.ncs
+
+      loc  .ncs      =   @e.constrs ++ @loc.newcs
+           .assump   =   rmAssumpVar @loc.vvar @e.assumps
+           .vvar     =   getVar @v.copy
+           .newcs    =   let  f nm c cs
+                                | nm == @loc.vvar  = Later c @loc.ncv : cs
+                                | otherwise        = cs
+                         in   @e.constrs ++ DM.foldrWithKey f [] @e.assumps
+           .ei       =   @e.buinf
+           .newctr   =   @loc.ncv >-> @loc.ei
+           .ncv      =   mkVar @loc.ncvnum
+      loc  .ncvnum   ::  uniqueref varcnt
+
+  | ELet
+      lhs  .buinf    =   @loc.e2i
+           .assumps  =   @loc.assump
+           .constrs  =   @loc.newcs
+
+      loc  .e1i      =   @e1.buinf
+           .e1a      =   @e1.assumps
+           .e1c      =   @e1.constrs
+           .e2i      =   @e2.buinf
+           .e2a      =   @e2.assumps
+           .e2c      =   @e2.constrs
+           .assump   =   rmAssumpVar @loc.vvar $ @loc.e1a `DM.union` @loc.e2a
+           .vvar     =   getVar @v.copy
+           .newcs    =   let  f nm c cs
+                                | nm == @loc.vvar  = IInstance c @lhs.mvars @loc.e1i : cs
+                                | otherwise        = cs
+                              g nm c cs
+                                | nm == @loc.vvar  = Later c @loc.e1i : cs
+                                | otherwise        = cs
+                         in   @loc.e1c  ++ @loc.e2c
+                                        ++ DM.foldrWithKey f [] @loc.e2a
+                                        ++ DM.foldrWithKey g [] @loc.e1a
+           .ncv      =   mkVar @loc.ncvnum
+      loc  .ncvnum   ::  uniqueref varcnt
+
+  | ECons
+      lhs  .buinf    =   @loc.newfnc
+           .constrs  =   Later @loc.newfnc @tl.buinf : @hd.constrs ++ @tl.constrs
+
+      loc  .newfnc   =   CFunctor @loc.var1 @loc.hdbuinf
+           .ncv      =   if @loc.const
+                           then  mkVarConst @loc.ncvnum @loc.copy
+                           else  mkVar @loc.ncvnum
+           .hdbuinf  =   if @loc.const
+                           then  mkPlainC @hd.buinf
+                           else  @hd.buinf
+      loc  .ncvnum   ::  uniqueref varcnt
+
+  | EJust
+      lhs  .buinf    =   CFunctor @loc.var @e.buinf
+
+  | ENil ENothing
+      lhs  .buinf    =   CFunctor  (mkVarConst @loc.ncvn1 @loc.copy)
+                                   (mkVar @loc.ncvn2)
+
+      loc  .ncvn1    ::  uniqueref varcnt
+      loc  .ncvn2    ::  uniqueref varcnt
+
+  | * - EVar EApp ELam ELet ENil ENothing ECons EJust ECase
+     lhs.buinf = undefined
+     lhs.assumps = undefined
+     lhs.constrs = undefined
+
+  | ECase
+      lhs  .buinf    = @alts.buinf
+           .assumps  = @alts.assumps `DM.union` @match.assumps
+           .constrs  = Later @match.buinf @alts.patinf : @alts.constrs ++ @match.constrs
+
+sem Alts
+  | Cons
+      lhs  .patinf   = @hd.patinf
+           .constrs  = Later @hd.patinf @tl.patinf : @hd.constrs ++ @tl.constrs
+           .assumps  = @hd.assumps `DM.union` @tl.assumps
+
+  | Nil
+      lhs  .buinf    =   mkVar @loc.ncv1
+           .patinf   =   mkVar @loc.ncv2
+
+      loc  .ncv1     ::  uniqueref varcnt
+      loc  .ncv2     ::  uniqueref varcnt
+
+sem Alt
+  | Tuple
+      lhs  .buinf    = @x2.buinf
+           .patinf   = @x1.buinf
+           .assumps  = DS.foldr DM.delete @loc.cmbassm @x1.patvars
+           .constrs  = @x1.constrs ++ @x2.constrs
+
+      loc  .rhsinf   = @x2.buinf
+           .rhsas    = @x2.assumps
+           .cmbassm  = @x1.assumps `DM.union` @x2.assumps
+
+sem Expr
+  | EVar
+      lhs  .patvars  = DS.singleton @nm
+
+sem Constraint
+  | IInstance
+      lhs.activevars =  let  mfcv = DS.foldr f DS.empty @m
+                             f c vs = fcv c `DS.union` vs
+                        in   @c1.fcv `DS.union` (mfcv `DS.intersection` @c2.fcv)
+
+{
+inferNew :: Expr -> (Subst, Contract)
+inferNew expr = inferNew' DM.empty expr
+
+inferNew' :: CEnv' -> Expr -> (Subst, Contract)
+inferNew' env expr =  if setFromDom as `DS.isSubsetOf` setFromDom env
+                        then  (s, subst s contr)
+                        else  error $ "Undefined variables exist: " ++ show as ++ show env
+  where  s = solve (cstr ++ liftEInst as env)
+         (as, cstr, contr) =  (  stdSynExpr assumps_Syn_Expr expr
+                              ,  stdSynExpr constrs_Syn_Expr expr
+                              ,  stdSynExpr buinf_Syn_Expr expr )
+         setFromDom = DS.fromList . map fst . DM.toList
+
+liftEInst :: Assumptions -> CEnv' -> Constraints
+liftEInst a gamm = map snd $ DM.toList $ DM.intersectionWith EInstance a gamm
+
+activeVars :: Constraint -> Set Contract
+activeVars c = activevars_Syn_Constraint $ wrap_Constraint (sem_Constraint c) stdInhConstraint
+
+stdInhConstraint :: Inh_Constraint
+stdInhConstraint = Inh_Constraint DM.empty 0
+
+instance FCV a => FCV (Set a) where
+  fcv s = DS.foldr (\x xs -> fcv x `DS.union` xs) DS.empty s
+
+gen' :: Set Contract -> Contract -> Contract
+gen' m t = t -- DS.foldr CQuant t (fcv t DS.\\ m)
+
+rmAssumpVar :: String -> Assumptions -> Assumptions
+rmAssumpVar v = DM.filterWithKey f
+  where f nm _ = nm /= v
+
+solve :: Constraints -> Subst
+solve []                         = SId
+solve (Later c1 c2 : cs)         = SComp (solve (subst s cs)) s
+  where s = unifyC c1 c2
+solve (IInstance c1 ms c2 : cs)
+  | nullIntr   = solve $ EInstance c1 (gen' ms c2) : cs
+  | otherwise  = error "solve: should not happen"
+  where  nullIntr  = DS.null $ (fcv c2 DS.\\ ms) `DS.intersection` avs
+         avs       = foldr (\x xs -> activeVars x `DS.union` xs) DS.empty cs
+solve (EInstance c1 c2 : cs)     = solve $ Later c1 (inst c2) : cs
+
+instance Substitutable a => Substitutable [a] where
+  subst s = foldr (\x xs -> subst s x : xs) []
+
+instance Substitutable Constraint where
+  subst s (Later c1 c2)        = Later (subst s c1) (subst s c2)
+  subst s (EInstance c1 c2)    = EInstance (subst s c1) (subst s c2)
+  subst s (IInstance c1 m c2)  = IInstance (subst s c1) (subst s m) (subst s c2)
+
+instance (Substitutable a, Ord a) => Substitutable (Set a) where
+  subst s = DS.map (subst s)
+}
+

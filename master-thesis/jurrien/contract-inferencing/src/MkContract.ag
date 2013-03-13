@@ -1,0 +1,201 @@
+attr Expr Alt Alts Contract MaybeConst Subst
+  inh  recvars                                  :: {Map String String}
+  inh  clets                                    :: {Map String String}
+  inh  allsubsts :: Subst
+
+attr Contract
+  syn  mkExpr :: Expr
+
+attr Expr
+  syn  lamVars :: {[Expr]}
+
+sem Expr
+  | ELam
+      lhs.lamVars = @v.copy : @e.lamVars
+
+  | * - ELam
+      lhs.lamVars = []
+
+-- Semantics for making a contracted version of the code
+sem Expr
+  |  EVar
+       lhs.mkCtrd  =   case DM.lookup @nm @lhs.recvars of
+                         (Just v)  ->  EVar v
+                         _         ->  case (DM.lookup @nm @lhs.clets, DM.lookup @nm @lhs.env) of
+                                         (Just cn, Just c)  -> EVar cn `app` mkExpr (subst @lhs.allsubsts c)
+                                         _                  -> @loc.copy
+
+  |  EConst ENil ENothing EHole
+       lhs.mkCtrd  =   @loc.copy
+
+  |  ELam
+       lhs.mkCtrd  =   ELam @v.mkCtrd @e.mkCtrd
+
+  -- This is where we want to replace the original function application with
+  -- the contracted function application. However, we run into a problem here
+  -- in the case of (mutually) recursive polymorphic functions. Suppose such a
+  -- function is applied twice in the same code, but to arguments with
+  -- different contracts. Then, it is not clear to which recursive call it
+  -- should recurse. Instead, we will have to rewrite the original let binding
+  -- in which the function is defined to accept an additional parameter, namely
+  -- the recursive call itself. Can we do this with a fix combinator?
+  |  EApp
+       lhs.mkCtrd  =    EApp @e1.mkCtrd @e2.mkCtrd
+
+  |  ELet
+       {-
+Suppose we have the following code
+let x = \i -> i
+in  let y = \z -> z x
+    in  y x
+
+Then we will need to add lets in both branches of the lower let block (not in
+the upper, since there is no application there):
+
+let __x = \__rec -> \i -> i
+in  let __ctrtx = \ctrt -> \a -> (assert "x" ctrt) (fun __x (__ctrtx ctrt)) a
+    in  let y = z (__ctrtx xctrt1)
+        in  y (__ctrtx xctrt2)
+
+And in case of a recursive function, it is the same, only the recursive argument is used
+
+let foldr = \f -> \b -> \zs -> ...... f x (foldr f xs)
+in  let g = ...
+    in  let ys = ....
+        in  foldr g [] ys
+
+Becomes
+
+let __foldr = \__rec -> \f -> \b -> \zs.... f x (__rec f xs)
+in  let __ctrdfoldr = \ctrt -> \f' -> \b' -> \zs' -> apply (assert "foldr" ctrt) (app (app (fun (__foldr (__ctrdfoldr ctrt)) f') b') zs')
+    in let g = ...   -- This will have a contracted version too
+       in  let ys = ....
+           in  (__ctrdfoldr foldrctrt1) __ctrdg [] ys      -- g is also contracted, but that's left out here for brievety
+                                                             -- we choose to apply the concrete contract here, because this is where
+                                                             -- we have it completely. Note the extra parameter in __ctrdfoldr
+
+
+       -}
+       lhs.mkCtrd  =   let  reclam = ELam (EVar @loc.recvar) @e1.mkCtrd
+                       in   ELet @v.mkCtrd reclam @loc.ctrtLet
+
+       loc.varnm   =   @v.varnm
+          .recvar  =   mkRecNm @loc.varnm
+          .ctrtE   =   EVar "apply" `app` @loc.assertE `app` @loc.apps
+          .assertE =   EVar "assert" `app` mkStr @loc.varnm `app` ctrtVar
+          .apps    =   apps @e1.lamVars $ EVar "fun" `app` (EVar @v.varnm `app` (@loc.ctrtVar `app` ctrtVar))
+          .ctrtVar =   EVar $ mkCtrtNm @loc.varnm
+          .ctrtLet =   ELet @loc.ctrtVar
+                            (ELam ctrtVar $ lams @e1.lamVars @loc.ctrtE) @e2.mkCtrd
+
+-- TODO: Only generate recs etc if the rhs of a let.e1 is a lambda
+-- FIXME: We're not yet generating the correct contracts here
+-- look up in env, syn substs, and apply?
+       inst.lctrt  :: Contract
+       inst.lctrt  =  subst @v.subst @e1.infer
+
+       e1 .recvars =   DM.insert @loc.lbvar @loc.recvar @lhs.recvars
+       e2 .clets   =   DM.insert @loc.lbvar (mkCtrtNm @loc.varnm) @lhs.clets
+
+  |  ECase
+       lhs.mkCtrd  =   ECase @match.mkCtrd @alts.mkCtrd
+
+  |  ECons
+       lhs.mkCtrd  =   ECons @hd.mkCtrd @tl.mkCtrd
+
+  |  EJust
+       lhs.mkCtrd  =   EJust @e.mkCtrd
+
+  |  EPair
+       lhs.mkCtrd  =   EPair @pl.mkCtrd @pr.mkCtrd
+
+  |  ELeft
+       lhs.mkCtrd  =   ELeft @e.mkCtrd
+
+  |  ERight
+       lhs.mkCtrd  =   ERight @e.mkCtrd
+
+  |  EBinOp
+       lhs.mkCtrd  =   EBinOp @nm @l.mkCtrd @r.mkCtrd
+
+sem Alt
+  | Tuple
+      lhs.mkCtrd   =   (@x1.copy, @x2.mkCtrd)
+
+sem Alts
+  | Cons
+      lhs.mkCtrd   =   @hd.mkCtrd : @tl.mkCtrd
+
+  | Nil
+      lhs.mkCtrd   =   @loc.copy
+
+-- Semantics for easily getting an expression's variable name
+sem Expr
+  |  EVar
+       lhs.varnm = @nm
+
+  |  * - EVar
+       lhs.varnm = error "Expression is not a variable"
+
+-- Semantics for turning a contract into a concrete expression
+sem Contract
+  |  CArr        lhs.mkExpr = EVar "(>->)" `app` @c1.mkExpr `app` @c2.mkExpr
+  |  CProp       lhs.mkExpr = EVar @p
+  |  CFunctor    lhs.mkExpr = EVar "(<@>)" `app` @o.mkExpr `app` @i.mkExpr
+  |  CBifunctor  lhs.mkExpr = EVar "(<@@>)" `app` @o.mkExpr `app` EPair @il.mkExpr @ir.mkExpr
+  |  CVar        lhs.mkExpr = EVar @v -- TODO: Default contract etc.
+  |  CQuant      lhs.mkExpr = @cs.mkExpr
+
+{
+mkCApp :: Int -> Expr -> Expr
+mkCApp n e = foldr f (mkApps n e) [1..n]
+  where f x xs = EApp (EVar "fun") (ELam (mkVN x) xs)
+
+mkVN :: Show a => a -> Expr
+mkVN n = EVar $ 'v' : show n
+
+mkApps :: Int -> Expr -> Expr
+mkApps n e = foldl f e [1..n]
+  where f xs x = EApp (EApp (EVar "app") xs) (mkVN x)
+
+arity :: Contract -> Int
+arity (CArr _ c)  = 1 + arity c
+arity _           = 0
+
+mkRecNm :: String -> String
+mkRecNm xs = "__rec_" ++ xs
+
+mkCtrtNm :: String -> String
+mkCtrtNm xs = "__ctrt_" ++ xs
+
+ctrtVar :: Expr
+ctrtVar = EVar "ctrt"
+
+mkExpr :: Contract -> Expr
+mkExpr = stdSynContract mkExpr_Syn_Contract
+
+{-
+For generating an alternative to dependent contracts, I think there are two
+options, both of which rely on the availability of a QuickCheck
+counter-example:
+
+1) We only contract the top-level call of a function. Recursion uses the
+non-contracted version of the function. This could work, as we know that the QC
+counter-example is shrunk. I.e., recursive calls with "smaller" arguments will
+work just fine, otherwise a smaller counter-example would have been produced.
+Once the recursive call is complete, the contracted function can execute, which
+is supplied with the counter-example. At this point, the contract should
+hopefully fail with the expected error location.
+With this approach, we would generate "smaller" contracted code, so we need to
+cater to this separately from the "generic" contracted approach.
+
+2) We do an analysis to see how an argument is used and transform the argument,
+and its application in a contract manually in recursive calls. This requires
+some extra work to parameterize the contract with the counter-example
+recursively. It is also not clear whether this works.
+
+Of these two, option number 1 is probably easiest.
+
+-}
+
+}

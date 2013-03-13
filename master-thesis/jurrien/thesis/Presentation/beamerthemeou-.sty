@@ -1,0 +1,47 @@
+%----------------------------------------------------------------------------
+%
+%  Title       :  Beamer outer theme for OUNL presentations
+%  Author      :  ir. Alex Gerdes
+%  Copyright   :  (c) 2008 Open University / Alex Gerdes
+%  Created     :  16 September 2008
+%
+%  Purpose     :  This is the main theme file, it passes the options
+%                 to the inner and outer theme files.
+% 
+%----------------------------------------------------------------------------
+
+\RequirePackage{calc}
+\RequirePackage{ifthen}
+\RequirePackage{cmbright}
+\RequirePackage[T1]{fontenc}
+
+\renewcommand*\familydefault{\sfdefault}
+
+\DeclareOptionBeamer{navbar}
+{\PassOptionsToPackage{navbar=#1}{beamerouterthemeou}}
+
+\DeclareOptionBeamer{highcontrast}
+{\PassOptionsToPackage{highcontrast=#1}{beamerouterthemeou}}
+
+\DeclareOptionBeamer{showpagenr}
+{\PassOptionsToPackage{showpagenr=#1}{beamerouterthemeou}}
+
+\DeclareOptionBeamer{footline}
+{\PassOptionsToPackage{footline=#1}{beamerouterthemeou}}
+
+\DeclareOptionBeamer{sectionpages}
+{\PassOptionsToPackage{sectionpages=#1}{beamerinnerthemeou}}
+
+\DeclareOptionBeamer{tocnrs}
+{\PassOptionsToPackage{tocnrs=#1}{beamerinnerthemeou}}
+
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\useinnertheme{ou}
+\useoutertheme{ou}
+%\usecolortheme{ou}
+
+\mode<all>

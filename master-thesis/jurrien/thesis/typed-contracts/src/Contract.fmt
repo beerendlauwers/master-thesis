@@ -1,0 +1,159 @@
+% \arrayhs
+\plainhs
+
+\newcommand{\technical}[1]{\textsl{#1}}
+\newcommand{\explain}[1]{\quad\{\;\text{#1}\;\}}
+\newcommand{\justify}[1]{\quad\{\;\text{#1}\;\}}
+\newcommand{\todo}[1]{[\textit{Ralf says:}~#1]}
+
+\newcommand{\ralf}[1]{[\textit{Ralf says:}~#1]}
+\newcommand{\andres}[1]{[\textit{Andres says:}~#1]}
+\newcommand{\johan}[1]{[\textit{Johan says:}~#1]}
+
+% the `doubleequals' macro is due to Jeremy Gibbons
+\def\doubleequals{\mathrel{\unitlength 0.01em
+  \begin{picture}(78,40)
+    \put(7,34){\line(1,0){25}} \put(45,34){\line(1,0){25}}
+    \put(7,14){\line(1,0){25}} \put(45,14){\line(1,0){25}}
+  \end{picture}}}
+
+%if style == newcode
+
+%else
+
+%format ^			=  " "
+%format cdots			=  "\cdots "
+%format ldots			=  "\ldots "
+%format `elem`			=  "\in "
+%format `o`			=  "\mathrel{\cdot}"
+%format o                       =  "(\cdot)"
+%format ==                      =  "\doubleequals "
+%format /=                      =  "\not\doubleequals "
+%format forall (a)              =  "\forall " a
+%format .                       =  "\,.\,"
+% format .                       =  "\mathrel{\cdot}"
+%format not                     =  "\Varid{not}"
+%format <<                      =  "\mathit{Contracts}\rangle\enskip "
+
+%format :                       =  "\mathbin{::}"
+%format ::                      =  "\mathbin{:}"
+
+%format a1
+%format a1'
+%format a2
+%format b1
+%format b2
+%format as1
+%format as2
+%format as1'
+%format as2'
+%format c1
+%format c2
+%format c3
+%format d1
+%format d2
+%format e1
+%format e2
+%format nat4
+%format p1
+%format p2
+%format x1
+%format x2
+%format y0
+%format y0'
+%format y1
+%format y2
+%format y3
+%format y4
+
+%format loc                     =  "\ell "
+%format locs                    =  "\ell\mkern-2.328mus"
+%format loc'                    =  "\ell'' "
+%format locs'                   =  "\ell\mkern-2.328mus''"
+%format locsf                   =  "\ell\!s_f"
+%format locx                    =  "\ell_x"
+
+%format pre1
+%format pre2
+%format post1
+%format post2
+
+%format aT                      =  "\alpha "
+%format a1T                     =  "\alpha_1 "
+%format a2T                     =  "\alpha_2 "
+%format bT                      =  "\beta "
+%format b1T                     =  "\beta_1 "
+%format b2T                     =  "\beta_2 "
+%format cT                      =  "\gamma "
+%format fT                      =  "\varphi "
+%format sT                      =  "\sigma "
+%format s1T                     =  "\sigma_1 "
+%format s2T                     =  "\sigma_2 "
+%format tT                      =  "\tau "
+%format Gamma                   =  "\Gamma "
+
+%format ==>                     =  "\Longrightarrow"
+
+% format >->                     =  "\mapsto "
+%format >->                     =  "\rightarrowtriangle "
+% format >->                     =  "\longmapsto "
+% format >>->                    =  "\Mapsto "
+% format >>->                    =  "\Longmapsto "
+% format >>->                    =  "\stackrel{d}{\mapsto}"
+%format >>->                    =  "\stackrel{d}{\longmapsto}"
+%format >*>                     =  "\times "
+%format (pair (a) (b))          =  (a, b)
+%format &                       =  "\mathrel{\&}"
+%format /--                     =  "\mathrel{\vdash}"
+%format (Bag (a))               =  "\lbag " a "\rbag "
+
+% format :->                     =  "\hookrightarrow"
+%format :->                     =  "\rightarrowtriangle "
+
+%format (negative a)            =  a "^-"
+%format (positive a)            =  a "^+"
+
+%format less3 (a) (x) (b)       =  a <= x < b
+%format (sq x)                  =  x "^2"
+%format insertionSort           =  "\textit{insertion-sort}"
+%format insertionSort'          =  "\textit{insertion-sort}\,''"
+%format insertionSort''         =  "\textit{insertion-sort}\,''''"
+%format insertionSort'''        =  "\textit{insertion-sort}\,''''"
+%format insertionSort''''       =  "\textit{insertion-sort}\,''''''"
+%format insertionSort'''''      =  "\textit{insertion-sort}\,''''''''"
+%format heapSort                =  "\textit{heap-sort}"
+
+%format g' = g
+%format assert'                 =  "\Varid{assert}"
+%format varassert               =  "\Varid{assert}"
+%format <>                      =  "\mathbin{\diamond}"
+%format apply                   =  "\Varid{app}"
+%format prop'                   =  "\Varid{prop}"
+%format pair'                   =  "\Varid{pair}"
+%format list'                   =  "\Varid{list}"
+
+%endif % style == newcode
+
+%if style == newcode
+%format PROP x (p)              =  Prop ("\ " x " -> " p)
+%format FUNCTION x dom cod      =  Function dom (\ x -> cod)
+%format PAIR x l r              =  Pair l ("\ " x " -> " r)
+%format FUN x e                 =  fun ("\ " x " -> " e)
+%format FORALL x e              =  Forall ("\ " x " -> " e)
+%else
+%format (PROP x (p))            =  "\{\," x "\mid " p "\,\}"
+%format FUNCTION x (dom) (cod)  =  (x :: dom) >-> cod
+%format PAIR x (l) (r)          =  (x :: l) >*> r
+%format FUN x (e)               =  \ x :-> e
+%format fun (e)                 =  e
+%format FORALL x (e)            =  "\forall " x "\,.\," e
+% format (app (f) (l))           =  f "\;{}^{" l "}"
+% format (app (f) (l))           =  f "\diamond_{" l "}"
+%format (app (f) (l) x)           =  f "\;\mbox{}_{\loc{" l "}}" x
+%format (apps (f) (ls) x)           =  f "\;\mbox{}_{" ls "}" x
+%format (varapp (f) (l) x)      =  f "\;\mbox{}_{\loc{" l "}}" x
+%format (list (a))              =  [a]
+%\newcommand{\loc}[1]{(#1)}
+%\newcommand{\loc}[1]{\ensuremath{#1\urcorner}}
+\newcommand{\loc}[1]{\ensuremath{\langle#1\rangle}}
+%endif

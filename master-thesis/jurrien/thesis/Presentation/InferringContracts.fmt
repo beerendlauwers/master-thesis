@@ -1,0 +1,161 @@
+%include polycode.fmt
+
+\newlength{\tightskip}
+\setlength{\tightskip}{0.5mm}
+
+\newenvironment{tightcodefirst}{\setlength{\belowdisplayskip}{\tightskip}}{}%
+\newenvironment{tightcodelast}{\setlength{\abovedisplayskip}{\tightskip}}{}%
+\newenvironment{tightcode}%
+  {\setlength{\abovedisplayskip}{\tightskip}%
+   \setlength{\belowdisplayskip}{\tightskip}%
+  }{}%
+
+\newcommand{\step}[1]{$\Rightarrow$ \quad\{ #1 \}}
+
+\newenvironment{eqarray}{\begin{array}[t]{l@@{\:\:\:}c@@{\:\:\:}l}}{\end{array}}
+
+
+%format reverse1 
+%format reverse2 
+%format reverse2'
+%format reverse3 
+%format reverseS1 
+%format reverseS2 
+%format reverseS3 
+
+%format :@: = "\mathrel{{:}\hspace{0em}@\hspace{0em}{:}}"
+
+
+%format reverse20 = "\mbox{{\it reverse}}"
+%format reverse21 = "\mbox{{\it reverse}}"
+%format reverse22 = "\mbox{{\it reverse}}"
+%format reverse23 = "\mbox{{\it reverse}}"
+%format reverse24 = "\mbox{{\it reverse}}"
+%format many2 = "many"
+
+
+%format ... = "\mathbin{\bullet}"
+%format .... = "..."
+%format hole1 = "\mbox{$\bullet$}_{1}"
+%format hole2 = "\mbox{$\bullet$}_{2}"
+%format (hole n) = "\mbox{$\bullet$}_{"n"}"
+
+%format ^ = "\mathbin{^{\wedge}}"
+%format ^- =
+%format ^-- = "~"
+%format x_2
+%format x_3
+%format x_4
+%format x_5
+%format quad = "\quad"
+%format ^^  = "\; "
+
+%format @ = "\mathrel{@}"
+%format :->: = "\mathrel{\rightarrow}"
+%format :<->: = "\mathrel{\leftrightarrow}"
+%format :&&: = "\mathrel{\wedge}"
+%format :||: = "\mathrel{\vee}"
+%format \/ =  "\mathrel{\vee}"
+%format /\ =  "\mathrel{\wedge}"
+%format <*> = "\mathrel{{<}\hspace{-0.4em}\star\hspace{-0.4em}{>}}"
+%format <%> = "\mathrel{{<}\hspace{-0.15em}\%\hspace{-0.15em}{>}}"
+%format %> = "\mathrel{\%\hspace{-0.15em}{>}}"
+%format <|> = "\mathrel{{<}\hspace{-0.4em}\mid\hspace{-0.4em}{>}}"
+%format <||> = "\mathrel{{<}\hspace{-0.2em}\|\hspace{-0.2em}{>}}"
+%format ||> = "\mathrel{\|\hspace{-0.2em}{>}}"
+%format not = "\neg"
+% format Not2 a = "\neg\neg"a
+%format ldots = "\ldots"
+
+\newcommand{\pragma}[2]{\{-\#\enskip\mathbf{#1}\enskip#2\enskip\#-\}}
+%format pragma a (b)    = "\{-\#\enskip\mathbf{" a "}\enskip" b "\enskip\#-\}"
+%format (pragma a (b))  = "\{-\#\enskip\mathbf{" a "}\enskip" b "\enskip\#-\}"
+%format pragma' a    = "\{-\#\enskip\mathbf{" a "}\enskip\#-\}"
+%format (pragma' a)    = "\{-\#\enskip\mathbf{" a "}\enskip\#-\}"
+
+\newcommand{\atomic}[1]{\langle#1\rangle}
+%format atomic (a) = "\atomic{"a"}"
+%format (atomic a) = "\atomic{"a"}"
+%format (atomic (a)) = "\atomic{"a"}"
+
+\newcommand{\enterText}{\textsc{Enter}}
+\newcommand{\exitText}{\textsc{Exit}}
+%format EnterSym a = "\enterText_{"a"}"
+%format ExitSym  a = "\exitText_{"a"}"
+%format label = "label"
+%format lab = "\ell"
+%format lab0
+%format lab1
+%format lab2
+%format lab3
+%format lab4
+
+%format ruleAdd = "\textsc{Add}"
+%format ruleLCD = "\textsc{LCD}"
+%format ruleRename = "\textsc{Rename}"
+%format ruleSimpl = "\textsc{Simpl}"
+%format ruleUp = "\textsc{Up}"
+%format ruleDown = "\textsc{Down}"
+%format ruleLeft = "\textsc{Left}"
+%format ruleRight = "\textsc{Right}"
+
+%format zero = "0"
+%format one = "1"
+%format two = "2"
+%format three = "3"
+%format four = "4"
+%format seven = "7"
+
+
+
+%format s = "\sigma"
+%format s'
+%format s''
+%format t = "\tau"
+%format cup = "\cup"
+%format dot = "."
+%format and = "\wedge"
+%format ell = "\ell"
+
+%format ~ = "\empty"
+%format lan (a) = "\mathcal{L}~("a")"
+%format lanSymbol = "\mathcal{L}"
+%format +++ = "\cup"
+%format emptyset = "\emptyset"
+%format epsilon = "\epsilon"
+%format exists = "\exists"
+%format forall = "\forall"
+%format <=>                     =  "\Leftrightarrow"
+%format ## = "\quad"
+%format \/ =  "\mathrel{\vee}"
+%format unions = "\bigcup"
+%format s1
+%format s2
+%format s3
+%format s4
+%format s5
+%format s6
+%format or = "\mathrel{\;\;|\;\;}"
+
+%format :*: = "\mathrel{{:}\hspace{-0.2em}\star\hspace{-0.2em}{:}}"
+%format :|: = "\mathrel{{:}\hspace{-0.2em}\mid\hspace{-0.2em}{:}}"
+%format :%: = "\mathrel{{:}\hspace{0em}\%\hspace{0em}{:}}"
+%format :%>: = "\mathrel{{:}\%\hspace{-0.1em}{>}\hspace{-0.05em}{:}}"
+
+%format atomicSmart = "atomic"
+
+
+%format shift = "\hspace{3cm}"
+
+%let code_style = newcode
+
+%if style == newcode
+
+%format ^- = "-- "
+%format :\$ = ":$"
+%format \$ = "$"
+%format ^-- =
+
+%else
+
+%endif

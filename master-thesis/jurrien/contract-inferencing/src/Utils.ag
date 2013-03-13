@@ -1,0 +1,44 @@
+{
+mkStr :: String -> Expr
+mkStr = EConst . EString
+
+mkList :: [Expr] -> Expr
+mkList = foldr ECons ENil
+
+mkInt :: Int -> Expr
+mkInt = EConst . EInt
+
+mkChar :: Char -> Expr
+mkChar = EConst . EChar
+
+mkBool :: Bool -> Expr
+mkBool = EConst . EBool
+
+var :: String -> Expr
+var = EVar
+
+infixl 6 `app`
+app :: Expr -> Expr -> Expr
+app = EApp
+
+apps :: [Expr] -> Expr -> Expr
+apps xs b = foldr f b (reverse xs)
+  where f y ys = (EVar "app" `app` ys) `app` y
+
+fun :: String -> Expr -> Expr
+fun nm e = ELet vn e vn
+  where vn = var nm
+
+fun' :: String -> Expr -> Expr -> Expr
+fun' = ELet . EVar
+
+lams :: [Expr] -> Expr -> Expr
+lams = flip (foldr ELam)
+
+lamsS :: [String] -> Expr -> Expr
+lamsS = lams . map var
+
+infixr 6 <@>
+(<@>) :: Contract -> Contract -> Contract
+(<@>) = CFunctor
+}

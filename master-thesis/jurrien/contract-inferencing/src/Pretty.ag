@@ -1,0 +1,109 @@
+imports
+{
+import            Text.PrettyPrint
+}
+
+attr Expr Alt Alts EConst Contract Subst MaybeConst
+  syn pp :: Doc
+
+-- Semantics for the pretty printing
+sem Expr
+  |  EApp      lhs.pp = @e1.pp <+> ppWParens @e2.copy @e2.pp
+  |  ELam      lhs.pp = text "\\" <> @v.pp <+> pparr <+> @e.pp
+  |  ELet      lhs.pp =  text "let" <+> @v.pp <+> text "=" <+> @e1.pp
+                         $+$ text "in" <+> nest 2 @e2.pp
+  |  ECase     lhs.pp =  text "case" <+> ppWParens @match.copy @match.pp <+> text "of"
+                         $+$ nest 2 @alts.pp
+  |  EVar      lhs.pp = text @nm
+  |  EConst    lhs.pp = @c.pp
+  |  ECons     lhs.pp = @hd.pp <+> colon <+> @tl.pp
+  |  ENil      lhs.pp = text "[]"
+  |  EJust     lhs.pp = text "Just" <+> @e.pp
+  |  ENothing  lhs.pp = text "Nothing"
+  |  EPair     lhs.pp = parens (@pl.pp <> comma <+> @pr.pp)
+  |  EHole     lhs.pp = char '?'
+  |  EBinOp    lhs.pp = @l.pp <+> text @nm <+> @r.pp
+
+sem Alt
+  |  Tuple  lhs.pp = ppWParens @x1.copy @x1.pp <+> pparr <+> @x2.pp
+
+sem Alts
+  |  Cons  lhs.pp = @hd.pp $+$ @tl.pp
+  |  Nil   lhs.pp = empty
+
+sem EConst
+  |  EInt     lhs.pp = int @i
+  |  EChar    lhs.pp = char @c
+  |  EBool    lhs.pp = text $ show @b
+  |  EString  lhs.pp = doubleQuotes $ text @s
+
+sem MaybeConst
+  |  Nothing  lhs.pp = empty
+  |  Just     lhs.pp = char '@' <> braces (text "prop" <+> parens @just.pp)
+
+sem Subst
+  |  SId     lhs.pp = text "Id"
+  |  SComp   lhs.pp = @l.pp <+> text " . " <+> @r.pp
+  |  SSubst  lhs.pp = brackets (@v.pp <+> text "+->" <+> @c.pp)
+
+sem Contract
+  |  CArr        lhs.pp = ppWCParens @c1.copy @c1.pp <+> text ">->" <+> ppWCParens @c2.copy @c2.pp
+  |  CProp       lhs.pp = text @p -- .pp
+  |  CFunctor    lhs.pp =  ppWCParens @o.copy @o.pp <+> text "<@>"
+                           <+> ppWCParens @i.copy @i.pp
+  |  CBifunctor  lhs.pp =  ppWCParens @o.copy @o.pp <+> text "<@@>"
+                           <+> parens (@il.pp <> comma <+> @ir.pp)
+  |  CVar        lhs.pp =  text @v <> @mc.pp
+  |  CQuant      lhs.pp =  case @cv.copy of
+                              (CVar v _)  ->  text "forall" <+> text v <> char '.'
+                                                            <+> @cs.pp
+                              _           ->  error "Quantifier needs variable"
+
+{
+isChar :: Expr -> Bool
+isChar (EConst (EChar _))  = True
+isChar _                   = False
+
+class Pretty a where
+  pprint :: a -> Doc
+
+instance Pretty a => Pretty (Maybe a) where
+  pprint Nothing   = text "Nothing"
+  pprint (Just p)  = parens $ text "Just" <+> parens (pprint p)
+
+instance Pretty a => Pretty [a] where
+  pprint = foldr (\x xs -> pprint x $+$ xs) empty
+
+instance (Pretty a, Pretty b) => Pretty (a, b) where
+  pprint (l, r) = parens $ pprint l <> comma <+> pprint r
+
+instance Pretty Expr where
+  pprint = stdSynExpr pp_Syn_Expr
+
+instance Pretty Contract where
+  pprint = stdSynContract pp_Syn_Contract
+
+instance Pretty Subst where
+  pprint c = pp_Syn_Subst (wrap_Subst (sem_Subst c) stdInhSubst)
+
+instance Pretty a => Pretty (Map String a) where
+  pprint = brackets . hcat . punctuate (comma <> space) . map p . DM.toList
+    where p (d, c) = parens $ text d <> comma <+> pprint c
+
+pretty :: Pretty a => a -> String
+pretty = render . pprint
+
+pparr :: Doc
+pparr = text "->"
+
+ppWCParens :: Contract -> Doc -> Doc
+ppWCParens CArr{}  d = parens d
+ppWCParens _       d = d
+
+ppWParens :: Expr -> Doc -> Doc
+ppWParens EApp{}   d = parens d
+ppWParens ELam{}   d = parens d
+ppWParens ECons{}  d = parens d
+ppWParens EJust{}  d = parens d
+ppWParens _        d = d
+}

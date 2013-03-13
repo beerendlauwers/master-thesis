@@ -1,0 +1,829 @@
+optpragmas
+{
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+}
+
+imports
+{
+import            Data.Map (Map)
+import qualified  Data.Map as DM
+import            Data.Set (Set)
+import qualified  Data.Set as DS
+}
+
+{
+type CEnv = Map String Contract
+}
+
+attr Expr
+  syn  infer                                    :: Contract
+  syn  resEnv    use {`urenv`}     {DM.empty}   :: {Map String [Contract]}
+  syn  subst                                    :: Subst
+  syn  mkCtrd                                   :: Expr
+
+attr Alt
+  syn  mkCtrd                                   :: Alt
+
+attr Alts
+  syn  mkCtrd                                   :: Alts
+
+attr Expr Alt Alts
+  syn  debug     use {$+$}         {empty}      :: Doc
+
+attr Expr Alt Alts Contract MaybeConst Subst
+  inh  env                                      :: CEnv
+  inh  cann                                     :: {Maybe Contract}
+
+attr Expr Alt
+  syn  instvars  use {`DM.union`}  {DM.empty}   :: CEnv
+
+attr Alts Alt
+  syn  infLhs                                   :: Contract
+  syn  infRhs                                   :: Contract
+  syn  subLhs                                   :: Subst
+  syn  subRhs                                   :: Subst
+  inh  inhSubsts                                :: Subst
+
+-- attr Alts
+--   inh matchCtrt :: Contract
+
+attr Contract MaybeConst
+  syn  mkfinal                                  :: Contract
+
+attr Contract
+  syn  fcv       use {`DS.union`}  {DS.empty}   :: {Set Contract}
+  syn  instc                                    :: Contract
+  syn  rmCnst                                   :: Contract
+
+attr Expr
+  syn  isConst   use {&&}          {True}       :: Bool
+  syn  varnm                                    :: String
+
+{
+urenv :: Map String [a] -> Map String [a] -> Map String [a]
+urenv = DM.unionWith (++)
+}
+
+-- Semantics for inferring a contract from an expression
+sem Expr
+  | EVar
+      lhs  .infer   =   @loc.infer'
+           .subst   =   SId
+           .resEnv  =   DM.singleton @nm [@loc.infer']
+           .debug   =   vcat  [  text "EVar"
+                              ,  dbTxt "expr"       <+> pprint @loc.copy
+                              ,  dbTxt "inh env"    <+> pprint @lhs.env
+                              ,  dbTxt "inh cann"   <+> pprint @lhs.cann
+                              ,  dbTxt "@nm"        <+> text @nm
+                              ,  dbTxt "syn infer"  <+> pprint @loc.infer'
+                              ,  dbTxt "syn subst"  <+> pprint SId
+                              ]
+
+     loc  .infer'  =   case @lhs.cann of
+                         (Just ann)  -> ann
+                         _           -> @luv.instc
+
+     inst .luv     ::  Contract
+     inst .luv     =   envLU @nm @lhs.env
+
+  | ELam
+      -- TODO: Can we infer that the contract for the lambda argument x is
+      -- `false` if it does not occur free on the expression to which it bound?
+      -- (or, if this little language would support it, was a wildcard?)
+      -- Would this work in conjunction with other contracts of other
+      -- functions? Probably need to apply the same trick as with the equality
+      -- contracts. I suppose inferring false would work well for functions
+      -- such as length
+      lhs  .infer   =   @loc.infer'
+           .subst   =   @loc.th
+           .debug   =   vcat  [  text "ELam"
+                              ,  dbTxt "expr"        <+> pprint @loc.copy
+                              ,  dbTxt "inh env"     <+> pprint @lhs.env
+                              ,  dbTxt "inh cann"   <+> pprint @lhs.cann
+                              ,  dbTxt "@v"          <+> pprint @v.copy
+                              ,  dbTxt "@e"          <+> pprint @e.copy
+                              ,  dbTxt "@loc.c2"     <+> pprint @loc.c2
+                              ,  dbTxt "@loc.x"     <+> pprint @loc.x
+                              ,  dbTxt "@loc.alpha"  <+> pprint @loc.alpha
+                              ,  dbTxt "@loc.th"     <+> pprint @loc.th
+                              ,  dbTxt "@loc.infer"  <+> pprint @loc.infer'
+                              ,  dbTxt "syn infer"   <+> pprint @loc.infer'
+                              ,  dbTxt "syn subst"   <+> pprint @loc.th
+                              ,  nest 2 @v.debug
+                              ,  nest 2 @e.debug]
+
+      loc  .infer'  =   subst @loc.th $ @loc.x >-> @loc.c2
+           .c2      =   @e.infer
+           .th      =   @e.subst
+           .x       =   case @lhs.cann of
+                          (Just (CArr c1 _))  -> c1
+                          _                   -> @loc.alpha
+           .alpha   =   mkVar @loc.num
+           .newenv  =   case @v.copy of
+                          (EVar ev)  -> DM.insert ev @loc.x @lhs.env
+                          _          -> error "Only variables can be bound in a lambda"
+      loc  .num     ::  uniqueref varcnt
+
+      v    .env     =   @loc.newenv
+      v    .cann    =   case @lhs.cann of
+                          (Just (CArr c1 _))  -> Just c1
+                          _                   -> Nothing
+      e    .env     =   @loc.newenv
+      e    .cann    =   case @lhs.cann of
+                          (Just (CArr _ c2))  -> Just c2
+                          _                   -> Nothing
+
+  | EApp
+      lhs  .infer   =   @loc.infer'
+           .subst   =   @loc.ths
+           .debug   =   vcat  [  text "EApp"
+                              ,  dbTxt "expr"        <+> pprint @loc.copy
+                              ,  dbTxt "inh env"     <+> pprint @lhs.env
+                              ,  dbTxt "inh cann"   <+> pprint @lhs.cann
+                              ,  dbTxt "@e1"         <+> pprint @e1.copy
+                              ,  dbTxt "@e2"         <+> pprint @e2.copy
+                              ,  dbTxt "@loc.c1"     <+> pprint @loc.c1
+                              ,  dbTxt "@loc.c2"     <+> pprint @loc.c2
+                              ,  dbTxt "@loc.alpha"  <+> pprint @loc.alpha
+                              ,  dbTxt "@loc.c1st"   <+> pprint @loc.c1st
+                              ,  dbTxt "@loc.carr"   <+> pprint @loc.carr
+                              ,  dbTxt "@loc.th1"    <+> pprint @loc.th1
+                              ,  dbTxt "@loc.th2"    <+> pprint @loc.th2
+                              ,  dbTxt "@loc.th3"    <+> pprint @loc.th3
+                              ,  dbTxt "@loc.ths"    <+> pprint @loc.ths
+                              ,  dbTxt "@loc.e2env"  <+> pprint @loc.e2env
+                              ,  dbTxt "syn infer"   <+> pprint @loc.infer'
+                              ,  dbTxt "syn subst"   <+> pprint @loc.ths
+                              ,  nest 2 @e1.debug
+                              ,  nest 2 @e2.debug]
+
+      -- When generating the contracted code, we face the choice of generating
+      -- contract wrappers for individual values or not. One advantage of doing
+      -- so is that, if we have a specific contract for that value, we have yet
+      -- another checkpoint where the contract system can report an error. A
+      -- downside to doing so is mostly a code explosion, sine many additional
+      -- let bindings will be introduced for the contract wrapper functions.
+      -- The question now is, do we generate contract wrappers for these
+      -- variables? An important fact to keep in mind is that these variables
+      -- already have a contract assigned in their lambda or let binding, so
+      -- the contract failure will be caught there regardless, and likely even
+      -- before the contract failure can be caught by the individual variable.
+      -- Conclusion: we only generate contract wrappers for functions, as the
+      -- binding constructs will already have a contract for variables, where
+      -- any contract violation for them will be caught.
+
+      loc  .infer'  =   subst @loc.th3 @loc.alpha
+           .ths     =   let  ths = @loc.th3 `o` @loc.th2 `o` @loc.th1
+                        in   case @lhs.cann of
+                               (Just ann)  -> unifyC ann @loc.infer' `o` ths
+                               _           -> ths
+           .c1      =   @e1.infer
+           .th1     =   @e1.subst
+           .e2env   =   subst @loc.th1 @lhs.env
+           .c2      =   @e2.infer
+           .th2     =   @e2.subst
+           .c1st    =   subst @loc.th2 @loc.c1
+           .carr    =   @loc.c2 >-> @loc.alpha
+           .th3     =   unifyC @loc.c1st @loc.carr
+           .alpha   =   mkVar @loc.num
+      loc  .num     ::  uniqueref varcnt
+
+      e2   .env     =   subst @loc.th1 @loc.e2env
+
+      e1   .cann    =   Nothing
+      e2   .cann    =   Nothing
+
+  | ELet
+      lhs  .infer   =   @loc.c2
+           .subst   =   @loc.ths
+           .debug   =   vcat  [  text "ELet"
+                              ,  dbTxt "expr"       <+> pprint @loc.copy
+                              ,  dbTxt "inh env"    <+> pprint @lhs.env
+                              ,  dbTxt "inh cann"   <+> pprint @lhs.cann
+                              ,  dbTxt "@v"         <+> pprint @v.copy
+                              ,  dbTxt "@e1"        <+> pprint @e1.copy
+                              ,  dbTxt "@e2"        <+> pprint @e2.copy
+                              ,  dbTxt "@loc.lbvar" <+> text @loc.lbvar
+                              ,  dbTxt "@loc.c1"    <+> pprint @loc.c1
+                              ,  dbTxt "@loc.th1"   <+> pprint @loc.th1
+                              ,  dbTxt "@loc.c2"    <+> pprint @loc.c2
+                              ,  dbTxt "@loc.th2"   <+> pprint @loc.th2
+                              ,  dbTxt "@loc.ths"   <+> pprint @loc.ths
+                              ,  dbTxt "syn infer"  <+> pprint @loc.c2
+                              ,  dbTxt "syn subst"  <+> pprint @loc.ths
+                              ,  nest 2 @v.debug
+                              ,  nest 2 @e1.debug
+                              ,  dbTxt "expr"       <+> pprint @loc.copy
+                              ,  dbTxt "syn infer"  <+> pprint @loc.c2
+                              ,  dbTxt "syn subst"  <+> pprint @loc.ths
+                              ,  dbTxt "syn resEnv" <+> pprint @e1.resEnv
+                              ,  dbTxt "syn substResEnv" <+> pprint (subst @loc.ths @e1.resEnv)
+                              ,  nest 2 @e2.debug]
+
+        v    .env     =   @loc.ve1env
+        v    .cann    =   Nothing
+
+        e1   .env     =   @loc.ve1env
+        e1   .cann    =   DM.lookup @loc.lbvar @lhs.env
+
+        e2   .env     =   let  env' = subst @loc.th2d1 @lhs.env
+                          in   case DM.lookup @loc.lbvar @lhs.env of
+                                 Just{}  -> @lhs.env
+                                 _       -> DM.insert @loc.lbvar @loc.varC env'
+
+        loc  .lbvar   =   getVar @v.copy
+             .th1     =   @e1.subst
+             .c1      =   @e1.infer
+             .th2     =   unifyC (subst @loc.th1 @loc.var) @loc.c1
+             .th2d1   =   @loc.th2 `o` @loc.th1
+             .varC    =   gen  (subst @loc.th2d1 @lhs.env)
+                               (subst @loc.th2 @loc.c1)
+             .c2      =   @e2.infer
+             .th3     =   @e2.subst
+             .ths     =   @loc.th3 `o` @loc.th2d1
+             .var     =   mkVar @loc.num
+             .ve1env  =   case DM.lookup @loc.lbvar @lhs.env of
+                            Just{}  -> @lhs.env
+                            _       -> DM.insert @loc.lbvar @loc.var @lhs.env
+        loc  .num     ::  uniqueref varcnt
+
+  | EConst
+      lhs  .infer   =   mkVarConst @loc.num @loc.copy
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+  | ECons
+      -- TODO: We are currently refreshing the contract variable for the outer
+      -- list every time. This is probably not needed. can we just use the
+      -- outer contract variable generated by the nil case?
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.ths
+           .debug   =   vcat  [  text "ECons"
+                              ,  dbTxt "expr"       <+> pprint @loc.copy
+                              ,  dbTxt "inh env"    <+> pprint @lhs.env
+                              ,  dbTxt "@hd"        <+> pprint @hd.copy
+                              ,  dbTxt "@tl"        <+> pprint @tl.copy
+                              ,  dbTxt "@loc.cfunc" <+> pprint @loc.cfunc
+                              ,  dbTxt "@loc.th1"   <+> pprint @loc.th1
+                              ,  dbTxt "@loc.th2"   <+> pprint @loc.th2
+                              ,  dbTxt "@loc.th3"   <+> pprint @loc.th3
+                              ,  dbTxt "@loc.ths"   <+> pprint @loc.ths
+                              ,  dbTxt "@loc.const" <+> (text $ show @loc.const)
+                              ,  dbTxt "syn infer"  <+> pprint @loc.inf
+                              ,  dbTxt "syn subst"  <+> pprint @loc.ths
+                              ,  nest 2 @hd.debug
+                              ,  nest 2 @tl.debug]
+
+      loc  .inf     =   subst @loc.ths @loc.cfunc
+           .cfunc   =   CFunctor @loc.var1 @loc.hdc
+           .th1     =   @hd.subst
+           .th2     =   @tl.subst
+           .th3     =   unifyC @tl.infer (subst @loc.th2 @loc.cfunc)
+           .ths     =   @loc.th3 `o` @loc.th2 `o` @loc.th1
+           .const   =   @hd.isConst && @tl.isConst
+           .var1    =   if @loc.const
+                          then  mkVarConst @loc.num @loc.copy
+                          else  mkVar @loc.num
+           .hdc     =   if @loc.const
+                          then  mkPlainC @hd.infer
+                          else  @hd.infer
+      loc  .num     ::  uniqueref varcnt
+
+  | EJust
+      -- | Inferring Maybe contracts
+      -- We assume that we cannot infer outer contracts. The inner contract is
+      -- determined by the inner type.
+      lhs  .infer   =   CFunctor @loc.var @e.infer
+           .subst   =   @e.subst
+
+      loc  .var     =   if @e.isConst
+                          then  mkVarConst @loc.num @loc.copy
+                          else  mkVar @loc.num
+      loc  .num     ::  uniqueref varcnt
+
+  | ENil ENothing
+      -- | Inferring the inner functor contract for singleton functorial
+      -- constructors:
+      -- We infer a fresh contract variable for the inner contract of
+      -- singleton functorial constructors, rather than giving them a `false`
+      -- contract, even though they do not have an inner value for which the
+      -- contract can be checked. We do this because otherwise this concrete
+      -- contract will be passed upwards through the rest of the list, even
+      -- though the elements of the list might actually have a contract.
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.sub
+           .debug   =   vcat  [  text "ENil/ENothing"
+                              ,  dbTxt "inh env"    <+> pprint @lhs.env
+                              ,  dbTxt "syn infer"  <+> pprint @loc.inf
+                              ,  dbTxt "syn subst"  <+> pprint @loc.sub
+                              ]
+
+      loc  .inf     =   CFunctor  (mkVarConst @loc.num1 @loc.copy)
+                                  (mkVar @loc.num2)
+           .sub     =   SId
+
+      loc  .num1    ::  uniqueref varcnt
+      loc  .num2    ::  uniqueref varcnt
+
+  | EPair -- TODO: apply substs?
+      lhs  .infer   =   CBifunctor @loc.var @pl.infer @pr.infer
+           .subst   =   @loc.th2 `o` @loc.th1
+
+      loc  .var     =   if @pl.isConst && @pr.isConst
+                          then  mkVarConst @loc.num @loc.copy
+                          else  mkVar @loc.num
+           .th1     =   @pl.subst
+           .th2     =   @pr.subst
+      loc  .num     ::  uniqueref varcnt
+
+  | ELeft
+      lhs  .infer   =   CBifunctor (mkVar @loc.num1) @e.infer (mkVar @loc.num2)
+           .subst   =   @e.subst
+
+      loc  .num1    ::  uniqueref varcnt
+      loc  .num2    ::  uniqueref varcnt
+
+  | ERight
+      lhs  .infer   =   CBifunctor (mkVar @loc.num1) (mkVar @loc.num2) @e.infer
+           .subst   =   @e.subst
+
+      loc  .num1    ::  uniqueref varcnt
+      loc  .num2    ::  uniqueref varcnt
+
+  | EBinOp
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+  | EHole
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+  -- TODO: When the pattern and left-hand side are identical, also unify the
+  -- outer contract, if any. Would this be correct?
+  | ECase
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.altSubst
+           .debug   =   vcat  [  text "ECase"
+                              ,  dbTxt "expr"       <+> pprint @loc.copy
+                              ,  dbTxt "inh env"    <+> pprint @lhs.env
+                              ,  dbTxt "@match"     <+> pprint @match.copy
+                              ,  dbTxt "@alts"      <+> pprint @alts.copy
+                              ,  dbTxt "@loc.infLhs"<+> pprint @loc.infLhs
+                              ,  dbTxt "@loc.matchC"<+> pprint @loc.matchC
+                              ,  dbTxt "@loc.csubsts" <+> pprint @loc.csubsts
+                              ,  dbTxt "syn infer"  <+> pprint @loc.inf
+                              ,  dbTxt "syn subst"  <+> pprint @loc.altSubst
+                              ,  nest 2 @match.debug
+                              ,  nest 2 @alts.debug]
+
+      loc  .inf       = subst @loc.altSubst @alts.infRhs
+           .infLhs    = @alts.infLhs
+           .subLhs    = @alts.subLhs
+           .altSubst  = @loc.csubsts `o` @alts.subRhs `o` @alts.subLhs
+           .matchC    = @match.infer
+           .csubsts   = unifyC @loc.matchC @loc.infLhs
+
+      alts.inhSubsts = @loc.csubsts
+
+      -- We restrict case blocks to match only against single variable
+      -- expressions. We look the variable expression up in the environment
+      -- to obtain the corresponding contract (variable). We then pass this
+      -- contract down to the alternatives, where contract substitutions
+      -- should be made to refine it.
+--       alts.matchCtrt =  case @match.copy of
+--                           -- Since we know that we are dealing with a variable,
+--                           -- we can just use the default inference for
+--                           -- variables. We don't need to infer a substitution,
+--                           -- as it will be an identity anyway.
+--                           EVar{}  -> @loc.matchC
+--                           _       -> error "Can only match on variables"
+sem Alt
+  | Tuple
+      lhs  .infRhs  =   @loc.inf
+           .subRhs  =   @loc.rhsSubst
+           .infLhs  =   @pat.rmCnst -- @loc.substPatC
+           .subLhs  =   @loc.subl
+           .debug   =   vcat  [  text "Alt"
+                              ,  dbTxt "expr"          <+> pprint @loc.copy
+                              ,  dbTxt "inh env"       <+> pprint @lhs.env
+                              ,  dbTxt "@x1"           <+> pprint @x1.copy
+                              ,  dbTxt "@x2"           <+> pprint @x2.copy
+                              ,  dbTxt "@loc.patContr" <+> pprint @loc.patContr
+                              ,  dbTxt "@loc.patvars"  <+> pprint @loc.patvars
+                              ,  dbTxt "@loc.newenv"   <+> pprint @loc.newenv
+                              ,  dbTxt "syn infLhs"    <+> pprint @pat.rmCnst -- @loc.substPatC
+                              ,  dbTxt "syn subLhs"    <+> pprint @loc.subl
+                              ,  dbTxt "syn infRhs"    <+> pprint @loc.inf
+                              ,  dbTxt "syn subRhs"    <+> pprint @loc.rhsSubst
+                              ,  nest 2 @x1.debug
+                              ,  nest 2 @x2.debug]
+
+      loc  .inf       = subst @lhs.inhSubsts $ @x2.infer
+           .rhsSubst  = @x2.subst
+           .patContr  = @x1.infer
+           .substPatC = subst @loc.rhsSubst @loc.patContr
+           .subl      = @x1.subst
+
+      -- Here we obtain all the variables from the pattern. These variables
+      -- need to be bound in the environment of the rhs. In a way, this acts
+      -- similar to a lambda. We first inject the variables in the environment,
+      -- iner the contract for the rhs, and then apply the resulting
+      -- substitutions to the pattern in the lhs. Once this is done, we can
+      -- pass the resulting contract from the lhs up to the case above where
+      -- the process is repeated.
+           .patvars = @x1.instvars
+      -- Union is left-biased, and we wants the vars in the pattern to take
+      -- precedence
+           .newenv =  @loc.patvars `DM.union` @lhs.env
+
+      x1   .env     =  @loc.newenv
+      x2   .env     =  @loc.newenv
+
+      inst .pat     ::  Contract
+      inst .pat     =   @loc.substPatC
+
+sem Alts
+  | Cons
+      lhs  .infLhs  =   @loc.infl
+           .subLhs  =   @loc.slhs
+           .infRhs  =   @loc.infr
+           .subRhs  =   @loc.srhs
+           .debug   =   vcat  [  text "Alts.Cons"
+                              ,  dbTxt "expr"        <+> pprint @loc.copy
+                              ,  dbTxt "inh env"    <+> pprint @lhs.env
+                              ,  dbTxt "@hd"         <+> pprint @hd.copy
+                              ,  dbTxt "@tl"         <+> pprint @tl.copy
+                              ,  dbTxt "@loc.rhsHdC" <+> pprint @loc.rhsHdC
+                              ,  dbTxt "@loc.rhsTlC" <+> pprint @loc.rhsTlC
+                              ,  dbTxt "@loc.uniRhs" <+> pprint @loc.uniRhs
+                              ,  dbTxt "@loc.lhsHdC" <+> pprint @loc.lhsHdC
+                              ,  dbTxt "@loc.lhsTlC" <+> pprint @loc.lhsTlC
+                              ,  dbTxt "@loc.uniLhs" <+> pprint @loc.uniLhs
+                              ,  dbTxt "syn infLhs"  <+> pprint @loc.infl
+                              ,  dbTxt "syn subLhs"  <+> pprint @loc.slhs
+                              ,  dbTxt "syn infRhs"  <+> pprint @loc.infr
+                              ,  dbTxt "syn subRhs"  <+> pprint @loc.srhs
+                              ,  nest 2 @hd.debug
+                              ,  @tl.debug]
+
+      loc  .infr   = subst @loc.srhs @loc.rhsHdC
+           .infl   = subst @loc.slhs @loc.lhsHdC
+
+           .rhsHdC = @hd.infRhs
+           .rhsTlC = @tl.infRhs
+           .uniRhs = unifyInnerC @loc.rhsHdC @loc.rhsTlC
+      -- todo: apply substitution over all rhs and lhs
+
+           .lhsHdC = @hd.infLhs
+           .lhsTlC = @tl.infLhs
+           .uniLhs = unifyInnerC @loc.lhsHdC @loc.lhsTlC
+      -- todo: apply substitution over all rhs and lhs
+
+           .srhs   = @loc.uniRhs `o` @hd.subRhs `o` @tl.subRhs
+           .slhs   = @loc.uniLhs `o` @hd.subLhs `o` @tl.subLhs
+--           .matchS = unifyC @lhs.matchCtrt (subst @loc.uniLhs @loc.lhsHdC)
+
+  | Nil
+      lhs  .infRhs  =   @loc.var1
+           .subRhs  =   SId
+           .infLhs  =   @loc.var2
+           .subLhs  =   SId
+           .debug   =   vcat  [  text "Alts.Nil"
+                              ,  dbTxt "inh env"     <+> pprint @lhs.env
+                              ,  dbTxt "syn infLhs"  <+> pprint @loc.var2
+                              ,  dbTxt "syn infRhs"  <+> pprint @loc.var1
+                              ]
+
+      loc  .var1    =   mkVar @loc.num1
+           .var2    =   mkVar @loc.num2
+
+      loc  .num1    ::  uniqueref varcnt
+      loc  .num2    ::  uniqueref varcnt
+
+-- Semantics for instantiating variables
+sem Expr
+  | EVar
+      lhs.instvars  =   DM.singleton @nm @loc.alpha
+
+      loc.alpha     =   mkVar @loc.num
+      loc.num       ::  uniqueref varcnt
+
+-- Semantics for finalizing a contract
+sem Contract
+  | CArr
+      lhs.mkfinal = @c1.mkfinal >-> @c2.mkfinal
+
+  | CProp
+      lhs.mkfinal = @loc.copy -- CProp @p.copy
+
+  | CFunctor
+      lhs.mkfinal = CFunctor @o.mkfinal @i.mkfinal
+
+  | CBifunctor
+      lhs.mkfinal = CBifunctor @o.mkfinal @il.mkfinal @ir.mkfinal
+
+  | CVar
+      lhs.mkfinal = @mc.mkfinal
+
+  | CQuant
+      lhs.mkfinal = @cs.mkfinal
+
+sem MaybeConst
+  | Nothing
+      lhs.mkfinal = ctrue
+
+  | Just
+      lhs.mkfinal = CProp ("prop " ++ pretty @just.copy) -- EApp (var "prop") @just.copy)
+
+-- Semantics for obtaining the free contract variables
+sem Contract
+  | CQuant
+      lhs.fcv = DS.delete @cv.copy @cs.fcv
+
+  | CVar
+      lhs.fcv = DS.singleton @loc.copy
+
+-- Semantics for instantiation
+sem Contract
+  | CArr
+      lhs.instc  =   @c1.instc >-> @c2.instc
+
+  | CProp
+      lhs.instc  =   @loc.copy
+
+  | CFunctor
+      lhs.instc  =   CFunctor @o.instc @i.instc
+
+  | CBifunctor
+      lhs.instc  =   CBifunctor @o.instc @il.instc @ir.instc
+
+  | CVar
+      lhs.instc  =   @loc.copy
+
+  | CQuant
+      lhs.instc  =   subst @loc.th @cs.instc
+      loc.th     =   @cv.copy +-> mkVar @loc.alpha
+      loc.alpha  ::  uniqueref varcnt
+
+-- Semantics for constant expressions
+sem Expr
+  | EVar ELam EApp ELet ECase EHole EBinOp
+      lhs.isConst = False
+
+-- Semantics for removing constant contract annotations from a contract
+sem Contract
+  | CArr
+      lhs.rmCnst  =   @c1.rmCnst >-> @c2.rmCnst
+
+  | CProp
+      lhs.rmCnst  =   @loc.copy
+
+  | CFunctor
+      lhs.rmCnst  =   CFunctor @o.rmCnst @i.rmCnst
+
+  | CBifunctor
+      lhs.rmCnst  =   CBifunctor @o.rmCnst @il.rmCnst @ir.rmCnst
+
+  | CVar
+      lhs.rmCnst  =   let  (CVar c _) = @loc.copy
+                      in   CVar c Nothing
+
+  | CQuant
+      lhs.rmCnst  =   CQuant @cv.rmCnst @cs.rmCnst
+
+{
+mkCtrNm :: String -> String
+mkCtrNm str = "__ctr_" ++ str
+
+mkUnqNm :: Int -> String -> String
+mkUnqNm n str = "__unq_" ++ str ++ show n
+
+isFunCtrt :: Contract -> Bool
+isFunCtrt CArr{}  = True
+isFunCtrt _       = False
+
+isApp :: Expr -> Bool
+isApp EApp{}  = True
+isApp _       = False
+
+mkPlainC :: Contract -> Contract
+mkPlainC (CVar v _)  = CVar v Nothing
+mkPlainC c           = c
+
+dbTxt :: String -> Doc
+dbTxt xs = nest 6 $ text (xs ++ replicate n '.' ++ ":")
+  where n = 12 - length xs
+
+isConst :: Expr -> Bool
+isConst = stdSynExpr isConst_Syn_Expr
+
+getVar :: Expr -> String
+getVar (EVar ev)  = ev
+getVar _          = error "Expression is not a variable"
+
+envLU :: String -> CEnv -> Contract
+envLU nm env = maybe (error emsg) id (DM.lookup nm env)
+  where emsg = "variable '" ++ nm ++ "' not in environment: " ++ pretty env
+
+gen :: CEnv -> Contract -> Contract
+gen env c = DS.foldr CQuant c (fcv c DS.\\ fcv env)
+
+-- | Instantiate a generalized contract without generating fresh variables.
+-- This is useful in the final step where we have a complete environment with
+-- contracts and need to unify the known contract with the inferred top-level
+-- contract. This is needed, because the generalized contract corresponds with
+-- the inferred contracts in the synthesized environment. If we were to just
+-- instantiate it, we would get a contract wiht all fresh variables and the
+-- relation would be lost.
+instNoFresh :: Contract -> Contract
+instNoFresh (CQuant _ c)  = instNoFresh c
+instNoFresh c             = c
+
+-- | FCV: Free contract variables
+class FCV a where
+  fcv :: a -> Set Contract
+
+instance FCV Contract where
+  fcv = stdSynContract fcv_Syn_Contract
+
+instance FCV CEnv where
+  fcv = DM.foldr DS.union DS.empty . fmap fcv
+
+class Substitutable a where
+  subst :: Subst -> a -> a
+
+instance Substitutable a => Substitutable [a] where
+  subst SId            = id
+  subst (SComp s1 s2)  = subst s1 . subst s2
+  subst s = fmap (subst s)
+
+instance Substitutable Contract where
+  subst SId             c           = c
+  subst (SComp s1 s2)   c           = subst s1 (subst s2 c)
+  subst (SSubst v c')   c | v == c  = c'
+  subst s@(SSubst v _) (CQuant qv cs)
+    | v == qv                       = CQuant qv cs
+    | otherwise                     = CQuant qv (subst s cs)
+
+  subst s  (CArr c1 c2)             = subst s c1 >-> subst s c2
+  subst s  (CFunctor co ci)         = CFunctor (subst s co) (subst s ci)
+  subst s  (CBifunctor co ci1 ci2)  = CBifunctor (subst s co)
+                                           (subst s ci1) (subst s ci2)
+  subst _  c                        = c
+
+instance Substitutable a => Substitutable (Map String a) where
+  subst SId            = id
+  subst (SComp s1 s2)  = subst s1 . subst s2
+  subst s              = fmap (subst s)
+
+unifyC :: Contract -> Contract -> Subst
+unifyC c1              c2 | c1 == c2   = SId
+unifyC v@CVar{}        c               = unifyCVars v c
+unifyC c               v@CVar{}        = unifyCVars v c
+unifyC (CArr cl1 cr1)  (CArr cl2 cr2)  =
+  let  th1  = unifyC cl1 cl2
+       th2  = unifyC (subst th1 cr1) (subst th1 cr2)
+  in   th2 `o` th1
+unifyC (CFunctor c11 c12)        (CFunctor c21 c22)        =
+  let  th1  = unifyC c11 c21
+       th2  = unifyC (subst th1 c12) (subst th1 c22)
+  in   th2 `o` th1
+unifyC (CBifunctor c11 c12 c13)  (CBifunctor c21 c22 c23)  =
+  let  th1  = unifyC c11 c21
+       th2  = unifyC (subst th1 c12) (subst th1 c22)
+       th2dot1 = th2 `o` th1
+       th3  = unifyC (subst th2dot1 c13) (subst th2dot1 c23)
+  in   th3 `o` th2dot1
+unifyC c1 c2 = unifyErr "No such unification case." c1 c2
+
+unifyInnerC :: Contract -> Contract -> Subst
+unifyInnerC (CFunctor _ c12)        (CFunctor _ c22)        = unifyC c12 c22
+unifyInnerC (CBifunctor _ c12 c13)  (CBifunctor _ c22 c23)  =
+  let  th1  = unifyC c12 c22
+       th2  = unifyC (subst th1 c13) (subst th1 c23)
+  in   th2 `o` th1
+unifyInnerC c1                      c2                      = unifyC c1 c2
+
+unifyCVars :: Contract -> Contract -> Subst
+unifyCVars v@CVar{}  c  | v `DS.member` fcv c  = unifyErr "Occurs check." v c
+                        | otherwise            = v +-> c
+unifyCVars _         _                         = error "unifyCVars"
+
+unifyErr :: String -> Contract -> Contract -> a
+unifyErr msg c1 c2 = error $ msg ++ stdMsg
+  where stdMsg =  " Trying to unify '" ++ show (pprint c1) ++
+                  "' and '" ++ show (pprint c2) ++ "'"
+
+ctrue :: Contract
+ctrue = CProp "true" -- (EVar "true")
+
+mkVar :: Int -> Contract
+mkVar n = mkVarWM n Nothing
+
+-- | Inferring equality contracts for constants:
+-- We can infer equality contracts for constants, which might be useful is
+-- certain cases. For example, support we have the following snippet of code:
+--
+--   < encode xs = merge $ map (\z -> (1, z)) xs
+--   <
+--   < merge ((m, x) : (n, y) : xs)  =  if x == y
+--   <                                    then  merge ((m + n, x) : rest)
+--   <                                    else  (m, x) : merge ((n, y) : xs)
+--   < merge xs                      =  xs
+--
+-- Then we would like to infer a contract similar to the following:
+--
+--   < merge :: true <@> true <@@> ((==1), true) >-> mergeC
+--
+-- since the initial map over `xs` fixes the constant 1. This constant is
+-- maintained in the rest of the function. In the following (contrived)
+-- example, this fixed constant contract is not desirable, however:
+--
+--   < foo f xs = bar f $ map (\z -> (1, z)) xs
+--   <
+--   < bar f (n, m)  | f n        = bar f (n + 1, m)
+--   <               | otherwise  = (n, m)
+--
+-- If we were to have the fixed constant contract there, it would be violated
+-- in the recursive call to `bar`. When do we want to infer a constant equality
+-- contract then? Informally this is easy to express: whenever we know that the
+-- value will remain constant. A bit more exact would be: if the variable with
+-- a constant contract is passed to the recursive call completele unmodified
+-- from the way it's bound in the left-hand side, then we can infer a constant
+-- contract. This definition is still rather hard to check, as the identity of
+-- that value, for example, should also be recognized. In the most simple
+-- analyses, it won't, however. We might need something like sized types (sized
+-- contracts?) to implement this correctly.
+--
+-- FIXME: For now, we will simply not generate constant equality contracts, as
+-- it is not clear yet how to do this correctly. When we do want to generate
+-- these contracts, replace the current definition of mkVarConst with the
+-- definition below.
+mkVarConst :: Int -> Expr -> Contract
+mkVarConst n _ = mkVarWM n Nothing
+-- mkVarConst n c = mkVarWM n (Just $ ELam x (EBinOp "==" c x))
+--   where x = EVar "x"
+
+mkVarWM :: Int -> Maybe Expr -> Contract
+mkVarWM n m = CVar ('c' : show n) m
+
+stdSynExpr :: (Syn_Expr -> a) -> Expr -> a
+stdSynExpr s e = s (wrap_Expr (sem_Expr e) stdInhExpr)
+
+stdSynContract :: (Syn_Contract -> a) -> Contract -> a
+stdSynContract s e = s (wrap_Contract (sem_Contract e) stdInhContract)
+
+custSynExpr :: (Syn_Expr -> a) -> Expr -> Inh_Expr -> a
+custSynExpr s e i = s (wrap_Expr (sem_Expr e) i)
+
+infer :: Expr -> Contract
+infer = stdSynExpr infer_Syn_Expr
+
+inferWE :: Expr -> CEnv -> Contract
+inferWE expr env = custSynExpr infer_Syn_Expr expr stdInhExpr{ env_Inh_Expr = env }
+
+inferDebug :: Expr -> Doc
+inferDebug = stdSynExpr debug_Syn_Expr
+
+inferDebugWE :: Expr -> CEnv -> Doc
+inferDebugWE expr env = custSynExpr debug_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env }
+
+mkFinal :: Contract -> Contract
+mkFinal = stdSynContract mkfinal_Syn_Contract
+
+stdInhExpr :: Inh_Expr
+stdInhExpr =  Inh_Expr  {  env_Inh_Expr = DM.empty
+                        ,  varcnt_Inh_Expr = 0
+                        ,  cann_Inh_Expr = Nothing
+                        ,  recvars_Inh_Expr = DM.empty
+                        ,  clets_Inh_Expr = DM.empty
+                        ,  allsubsts_Inh_Expr = SId
+                        }
+
+stdInhExpr' :: Subst -> Inh_Expr
+stdInhExpr' s = stdInhExpr { allsubsts_Inh_Expr = s }
+
+
+stdInhContract :: Inh_Contract
+stdInhContract = Inh_Contract  {  env_Inh_Contract = DM.empty
+                               ,  varcnt_Inh_Contract = 0
+                               ,  cann_Inh_Contract = Nothing
+                               ,  recvars_Inh_Contract = DM.empty
+                               ,  clets_Inh_Contract = DM.empty
+                               ,  allsubsts_Inh_Contract = SId
+                               }
+
+stdInhSubst :: Inh_Subst
+stdInhSubst = Inh_Subst  {  env_Inh_Subst = DM.empty
+                         ,  varcnt_Inh_Subst = 0
+                         ,  cann_Inh_Subst = Nothing
+                         ,  recvars_Inh_Subst = DM.empty
+                         ,  clets_Inh_Subst = DM.empty
+                         ,  allsubsts_Inh_Subst = SId
+                         }
+}
