@@ -1,0 +1,253 @@
+optpragmas
+{
+{-# LANGUAGE NoMonomorphismRestriction, TypeOperators #-}
+}
+
+imports
+{
+import qualified  Contract as C
+import qualified  Data.List as DL
+import            Test.QuickCheck
+}
+{
+
+-- Status: OK
+-- Expected contract:  c0 >-> c1 >-> c0
+econst :: Expr
+econst = fun "econst" $ lamsS ["x", "y"] (var "x")
+
+-- Status: OK
+-- Expected contract: (c4 >-> (c10 >-> c6)) >-> ((c4 >-> c10) >-> (c4 >-> c6))
+es :: Expr
+es = lams [x, y, z] $ x `app` z `app` (y `app` z)
+  where x = var "x"
+        y = var "y"
+        z = var "z"
+
+-- Status: OK
+-- Expected contract: c0 >-> (c2 >-> c0)
+ek :: Expr
+ek = lams [x, y] x
+  where x = var "x"
+        y = var "y"
+
+-- Status: OK
+-- Expected contract: c0 >-> c0
+eskk :: Expr
+eskk = ELet s es $ ELet k ek $ s `app` k `app` k
+  where s = var "s"
+        k = var "k"
+
+-- Status: OK
+-- Expected contract: c0 >-> c1 <@> c0
+erepeat :: Expr
+erepeat = fun "repeat" $ ELam x $ ECons x (var "repeat" `app` x)
+  where x = var "x"
+
+-- Status: OK
+-- Expected contract: (c0 >-> c0) >-> c0
+efix :: Expr
+efix = ELet fixnm (ELam f (f `app` (fixnm `app` f))) fixnm
+  where  fixnm = var "efix"
+         f = var "f"
+
+-- Status: OK
+-- Expected contract: (c29 >-> (c30 >-> c30)) >-> (c30 >-> (c31 <@> c29 >-> c30))
+efoldr :: Expr -> Expr
+efoldr = fun' "efoldr" (lams [f, b, xs] $
+  ECase xs  [  (ENil,        b)
+            ,  (ECons y ys,  ind) ])
+  where  ind  =  (f `app` y) `app`
+                 (var "efoldr" `app` f `app` b `app` ys)
+         f    = var "f"
+         b    = var "b"
+         xs   = var "xs"
+         y    = var "x"
+         ys   = var "ys"
+
+-- Status: OK
+-- Expected contract: c1 >-> (c0 <@> c1 >-> c2 <@> c1)
+insert :: Expr -> Expr
+insert = fun' "insert" (lams [z, zs] $ ECase zs
+  [  (ENil,          ECons z ENil)
+  ,  (ECons z' zs',  conscase) ])
+  where  z    = var "z"
+         z'   = var "z'"
+         zs   = var "zs"
+         zs'  = var "zs'"
+         rel  = var "rel"
+         conscase = ELet rel (EBinOp "<=" z z') $
+           ECase rel $
+             [  (EConst (EBool True),   ECons z (ECons z' zs'))
+             ,  (EConst (EBool False),  ECons z' (var "insert" `app` z `app` zs'))]
+
+-- Status: OK
+-- Expected contract: c1 <@> c0 >-> c2 <@> c0
+isort :: Expr
+isort = fun "isort" $ lams [us] $ insert $
+  efoldr $ (var "efoldr") `app` (var "insert") `app` ENil `app` us
+  where us = var "us"
+
+isortWC :: Contract
+isortWC = inferWE isort isortEnv
+
+isortMkCtrd :: Expr
+isortMkCtrd = custSynExpr mkCtrd_Syn_Expr isort $ (stdInhExpr' isortSubsts) { env_Inh_Expr = isortEnv }
+
+isortSubsts :: Subst
+isortSubsts = custSynExpr subst_Syn_Expr isort $ stdInhExpr{ env_Inh_Expr = isortEnv }
+
+isortWCDebug :: Doc
+isortWCDebug = inferDebugWE isort isortEnv
+
+isortResEnv :: Doc
+isortResEnv = let  (c, s) = f isort isortEnv
+                   p (k, v) c' = text k <> colon <+> pprint v $+$ c'
+              in   foldr p empty $ map (fmap last) $ DM.assocs $ subst s c
+  where f expr env = ( custSynExpr resEnv_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env }
+                     , custSynExpr subst_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env })
+
+isortEnv :: CEnv
+isortEnv = DM.fromList  [ -- ("true",   ctrue) ]
+                        --,  ("ord",    cord)
+                        -- ,
+                          ("isort",  sortC) ]
+
+cord :: Contract -- FIXME: Have a "real" contract here ...
+cord = CProp "ord"
+
+sortC :: Contract
+sortC = ctrue <@> ctrue >-> cord <@> ctrue
+
+--- Real Haskell experiment
+
+cfoldr_sort = cf C.>>-> (\f -> sorted [] C.>>-> (\b -> C.true C.<@> C.true C.>>-> (\i -> sorted i)))
+  where cf = C.true C.>>-> (\x -> C.true C.<@> C.true C.>>-> (\xs -> sorted (x:xs)))
+        sorted rs = (C.ord C.& perms rs) C.<@> C.true
+        perms rs = C.prop (\xs -> xs `elem` DL.permutations rs)
+
+foo = C.fun foldr
+
+-- foldr_c :: (a -> b -> b) -> b -> [a] -> b
+-- foldr_c f b xs = C.app (C.app (C.app (C.assert "foldr_c" ctrt foldapp) 1 f) 2 b) 3 xs
+--   where ctrt = (C.true C.>-> C.true C.>-> C.true) C.>-> C.true C.>-> C.true C.>-> C.true
+--         foldapp = C.fun (\ f -> C.fun (\ e -> C.fun (\ x -> foldr f b x)))
+
+--  C.app (C.app (C.app (C.assert "foldr" c
+--   (C.fun (\ f -> C.fun (\ e -> C.fun (\ x -> foldr (C.assert "" f 9 e) x
+--   ))))) 1 f) 2 b) 3 xs
+
+ins_c :: Ord a => C.Contract (a C.:-> ([a] C.:-> [a])) -> a -> [a] -> [a]
+ins_c c x xs = C.app (C.app (C.assert "ins_c" c (C.fun (\x -> C.fun (\xs -> ins x xs
+  )))) 1 x) 2 xs
+
+ins :: Ord a => a -> [a] -> [a]
+ins x []                   = [x]
+ins x (y:ys)  | x < y      = x : y :ys
+              | otherwise  = y : ins x ys
+
+-- Counter-example: [0,1]
+hisort :: Ord a => [a] -> [a]
+hisort = foldr ins []
+  where  ins x []                   = [x]
+         ins x (y:ys)  | x <= y     = y : x : ys -- y and x are swapped
+                       | otherwise  = y : ins x ys
+
+prop_Sort :: [Int] -> Bool
+prop_Sort xs = isSorted xs (hisort xs)
+
+isSorted :: Ord a => [a] -> [a] -> Bool
+isSorted xs ys = isNondesc ys && isPermutation
+  where  isPermutation = ys `elem` DL.permutations xs
+         isNondesc (z:z':zs)  = z <= z' && isNondesc (z':zs)
+         isNondesc _          = True
+
+-- hisort' cfr ci = foldr_c cfr (ins_c ci) []
+
+-- hisort_c = hisort' cfr ci
+--   where cfr = (C.true C.>-> isd C.>-> isd) C.>-> isd C.>-> C.true C.>-> isd
+--         ci  = C.true C.>-> isd C.>-> isd
+--         isd = C.prop (isSorted [0,1])
+-----
+{-
+encode :: Eq a => [a] -> [(Int, a)]
+encode xs = merge $ map (\z -> (1, z)) xs
+ where merge [] = []
+       merge [(n,x)] = [(n,x)]
+       merge ((m,x):(n,y):rest) = if x==y
+                                  then merge ((m+n,x):rest)
+                                  else (m,x):merge ((n,y):rest)
+-}
+
+emerge :: Expr -> Expr
+emerge = fun' "emerge" $ lams [xs] $ ECase xs
+  [  (ENil,  ENil)
+  ,  (ECons (EPair n x) ENil, ECons (EPair n x) ENil)
+  ,  (ECons (EPair m x) (ECons (EPair n y) ys), ifcase) ]
+  where  xs  = var "xs"
+         ys  = var "ys"
+         m   = var "m"
+         n   = var "n"
+         x   = var "x"
+         y   = var "y"
+         nm  = var "emerge"
+         ifcase = ECase (EBinOp "==" x y)
+           [  (mkBool True, nm `app` (ECons (EPair (EBinOp "+" m n) x) ys))
+           ,  (mkBool False, ECons (EPair m x) (nm `app` (ECons (EPair n y) ys))) ]
+
+emerge' :: Expr -> Expr
+emerge' = fun' "emerge" $ lams [xs] $ ECase xs
+  [  (ECons (EPair m x) (ECons (EPair n y) ys), ifcase)
+  ,  (zs, zs) ]
+  where  xs  = var "xs"
+         ys  = var "ys"
+         zs  = var "zs"
+         m   = var "m"
+         n   = var "n"
+         x   = var "x"
+         y   = var "y"
+         nm  = var "emerge"
+         ifcase = ECase (EBinOp "==" x y)
+           [  (mkBool True, nm `app` (ECons (EPair (EBinOp "+" m n) x) ys))
+           ,  (mkBool False, ECons (EPair m x) (nm `app` (ECons (EPair n y) ys))) ]
+
+-- Status: OK
+-- Expected contract: c0 <@> c1 >-> c2 <@> (c3 <@@> (c4, c1))
+eencode :: Expr
+eencode = _eencode emerge
+
+-- Status: OK
+-- Expected contract: c0 <@> c1 >-> c2 <@> (c3 <@@> (c4, c1))
+eencode' :: Expr
+eencode' = _eencode emerge'
+
+_eencode :: (Expr -> Expr) -> Expr
+_eencode m = fun "eencode" $ lams [xs] $ m $ emap $
+  (var "emerge") `app` (var "emap" `app` zl `app` xs)
+  where  xs  = var "xs"
+         z   = var "z"
+         zl  = ELam z (EPair (mkInt 1) z)
+
+emap :: Expr -> Expr
+emap = fun' "emap" (lams [f, xs] $ ECase xs
+  [  (ENil,        ENil)
+  ,  (ECons y ys,  ECons (f `app` y) (nm `app` f `app` ys)) ])
+  where  xs  = var "xs"
+         y   = var "y"
+         ys  = var "ys"
+         f   = var "f"
+         nm  = var "emap"
+
+
+eencodeWC :: Contract
+eencodeWC = inferWE eencode eencodeEnv
+
+eencodeWCDebug :: Doc
+eencodeWCDebug = inferDebugWE eencode eencodeEnv
+
+eencodeWCDebug' :: Doc
+eencodeWCDebug' = inferDebugWE eencode' eencodeEnv
+
+eencodeEnv :: CEnv
+eencodeEnv = DM.fromList  []
+}

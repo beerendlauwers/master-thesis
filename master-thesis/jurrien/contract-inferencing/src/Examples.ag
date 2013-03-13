@@ -1,0 +1,190 @@
+{
+econstappint, econstappnil, econstappconsint, econstappconsnil :: Expr
+econstappint = EApp (lamsS ["x", "y"] (var "x")) (EConst (EInt 1))
+econstappnil = EApp (lamsS ["x", "y"] (var "x")) ENil
+econstappconsint = EApp (lamsS ["x", "y"] (var "x")) (ECons (EConst $ EInt 1) ENil)
+econstappconsnil = EApp (lamsS ["x", "y"] (var "x")) (ECons ENil ENil)
+
+lamlist :: Expr
+lamlist = lamsS vars $ mkList $ map var vars
+  where vars = ["v", "w", "x", "y", "z"]
+
+-- Status: OK
+-- Expected contract: c6 <@> c7 >-> c10
+isempty :: Expr
+isempty = ELam xs $ ECase xs [
+  (ENil,                        (EConst $ EBool True)),
+  (ECons (var "y") (var "ys"),  (EConst $ EBool False))
+  ]
+  where xs = var "xs"
+
+ces :: Contract
+ces = CQuant c0 $ CQuant c1 $ CQuant c2
+                $ (c0 >-> c1 >-> c2) >-> (c0 >-> c1) >-> (c0 >-> c2)
+  where c0 = mkVar 1
+        c1 = mkVar 2
+        c2 = mkVar 3
+
+cek :: Contract
+cek = CQuant c0 $ CQuant c1 $ c0 >-> c1 >-> c0
+  where c0 = mkVar 0
+        c1 = mkVar 1
+
+-- Status: OK
+id' :: Expr
+id' = (ELam x x) `app` (ELam x x)
+  where x = var "x"
+
+comp :: Subst
+comp =  SSubst (mkVar 1) (mkVar 2)
+  `o`   SSubst (mkVar 3) (mkVar 4)
+  `o`   SSubst (mkVar 5) (mkVar 6)
+
+comp' :: Subst
+comp' = SComp  (SSubst (CVar "c1" Nothing) (CVar "c2" Nothing))
+               (SComp  (SSubst (CVar "c3" Nothing) (CVar "c4" Nothing))
+                       (SSubst (CVar "c5" Nothing) (CVar "c6" Nothing)))
+
+var1, var2, var3, var4, var5, var6, prop1, arr1, arr2, arr3 :: Contract
+var1 = mkVar 1
+var2 = mkVar 2
+var3 = mkVar 3
+var4 = mkVar 4
+var5 = mkVar 5
+var6 = mkVar 6
+prop1 = CProp "[]" --ENil
+arr1 = CArr var1 var2
+arr2 = CArr var3 var4
+arr3 = CArr var1 var1
+
+tu1, tu2, tu3, tu4, tu5, tu6, tu7, tu8 :: Bool
+tu1 = unifyC var1 var1 == SId
+tu2 = unifyC var1 var2 == SSubst var2 var1
+tu3 = unifyC var1 prop1 == SSubst prop1 var1
+tu4 = unifyC prop1 var1 == SSubst prop1 var1
+tu5 = unifyC arr1 arr2 == SComp (SSubst var4 var2) (SSubst var3 var1)
+tu6 = unifyC arr2 arr1 == SComp (SSubst var2 var4) (SSubst var1 var3)
+tu7 = unifyC arr2 arr3 == SComp (SSubst var1 var4) (SSubst var1 var3)
+tu8 = unifyC arr3 arr2 == SComp (SSubst var4 var3) (SSubst var3 var1)
+
+testUnif :: Bool
+testUnif = and [tu1, tu2, tu3, tu4, tu5, tu6, tu7, tu8]
+
+testSubstEnv :: Doc
+testSubstEnv = pprint $ subst th origEnv
+  where origEnv  = DM.fromList [("myfix", v99)]
+        th       = SSubst (CArr (mkVar 1) (mkVar 2)) v99
+        v99      = mkVar 99
+
+testSubstEnv' :: Doc
+testSubstEnv' = pprint $ subst th origEnv
+  where origEnv  = DM.fromList [("myfix", CArr v99 (mkVar 3))]
+        th       = SSubst (CArr (mkVar 1) (mkVar 2)) v99
+        v99      = mkVar 99
+
+-- Status: OK
+-- Expected: c0 <@> c1 >-> c2 <@> c1
+listid :: Expr
+listid = fun "listid" $ ELam xs $ ECase xs
+  [ (ENil,        ENil)
+  , (ECons y ys,  ECons y ys) ]
+  where  xs  = var "xs"
+         y   = var "y"
+         ys  = var "ys"
+
+-- Status: Possibly OK
+-- Actual: c25 <@> c23 >-> ((c24 <@> c23 >-> c26 <@> c22) >-> c26 <@> c22)
+-- TODO: Is the contract of the result of the function argument really the same
+-- as the function's end result? On the one hand: yes, as it directly relates
+-- to the function output. But with the property that the outer contracts are
+-- always fresh for concrete types, does this still hold? Lets leave it as it
+-- is for now...
+listapp :: Expr
+listapp = fun "listapp" $ ELam xs $ ELam f $ ECase xs
+  [ (ENil,        ENil)
+  , (ECons y ys,  f `app` (ECons y ys)) ]
+  where  xs  = var "xs"
+         y   = var "y"
+         ys  = var "ys"
+         f   = var "f"
+
+-- Status: OK
+-- Expected contract: c0 <@> c1
+infnil :: Doc
+infnil = pprint $ infer ENil
+
+unifyNilS :: Doc
+unifyNilS = pprint $ unifyC (inferWE (EVar "y") (DM.singleton "y" (mkVar 9))) (infer ENil)
+
+unifyNilNil :: Doc
+unifyNilNil = pprint $ unifyC (CFunctor (mkVar 1) (mkVar 2)) (CFunctor (mkVar 3) (mkVar 4))
+
+unifyNilNil' :: Doc
+unifyNilNil' = pprint $ unifyC (CFunctor (mkVar 3) (mkVar 4)) (CFunctor (mkVar 1) (mkVar 2))
+
+infconslam :: Doc
+infconslam = pprint $ infer econslam
+
+inflamnil :: Doc
+inflamnil = pprint $ infer $ ELam x $ ECons x ENil
+  where x = var "x"
+
+-- Status: OK
+-- Expected contract: c1 >-> (c9 <@> c1 >-> c9 <@> c1)
+econslam :: Expr
+econslam = lamsS ["x", "y"] econs
+
+econs :: Expr
+econs = ECons (var "x") (var "y")
+
+
+-- Status: OK
+-- Expected contract: (c5 >-> c9) >-> (c5 >-> c9)
+eappvar :: Expr
+eappvar = lamsS ["f", "x"] $ var "f" `app` var "x"
+
+-- Status: OK
+-- Expected contract: (c0 >-> c0) >-> c0
+efix' :: Expr
+efix' = ELet fixnm (ELam f (f `app` (fixnm `app` f))) fixnm
+  where fixnm = var "efix"
+        f = var "f"
+
+efix'd :: Doc
+efix'd = inferDebug $ ELet fixnm (ELam f (f `app` (fixnm `app` f))) fixnm
+  where fixnm = var "efix"
+        f = var "f"
+
+-- Status: OK
+-- Expected contract:  (c8 >-> c6) >-> ((c4 >-> c8) >-> (c4 >-> c6))
+ecomp :: Expr
+ecomp = ELam f $ ELam g $ ELam x $ f `app` (g `app` x)
+  where f = var "f"
+        g = var "g"
+        x = var "x"
+
+-- Status: OK
+-- Expected contract: (c0 >-> c0) >-> (c0 >-> c1 <@> c0)
+efoo :: Expr
+efoo = fun "foo" $ lamsS ["f", "x"] $ ECons x (ECons (f `app` x) (var "foo" `app` f `app` x))
+  where  f = var "f"
+         x = var "x"
+
+-- Status: OK
+-- Expected contract: (c29 >-> (c30 >-> c30)) >-> (c30 >-> (c31 <@> c29 >-> c30))
+efoldr' :: Expr
+efoldr' = efoldr (EVar "efoldr")
+
+-- Status: OK
+-- Expected contract: c46 >-> (c47 <@> c46 >-> c48 <@> c46)
+insert' :: Expr
+insert' = insert (EVar "insert")
+
+testIsConst :: [Bool]
+testIsConst = [t1, t2, t3, t4, t5]
+  where  t1  = isConst ENil
+         t2  = isConst $ mkList [EVar "foo"]
+         t3  = isConst $ mkList [mkInt 1, mkInt 2]
+         t4  = isConst $ ELeft (mkBool False)
+         t5  = isConst $ mkList [mkInt 1, mkInt 2, EVar "bar"]
+}

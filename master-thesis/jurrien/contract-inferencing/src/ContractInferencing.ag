@@ -1,0 +1,20 @@
+include "Examples.ag"
+include "Experiments.ag"
+include "Utils.ag"
+include "Inference.ag"
+include "Pretty.ag"
+include "Types.ag"
+include "MkContract.ag"
+-- include "GenHM.ag"
+
+attr Expr Alt Alts EConst Contract Subst MaybeConst
+  chn varcnt   :: Int
+
+attr Expr Alt Alts EConst Contract Subst MaybeConst
+  syn copy :: self
+
+{
+nextUnique :: Int -> (Int, Int)
+nextUnique u = (u + 1, u)
+}
+

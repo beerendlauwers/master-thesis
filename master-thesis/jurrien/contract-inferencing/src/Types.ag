@@ -1,0 +1,57 @@
+type Alt         = (Expr, Expr)
+type Alts        = [ Alt ]
+type MaybeConst  = maybe Expr
+
+data Expr
+  |  EVar    nm     :: String
+  |  ELam    v      :: Expr   e     :: Expr
+  |  EApp    e1     :: Expr   e2    :: Expr
+  |  ELet    v      :: Expr   e1    :: Expr  e2    :: Expr
+  |  ECase   match  :: Expr   alts  :: Alts
+  |  EConst  c      :: EConst
+  |  ECons   hd     :: Expr   tl    :: Expr
+  |  ENil
+  |  EJust   e      :: Expr
+  |  ENothing
+  |  EPair   pl     :: Expr   pr    :: Expr
+  |  ELeft   e      :: Expr
+  |  ERight  e      :: Expr
+  |  EHole
+  |  EBinOp  nm     :: String l     :: Expr  r :: Expr
+
+data EConst
+  |  EInt     i  :: Int
+  |  EChar    c  :: Char
+  |  EBool    b  :: Bool
+  |  EString  s  :: String
+
+data Contract
+  |  CArr        c1     :: Contract  c2  :: Contract
+  |  CProp       p      :: String -- Expr TODO: This is nasty, but it beats debugging AGs
+  |  CFunctor    o      :: Contract  i   :: Contract
+  |  CBifunctor  o      :: Contract  il  :: Contract    ir :: Contract
+  |  CVar        v      :: String    mc  :: MaybeConst
+  |  CQuant      cv     :: Contract  cs  :: Contract
+
+data Subst
+  |  SId
+  |  SComp   l  :: Subst     r  :: Subst
+  |  SSubst  v  :: Contract  c  :: Contract
+
+deriving Expr EConst FunBind Contract Subst : Show
+deriving Expr EConst FunBind Contract Subst : Eq
+deriving Expr EConst FunBind Contract Subst : Ord
+
+{
+infixr 4 +->
+(+->) :: Contract -> Contract -> Subst
+(+->) = SSubst
+
+infixr 4 >->
+(>->) :: Contract -> Contract -> Contract
+(>->) = CArr
+
+infixr 6 `o`
+o :: Subst -> Subst -> Subst
+o = SComp
+}
