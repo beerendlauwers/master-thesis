@@ -1,6 +1,7 @@
 attr Expr Alt Alts Contract MaybeConst Subst
   inh  recvars                                  :: {Map String String}
   inh  clets                                    :: {Map String String}
+  inh  recvarsparameters                        :: {Map String [(Expr,Int)]}
   inh  allsubsts :: Subst
 
 attr Contract
@@ -19,8 +20,11 @@ sem Expr
 -- Semantics for making a contracted version of the code
 sem Expr
   |  EVar
-       lhs.mkCtrd  =   case DM.lookup @nm @lhs.recvars of
-                         (Just v)  ->  EVar v
+       -- This part of the code updates recursive function calls with the contracted version.
+       lhs.mkCtrd  =   case DM.lookup @nm @lhs.recvars of 
+                         (Just v)  ->  case DM.lookup @nm @lhs.recvarsparameters of
+                                        (Just params) -> EVar "(" `app` (lams (map fst params) $ apps params (EVar v)) `app` EVar ")" -- Replaces "insert" with "(\x -> \xs -> app (app insert 0 x) 1 xs)", because the context is "insert x xs", and it's a lot of work to remove those parameters, so we just capture them with the lambdas. I also add "(" and ")" to the sides of the generates expression, because those don't seem to appear during pretty-printing.
+                                        _             -> error $ "The recursive function call for " ++ v ++ " doesn't have any parameters available."
                          _         ->  case (DM.lookup @nm @lhs.clets, DM.lookup @nm @lhs.env) of
                                          (Just cn, Just c)  -> EVar cn `app` mkExpr (subst @lhs.allsubsts c)
                                          _                  -> @loc.copy
@@ -95,6 +99,8 @@ in  let __ctrdfoldr = \ctrt -> \f' -> \b' -> \zs' -> apply (assert "foldr" ctrt)
           .allFuns =   funs @e1.lamVars @loc.functionCall
           -- This gives us: fun (\x -> fun (\ y -> insert (__ctrt_insert ctrt) x y))
 
+          .lamVarsWithSourcePos = (zip @e1.lamVars [0..]) -- TODO Put actual source position info in here
+
           .ctrtLet =   ELet @loc.ctrtVar
                             (ELam ctrtVar $ @loc.assertedExpression) @e2.mkCtrd
 
@@ -111,7 +117,8 @@ in  let __ctrdfoldr = \ctrt -> \f' -> \b' -> \zs' -> apply (assert "foldr" ctrt)
           .recursiveCall = foldl app (EVar @loc.varnm) ((@loc.ctrtVar `app` ctrtVar) : @e1.lamVars)
                             -- Makes something like "insert (__ctrt_insert ctrt) x y"
           .funs    =   funs @e1.lamVars @loc.recursiveCall  
-          .apps    =   apps (zip @e1.lamVars [0..]) @loc.ctrtE -- TODO Put actual source position info in here
+          .apps    =   apps @loc.lamVarsWithSourcePos @loc.ctrtE 
+          
           .ctrtVar =   EVar $ mkCtrtNm @loc.varnm
           .ctrtLet =   ELet @loc.ctrtVar
                             (ELam ctrtVar $ lams @e1.lamVars @loc.apps) @e2.mkCtrd
@@ -125,6 +132,7 @@ in  let __ctrdfoldr = \ctrt -> \f' -> \b' -> \zs' -> apply (assert "foldr" ctrt)
 
        e1 .recvars =   DM.insert @loc.lbvar @loc.recvar @lhs.recvars
        e2 .clets   =   DM.insert @loc.lbvar (mkCtrtNm @loc.varnm) @lhs.clets
+       e1 .recvarsparameters = DM.insert @loc.lbvar @loc.lamVarsWithSourcePos @lhs.recvarsparameters
 
   |  ECase
        lhs.mkCtrd  =   ECase @match.mkCtrd @alts.mkCtrd
