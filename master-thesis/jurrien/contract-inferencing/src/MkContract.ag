@@ -81,12 +81,41 @@ in  let __ctrdfoldr = \ctrt -> \f' -> \b' -> \zs' -> apply (assert "foldr" ctrt)
 
        loc.varnm   =   @v.varnm
           .recvar  =   mkRecNm @loc.varnm
-          .ctrtE   =   EVar "apply" `app` @loc.assertE `app` @loc.apps
-          .assertE =   EVar "assert" `app` mkStr @loc.varnm `app` ctrtVar
-          .apps    =   apps @e1.lamVars $ EVar "fun" `app` (EVar @v.varnm `app` (@loc.ctrtVar `app` ctrtVar))
+          .ctrtVar =   EVar $ mkCtrtNm @loc.varnm
+
+          .assertedExpression = (EVar "assert") `app` (mkStr @loc.varnm) `app` ctrtVar `app` @loc.allFuns
+          -- This gives us: assert "insert" ctrt funs
+
+          .functionCall = foldl app (EVar @loc.varnm) ((@loc.ctrtVar `app` ctrtVar) : @loc.expandedlamVars)
+          -- This gives us: insert (__ctrt_insert ctrt) x y
+          -- In case of a higher-order function, we'll get something like:
+          -- foldr (__ctrt_foldr ctrt) (\ a -> \ b -> app (app f 0 a) 1 b) x xs
+          -- Note how the definition of f has been expanded, that's what @loc.expandedlamVars is for.
+
+          .allFuns =   funs @e1.lamVars @loc.functionCall
+          -- This gives us: fun (\x -> fun (\ y -> insert (__ctrt_insert ctrt) x y))
+
+          .ctrtLet =   ELet @loc.ctrtVar
+                            (ELam ctrtVar $ @loc.assertedExpression) @e2.mkCtrd
+
+          .expandedlamVars = expandLamVars (zip @e1.lamVars (generateArity @loc.varnm @lhs.env))
+          -- What we want to do here is take all the bound variables and inspect their type.
+          -- If it has the type of a function, we need to do some extra work.
+          -- Then, we replace f by f', and pass this modified list of bound variables to the functionCall construction site.
+{-
+       loc.varnm   =   @v.varnm
+          .recvar  =   mkRecNm @loc.varnm
+          .ctrtE   =   EVar "app" `app` @loc.assertE `app` @loc.assertSourcePos `app` @loc.funs
+          .assertSourcePos = EVar "0" -- TODO: Put actual source position info in here
+          .assertE =   EVar "fun" `app` (EVar "assert" `app` mkStr @loc.varnm `app` ctrtVar)
+          .recursiveCall = foldl app (EVar @loc.varnm) ((@loc.ctrtVar `app` ctrtVar) : @e1.lamVars)
+                            -- Makes something like "insert (__ctrt_insert ctrt) x y"
+          .funs    =   funs @e1.lamVars @loc.recursiveCall  
+          .apps    =   apps (zip @e1.lamVars [0..]) @loc.ctrtE -- TODO Put actual source position info in here
           .ctrtVar =   EVar $ mkCtrtNm @loc.varnm
           .ctrtLet =   ELet @loc.ctrtVar
-                            (ELam ctrtVar $ lams @e1.lamVars @loc.ctrtE) @e2.mkCtrd
+                            (ELam ctrtVar $ lams @e1.lamVars @loc.apps) @e2.mkCtrd
+-}
 
 -- TODO: Only generate recs etc if the rhs of a let.e1 is a lambda
 -- FIXME: We're not yet generating the correct contracts here

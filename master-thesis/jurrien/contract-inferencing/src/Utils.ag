@@ -21,9 +21,39 @@ infixl 6 `app`
 app :: Expr -> Expr -> Expr
 app = EApp
 
-apps :: [Expr] -> Expr -> Expr
+-- TODO: Change [Int] to actual sourcePos!!!!
+apps :: [(Expr,Int)] ->  Expr -> Expr
 apps xs b = foldr f b (reverse xs)
-  where f y ys = (EVar "app" `app` ys) `app` y
+  where f (y,pos) ys = (EVar "app" `app` ys) `app` (EVar (show pos)) `app` y
+
+-- fun (\x -> fun (\y -> insert x y)))) 0 z) 1 zs
+funs :: [Expr] -> Expr -> Expr
+funs xs b = foldr f b xs
+  where f y ys = EVar "fun" `app` (ELam y ys)
+
+-- TODO: FINISH ME
+-- Generates something like: \f1 -> \f2 -> app (app f 1 x1) 2 x2
+-- in case the bound variables has a function type.
+
+expandLamVars :: [(Expr,Int)] -> [Expr]
+expandLamVars xs = map f xs
+  where f (e,arity) = if arity > 0
+                       then lams (generateLambdaVars e arity)  (apps (generateTuples e arity) e) -- Make extended function definition
+                       else e -- Leave it as is
+        generateLambdaVars (EVar x) arity = [ EVar (x ++ show z) | z <- [1..arity]]
+        extractLocations xs = [1..(length xs)] -- TODO: PUT ACTUAL LOCATION INFORMATION HERE IF NEEDED
+        generateTuples x arity = zip (generateLambdaVars x arity) (extractLocations xs)
+
+generateArity :: String -> CEnv -> [Int]
+generateArity x env = case (DM.lookup x env) of
+                       (Just ty) -> map f (splitContractType ty)
+                       Nothing   -> error ("Couldn't find " ++ x ++ " in environment!")
+  where f (CArr x y) = 1 + f y
+        f _          = 0
+
+splitContractType :: Contract -> [Contract]
+splitContractType (CArr x y) = x : splitContractType y
+splitContractType x = [x]
 
 fun :: String -> Expr -> Expr
 fun nm e = ELet vn e vn
