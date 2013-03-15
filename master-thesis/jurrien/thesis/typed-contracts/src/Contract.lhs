@@ -1055,6 +1055,9 @@ terms of |prop'|, |function|, |pair'|, |list'| and `|<>|'. Then
 > app :: (aT :-> bT) -> Int -> aT -> bT
 > app f loc x  =  apply f (makeloc (App loc)) x
 
+> appString :: (aT :-> bT) -> String -> aT -> bT
+> appString f s x  =  apply f (makeloc (Def s)) x
+
 > id        ::  aT :-> aT
 > id        =   fun (\ x -> x)
 
@@ -1960,6 +1963,7 @@ Redoing some of the why dependent types matter stuff. All rather trivial.
 
 
 
+> {-
 > foo =  let  sort = \ xs ->
 >                     let  insert = \ x -> \ xs ->
 >                                     case xs of
@@ -1988,6 +1992,7 @@ Redoing some of the why dependent types matter stuff. All rather trivial.
 >   where  isPermutation xs ys = xs `elem` DL.permutations ys
 >          isNonDesc (x : y : ys)  = x <= y && isNonDesc (y : ys)
 >          isNonDesc _             = True
+> -}
 
 \bibliographystyle{splncs}
 \bibliography{abbr,rh,Contract}

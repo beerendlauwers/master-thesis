@@ -62,7 +62,7 @@ efoldr = fun' "efoldr" (lams [f, b, xs] $
          f    = var "f"
          b    = var "b"
          xs   = var "xs"
-         y    = var "x"
+         y    = var "y"
          ys   = var "ys"
 
 -- Status: OK
@@ -92,10 +92,15 @@ isortWC :: Contract
 isortWC = inferWE isort isortEnv
 
 isortMkCtrd :: Expr
-isortMkCtrd = custSynExpr mkCtrd_Syn_Expr isort $ (stdInhExpr' isortSubsts) { env_Inh_Expr = isortEnv }
+isortMkCtrd = custSynExpr mkCtrd_Syn_Expr isort $ (stdInhExpr' isortSubsts) { env_Inh_Expr = isortResEnvs }
 
 isortSubsts :: Subst
 isortSubsts = custSynExpr subst_Syn_Expr isort $ stdInhExpr{ env_Inh_Expr = isortEnv }
+
+isortResEnvs = let  (c, s) = f isort isortEnv
+               in   DM.fromList $ map (fmap last) $ DM.assocs $ subst s c
+  where f expr env = ( custSynExpr resEnv_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env }
+                     , custSynExpr subst_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env })
 
 isortWCDebug :: Doc
 isortWCDebug = inferDebugWE isort isortEnv
@@ -111,13 +116,18 @@ isortEnv :: CEnv
 isortEnv = DM.fromList  [ -- ("true",   ctrue) ]
                         --,  ("ord",    cord)
                         -- ,
-                          ("isort",  sortC) ]
+                          ("isort",  sortC)--,
+                         -- ("insert", insC) 
+                        ]
 
 cord :: Contract -- FIXME: Have a "real" contract here ...
 cord = CProp "ord"
 
 sortC :: Contract
 sortC = ctrue <@> ctrue >-> cord <@> ctrue
+
+insC :: Contract
+insC = ctrue >-> cord <@> ctrue >-> cord <@> ctrue
 
 --- Real Haskell experiment
 

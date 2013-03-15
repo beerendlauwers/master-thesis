@@ -5,7 +5,7 @@ include "Inference.ag"
 include "Pretty.ag"
 include "Types.ag"
 include "MkContract.ag"
--- include "GenHM.ag"
+--include "GenHM.ag"
 
 attr Expr Alt Alts EConst Contract Subst MaybeConst
   chn varcnt   :: Int
