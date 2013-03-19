@@ -195,7 +195,7 @@ app_foldr_insert_list
 
 -}
 
-{-
+
 rectestbig =
  let isort = \__rec_isort -> \us -> let insert = \__rec_insert -> \z -> \zs -> case zs of
                                                                                 [] -> z : []
@@ -207,21 +207,25 @@ rectestbig =
                                    in let __ctrt_insert = \ctrt -> assert "insert" ctrt (fun (\z -> fun (\zs -> insert (__ctrt_insert ctrt) z zs)))
                                       in let efoldr = \__rec_efoldr -> \f -> \b -> \xs -> case xs of
                                                                                             [] -> b
-                                                                                            (y : ys) -> f y (( (\f -> \b -> \xs -> app (app (app __rec_efoldr 0 f) 1 b) 2 xs) ) f b ys)
+                                                                                            (y : ys) -> f y (( (\f -> \b -> \xs -> app (app (app __rec_efoldr 0 (fun (\a -> (fun (\b -> f a b)))) ) 1 b) 2 xs) ) f b ys)
                                          in let __ctrt_efoldr = \ctrt -> assert "efoldr" ctrt (fun (\f -> fun (\b -> fun (\xs -> efoldr (__ctrt_efoldr ctrt) (\f1 -> \f2 -> app (app f 1 f1) 2 f2) b xs))))
-                                            in __ctrt_efoldr ((>->) ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true))) ((>->) ((<@>) ord true) ((>->) ((<@>) true true) ((<@>) ord true)))) (__ctrt_insert ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true)))) [] us
+                                            in app (app (app (__ctrt_efoldr ((>->) ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true))) ((>->) ((<@>) ord true) ((>->) ((<@>) true true) ((<@>) ord true))))) 1 (__ctrt_insert ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true))))) 2 []) 3 us
  in let __ctrt_isort = \ctrt -> assert "isort" ctrt (fun (\us -> isort (__ctrt_isort ctrt) us))
-    in __ctrt_isort ((>->) ((<@>) true true) ((<@>) ord true))
--}
+    in app (__ctrt_isort ((>->) ((<@>) true true) ((<@>) ord true))) 0 [1,2,3]
+
+-- __rec_efoldr 0 f -> need to expand the f, we can pass the arity information of function parameters around, so that shouldn't be an issue
+-- __ctrt_efoldr usage has to be app'ed, I think everything except the top-level let (in this case, isort and its assorted __ctrt_isort) have to be app'ed. Could also just app everything
+
 
 
 rectest2 = let efoldr = (\__rec_efoldr -> \f -> \b -> \xs -> case xs of
                                                              [] -> b
-                                                             (y : ys) -> f y (( (\f -> \b -> \xs -> app (app (app __rec_efoldr 0 f) 1 b) 2 xs) ) f b ys)) :: (((aT :-> (bT :-> bT)) :-> (bT :-> ([aT] :-> bT))) -> (a -> b -> b) -> b -> [a] -> [b])
-           in let __ctrt_efoldr = (\ctrt -> assert "efoldr" ctrt (fun (\f -> fun (\b -> fun (\xs -> efoldr (__ctrt_efoldr ctrt) (\f1 -> \f2 -> app (app f 1 f1) 2 f2) b xs))))) :: (Contract a1) -> ((aT :-> (bT :-> bT)) :-> (bT :-> ([aT] :-> bT)))
+                                                             (y : ys) -> f y (( (\f -> \b -> \xs -> app (app (app __rec_efoldr 0 (fun (\a -> (fun (\b -> f a b)))) ) 1 b) 2 xs) ) f b ys))
+           in let __ctrt_efoldr = (\ctrt -> assert "efoldr" ctrt (fun (\f -> fun (\b -> fun (\xs -> efoldr (__ctrt_efoldr ctrt) (\f1 -> \f2 -> app (app f 1 f1) 2 f2) b xs)))))
               in __ctrt_efoldr ((true >-> ord >-> ord) >-> ord >-> true >-> ord)
 
-
+foldr_contracted :: Contract ((aT :-> (bT :-> bT)) :-> (bT :-> ([aT] :-> bT))) -> (aT :-> (bT :-> bT)) :-> (bT :-> ([aT] :-> bT))
+foldr_contracted = \ctrt -> assert "foldr" ctrt (fun (\f -> fun (\x -> fun (\xs -> DL.foldr (\ a -> \ b -> app (app f 0 a) 1 b) x xs))))
 
 
 
@@ -252,9 +256,6 @@ wrongInsert z zs = case zs of
 
 insert_contracted :: Ord a => Contract (a :-> ([a] :-> [a])) -> a :-> ([a] :-> [a])
 insert_contracted = \ctrt -> assert "insert" ctrt (fun (\a -> fun (\ b -> DL.insert a b)))
-
-foldr_contracted :: Contract ((aT1 :-> (aT :-> aT)) :-> (aT :-> ([aT1] :-> aT))) -> (aT1 :-> (aT :-> aT)) :-> (aT :-> ([aT1] :-> aT))
-foldr_contracted = \ctrt -> assert "foldr" ctrt (fun (\f -> fun (\x -> fun (\xs -> DL.foldr (\ a -> \ b -> app (app f 0 a) 1 b) x xs))))
 
 --our_env = [("foldr",,("insert",]
 
