@@ -35,14 +35,21 @@ funs xs b = foldr f b xs
 -- Generates something like: \f1 -> \f2 -> app (app f 1 x1) 2 x2
 -- in case the bound variables has a function type.
 
+expandParameters :: [(Expr,Int)] -> [Expr]
+expandParameters xs = map f xs
+  where f (e,arity) = if arity > 0
+                       then funs (generateLambdaVars e arity) e
+                       else e
+
 expandLamVars :: [(Expr,Int)] -> [Expr]
 expandLamVars xs = map f xs
   where f (e,arity) = if arity > 0
                        then lams (generateLambdaVars e arity)  (apps (generateTuples e arity) e) -- Make extended function definition
-                       else e -- Leave it as is
-        generateLambdaVars (EVar x) arity = [ EVar (x ++ show z) | z <- [1..arity]]
+                       else e -- Leave as is
         extractLocations xs = [1..(length xs)] -- TODO: PUT ACTUAL LOCATION INFORMATION HERE IF NEEDED
         generateTuples x arity = zip (generateLambdaVars x arity) (extractLocations xs)
+
+generateLambdaVars (EVar x) arity = [EVar (x ++ show z) | z <- [1..arity]]
 
 generateArity :: String -> CEnv -> [Int]
 generateArity x env = case (DM.lookup x env) of

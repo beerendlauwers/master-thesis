@@ -20,11 +20,19 @@ sem Expr
 -- Semantics for making a contracted version of the code
 sem Expr
   |  EVar
+       -- This reads out the parameters of a recursive function call.
+       loc.parametersOfRecursiveFunctionCall = case DM.lookup @nm @lhs.recvars of
+                                                (Just v) -> case DM.lookup @nm @lhs.recvarsparameters of
+                                                             (Just params) -> params
+                                                             _             -> error $ "The recursive function call for " ++ v ++ " doesn't have any parameters available."
+                                                _        -> [] -- Not an error, this EVar is just not a recursive function call.
+       -- In case a parameter of a recursive function call is a function, we need to expand its definition from f to f', where f' = funs (parametersOf f) f. So, we need to find the arity of each parameter and expand it if necessary.
+       loc.parametersWithArity = (zip (map fst @loc.parametersOfRecursiveFunctionCall) (generateArity @nm @lhs.env))
+       loc.expandedParameters = zip (expandParameters @loc.parametersWithArity) (map snd @loc.parametersOfRecursiveFunctionCall) -- Recombine the expanded parameters with their original source position
+                                             
        -- This part of the code updates recursive function calls with the contracted version.
        lhs.mkCtrd  =   case DM.lookup @nm @lhs.recvars of 
-                         (Just v)  ->  case DM.lookup @nm @lhs.recvarsparameters of
-                                        (Just params) -> EVar "(" `app` (lams (map fst params) $ apps params (EVar v)) `app` EVar ")" -- Replaces "insert" with "(\x -> \xs -> app (app insert 0 x) 1 xs)", because the context is "insert x xs", and it's a lot of work to remove those parameters, so we just capture them with the lambdas. I also add "(" and ")" to the sides of the generates expression, because those don't seem to appear during pretty-printing.
-                                        _             -> error $ "The recursive function call for " ++ v ++ " doesn't have any parameters available."
+                         (Just v)  ->  EVar "(" `app` (lams (map fst @loc.parametersOfRecursiveFunctionCall) $ apps @loc.expandedParameters (EVar v)) `app` EVar ")" -- Replaces "insert" with "(\x -> \xs -> app (app insert 0 x) 1 xs)", because the context is "insert x xs", and it's a lot of work to remove those parameters, so we just capture them with the lambdas. I also add "(" and ")" to the sides of the generated expression, because those don't seem to appear during pretty-printing.
                          _         ->  case (DM.lookup @nm @lhs.clets, DM.lookup @nm @lhs.env) of
                                          (Just cn, Just c)  -> EVar cn `app` mkExpr (subst @lhs.allsubsts c)
                                          _                  -> @loc.copy
