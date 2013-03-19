@@ -62,6 +62,19 @@ splitContractType :: Contract -> [Contract]
 splitContractType (CArr x y) = x : splitContractType y
 splitContractType x = [x]
 
+isTrueContract :: String -> Bool
+isTrueContract (x:xs) = if x == 'c'
+                           then case (reads xs) :: [(Integer,String)] of
+                                 [(_,"")] -> True
+                                 _        -> False
+                           else False
+isTrueContract []      = False
+
+replaceTrueContract :: String -> String
+replaceTrueContract x = if isTrueContract x
+                         then "true"
+                         else x
+
 fun :: String -> Expr -> Expr
 fun nm e = ELet vn e vn
   where vn = var nm
