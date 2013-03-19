@@ -38,7 +38,7 @@ funs xs b = foldr f b xs
 expandParameters :: [(Expr,Int)] -> [Expr]
 expandParameters xs = map f xs
   where f (e,arity) = if arity > 0
-                       then funs (generateLambdaVars e arity) e
+                       then funs (generateLambdaVars e arity) (foldl app e (generateLambdaVars e arity))
                        else e
 
 expandLamVars :: [(Expr,Int)] -> [Expr]

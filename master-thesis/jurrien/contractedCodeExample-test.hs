@@ -209,9 +209,9 @@ rectestbig =
                                                                                             [] -> b
                                                                                             (y : ys) -> f y (( (\f -> \b -> \xs -> app (app (app __rec_efoldr 0 (fun (\a -> (fun (\b -> f a b)))) ) 1 b) 2 xs) ) f b ys)
                                          in let __ctrt_efoldr = \ctrt -> assert "efoldr" ctrt (fun (\f -> fun (\b -> fun (\xs -> efoldr (__ctrt_efoldr ctrt) (\f1 -> \f2 -> app (app f 1 f1) 2 f2) b xs))))
-                                            in app (app (app (__ctrt_efoldr ((>->) ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true))) ((>->) ((<@>) ord true) ((>->) ((<@>) true true) ((<@>) ord true))))) 1 (__ctrt_insert ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true))))) 2 []) 3 us
+                                            in (\f -> \b -> \xs -> app (app (app (__ctrt_efoldr ((>->) ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true))) ((>->) ((<@>) ord true) ((>->) ((<@>) true true) ((<@>) ord true))))) 1 f) 2 b) 3 xs) (__ctrt_insert ((>->) true ((>->) ((<@>) ord true) ((<@>) ord true)))) [] us
  in let __ctrt_isort = \ctrt -> assert "isort" ctrt (fun (\us -> isort (__ctrt_isort ctrt) us))
-    in app (__ctrt_isort ((>->) ((<@>) true true) ((<@>) ord true))) 0 [1,2,3]
+    in (\us -> app (__ctrt_isort ((>->) ((<@>) true true) ((<@>) ord true))) 0 us)
 
 -- __rec_efoldr 0 f -> need to expand the f, we can pass the arity information of function parameters around, so that shouldn't be an issue
 -- __ctrt_efoldr usage has to be app'ed, I think everything except the top-level let (in this case, isort and its assorted __ctrt_isort) have to be app'ed. Could also just app everything
