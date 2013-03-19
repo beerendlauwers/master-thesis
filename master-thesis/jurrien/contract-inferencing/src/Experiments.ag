@@ -95,7 +95,7 @@ isortMkCtrd :: Expr
 isortMkCtrd = custSynExpr mkCtrd_Syn_Expr isort $ (stdInhExpr' isortSubsts) { env_Inh_Expr = isortResEnvs }
 
 isortSubsts :: Subst
-isortSubsts = custSynExpr subst_Syn_Expr isort $ stdInhExpr{ env_Inh_Expr = isortEnv }
+isortSubsts = custSynExpr subst_Syn_Expr isort $ stdInhExpr{ env_Inh_Expr = isortResEnvs }
 
 isortResEnvs = let  (c, s) = f isort isortEnv
                in   DM.fromList $ map (fmap last) $ DM.assocs $ subst s c
