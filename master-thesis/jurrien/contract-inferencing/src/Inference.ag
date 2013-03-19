@@ -804,6 +804,7 @@ stdInhExpr =  Inh_Expr  {  env_Inh_Expr = DM.empty
                         ,  clets_Inh_Expr = DM.empty
                         ,  recvarsparameters_Inh_Expr = DM.empty
                         ,  recvarsparametersWithArity_Inh_Expr = DM.empty
+                        ,  isParameter_Inh_Expr = False
                         ,  allsubsts_Inh_Expr = SId
                         }
 
@@ -819,6 +820,7 @@ stdInhContract = Inh_Contract  {  env_Inh_Contract = DM.empty
                                ,  clets_Inh_Contract = DM.empty
                                ,  recvarsparameters_Inh_Contract = DM.empty
                                ,  recvarsparametersWithArity_Inh_Contract = DM.empty
+                               ,  isParameter_Inh_Contract = False
                                ,  allsubsts_Inh_Contract = SId
                                }
 
@@ -829,6 +831,7 @@ stdInhSubst = Inh_Subst  {  env_Inh_Subst = DM.empty
                          ,  recvars_Inh_Subst = DM.empty
                          ,  recvarsparameters_Inh_Subst = DM.empty
                          ,  recvarsparametersWithArity_Inh_Subst = DM.empty
+                         ,  isParameter_Inh_Subst = False
                          ,  clets_Inh_Subst = DM.empty
                          ,  allsubsts_Inh_Subst = SId
                          }

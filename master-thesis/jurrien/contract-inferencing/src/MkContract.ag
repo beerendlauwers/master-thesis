@@ -4,6 +4,7 @@ attr Expr Alt Alts Contract MaybeConst Subst
   inh  recvarsparameters                        :: {Map String [(Expr,Int)]}
   inh  recvarsparametersWithArity               :: {Map String [(Expr,Int)]}
   inh  allsubsts :: Subst
+  inh isParameter :: {Bool}
 
 attr Contract
   syn  mkExpr :: Expr
@@ -18,27 +19,43 @@ sem Expr
   | * - ELam
       lhs.lamVars = []
 
+attr Expr
+  syn allParams :: {[(Expr,Bool)]}
+
+sem Expr
+  | EApp
+     lhs.allParams = (@e2.copy,True) : @e1.allParams
+  | EVar
+     lhs.allParams = [(EVar @nm,@lhs.isParameter)]
+  | * - EApp - EVar
+     lhs.allParams = []
+
 -- Semantics for making a contracted version of the code
 sem Expr
   |  EVar
        -- This reads out the parameters of a recursive function call.
-       loc.parametersOfRecursiveFunctionCall = case DM.lookup @nm @lhs.recvars of
-                                                (Just v) -> case DM.lookup @nm @lhs.recvarsparameters of
-                                                             (Just params) -> params
-                                                             _             -> error $ "The recursive function call for " ++ v ++ " doesn't have any parameters available."
-                                                _        -> [] -- Not an error, this EVar is just not a recursive function call.
+       loc.parametersOfRecursiveFunctionCall = case DM.lookup @nm @lhs.recvarsparameters of
+                                                 (Just params) -> params
+                                                 _             -> error $ "The recursive function call for " ++ @nm ++ " doesn't have any parameters available."
        -- In case a parameter of a recursive function call is a function, we need to expand its definition from f to f', where f' = funs (parametersOf f) f. So, we need to find the arity of each parameter and expand it if necessary.
        loc.parametersWithArity = case DM.lookup @nm @lhs.recvarsparametersWithArity of
                                   (Just params) -> params
                                   _             -> error $ "The recursive function call for " ++ @nm ++ " doesn't have any parameters with arity information available."
-       loc.expandedParameters = zip (expandParameters @loc.parametersWithArity) (map snd @loc.parametersOfRecursiveFunctionCall) -- Recombine the expanded parameters with their original source position
+       loc.expandedParameters = zip (expandParameters @loc.parametersWithArity) (map snd @loc.parametersOfRecursiveFunctionCall) -- Recombine the expanded parameters with their original source position, could be wrong sourcepos though
                                              
        -- This part of the code updates recursive function calls with the contracted version.
        lhs.mkCtrd  =   case DM.lookup @nm @lhs.recvars of 
                          (Just v)  ->  EVar "(" `app` (lams (map fst @loc.parametersOfRecursiveFunctionCall) $ apps @loc.expandedParameters (EVar v)) `app` EVar ")" -- Replaces "insert" with "(\x -> \xs -> app (app insert 0 x) 1 xs)", because the context is "insert x xs", and it's a lot of work to remove those parameters, so we just capture them with the lambdas. I also add "(" and ")" to the sides of the generated expression, because those don't seem to appear during pretty-printing.
                          _         ->  case (DM.lookup @nm @lhs.clets, DM.lookup @nm @lhs.env) of
-                                         (Just cn, Just c)  -> EVar cn `app` mkExpr (subst @lhs.allsubsts c) `app` (EVar "TESTINGLOL")
+                                         (Just cn, Just c)  -> let contractedCall = EVar cn `app` mkExpr (subst @lhs.allsubsts c)
+                                                               in if not @lhs.isParameter
+                                                                   then EVar "(" `app` (lams (map fst @loc.parametersOfRecursiveFunctionCall) $ apps @loc.parametersOfRecursiveFunctionCall contractedCall) `app` EVar ")" -- @loc.parametersOfRecursiveFunctionCall probably has wrong sourcepos information here, so will need to update that later
+                                                                   else contractedCall
                                          _                  -> @loc.copy
+
+  -- Need a way to capture the expressions that are parameters so we can then ANNOTATE that these expressions are a parameter.
+  -- Then, we can say: if this expr is a parameter, DON'T transform it!
+  -- IDEA: What if we make a Map String SourcePos??? Then we can say, "the expression at this sourcepos is a parameter"!
 
   |  EConst ENil ENothing EHole
        lhs.mkCtrd  =   @loc.copy
@@ -56,6 +73,8 @@ sem Expr
   -- the recursive call itself. Can we do this with a fix combinator?
   |  EApp
        lhs.mkCtrd  =    EApp @e1.mkCtrd @e2.mkCtrd
+       e1.isParameter = @lhs.isParameter
+       e2.isParameter = True
 
   |  ELet
        {-
@@ -144,6 +163,7 @@ in  let __ctrdfoldr = \ctrt -> \f' -> \b' -> \zs' -> apply (assert "foldr" ctrt)
        e1 .recvars =   DM.insert @loc.lbvar @loc.recvar @lhs.recvars
        e2 .clets   =   DM.insert @loc.lbvar (mkCtrtNm @loc.varnm) @lhs.clets
        e1 .recvarsparameters = DM.insert @loc.lbvar @loc.lamVarsWithSourcePos @lhs.recvarsparameters
+       e2 .recvarsparameters = DM.insert @loc.lbvar @loc.lamVarsWithSourcePos @lhs.recvarsparameters
        e1 .recvarsparametersWithArity = DM.insert @loc.lbvar (zip @e1.lamVars (generateArity @loc.varnm @lhs.env)) @lhs.recvarsparametersWithArity
 
   |  ECase
