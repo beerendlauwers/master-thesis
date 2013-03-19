@@ -1,0 +1,6 @@
+Maak een voorbeeldje hiervan
+
+*Main> :t DL.foldr (\f fs -> f . fs)
+DL.foldr (\f fs -> f . fs) :: (a -> b) -> [b -> b] -> a -> b
+
+en zie of het werkt of misloopt
