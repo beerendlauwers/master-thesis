@@ -50,12 +50,25 @@ sem Expr
                                          (Just cn, Just c)  -> let contractedCall = EVar cn `app` mkExpr (subst @lhs.allsubsts c)
                                                                in if not @lhs.isParameter
                                                                    then EVar "(" `app` (lams (map fst @loc.parametersOfRecursiveFunctionCall) $ apps @loc.parametersOfRecursiveFunctionCall contractedCall) `app` EVar ")" -- @loc.parametersOfRecursiveFunctionCall probably has wrong sourcepos information here, so will need to update that later
-                                                                   else contractedCall
+                                                                   else {- if isHigherOrderFunction -}  contractedCall
                                          _                  -> @loc.copy
 
-  -- Need a way to capture the expressions that are parameters so we can then ANNOTATE that these expressions are a parameter.
-  -- Then, we can say: if this expr is a parameter, DON'T transform it!
-  -- IDEA: What if we make a Map String SourcePos??? Then we can say, "the expression at this sourcepos is a parameter"!
+  -- Ok, from experiments I've concluded the following:
+  -- First contracted function calll always gets app'ed.
+  -- contracted functions calls that are (part of) a parameter are only app'ed if the function is a higher-order function.
+  -- Also, if a function passed to a higher-order function is an anonymous function, it's currently not contracted, should fix that. Perhaps we could check if the function parameter of the HO-function is not in the contracted function list, and is a lambda? If so, it's an anonymous function and we should contract it (get arity, expand definition, etc).
+
+  -- UPDATE: ok how about this: app every contracted function call EXCEPT if it is a parameter to a higher-order function AND if it is not higher-order itself. so for example emerge (insert x xs) would all get apped, as expected.
+
+  -- YET ANOTHER INSIGHT: Ok, what about partially applied contracted functions? say, foldr (f "test") gets contracted:
+  -- foldr gets app'ed, but then f also gets fully contracted, so we need to app there as well.
+  -- It seems we have to step over each EVar, see if it's a contracted function, and if yes:
+  -- 1) Inspect its type, for example f :: String -> Int -> Int -> Int
+  -- 2) Inspect the parameters it was already given, for example "test"
+  -- 3) Generate apps for either:
+  -- 4a) In case of a parameter to a higher-order function and not higher-order itself
+
+  -- A 
 
   |  EConst ENil ENothing EHole
        lhs.mkCtrd  =   @loc.copy

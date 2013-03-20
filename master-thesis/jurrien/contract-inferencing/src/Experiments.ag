@@ -250,6 +250,11 @@ emap = fun' "emap" (lams [f, xs] $ ECase xs
          f   = var "f"
          nm  = var "emap"
 
+emap_test = emap (ELam xs (var "emap" `app` zl `app` xs))
+  where  xs  = var "xs"
+         z   = var "z"
+         zl  = ELam z (EPair (mkInt 1) z)
+
 
 eencodeWC :: Contract
 eencodeWC = inferWE eencode eencodeEnv
@@ -262,4 +267,70 @@ eencodeWCDebug' = inferDebugWE eencode' eencodeEnv
 
 eencodeEnv :: CEnv
 eencodeEnv = DM.fromList  []
+
+eencodeMkCtrd :: Expr
+eencodeMkCtrd = custSynExpr mkCtrd_Syn_Expr eencode $ (stdInhExpr' eencodeSubsts) { env_Inh_Expr = eencodeResEnvs }
+
+eencodeSubsts :: Subst
+eencodeSubsts = custSynExpr subst_Syn_Expr eencode $ stdInhExpr{ env_Inh_Expr = eencodeEnv }
+
+eencodeResEnvs = let  (c, s) = f eencode eencodeEnv
+                 in   DM.fromList $ map (fmap last) $ DM.assocs $ subst s c
+  where f expr env = ( custSynExpr resEnv_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env }
+                     , custSynExpr subst_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env })
+
+writeContractedCodeEncode = do writeFile "contractedCodeExampleEncode" ((show . pprint) eencodeMkCtrd)
+
+emap_testMkCtrd :: Expr
+emap_testMkCtrd = custSynExpr mkCtrd_Syn_Expr emap_test $ (stdInhExpr' emap_testSubsts) { env_Inh_Expr = emap_testResEnvs }
+
+emap_testSubsts :: Subst
+emap_testSubsts = custSynExpr subst_Syn_Expr emap_test $ stdInhExpr{ env_Inh_Expr = emap_testResEnvs }
+
+emap_testResEnvs = let  (c, s) = f emap_test eencodeEnv
+                 in   DM.fromList $ map (fmap last) $ DM.assocs $ subst s c
+  where f expr env = ( custSynExpr resEnv_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env }
+                     , custSynExpr subst_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env })
+
+writeContractedCodeMap = do writeFile "contractedCodeExampleEncode" ((show . pprint) eencodeMkCtrd)
+
+
+writeContractedCodeInsert = do writeFile "contractedCodeExampleInsert" ((show . pprint) einsertMkCtrd)
+
+einsert :: Expr
+einsert = insert (var "insert")
+
+einsertMkCtrd :: Expr
+einsertMkCtrd = custSynExpr mkCtrd_Syn_Expr einsert $ (stdInhExpr' einsertSubsts) { env_Inh_Expr = einsertResEnvs }
+
+einsertSubsts :: Subst
+einsertSubsts = custSynExpr subst_Syn_Expr einsert $ stdInhExpr{ env_Inh_Expr = einsertEnv }
+
+einsertResEnvs = let  (c, s) = f einsert einsertEnv
+                 in   DM.fromList $ map (fmap last) $ DM.assocs $ subst s c
+  where f expr env = ( custSynExpr resEnv_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env }
+                     , custSynExpr subst_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env })
+
+-- Expected contract: c1 >-> (c0 <@> c1 >-> c2 <@> c1)
+einsertEnv :: CEnv
+einsertEnv = DM.fromList  [ ("insert", CQuant (CVar "ftrue" Nothing) (( CVar "ftrue" Nothing >-> cord <@> CVar "ftrue" Nothing >-> cord <@> CVar "ftrue" Nothing )) ) ]
+
+emergeinsert :: Expr
+emergeinsert = emerge (insert $ lams [EVar "x",EVar "xs"] (var "emerge" `app` (var "insert" `app` (EVar "x") `app` (EVar "xs") )))
+
+emergeinsertMkCtrd :: Expr
+emergeinsertMkCtrd = custSynExpr mkCtrd_Syn_Expr emergeinsert $ (stdInhExpr' emergeinsertSubsts) { env_Inh_Expr = emergeinsertResEnvs }
+
+emergeinsertSubsts :: Subst
+emergeinsertSubsts = custSynExpr subst_Syn_Expr emergeinsert $ stdInhExpr{ env_Inh_Expr = emergeinsertEnv }
+
+emergeinsertResEnvs = let  (c, s) = f emergeinsert emergeinsertEnv
+                 in   DM.fromList $ map (fmap last) $ DM.assocs $ subst s c
+  where f expr env = ( custSynExpr resEnv_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env }
+                     , custSynExpr subst_Syn_Expr expr $ stdInhExpr{ env_Inh_Expr = env })
+
+emergeinsertEnv :: CEnv
+emergeinsertEnv = DM.fromList []
+--emergeinsertEnv = DM.fromList [("emerge", CQuant (CVar "true1" Nothing) (CQuant (CVar "true2" Nothing) (ctrue <@> ctrue <@@> (CVar "true1" Nothing, CVar "true2" Nothing) >-> ctrue <@> ctrue <@@> (CVar "true1" Nothing, CVar "true2" Nothing))))]
+
 }
