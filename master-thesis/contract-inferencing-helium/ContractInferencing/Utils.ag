@@ -1,0 +1,5 @@
+
+allPVars :: [Pat] -> Bool
+allPVars xs = all f xs
+  where f (PVar (Ident _)) = True
+          _                = False

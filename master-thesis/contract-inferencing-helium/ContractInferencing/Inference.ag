@@ -1,0 +1,59 @@
+MODULE {Domain.FP.ContractInferencing.Inference}{}
+
+
+{
+type CEnv = Map String Contract
+}
+
+--
+attr Expr
+  syn  infer                                    :: Contract
+  syn  resEnv    use {`urenv`}     {DM.empty}   :: {Map Name [Contract]}
+  syn  subst                                    :: Subst
+  syn  mkCtrd                                   :: Expr
+
+
+
+-- Semantics for inferring a contract from an expression
+sem Expr
+  | Var
+      lhs  .infer   =   @loc.infer'
+           .subst   =   SId
+           .resEnv  =   DM.singleton @name [@loc.infer']
+
+     loc  .infer'  =   case @lhs.cann of
+                         (Just ann)  -> ann
+                         _           -> @luv.instc
+
+     inst .luv     ::  Contract
+     inst .luv     =   envLU @nm @lhs.env
+
+  | Lambda
+      lhs  .infer   =   @loc.infer'
+           .subst   =   @loc.th
+
+      loc  .infer'  =   subst @loc.th $ @loc.x >-> @loc.c2
+           .c2      =   @expr.infer
+           .th      =   @expr.subst
+           .x       =   case @lhs.cann of
+                          (Just (CArr c1 _))  -> c1
+                          _                   -> @loc.alpha
+           .alpha   =   mkVar @loc.num
+           .newenv  =   case (allPVars @pats.copy) of
+                          True -> (EVar ev)  -> DM.insert ev @loc.x @lhs.env
+                          _    -> error "Only variables can be bound in a lambda"
+      loc  .num     ::  uniqueref varcnt
+
+      v    .env     =   @loc.newenv
+      v    .cann    =   case @lhs.cann of
+                          (Just (CArr c1 _))  -> Just c1
+                          _                   -> Nothing
+      e    .env     =   @loc.newenv
+      e    .cann    =   case @lhs.cann of
+                          (Just (CArr _ c2))  -> Just c2
+                          _                   -> Nothing
+
+
+envLU :: Name -> CEnv -> Contract
+envLU nm env = maybe (error emsg) id (DM.lookup nm env)
+  where emsg = "variable '" ++ (show nm) ++ "' not in environment: " ++ pretty env
