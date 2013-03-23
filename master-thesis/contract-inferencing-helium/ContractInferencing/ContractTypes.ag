@@ -1,0 +1,16 @@
+MODULE {Domain.FP.ContractInferencing.ContractTypes}{}
+
+type MaybeConst  = maybe Expr
+
+data Contract
+  |  CArr        c1     :: Contract  c2  :: Contract
+  |  CProp       p      :: String -- Expr TODO: This is nasty, but it beats debugging AGs
+  |  CFunctor    o      :: Contract  i   :: Contract
+  |  CBifunctor  o      :: Contract  il  :: Contract    ir :: Contract
+  |  CVar        v      :: String    mc  :: MaybeConst
+  |  CQuant      cv     :: Contract  cs  :: Contract
+
+data Subst
+  |  SId
+  |  SComp   l  :: Subst     r  :: Subst
+  |  SSubst  v  :: Contract  c  :: Contract
