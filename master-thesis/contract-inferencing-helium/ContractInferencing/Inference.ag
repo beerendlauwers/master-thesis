@@ -6,17 +6,17 @@ type CEnv = Map String Contract
 }
 
 --
-attr Expr
+attr ExprR
   syn  infer                                    :: Contract
   syn  resEnv    use {`urenv`}     {DM.empty}   :: {Map Name [Contract]}
   syn  subst                                    :: Subst
-  syn  mkCtrd                                   :: Expr
+  syn  mkCtrd                                   :: ExprR
 
 
 
 -- Semantics for inferring a contract from an expression
-sem Expr
-  | Var
+sem ExprR
+  | VarR
       lhs  .infer   =   @loc.infer'
            .subst   =   SId
            .resEnv  =   DM.singleton @name [@loc.infer']
@@ -28,7 +28,7 @@ sem Expr
      inst .luv     ::  Contract
      inst .luv     =   envLU @nm @lhs.env
 
-  | Lambda
+  | LambdaR
       lhs  .infer   =   @loc.infer'
            .subst   =   @loc.th
 
@@ -39,17 +39,19 @@ sem Expr
                           (Just (CArr c1 _))  -> c1
                           _                   -> @loc.alpha
            .alpha   =   mkVar @loc.num
-           .newenv  =   case (allPVars @pats.copy) of
-                          True -> (EVar ev)  -> DM.insert ev @loc.x @lhs.env
-                          _    -> error "Only variables can be bound in a lambda"
+           .newenv  =   if (length @pats.copy) == 1
+                         then case @pats.copy of
+                               [(PVarR ev _)] -> DM.insert ev @loc.x @lhs.env
+                               _              -> error "Only variables can be bound in a lambda!"
+                         else error "Contract inferencing expects lambdas with a single variable!"
       loc  .num     ::  uniqueref varcnt
 
-      v    .env     =   @loc.newenv
-      v    .cann    =   case @lhs.cann of
+      pats .env     =   @loc.newenv
+      pats .cann    =   case @lhs.cann of
                           (Just (CArr c1 _))  -> Just c1
                           _                   -> Nothing
-      e    .env     =   @loc.newenv
-      e    .cann    =   case @lhs.cann of
+      expr .env     =   @loc.newenv
+      expr .cann    =   case @lhs.cann of
                           (Just (CArr _ c2))  -> Just c2
                           _                   -> Nothing
 

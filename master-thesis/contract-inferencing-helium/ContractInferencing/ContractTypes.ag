@@ -1,6 +1,6 @@
 MODULE {Domain.FP.ContractInferencing.ContractTypes}{}
 
-type MaybeConst  = maybe Expr
+type MaybeConst  = maybe ExprR
 
 data Contract
   |  CArr        c1     :: Contract  c2  :: Contract
