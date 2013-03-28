@@ -132,13 +132,14 @@ DATA ExprR
       to       : MaybeExprR
       range    : RangeR
    | ListR
-      exprs    : ExprsR
+      exprs    : ListExprR -- We use a new type here because for lists, the inferred contracts must hold on all elements.
       range    : RangeR
    | NegR
       expr     : ExprR
       range    : RangeR
 
 TYPE ExprsR = [ExprR]
+TYPE ListExprR = [ExprR]
 
 DATA MaybeExprR
    | NoExprR
@@ -229,8 +230,8 @@ DATA PatR
       name     : NameR
       right    : PatR
       range    : RangeR
-   | PListR
-      pats     : PatsR
+   | PListR  -- We use a new type here because for lists, the inferred contracts must hold on all elements.
+      pats     : ListPatsR
       range    : RangeR
    | PLitR
       lit      : LiteralR
@@ -252,6 +253,7 @@ DATA PatR
       range    : RangeR
 
 TYPE PatsR = [PatR]
+TYPE ListPatsR = [PatR]
 
 -- | Right hand side
 DATA RhsR
