@@ -1,5 +1,29 @@
 
-allPVars :: [Pat] -> Bool
-allPVars xs = all f xs
-  where f (PVar (Ident _)) = True
-          _                = False
+guard :: (a -> Bool) -> a -> String -> a
+guard f x s = if f x
+               then x
+               else error "Guard failed: " ++ s
+
+-- AppR should only have single parameter
+gAppSingleParameter (AppR _ xs r) = guard (\x -> length x == 1) xs ("AppR should only have a single parameter! " ++ show r)
+
+getVar :: NameR -> String
+getVar (IdentR x _)    = x
+getVar (OperatorR x _) = x
+getVar (SpecialR x _)  = x
+
+mkVar :: Int -> Contract
+mkVar n = mkVarWM n Nothing
+
+mkVarWM :: Int -> Maybe ExprR -> Contract
+mkVarWM n m = CVar ('c' : show n) m
+
+-- FIXME: For now, we will simply not generate constant equality contracts, as
+-- it is not clear yet how to do this correctly. When we do want to generate
+-- these contracts, replace the current definition of mkVarConst.
+mkVarConst :: Int -> ExprR -> Contract
+mkVarConst n _ = mkVarWM n Nothing
+
+mkPlainC :: Contract -> Contract
+mkPlainC (CVar v _)  = CVar v Nothing
+mkPlainC c           = c

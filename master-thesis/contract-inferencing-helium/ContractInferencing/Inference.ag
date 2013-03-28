@@ -6,16 +6,168 @@ type CEnv = Map String Contract
 }
 
 --
-attr ExprR
+attr ExprR MaybeExprR ListExprR
   syn  infer                                    :: Contract
   syn  resEnv    use {`urenv`}     {DM.empty}   :: {Map Name [Contract]}
   syn  subst                                    :: Subst
   syn  mkCtrd                                   :: ExprR
 
+attr ExprR MaybeExprR ListExpR
+  inh  env                                      :: CEnv
+  inh  cann                                     :: {Maybe Contract}
 
+attr PatR
+  syn envFromPats use {`urenv`}    {DM.empty}   :: {Map Name [Contract]} 
+
+attr ListPatsR
+  syn envFromPats use {`urenv`}    {DM.empty}   :: {Map Name [Contract]} 
+
+{-
+
+Checklist:
+                         EXPR
+-- | A Haskell source module
+DATA ModuleR
+   | ModuleR
+
+DATA BodyR
+   | BHoleR
+   | BodyR
+
+-- | Declarations
+DATA DeclR              
+   | DHoleR
+   | DEmptyR
+   | DFunBindsR
+   | DPatBindR
+
+-- | Expressions         
+DATA ExprR             
+   | HoleR               DONE
+   | FeedbackR
+   | MustUseR
+   | CaseR
+   | ConR
+   | IfR
+   | InfixAppR
+   | LambdaR             DONE
+   | LetR                DONE
+   | LitR                DONE
+   | AppR                DONE
+   | ParenR              DONE
+   | TupleR
+   | VarR                DONE
+   | EnumR               DONE
+   | ListR               DONE
+   | NegR
+
+DATA MaybeExprR
+   | NoExprR             DONE
+   | JustExprR           DONE
+
+-- | Alternatives
+DATA AltR
+   | AHoleR              DONE
+   | AltR
+   | AltEmptyR           DONE
+
+-- | Function bindings
+DATA FunBindR
+   | FBHoleR
+   | FunBindR
+
+-- | Guarded expressions 
+DATA GuardedExprR
+   | GExprR
+
+-- | Literal values
+DATA LiteralR
+   | LCharR
+   | LFloatR
+   | LIntR
+   | LStringR
+
+-- | Names
+DATA NameR
+   | IdentR
+   | OperatorR
+   | SpecialR
+
+DATA MaybeNameR
+   | NoNameR
+   | JustNameR
+
+-- | Patterns
+DATA PatR
+   | PHoleR
+   | PConR
+   | PInfixConR
+   | PListR
+   | PLitR               DONE
+   | PParenR             DONE
+   | PTupleR
+   | PVarR               DONE
+   | PAsR                DONE
+   | PWildcardR          DONE
+
+-- | Right hand side
+DATA RhsR
+   | RhsR
+   | GRhsR
+
+DATA RangeR
+    | RangeR
+
+DATA PositionR
+    | PositionR
+    | UnknownR
+      
+
+-}
+
+sem FunBindR
+   | FBHoleR
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+   -- (ident "f") [pats] = rhs
+   | FunBindR
+      lhs  .infer   =   
+           .subst   =   SId
+
+      loc  .infer'  =   @rhs.infer
+
+           -- GENERATE FRESH CONTRACT FOR FUNCTION IDENTIFIER
+           .fident  =   mkVar @loc.num -- give f a fresh contract
+           .newenv  =   DM.insert @name.copy @loc.fident @lhs.env -- Add (f :: TRUEi) to env
+
+           -- COLLECT CONTRACTS FROM PATTERNS
+           .patenvs =   @pats.envFromPats
+
+           -- COMBINE CONTRACTS, PASS TO RHS
+      rhs  .env     =   DM.union @pats.envFromPats @lhs.newenv
+
+
+
+
+      loc  .num     ::  uniqueref varcnt
+
+      feedback : {Maybe String}
+      name     : NameR
+      pats     : PatsR
+      rhs      : RhsR
+      range    : RangeR
 
 -- Semantics for inferring a contract from an expression
 sem ExprR
+   | HoleR
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
   | VarR
       lhs  .infer   =   @loc.infer'
            .subst   =   SId
@@ -55,6 +207,250 @@ sem ExprR
                           (Just (CArr _ c2))  -> Just c2
                           _                   -> Nothing
 
+
+  | AppR
+      lhs  .infer   =   @loc.infer'
+           .subst   =   @loc.ths
+
+      loc  .infer'  =   subst @loc.th3 @loc.alpha
+           .ths     =   let  ths = @loc.th3 `o` @loc.th2 `o` @loc.th1
+                        in   case @lhs.cann of
+                               (Just ann)  -> unifyC ann @loc.infer' `o` ths
+                               _           -> ths
+           .c1      =   @fun.infer
+           .th1     =   @fun.subst
+           .e2env   =   subst @loc.th1 @lhs.env
+           .c2      =   @args.infer
+           .th2     =   @args.subst
+           .c1st    =   subst @loc.th2 @loc.c1
+           .carr    =   @loc.c2 >-> @loc.alpha
+           .th3     =   unifyC @loc.c1st @loc.carr
+           .alpha   =   mkVar @loc.num
+      loc  .num     ::  uniqueref varcnt
+
+      args .env     =   subst @loc.th1 @loc.e2env
+
+      fun  .cann    =   Nothing
+      args .cann    =   Nothing
+
+  | LetR
+      lhs  .infer   =   @loc.c2
+           .subst   =   @loc.ths
+
+      loc  .v       =   case (head @decls.copy) of
+                          [DPatBindR (PVarR (IdentR x r) _) _ _] -> IdentR x r
+                          x                                      -> error $ "Let definition has something else besides pattern binding! : " ++ show x
+
+      -- v isn't in the AST, we only seem to need it for the string though
+      -- v    .env     =   @loc.ve1env
+      -- v    .cann    =   Nothing
+
+      decls.env     =   @loc.ve1env
+      decls.cann    =   DM.lookup @loc.lbvar @lhs.env
+
+      expr .env     =   let  env' = subst @loc.th2d1 @lhs.env
+                        in   case DM.lookup @loc.lbvar @lhs.env of
+                               Just{}  -> @lhs.env
+                               _       -> DM.insert @loc.lbvar @loc.varC env'
+
+      loc  .lbvar   =   @loc.v
+           .th1     =   @decls.subst
+           .c1      =   @decls.infer
+           .th2     =   unifyC (subst @loc.th1 @loc.var) @loc.c1
+           .th2d1   =   @loc.th2 `o` @loc.th1
+           .varC    =   gen  (subst @loc.th2d1 @lhs.env)
+                             (subst @loc.th2 @loc.c1)
+           .c2      =   @expr.infer
+           .th3     =   @expr.subst
+           .ths     =   @loc.th3 `o` @loc.th2d1
+           .var     =   mkVar @loc.num
+           .ve1env  =   case DM.lookup @loc.lbvar @lhs.env of
+                          Just{}  -> @lhs.env
+                          _       -> DM.insert @loc.lbvar @loc.var @lhs.env
+      loc  .num     ::  uniqueref varcnt
+
+  | LitR
+      lhs  .infer   =   mkVarConst @loc.num @lit.copy
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+  | ParenR
+      lhs  .infer   =   @expr.infer
+           .subst   =   @expr.subst
+
+  | ListR
+      lhs  .infer   =   @exprs.infer
+           .subst   =   @exprs.subst
+
+ -- TODO: Think about making these more specific in case of a [x..] enum, perhaps [x..] unification is too general (or may even fail?)
+  | EnumR
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.ths
+
+      loc  .inf     =   subst @loc.ths @loc.cfunc
+           .cfunc   =   CFunctor @loc.var1 @loc.hdc
+           .th1     =   @from.subst
+           .th2     =   @to.subst
+           .th3     =   unifyC @to.infer (subst @loc.th2 @loc.cfunc)
+           .ths     =   @loc.th3 `o` @loc.th2 `o` @loc.th1
+           .const   =   @from.isConst && @then.isConst && @to.isConst
+           .var1    =   if @loc.const
+                          then  mkVarConst @loc.num @loc.copy
+                          else  mkVar @loc.num
+           .hdc     =   if @loc.const
+                          then  mkPlainC @from.infer
+                          else  @from.infer
+      loc  .num     ::  uniqueref varcnt
+
+  | CaseR
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.altSubst
+
+      loc  .inf       = subst @loc.altSubst @alts.infRhs
+           .infLhs    = @alts.infLhs
+           .subLhs    = @alts.subLhs
+           .altSubst  = @loc.csubsts `o` @alts.subRhs `o` @alts.subLhs
+           .matchC    = @expr.infer
+           .csubsts   = unifyC @loc.matchC @loc.infLhs
+
+      alts.inhSubsts = @loc.csubsts
+
+sem AltR
+  | AHoleR
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+  | AltR
+      feedback : {Maybe String}
+      pat      : PatR
+      rhs      : RhsR
+      range    : RangeR
+
+  | AltEmptyR
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+
+sem MaybeExprR
+  | NoExprR
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+      loc  .num     ::  uniqueref varcnt
+
+  | JustExprR
+      lhs  .infer   =   @expr.infer
+           .subst   =   @expr.subst
+
+sem ListExprR
+  | Cons
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.ths
+
+      loc  .inf     =   subst @loc.ths @loc.cfunc
+           .cfunc   =   CFunctor @loc.var1 @loc.hdc
+           .th1     =   @hd.subst
+           .th2     =   @tl.subst
+           .th3     =   unifyC @tl.infer (subst @loc.th2 @loc.cfunc)
+           .ths     =   @loc.th3 `o` @loc.th2 `o` @loc.th1
+           .const   =   @hd.isConst && @tl.isConst
+           .var1    =   if @loc.const
+                          then  mkVarConst @loc.num @loc.copy
+                          else  mkVar @loc.num
+           .hdc     =   if @loc.const
+                          then  mkPlainC @hd.infer
+                          else  @hd.infer
+      loc  .num     ::  uniqueref varcnt
+
+  | Nil
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.sub
+
+      loc  .inf     =   CFunctor  (mkVarConst @loc.num1 @loc.copy)
+                                  (mkVar @loc.num2)
+           .sub     =   SId
+
+      loc  .num1    ::  uniqueref varcnt
+      loc  .num2    ::  uniqueref varcnt
+
+sem PatR 
+  | PVarR -- Copied from VarR
+      lhs  .infer   =   @loc.infer'
+           .subst   =   SId
+           .envFromPats  =   DM.singleton @name [@loc.infer']
+
+     loc  .infer'  =   case @lhs.cann of
+                         (Just ann)  -> ann
+                         _           -> @luv.instc
+
+     inst .luv     ::  Contract
+     inst .luv     =   envLU @nm @lhs.env
+
+  | PLitR -- Copied from LitR
+      lhs  .infer   =   mkVarConst @loc.num @lit.copy
+           .subst   =   SId
+           .envFromPats  = DM.empty
+
+      loc  .num     ::  uniqueref varcnt
+
+  | PParenR -- Copied from ParenR
+      lhs  .infer   =   @pat.infer
+           .subst   =   @pat.subst
+
+  | PAsR -- example: p@(x:xs) in pattern match
+      lhs  .infer   =   @pat.infer
+           .subst   =   SId
+           .envFromPats  =   DM.singleton @name [@pat.infer]
+
+  | PWildcardR -- underscore in pattern match
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
+
+  | PListR -- [x,y] pattern
+      lhs  .infer   =   @pats.infer
+           .subst   =   @pats.subst
+           .envFromPats = @pats.envFromPats
+
+
+-- TODO: We probably need to put the values of x and y in [x,y] in the env?
+sem ListPatsR -- Copied from ListExprR
+  | Cons
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.ths
+      lhs  .envFromPats = DM.union @hd.envFromPats @tl.envFromPats
+
+      loc  .inf     =   subst @loc.ths @loc.cfunc
+           .cfunc   =   CFunctor @loc.var1 @loc.hdc
+           .th1     =   @hd.subst
+           .th2     =   @tl.subst
+           .th3     =   unifyC @tl.infer (subst @loc.th2 @loc.cfunc)
+           .ths     =   @loc.th3 `o` @loc.th2 `o` @loc.th1
+           .const   =   @hd.isConst && @tl.isConst
+           .var1    =   if @loc.const
+                          then  mkVarConst @loc.num @loc.copy
+                          else  mkVar @loc.num
+           .hdc     =   if @loc.const
+                          then  mkPlainC @hd.infer
+                          else  @hd.infer
+      loc  .num     ::  uniqueref varcnt
+
+  | Nil
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.sub
+      lhs  .envFromPats = DM.empty
+
+      loc  .inf     =   CFunctor  (mkVarConst @loc.num1 @loc.copy)
+                                  (mkVar @loc.num2)
+           .sub     =   SId
+
+      loc  .num1    ::  uniqueref varcnt
+      loc  .num2    ::  uniqueref varcnt
 
 envLU :: Name -> CEnv -> Contract
 envLU nm env = maybe (error emsg) id (DM.lookup nm env)
