@@ -1,3 +1,6 @@
+envLU :: Name -> CEnv -> Contract
+envLU nm env = maybe (error emsg) id (DM.lookup nm env)
+  where emsg = "variable '" ++ (show nm) ++ "' not in environment: " ++ pretty env
 
 guard :: (a -> Bool) -> a -> String -> a
 guard f x s = if f x
@@ -7,10 +10,21 @@ guard f x s = if f x
 -- AppR should only have single parameter
 gAppSingleParameter (AppR _ xs r) = guard (\x -> length x == 1) xs ("AppR should only have a single parameter! " ++ show r)
 
+-- Just fetches the string out of a NameR
 getVar :: NameR -> String
 getVar (IdentR x _)    = x
 getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
+
+-- Simple combinator
+compareVar :: NameR -> String -> Bool
+compareVar x s = (getVar x) == s
+
+opIsList :: NameR -> Bool
+opIsList x = compareVar x ":"
+
+opIsNil :: NameR -> Bool
+opIsNil x = compareVar x "[]"
 
 mkVar :: Int -> Contract
 mkVar n = mkVarWM n Nothing
