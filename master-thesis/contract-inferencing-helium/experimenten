@@ -99,3 +99,24 @@ expandLists (List (x:xs)
 f x = case x of
        (x:xs) -> True
        []     -> False
+
+*Domain.FP.Debug> compile "f (True) = True"
+Module NoName (Body [DFunBinds [FunBind Nothing (Ident "f") [PParen (PCon (Ident "True") [])] (Rhs (Con (Ident "True")) [])]])
+
+
+*Domain.FP.Debug> compile "f ((:) x xs) = True"
+Module NoName (Body [DFunBinds [FunBind Nothing (Ident "f") [PParen (PCon (Operator ":") [PVar (Ident "x"),PVar (Ident "xs")])] (Rhs (Con (Ident "True")) [])]])
+*Domain.FP.Debug> 
+
+"f x = g x\n where g = id"
+
+f x = g x
+ where g = id
+
+"f = let (x:xs) = [1,2]\n    in xs"
+
+f = let (x:xs) = [1,2]
+    in xs
+
+Module NoName (Body [DPatBind (PVar (Ident "f")) (Rhs (Let [DPatBind (PParen (PInfixCon (PVar (Ident "x")) (Operator ":") (PVar (Ident "xs")))) (Rhs (List [Lit (LInt 1),Lit (LInt 2)]) [])] (Var (Ident "xs"))) [])])
+

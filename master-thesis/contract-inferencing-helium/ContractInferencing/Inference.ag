@@ -51,19 +51,19 @@ DATA ExprR
    | IfR
    | InfixAppR
    | LambdaR             DONE
-   | LetR                DONE
-   | LitR                DONE
+   | LetR                
+   | LitR                
    | AppR                DONE
-   | ParenR              DONE
+   | ParenR              
    | TupleR
    | VarR                DONE
-   | EnumR               DONE
-   | ListR               DONE
+   | EnumR               
+   | ListR               
    | NegR
 
 DATA MaybeExprR
-   | NoExprR             DONE
-   | JustExprR           DONE
+   | NoExprR             
+   | JustExprR           
 
 -- | Alternatives
 DATA AltR
@@ -73,8 +73,8 @@ DATA AltR
 
 -- | Function bindings
 DATA FunBindR
-   | FBHoleR
-   | FunBindR
+   | FBHoleR             DONE
+   | FunBindR            DONE
 
 -- | Guarded expressions 
 DATA GuardedExprR
@@ -99,10 +99,10 @@ DATA MaybeNameR
 
 -- | Patterns
 DATA PatR
-   | PHoleR
-   | PConR
-   | PInfixConR
-   | PListR
+   | PHoleR              DONE
+   | PConR               DONE
+   | PInfixConR          DONE
+   | PListR              DONE
    | PLitR               DONE
    | PParenR             DONE
    | PTupleR
@@ -125,40 +125,96 @@ DATA PositionR
 
 -}
 
+attr FunBindsR -- List of FunBindR
+  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: {Map Name [Contract]}
+
+attr FunBindR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: {Map Name [Contract]}
+
 sem FunBindR
    | FBHoleR
       lhs  .infer   =   mkVar @loc.num
            .subst   =   SId
+           .contractedFuns = DM.empty
 
       loc  .num     ::  uniqueref varcnt
 
    -- (ident "f") [pats] = rhs
    | FunBindR
-      lhs  .infer   =   
-           .subst   =   SId
+      lhs  .infer   =   @loc.fctrt -- Contract of function f
+           .subst   =   @loc.finalsubsts -- Substitutions of RHS, LHS only generates SIds
+           .contractedFuns = DM.singleton @name.copy @loc.fctrt
+           -- NOTE: DM.union is left-biased, so it could be that "older" function contracts overwrite "newer" ones?
 
-      loc  .infer'  =   @rhs.infer
-
-           -- GENERATE FRESH CONTRACT FOR FUNCTION IDENTIFIER
+           -- Generate fresh contract for function identifier
            .fident  =   mkVar @loc.num -- give f a fresh contract
-           .newenv  =   DM.insert @name.copy @loc.fident @lhs.env -- Add (f :: TRUEi) to env
 
-           -- COLLECT CONTRACTS FROM PATTERNS
+           -- Add (f :: TRUEi) to env, may overwrite a possible previous contract
+           .newenv  =   DM.insert @name.copy @loc.fident @lhs.env
+
+           -- collect contracts from patterns
            .patenvs =   @pats.envFromPats
 
-           -- COMBINE CONTRACTS, PASS TO RHS
+           -- Combine contract environment, pass to RHS
+           -- No unification or substitution? 
+           -- Indeed, because the variables and function identifier in the LHS
+           -- are all fresh anyway, and they're all unique identifiers.
       rhs  .env     =   DM.union @pats.envFromPats @lhs.newenv
 
+           -- RHS may have generated substitutions on our pattern variables, need to update:
+           .substp  =   subst @rhs.substs @pats.envFromPats
 
+           -- With pattern contracts and RHS, construct new contract for f,
+           -- for example C1 >-> C2 >-> @rhs.infer
+           .fctrt   =   foldr (>->) @rhs.infer @loc.substp
 
+           -- It's possible the function identifier already had its contract inferred previously:
+           -- f (x:xs) = [x]
+           -- f [] = []
+           -- Unify the contracts of these definitions?
+           .finalsubsts = case DM.lookup @name.copy @lhs.env of
+                           (Just previousctrt) -> (unifyC previousctrt @loc.ctrt) `o` @rhs.subst
+                           Nothing             -> @rhs.subst        
 
       loc  .num     ::  uniqueref varcnt
 
-      feedback : {Maybe String}
-      name     : NameR
-      pats     : PatsR
+attr DeclR
+  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: {Map Name [Contract]}
+
+sem DeclR
+   | DHoleR
+      lhs  .contractedFuns = DM.empty
+
+   | DEmptyR
+      lhs  .contractedFuns = DM.empty
+
+   | DPatBindR  -- Used in lets, such as let (x:xs) = [1,2] in ...
+      -- What we need to do here, is get a contract from the LHS and RHS,
+      -- and then unify. This way, bound pattern variables will get their
+      -- correct contracts. Then, we pass this information upwards.
+
+      lhs  .contractedFuns =
+
+      -- Get environment from LHS, pass it to RHS
+      rhs  .env = DM.union @pat.envFromPats @lhs.env
+
+      -- Infer LHS and RHS, unify.
+      loc  .unifysubsts    = unifyC @pat.infer @rhs.infer
+      
+      -- Now, we have to apply the substitutions to the envFromPats environment
+      -- to get the final contracted patterns variables.
+      loc  .finalEnv       = subst (@loc.unifysubsts `o` @rhs.subst) 
+
+      @pat.infer
+      @rhs.infer
+      
+
+      pat      : PatR
       rhs      : RhsR
       range    : RangeR
+
 
 -- Semantics for inferring a contract from an expression
 sem ExprR
@@ -175,10 +231,7 @@ sem ExprR
 
      loc  .infer'  =   case @lhs.cann of
                          (Just ann)  -> ann
-                         _           -> @luv.instc
-
-     inst .luv     ::  Contract
-     inst .luv     =   envLU @nm @lhs.env
+                         _           -> envLU @nm @lhs.env
 
   | LambdaR
       lhs  .infer   =   @loc.infer'
@@ -378,47 +431,144 @@ sem ListExprR
       loc  .num2    ::  uniqueref varcnt
 
 sem PatR 
-  | PVarR -- Copied from VarR
-      lhs  .infer   =   @loc.infer'
+  | PHoleR -- Just a hole
+      lhs  .infer   =   mkVar @loc.num
            .subst   =   SId
+           .envFromPats = DM.empty
+
+      loc  .num     ::  uniqueref varcnt
+
+  | PConR -- a data constructor. Perhaps we can infer list and other contracts here?
+      lhs  .infer   =   case @loc.specificInferCase of
+                         (Just x) -> fst $ lookup x @loc.allInferrables
+                         Nothing  -> @pats.infer
+           .subst   =   case @loc.specificInferCase of
+                         (Just x) -> fst $ lookup x @loc.allInferrables
+                         Nothing  -> @pats.subst 
+           .envFrompats = @pats.envFromPats
+
+           -- All the specific contract inferring cases.
+      loc  .allInferrables = [(@loc.nilResults,@loc.isNil)]
+
+           -- A Maybe Int that identifies which inferring case is valid 
+      loc  .specificInferCase = elemIndex True (snd @loc.allInferrables)
+
+      -- SPECIFIC CASE 1: NIL OPERATOR --
+
+      loc  .isNil   =  opIsNil @name.copy
+           -- If it's Nil, we can infer a simple list contract!
+           .inferNil =  CFunctor (mkVarConst @loc.numNil1 @loc.copy) (mkVar @loc.numNil2)
+           .substNil =  SId
+
+      loc  .nilResults = (@loc.inferNil,@loc.substNil)
+
+      loc  .numNil1 :: uniqueref varcnt  
+      loc  .numNil2 :: uniqueref varcnt  
+
+    {-
+      loc  .con     =   getVar @name.copy
+           .isList  =   opIsList @name.copy
+     
+           -- If it's a list, we can infer a list contract!
+
+           -- If it's a named variable, we can look it up in the environment.
+           -- Otherwise, it's a literal or a wildcard or a hole or something,
+           -- and we can make a fresh contract (HACK: we don't actually fetch
+           -- the fresh contract made by the literal, wildcard or hole!!!)
+
+           -- Fetch contract of head
+           .headC   =   case (head @pats.copy) of 
+                         (PVarR x) -> envLU x @pats.envFromPats
+                         _         -> mkVar @loc.num1
+
+           -- Fetch contract of tail
+           .tailC   =   case (head.tail $ @pats.copy) of
+                         (PVarR x) -> envLU x @pats.envFromPats
+                         _         -> mkVar @loc.num2
+
+           -- Make list contract
+           .listC   =   CFunctor @loc.tailC @loc.headC
+         
+               
+      loc  .num1    ::  uniqueref varcnt     
+      loc  .num2    ::  uniqueref varcnt        
+     -}
+
+  | PInfixConR -- An infix PConR. Same thoughts as above, but here we can directly access our children!
+      lhs  .infer   =   @loc.ctrt
+           .subst   =   @loc.substs
+           .envFrompats = DM.union @left.envFromPats @right.envFromPats
+
+      loc  .ctrt    =   if @loc.isList
+                         then @loc.infL
+                         else mkVar @loc.numL
+      loc  .substs  =   if @loc.isList
+                         then @loc.thsL
+                         else SId
+
+           -- If it's a list, we can infer a list contract!
+      loc  .isList  =   opIsList @name.copy
+
+      loc  .infL    =   subst @loc.thsL @loc.cfuncL
+           .cfuncL  =   CFunctor @loc.var1L @loc.hdcL
+           .th1L    =   @left.subst
+           .th2L    =   @right.subst
+           .th3L    =   unifyC @right.infer (subst @loc.th2L @loc.cfuncL)
+           .thsL    =   @loc.th3L `o` @loc.th2L `o` @loc.th1L
+           .constL  =   @left.isConst && @right.isConst
+           .var1L   =   if @loc.constL
+                          then  mkVarConst @loc.numL @loc.copy
+                          else  mkVar @loc.numL
+           .hdcL    =   if @loc.constL
+                          then  mkPlainC @left.infer
+                          else  @left.infer
+      loc  .numL    ::  uniqueref varcnt
+
+  | PVarR -- A pattern variable defines a variable, so we need to put it in scope.
+           -- Make a fresh contract for this fresh variable
+      lhs  .infer   =   @loc.infer'
+           -- No substitutions
+           .subst   =   SId
+           -- Add the contract to our environment.
            .envFromPats  =   DM.singleton @name [@loc.infer']
 
-     loc  .infer'  =   case @lhs.cann of
-                         (Just ann)  -> ann
-                         _           -> @luv.instc
+      loc  .infer'  = mkVar @loc.num
 
-     inst .luv     ::  Contract
-     inst .luv     =   envLU @nm @lhs.env
+      loc  .num     ::  uniqueref varcnt
 
-  | PLitR -- Copied from LitR
+  | PLitR -- Copied from LitR, a literal pattern variable just gets assigned the True contract at the moment
       lhs  .infer   =   mkVarConst @loc.num @lit.copy
            .subst   =   SId
            .envFromPats  = DM.empty
 
       loc  .num     ::  uniqueref varcnt
 
-  | PParenR -- Copied from ParenR
+  | PParenR -- Copied from ParenR, just pass it along
       lhs  .infer   =   @pat.infer
            .subst   =   @pat.subst
+           .envFromPats = DM.empty
 
   | PAsR -- example: p@(x:xs) in pattern match
+           -- Pass along the pattern list contract
       lhs  .infer   =   @pat.infer
+           -- These are pattern variables, so they should all have fresh contracts?
+           -- Perhaps we should check this.
            .subst   =   SId
+           -- p has the contract of the expression it's bound to.
            .envFromPats  =   DM.singleton @name [@pat.infer]
 
-  | PWildcardR -- underscore in pattern match
+  | PWildcardR -- underscore in pattern match.
       lhs  .infer   =   mkVar @loc.num
            .subst   =   SId
+           .envFromPats = DM.empty
 
       loc  .num     ::  uniqueref varcnt
 
-  | PListR -- [x,y] pattern
+  | PListR -- [x,y] pattern, just pass it along
       lhs  .infer   =   @pats.infer
            .subst   =   @pats.subst
            .envFromPats = @pats.envFromPats
 
-
--- TODO: We probably need to put the values of x and y in [x,y] in the env?
 sem ListPatsR -- Copied from ListExprR
   | Cons
       lhs  .infer   =   @loc.inf
@@ -452,6 +602,12 @@ sem ListPatsR -- Copied from ListExprR
       loc  .num1    ::  uniqueref varcnt
       loc  .num2    ::  uniqueref varcnt
 
-envLU :: Name -> CEnv -> Contract
-envLU nm env = maybe (error emsg) id (DM.lookup nm env)
-  where emsg = "variable '" ++ (show nm) ++ "' not in environment: " ++ pretty env
+sem RhsR -- Type: RhsR :: ExprR -> DeclsR -> RangeR -> RhsR
+         -- The DeclsR are the stuff in there where clause.
+         -- We'll have to contract those things first, probably?
+  | RhsR
+      -- The substitions in the where clause and the in
+      lhs  .infer   =   @expr.infer
+      lhs  .subst   =   @expr.subst
+
+      expr .env     =   @lhs.env --DM.union @lhs.env @where.envFromWhere

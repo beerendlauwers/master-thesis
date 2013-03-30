@@ -63,10 +63,10 @@ DATA DeclR
       range    : RangeR
    | DEmptyR
       range    : RangeR
-   | DFunBindsR
+   | DFunBindsR -- Only used for top-level function definitions?
       funbinds : FunBindsR
       range    : RangeR
-   | DPatBindR
+   | DPatBindR  -- Only used in let?
       pat      : PatR
       rhs      : RhsR
       range    : RangeR
