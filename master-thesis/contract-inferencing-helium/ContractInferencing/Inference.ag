@@ -125,6 +125,23 @@ DATA PositionR
 
 -}
 
+attr ModuleR
+  syn  topLevelDecls use {`DM.union`}  {DM.empty}    :: {Map Name [Contract]} 
+
+sem ModuleR
+   | ModuleR
+      lhs   .topLevelDecls = @body.topLevelDecls
+
+attr BodyR -- Body of entire module
+  syn  topLevelDecls use {`DM.union`}  {DM.empty}    :: {Map Name [Contract]} 
+
+sem BodyR
+   | BHoleR
+      lhs   .topLevelDecls = DM.empty
+
+   | BodyR
+      lhs   .topLevelDecls = @decls.contractedFuns -- These are the top-level declarations.
+
 attr FunBindsR -- List of FunBindR
   syn  contractedFuns use {`DM.union`}  {DM.empty}   :: {Map Name [Contract]}
 
@@ -141,7 +158,7 @@ sem FunBindR
 
       loc  .num     ::  uniqueref varcnt
 
-   -- (ident "f") [pats] = rhs
+   -- AST example: (ident "f") [pats] = rhs
    | FunBindR
       lhs  .infer   =   @loc.fctrt -- Contract of function f
            .subst   =   @loc.finalsubsts -- Substitutions of RHS, LHS only generates SIds
