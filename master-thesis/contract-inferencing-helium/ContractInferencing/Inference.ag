@@ -246,9 +246,20 @@ sem ExprR
            .subst   =   SId
            .resEnv  =   DM.singleton @name [@loc.infer']
 
-     loc  .infer'  =   case @lhs.cann of
+      -- Had to change this from Jurriën's implementation to reflect the fact that 
+      -- identifiers can be referenced before they're defined, for example:
+      -- f (x:xs) = g x ++ f xs
+      -- g x = x
+      -- We begin to infer for f, but encounter an unknown identifier, g.
+      -- We rely on the compiler's correctness that g isn't just an unknown identifier,
+      -- and give it a fresh contract variable
+      loc  .infer'  =   case @lhs.cann of
                          (Just ann)  -> ann
-                         _           -> envLU @nm @lhs.env
+                         Nothing     -> case DM.lookup @nm @lhs.env of
+                                         (Just contract) -> contract
+                                         Nothing         -> mkVar @loc.num
+
+      loc  .num     ::  uniqueref varcnt
 
   | LambdaR
       lhs  .infer   =   @loc.infer'
