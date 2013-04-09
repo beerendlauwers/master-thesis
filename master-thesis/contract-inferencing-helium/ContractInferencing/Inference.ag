@@ -2,7 +2,7 @@ MODULE {Domain.FP.ContractInferencing.Inference}{}
 
 
 {
-type CEnv = Map String Contract
+type CEnv = Map Name Contract
 }
 
 --
@@ -10,17 +10,20 @@ attr ExprR MaybeExprR ListExprR
   syn  infer                                    :: Contract
   syn  resEnv    use {`urenv`}     {DM.empty}   :: {Map Name [Contract]}
   syn  subst                                    :: Subst
-  syn  mkCtrd                                   :: ExprR
+
+  -- We use this for identifiers that were not in scope
+  syn  newIdents  use {`DM.union`}  {DM.empty}  :: CEnv  
 
 attr ExprR MaybeExprR ListExpR
   inh  env                                      :: CEnv
   inh  cann                                     :: {Maybe Contract}
 
 attr PatR
-  syn envFromPats use {`urenv`}    {DM.empty}   :: {Map Name [Contract]} 
+  syn envFromPats use {`urenv`}    {DM.empty}   :: CEnv
 
 attr ListPatsR
-  syn envFromPats use {`urenv`}    {DM.empty}   :: {Map Name [Contract]} 
+  syn orderedPats :: [Contract] -- We can use this for creating a function contract
+  syn envFromPats use {`urenv`}    {DM.empty}   :: CEnv
 
 {-
 
@@ -126,47 +129,101 @@ DATA PositionR
 -}
 
 attr ModuleR
-  syn  topLevelDecls use {`DM.union`}  {DM.empty}    :: {Map Name [Contract]} 
+  syn  topLevelDecls use {`DM.union`}  {DM.empty}    :: CEnv
 
 sem ModuleR
    | ModuleR
       lhs   .topLevelDecls = @body.topLevelDecls
 
 attr BodyR -- Body of entire module
-  syn  topLevelDecls use {`DM.union`}  {DM.empty}    :: {Map Name [Contract]} 
+  syn  topLevelDecls use {`DM.union`}  {DM.empty}    :: CEnv
+
+  syn  subst                                         :: Subst
 
 sem BodyR
    | BHoleR
-      lhs   .topLevelDecls = DM.empty
+      lhs  .topLevelDecls = DM.empty
+      lhs  .subst = SId
 
    | BodyR
-      lhs   .topLevelDecls = @decls.contractedFuns -- These are the top-level declarations.
+      -- These are the top-level function identifiers.
+      loc  .functionIdents = @decls.functionIdents
+
+      -- We have to add these to the environment so all functions know about all other functions.
+      decls.env     =    DM.union @loc.functionIdents @lhs.env
+
+      -- These are the contracts of the top-level declarations.
+      lhs  .topLevelDecls = @decls.contractedFuns
+
+      -- These are all the substitutions.
+      lhs  .subst = @decls.subst
+      
 
 attr FunBindsR -- List of FunBindR
-  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: {Map Name [Contract]}
+  syn  subst                                         :: Subst
+
+  -- The function identifiers with their final contract, relies on env
+  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: CEnv
+
+  -- The function identifiers with a fresh contract, doesn't rely on anything
+  syn  functionIdents use {`DM.union`}  {DM.empty}   :: CEnv
+
+sem FunBindsR
+   | Cons
+      lhs  .subst   =  @loc.subst'
+      lhs  .contractedFuns = DM.union @loc.finalContractedFuns @tl.contractedFuns
+      lhs  .functionIdents = DM.union @hd.functionIdents @tl.functionIdents
+
+      -- Update the environment by applying the substitutions we know about to them.
+      loc  .updatedEnv = subst @hd.subst @hd.contractedFuns
+  
+      -- We have to pass the contract environment from the head function binding
+      -- To the rest of the function bindings.
+      -- NOTE: Here, the user-supplied contract environment takes precedence!
+      tl   .env     =   DM.union @lhs.env @loc.updatedEnv
+
+      -- Collect all substitutions, pass them upwards.
+      loc   .subst' =   @tl.subst `o` @hd.subst
+
+      -- These substitutions will help us refine the function contracts more.
+      loc   .finalContractedFuns = subst @loc.subst' @loc.updatedEnv
+
+   | Nil
+      lhs  .subst   =  SId
+      lhs  .contractedFuns = DM.empty
+      lhs  .functionIdents = DM.empty
 
 attr FunBindR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
-  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: {Map Name [Contract]}
+
+  -- The function identifiers with their final contract, relies on env
+  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: CEnv
+
+  -- The function identifiers with a fresh contract, doesn't rely on anything
+  syn  functionIdents use {`DM.union`}  {DM.empty}   :: CEnv
 
 sem FunBindR
    | FBHoleR
       lhs  .infer   =   mkVar @loc.num
            .subst   =   SId
-           .contractedFuns = DM.empty
 
       loc  .num     ::  uniqueref varcnt
 
    -- AST example: (ident "f") [pats] = rhs
    | FunBindR
+      -- This is passed upwards to the entire list of function definitions.
+      -- There, it is added to the environment, so that every function knows
+      -- about every other function.
+      lhs  .functionIdents = DM.singleton @name.copy (mkVar @loc.num) -- give f a fresh contract
+
       lhs  .infer   =   @loc.fctrt -- Contract of function f
            .subst   =   @loc.finalsubsts -- Substitutions of RHS, LHS only generates SIds
            .contractedFuns = DM.singleton @name.copy @loc.fctrt
            -- NOTE: DM.union is left-biased, so it could be that "older" function contracts overwrite "newer" ones?
 
-           -- Generate fresh contract for function identifier
-           .fident  =   mkVar @loc.num -- give f a fresh contract
+           -- Look up contract for function identifier
+           .fident  =   envLU @name.copy @lhs.env
 
            -- Add (f :: TRUEi) to env, may overwrite a possible previous contract
            .newenv  =   DM.insert @name.copy @loc.fident @lhs.env
@@ -181,7 +238,7 @@ sem FunBindR
       rhs  .env     =   DM.union @pats.envFromPats @lhs.newenv
 
            -- RHS may have generated substitutions on our pattern variables, need to update:
-           .substp  =   subst @rhs.substs @pats.envFromPats
+           .substp  =   subst @rhs.substs @pats.orderedPats
 
            -- With pattern contracts and RHS, construct new contract for f,
            -- for example C1 >-> C2 >-> @rhs.infer
@@ -198,40 +255,59 @@ sem FunBindR
       loc  .num     ::  uniqueref varcnt
 
 attr DeclR
-  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: {Map Name [Contract]}
+  syn  subst                                         :: Subst
+
+  -- The function identifiers with their final contract, relies on env
+  syn  contractedFuns use {`DM.union`}  {DM.empty}   :: CEnv
+
+  -- The function identifiers with a fresh contract, doesn't rely on anything
+  syn  functionIdents use {`DM.union`}  {DM.empty}   :: CEnv
 
 sem DeclR
    | DHoleR
+      lhs  .subst = SId
       lhs  .contractedFuns = DM.empty
 
    | DEmptyR
+      lhs  .subst = SId
       lhs  .contractedFuns = DM.empty
+
+   | DFunBindsR
+      lhs  .subst = @funbinds.subst
+      lhs  .contractedFuns = @funbinds.contractedFuns
+      lhs  .functionIdents = @funbinds.functionIdents
 
    | DPatBindR  -- Used in lets, such as let (x:xs) = [1,2] in ...
       -- What we need to do here, is get a contract from the LHS and RHS,
       -- and then unify. This way, bound pattern variables will get their
       -- correct contracts. Then, we pass this information upwards.
+      lhs  .subst = @loc.unifysubsts `o` @rhs.subst `o` @pat.subst
 
-      lhs  .contractedFuns =
+      lhs  .contractedFuns = DM.empty -- Can pattern-bound identifiers be top-level?
+                                      -- If so, this is incorrect, and we'll have to
+                                      -- pass @loc.finalEnv.
+
+      -- We need to collect all the identifiers so these can be put
+      -- in the environment of all (local) expressions, e.g.
+      -- let (x:xs) = [1,2]
+      --     f = xs ++ [x]
+      -- in f
+      lhs  .functionIdents = @pat.patternIdents
 
       -- Get environment from LHS, pass it to RHS
-      rhs  .env = DM.union @pat.envFromPats @lhs.env
+
+      -- TODO: Is envFromPats necessary here? lhs.functionIdents will
+      -- pass all pattern-bound identifiers  to the environment anyway...
+      --loc  .rhsEnv = DM.union @pat.envFromPats @lhs.env
+      rhs  .env = @loc.rhsEnv
 
       -- Infer LHS and RHS, unify.
       loc  .unifysubsts    = unifyC @pat.infer @rhs.infer
       
       -- Now, we have to apply the substitutions to the envFromPats environment
       -- to get the final contracted patterns variables.
-      loc  .finalEnv       = subst (@loc.unifysubsts `o` @rhs.subst) 
-
-      @pat.infer
-      @rhs.infer
-      
-
-      pat      : PatR
-      rhs      : RhsR
-      range    : RangeR
-
+      -- TODO: Just pass this to the top?
+      -- loc  .finalEnv       = subst (@loc.unifysubsts `o` @rhs.subst `o` @pat.subst) @loc.rhsEnv
 
 -- Semantics for inferring a contract from an expression
 sem ExprR
@@ -245,19 +321,23 @@ sem ExprR
       lhs  .infer   =   @loc.infer'
            .subst   =   SId
            .resEnv  =   DM.singleton @name [@loc.infer']
+           .newIdents = @loc.newIdent
 
+      loc  .infer'  =   case @lhs.cann of
+                         (Just ann)  -> ann
+                         Nothing     -> envLU @name @lhs.env
+      loc  .freshctrt = mkVar @loc.num
+ 
       -- Had to change this from Jurriën's implementation to reflect the fact that 
       -- identifiers can be referenced before they're defined, for example:
       -- f (x:xs) = g x ++ f xs
       -- g x = x
       -- We begin to infer for f, but encounter an unknown identifier, g.
       -- We rely on the compiler's correctness that g isn't just an unknown identifier,
-      -- and give it a fresh contract variable
-      loc  .infer'  =   case @lhs.cann of
-                         (Just ann)  -> ann
-                         Nothing     -> case DM.lookup @nm @lhs.env of
-                                         (Just contract) -> contract
-                                         Nothing         -> mkVar @loc.num
+      -- and give it a fresh contract variable.
+      loc  .newIdent = case DM.lookup @nm @lhs.env of
+                        (Just c) -> DM.empty
+                        Nothing  -> DM.singleton @name @loc.freshctrt
 
       loc  .num     ::  uniqueref varcnt
 
@@ -300,7 +380,7 @@ sem ExprR
                                _           -> ths
            .c1      =   @fun.infer
            .th1     =   @fun.subst
-           .e2env   =   subst @loc.th1 @lhs.env
+           .e2env   =   subst @loc.th1 (DM.union @lhs.env @fun.
            .c2      =   @args.infer
            .th2     =   @args.subst
            .c1st    =   subst @loc.th2 @loc.c1
@@ -318,6 +398,7 @@ sem ExprR
       lhs  .infer   =   @loc.c2
            .subst   =   @loc.ths
 
+      -- TODO: This doesn't take into account patterns such as (x:xs) AT ALL!
       loc  .v       =   case (head @decls.copy) of
                           [DPatBindR (PVarR (IdentR x r) _) _ _] -> IdentR x r
                           x                                      -> error $ "Let definition has something else besides pattern binding! : " ++ show x
@@ -599,10 +680,16 @@ sem PatR
 
 sem ListPatsR -- Copied from ListExprR
   | Cons
+      {-
       lhs  .infer   =   @loc.inf
            .subst   =   @loc.ths
+      -}
       lhs  .envFromPats = DM.union @hd.envFromPats @tl.envFromPats
+      lhs  .orderedPats = @hd.infer : @tl.infer
 
+      -- TODO: Um, I don't think patterns are going to have the same contracts...
+      -- Probably wasn't thinking right here and we can get rid of this code.
+      {-
       loc  .inf     =   subst @loc.ths @loc.cfunc
            .cfunc   =   CFunctor @loc.var1 @loc.hdc
            .th1     =   @hd.subst
@@ -617,25 +704,57 @@ sem ListPatsR -- Copied from ListExprR
                           then  mkPlainC @hd.infer
                           else  @hd.infer
       loc  .num     ::  uniqueref varcnt
+      -}
 
   | Nil
+      {-
       lhs  .infer   =   @loc.inf
            .subst   =   @loc.sub
+      -}
       lhs  .envFromPats = DM.empty
+      lhs  .orderedPats = []
 
+      {-
       loc  .inf     =   CFunctor  (mkVarConst @loc.num1 @loc.copy)
                                   (mkVar @loc.num2)
            .sub     =   SId
 
       loc  .num1    ::  uniqueref varcnt
       loc  .num2    ::  uniqueref varcnt
+      -}
 
 sem RhsR -- Type: RhsR :: ExprR -> DeclsR -> RangeR -> RhsR
          -- The DeclsR are the stuff in there where clause.
          -- We'll have to contract those things first, probably?
   | RhsR
-      -- The substitions in the where clause and the in
+      -- The substitions in the where clause have to be given to the RHS.
       lhs  .infer   =   @expr.infer
       lhs  .subst   =   @expr.subst
 
-      expr .env     =   @lhs.env --DM.union @lhs.env @where.envFromWhere
+      -- We receive an environment filled with fresh patterns from the LHS.
+      -- It gets passed to the where clause.
+
+      -- Synthesize all the bound identifiers in the where-clause.
+      -- functionIdents is a mapping from function identifiers to fresh contracts.
+      loc  .whereIdents = @where.functionIdents
+
+      -- Add these locally bound identifiers to the environment.
+      -- These bindings overwrite any out-of-scope functions with the same name.
+      loc .whereEnv     = DM.union @loc.whereIdents @lhs.env
+
+      -- Pass this updated environment to the where clause, because these locally bound identifiers
+      -- are probably used here as well.
+      where.env     = @loc.whereEnv
+
+      -- The where-clause itself generates an environment that is local to the expression,
+      -- containing the final contracts for the local where-clause identifiers.
+      -- Pass this env to the expression.
+
+      -- UNCLEAR: Apply substitutions?
+      expr .env     =   DM.union @where.envFromWhere @loc.whereEnv
+
+
+
+      -- TODO: Substs were possibly generated for the out of scope functions,
+      --       so we have to pass these substs upwards (both expr and where-clause).
+      -- How to do this? 

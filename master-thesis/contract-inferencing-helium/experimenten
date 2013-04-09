@@ -120,3 +120,15 @@ f = let (x:xs) = [1,2]
 
 Module NoName (Body [DPatBind (PVar (Ident "f")) (Rhs (Let [DPatBind (PParen (PInfixCon (PVar (Ident "x")) (Operator ":") (PVar (Ident "xs")))) (Rhs (List [Lit (LInt 1),Lit (LInt 2)]) [])] (Var (Ident "xs"))) [])])
 
+*Domain.FP.Debug> compile "f x = x\ng x = x\nz x = x"
+Module NoName (Body [DFunBinds [FunBind Nothing (Ident "f") [PVar (Ident "x")] (Rhs (Var (Ident "x")) [])],DFunBinds [FunBind Nothing (Ident "g") [PVar (Ident "x")] (Rhs (Var (Ident "x")) [])],DFunBinds [FunBind Nothing (Ident "z") [PVar (Ident "x")] (Rhs (Var (Ident "x")) [])]])
+
+
+f = let (x,y) = (1,2)
+        (x:xs) = [1,2]
+    in x
+
+"f = let (x,y) = (1,2)\n        (x:xs) = [1,2]\n    in x"
+
+
+

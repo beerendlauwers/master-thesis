@@ -1,4 +1,4 @@
-envLU :: Name -> CEnv -> Contract
+envLU :: NameR -> CEnv -> Contract
 envLU nm env = maybe (error emsg) id (DM.lookup nm env)
   where emsg = "variable '" ++ (show nm) ++ "' not in environment: " ++ pretty env
 
