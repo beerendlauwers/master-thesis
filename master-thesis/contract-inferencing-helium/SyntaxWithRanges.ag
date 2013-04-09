@@ -121,7 +121,7 @@ DATA ExprR
       expr     : ExprR
       range    : RangeR
    | TupleR
-      exprs    : ExprsR
+      exprs    : TupleExprR
       range    : RangeR
    | VarR
       name     : NameR
@@ -140,6 +140,7 @@ DATA ExprR
 
 TYPE ExprsR = [ExprR]
 TYPE ListExprR = [ExprR]
+TYPE TupleExprR = [ExprR]
 
 DATA MaybeExprR
    | NoExprR
@@ -240,7 +241,7 @@ DATA PatR
       pat      : PatR
       range    : RangeR
    | PTupleR
-      pats     : PatsR
+      pats     : TuplePatsR
       range    : RangeR
    | PVarR
       name     : NameR
@@ -254,6 +255,7 @@ DATA PatR
 
 TYPE PatsR = [PatR]
 TYPE ListPatsR = [PatR]
+TYPE TuplePatsR [PatR]
 
 -- | Right hand side
 DATA RhsR

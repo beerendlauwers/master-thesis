@@ -9,6 +9,7 @@ data Contract
   |  CBifunctor  o      :: Contract  il  :: Contract    ir :: Contract
   |  CVar        v      :: String    mc  :: MaybeConst
   |  CQuant      cv     :: Contract  cs  :: Contract
+  |  CTuple      li     :: [Contract] -- Helium AST portrays tuples as lists, this seems like the best way
 
 data Subst
   |  SId
