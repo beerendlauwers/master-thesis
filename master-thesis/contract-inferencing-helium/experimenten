@@ -132,3 +132,9 @@ f = let (x,y) = (1,2)
 
 
 
+f x = case x of
+       (y:ys) -> x
+       []     -> x
+
+"f x = case x of\n       (y:ys) -> x\n       []     -> x"
+
