@@ -469,17 +469,13 @@ sem ExprR
            .subst   =   @exprs.subst
 
   | CaseR
-      lhs  .infer   =   @loc.inf
-           .subst   =   @loc.altSubst
+      lhs  .infer   =   subst @loc.allSubsts @alts.infer
+           .subst   =   @loc.allSubsts
 
-      loc  .inf       = subst @loc.altSubst @alts.infRhs
-           .infLhs    = @alts.infLhs
-           .subLhs    = @alts.subLhs
-           .altSubst  = @loc.csubsts `o` @alts.subRhs `o` @alts.subLhs
-           .matchC    = @expr.infer
-           .csubsts   = unifyC @loc.matchC @loc.infLhs
-
-      alts.inhSubsts = @loc.csubsts
+      -- Unify expression with head of list of alternatives,
+      -- which, in turn, was unified with the tail of list of alts
+      loc  .unifyCtrt = unifyC @expr.infer @alts.infer
+           .allSubsts = @loc.unifyCtrt `o` @alts.subst `o` @expr.subst
 
 attr TupleExprR -- List of ExprR for tuples, different semantics than a normal list of ExprR
   syn  infer                                         :: Contract
@@ -497,6 +493,26 @@ sem TupleExprR
       lhs  .subst   =   SId
 
 
+attr AltsR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+
+sem AltsR
+   | Cons
+      -- Substitute head alternative contract with information of all previous
+      -- substitutions, pass that to CaseR
+      lhs  .infer   =   subst @loc.allSubsts @hd.infer
+           .subst   =   @loc.allSubsts
+
+      -- Unify head and tail 
+      loc  .unifyCtrt = unifyC @hd.infer @tl.infer
+           .allSubsts = @loc.unifyCtrt `o` @hd.subst `o` @tl.subst
+
+   | Nil
+      lhs  .infer   =   mkVar @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt
 
 sem AltR
   | AHoleR
@@ -506,10 +522,15 @@ sem AltR
       loc  .num     ::  uniqueref varcnt
 
   | AltR
-      feedback : {Maybe String}
-      pat      : PatR
-      rhs      : RhsR
-      range    : RangeR
+      lhs  .infer   =   subst @loc.subst' @rhs.infer
+           .subst   =   @loc.subst'
+      loc  .subst'  =   @loc.unifyCtrt `o` @rhs.subst `o` @pat.subst
+
+      -- Unify LHS and RHS contracts, we'll pass this upwards
+      loc  .unifyCtrt = unifyC @pat.infer @rhs.infer
+
+      -- Add pattern variables to RHS environment
+      rhs  .env     =   DM.union @pat.envFromPats @lhs.env
 
   | AltEmptyR
       lhs  .infer   =   mkVar @loc.num
