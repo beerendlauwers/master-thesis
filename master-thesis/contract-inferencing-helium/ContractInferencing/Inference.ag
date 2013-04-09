@@ -11,14 +11,14 @@ attr ExprR MaybeExprR ListExprR
   syn  resEnv    use {`urenv`}     {DM.empty}   :: {Map Name [Contract]}
   syn  subst                                    :: Subst
 
-  -- We use this for identifiers that were not in scope
-  syn  newIdents  use {`DM.union`}  {DM.empty}  :: CEnv  
-
 attr ExprR MaybeExprR ListExpR
   inh  env                                      :: CEnv
   inh  cann                                     :: {Maybe Contract}
 
 attr PatR
+  syn  infer                                    :: Contract
+  syn  subst                                    :: Subst
+
   syn envFromPats use {`urenv`}    {DM.empty}   :: CEnv
 
 attr ListPatsR
@@ -321,7 +321,6 @@ sem ExprR
       lhs  .infer   =   @loc.infer'
            .subst   =   SId
            .resEnv  =   DM.singleton @name [@loc.infer']
-           .newIdents = @loc.newIdent
 
       loc  .infer'  =   case @lhs.cann of
                          (Just ann)  -> ann
@@ -465,6 +464,10 @@ sem ExprR
                           else  @from.infer
       loc  .num     ::  uniqueref varcnt
 
+  | TupleR
+      lhs  .infer   =   @exprs.infer
+           .subst   =   @exprs.subst
+
   | CaseR
       lhs  .infer   =   @loc.inf
            .subst   =   @loc.altSubst
@@ -477,6 +480,23 @@ sem ExprR
            .csubsts   = unifyC @loc.matchC @loc.infLhs
 
       alts.inhSubsts = @loc.csubsts
+
+attr TupleExprR -- List of ExprR for tuples, different semantics than a normal list of ExprR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+
+sem TupleExprR
+   | Cons
+      lhs  .infer   =   CTuple ( @hd.infer : @tl.inferTl )
+           .subst   =   @tl.subst `o` @hd.subst 
+      loc  .inferTl =   case @tl.infer of
+                         (CTuple xs) -> xs
+                         x           -> x
+   | Nil
+      lhs  .infer   =   CTuple []
+      lhs  .subst   =   SId
+
+
 
 sem AltR
   | AHoleR
@@ -652,6 +672,12 @@ sem PatR
 
       loc  .num     ::  uniqueref varcnt
 
+  | PTupleR
+      lhs  .infer   =   @pats.infer
+           .subst   =   @pats.subst
+           .envFromPats  = @pats.envFromPats
+
+
   | PParenR -- Copied from ParenR, just pass it along
       lhs  .infer   =   @pat.infer
            .subst   =   @pat.subst
@@ -722,6 +748,26 @@ sem ListPatsR -- Copied from ListExprR
       loc  .num1    ::  uniqueref varcnt
       loc  .num2    ::  uniqueref varcnt
       -}
+
+attr TuplePatsR
+  syn  infer                                    :: Contract
+  syn  subst                                    :: Subst
+
+  syn envFromPats use {`urenv`}    {DM.empty}   :: CEnv
+
+sem TuplePatsR
+   | Cons
+      lhs  .infer   =   CTuple ( @hd.infer : @tl.inferTl )
+           .subst   =   @tl.subst `o` @hd.subst
+      lhs  .envFromPats = DM.union @hd.envFromPats @tl.envFromPats
+      loc  .inferTl =   case @tl.infer of
+                         (CTuple xs) -> xs
+                         x           -> x
+   | Nil
+      lhs  .infer   =   CTuple []
+      lhs  .subst   =   SId
+      lhs  .envFromPats = DM.empty
+
 
 sem RhsR -- Type: RhsR :: ExprR -> DeclsR -> RangeR -> RhsR
          -- The DeclsR are the stuff in there where clause.
