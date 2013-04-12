@@ -250,7 +250,13 @@ sem FunBindR
            -- Unify the contracts of these definitions?
            .finalsubsts = case DM.lookup @name.copy @lhs.env of
                            (Just previousctrt) -> (unifyC previousctrt @loc.ctrt) `o` @rhs.subst
-                           Nothing             -> @rhs.subst        
+                           Nothing             -> @rhs.subst       
+
+           -- IDEA: Rewrite funbindsList to something like
+           --     f = \x -> case x of
+           --                 [] -> ...
+           --                 (x:xs) -> ...
+           -- cases only necessary for variables that have multiple options!
 
       loc  .num     ::  uniqueref varcnt
 
@@ -463,6 +469,8 @@ sem ExprR
                           then  mkPlainC @from.infer
                           else  @from.infer
       loc  .num     ::  uniqueref varcnt
+
+   --IDEA: Transform this to a list.
 
   | TupleR
       lhs  .infer   =   @exprs.infer
