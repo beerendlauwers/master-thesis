@@ -124,6 +124,41 @@ Module NoName (Body [DPatBind (PVar (Ident "f")) (Rhs (Let [DPatBind (PParen (PI
 Module NoName (Body [DFunBinds [FunBind Nothing (Ident "f") [PVar (Ident "x")] (Rhs (Var (Ident "x")) [])],DFunBinds [FunBind Nothing (Ident "g") [PVar (Ident "x")] (Rhs (Var (Ident "x")) [])],DFunBinds [FunBind Nothing (Ident "z") [PVar (Ident "x")] (Rhs (Var (Ident "x")) [])]])
 
 
+f (x:y:xs) = [x]
+f (x:[]) = []
+f [] = []
+
+Module NoName (Body [DFunBinds [FunBind Nothing (Ident "f") [PParen (PInfixCon (PVar (Ident "x")) (Operator ":") (PInfixCon (PVar (Ident "y")) (Operator ":") (PVar (Ident "xs"))))] (Rhs (List [Var (Ident "x")]) []),FunBind Nothing (Ident "f") [PParen (PInfixCon (PVar (Ident "x")) (Operator ":") (PCon (Special "[]") []))] (Rhs (Con (Special "[]")) []),FunBind Nothing (Ident "f") [PCon (Special "[]") []] (Rhs (Con (Special "[]")) [])]])
+
+
+
+Lambda [PVar (Ident "p1"),PVar (Ident "p2"),PVar (Ident "p3")] (Case (Var (Ident "p1")) [Alt Nothing (PParen (PInfixCon (PVar (Ident "x")) (Operator ":") (PInfixCon (PVar (Ident "y")) (Operator ":") (PVar (Ident "xs"))))) (Rhs (Case (Var (Ident "p2")) *** Exception: Prelude.head: empty list
+
+\p1 p2 p3 -> Case p1 of
+              (x:y:xs) -> Case p2 
+
+
+transformFunctions (Body (DFunBinds decls)) = 
+ let allPats = collectPatterns decls
+     collectPatterns = map (\(FunBind _ _ ps _) -> ps)
+     collectRhs = map ((\FunBind _ _ _ rhs _) -> rhs)
+     allRhs = collectRhs decls
+     differentPats = filter (\x -> length x == 1) allPats
+     allVars = ["p" ++ show i | i <- [1..length (head allPats)]]
+     allMatches = map (\x -> Var $ Ident x) allVars
+     allPats = map (\x -> PVar $ Ident x) allVars
+ in Lambda allPats (constructCase allMatches allPats allRhs)
+
+constructCase (m:ms) pats rhs = 
+ let alts = head $ nub $ transpose pats
+     nextVals = groupBy (\x y -> head x == head y) pats
+     valsByAlt = (\(x:xs) -> zip x xs) $ map nub $ transpose nextVals
+     altExprs = map (\pat -> Alt Nothing pat (constructCase ms (lookup pat valsByAlt) rhs)) alts
+ in Case m altExprs
+constructCase [m] [p] [r] = Case m [(Alt Nothing p r)]
+
+"f (x:y:xs) = [x]\nf (x:[]) = []\nf [] = []"
+
 f = let (x,y) = (1,2)
         (x:xs) = [1,2]
     in x
