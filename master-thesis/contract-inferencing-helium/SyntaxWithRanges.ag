@@ -255,7 +255,7 @@ DATA PatR
 
 TYPE PatsR = [PatR]
 TYPE ListPatsR = [PatR]
-TYPE TuplePatsR [PatR]
+TYPE TuplePatsR = [PatR]
 
 -- | Right hand side
 DATA RhsR

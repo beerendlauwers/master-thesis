@@ -3,12 +3,14 @@ module Domain.FP.ContractInferencing.SyntaxTransformations where
 
 import Domain.FP.SyntaxWithRanges
 import qualified Data.Generics.Uniplate as U
+import Data.List (groupBy,nub,transpose)
+import Data.Maybe (fromJust)
 
 -- Transform lambdas of the form \x y z to \x -> \y -> \z
 -- for easier contract inferencing.
 expandLambdas :: ExprR -> ExprR
 expandLambdas (LambdaR (x:xs) body range) = LambdaR [x] (expandLambdas $ LambdaR xs body range) range
-expandLambdas (LambdaR [] body _ = body
+expandLambdas (LambdaR [] body _) = body
 
 transformLambdas = U.transform f
   where f (LambdaR x b r) = expandLambdas (LambdaR x b r)
@@ -42,6 +44,17 @@ transformLets = U.transform f
   where f (LetR dl e r) = expandLets (LetR dl e r)
         f x = x
 
+-- Transform enums into lists
+-- for easier contract inferencing.
+transformEnum :: ExprR -> ExprR
+transformEnum (EnumR fr NoExprR        NoExprR        range) = ListR [fr] range
+transformEnum (EnumR fr NoExprR        (JustExprR to) range) = ListR [fr,to] range
+transformEnum (EnumR fr (JustExprR th) (JustExprR to) range) = ListR [fr,th,to] range
+
+transformEnums = U.transform f
+  where f e@(EnumR _ _ _ _) = transformEnum e
+        f x = x
+
 --Simplifies function definitions into lambda definitions.
 transformFunctions :: Domain.FP.Syntax.Decl -> Domain.FP.Syntax.Decl
 transformFunctions (DFunBinds decls) = 
@@ -56,8 +69,9 @@ transformFunctions (DFunBinds decls) =
      funcIdentifier = PVar $ (\(FunBind _ f _ _) -> f) (head decls)
  in DPatBind funcIdentifier (Rhs (Paren $ Lambda allPatVars (constructCase allMatches (zip [1..] allPats) (zip [1..] allRhs))) [])
 
--- TODO: Preprocess patterns so they're all the same.
--- Currently, x and y are different patterns...
+-- POSSIBLE FIXME: x and y are recognized as different patterns,
+-- but if we want to make them the same, we have to rewrite RHS
+-- with the new pattern value. We'll also need to take into account scoping.
 constructCase :: [Expr] -> [(Int,Pats)] -> [(Int,Rhs)] -> Expr
 constructCase [m] pats rhs =  
  let alts = map (\(n,[p]) -> (n,p)) pats
