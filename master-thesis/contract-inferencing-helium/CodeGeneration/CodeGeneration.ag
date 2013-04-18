@@ -1,0 +1,144 @@
+MODULE {Domain.FP.CodeGeneration.CodeGeneration}{}
+
+-- Include simplified syntax used by Ask-Elle
+include "Domain/FP/SyntaxWithRanges.ag"
+
+-- Include code to collect local identifiers, as well as uncontracted code
+include "Domain/FP/CodeGeneration/CollectLocalIdents.ag"
+
+-- Include Utils.ag
+include "Domain/FP/CodeGeneration/Utils.ag"
+
+
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+
+  -- We get this from the Helium compiler.
+  inh topLevelTypes                                     :: {ImportEnvironment}
+
+  -- Identifiers that shadow the top-level identifiers.
+  inh localIdentifiers                                  :: {[Name]}
+
+  -- The 'main' function, the top-level point of entry. We'll start contract generation here.
+  inh entryFunction                                     :: {String}
+
+  -- We induce a contract from the type.
+  inh contract                                          :: {Contract}
+
+  -- Arity of parameters of a function. Example: foldr = [2,0,0]
+  --inh parameterArity                                    :: {[Int]}
+
+  -- Arity of function itself. Example: foldr = 3
+  --inh identifierArity                                   :: {Int}
+
+attr ExprR
+  -- Function with contract applied to it.
+  -- Used when passing a contracted function to higher-order function.
+  -- Example: __ctrt_insert = __contracted_insert CONTRACT
+  syn functionWithContract                              :: FunBindR
+
+  -- The function identifier in contract wrappers.
+  -- Used in the non-contracted function call if it's not part of a higher-order function.
+  -- Example: __contracted_insert ctrt = assert "insert" ctrt funs
+  --           where funs = fun (\x -> fun (\xs -> insert x xs))
+  syn contractedFunction                                :: FunBindR
+
+  -- The applied contracted function identifier.
+  -- Used to replace the non-contracted function call if it's not part of a higher-order function.
+  -- Example: __app_insert (posx,x) (posxs,xs) = app (app __ctrt_insert posx x) posxs xs
+  syn appliedContractedFunction                         :: FunBindR
+
+
+
+
+attr ModuleR BodyR DeclR ExprR PatR AltR FunBindR GuardedExprR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR
+  -- The contracted version of the code.
+  syn contractedCode                                    :: self
+
+-- TODO: We can add this after generating the contracted code?
+{-
+sem DeclR
+   | DPatBindR
+      -- We need to replace the original point of entry with a call to the contracted version.
+      -- That's what we do here.
+      lhs  .contractedCode      = case @pat.copy of
+                                   (PVarR (IdentR x ri) rv) | x == @lhs.entryFunction -> DPatBindR (PVarR (IdentR x ri) rv) @loc.rhs @range.copy
+                                   otherwise -> @self.copy
+      loc  .rhs                 = RhsR @lhs.functionWithContract [] noRange
+-}
+
+-- TODO: Change functionWithContract, etc... to MaybeFunBindR and not FunBindR.
+-- TODO: We need to take into account anonymous functions as well. We could contract those, too.
+-- TODO: This will get generated for each and every function application, so there may be doubles. Perhaps an env?
+sem Expr
+  | App
+      -- TODO: Would this be necessary or even wanted? What if insert is called twice, like in (insert x xs,insert y ys) ?
+      -- Example: __ctrt_insert = __contracted_insert CONTRACT
+      lhs  .functionWithContract        = FunBindR Nothing @loc.name [] @loc.rhs noRange
+
+      -- LHS
+      -- (IdentR "insert" _) goes in, (IdentR "__ctrt_insert" _) goes out
+      loc  .name                        = (IdentR (prefixFunctionWithContract @loc.functionIdentifier) noRange)
+      loc  .isFunction                  = elem @loc.functionIdentifier @lhs.localIdentifiers || isInToplevel @loc.functionIdentifier
+      loc  .functionIdentifier          = case @expr.copy of
+                                           (VarR x _) -> x
+                                           otherwise -> IdentR "_" noRange
+
+      -- RHS --
+      loc  .rhs                         = RhsR @loc.app [] noRange
+      loc  .app                         = AppR @loc.rhsAppIdent [@loc.contract] noRange
+      loc  .rhsAppIdent                 = VarR (prefixcontractedFunction @loc.functionIdentifier) noRange
+      loc  .contract                    = @lhs.contract
+
+      -- Example: __contracted_insert ctrt = assert "insert" ctrt funs
+      --           where funs = fun (\x -> fun (\xs -> insert x xs))
+      lhs  .contractedFunction          = FunBindR Nothing @loc.contractedName [makePVar "ctrt"] @loc.contractedRhs noRange
+
+      -- LHS --
+      -- (IdentR "insert" _) goes in, (IdentR "__contracted_insert" _) goes out
+      loc  .contractedName              = (IdentR (prefixcontractedFunction @loc.functionIdentifier) noRange)
+
+      -- RHS --
+      loc  .contractedRhs               = RhsR @loc.assertApp (map makeVar ["assert",@loc.functionIdent,"ctrt","funs"]) @loc.whereClause noRange
+      loc  .functionIdent               = (\(IdentR x _) -> x) @loc.functionIdentifier
+      loc  .whereClause                 = DFunBindsR [FunBindR Nothing (IdentR "funs" noRange) [] @loc.whereRhs noRange] noRange
+      loc  .whereRhs                    = RhsR (makeFuns @loc.funsPatterns @loc.funsBase) [] noRange
+      loc  .funsPatterns                = [ "__x" ++ @loc.num ++ show x | [1..@loc.parameterArity] ]
+      loc  .parameterArity              = calculateArity @lhs.localType -- TODO: Generate localType. -- TODO: Implement calculateArity.
+      loc  .funsBase                    = AppR (makeVar @loc.functionIdent) (map makeVar @loc.funsPatterns) noRange
+
+      loc  .num     ::  uniqueref varcnt
+
+{
+-- Given a list of patterns and a base value, generate a chain of 'fun' applications.
+-- Example: funs = fun (\x -> fun (\xs -> insert x xs))
+makeFuns :: [PVarR] -> ExprR -> ExprR
+makeFuns xs b = foldr f b xs
+  where f pat rest = AppR (makeVar "fun") [LambdaR pat rest noRange] noRange
+
+makePVar :: String -> PVarR
+makePVar s = PVarR (IdentR s noRange) noRange
+
+makeVar :: String -> VarR
+makeVar s = VarR (IdentR s noRange) noRange
+
+prefixFunctionWithContract :: NameR -> NameR
+prefixFunctionWithContract (IdentR name r)    = (IdentR ("__ctrt_"++name) r)
+prefixFunctionWithContract (OperatorR name r) = (OperatorR ("---"++name++"---") r)
+prefixFunctionWithContract _ = error "prefixFunctionWithContract: Haven't defined anything yet for SpecialR."
+
+prefixcontractedFunction :: NameR -> NameR
+prefixcontractedFunction (IdentR name r)    = (IdentR ("__contracted_"++name) r)
+prefixcontractedFunction (OperatorR name r) = (OperatorR ("+++"++name++"+++") r)
+prefixcontractedFunction _ = error "prefixcontractedFunction: Haven't defined anything yet for SpecialR."
+
+isInToplevel :: ImportEnvironment -> NameR -> Bool
+isInToplevel (ImportEnvironment _ _ functions _ _ _) x = 
+ let find = case x of
+             (IdentR name _) = Ident name
+             (OperatorR name _) = Operator name
+             (SpecialR name _) = Special name
+ in member find functions
+}
+
+
