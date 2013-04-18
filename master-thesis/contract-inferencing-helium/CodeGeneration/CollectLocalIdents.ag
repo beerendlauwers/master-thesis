@@ -1,0 +1,81 @@
+-- TO TEST THIS AG ONLY:
+-- FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.CodeGeneration.CollectLocalIdents" Domain/FP/CodeGeneration/CollectLocalIdents.ag
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+   syn copy                                             :: self
+
+
+
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+  -- Identifiers that shadow the top-level identifiers.
+  inh localIdentifiers                                  :: {[NameR]}
+
+  -- The 'main' function, the top-level point of entry. We'll start contract generation here.
+  inh entryFunction                                     :: {String}
+
+-- Patterns are only local if they're not defined top-level.
+attr DeclR DeclsR
+   inh isTopLevel                                       :: {Bool}
+
+sem BodyR
+   | BodyR
+      decls.isTopLevel          = True
+
+sem ExprR
+   | LetR
+      decls.isTopLevel          = False
+
+sem RhsR
+   | RhsR
+      where.isTopLevel          = False
+   | GRhsR
+      where.isTopLevel          = False
+
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+  -- Version of the code where the top-level point of entry identifier has been replaced
+  syn uncontractedCode                                  :: self
+
+-- Replace the name of the original point of entry.
+-- Example: isort becomes __original_isort, so we can then write isort = __original_isort CONTRACT
+sem ExprR
+  | VarR
+      lhs  .uncontractedCode    = if (getVar @name.copy == @lhs.entryFunction) && (elem @name.copy @lhs.localIdentifiers)
+                                   then VarR (prefixPointOfEntry @name.copy) @range.copy
+                                   else VarR @name.copy @range.copy
+
+
+-- Pass local patterns downwards.
+sem DeclR
+  | DPatBindR
+      rhs.localIdentifiers      = if not @lhs.isTopLevel 
+                                   then @pat.localPatterns ++ @lhs.localIdentifiers
+                                   else @lhs.localIdentifiers
+
+sem AltR
+  | AltR
+      rhs.localIdentifiers      = @pat.localPatterns ++ @lhs.localIdentifiers
+
+sem ExprR
+  | LambdaR
+      expr.localIdentifiers     = @pats.localPatterns ++ @lhs.localIdentifiers
+
+sem FunBindR
+  | FunBindR
+      rhs.localIdentifiers      = @pats.localPatterns ++ @lhs.localIdentifiers
+
+-- Fetch locally-bound stuff from patterns.
+-- Most of this is auto-generated.
+attr PatR PatsR ListPatsR TuplePatsR
+  syn localPatterns use {++} {[]}                       :: {[NameR]}
+
+sem PatR
+   | PInfixConR
+      lhs  .localPatterns       = @left.localPatterns ++ @right.localPatterns
+   | PVarR
+      lhs  .localPatterns       = [@name.copy]
+   | PAsR
+      lhs  .localPatterns       = @name.copy : @pat.localPatterns
+
+

@@ -1,0 +1,14 @@
+
+{
+prefixPointOfEntry :: NameR -> NameR
+prefixPointOfEntry (IdentR name r)    = (IdentR ("__original_"++name) r)
+prefixPointOfEntry (OperatorR name r) = (OperatorR ("***"++name++"***") r)
+prefixPointOfEntry _ = error "prefixPointOfEntry: Haven't defined anything yet for SpecialR."
+
+-- Just fetches the string out of a NameR
+getVar :: NameR -> String
+getVar (IdentR x _)    = x
+getVar (OperatorR x _) = x
+getVar (SpecialR x _)  = x
+
+}
