@@ -5,20 +5,7 @@ optpragmas {
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# OPTIONS -fno-warn-name-shadowing #-}
------------------------------------------------------------------------------
--- Copyright 2011, Open Universiteit Nederland. This file is distributed
--- under the terms of the GNU General Public License. For more information,
--- see the file "LICENSE.txt", which is included in the distribution.
------------------------------------------------------------------------------
--- |
--- Maintainer  :  alex.gerdes@ou.nl
--- Stability   :  provisional
--- Portability :  unknown
---
------------------------------------------------------------------------------
 }
-
-MODULE {Domain.FP.SyntaxWithRanges}{}
 
 {
 import Control.Monad
@@ -34,250 +21,250 @@ import Test.QuickCheck
 type HoleIDR = Integer
 }
 
-SET Every = ModuleR BodyR DeclR ExprR PatR AltR FunBindR GuardedExprR LiteralR RhsR NameR
+set Every = ModuleR BodyR DeclR ExprR PatR AltR FunBindR GuardedExprR LiteralR RhsR NameR
             MaybeExprR MaybeNameR RangeR PositionR
 
-DERIVING Every:  Eq, Show, Ord, Typeable, Data
+deriving Every:  Eq, Show, Ord, Typeable, Data
 
-DERIVING Name: Read
+deriving Name: Read
 
 -- | A Haskell source module
-DATA ModuleR
+data ModuleR
    | ModuleR
-      name     : MaybeNameR
-      body     : BodyR
-      range    : RangeR
+      name     :: MaybeNameR
+      body     :: BodyR
+      range    :: RangeR
 
-DATA BodyR
+data BodyR
    | BHoleR
-      id       : HoleIDR
-      range    : RangeR
+      id       :: HoleIDR
+      range    :: RangeR
    | BodyR
-      decls    : DeclsR
-      range    : RangeR
+      decls    :: DeclsR
+      range    :: RangeR
 
 -- | Declarations
-DATA DeclR
+data DeclR
    | DHoleR
-      id       : HoleIDR
-      range    : RangeR
+      id       :: HoleIDR
+      range    :: RangeR
    | DEmptyR
-      range    : RangeR
+      range    :: RangeR
    | DFunBindsR -- Only used for top-level function definitions?
-      funbinds : FunBindsR
-      range    : RangeR
+      funbinds :: FunBindsR
+      range    :: RangeR
    | DPatBindR  -- Only used in let?
-      pat      : PatR
-      rhs      : RhsR
-      range    : RangeR
+      pat      :: PatR
+      rhs      :: RhsR
+      range    :: RangeR
 
-TYPE DeclsR = [DeclR]
+type DeclsR = [DeclR]
 
 -- | Expressions
-DATA ExprR
+data ExprR
    | HoleR
-      id       : HoleIDR
-      range    : RangeR
+      id       :: HoleIDR
+      range    :: RangeR
    | FeedbackR
-      feedback : String
-      expr     : ExprR
-      range    : RangeR
+      feedback :: String
+      expr     :: ExprR
+      range    :: RangeR
    | MustUseR
-      expr     : ExprR
-      range    : RangeR
+      expr     :: ExprR
+      range    :: RangeR
    | CaseR
-      expr     : ExprR
-      alts     : AltsR
-      range    : RangeR
+      expr     :: ExprR
+      alts     :: AltsR
+      range    :: RangeR
    | ConR
-      name     : NameR
-      range    : RangeR
+      name     :: NameR
+      range    :: RangeR
    | IfR
-      cond     : ExprR
-      then     : ExprR
-      else     : ExprR
-      range    : RangeR
+      cond     :: ExprR
+      then     :: ExprR
+      else     :: ExprR
+      range    :: RangeR
    | InfixAppR
-      left     : MaybeExprR
-      op       : ExprR
-      right    : MaybeExprR
-      range    : RangeR
+      left     :: MaybeExprR
+      op       :: ExprR
+      right    :: MaybeExprR
+      range    :: RangeR
    | LambdaR
-      pats     : PatsR
-      expr     : ExprR
-      range    : RangeR
+      pats     :: PatsR
+      expr     :: ExprR
+      range    :: RangeR
    | LetR
-      decls    : DeclsR
-      expr     : ExprR
-      range    : RangeR
+      decls    :: DeclsR
+      expr     :: ExprR
+      range    :: RangeR
    | LitR
-      lit      : LiteralR
-      range    : RangeR
+      lit      :: LiteralR
+      range    :: RangeR
    | AppR
-      fun      : ExprR
-      args     : ExprsR
-      range    : RangeR
+      fun      :: ExprR
+      args     :: ExprsR
+      range    :: RangeR
    | ParenR
-      expr     : ExprR
-      range    : RangeR
+      expr     :: ExprR
+      range    :: RangeR
    | TupleR
-      exprs    : TupleExprR
-      range    : RangeR
+      exprs    :: TupleExprR
+      range    :: RangeR
    | VarR
-      name     : NameR
-      range    : RangeR
+      name     :: NameR
+      range    :: RangeR
    | EnumR
-      from     : ExprR
-      then     : MaybeExprR
-      to       : MaybeExprR
-      range    : RangeR
+      from     :: ExprR
+      then     :: MaybeExprR
+      to       :: MaybeExprR
+      range    :: RangeR
    | ListR
-      exprs    : ListExprR -- We use a new type here because for lists, the inferred contracts must hold on all elements.
-      range    : RangeR
+      exprs    :: ListExprR -- We use a new type here because for lists, the inferred contracts must hold on all elements.
+      range    :: RangeR
    | NegR
-      expr     : ExprR
-      range    : RangeR
+      expr     :: ExprR
+      range    :: RangeR
 
-TYPE ExprsR = [ExprR]
-TYPE ListExprR = [ExprR]
-TYPE TupleExprR = [ExprR]
+type ExprsR = [ExprR]
+type ListExprR = [ExprR]
+type TupleExprR = [ExprR]
 
-DATA MaybeExprR
+data MaybeExprR
    | NoExprR
    | JustExprR
-      expr     : ExprR
+      expr     :: ExprR
 
 -- | Alternatives
-DATA AltR
+data AltR
    | AHoleR
-      id       : HoleIDR
-      range    : RangeR
+      id       :: HoleIDR
+      range    :: RangeR
    | AltR
-      feedback : {Maybe String}
-      pat      : PatR
-      rhs      : RhsR
-      range    : RangeR
+      feedback :: {Maybe String}
+      pat      :: PatR
+      rhs      :: RhsR
+      range    :: RangeR
    | AltEmptyR
-      range    : RangeR
+      range    :: RangeR
 
-TYPE AltsR = [AltR]
+type AltsR = [AltR]
 
 -- | Function bindings
-DATA FunBindR
+data FunBindR
    | FBHoleR
-      id       : HoleIDR
-      range    : RangeR
+      id       :: HoleIDR
+      range    :: RangeR
    | FunBindR
-      feedback : {Maybe String}
-      name     : NameR
-      pats     : PatsR
-      rhs      : RhsR
-      range    : RangeR
+      feedback :: {Maybe String}
+      name     :: NameR
+      pats     :: PatsR
+      rhs      :: RhsR
+      range    :: RangeR
 
-TYPE FunBindsR = [FunBindR]
+type FunBindsR = [FunBindR]
 
 -- | Guarded expressions
-DATA GuardedExprR
+data GuardedExprR
    | GExprR
-      guard    : ExprR
-      expr     : ExprR
-      range    : RangeR
+      guard    :: ExprR
+      expr     :: ExprR
+      range    :: RangeR
 
-TYPE GuardedExprsR = [GuardedExprR]
+type GuardedExprsR = [GuardedExprR]
 
 -- | Literal values
-DATA LiteralR
+data LiteralR
    | LCharR
-      val      : Char
-      range    : RangeR
+      val      :: Char
+      range    :: RangeR
    | LFloatR
-      val      : Float
-      range    : RangeR
+      val      :: Float
+      range    :: RangeR
    | LIntR
-      val      : Int
-      range    : RangeR
+      val      :: Int
+      range    :: RangeR
    | LStringR
-      val      : String
-      range    : RangeR
+      val      :: String
+      range    :: RangeR
 
 -- | Names
-DATA NameR
+data NameR
    | IdentR
-      name     : String
-      range    : RangeR
+      name     :: String
+      range    :: RangeR
    | OperatorR
-      name     : String
-      range    : RangeR
+      name     :: String
+      range    :: RangeR
    | SpecialR
-      name     : String
-      range    : RangeR
+      name     :: String
+      range    :: RangeR
 
-DATA MaybeNameR
+data MaybeNameR
    | NoNameR
    | JustNameR
-      name     : NameR
+      name     :: NameR
 
 -- | Patterns
-DATA PatR
+data PatR
    | PHoleR
-      id       : HoleIDR
-      range    : RangeR
+      id       :: HoleIDR
+      range    :: RangeR
    | PConR
-      name     : NameR
-      pats     : PatsR
-      range    : RangeR
+      name     :: NameR
+      pats     :: PatsR
+      range    :: RangeR
    | PInfixConR
-      left     : PatR
-      name     : NameR
-      right    : PatR
-      range    : RangeR
+      left     :: PatR
+      name     :: NameR
+      right    :: PatR
+      range    :: RangeR
    | PListR  -- We use a new type here because for lists, the inferred contracts must hold on all elements.
-      pats     : ListPatsR
-      range    : RangeR
+      pats     :: ListPatsR
+      range    :: RangeR
    | PLitR
-      lit      : LiteralR
-      range    : RangeR
+      lit      :: LiteralR
+      range    :: RangeR
    | PParenR
-      pat      : PatR
-      range    : RangeR
+      pat      :: PatR
+      range    :: RangeR
    | PTupleR
-      pats     : TuplePatsR
-      range    : RangeR
+      pats     :: TuplePatsR
+      range    :: RangeR
    | PVarR
-      name     : NameR
-      range    : RangeR
+      name     :: NameR
+      range    :: RangeR
    | PAsR
-      name     : NameR
-      pat      : PatR
-      range    : RangeR
+      name     :: NameR
+      pat      :: PatR
+      range    :: RangeR
    | PWildcardR
-      range    : RangeR
+      range    :: RangeR
 
-TYPE PatsR = [PatR]
-TYPE ListPatsR = [PatR]
-TYPE TuplePatsR = [PatR]
+type PatsR = [PatR]
+type ListPatsR = [PatR]
+type TuplePatsR = [PatR]
 
 -- | Right hand side
-DATA RhsR
+data RhsR
    | RhsR
-      expr     : ExprR
-      where    : DeclsR
-      range    : RangeR
+      expr     :: ExprR
+      where    :: DeclsR
+      range    :: RangeR
    | GRhsR
-      gexprs   : GuardedExprsR
-      where    : DeclsR
-      range    : RangeR
+      gexprs   :: GuardedExprsR
+      where    :: DeclsR
+      range    :: RangeR
 
-DATA RangeR
+data RangeR
     | RangeR
-        rangestart                    : PositionR
-        rangestop                     : PositionR
+        rangestart                    :: PositionR
+        rangestop                     :: PositionR
 
-DATA PositionR
+data PositionR
     | PositionR
-        filename                 : String
-        line                     : Int
-        column                   : Int
+        filename                 :: String
+        line                     :: Int
+        column                   :: Int
     | UnknownR
       
 {
