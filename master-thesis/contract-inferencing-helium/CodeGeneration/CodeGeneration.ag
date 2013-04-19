@@ -1,5 +1,3 @@
-MODULE {Domain.FP.CodeGeneration.CodeGeneration}{}
-
 -- Include simplified syntax used by Ask-Elle
 include "Domain/FP/SyntaxWithRanges.ag"
 
@@ -9,9 +7,19 @@ include "Domain/FP/CodeGeneration/CollectLocalIdents.ag"
 -- Include Utils.ag
 include "Domain/FP/CodeGeneration/Utils.ag"
 
+-- Include debug statements
+include "Domain/FP/CodeGeneration/DebugCode.ag"
 
+{
+type FunctionArityEnvironment = Map Name Int
+type ParameterArityEnvironment = Map Name [Int]
+}
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+  chn varcnt   :: Int
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+   syn copy                                             :: self
 
   -- We get this from the Helium compiler.
   inh topLevelTypes                                     :: {ImportEnvironment}
@@ -26,10 +34,10 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
   inh contract                                          :: {Contract}
 
   -- Arity of parameters of a function. Example: foldr = [2,0,0]
-  --inh parameterArity                                    :: {[Int]}
+  inh parameterArity                                    :: {ParameterArityEnvironment}
 
   -- Arity of function itself. Example: foldr = 3
-  --inh identifierArity                                   :: {Int}
+  inh identifierArity                                   :: {FunctionArityEnvironment}
 
 attr ExprR
   -- Function with contract applied to it.
@@ -70,8 +78,8 @@ sem DeclR
 -- TODO: Change functionWithContract, etc... to MaybeFunBindR and not FunBindR.
 -- TODO: We need to take into account anonymous functions as well. We could contract those, too.
 -- TODO: This will get generated for each and every function application, so there may be doubles. Perhaps an env?
-sem Expr
-  | App
+sem ExprR
+  | AppR
       -- TODO: Would this be necessary or even wanted? What if insert is called twice, like in (insert x xs,insert y ys) ?
       -- Example: __ctrt_insert = __contracted_insert CONTRACT
       lhs  .functionWithContract        = FunBindR Nothing @loc.name [] @loc.rhs noRange
@@ -99,7 +107,10 @@ sem Expr
       loc  .contractedName              = (IdentR (prefixcontractedFunction @loc.functionIdentifier) noRange)
 
       -- RHS --
-      loc  .contractedRhs               = RhsR @loc.assertApp (map makeVar ["assert",@loc.functionIdent,"ctrt","funs"]) @loc.whereClause noRange
+      loc  .contractedRhs               = RhsR @loc.assertApp [ makeVar "assert" 
+                                                              , LStringR @loc.functionIdent noRange
+                                                              , makeVar "ctrt"
+                                                              , makeVar "funs" ]
       loc  .functionIdent               = (\(IdentR x _) -> x) @loc.functionIdentifier
       loc  .whereClause                 = DFunBindsR [FunBindR Nothing (IdentR "funs" noRange) [] @loc.whereRhs noRange] noRange
       loc  .whereRhs                    = RhsR (makeFuns @loc.funsPatterns @loc.funsBase) [] noRange
@@ -139,6 +150,11 @@ isInToplevel (ImportEnvironment _ _ functions _ _ _) x =
              (OperatorR name _) = Operator name
              (SpecialR name _) = Special name
  in member find functions
+}
+
+{
+nextUnique :: Int -> (Int, Int)
+nextUnique u = (u + 1, u)
 }
 
 

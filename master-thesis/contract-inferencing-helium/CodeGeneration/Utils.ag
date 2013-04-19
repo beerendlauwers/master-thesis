@@ -18,4 +18,19 @@ getVar (IdentR x _)    = x
 getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
 
+calculateArity :: TypeEnvironment -> FunctionArityEnvironment
+calculateArity env = fromList $ map (\(name,ty) -> (name, Top.Types.Schemes.arityOfTpScheme ty)) (toList env)
+
+calculateParameterArity :: TypeEnvironment -> ParameterArityEnvironment
+calculateParameterArity env = map (\(name,ty) -> (name, getParameterArity ty)) (toList env)
+  where getParameterArity ty = let primTy = ((map Top.Types.Primitive.arityOfTp) . fst . Top.Types.Primitive.functionSpine . Top.Types.Qualification.unqualify . Top.Types.Quantification.unquantify) ty
+
+
+apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR
+apps xs b = foldr f b (reverse xs)
+  where f (y,pos) ys = AppR (makeVar "appWithPos") [ys, makeAppPos pos, y]
+        makeAppPos (RangeR st st) = AppR (ConR (IdentR "PositionR" noRange) noRange) [makeRange st,makeRange st] noRange
+        makeRange (PositionR f l c) = AppR (ConR (IdentR "PositionR" noRange) noRange) [LitR (LStringR f noRange) noRange,LitR (LIntR l noRange),LitR (LIntR c noRange)] noRange
+        makeRange UnknownR = ConR (IdentR "UnknownR" noRange) noRange
+
 }
