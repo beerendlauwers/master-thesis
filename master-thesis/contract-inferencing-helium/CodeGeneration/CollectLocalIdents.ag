@@ -1,28 +1,6 @@
 -- TO TEST THIS AG ONLY:
 -- FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.CodeGeneration.CollectLocalIdents" Domain/FP/CodeGeneration/CollectLocalIdents.ag
 
--- Include simplified syntax used by Ask-Elle
-include "Domain/FP/SyntaxWithRanges.ag"
-
--- Include Utils.ag
-include "Domain/FP/CodeGeneration/Utils.ag"
-
--- Include debug statements
-include "Domain/FP/CodeGeneration/DebugCode.ag"
-
-attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
-   syn copy                                             :: self
-
-
-
-
-attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
-  -- Identifiers that shadow the top-level identifiers.
-  inh localIdentifiers                                  :: {[NameR]}
-
-  -- The 'main' function, the top-level point of entry. We'll start contract generation here.
-  inh entryFunction                                     :: {String}
-
 -- Patterns are only local if they're not defined top-level.
 attr DeclR DeclsR
    inh isTopLevel                                       :: {Bool}
