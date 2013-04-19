@@ -1,5 +1,12 @@
 
 {
+
+updateName :: (NameR -> NameR) -> NameR -> String -> [NameR] -> NameR
+updateName f n entryPoint localIdents = 
+ if (getVar n == entryPoint) && not (elem n localIdents)
+  then f n
+  else n
+
 prefixPointOfEntry :: NameR -> NameR
 prefixPointOfEntry (IdentR name r)    = (IdentR ("__original_"++name) r)
 prefixPointOfEntry (OperatorR name r) = (OperatorR ("***"++name++"***") r)

@@ -1,6 +1,15 @@
 -- TO TEST THIS AG ONLY:
 -- FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.CodeGeneration.CollectLocalIdents" Domain/FP/CodeGeneration/CollectLocalIdents.ag
 
+-- Include simplified syntax used by Ask-Elle
+include "Domain/FP/SyntaxWithRanges.ag"
+
+-- Include Utils.ag
+include "Domain/FP/CodeGeneration/Utils.ag"
+
+-- Include debug statements
+include "Domain/FP/CodeGeneration/DebugCode.ag"
+
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
    syn copy                                             :: self
 
@@ -41,29 +50,41 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 -- Example: isort becomes __original_isort, so we can then write isort = __original_isort CONTRACT
 sem ExprR
   | VarR
-      lhs  .uncontractedCode    = if (getVar @name.copy == @lhs.entryFunction) && (elem @name.copy @lhs.localIdentifiers)
-                                   then VarR (prefixPointOfEntry @name.copy) @range.copy
-                                   else VarR @name.copy @range.copy
+      lhs  .uncontractedCode    = @loc.uncontractedCode
+      loc  .uncontractedCode    = VarR @loc.updatedName @range.uncontractedCode
+      loc  .updatedName         = updateName prefixPointOfEntry @name.copy @lhs.entryFunction @lhs.localIdentifiers
+
+
+sem FunBindR
+  | FunBindR
+      lhs  .uncontractedCode    = @loc.uncontractedCode
+      loc  .uncontractedCode    = FunBindR @feedback @loc.updatedName @pats.uncontractedCode @rhs.uncontractedCode @range.uncontractedCode
+      loc  .updatedName         = updateName prefixPointOfEntry @name.copy @lhs.entryFunction @lhs.localIdentifiers
+
 
 
 -- Pass local patterns downwards.
 sem DeclR
   | DPatBindR
-      rhs.localIdentifiers      = if not @lhs.isTopLevel 
+      rhs.localIdentifiers      = @loc.localIdentifiers
+      loc.localIdentifiers      = if not @lhs.isTopLevel 
                                    then @pat.localPatterns ++ @lhs.localIdentifiers
                                    else @lhs.localIdentifiers
 
 sem AltR
   | AltR
-      rhs.localIdentifiers      = @pat.localPatterns ++ @lhs.localIdentifiers
+      rhs.localIdentifiers      = @loc.localIdentifiers
+      loc.localIdentifiers      = @pat.localPatterns ++ @lhs.localIdentifiers
 
 sem ExprR
   | LambdaR
-      expr.localIdentifiers     = @pats.localPatterns ++ @lhs.localIdentifiers
+      expr.localIdentifiers     = @loc.localIdentifiers
+      loc.localIdentifiers      = @pats.localPatterns ++ @lhs.localIdentifiers
 
 sem FunBindR
   | FunBindR
-      rhs.localIdentifiers      = @pats.localPatterns ++ @lhs.localIdentifiers
+      rhs.localIdentifiers      = @loc.localIdentifiers
+      loc.localIdentifiers      = @pats.localPatterns ++ @lhs.localIdentifiers
 
 -- Fetch locally-bound stuff from patterns.
 -- Most of this is auto-generated.
@@ -72,10 +93,13 @@ attr PatR PatsR ListPatsR TuplePatsR
 
 sem PatR
    | PInfixConR
-      lhs  .localPatterns       = @left.localPatterns ++ @right.localPatterns
+      lhs  .localPatterns       = @loc.localPatterns
+      loc  .localPatterns       = @left.localPatterns ++ @right.localPatterns
    | PVarR
-      lhs  .localPatterns       = [@name.copy]
+      lhs  .localPatterns       = @loc.localPatterns
+      loc  .localPatterns       = [@name.copy]
    | PAsR
-      lhs  .localPatterns       = @name.copy : @pat.localPatterns
+      lhs  .localPatterns       = @loc.localPatterns
+      loc  .localPatterns       = @name.copy : @pat.localPatterns
 
 
