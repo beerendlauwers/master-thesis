@@ -1,5 +1,22 @@
+optpragmas
+{
+{-# LANGUAGE FlexibleContexts #-}
+}
+
+imports
+{
+import qualified Top.Types.Schemes as S
+import qualified Top.Types.Primitive as P
+import qualified Top.Types.Qualification as QL
+import qualified Top.Types.Quantification as QN
+import qualified ModuleSystem.ImportEnvironment as IE
+import qualified Data.Map as DM
+}
 
 {
+
+type FunctionArityEnvironment = DM.Map NameR Int
+type ParameterArityEnvironment = DM.Map NameR [Int]
 
 updateName :: (NameR -> NameR) -> NameR -> String -> [NameR] -> NameR
 updateName f n entryPoint localIdents = 
@@ -18,19 +35,29 @@ getVar (IdentR x _)    = x
 getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
 
-calculateArity :: TypeEnvironment -> FunctionArityEnvironment
-calculateArity env = fromList $ map (\(name,ty) -> (name, Top.Types.Schemes.arityOfTpScheme ty)) (toList env)
+calculateArity :: IE.TypeEnvironment -> FunctionArityEnvironment
+calculateArity env = DM.fromList $ map (\(name,ty) -> ((convertHeliumNameToNameR name)::NameR, S.arityOfTpScheme ty)) (DM.toList env)
 
-calculateParameterArity :: TypeEnvironment -> ParameterArityEnvironment
-calculateParameterArity env = map (\(name,ty) -> (name, getParameterArity ty)) (toList env)
-  where getParameterArity ty = let primTy = ((map Top.Types.Primitive.arityOfTp) . fst . Top.Types.Primitive.functionSpine . Top.Types.Qualification.unqualify . Top.Types.Quantification.unquantify) ty
+calculateParameterArity :: IE.TypeEnvironment -> ParameterArityEnvironment
+calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> ((convertHeliumNameToNameR name)::NameR, getParameterArity ty)) (DM.toList env)
+  where getParameterArity ty = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify) ty
 
+makeModuleR :: DeclsR -> ModuleR
+makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
 
+convertHeliumNameToNameR :: Views.Cast Helium.Name NameR => Helium.Name -> NameR
+convertHeliumNameToNameR n = (Views.fromHelium n) :: NameR
+
+noRangeR :: RangeR
+noRangeR = RangeR UnknownR UnknownR
+
+{-
 apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR
 apps xs b = foldr f b (reverse xs)
   where f (y,pos) ys = AppR (makeVar "appWithPos") [ys, makeAppPos pos, y]
-        makeAppPos (RangeR st st) = AppR (ConR (IdentR "PositionR" noRange) noRange) [makeRange st,makeRange st] noRange
+        makeAppPos (RangeR start stop) = AppR (ConR (IdentR "PositionR" noRange) noRange) [makeRange start,makeRange stop] noRange
         makeRange (PositionR f l c) = AppR (ConR (IdentR "PositionR" noRange) noRange) [LitR (LStringR f noRange) noRange,LitR (LIntR l noRange),LitR (LIntR c noRange)] noRange
         makeRange UnknownR = ConR (IdentR "UnknownR" noRange) noRange
+-}
 
 }
