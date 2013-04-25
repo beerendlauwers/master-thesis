@@ -5,7 +5,7 @@ optpragmas
 
 imports
 {
---import qualified Common.Library (build)
+import qualified Common.Library (build)
 import Text.PrettyPrint as PP
 --import qualified Domain.FP.Helium as H
 --import Domain.FP.Views (heliumView)
