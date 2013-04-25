@@ -5,8 +5,12 @@ optpragmas
 {-# LANGUAGE DeriveDataTypeable #-}
 }
 
+imports
 {
 import Data.Data
+}
+
+{
 type HoleIDR = Integer
 }
 

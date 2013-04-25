@@ -1,0 +1,1982 @@
+optpragmas {
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# OPTIONS -fno-warn-name-shadowing #-}
+-----------------------------------------------------------------------------
+-- Copyright 2011, Open Universiteit Nederland. This file is distributed
+-- under the terms of the GNU General Public License. For more information,
+-- see the file "LICENSE.txt", which is included in the distribution.
+-----------------------------------------------------------------------------
+-- |
+-- Maintainer  :  alex.gerdes@ou.nl
+-- Stability   :  provisional
+-- Portability :  unknown
+--
+-----------------------------------------------------------------------------
+}
+
+MODULE {Domain.FP.Syntax}{}
+
+{
+import Control.Monad
+import Common.Environment
+import Common.Rewriting.Term
+import Common.View
+import Data.Char
+import Data.Data
+import Data.Generics.Uniplate.Direct
+import GHC.Float
+import Test.QuickCheck
+
+type HoleID = Integer
+}
+
+SET Every = Module Body Decl Expr Pat Alt FunBind GuardedExpr Literal Rhs Name
+            MaybeExpr MaybeName
+
+DERIVING Every:  Eq, Show, Ord, Typeable, Data
+
+DERIVING Name: Read
+
+-- | A Haskell source module
+DATA Module
+   | Module
+      name     : MaybeName
+      body     : Body
+
+DATA Body
+   | BHole
+      id       : HoleID
+   | Body
+      decls    : Decls
+
+-- | Declarations
+DATA Decl
+   | DHole
+      id       : HoleID
+   | DEmpty
+   | DFunBinds
+      funbinds : FunBinds
+   | DPatBind
+      pat      : Pat
+      rhs      : Rhs
+
+TYPE Decls = [Decl]
+
+-- | Expressions
+DATA Expr
+   | Hole
+      id       : HoleID
+   | Feedback
+      feedback : String
+      expr     : Expr
+   | MustUse
+      expr     : Expr
+   | Case
+      expr     : Expr
+      alts     : Alts
+   | Con
+      name     : Name
+   | If
+      cond     : Expr
+      then     : Expr
+      else     : Expr
+   | InfixApp
+      left     : MaybeExpr
+      op       : Expr
+      right    : MaybeExpr
+   | Lambda
+      pats     : Pats
+      expr     : Expr
+   | Let
+      decls    : Decls
+      expr     : Expr
+   | Lit
+      lit      : Literal
+   | App
+      fun      : Expr
+      args     : Exprs
+   | Paren
+      expr     : Expr
+   | Tuple
+      exprs    : Exprs
+   | Var
+      name     : Name
+   | Enum
+      from     : Expr
+      then     : MaybeExpr
+      to       : MaybeExpr
+   | List
+      exprs    : Exprs
+   | Neg 
+      expr     : Expr
+
+TYPE Exprs = [Expr]
+
+DATA MaybeExpr
+   | NoExpr
+   | JustExpr 
+      expr     : Expr
+
+-- | Alternatives
+DATA Alt
+   | AHole
+      id       : HoleID
+   | Alt
+      feedback : {Maybe String}
+      pat      : Pat
+      rhs      : Rhs
+   | AltEmpty
+
+TYPE Alts = [Alt]
+
+-- | Function bindings
+DATA FunBind
+   | FBHole
+      id       : HoleID
+   | FunBind
+      feedback : {Maybe String}
+      name     : Name
+      pats     : Pats
+      rhs      : Rhs
+
+TYPE FunBinds = [FunBind]
+
+-- | Guarded expressions
+DATA GuardedExpr
+   | GExpr
+      guard    : Expr
+      expr     : Expr
+
+TYPE GuardedExprs = [GuardedExpr]
+
+-- | Literal values
+DATA Literal
+   | LChar
+      val      : Char
+   | LFloat
+      val      : Float
+   | LInt
+      val      : Int
+   | LString
+      val      : String
+
+-- | Names
+DATA Name
+   | Ident
+      name     : String
+   | Operator
+      name     : String
+   | Special
+      name     : String
+
+DATA MaybeName
+   | NoName
+   | JustName 
+      name     : Name
+
+-- | Patterns
+DATA Pat
+   | PHole
+      id       : HoleID
+   | PCon
+      name     : Name
+      pats     : Pats
+   | PInfixCon
+      left     : Pat
+      name     : Name
+      right    : Pat
+   | PList
+      pats     : Pats
+   | PLit
+      lit      : Literal
+   | PParen
+      pat      : Pat
+   | PTuple
+      pats     : Pats
+   | PVar
+      name     : Name
+   | PAs
+      name     : Name
+      pat      : Pat
+   | PWildcard
+
+TYPE Pats = [Pat]
+
+-- | Right hand side
+DATA Rhs
+   | Rhs
+      expr     : Expr
+      where    : Decls
+   | GRhs
+      gexprs   : GuardedExprs
+      where    : Decls
+      
+{
+
+-- | Symbols do not allow for capitals. We replace capitals by the corresponding
+--   lower case letter with a preceding '-' character. A dash character is not 
+--   allowed in constructor names.
+constrToSym :: String -> Symbol
+constrToSym = 
+    newSymbol . foldr (\c cs -> if isUpper c then '-' : c : cs else c :cs) []
+
+symToConstr :: Symbol -> String
+symToConstr = 
+    foldr (\c cs -> if c == '-' then capitalise cs else c:cs) [] . show
+  where
+    capitalise []     = []
+    capitalise (x:xs) = toUpper x : xs
+
+constrView :: View String Symbol
+constrView = makeView (Just . constrToSym) symToConstr
+
+genConstr :: Gen String
+genConstr = liftM2 (:) capital (listOf (oneof [letter, capital, return '_']))
+  where
+    capital = choose ('A', 'Z')
+    letter  = choose ('a', 'z')
+
+testConstrView :: IO ()
+testConstrView = quickCheck $ propSoundness (==) genConstr constrView
+
+-- AG: I think some arity-generic programming would help here
+fromCon1 :: (MonadPlus m, IsTerm a) 
+         => (a -> b) -> Term -> m b
+fromCon1 cons = liftM cons . fromTerm
+
+fromCon2 :: (MonadPlus m, IsTerm a, IsTerm b) 
+         => (a -> b -> c) -> Term -> Term -> m c
+fromCon2 cons x y = liftM2 cons (fromTerm x) (fromTerm y)
+
+fromCon3 :: (MonadPlus m, IsTerm a, IsTerm b, IsTerm c) 
+         => (a -> b -> c -> d) -> Term -> Term -> Term -> m d
+fromCon3 cons x y z = liftM3 cons (fromTerm x) (fromTerm y) (fromTerm z)
+
+toCon :: String -> [Term] -> Term
+toCon name = TCon (constrToSym name)
+
+(.=) :: Symbol -> String -> Bool
+sym .= str = symToConstr sym == str
+
+-- | Term instances for syntax datatypes
+instance IsTerm Module where
+  toTerm (Module name body) = toCon "Module" [toTerm name, toTerm body]
+  fromTerm term = 
+      case term of
+        TCon sym [n, b] | sym .= "Module" -> fromCon2 Module n b
+        _ -> fromTermError term
+instance IsTerm Body where
+  toTerm body  = 
+      case body of
+        BHole id   -> toCon "BHole" [toTerm id]
+        Body decls -> toCon "Body"  [toTerm decls]
+  fromTerm term =
+      case term of
+        TCon sym [id]    | sym .= "BHole" -> fromCon1 BHole id
+        TCon sym [decls] | sym .= "Body"  -> fromCon1 Body  decls
+        _ -> fromTermError term
+instance IsTerm Decl where
+  toTerm decl = 
+      case decl of
+        DHole id           -> toCon "DHole"     [toTerm id]
+        DEmpty             -> toCon "DEmpty"    []
+        DFunBinds funbinds -> toCon "DFunBinds" [toTerm funbinds]
+        DPatBind pat rhs   -> toCon "DPatBind"  [toTerm pat, toTerm rhs]
+  fromTerm term = 
+      case term of
+        TCon sym [id]       | sym .= "DHole"     -> fromCon1 DHole id
+        TCon sym []         | sym .= "DEmpty"    -> return DEmpty
+        TCon sym [funbinds] | sym .= "DFunBinds" -> fromCon1 DFunBinds funbinds
+        TCon sym [pat, rhs] | sym .= "DPatBind"  -> fromCon2 DPatBind pat rhs
+        _ -> fromTermError term
+instance IsTerm Expr where
+  toTerm expr = case expr of
+      Hole id           -> toCon "Hole"     [toTerm id]
+      Feedback msg expr -> toCon "Feedback" [toTerm msg, toTerm expr]
+      MustUse  expr     -> toCon "MustUse"  [toTerm expr]
+      Case expr alts    -> toCon "Case"     [toTerm expr, toTerm alts]
+      Con name          -> toCon "Con"      [toTerm name]
+      If c t e          -> toCon "If"       [toTerm c, toTerm t, toTerm e]
+      InfixApp l op r   -> toCon "InfixApp" [toTerm l, toTerm op, toTerm r]
+      Lambda pats expr  -> toCon "Lambda"   [toTerm pats, toTerm expr]
+      Let decls expr    -> toCon "Let"      [toTerm decls, toTerm expr]
+      Lit lit           -> toCon "Lit"      [toTerm lit]
+      App fun args      -> toCon "App"      [toTerm fun, toTerm args]
+      Paren expr        -> toCon "Paren"    [toTerm expr]
+      Tuple exprs       -> toCon "Tuple"    [toTerm exprs]
+      Var name          -> toCon "Var"      [toTerm name]
+      Enum from t to    -> toCon "Enum"     [toTerm from, toTerm t, toTerm to]
+      List exprs        -> toCon "List"     [toTerm exprs]
+      Neg expr          -> toCon "Neg"      [toTerm expr]
+  fromTerm term = 
+      case term of
+        TCon sym [id]          | sym .= "Hole"     -> fromCon1 Hole id
+        TCon sym [msg, expr]   | sym .= "Feedback" -> fromCon2 Feedback msg expr
+        TCon sym [expr]        | sym .= "MustUse"  -> fromCon1 MustUse expr
+        TCon sym [expr, alts]  | sym .= "Case"     -> fromCon2 Case expr alts
+        TCon sym [name]        | sym .= "Con"      -> fromCon1 Con name
+        TCon sym [c, t, e]     | sym .= "If"       -> fromCon3 If c t e
+        TCon sym [l, op, r]    | sym .= "InfixApp" -> fromCon3 InfixApp l op r
+        TCon sym [pats, expr]  | sym .= "Lambda"   -> fromCon2 Lambda pats expr
+        TCon sym [decls, expr] | sym .= "Let"      -> fromCon2 Let decls expr
+        TCon sym [lit]         | sym .= "Lit"      -> fromCon1 Lit lit
+        TCon sym [fun, args]   | sym .= "App"      -> fromCon2 App fun args
+        TCon sym [expr]        | sym .= "Paren"    -> fromCon1 Paren expr
+        TCon sym [exprs]       | sym .= "Tuple"    -> fromCon1 Tuple exprs
+        TCon sym [name]        | sym .= "Var"      -> fromCon1 Var name
+        TCon sym [from, t, to] | sym .= "Enum"     -> fromCon3 Enum from t to
+        TCon sym [exprs]       | sym .= "List"     -> fromCon1 List exprs
+        TCon sym [expr]        | sym .= "Neg"      -> fromCon1 Neg expr
+        _ -> fromTermError term
+instance IsTerm MaybeExpr where
+  toTerm mexpr = 
+      case mexpr of
+        NoExpr        -> toCon "NoExpr"   []
+        JustExpr expr -> toCon "JustExpr" [toTerm expr]
+  fromTerm term =
+      case term of
+        TCon sym []     | sym .= "NoExpr"   -> return NoExpr
+        TCon sym [expr] | sym .= "JustExpr" -> fromCon1 JustExpr expr
+        _ -> fromTermError term
+instance IsTerm Alt where
+  toTerm alt = 
+      case alt of
+        AHole id       -> toCon "AHole"    [toTerm id]
+        Alt fb pat rhs -> toCon "Alt"      [toTerm fb, toTerm pat, toTerm rhs]
+        AltEmpty       -> toCon "AltEmpty" []
+  fromTerm term =
+      case term of
+        TCon sym [id]           | sym .= "AHole"    -> fromCon1 AHole id
+        TCon sym [fb, pat, rhs] | sym .= "Alt"      -> fromCon3 Alt fb pat rhs
+        TCon sym []             | sym .= "AltEmpty" -> return AltEmpty
+        _ -> fromTermError term
+instance IsTerm FunBind where
+  toTerm funbind =
+      case funbind of
+        FBHole id -> toCon "FBHole" [toTerm id]
+        FunBind fb name pats rhs -> 
+            toCon "FunBind" [toTerm fb, toTerm name, toTerm pats, toTerm rhs]
+  fromTerm term =
+      case term of
+        TCon sym [id] | sym .= "FBHole" -> fromCon1 FBHole id
+        TCon sym [fb, name, pats, rhs] | sym .= "FunBind" ->
+            liftM4 FunBind (fromTerm fb) (fromTerm name) (fromTerm pats) (fromTerm rhs)
+        _ -> fromTermError term
+instance IsTerm GuardedExpr where
+  toTerm (GExpr guard expr) = toCon "GExpr" [toTerm guard, toTerm expr]
+  fromTerm term =
+      case term of
+        TCon sym [guard, expr] | sym .= "GExpr" -> fromCon2 GExpr guard expr
+        _ -> fromTermError term
+instance IsTerm Literal where
+  toTerm lit = 
+      case lit of
+        LChar val   -> toCon "LChar"   [toTerm val]
+        LFloat val  -> toCon "LFloat"  [toTerm $ float2Double val]
+        LInt val    -> toCon "LInt"    [toTerm val]
+        LString val -> toCon "LString" [toTerm val]
+  fromTerm term@(TCon sym [val]) = 
+      case symToConstr sym of
+        "LChar"   -> fromCon1 LChar   val
+        "LFloat"  -> fromCon1 (LFloat . double2Float)  val
+        "LInt"    -> fromCon1 LInt    val
+        "LString" -> fromCon1 LString val
+        _         -> fromTermError term
+  fromTerm term = fromTermError term
+instance IsTerm Name where
+  toTerm name =
+      case name of
+        Ident name    -> toCon "Ident"    [toTerm name]
+        Operator name -> toCon "Operator" [toTerm name]
+        Special name  -> toCon "Special"  [toTerm name]
+  fromTerm term@(TCon sym [name]) = 
+      case symToConstr sym of
+        "Ident"    -> fromCon1 Ident    name
+        "Operator" -> fromCon1 Operator name
+        "Special"  -> fromCon1 Special  name
+        _          -> fromTermError term
+  fromTerm term = fromTermError term
+instance IsTerm MaybeName where
+  toTerm mname = 
+      case mname of
+        NoName        -> toCon "NoName" []
+        JustName name -> toCon "JustName" [toTerm name]
+  fromTerm term = 
+      case term of
+        TCon sym [] | sym .= "NoName" -> return NoName
+        TCon sym [name] | sym .= "JustName" -> fromCon1 JustName name
+        _ -> fromTermError term
+instance IsTerm Pat where
+  toTerm pat =
+      case pat of
+        PHole id           -> toCon "PHole"     [toTerm id]
+        PCon name pats     -> toCon "PCon"      [toTerm name, toTerm pats]
+        PInfixCon l name r -> toCon "PInfixCon" [toTerm l, toTerm name, toTerm r]
+        PList pats         -> toCon "PList"     [toTerm pats]
+        PLit lit           -> toCon "PLit"      [toTerm lit]
+        PParen pat         -> toCon "PParen"    [toTerm pat]
+        PTuple pats        -> toCon "PTuple"    [toTerm pats]
+        PVar name          -> toCon "PVar"      [toTerm name]
+        PAs name pat       -> toCon "PAs"       [toTerm name, toTerm pat]
+        PWildcard          -> toCon "PWildcard" []
+  fromTerm term = 
+      case term of
+        TCon sym [id]         | sym .= "PHole"     -> fromCon1 PHole id
+        TCon sym [name, pats] | sym .= "PCon"      -> fromCon2 PCon name pats
+        TCon sym [l, name, r] | sym .= "PInfixCon" -> fromCon3 PInfixCon l name r
+        TCon sym [pats]       | sym .= "PList"     -> fromCon1 PList pats
+        TCon sym [lit]        | sym .= "PLit"      -> fromCon1 PLit lit
+        TCon sym [pat]        | sym .= "PParen"    -> fromCon1 PParen pat
+        TCon sym [pats]       | sym .= "PTuple"    -> fromCon1 PTuple pats
+        TCon sym [name]       | sym .= "PVar"      -> fromCon1 PVar name
+        TCon sym [name, pat]  | sym .= "PAs"       -> fromCon2 PAs name pat
+        TCon sym []           | sym .= "PWildcard" -> return PWildcard
+        _ -> fromTermError term
+instance IsTerm Rhs where
+  toTerm rhs =
+      case rhs of
+        Rhs expr where_    -> toCon "Rhs"  [toTerm expr, toTerm where_]
+        GRhs gexprs where_ -> toCon "GRhs" [toTerm gexprs, toTerm where_]
+  fromTerm term = 
+      case term of
+        TCon sym [expr, where_]   | sym .= "Rhs"  -> fromCon2 Rhs expr where_
+        TCon sym [gexprs, where_] | sym .= "GRhs" -> fromCon2 GRhs gexprs where_
+        _ -> fromTermError term
+
+instance IsTerm a => IsTerm (Maybe a) where
+    toTerm = maybe (toCon "Nothing" []) (\x -> toCon "Just" [toTerm x])
+    fromTerm term =
+        case term of
+          TCon sym []  | sym .= "Nothing" -> return Nothing
+          TCon sym [a] | sym .= "Just"    -> fromCon1 Just a
+          _ -> fromTermError term          
+
+fromTermError :: MonadPlus m => Term -> m a
+fromTermError term = fail $ "No fromTerm definition for: " ++ show term
+
+instance Reference Name
+
+-- | A convenient shorthand notation for Biplate constraints
+class ( Biplate b Module, Biplate b Body, Biplate b Decl, Biplate b Expr
+      , Biplate b FunBind, Biplate b Alt, Biplate b Pat 
+      , Biplate b Rhs, Typeable b ) 
+      => BiplateFor b
+instance BiplateFor Module where
+instance BiplateFor Decl   where
+instance BiplateFor Rhs    where
+instance BiplateFor Pat    where
+instance BiplateFor Expr   where  
+
+instance Uniplate Module where
+         
+        {-# INLINE uniplate #-}
+        uniplate x = plate x
+
+ 
+instance Uniplate Body where
+         
+        {-# INLINE uniplate #-}
+        uniplate x = plate x
+
+ 
+instance Uniplate Decl where
+         
+        {-# INLINE uniplate #-}
+        uniplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        uniplate (DPatBind x1 x2) = plate (DPatBind x1) |+ x2
+        uniplate x = plate x
+
+ 
+instance Uniplate FunBind where
+         
+        {-# INLINE uniplate #-}
+        uniplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2 x3) |+ x4
+        uniplate x = plate x
+
+ 
+instance Uniplate Pat where
+         
+        {-# INLINE uniplate #-}
+        uniplate (PAs x1 x2) = plate (PAs x1) |* x2
+        uniplate (PCon x1 x2) = plate (PCon x1) ||* x2
+        uniplate (PInfixCon x1 x2 x3) = plate PInfixCon |* x1 |- x2 |* x3
+        uniplate (PList x1) = plate PList ||* x1
+        uniplate (PParen x1) = plate PParen |* x1
+        uniplate (PTuple x1) = plate PTuple ||* x1
+        uniplate x = plate x
+
+ 
+instance Uniplate Rhs where
+         
+        {-# INLINE uniplate #-}
+        uniplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        uniplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Uniplate Expr where
+         
+        {-# INLINE uniplate #-}
+        uniplate (App x1 x2) = plate App |* x1 ||* x2
+        uniplate (Case x1 x2) = plate Case |* x1 ||+ x2
+        uniplate (Enum x1 x2 x3) = plate Enum |* x1 |+ x2 |+ x3
+        uniplate (Feedback x1 x2) = plate (Feedback x1) |* x2
+        uniplate (If x1 x2 x3) = plate If |* x1 |* x2 |* x3
+        uniplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |* x2 |+ x3
+        uniplate (Lambda x1 x2) = plate (Lambda x1) |* x2
+        uniplate (Let x1 x2) = plate Let ||+ x1 |* x2
+        uniplate (List x1) = plate List ||* x1
+        uniplate (MustUse x1) = plate MustUse |* x1
+        uniplate (Neg x1) = plate Neg |* x1
+        uniplate (Paren x1) = plate Paren |* x1
+        uniplate (Tuple x1) = plate Tuple ||* x1
+        uniplate x = plate x
+
+ 
+instance Uniplate MaybeExpr where
+         
+        {-# INLINE uniplate #-}
+        uniplate (JustExpr x1) = plate JustExpr |+ x1
+        uniplate x = plate x
+
+ 
+instance Uniplate Alt where
+         
+        {-# INLINE uniplate #-}
+        uniplate (Alt x1 x2 x3) = plate (Alt x1 x2) |+ x3
+        uniplate x = plate x
+
+ 
+instance Uniplate Name where
+         
+        {-# INLINE uniplate #-}
+        uniplate x = plate x
+
+ 
+instance Uniplate MaybeName where
+         
+        {-# INLINE uniplate #-}
+        uniplate x = plate x
+
+ 
+instance Uniplate Literal where
+         
+        {-# INLINE uniplate #-}
+        uniplate x = plate x
+
+ 
+instance Uniplate GuardedExpr where
+         
+        {-# INLINE uniplate #-}
+        uniplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+instance Biplate Module Module where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Module Body where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |* x2
+
+ 
+instance Biplate Module Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module Name where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate Module |+ x1 |+ x2
+
+ 
+instance Biplate Module MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate Module |* x1 |- x2
+
+ 
+instance Biplate Module Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Module GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (Module x1 x2) = plate (Module x1) |+ x2
+
+ 
+instance Biplate Body Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Body Body where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Body Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||* x1
+        biplate x = plate x
+
+ 
+instance Biplate Body FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body Name where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Body Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Body GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (Body x1) = plate Body ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Decl Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Decl Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Decl Decl where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Decl FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||* x1
+        biplate (DPatBind x1 x2) = plate (DPatBind x1) |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate DPatBind |* x1 |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate (DPatBind x1) |* x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate (DPatBind x1) |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate (DPatBind x1) |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate (DPatBind x1) |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl Name where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate DPatBind |+ x1 |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Decl Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate DPatBind |+ x1 |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate Decl GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (DFunBinds x1) = plate DFunBinds ||+ x1
+        biplate (DPatBind x1 x2) = plate (DPatBind x1) |+ x2
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2 x3) |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate FunBind Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2) ||* x3 |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2 x3) |* x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2 x3) |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2 x3) |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2 x3) |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Name where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4)
+          = plate (FunBind x1) |* x2 ||+ x3 |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate FunBind Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2) ||+ x3 |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate FunBind GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (FunBind x1 x2 x3 x4) = plate (FunBind x1 x2 x3) |+ x4
+        biplate x = plate x
+
+ 
+instance Biplate Pat Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat Decl where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat Pat where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Pat Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat Expr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat Alt where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat Name where
+         
+        {-# INLINE biplate #-}
+        biplate (PAs x1 x2) = plate PAs |* x1 |+ x2
+        biplate (PCon x1 x2) = plate PCon |* x1 ||+ x2
+        biplate (PInfixCon x1 x2 x3) = plate PInfixCon |+ x1 |* x2 |+ x3
+        biplate (PList x1) = plate PList ||+ x1
+        biplate (PParen x1) = plate PParen |+ x1
+        biplate (PTuple x1) = plate PTuple ||+ x1
+        biplate (PVar x1) = plate PVar |* x1
+        biplate x = plate x
+
+ 
+instance Biplate Pat MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Pat Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (PAs x1 x2) = plate (PAs x1) |+ x2
+        biplate (PCon x1 x2) = plate (PCon x1) ||+ x2
+        biplate (PInfixCon x1 x2 x3) = plate PInfixCon |+ x1 |- x2 |+ x3
+        biplate (PList x1) = plate PList ||+ x1
+        biplate (PLit x1) = plate PLit |* x1
+        biplate (PParen x1) = plate PParen |+ x1
+        biplate (PTuple x1) = plate PTuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Pat GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Rhs Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Rhs Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Rhs Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||* x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||* x2
+
+ 
+instance Biplate Rhs FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Biplate Rhs Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Biplate Rhs Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Rhs Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |* x1 ||+ x2
+
+ 
+instance Biplate Rhs MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Biplate Rhs Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Biplate Rhs Name where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Biplate Rhs MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Rhs Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||+ x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Biplate Rhs GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (GRhs x1 x2) = plate GRhs ||* x1 ||+ x2
+        biplate (Rhs x1 x2) = plate Rhs |+ x1 ||+ x2
+
+ 
+instance Biplate Expr Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Expr Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Expr Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate (Lambda x1) |+ x2
+        biplate (Let x1 x2) = plate Let ||* x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate (Lambda x1) |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate Lambda ||* x1 |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate (Lambda x1) |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr Expr where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Expr MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |* x2 |* x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |* x1 |+ x2 |* x3
+        biplate (Lambda x1 x2) = plate (Lambda x1) |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||* x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate (Lambda x1) |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr Name where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Con x1) = plate Con |* x1
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate Lambda ||+ x1 |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate (Var x1) = plate Var |* x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Expr Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate Lambda ||+ x1 |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (Lit x1) = plate Lit |* x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Expr GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (App x1 x2) = plate App |+ x1 ||+ x2
+        biplate (Case x1 x2) = plate Case |+ x1 ||+ x2
+        biplate (Enum x1 x2 x3) = plate Enum |+ x1 |+ x2 |+ x3
+        biplate (Feedback x1 x2) = plate (Feedback x1) |+ x2
+        biplate (If x1 x2 x3) = plate If |+ x1 |+ x2 |+ x3
+        biplate (InfixApp x1 x2 x3) = plate InfixApp |+ x1 |+ x2 |+ x3
+        biplate (Lambda x1 x2) = plate (Lambda x1) |+ x2
+        biplate (Let x1 x2) = plate Let ||+ x1 |+ x2
+        biplate (List x1) = plate List ||+ x1
+        biplate (MustUse x1) = plate MustUse |+ x1
+        biplate (Neg x1) = plate Neg |+ x1
+        biplate (Paren x1) = plate Paren |+ x1
+        biplate (Tuple x1) = plate Tuple ||+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |* x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate MaybeExpr Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Name where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeExpr GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (JustExpr x1) = plate JustExpr |+ x1
+        biplate x = plate x
+
+ 
+instance Biplate Alt Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Alt Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Alt Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1 x2) |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1 x2) |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1) |* x2 |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1 x2) |* x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1 x2) |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1 x2) |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt Alt where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Alt Name where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1) |+ x2 |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Alt Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1) |+ x2 |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Alt GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (Alt x1 x2 x3) = plate (Alt x1 x2) |+ x3
+        biplate x = plate x
+
+ 
+instance Biplate Name Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Decl where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Pat where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Expr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Alt where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Name where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Name MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name Literal where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Name GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Decl where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Pat where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Expr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Alt where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName Name where
+         
+        {-# INLINE biplate #-}
+        biplate (JustName x1) = plate JustName |* x1
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate MaybeName Literal where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate MaybeName GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Decl where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Pat where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Expr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Alt where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Name where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate Literal Literal where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+ 
+instance Biplate Literal GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate GuardedExpr Module where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate GuardedExpr Body where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate GuardedExpr Decl where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr FunBind where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr Pat where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr Rhs where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr Expr where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |* x1 |* x2
+
+ 
+instance Biplate GuardedExpr MaybeExpr where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr Alt where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr Name where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr MaybeName where
+         
+        {-# INLINE biplate #-}
+        biplate x = plate x
+
+ 
+instance Biplate GuardedExpr Literal where
+         
+        {-# INLINE biplate #-}
+        biplate (GExpr x1 x2) = plate GExpr |+ x1 |+ x2
+
+ 
+instance Biplate GuardedExpr GuardedExpr where
+         
+        {-# INLINE biplate #-}
+        biplate = plateSelf
+
+-- | Deriving uniplate instances
+-- ds = [ "Module", "Body", "Decl", "FunBind", "Pat", "Rhs", "Expr", "MaybeExpr", "Alt"
+--      , "Name", "MaybeName", "Literal", "GuardedExpr" ]
+-- 
+-- putStrLn $ "{-!\n" 
+--          ++ unlines ["deriving instance UniplateDirect " ++ d | d <- ds] 
+--          ++ unlines ["deriving instance UniplateDirect " ++ d ++ " " ++ d' | d <- ds, d' <- ds] 
+--          ++ "!-}"
+
+{-!
+deriving instance UniplateDirect Module
+deriving instance UniplateDirect Body
+deriving instance UniplateDirect Decl
+deriving instance UniplateDirect FunBind
+deriving instance UniplateDirect Pat
+deriving instance UniplateDirect Rhs
+deriving instance UniplateDirect Expr
+deriving instance UniplateDirect MaybeExpr
+deriving instance UniplateDirect Alt
+deriving instance UniplateDirect Name
+deriving instance UniplateDirect MaybeName
+deriving instance UniplateDirect Literal
+deriving instance UniplateDirect GuardedExpr
+deriving instance UniplateDirect Module Module
+deriving instance UniplateDirect Module Body
+deriving instance UniplateDirect Module Decl
+deriving instance UniplateDirect Module FunBind
+deriving instance UniplateDirect Module Pat
+deriving instance UniplateDirect Module Rhs
+deriving instance UniplateDirect Module Expr
+deriving instance UniplateDirect Module MaybeExpr
+deriving instance UniplateDirect Module Alt
+deriving instance UniplateDirect Module Name
+deriving instance UniplateDirect Module MaybeName
+deriving instance UniplateDirect Module Literal
+deriving instance UniplateDirect Module GuardedExpr
+deriving instance UniplateDirect Body Module
+deriving instance UniplateDirect Body Body
+deriving instance UniplateDirect Body Decl
+deriving instance UniplateDirect Body FunBind
+deriving instance UniplateDirect Body Pat
+deriving instance UniplateDirect Body Rhs
+deriving instance UniplateDirect Body Expr
+deriving instance UniplateDirect Body MaybeExpr
+deriving instance UniplateDirect Body Alt
+deriving instance UniplateDirect Body Name
+deriving instance UniplateDirect Body MaybeName
+deriving instance UniplateDirect Body Literal
+deriving instance UniplateDirect Body GuardedExpr
+deriving instance UniplateDirect Decl Module
+deriving instance UniplateDirect Decl Body
+deriving instance UniplateDirect Decl Decl
+deriving instance UniplateDirect Decl FunBind
+deriving instance UniplateDirect Decl Pat
+deriving instance UniplateDirect Decl Rhs
+deriving instance UniplateDirect Decl Expr
+deriving instance UniplateDirect Decl MaybeExpr
+deriving instance UniplateDirect Decl Alt
+deriving instance UniplateDirect Decl Name
+deriving instance UniplateDirect Decl MaybeName
+deriving instance UniplateDirect Decl Literal
+deriving instance UniplateDirect Decl GuardedExpr
+deriving instance UniplateDirect FunBind Module
+deriving instance UniplateDirect FunBind Body
+deriving instance UniplateDirect FunBind Decl
+deriving instance UniplateDirect FunBind FunBind
+deriving instance UniplateDirect FunBind Pat
+deriving instance UniplateDirect FunBind Rhs
+deriving instance UniplateDirect FunBind Expr
+deriving instance UniplateDirect FunBind MaybeExpr
+deriving instance UniplateDirect FunBind Alt
+deriving instance UniplateDirect FunBind Name
+deriving instance UniplateDirect FunBind MaybeName
+deriving instance UniplateDirect FunBind Literal
+deriving instance UniplateDirect FunBind GuardedExpr
+deriving instance UniplateDirect Pat Module
+deriving instance UniplateDirect Pat Body
+deriving instance UniplateDirect Pat Decl
+deriving instance UniplateDirect Pat FunBind
+deriving instance UniplateDirect Pat Pat
+deriving instance UniplateDirect Pat Rhs
+deriving instance UniplateDirect Pat Expr
+deriving instance UniplateDirect Pat MaybeExpr
+deriving instance UniplateDirect Pat Alt
+deriving instance UniplateDirect Pat Name
+deriving instance UniplateDirect Pat MaybeName
+deriving instance UniplateDirect Pat Literal
+deriving instance UniplateDirect Pat GuardedExpr
+deriving instance UniplateDirect Rhs Module
+deriving instance UniplateDirect Rhs Body
+deriving instance UniplateDirect Rhs Decl
+deriving instance UniplateDirect Rhs FunBind
+deriving instance UniplateDirect Rhs Pat
+deriving instance UniplateDirect Rhs Rhs
+deriving instance UniplateDirect Rhs Expr
+deriving instance UniplateDirect Rhs MaybeExpr
+deriving instance UniplateDirect Rhs Alt
+deriving instance UniplateDirect Rhs Name
+deriving instance UniplateDirect Rhs MaybeName
+deriving instance UniplateDirect Rhs Literal
+deriving instance UniplateDirect Rhs GuardedExpr
+deriving instance UniplateDirect Expr Module
+deriving instance UniplateDirect Expr Body
+deriving instance UniplateDirect Expr Decl
+deriving instance UniplateDirect Expr FunBind
+deriving instance UniplateDirect Expr Pat
+deriving instance UniplateDirect Expr Rhs
+deriving instance UniplateDirect Expr Expr
+deriving instance UniplateDirect Expr MaybeExpr
+deriving instance UniplateDirect Expr Alt
+deriving instance UniplateDirect Expr Name
+deriving instance UniplateDirect Expr MaybeName
+deriving instance UniplateDirect Expr Literal
+deriving instance UniplateDirect Expr GuardedExpr
+deriving instance UniplateDirect MaybeExpr Module
+deriving instance UniplateDirect MaybeExpr Body
+deriving instance UniplateDirect MaybeExpr Decl
+deriving instance UniplateDirect MaybeExpr FunBind
+deriving instance UniplateDirect MaybeExpr Pat
+deriving instance UniplateDirect MaybeExpr Rhs
+deriving instance UniplateDirect MaybeExpr Expr
+deriving instance UniplateDirect MaybeExpr MaybeExpr
+deriving instance UniplateDirect MaybeExpr Alt
+deriving instance UniplateDirect MaybeExpr Name
+deriving instance UniplateDirect MaybeExpr MaybeName
+deriving instance UniplateDirect MaybeExpr Literal
+deriving instance UniplateDirect MaybeExpr GuardedExpr
+deriving instance UniplateDirect Alt Module
+deriving instance UniplateDirect Alt Body
+deriving instance UniplateDirect Alt Decl
+deriving instance UniplateDirect Alt FunBind
+deriving instance UniplateDirect Alt Pat
+deriving instance UniplateDirect Alt Rhs
+deriving instance UniplateDirect Alt Expr
+deriving instance UniplateDirect Alt MaybeExpr
+deriving instance UniplateDirect Alt Alt
+deriving instance UniplateDirect Alt Name
+deriving instance UniplateDirect Alt MaybeName
+deriving instance UniplateDirect Alt Literal
+deriving instance UniplateDirect Alt GuardedExpr
+deriving instance UniplateDirect Name Module
+deriving instance UniplateDirect Name Body
+deriving instance UniplateDirect Name Decl
+deriving instance UniplateDirect Name FunBind
+deriving instance UniplateDirect Name Pat
+deriving instance UniplateDirect Name Rhs
+deriving instance UniplateDirect Name Expr
+deriving instance UniplateDirect Name MaybeExpr
+deriving instance UniplateDirect Name Alt
+deriving instance UniplateDirect Name Name
+deriving instance UniplateDirect Name MaybeName
+deriving instance UniplateDirect Name Literal
+deriving instance UniplateDirect Name GuardedExpr
+deriving instance UniplateDirect MaybeName Module
+deriving instance UniplateDirect MaybeName Body
+deriving instance UniplateDirect MaybeName Decl
+deriving instance UniplateDirect MaybeName FunBind
+deriving instance UniplateDirect MaybeName Pat
+deriving instance UniplateDirect MaybeName Rhs
+deriving instance UniplateDirect MaybeName Expr
+deriving instance UniplateDirect MaybeName MaybeExpr
+deriving instance UniplateDirect MaybeName Alt
+deriving instance UniplateDirect MaybeName Name
+deriving instance UniplateDirect MaybeName MaybeName
+deriving instance UniplateDirect MaybeName Literal
+deriving instance UniplateDirect MaybeName GuardedExpr
+deriving instance UniplateDirect Literal Module
+deriving instance UniplateDirect Literal Body
+deriving instance UniplateDirect Literal Decl
+deriving instance UniplateDirect Literal FunBind
+deriving instance UniplateDirect Literal Pat
+deriving instance UniplateDirect Literal Rhs
+deriving instance UniplateDirect Literal Expr
+deriving instance UniplateDirect Literal MaybeExpr
+deriving instance UniplateDirect Literal Alt
+deriving instance UniplateDirect Literal Name
+deriving instance UniplateDirect Literal MaybeName
+deriving instance UniplateDirect Literal Literal
+deriving instance UniplateDirect Literal GuardedExpr
+deriving instance UniplateDirect GuardedExpr Module
+deriving instance UniplateDirect GuardedExpr Body
+deriving instance UniplateDirect GuardedExpr Decl
+deriving instance UniplateDirect GuardedExpr FunBind
+deriving instance UniplateDirect GuardedExpr Pat
+deriving instance UniplateDirect GuardedExpr Rhs
+deriving instance UniplateDirect GuardedExpr Expr
+deriving instance UniplateDirect GuardedExpr MaybeExpr
+deriving instance UniplateDirect GuardedExpr Alt
+deriving instance UniplateDirect GuardedExpr Name
+deriving instance UniplateDirect GuardedExpr MaybeName
+deriving instance UniplateDirect GuardedExpr Literal
+deriving instance UniplateDirect GuardedExpr GuardedExpr
+!-}
+}

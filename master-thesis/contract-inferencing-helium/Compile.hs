@@ -40,3 +40,7 @@ compileWithRanges txt = either error id $ safeCompileWithRanges txt
 
 safeCompileWithRanges :: String -> Either String ModuleR
 safeCompileWithRanges txt = H.compile txt >>= matchM heliumView
+
+expandLets (LetR (x:xs) e r) = LetR [x] (expandLets $ LetR xs e r) r
+expandLets (LetR [] e _) = e
+
