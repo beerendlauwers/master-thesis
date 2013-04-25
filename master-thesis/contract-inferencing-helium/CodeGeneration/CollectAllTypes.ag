@@ -1,0 +1,69 @@
+-- ~/thesis/FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.CodeGeneration.CollectAllTypes" Domain/FP/CodeGeneration/CollectAllTypes.ag
+
+-- Include simplified syntax used by Ask-Elle
+include "Domain/FP/SyntaxWithRanges.ag"
+
+-- Include Utils.ag
+include "Domain/FP/CodeGeneration/Utils.ag"
+
+include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
+
+imports
+{
+import qualified Domain.FP.Helium as H
+}
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+   syn copy                                             :: self
+
+  -- We get this from the Helium compiler.
+  inh topLevelTypes                                     :: {IE.ImportEnvironment}
+
+--{
+--data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
+--                   NoLocalDefinitions
+--}
+
+sem ExprR
+   | LetR
+    -- Generate types for this group of bindings.
+      loc  .asModuleR           = makeModuleR @decls.copy
+      loc  .heliumResults       = H.compileWithExtraEnv (show $ pprint @loc.asModuleR) @lhs.topLevelTypes
+      loc  .types               = H.extractTypes @loc.heliumResults
+      loc  .importEnv           = H.extractImportEnv @loc.heliumResults
+
+    -- TODO: Pass types down to decls and assign them to each definition, so everyone knows their type.
+
+    -- Combine environment and pass it down to children.
+      loc  .newEnv              = IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
+      decls.topLevelTypes       = @loc.newEnv
+      expr .topLevelTypes       = @loc.newEnv
+
+sem RhsR
+  | RhsR
+    -- Generate types for this group of bindings.
+      loc  .asModuleR           = makeModuleR @where.copy
+      loc  .heliumResults       = H.compileWithExtraEnv (show $ pprint @loc.asModuleR) @lhs.topLevelTypes
+      loc  .types               = H.extractTypes @loc.heliumResults
+      loc  .importEnv           = H.extractImportEnv @loc.heliumResults
+
+    -- TODO: Pass types down to decls and assign them to each definition, so everyone knows their type.
+
+    -- Combine environment and pass it down to children.
+      loc  .newEnv              = IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
+      where.topLevelTypes       = @loc.newEnv
+      expr .topLevelTypes       = @loc.newEnv
+
+  | GRhsR
+    -- Generate types for this group of bindings.
+      loc  .asModuleR           = makeModuleR @where.copy
+      loc  .heliumResults       = H.compileWithExtraEnv (show $ pprint @loc.asModuleR) @lhs.topLevelTypes
+      loc  .types               = H.extractTypes @loc.heliumResults
+      loc  .importEnv           = H.extractImportEnv @loc.heliumResults
+
+    -- TODO: Pass types down to decls and assign them to each definition, so everyone knows their type.
+
+    -- Combine environment and pass it down to children.
+      loc  .newEnv              = IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
+      where.topLevelTypes       = @loc.newEnv
+      gexprs.topLevelTypes      = @loc.newEnv

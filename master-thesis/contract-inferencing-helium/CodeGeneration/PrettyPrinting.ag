@@ -5,10 +5,11 @@ optpragmas
 
 imports
 {
-import qualified Common.Library (build)
+import qualified Common.Library as CL (build)
 import Text.PrettyPrint as PP
---import qualified Domain.FP.Helium as H
---import Domain.FP.Views (heliumView)
+import qualified Domain.FP.Helium as Helium
+import qualified Domain.FP.Views as Views
+import Domain.FP.Views ()
 }
 
 
@@ -40,21 +41,67 @@ instance Pretty NameR where
   pprint (OperatorR n _) = PP.text n
   pprint (SpecialR n _)  = PP.text n
 
--- We can't use these in AGs, we get a "Duplicate instance declarations" error:
--- Domain/FP/SyntaxWithRanges.ag:506:10:
---     Duplicate instance declarations:
---       instance [overlap ok] IsTerm a => IsTerm (Maybe a)
---         -- Defined at Domain/FP/SyntaxWithRanges.ag:506:10
---       instance IsTerm a => IsTerm (Maybe a)
---         -- Defined at src/Domain/FP/SyntaxWithRanges.hs:271:10
+-- For some reason, we are missing instance declarations???
+
+{-
+Domain/FP/CodeGeneration/PrettyPrinting.ag:53:49:
+    No instance for (Views.Cast Helium.Module ModuleR)
+      arising from a use of `Views.heliumWithRangesView'
+    Possible fix:
+      add an instance declaration for (Views.Cast Helium.Module ModuleR)
+    In the first argument of `CL.build', namely
+      `Views.heliumWithRangesView'
+    In the second argument of `(.)', namely
+      `CL.build Views.heliumWithRangesView'
+    In the second argument of `(.)', namely
+      `Helium.ppModule . CL.build Views.heliumWithRangesView'
+
+Domain/FP/CodeGeneration/PrettyPrinting.ag:56:54:
+    No instance for (Views.Cast Helium.Declaration DeclR)
+      arising from a use of `Views.heliumWithRangesView'
+    Possible fix:
+      add an instance declaration for
+      (Views.Cast Helium.Declaration DeclR)
+    In the first argument of `CL.build', namely
+      `Views.heliumWithRangesView'
+    In the second argument of `(.)', namely
+      `CL.build Views.heliumWithRangesView'
+    In the second argument of `(.)', namely
+      `Helium.ppDeclaration . CL.build Views.heliumWithRangesView'
+
+Domain/FP/CodeGeneration/PrettyPrinting.ag:59:53:
+    No instance for (Views.Cast Helium.Expression ExprR)
+      arising from a use of `Views.heliumWithRangesView'
+    Possible fix:
+      add an instance declaration for
+      (Views.Cast Helium.Expression ExprR)
+    In the first argument of `CL.build', namely
+      `Views.heliumWithRangesView'
+    In the second argument of `(.)', namely
+      `CL.build Views.heliumWithRangesView'
+    In the second argument of `(.)', namely
+      `Helium.ppExpression . CL.build Views.heliumWithRangesView'
+
+Domain/FP/CodeGeneration/Utils.ag:42:66:
+    No instance for (Views.Cast Helium.Name NameR)
+      arising from a use of `convertHeliumNameToNameR'
+    Possible fix:
+      add an instance declaration for (Views.Cast Helium.Name NameR)
+    In the expression: convertHeliumNameToNameR name
+    In the expression:
+      (convertHeliumNameToNameR name, getParameterArity ty)
+    In the first argument of `map', namely
+      `(\ (name, ty)
+          -> (convertHeliumNameToNameR name, getParameterArity ty))'
+-}
 
 
---instance Pretty ModuleR where
---  pprint = PP.text . H.ppModule . build heliumView
+instance Pretty ModuleR where
+  pprint = PP.text . Helium.ppModule . CL.build Views.heliumWithRangesView
 
---instance Pretty DeclR where
---  pprint = PP.text . H.ppDeclaration . build heliumView
+instance Pretty DeclR where
+  pprint = PP.text . Helium.ppDeclaration . CL.build Views.heliumWithRangesView
 
---instance Pretty ExprR where
---  pprint = PP.text . H.ppExpression . build heliumView
+instance Pretty ExprR where
+  pprint = PP.text . Helium.ppExpression . CL.build Views.heliumWithRangesView
 }
