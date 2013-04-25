@@ -11,8 +11,8 @@ include "Domain/FP/CodeGeneration/Utils.ag"
 include "Domain/FP/CodeGeneration/DebugCode.ag"
 
 {
-type FunctionArityEnvironment = Map Name Int
-type ParameterArityEnvironment = Map Name [Int]
+type FunctionArityEnvironment = Map NameR Int
+type ParameterArityEnvironment = Map NameR [Int]
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -25,7 +25,7 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
   inh topLevelTypes                                     :: {ImportEnvironment}
 
   -- Identifiers that shadow the top-level identifiers.
-  inh localIdentifiers                                  :: {[Name]}
+  inh localIdentifiers                                  :: {[NameR]}
 
   -- The 'main' function, the top-level point of entry. We'll start contract generation here.
   inh entryFunction                                     :: {String}
