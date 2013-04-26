@@ -1,0 +1,142 @@
+CODE GENERATION:
+
+Elke functie die wordt gebruikt moet worden gecontracteerd.
+Met andere woorden, er dienen voor elke functie FUNCTIENAAM drie dingen te gebeuren:
+
+1) Generatie van een gecontracteerde functie call, bv:
+
+   __contracted_FUNCTIENAAM ctrt = assert "FUNCTIENAAM" ctrt funs
+     where funs = ...
+
+Deze call wordt gebruikt om de originele functie call te vervangen.
+
+2) Generatie van een functie die de gecontracteerde functie aanroept en de parameters toepast, bv:
+
+   __app_FUNCTIENAAM (POSX,X) (POSY,Y) = app (app __contracted_FUNCTIENAAM CONTRACT POSX X) POSY Y
+
+3) Vervanging van elke call van FUNCTIENAAM door de functie gegenereerd in stap 2.
+   Hier dient te worden opgelet als FUNCTIENAAM een parameter is in een higher-order functie,
+   want dan moet de functie gegenereerd in stap 1 worden gebruikt.
+
+   TODO: Wat met partially-applied gecontracteerde functies?
+
+
+Hiernaast moet de originele point-of-entry functie (bv. "main") worden hernoemd naar iets anders,
+bv. "__original_main", en elke referentie naar de oude definitie moet worden vervangen met de nieuwe.
+
+Om bovenstaande functionaliteit te verkrijgen, hebben we de volgende elementen nodig:
+
+A) Type van de functie / binding. Dit is nodig om elementen B en C te verkrijgen.
+B) Arity van de functie. Bv. foldr = 3
+C) Parameter-arity van de functie. Bv. foldr = [2,0,0]
+D) Contract van de functie.
+
+Element D vereist het infereren van een contract. We gebruiken momenteel een HM-achtig inferentiesysteem,
+maar het is niet duidelijk hoe dit gemakkelijk kan worden uitgebreid met binding groups voor mutually recursive functies.
+
+Een andere mogelijkheid is de volgende: Indien het type van de functie gekend is,
+kan een gegeneraliseerd contract hieruit worden gegenereerd, bv.
+
+foldr :: (a -> b -> b) -> b -> [a] -> b
+
+genereert het volgende geldige, gegeneraliseerde contract:
+
+foldr ;; (a1 >-> b1 >-> b2) >-> b3 >-> (a2 <@> a3) >-> b4
+
+Omdat van elke top-level functie en -binding de types gekend zijn, is het mogelijk om een "finaal" contract
+te genereren voor elke functie. Als we deze informatie in een contract environment gooien en dan gebruiken om
+contract inferentie uit te voeren, zou dit moeten leiden tot specifieke contracten. Bijvoorbeeld:
+
+f x = g x
+g x = [x]
+z = (f '2', f 5)
+
+Gekende types, van Helium:
+f :: a -> [a]
+g :: a -> [a]
+z :: ([Char],[Int])
+
+We genereren de volgende contracten:
+f ;; A0 >-> (A1 <@> A2)
+g ;; A3 >-> (A4 <@> A5)
+
+Het contract van z wordt op voorhand meegegeven:
+z ;; (True <@> IsChar, True <@> IsNum)
+
+Inferentie van f x = g x levert de volgende substituties op:
+
+A0 = A3
+(A1 <@> A2) = (A4 <@> A5)
+
+Inferentie van g x = [x] levert de volgende substitutie op:
+
+A3 = A5
+
+Uiteindelijk zijn de contracten:
+
+f ;; A5 >-> (A4 <@> A5)
+g ;; A5 >-> (A4 <@> A5)
+
+Maar bij z worden de contracten van f specifieker, namelijk:
+
+f '2' genereert de volgende substituties:
+A4 = True
+A5 = IsChar
+
+dus f ;; IsChar >-> (True <@> IsChar)
+
+f 5 genereert de volgende substituties, namelijk:
+A4 = True
+A5 = IsNum
+
+dus f ;; IsNum >-> (True <@> IsNum)
+
+Merk op dat we hier van een forall'd contract naar een contract gaan zonder foralls.
+Deze inferentie-informatie moet niet worden verspreid naar de rest van de code,
+want dan zou de rest van de contracten minder algemeen worden.
+
+Zo zou de gegenereerde code er uit zien:
+
+__contracted_f ctrt = assert "f" ctrt funs
+  where funs = fun (\x -> f x)
+
+__app_f ctrt (posx,x) = app (__contracted_f ctrt) posx x
+
+__contracted_g ctrt = assert "g" ctrt funs
+  where funs = fun (\x -> g x)
+
+__app_g ctrt (posx,x) = app (__contracted_g ctrt) posx x
+
+f x = __app_g (a5 >-> (a4 <@> a5)) (posx,x)
+g x = [x]
+z = ( __app_f (IsChar >-> (True <@> IsChar)) (pos2,'2'), __app_f (IsNum >-> (True <@> IsNum)) (pos5,5) )
+
+Mogelijk probleem: er wordt een nutteloos contract genenereerd voor de applicatie van g in de definitie van f,
+en het is mogelijk net interessant dat ook g de informatie in het contract meekrijgt.
+
+In tegenstelling tot een type is het voor een contract erg interessant om dieper de AST in te worden doorgegeven.
+Misschien kan er een lijst van substituties worden opgebouwd die wordt doorgegeven en toegepast wanneer de code runt?
+
+bv.
+
+Dit wordt gegenereerd voor f 5:
+substs = [a4 = True,a5 = IsNum]
+
+Dit wordt gegenereerd voor f '2':
+substs = [a4  True,a5 = IsChar]
+
+Deze lijst wordt meegegeven aan g:
+
+__contracted_f ctrt = assert "f" ctrt funs
+  where funs = fun (\x -> f (genSubsts ctrt) x)
+        genSubsts ctrt = GENERATIECODE
+
+Waar GENERATIECODE het volgende zou doen:
+De generatiecode zou het oorspronkelijke, meest generale contract unificeren met het specifieke contract (ctrt).
+Het oorspronkelijke contract wordt gehardcoded (het is immers het meest generale) en bevat hopelijk contractvariabelen
+die ook voorkomen in het generale contract van de functie aan wie het wordt doorgegeven.
+
+Op deze manier worden relevante (= specifiekere) delen van het contract gepropageerd zonder generaliteit te verliezen.
+
+Merk ook op dat de volledige code werd geanalyseerd om tot de correcte contracten te komen. Indien broncode onbeschikbaar is,
+is het een goed idee om een meest generale contract van een functie te hebben. 
