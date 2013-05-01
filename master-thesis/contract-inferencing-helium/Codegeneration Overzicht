@@ -3,12 +3,12 @@ CODE GENERATION:
 Elke functie die wordt gebruikt moet worden gecontracteerd.
 Met andere woorden, er dienen voor elke functie FUNCTIENAAM drie dingen te gebeuren:
 
-1) Generatie van een gecontracteerde functie call, bv:
+1) Generatie van een gecontracteerde functie definitie, bv:
 
    __contracted_FUNCTIENAAM ctrt = assert "FUNCTIENAAM" ctrt funs
      where funs = ...
 
-Deze call wordt gebruikt om de originele functie call te vervangen.
+Deze definitie wordt gebruikt om de originele functie call te vervangen.
 
 2) Generatie van een functie die de gecontracteerde functie aanroept en de parameters toepast, bv:
 
