@@ -3,13 +3,13 @@ optpragmas
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 }
 
+include "Domain/FP/CodeGeneration/Views.ag"
+
 imports
 {
 import qualified Common.Library as CL (build)
 import Text.PrettyPrint as PP
-import qualified Domain.FP.Helium as Helium
-import qualified Domain.FP.Views as Views
-import Domain.FP.Views ()
+--import qualified Domain.FP.Helium as Helium --Imported in Domain/FP/CodeGeneration/Views.ag
 }
 
 
@@ -97,11 +97,11 @@ Domain/FP/CodeGeneration/Utils.ag:42:66:
 
 
 instance Pretty ModuleR where
-  pprint = PP.text . Helium.ppModule . CL.build Views.heliumWithRangesView
+  pprint = PP.text . Helium.ppModule . CL.build heliumWithRangesView
 
 instance Pretty DeclR where
-  pprint = PP.text . Helium.ppDeclaration . CL.build Views.heliumWithRangesView
+  pprint = PP.text . Helium.ppDeclaration . CL.build heliumWithRangesView
 
 instance Pretty ExprR where
-  pprint = PP.text . Helium.ppExpression . CL.build Views.heliumWithRangesView
+  pprint = PP.text . Helium.ppExpression . CL.build heliumWithRangesView
 }
