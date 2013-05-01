@@ -11,6 +11,7 @@ import qualified Top.Types.Qualification as QL
 import qualified Top.Types.Quantification as QN
 import qualified ModuleSystem.ImportEnvironment as IE
 import qualified Data.Map as DM
+import Domain.FP.Views (fromHelium)
 }
 
 {
@@ -45,8 +46,8 @@ calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> ((convertHeliumN
 makeModuleR :: DeclsR -> ModuleR
 makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
 
-convertHeliumNameToNameR :: Views.Cast Helium.Name NameR => Helium.Name -> NameR
-convertHeliumNameToNameR n = (Views.fromHelium n) :: NameR
+convertHeliumNameToNameR :: Cast Helium.Name NameR => Helium.Name -> NameR
+convertHeliumNameToNameR n = (fromHelium n) :: NameR
 
 noRangeR :: RangeR
 noRangeR = RangeR UnknownR UnknownR
