@@ -3,7 +3,6 @@
 -- Include simplified syntax used by Ask-Elle
 include "Domain/FP/SyntaxWithRanges.ag"
 
--- Include Utils.ag
 include "Domain/FP/CodeGeneration/Utils.ag"
 
 include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
@@ -11,6 +10,7 @@ include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
 imports
 {
 import qualified Domain.FP.Helium as H
+import qualified ModuleSystem.ImportEnvironment as IE
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR

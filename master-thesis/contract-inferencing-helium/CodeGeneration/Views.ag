@@ -1,0 +1,284 @@
+optpragmas
+{
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances, NoMonomorphismRestriction #-}
+{-# LANGUAGE FlexibleContexts, FunctionalDependencies #-}
+}
+
+
+imports
+{
+import Common.Library hiding (from, to)
+import Data.Char (readLitChar)
+import Domain.FP.Helium hiding (Module, Body, Name, Literal, MaybeName)
+import Domain.FP.HeliumInstances ()
+import qualified Domain.FP.Helium as Helium
+}
+
+
+{
+-- | Convert bewteen Helium and own abstract syntax, keeping ranges
+heliumWithRangesView ::CastRange a b => View a b
+heliumWithRangesView = makeView (Just . fromHeliumWithRanges) toHelium
+
+fromHeliumWithRanges :: CastRange a b => a -> b
+fromHeliumWithRanges = from
+
+toHeliumWithRanges :: CastRange a b => b -> a
+toHeliumWithRanges = to
+
+inHeliumWithRanges :: CastRange a b => (a -> a) -> b -> b
+inHeliumWithRanges f = from . f . to
+
+
+class CastRange a b where
+   from :: a -> b
+   to   :: b -> a
+
+instance CastRange Helium.Module ModuleR where
+   from m = 
+      case m of
+         Module_Module r n _ b -> ModuleR (from n) (from b) (from r)
+   
+   to m = 
+      case m of 
+         ModuleR n b r ->
+            Module_Module (to r) (to n) MaybeExports_Nothing (to b)
+
+instance CastRange Helium.Body BodyR where
+   from b = 
+      case b of
+         Body_Hole r i    -> BHoleR i (from r)
+         Body_Body r _ ds -> BodyR (map from ds) (from r)
+   
+   to b = 
+      case b of 
+         BHoleR i r -> Body_Hole (to r) i
+         BodyR ds r -> Body_Body (to r) [] $ map to ds
+
+instance CastRange Declaration DeclR where
+   from d = 
+      case d of 
+         Declaration_Hole r i               -> DHoleR i (from r)
+         Declaration_Empty r                -> DEmptyR (from r)
+         Declaration_FunctionBindings r fs  -> DFunBindsR (map from fs) (from r)
+         Declaration_PatternBinding r p rhs -> DPatBindR (from p) (from rhs) (from r)
+         Declaration_TypeSignature r _ _    -> DEmptyR (from r) -- throw away type sigs
+         Declaration_Fixity r _ _ _         -> DEmptyR (from r) -- throw away fixity decls
+         Declaration_Data r _ _ _ _         -> DEmptyR (from r)
+         _                                  -> castError d
+   
+   to d =
+      case d of
+         DHoleR i r        -> Declaration_Hole (to r) i
+         DEmptyR r         -> Declaration_Empty (to r)
+         DFunBindsR fs r   -> Declaration_FunctionBindings (to r) $ map to fs
+         DPatBindR p rhs r -> Declaration_PatternBinding (to r) (to p) (to rhs)
+
+
+instance CastRange FunctionBinding FunBindR where
+   from f = 
+      case f of 
+         FunctionBinding_Hole r i -> FBHoleR i (from r)
+         FunctionBinding_FunctionBinding r lhs rhs -> 
+            FunBindR Nothing (from n') (map from ps') (from rhs) (from r)
+               where 
+                  (n', ps') = fromLhs lhs
+                  fromLhs (LeftHandSide_Function _ n ps) = (n, ps)
+                  fromLhs (LeftHandSide_Infix _ lp op rp) = (op, [lp, rp]) -- This is a shorcut (read: hack) we can't go back to infix!
+                  fromLhs _ = castError f
+         FunctionBinding_Feedback r s fb -> (\(FunBindR _ a b c r') -> FunBindR (Just s) a b c) (from fb) (from r)
+
+   to f =
+      case f of
+         FBHoleR i r -> FunctionBinding_Hole (to r) i
+         FunBindR mfb n ps rhs r -> maybe id (FunctionBinding_Feedback noRange) mfb
+                                   $ FunctionBinding_FunctionBinding (to r) lhs (to rhs)
+               where
+                  lhs = LeftHandSide_Function noRange (to n) (map to ps)
+
+instance CastRange Expression ExprR where
+   from expr =
+      case expr of
+         Expression_Hole r i                     -> HoleR i (from r)
+         Expression_Feedback r s e               -> FeedbackR s (from e) (from r)
+         Expression_Case r e as                  -> CaseR (from e) (map from as) (from r)
+         Expression_Constructor r n              -> ConR (from n) (from r)
+         Expression_If r c t e                   -> IfR (from c) (from t) (from e) (from r)
+         Expression_InfixApplication r mel e mer -> InfixAppR (from mel) (from e) (from mer) (from r)
+         Expression_Lambda r ps e                -> LambdaR (map from ps) (from e) (from r)
+         Expression_Let r ds e                   -> LetR (map from ds) (from e) (from r)
+         Expression_Literal r l                  -> LitR (from l) (from r)
+         Expression_NormalApplication r f es     -> AppR (from f) (map from es) (from r)
+         Expression_Parenthesized r e            -> ParenR (from e) (from r)
+         Expression_Tuple r es                   -> TupleR (map from es) (from r)
+         Expression_Variable r n                 -> VarR (from n) (from r)
+         Expression_Enum r e me1 me2             -> EnumR (from e) (from me1) (from me2) (from r)
+         Expression_List r es                    -> ListR (map from es) (from r)
+         Expression_Negate r e                   -> NegR (from e) (from r)
+         Expression_NegateFloat r e              -> NegR (from e) (from r) -- AG: hack we can't go back!!!
+         _                                       -> castError expr
+   
+   to expr =
+      case expr of
+         HoleR i r             -> Expression_Hole (to r) i
+         FeedbackR s e r       -> Expression_Feedback (to r) s (to e)
+         MustUseR e r          -> Expression_MustUse (to r) (to e) 
+         CaseR e as r          -> Expression_Case (to r) (to e) (map to as)
+         ConR n r              -> Expression_Constructor (to r) $ to n
+         IfR c t e r           -> Expression_If (to r) (to c) (to t) (to e)
+         InfixAppR mel e mer r -> Expression_InfixApplication (to r) (to mel) (to e) (to mer)
+         LambdaR ps e r        -> Expression_Lambda (to r) (map to ps) (to e)
+         LetR ds e r           -> Expression_Let (to r) (map to ds) (to e)
+         LitR l r              -> Expression_Literal (to r) $ to l
+         AppR f es r           -> Expression_NormalApplication (to r) (to f) (map to es)
+         ParenR e r            -> Expression_Parenthesized (to r) $ to e
+         TupleR es r           -> Expression_Tuple (to r) $ map to es
+         VarR n r              -> Expression_Variable (to r) $ to n
+         EnumR e me1 me2 r     -> Expression_Enum (to r) (to e) (to me1) (to me2)
+         ListR es r            -> Expression_List (to r) $ map to es
+         NegR e r              -> Expression_Negate (to r) $ to e
+
+instance CastRange GuardedExpression GuardedExprR where
+   from (GuardedExpression_GuardedExpression r g e) = GExprR (from g) (from e) (from r)
+
+   to gexpr =
+      case gexpr of
+         GExprR g e r    -> 
+            GuardedExpression_GuardedExpression (to r) (to g) (to e)
+
+instance CastRange Pattern PatR where
+   from pat = 
+      case pat of
+         Pattern_Hole r i                   -> PHoleR i (from r)
+         Pattern_Constructor r n ps         -> PConR (from n) (map from ps) (from r)
+         Pattern_InfixConstructor r pl n pr -> PInfixConR (from pl) (from n) (from pr) (from r)
+         Pattern_List r ps                  -> PListR (map from ps) (from r)
+         Pattern_Literal r l                -> PLitR (from l) (from r)
+         Pattern_Parenthesized r p          -> PParenR (from p) (from r)
+         Pattern_Tuple r ps                 -> PTupleR (map from ps) (from r)
+         Pattern_Variable r n               -> PVarR (from n) (from r)
+         Pattern_As r n p                   -> PAsR (from n) (from p) (from r)
+         Pattern_Wildcard r                 -> PWildcardR (from r)
+         _                                  -> castError pat
+   
+   to pat =
+      case pat of
+         PHoleR i r           -> Pattern_Hole (to r) i
+         PConR n ps r         -> Pattern_Constructor (to r) (to n) (map to ps)
+         PInfixConR pl n pr r -> Pattern_InfixConstructor (to r) (to pl) (to n) (to pr)
+         PListR ps r          -> Pattern_List (to r) $ map to ps
+         PLitR l r            -> Pattern_Literal (to r) $ to l
+         PParenR p r          -> Pattern_Parenthesized (to r) $ to p
+         PTupleR ps r         -> Pattern_Tuple (to r) $ map to ps
+         PVarR n r            -> Pattern_Variable (to r) $ to n
+         PAsR n p r           -> Pattern_As (to r) (to n) (to p)
+         PWildcardR r         -> Pattern_Wildcard (to r)
+
+instance CastRange Helium.Literal LiteralR where
+   from l = 
+      case l of
+         Literal_Char r s   -> LCharR (fst $ head $ readLitChar s) (from r)
+         Literal_Float r s  -> LFloatR (read s) (from r)
+         Literal_Int r s    -> LIntR (read s) (from r)
+         Literal_String r s -> LStringR s (from r)
+
+   to l =
+      case l of
+         LCharR c r   -> Literal_Char (to r) [c]
+         LFloatR f r  -> Literal_Float (to r) $ show f
+         LIntR i r    -> Literal_Int (to r) $ show i
+         LStringR s r -> Literal_String (to r) s
+
+instance CastRange RightHandSide RhsR where
+   from rhs =  
+      case rhs of
+         RightHandSide_Expression r e mds -> RhsR (from e) (from mds) (from r)
+         RightHandSide_Guarded r ges mds  -> GRhsR (map from ges) (from mds) (from r)
+   
+   to rhs =
+      case rhs of
+          RhsR e ds r    -> RightHandSide_Expression (to r) (to e) (to ds)
+          GRhsR ges ds r -> RightHandSide_Guarded (to r) (map to ges) (to ds)
+
+instance CastRange MaybeDeclarations [DeclR] where
+   from mds =
+      case mds of
+         MaybeDeclarations_Just ds -> map from ds
+         MaybeDeclarations_Nothing -> []
+   
+   to [] = MaybeDeclarations_Nothing 
+   to ds = MaybeDeclarations_Just $ map to ds
+
+instance CastRange Helium.MaybeName MaybeNameR where
+   from mn = 
+      case mn of
+         MaybeName_Just n  -> JustNameR $ from n
+         MaybeName_Nothing -> NoNameR
+   
+   to mn = 
+      case mn of
+         JustNameR n -> MaybeName_Just $ to n
+         NoNameR     -> MaybeName_Nothing
+
+instance CastRange MaybeExpression MaybeExprR where
+   from me = 
+      case me of
+         MaybeExpression_Just e  -> JustExprR $ from e
+         MaybeExpression_Nothing -> NoExprR
+   
+   to me = 
+      case me of
+         JustExprR e -> MaybeExpression_Just $ to e
+         NoExprR     -> MaybeExpression_Nothing
+
+instance CastRange Helium.Name NameR where
+   from n = 
+      case n of
+         Name_Identifier r _ s -> IdentR s (from r)
+         Name_Operator r _ s   -> OperatorR s (from r)
+         Name_Special r _ s    -> SpecialR s (from r)
+   
+   to n =
+      case n of
+         IdentR s r    -> Name_Identifier (to r) [] s
+         OperatorR s r -> Name_Operator (to r) [] s
+         SpecialR s r  -> Name_Special (to r) [] s
+
+instance CastRange Alternative AltR where
+   from a = 
+      case a of
+         Alternative_Hole r i            -> AHoleR i (from r)
+         Alternative_Alternative r p rhs -> AltR Nothing (from p) (from rhs) (from r)
+         Alternative_Feedback r s al     -> (\(AltR _ x y r') -> AltR (Just s) x y r') $ (from al)
+         Alternative_Empty r             -> AltEmptyR (from r)
+
+   to a =
+      case a of 
+         AHoleR i r   -> Alternative_Hole (to r) i
+         AltR mfb p rhs r -> maybe id (Alternative_Feedback noRange) mfb
+                        $ Alternative_Alternative (to r) (to p) (to rhs)
+         AltEmptyR r  -> Alternative_Empty (to r)
+
+instance CastRange Range RangeR where
+   from (Range_Range x y)  = RangeR (from x) (from y)
+   to   (RangeR x y) = Range_Range (to x) (to y)
+
+instance CastRange Position PositionR where
+  from (Position_Position n l c)  = PositionR n l c
+  from Position_Unknown = UnknownR
+  to   (PositionR n l c) = Position_Position n l c
+  to   UnknownR = Position_Unknown
+
+-- | Convert between GHC and own abstract syntax
+-- ghcView :: View GHC.Module Module
+-- ghcView = undefined
+
+
+-- | Help functions
+castError :: Show a => a -> b
+castError x = error $ "Unable to cast: " ++ show x
+
+--removeEmptyDecls :: Module -> Module -- Biplate a [Decl => a -> a
+--removeEmptyDecls = transformBi (filter (/= DEmpty))
+}
