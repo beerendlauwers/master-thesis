@@ -3,14 +3,18 @@
 -- Include simplified syntax used by Ask-Elle
 include "Domain/FP/SyntaxWithRanges.ag"
 
+include "Domain/FP/CodeGeneration/CollectLocalIdents.ag"
+
 include "Domain/FP/CodeGeneration/Utils.ag"
 
-include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
+include "Domain/FP/CodeGeneration/DebugCode.ag"
 
 imports
 {
 import qualified Domain.FP.Helium as H
 import qualified ModuleSystem.ImportEnvironment as IE
+import qualified Data.Map as DM
+import qualified Data.Maybe as DJ
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -24,6 +28,9 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 --                   NoLocalDefinitions
 --}
 
+-- Every node that has a (list of) declaration(s) has those declarations compiled
+-- by the Helium compiler to get their types.
+
 sem ExprR
    | LetR
     -- Generate types for this group of bindings.
@@ -32,7 +39,8 @@ sem ExprR
       loc  .types               = H.extractTypes @loc.heliumResults
       loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
-    -- TODO: Pass types down to decls and assign them to each definition, so everyone knows their type.
+    -- Pass types down to decls and assign them to each definition, so everyone knows their type.
+      decls.heliumType          = @loc.types
 
     -- Combine environment and pass it down to children.
       loc  .newEnv              = IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
@@ -47,7 +55,8 @@ sem RhsR
       loc  .types               = H.extractTypes @loc.heliumResults
       loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
-    -- TODO: Pass types down to decls and assign them to each definition, so everyone knows their type.
+    -- Pass types down to decls and assign them to each definition, so everyone knows their type.
+      where.heliumType          = @loc.types
 
     -- Combine environment and pass it down to children.
       loc  .newEnv              = IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
@@ -61,9 +70,31 @@ sem RhsR
       loc  .types               = H.extractTypes @loc.heliumResults
       loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
-    -- TODO: Pass types down to decls and assign them to each definition, so everyone knows their type.
+    -- Pass types down to decls and assign them to each definition, so everyone knows their type.
+      where.heliumType          = @loc.types
 
     -- Combine environment and pass it down to children.
       loc  .newEnv              = IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
       where.topLevelTypes       = @loc.newEnv
       gexprs.topLevelTypes      = @loc.newEnv
+
+
+
+-- We now have the types of the declarations, pass those down to each individual definition.
+
+attr DeclsR DeclR FunBindsR FunBindR
+  inh heliumType                                        :: {IE.TypeEnvironment}
+
+sem BodyR
+  | BodyR
+      decls.heliumType          = (\(IE.ImportEnvironment _ _ typeEnv _ _ _) -> typeEnv) @lhs.topLevelTypes
+
+sem FunBindR
+  | FunBindR
+      -- We'll use this local variable to generate contracts and contracted code.
+      loc.heliumType            = DJ.fromJust $ DM.lookup (toHeliumWithRanges @name.copy) @lhs.heliumType
+
+sem DeclR
+  | DPatBindR
+      -- Don't know if we'll need the contracts of stuff defined in tuples, but we might as well collect it, it's not too hard.
+      loc.heliumType            = map (\name -> DJ.fromJust $ DM.lookup (toHeliumWithRanges name) @lhs.heliumType) @pat.localPatterns

@@ -17,9 +17,17 @@ import qualified Domain.FP.Helium as Helium
 
 
 {
+
+
+compileWithRanges :: String -> ModuleR
+compileWithRanges txt = either error id $ safeCompileWithRanges txt
+
+safeCompileWithRanges :: String -> Either String ModuleR
+safeCompileWithRanges txt = H.compile txt >>= matchM heliumWithRangesView
+
 -- | Convert bewteen Helium and own abstract syntax, keeping ranges
 heliumWithRangesView ::CastRange a b => View a b
-heliumWithRangesView = makeView (Just . fromHeliumWithRanges) toHelium
+heliumWithRangesView = makeView (Just . fromHeliumWithRanges) toHeliumWithRanges
 
 fromHeliumWithRanges :: CastRange a b => a -> b
 fromHeliumWithRanges = from

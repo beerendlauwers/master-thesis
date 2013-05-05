@@ -1,5 +1,3 @@
-MODULE {Domain.FP.ContractInferencing.ContractTypes}{}
-
 type MaybeConst  = maybe ExprR
 
 data Contract
@@ -9,9 +7,12 @@ data Contract
   |  CBifunctor  o      :: Contract  il  :: Contract    ir :: Contract
   |  CVar        v      :: String    mc  :: MaybeConst
   |  CQuant      cv     :: Contract  cs  :: Contract
-  |  CTuple      li     :: [Contract] -- Helium AST portrays tuples as lists, this seems like the best way
+  |  CTuple      li     :: {[Contract]} -- Helium AST portrays tuples as lists, this seems like the best way
 
 data Subst
   |  SId
   |  SComp   l  :: Subst     r  :: Subst
   |  SSubst  v  :: Contract  c  :: Contract
+
+deriving Contract: Show
+deriving Subst: Show

@@ -1,7 +1,26 @@
 imports
 {
 import            Text.PrettyPrint as PP
-import	          Domain.FP.CodeGeneration.PrettyPrinting
+}
+
+include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
+
+
+{
+
+-- Expects the code as a string and the point of entry.
+showDebug :: String -> String -> Doc
+showDebug code pointOfEntry = 
+ let topLevelEnv = H.extractImportEnv $ H.compile' False code
+     astCode = compileWithRanges code
+     semModule = sem_ModuleR astCode
+     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv
+     wrapModule = wrap_ModuleR semModule inhModule
+ in debug_Syn_ModuleR wrapModule
+
+showDebugExample1 :: Doc
+showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" []
+
 }
 
 -- Some pretty-printed debug code so we can have a look at what's going on at each node in the AST.
@@ -10,10 +29,18 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 
 -- Debug info synthesis
 
+sem BodyR
+  | BodyR
+     lhs   .debug                       = vcat  [  text "BodyR"
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
+                                                ,  nest 2 @decls.debug
+                                                ]
+
 sem DeclR
   | DPatBindR
      lhs   .debug                       = vcat  [  text "DPatBindR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
+                                                ,  text "Helium type:"           PP.<+> text (show @loc.heliumType)
                                                 ,  text "is top-level:"          PP.<+> pprint @lhs.isTopLevel
                                                 ,  text "local idents known to RHS:"          PP.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug
@@ -23,7 +50,7 @@ sem DeclR
 sem AltR
   | AltR
      lhs   .debug                       = vcat  [  text "AltR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
                                                 ,  text "local idents known to RHS"          PP.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug
                                                 ,  nest 2 @rhs.debug
@@ -32,7 +59,8 @@ sem AltR
 sem FunBindR
   | FunBindR
      lhs   .debug                       = vcat  [  text "FunBindR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
+                                                ,  text "Helium type:"           PP.<+> text (show @loc.heliumType)
                                                 ,  text "orig ident:"            PP.<+> pprint @name.copy
                                                 ,  text "updated ident:"         PP.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        PP.<+> text @lhs.entryFunction
@@ -45,7 +73,7 @@ sem FunBindR
 sem PatR
    | PInfixConR
      lhs   .debug                       = vcat  [  text "PInfixConR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
                                                 ,  text "local patterns:"        PP.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @left.debug
                                                 ,  nest 2 @name.debug
@@ -53,13 +81,13 @@ sem PatR
                                                 ]
    | PVarR
      lhs   .debug                       = vcat  [  text "PVarR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
                                                 ,  text "local patterns:"        PP.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @name.debug
                                                 ]
    | PAsR
      lhs   .debug                       = vcat  [  text "PAsR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
                                                 ,  text "local patterns:"        PP.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @name.debug
                                                 ,  nest 2 @pat.debug
@@ -68,7 +96,7 @@ sem PatR
 sem ExprR
   | VarR
      lhs   .debug                       = vcat  [  text "VarR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
                                                 ,  text "orig ident:"            PP.<+> pprint @name.copy
                                                 ,  text "updated ident:"         PP.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        PP.<+> text @lhs.entryFunction
@@ -76,7 +104,7 @@ sem ExprR
                                                 ]
   | LambdaR
      lhs   .debug                       = vcat  [  text "LambdaR"
-                                                --,  text "code"                  PP.<+> pprint @loc.copy
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
                                                 ,  text "local idents known to expr:"          PP.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pats.debug
                                                 ,  nest 2 @expr.debug
