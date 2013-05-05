@@ -3,6 +3,8 @@ optpragmas
 {-# LANGUAGE FlexibleContexts #-}
 }
 
+include "../ContractInferencing/ContractTypes.ag"
+
 imports
 {
 import qualified Top.Types.Schemes as S
@@ -10,7 +12,6 @@ import qualified Top.Types.Primitive as P
 import qualified Top.Types.Qualification as QL
 import qualified Top.Types.Quantification as QN
 import qualified ModuleSystem.ImportEnvironment as IE
-import qualified Data.Map as DM
 }
 
 {
@@ -36,20 +37,65 @@ getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
 
 calculateArity :: IE.TypeEnvironment -> FunctionArityEnvironment
-calculateArity env = DM.fromList $ map (\(name,ty) -> ((convertHeliumNameToNameR name)::NameR, S.arityOfTpScheme ty)) (DM.toList env)
+calculateArity env = DM.fromList $ map (\(name,ty) -> (fromHeliumWithRanges name, S.arityOfTpScheme ty)) (DM.toList env)
 
 calculateParameterArity :: IE.TypeEnvironment -> ParameterArityEnvironment
-calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> ((convertHeliumNameToNameR name)::NameR, getParameterArity ty)) (DM.toList env)
+calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> (fromHeliumWithRanges name, getParameterArity ty)) (DM.toList env)
   where getParameterArity ty = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify) ty
 
 makeModuleR :: DeclsR -> ModuleR
 makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
 
-convertHeliumNameToNameR :: H.Name -> NameR
-convertHeliumNameToNameR n = fromHeliumWithRanges n
-
 noRangeR :: RangeR
 noRangeR = RangeR UnknownR UnknownR
+
+convertTopTypeToContract :: S.TpScheme -> Contract
+convertTopTypeToContract ty = 
+ let primType = (QL.unqualify . QN.unquantify) ty
+     varsToQuantify = map makeType (P.variablesInType primType)
+     quantifiedVars = map (\v -> CVar v Nothing) varsToQuantify
+     typeAsList = P.getTypes primType
+ in snd $ convert [((maximum (P.variablesInType primType))+1)..] (head typeAsList)
+  where
+   makeType :: Int -> String
+   makeType i = "v" ++ show i
+
+   -- Here, we convert a primitive type to a contract recursively.
+   convert :: [Int] -> P.Tp -> ([Int],Contract)
+   convert n (P.TVar i) = 
+    (n, CVar (makeType i) Nothing)
+   convert n (P.TApp (P.TApp (P.TCon "->") t1) t2) = 
+    let (n', ctrt1) = convert n t1
+        (n'',ctrt2) = convert n' t2
+    in (n'', CArr ctrt1 ctrt2)
+   convert (n:ns) (P.TApp (P.TCon x) t1) | x `elem` ["Maybe","[]"] =
+    let outer = CVar (makeType n) Nothing
+        (n',inner) = convert ns t1 
+    in (n', CFunctor outer inner)
+   convert (n:ns) (P.TApp (P.TApp (P.TCon x) t1) t2) | x `elem` ["Either","(,)"] =
+    let outer = CVar (makeType n) Nothing
+        (n',leftInner)   = convert ns t1
+        (n'',rightInner) = convert n' t2
+    in (n'', CBifunctor outer leftInner rightInner)
+   convert (n:ns) (P.TCon x) | x `elem` ["Int","Char","Float","Bool","String"] = 
+    (ns, CVar (makeType n) Nothing)
+   -- 4-tuple
+   convert n (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) | P.isTupleConstructor x =
+    let (n1, ctrt1) = convert n t1
+        (n2, ctrt2) = convert n1 t2
+        (n3, ctrt3) = convert n2 t3
+        (n4, ctrt4) = convert n3 t4
+    in (n4, CTuple [ctrt1,ctrt2,ctrt3,ctrt4])
+   -- 3-tuple
+   convert n (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) | P.isTupleConstructor x =
+    let (n1, ctrt1) = convert n t1
+        (n2, ctrt2) = convert n1 t2
+        (n3, ctrt3) = convert n2 t3
+    in (n3, CTuple [ctrt1,ctrt2,ctrt3])
+   convert n (P.TCon x) | P.isTupleConstructor x = 
+    error $ "Only tuples up to size 4 are currently supported. Tried to convert type: " ++ show x
+   convert _ x = error $ "Was unable to convert the following type: " ++ show x 
+
 
 {-
 apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR

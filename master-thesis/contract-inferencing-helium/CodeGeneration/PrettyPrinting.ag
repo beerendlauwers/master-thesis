@@ -41,67 +41,37 @@ instance Pretty NameR where
   pprint (OperatorR n _) = PP.text n
   pprint (SpecialR n _)  = PP.text n
 
--- For some reason, we are missing instance declarations???
-
-{-
-Domain/FP/CodeGeneration/PrettyPrinting.ag:53:49:
-    No instance for (Views.Cast Helium.Module ModuleR)
-      arising from a use of `Views.heliumWithRangesView'
-    Possible fix:
-      add an instance declaration for (Views.Cast Helium.Module ModuleR)
-    In the first argument of `CL.build', namely
-      `Views.heliumWithRangesView'
-    In the second argument of `(.)', namely
-      `CL.build Views.heliumWithRangesView'
-    In the second argument of `(.)', namely
-      `Helium.ppModule . CL.build Views.heliumWithRangesView'
-
-Domain/FP/CodeGeneration/PrettyPrinting.ag:56:54:
-    No instance for (Views.Cast Helium.Declaration DeclR)
-      arising from a use of `Views.heliumWithRangesView'
-    Possible fix:
-      add an instance declaration for
-      (Views.Cast Helium.Declaration DeclR)
-    In the first argument of `CL.build', namely
-      `Views.heliumWithRangesView'
-    In the second argument of `(.)', namely
-      `CL.build Views.heliumWithRangesView'
-    In the second argument of `(.)', namely
-      `Helium.ppDeclaration . CL.build Views.heliumWithRangesView'
-
-Domain/FP/CodeGeneration/PrettyPrinting.ag:59:53:
-    No instance for (Views.Cast Helium.Expression ExprR)
-      arising from a use of `Views.heliumWithRangesView'
-    Possible fix:
-      add an instance declaration for
-      (Views.Cast Helium.Expression ExprR)
-    In the first argument of `CL.build', namely
-      `Views.heliumWithRangesView'
-    In the second argument of `(.)', namely
-      `CL.build Views.heliumWithRangesView'
-    In the second argument of `(.)', namely
-      `Helium.ppExpression . CL.build Views.heliumWithRangesView'
-
-Domain/FP/CodeGeneration/Utils.ag:42:66:
-    No instance for (Views.Cast Helium.Name NameR)
-      arising from a use of `convertHeliumNameToNameR'
-    Possible fix:
-      add an instance declaration for (Views.Cast Helium.Name NameR)
-    In the expression: convertHeliumNameToNameR name
-    In the expression:
-      (convertHeliumNameToNameR name, getParameterArity ty)
-    In the first argument of `map', namely
-      `(\ (name, ty)
-          -> (convertHeliumNameToNameR name, getParameterArity ty))'
--}
-
-
 instance Pretty ModuleR where
   pprint = PP.text . Helium.ppModule . CL.build heliumWithRangesView
+
+instance Pretty BodyR where
+  pprint = PP.text . Helium.ppBody . CL.build heliumWithRangesView
+
+instance Pretty FunBindR where
+  pprint = PP.text . Helium.ppFunctionBinding . CL.build heliumWithRangesView
 
 instance Pretty DeclR where
   pprint = PP.text . Helium.ppDeclaration . CL.build heliumWithRangesView
 
 instance Pretty ExprR where
   pprint = PP.text . Helium.ppExpression . CL.build heliumWithRangesView
+
+instance Pretty AltR where
+  pprint = PP.text . Helium.ppAlternative . CL.build heliumWithRangesView
+
+instance Pretty PatR where
+  pprint = PP.text . Helium.ppPattern . CL.build heliumWithRangesView
+
+instance Pretty Contract where
+  pprint (CArr c1 c2) = PP.parens $ pprint c1 PP.<+> PP.text ">->" PP.<+> pprint c2
+  pprint (CProp p) = PP.text p
+  pprint (CFunctor o i) = pprint o PP.<+> PP.text "<@>" PP.<+> pprint i
+  pprint (CBifunctor o il ir) = PP.parens $ pprint o PP.<+> PP.text "<@@>" PP.<+> PP.parens (pprint il PP.<> comma PP.<+> pprint ir)
+  pprint (CVar v mc) = PP.text v
+  pprint (CQuant cv cs) = case cv of
+                           (CVar v _) -> PP.text "forall" PP.<+> PP.text v PP.<> PP.char '.' PP.<+> pprint cs
+                           _          -> error "Quantifier needs variable"
+  pprint (CTuple (c:[])) = pprint c
+  pprint (CTuple (c:cs)) = PP.parens $ pprint c PP.<+> PP.char ',' PP.<+> pprint (CTuple cs)
+  pprint (CTuple [])     = PP.empty
 }

@@ -20,7 +20,7 @@ module Domain.FP.Helium
      -- * Helium syntax data types
    , module Syntax.UHA_Syntax, module Syntax.UHA_Range
      -- * Pretty printing
-   , ppModule, ppDeclaration, ppExpression
+   , ppModule, ppBody, ppDeclaration, ppExpression, ppAlternative, ppFunctionBinding, ppPattern
      -- * Miscellaneous functions
    , patternVars, phaseDesugarer
    ) where
@@ -54,12 +54,24 @@ import Data.Maybe
 ppModule :: Module -> String
 ppModule m = show $
   PP.text_Syn_Module (PP.wrap_Module (PP.sem_Module m) PP.Inh_Module)
+ppBody :: Body -> String
+ppBody b = show $
+  PP.text_Syn_Body (PP.wrap_Body (PP.sem_Body b) PP.Inh_Body)
 ppDeclaration :: Declaration -> String
 ppDeclaration d = show $
   PP.text_Syn_Declaration (PP.wrap_Declaration (PP.sem_Declaration d) PP.Inh_Declaration)
 ppExpression :: Expression -> String
 ppExpression e = show $
   PP.text_Syn_Expression (PP.wrap_Expression (PP.sem_Expression e) PP.Inh_Expression)
+ppAlternative :: Alternative -> String
+ppAlternative a = show $
+  PP.text_Syn_Alternative (PP.wrap_Alternative (PP.sem_Alternative a) PP.Inh_Alternative)
+ppFunctionBinding :: FunctionBinding -> String
+ppFunctionBinding f = show $
+  PP.text_Syn_FunctionBinding (PP.wrap_FunctionBinding (PP.sem_FunctionBinding f) PP.Inh_FunctionBinding)
+ppPattern :: Pattern -> String
+ppPattern p = show $
+  PP.text_Syn_Pattern (PP.wrap_Pattern (PP.sem_Pattern p) PP.Inh_Pattern)
 
 filterImportEnvs :: [Name] -> [ImportEnvironment] -> [ImportEnvironment]
 filterImportEnvs ns env = map f env

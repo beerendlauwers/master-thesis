@@ -13,13 +13,12 @@
 
 module Domain.FP.Compile
    ( -- * Compile functions
-     compile, safeCompile, compilePrelude, compileWithRanges, safeCompileWithRanges
+     compile, safeCompile, compilePrelude
    ) where
 
 import Common.Library
 import qualified Domain.FP.Helium as H
 import Domain.FP.Syntax
-import Domain.FP.SyntaxWithRanges
 import Domain.FP.Views
 
 
@@ -35,12 +34,6 @@ compilePrelude :: String -> Module
 compilePrelude txt = 
   either error id $ H.compilePrelude txt >>= matchM heliumView
 
-compileWithRanges :: String -> ModuleR
-compileWithRanges txt = either error id $ safeCompileWithRanges txt
-
-safeCompileWithRanges :: String -> Either String ModuleR
-safeCompileWithRanges txt = H.compile txt >>= matchM heliumView
-
-expandLets (LetR (x:xs) e r) = LetR [x] (expandLets $ LetR xs e r) r
-expandLets (LetR [] e _) = e
+--expandLets (LetR (x:xs) e r) = LetR [x] (expandLets $ LetR xs e r) r
+--expandLets (LetR [] e _) = e
 
