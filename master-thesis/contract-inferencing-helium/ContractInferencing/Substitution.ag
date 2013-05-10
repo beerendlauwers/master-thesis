@@ -1,0 +1,84 @@
+{
+
+-- | FCV: Free contract variables
+class FCV a where
+  fcv :: a -> DS.Set Contract
+
+instance FCV Contract where
+  fcv = getFreeContractVars
+
+--instance FCV CEnv where
+--  fcv = DM.foldr DS.union DS.empty . fmap fcv
+
+class Substitutable a where
+  subst :: Subst -> a -> a
+  subst' :: Subst -> a -> a
+
+instance Substitutable a => Substitutable [a] where
+  subst SId            = id
+  subst (SComp s1 s2)  = subst s1 . subst s2
+  subst s = fmap (subst s)
+  subst' x y = subst x y
+
+instance Substitutable Contract where
+  subst SId             c           = c
+  subst (SComp s1 s2)   c           = subst s1 (subst s2 c)
+  subst (SSubst v c')   c | v == c  = c'
+  subst s@(SSubst v _) (CQuant qv cs)
+    | v == qv                       = CQuant qv cs
+    | otherwise                     = CQuant qv (subst s cs)
+
+  subst s  (CArr c1 c2)             = subst s c1 >-> subst s c2
+  subst s  (CFunctor co ci)         = CFunctor (subst s co) (subst s ci)
+  subst s  (CBifunctor co ci1 ci2)  = CBifunctor (subst s co)
+                                           (subst s ci1) (subst s ci2)
+  subst _  c                        = c
+
+  subst' s@(SSubst v c) (CQuant qv cs) | v == qv = CQuant c (subst' s cs)
+  subst' x y = subst x y
+
+instance Substitutable a => Substitutable (DM.Map String a) where
+  subst SId            = id
+  subst (SComp s1 s2)  = subst s1 . subst s2
+  subst s              = fmap (subst s)
+  subst' x y = subst x y
+
+unifyC :: Contract -> Contract -> Subst
+unifyC c1              c2 | c1 == c2   = SId
+unifyC v@CVar{}        c               = unifyCVars v c
+unifyC c               v@CVar{}        = unifyCVars v c
+unifyC (CArr cl1 cr1)  (CArr cl2 cr2)  =
+  let  th1  = unifyC cl1 cl2
+       th2  = unifyC (subst th1 cr1) (subst th1 cr2)
+  in   th2 `o` th1
+unifyC (CFunctor c11 c12)        (CFunctor c21 c22)        =
+  let  th1  = unifyC c11 c21
+       th2  = unifyC (subst th1 c12) (subst th1 c22)
+  in   th2 `o` th1
+unifyC (CBifunctor c11 c12 c13)  (CBifunctor c21 c22 c23)  =
+  let  th1  = unifyC c11 c21
+       th2  = unifyC (subst th1 c12) (subst th1 c22)
+       th2dot1 = th2 `o` th1
+       th3  = unifyC (subst th2dot1 c13) (subst th2dot1 c23)
+  in   th3 `o` th2dot1
+unifyC c1 c2 = unifyErr "No such unification case when" c1 c2
+
+unifyInnerC :: Contract -> Contract -> Subst
+unifyInnerC (CFunctor _ c12)        (CFunctor _ c22)        = unifyC c12 c22
+unifyInnerC (CBifunctor _ c12 c13)  (CBifunctor _ c22 c23)  =
+  let  th1  = unifyC c12 c22
+       th2  = unifyC (subst th1 c13) (subst th1 c23)
+  in   th2 `o` th1
+unifyInnerC c1                      c2                      = unifyC c1 c2
+
+unifyCVars :: Contract -> Contract -> Subst
+unifyCVars v@CVar{}  c  | v `DS.member` fcv c  = unifyErr "Occurs check when" v c
+                        | otherwise            = v +-> c
+unifyCVars _         _                         = error "unifyCVars"
+
+unifyErr :: String -> Contract -> Contract -> a
+unifyErr msg c1 c2 = error $ msg ++ stdMsg
+  where stdMsg =  " trying to unify '" ++ show (pprint c1) ++
+                  "' and '" ++ show (pprint c2) ++ "'"
+
+}

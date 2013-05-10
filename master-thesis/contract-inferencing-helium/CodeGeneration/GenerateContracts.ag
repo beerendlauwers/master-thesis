@@ -1,0 +1,107 @@
+-- Convert types to contracts.
+sem FunBindR
+  | FunBindR
+      loc.contract              = convertTopTypeToContract @loc.heliumType
+      --loc.finalContract         = normalizeContract @lhs.offsetVarNumber @loc.contract
+      --rhs.offsetVarNumber       = fetchUsedVarNumber @lhs.offsetVarNumber @loc.contract
+
+sem DeclR
+  | DPatBindR
+      loc.contract              = map convertTopTypeToContract @loc.heliumType
+      -- TODO: Need to pass offsetVarNumber info from one part of the tuple to another.
+      --loc.finalContract         = map (\x -> normalizeContract @lhs.offsetVarNumber x) @loc.contract
+      --rhs.offsetVarNumber       = error "TODO: Need to pass offsetVarNumber info from one part of the tuple to another."
+
+
+{-
+--TODO: Finish this if necessary?
+
+attr PatsR PatR ListPatsR TuplePatsR
+  syn contract                                          :: {Contract}
+
+sem PatR
+  | PVarR
+      lhs.contract              = error "PVarR" --TODO: Pass along the offset, convert to contract, etc
+  | PAsR
+      lhs.contract              = @pat.contract
+  | PParenR
+      lhs.contract              = @pat.contract
+  | PWildcardR
+      lhs.contract              = error "PWildcardR" --TODO: Pass along the offset, generate fresh contract, etc
+  | PHoleR
+      lhs.contract              = error "PHoleR" --TODO: Pass along the offset, generate fresh contract, etc
+  | PLitR
+      lhs.contract              = error "PLitR" --TODO: Pass along the offset, generate fresh contract, etc
+  | PListR
+      lhs.contract              = @pats.contract
+  | PInfixConR
+      lhs.contract              = error "PInfixConR" --TODO: pass along offset, convert to contracts, UNIFY????
+  | PConR
+-}
+
+
+{-
+
+{
+normalizeContract :: Int -> Contract -> Contract
+normalizeContract offset ctrt = 
+ let convSubsts = DM.toList $ synthesizeAttribute conversionSubsts_Syn_Contract ctrt (Inh_Contract offset 0)
+     actualSubsts = foldr SComp SId $ map (\(x,y) -> SSubst x y) convSubsts
+ in {- error $ show actualSubsts -} subst' actualSubsts ctrt
+
+fetchUsedVarNumber :: Int -> Contract -> Int
+fetchUsedVarNumber offset ctrt = synthesizeAttribute usedVarNumber_Syn_Contract ctrt (Inh_Contract offset 0)
+}
+
+-- This is not really necessary, I think. The Helium types hold the correct information already.
+
+-- TODO: Currentlty, substitutions are only local to a single definition. But mutually recursive will suffer from this.
+
+-- Synthesize substitutions with unique variables.
+-- The highest variable number is passed back to the rest of the AST and used as an offset.
+attr Contract MaybeConst
+  syn  copy                                             :: self
+
+attr Contract
+  syn  conversionSubsts    use {DM.union}  {DM.empty}   :: {DM.Map Contract Contract}
+  syn  usedVarNumber   use {`max`}     {0}              :: {Int}
+  inh  offsetVarNumber                                  :: {Int}
+  chn  varcnt                                           :: {Int}
+
+-- Semantics for generating substitutions for the contract that was generated from a Helium type.
+sem Contract
+  |  CVar
+      lhs.conversionSubsts      = DM.singleton @loc.copy (CVar ("v" ++ show @loc.variableNumber) @mc.copy)
+      loc.variableNumber        = @loc.num + @lhs.offsetVarNumber
+      lhs.usedVarNumber         = @loc.variableNumber
+      loc.num                   ::  uniqueref varcnt
+-}
+
+-- Synthesize free type variables for contract substutions.
+attr Contract MaybeConst
+  syn  copy                                             :: self
+
+attr Contract
+  syn  fcv       use {`DS.union`}  {DS.empty}           :: {DS.Set Contract}
+
+-- Semantics for obtaining free contract variables.
+sem Contract
+  | CQuant
+      lhs.fcv                   = DS.delete @cv.copy @cs.fcv
+
+  | CVar
+      lhs.fcv                   = DS.singleton @loc.copy
+   
+
+{
+
+getFreeContractVars :: Contract -> DS.Set Contract
+getFreeContractVars ctrt = synthesizeAttribute fcv_Syn_Contract ctrt
+
+synthesizeAttribute :: (Syn_Contract -> a) -> Contract -> a
+synthesizeAttribute attr ctrt = attr $ wrap_Contract (sem_Contract ctrt) Inh_Contract
+
+nextUnique :: Int -> (Int, Int)
+nextUnique u = (u + 1, u)
+
+}

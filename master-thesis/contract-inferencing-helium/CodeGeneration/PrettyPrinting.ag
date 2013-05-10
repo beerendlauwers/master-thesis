@@ -47,6 +47,9 @@ instance Pretty ModuleR where
 instance Pretty BodyR where
   pprint = PP.text . Helium.ppBody . CL.build heliumWithRangesView
 
+instance Pretty RhsR where
+  pprint = PP.text . Helium.ppRhs . CL.build heliumWithRangesView
+
 instance Pretty FunBindR where
   pprint = PP.text . Helium.ppFunctionBinding . CL.build heliumWithRangesView
 
