@@ -11,15 +11,44 @@ include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> Doc
 showDebug code pointOfEntry = 
- let topLevelEnv = H.extractImportEnv $ H.compile' False code
+ let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
-     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv
+     inhModule = Inh_ModuleR pointOfEntry Nothing [] topLevelEnv
      wrapModule = wrap_ModuleR semModule inhModule
  in debug_Syn_ModuleR wrapModule
 
 showDebugExample1 :: Doc
 showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" []
+
+showDebugExample2 :: Doc
+showDebugExample2 = showDebug "f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys" []
+
+showDebugExample3 :: Doc
+showDebugExample3 = showDebug "f x = n x\n  where n x = g x\ng x = x" []
+
+showDebugExample4 :: Doc
+showDebugExample4 = showDebug "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" []
+
+
+{-
+-- Example that shows shadowing of declarations and where clauses
+
+f x = x
+g x = f [x]
+isort xs = foldr insert [] xs
+  where insert x [] = []
+        insert x (y:ys) = case x > y of
+                            True -> y : f x ys
+                            False -> x : g (y:ys)
+        f x ys = insert x ys
+        g ys = ys
+
+string :
+"f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys"
+
+"f x = x\ng x = let (z,zs) = (f x,f [x])\n      in zs"
+-}
 
 }
 
@@ -36,11 +65,22 @@ sem BodyR
                                                 ,  nest 2 @decls.debug
                                                 ]
 
+sem RhsR
+  | RhsR
+     lhs   .debug                       = vcat  [  text "RhsR"
+                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
+                                                ,  text "Generated types by where-clause:"       PP.<+> text (show @loc.types)
+                                                ,  nest 2 @where.debug
+                                                ,  nest 2 @expr.debug
+                                                ]
+
 sem DeclR
   | DPatBindR
      lhs   .debug                       = vcat  [  text "DPatBindR"
                                                 ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "Helium type:"           PP.<+> text (show @loc.heliumType)
+                                                ,  text "HELIUM DEBUG:"          PP.<+> text (show @loc.heliumDebug)
+                                                ,  text "Helium type(s):"        PP.<+> text (show @loc.patternTypes)
+                                                ,  text "Contract:"              PP.<+> pprint @loc.contract
                                                 ,  text "is top-level:"          PP.<+> pprint @lhs.isTopLevel
                                                 ,  text "local idents known to RHS:"          PP.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug
@@ -61,6 +101,7 @@ sem FunBindR
      lhs   .debug                       = vcat  [  text "FunBindR"
                                                 ,  text "code:"                  PP.$+$ pprint @loc.copy
                                                 ,  text "Helium type:"           PP.<+> text (show @loc.heliumType)
+                                                ,  text "Contract:"              PP.<+> pprint @loc.contract
                                                 ,  text "orig ident:"            PP.<+> pprint @name.copy
                                                 ,  text "updated ident:"         PP.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        PP.<+> text @lhs.entryFunction

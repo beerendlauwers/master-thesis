@@ -14,5 +14,19 @@ data Subst
   |  SComp   l  :: Subst     r  :: Subst
   |  SSubst  v  :: Contract  c  :: Contract
 
-deriving Contract: Show
+deriving Contract: Show, Eq, Ord
 deriving Subst: Show
+
+{
+infixr 4 +->
+(+->) :: Contract -> Contract -> Subst
+(+->) = SSubst
+
+infixr 4 >->
+(>->) :: Contract -> Contract -> Contract
+(>->) = CArr
+
+infixr 6 `o`
+o :: Subst -> Subst -> Subst
+o = SComp
+}

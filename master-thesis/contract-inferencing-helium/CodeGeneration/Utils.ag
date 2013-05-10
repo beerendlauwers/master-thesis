@@ -16,6 +16,41 @@ import qualified ModuleSystem.ImportEnvironment as IE
 
 {
 
+generateImportEnv :: IE.TypeEnvironment -> IE.ImportEnvironment
+generateImportEnv tyenv = IE.emptyEnvironment { IE.typeEnvironment = tyenv }
+
+-- Replace definitions in old env with definitions in new env.
+overwriteImportEnv :: IE.ImportEnvironment -> IE.ImportEnvironment -> IE.ImportEnvironment
+overwriteImportEnv new@(IE.ImportEnvironment nc ns ne nv no nt) old@(IE.ImportEnvironment oc os oe ov oo ot) = IE.ImportEnvironment
+   { IE.typeConstructors  = DM.union nc oc
+   , IE.typeSynonyms      = DM.union ns os
+   , IE.typeEnvironment   = DM.union ne oe
+   , IE.valueConstructors = DM.union nv ov
+   , IE.operatorTable     = DM.union no oo
+   , IE.typingStrategies  = nt ++ ot
+   }
+
+removeFromTypeEnv :: H.Name -> IE.ImportEnvironment -> IE.ImportEnvironment
+removeFromTypeEnv x (IE.ImportEnvironment a b tyenv c d e) =
+ IE.ImportEnvironment a b (DM.delete x tyenv) c d e
+
+getQuantifiers :: Contract -> [Contract]
+getQuantifiers (CQuant qv cs) = qv : getQuantifiers cs
+getQuantifiers x = []
+
+stripQuantifiers :: Contract -> Contract
+stripQuantifiers (CQuant qv cs) = stripQuantifiers cs
+stripQuantifiers x = x
+
+splitFunctionContract :: Contract -> (Contract,Contract)
+splitFunctionContract x@(CQuant qv cs) = splitFunctionContract' (stripQuantifiers x) (getQuantifiers x)
+splitFunctionContract x = splitFunctionContract' x []
+
+splitFunctionContract' :: Contract -> [Contract] -> (Contract,Contract)
+splitFunctionContract' (CArr x y) quants = (foldr CQuant x quants,foldr CQuant y quants)
+splitFunctionContract' x _ = (error.show) $ PP.text "Not a function contract: " PP.<+> pprint x
+
+
 type FunctionArityEnvironment = DM.Map NameR Int
 type ParameterArityEnvironment = DM.Map NameR [Int]
 
@@ -44,54 +79,71 @@ calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> (fromHeliumWithR
   where getParameterArity ty = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify) ty
 
 makeModuleR :: DeclsR -> ModuleR
+makeModuleR []    = ModuleR NoNameR (BHoleR 0    noRangeR) noRangeR 
 makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
+
 
 noRangeR :: RangeR
 noRangeR = RangeR UnknownR UnknownR
 
+maximum' :: (Num a, Ord a) => [a] -> a
+maximum' [] = 0
+maximum' xs = maximum xs
+
+-- TODO: We generate fresh contract variables using maximum, but this may interfere with existing types???
+-- Perhaps first calculate the offset of the Helium types by synthesizing the highest value, and then passing that
+-- back down, passing it along as an offset to convertTopTypeToContract. That function then returns what it's used, which is
+-- given back to the rest of the AST...
 convertTopTypeToContract :: S.TpScheme -> Contract
 convertTopTypeToContract ty = 
  let primType = (QL.unqualify . QN.unquantify) ty
      varsToQuantify = map makeType (P.variablesInType primType)
-     quantifiedVars = map (\v -> CVar v Nothing) varsToQuantify
+     quantifiedVars = map (\v -> CVar v Nothing)
      typeAsList = P.getTypes primType
- in snd $ convert [((maximum (P.variablesInType primType))+1)..] (head typeAsList)
+     convertedTriple = convert [((maximum' (P.variablesInType primType))+1)..] (head typeAsList)
+     base = (\(_,c,_) -> c) convertedTriple
+     usedVariables = map makeType $ (\(_,_,v) -> v) convertedTriple
+ in foldr CQuant base (quantifiedVars $ varsToQuantify ++ usedVariables)
   where
    makeType :: Int -> String
    makeType i = "v" ++ show i
 
    -- Here, we convert a primitive type to a contract recursively.
-   convert :: [Int] -> P.Tp -> ([Int],Contract)
+   -- First [Int] parameter is just a list of fresh variable numbers.
+   -- Result: First [Int] is the remaining fresh variable numbers,
+   -- second [Int] is the list of used variable numbers, which are 
+   -- collected for use in universal quantification.
+   convert :: [Int] -> P.Tp -> ([Int],Contract,[Int])
    convert n (P.TVar i) = 
-    (n, CVar (makeType i) Nothing)
+    (n, CVar (makeType i) Nothing,[])
    convert n (P.TApp (P.TApp (P.TCon "->") t1) t2) = 
-    let (n', ctrt1) = convert n t1
-        (n'',ctrt2) = convert n' t2
-    in (n'', CArr ctrt1 ctrt2)
+    let (n', ctrt1,q1) = convert n t1
+        (n'',ctrt2,q2) = convert n' t2
+    in (n'', CArr ctrt1 ctrt2,q1++q2)
    convert (n:ns) (P.TApp (P.TCon x) t1) | x `elem` ["Maybe","[]"] =
     let outer = CVar (makeType n) Nothing
-        (n',inner) = convert ns t1 
-    in (n', CFunctor outer inner)
+        (n',inner,q) = convert ns t1 
+    in (n', CFunctor outer inner,n:q)
    convert (n:ns) (P.TApp (P.TApp (P.TCon x) t1) t2) | x `elem` ["Either","(,)"] =
     let outer = CVar (makeType n) Nothing
-        (n',leftInner)   = convert ns t1
-        (n'',rightInner) = convert n' t2
-    in (n'', CBifunctor outer leftInner rightInner)
+        (n',leftInner,q1)   = convert ns t1
+        (n'',rightInner,q2) = convert n' t2
+    in (n'', CBifunctor outer leftInner rightInner,n:q1++q2)
    convert (n:ns) (P.TCon x) | x `elem` ["Int","Char","Float","Bool","String"] = 
-    (ns, CVar (makeType n) Nothing)
+    (ns, CVar (makeType n) Nothing,[n])
    -- 4-tuple
    convert n (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) | P.isTupleConstructor x =
-    let (n1, ctrt1) = convert n t1
-        (n2, ctrt2) = convert n1 t2
-        (n3, ctrt3) = convert n2 t3
-        (n4, ctrt4) = convert n3 t4
-    in (n4, CTuple [ctrt1,ctrt2,ctrt3,ctrt4])
+    let (n1, ctrt1,q1) = convert n t1
+        (n2, ctrt2,q2) = convert n1 t2
+        (n3, ctrt3,q3) = convert n2 t3
+        (n4, ctrt4,q4) = convert n3 t4
+    in (n4, CTuple [ctrt1,ctrt2,ctrt3,ctrt4],q1++q2++q3++q4)
    -- 3-tuple
    convert n (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) | P.isTupleConstructor x =
-    let (n1, ctrt1) = convert n t1
-        (n2, ctrt2) = convert n1 t2
-        (n3, ctrt3) = convert n2 t3
-    in (n3, CTuple [ctrt1,ctrt2,ctrt3])
+    let (n1, ctrt1,q1) = convert n t1
+        (n2, ctrt2,q2) = convert n1 t2
+        (n3, ctrt3,q3) = convert n2 t3
+    in (n3, CTuple [ctrt1,ctrt2,ctrt3],q1++q2++q3)
    convert n (P.TCon x) | P.isTupleConstructor x = 
     error $ "Only tuples up to size 4 are currently supported. Tried to convert type: " ++ show x
    convert _ x = error $ "Was unable to convert the following type: " ++ show x 
