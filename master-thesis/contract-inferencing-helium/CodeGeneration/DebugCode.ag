@@ -1,6 +1,7 @@
 imports
 {
-import            Text.PrettyPrint as PP
+import qualified  Text.PrettyPrint as PP
+import            Text.PrettyPrint.Boxes as BOX
 }
 
 include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
@@ -9,26 +10,29 @@ include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
 {
 
 -- Expects the code as a string and the point of entry.
-showDebug :: String -> String -> Doc
+showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
  let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
-     inhModule = Inh_ModuleR pointOfEntry Nothing [] topLevelEnv
+     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv
      wrapModule = wrap_ModuleR semModule inhModule
- in debug_Syn_ModuleR wrapModule
+ in printBox (debug_Syn_ModuleR wrapModule)
 
-showDebugExample1 :: Doc
+showDebugExample1 :: IO ()
 showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" []
 
-showDebugExample2 :: Doc
+showDebugExample2 :: IO ()
 showDebugExample2 = showDebug "f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys" []
 
-showDebugExample3 :: Doc
+showDebugExample3 :: IO ()
 showDebugExample3 = showDebug "f x = n x\n  where n x = g x\ng x = x" []
 
-showDebugExample4 :: Doc
+showDebugExample4 :: IO ()
 showDebugExample4 = showDebug "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" []
+
+showDebugExample5 :: IO ()
+showDebugExample5 = showDebug "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" []
 
 
 {-
@@ -52,6 +56,190 @@ string :
 
 }
 
+{
+-- Prettyprinting helper functions
+
+-- Generates a vertical line the height of a box.
+makeVerticalLine :: Box -> Box
+makeVerticalLine box = vcat BOX.left $ map text $ replicate (rows box) "|"
+
+leftLine :: Box -> Box
+leftLine box = (makeVerticalLine box) BOX.<+> box
+
+leftLineNoSpace :: Box -> Box
+leftLineNoSpace box = (makeVerticalLine box) BOX.<> box
+
+rightLine :: Box -> Box
+rightLine box = box BOX.<+> (makeVerticalLine box)
+
+verticalLines :: Box -> Box
+verticalLines = leftLine.rightLine
+
+makeHorizontalLine :: Box -> Box
+makeHorizontalLine = makeHorizontalLineWith "-"
+
+makeHorizontalLineWith :: String -> Box -> Box
+makeHorizontalLineWith s box = text $ concat $ replicate (cols box) s
+
+topLine :: Box -> Box
+topLine box = (makeHorizontalLine box) BOX.// box
+
+bottomLine :: Box -> Box
+bottomLine box = box BOX.// (makeHorizontalLine box)
+
+horizontalLines :: Box -> Box
+horizontalLines = (bottomLine.topLine)
+
+horizontalLinesWith :: String -> Box -> Box
+horizontalLinesWith s box =
+ let l = makeHorizontalLineWith s box
+ in l BOX.// box BOX.// l
+
+-- Draws an ASCII box around a box.
+drawBox :: Box -> Box
+drawBox = verticalLines.horizontalLines
+
+
+-- Replicates the indenting behaviour of original Text.PrettyPrint
+nest :: Int -> Box -> Box
+nest i box = 
+ let indent = emptyBox (rows box) i
+ in hcat BOX.left [indent,box]
+
+
+}
+
+-- Some pretty-printed debug code so we can have a look at what's going on at each node in the AST.
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+  syn  debug     use {BOX.//}         {nullBox}      :: Box
+
+-- Debug info synthesis
+
+sem BodyR
+  | BodyR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  text "BodyR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  nest 2 @decls.debug
+                                                ]
+
+sem RhsR
+  | RhsR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "RhsR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
+                                                ,  nest 2 @where.debug
+                                                ,  nest 2 @expr.debug
+                                                ]
+
+sem DeclR
+  | DPatBindR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "DPatBindR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "HELIUM DEBUG:"          BOX.<+> text (show @loc.heliumDebug)
+                                                ,  text "Helium type(s):"        BOX.<+> text (show @loc.patternTypes)
+                                                ,  text "Contract:"              BOX.<+> pprint @loc.contract
+                                                ,  text "is top-level:"          BOX.<+> pprint @lhs.isTopLevel
+                                                ,  text "local idents known to RHS:"          BOX.<+> pprint @loc.localIdentifiers
+                                                ,  nest 2 @pat.debug
+                                                ,  nest 2 @rhs.debug
+                                                ]
+
+sem AltR
+  | AltR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "AltR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "local idents known to RHS"          BOX.<+> pprint @loc.localIdentifiers
+                                                ,  nest 2 @pat.debug
+                                                ,  nest 2 @rhs.debug
+                                                ]
+
+sem FunBindR
+  | FunBindR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "FunBindR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "Helium type:"           BOX.<+> text (show @loc.heliumType)
+                                                ,  text "Contract:"              BOX.<+> pprint @loc.contract
+                                                ,  text "orig ident:"            BOX.<+> pprint @name.copy
+                                                ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
+                                                ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
+                                                ,  text "local idents known to RHS:"          BOX.<+> pprint @loc.localIdentifiers
+                                                ,  nest 2 @name.debug
+                                                ,  nest 2 @pats.debug
+                                                ,  nest 2 @rhs.debug
+                                                ]
+
+sem PatR
+   | PInfixConR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "PInfixConR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
+                                                ,  nest 2 @left.debug
+                                                ,  nest 2 @name.debug
+                                                ,  nest 2 @right.debug
+                                                ]
+   | PVarR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "PVarR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
+                                                ,  nest 2 @name.debug
+                                                ]
+   | PAsR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "PAsR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
+                                                ,  nest 2 @name.debug
+                                                ,  nest 2 @pat.debug
+                                                ]
+
+sem ExprR
+  | VarR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "VarR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "orig ident:"            BOX.<+> pprint @name.copy
+                                                ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
+                                                ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
+                                                ,  text "local idents:"          BOX.<+> pprint @lhs.localIdentifiers
+                                                ]
+  | LambdaR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "LambdaR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "local idents known to expr:"          BOX.<+> pprint @loc.localIdentifiers
+                                                ,  nest 2 @pats.debug
+                                                ,  nest 2 @expr.debug
+                                                ]
+
+sem NameR
+  | IdentR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "IdentR"
+                                                ,  text "name:"                  BOX.<+> text @name
+                                                ]
+  | OperatorR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "OperatorR"
+                                                ,  text "name:"                  BOX.<+> text @name
+                                                ]
+  | SpecialR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "SpecialR"
+                                                ,  text "name:"                  BOX.<+> text @name
+                                                ]
+
+{-
+
+-- OLD CODE
+
+
 -- Some pretty-printed debug code so we can have a look at what's going on at each node in the AST.
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
   syn  debug     use {$+$}         {empty}      :: Doc
@@ -62,8 +250,9 @@ sem BodyR
   | BodyR
      lhs   .debug                       = vcat  [  text "BodyR"
                                                 ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  nest 2 @decls.debug
+                                                ,  @loc.declsbox
                                                 ]
+     loc   .declsbox                    = (fromBox.addLeftLine.toBox) (nest 2 @decls.debug)
 
 sem RhsR
   | RhsR
@@ -164,3 +353,5 @@ sem NameR
      lhs   .debug                       = vcat  [  text "SpecialR"
                                                 ,  text "name:"                  PP.<+> text @name
                                                 ]
+
+-}

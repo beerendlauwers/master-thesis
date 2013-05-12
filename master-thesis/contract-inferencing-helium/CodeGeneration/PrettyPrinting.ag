@@ -8,73 +8,83 @@ include "Domain/FP/CodeGeneration/Views.ag"
 imports
 {
 import qualified Common.Library as CL (build)
-import Text.PrettyPrint as PP
+import qualified  Text.PrettyPrint as PP
+import            Text.PrettyPrint.Boxes as BOX
 --import qualified Domain.FP.Helium as Helium --Imported in Domain/FP/CodeGeneration/Views.ag
 }
 
+{
+
+parens :: Box -> Box
+parens box = hcat BOX.left [text "(",box,text ")"]
+
+comma :: Box
+comma = text ","
+
+}
 
 {
 class Pretty a where
-  pprint :: a -> PP.Doc
+  pprint :: a -> Box
 
 instance Pretty a => Pretty (Maybe a) where
-  pprint Nothing   = PP.text "Nothing"
-  pprint (Just p)  = PP.parens $ PP.text "Just" PP.<+> PP.parens (pprint p)
+  pprint Nothing   = text "Nothing"
+  pprint (Just p)  = parens $ text "Just" BOX.<+> parens (pprint p)
 
 instance Pretty a => Pretty [a] where
-  pprint = foldr (\x xs -> pprint x $+$ xs) PP.empty
+  pprint = foldr (\x xs -> pprint x BOX.// xs) nullBox
 
 instance (Pretty a, Pretty b) => Pretty (a, b) where
-  pprint (l, r) = PP.parens $ pprint l PP.<> PP.comma PP.<+> pprint r
+  pprint (l, r) = parens $ pprint l BOX.<> comma BOX.<+> pprint r
 
 instance Pretty Int where
-  pprint = PP.int
+  pprint = text.show
 
 instance Pretty Char where
-  pprint = PP.char
+  pprint = text.show
 
 instance Pretty Bool where
-  pprint = PP.text . show
+  pprint = text.show
 
 instance Pretty NameR where
-  pprint (IdentR n _)    = PP.text n
-  pprint (OperatorR n _) = PP.text n
-  pprint (SpecialR n _)  = PP.text n
+  pprint (IdentR n _)    = text n
+  pprint (OperatorR n _) = text n
+  pprint (SpecialR n _)  = text n
 
 instance Pretty ModuleR where
-  pprint = PP.text . Helium.ppModule . CL.build heliumWithRangesView
+  pprint = text . Helium.ppModule . CL.build heliumWithRangesView
 
 instance Pretty BodyR where
-  pprint = PP.text . Helium.ppBody . CL.build heliumWithRangesView
+  pprint = text . Helium.ppBody . CL.build heliumWithRangesView
 
 instance Pretty RhsR where
-  pprint = PP.text . Helium.ppRhs . CL.build heliumWithRangesView
+  pprint = text . Helium.ppRhs . CL.build heliumWithRangesView
 
 instance Pretty FunBindR where
-  pprint = PP.text . Helium.ppFunctionBinding . CL.build heliumWithRangesView
+  pprint = text . Helium.ppFunctionBinding . CL.build heliumWithRangesView
 
 instance Pretty DeclR where
-  pprint = PP.text . Helium.ppDeclaration . CL.build heliumWithRangesView
+  pprint = text . Helium.ppDeclaration . CL.build heliumWithRangesView
 
 instance Pretty ExprR where
-  pprint = PP.text . Helium.ppExpression . CL.build heliumWithRangesView
+  pprint = text . Helium.ppExpression . CL.build heliumWithRangesView
 
 instance Pretty AltR where
-  pprint = PP.text . Helium.ppAlternative . CL.build heliumWithRangesView
+  pprint = text . Helium.ppAlternative . CL.build heliumWithRangesView
 
 instance Pretty PatR where
-  pprint = PP.text . Helium.ppPattern . CL.build heliumWithRangesView
+  pprint = text . Helium.ppPattern . CL.build heliumWithRangesView
 
 instance Pretty Contract where
-  pprint (CArr c1 c2) = PP.parens $ pprint c1 PP.<+> PP.text ">->" PP.<+> pprint c2
-  pprint (CProp p) = PP.text p
-  pprint (CFunctor o i) = pprint o PP.<+> PP.text "<@>" PP.<+> pprint i
-  pprint (CBifunctor o il ir) = PP.parens $ pprint o PP.<+> PP.text "<@@>" PP.<+> PP.parens (pprint il PP.<> comma PP.<+> pprint ir)
-  pprint (CVar v mc) = PP.text v
+  pprint (CArr c1 c2) = parens $ pprint c1 BOX.<+> text ">->" BOX.<+> pprint c2
+  pprint (CProp p) = text p
+  pprint (CFunctor o i) = pprint o BOX.<+> text "<@>" BOX.<+> pprint i
+  pprint (CBifunctor o il ir) = parens $ pprint o BOX.<+> text "<@@>" BOX.<+> parens (pprint il BOX.<> comma BOX.<+> pprint ir)
+  pprint (CVar v mc) = text v
   pprint (CQuant cv cs) = case cv of
-                           (CVar v _) -> PP.text "forall" PP.<+> PP.text v PP.<> PP.char '.' PP.<+> pprint cs
+                           (CVar v _) -> text "forall" BOX.<+> text v BOX.<> text "." BOX.<+> pprint cs
                            _          -> error "Quantifier needs variable"
   pprint (CTuple (c:[])) = pprint c
-  pprint (CTuple (c:cs)) = PP.parens $ pprint c PP.<+> PP.char ',' PP.<+> pprint (CTuple cs)
-  pprint (CTuple [])     = PP.empty
+  pprint (CTuple (c:cs)) = parens $ pprint c BOX.<+> comma BOX.<+> pprint (CTuple cs)
+  pprint (CTuple [])     = nullBox
 }

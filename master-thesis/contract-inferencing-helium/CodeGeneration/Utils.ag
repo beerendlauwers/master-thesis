@@ -48,7 +48,7 @@ splitFunctionContract x = splitFunctionContract' x []
 
 splitFunctionContract' :: Contract -> [Contract] -> (Contract,Contract)
 splitFunctionContract' (CArr x y) quants = (foldr CQuant x quants,foldr CQuant y quants)
-splitFunctionContract' x _ = (error.show) $ PP.text "Not a function contract: " PP.<+> pprint x
+splitFunctionContract' x _ = (error.show) $ text "Not a function contract: " BOX.<+> pprint x
 
 
 type FunctionArityEnvironment = DM.Map NameR Int

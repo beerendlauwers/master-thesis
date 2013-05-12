@@ -25,11 +25,28 @@ import qualified Data.Maybe as DJ
 {
 -- DEBUGGING
 
+{-
 top1 = H.compileWithExtraEnv "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" IE.emptyEnvironment
 top1NoGEnv = maybe (generateImportEnv $ H.extractTypes top1) (\x -> removeFromTypeEnv x (generateImportEnv $ H.extractTypes top1)) (Just $ toHeliumWithRanges (IdentR "g" noRangeR))
 combine1 = overwriteImportEnv top1NoGEnv IE.emptyEnvironment
 top2 = H.compile''' False "g x =\n   let\n       (z,zs) =\n           (f x,f [x]) in\n       zs" combine1
 combine2 = overwriteImportEnv (generateImportEnv $ H.extractTypes top2) combine1
+
+
+
+
+topn = H.compileWithExtraEnv "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" IE.emptyEnvironment
+topnNoFEnv = maybe (generateImportEnv $ H.extractTypes topn) (\x -> removeFromTypeEnv x (generateImportEnv $ H.extractTypes topn)) (Just $ toHeliumWithRanges (IdentR "f" noRangeR))
+combinen = overwriteImportEnv topnNoFEnv IE.emptyEnvironment
+topn' = H.compile'' False "z x y = x y" combinen
+combinen' = overwriteImportEnv (generateImportEnv $ H.extractTypes topn) combinen
+
+
+
+-- FIXING EXAMPLE 1
+example1top = H.compileWithExtraEnv "f x = g x\n  where g x = [x]\ng f x = f x" IE.emptyEnvironment
+example1env = generateImportEnv $ H.extractTypes example1top
+-}
 
 }
 
@@ -38,8 +55,6 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 
   -- We get this from the Helium compiler.
   inh topLevelTypes                                     :: {IE.ImportEnvironment}
-
-  inh functionIdent                                     :: {Maybe H.Name}
 
 --{
 --data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
@@ -53,7 +68,7 @@ sem ExprR
    | LetR
     -- Generate types for this group of bindings.
       loc  .asModuleR           = makeModuleR @decls.copy
-      loc  .heliumResults       = H.compileWithExtraEnv (show $ pprint @loc.asModuleR) @lhs.topLevelTypes
+      loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
       loc  .types               = H.extractTypes @loc.heliumResults
       loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
@@ -72,49 +87,38 @@ sem RhsR
   | RhsR
     -- Generate types for this group of bindings.
       loc  .asModuleR           = makeModuleR @where.copy
-      loc  .heliumResults       = H.compileWithExtraEnv (show $ pprint @loc.asModuleR) @lhs.topLevelTypes
+      loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
       loc  .types               = H.extractTypes @loc.heliumResults
       loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
 
-      -- Possibly remove the function definition (from the LHS) from the generated import environment.
-      loc  .importEnvNoDef      = maybe @loc.typesImportEnv (\x -> removeFromTypeEnv x @loc.typesImportEnv) @lhs.functionIdent
-
     -- Pass types down to decls and assign them to each definition, so everyone knows their type.
       where.heliumTypes         = @loc.types
 
     -- Overwrite environment and pass it down to children.
-      loc  .newEnv              = overwriteImportEnv @loc.importEnvNoDef @lhs.topLevelTypes --IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
+      loc  .newEnv              = overwriteImportEnv @loc.typesImportEnv @lhs.topLevelTypes --IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
       where.topLevelTypes       = @loc.newEnv
       expr .topLevelTypes       = @loc.newEnv
 
   | GRhsR
     -- Generate types for this group of bindings.
       loc  .asModuleR           = makeModuleR @where.copy
-      loc  .heliumResults       = H.compileWithExtraEnv (show $ pprint @loc.asModuleR) @lhs.topLevelTypes
+      loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
       loc  .types               = H.extractTypes @loc.heliumResults
       loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
 
-      -- Possibly remove the function definition (from the LHS) from the generated import environment.
-      loc  .importEnvNoDef      = maybe @loc.typesImportEnv (\x -> removeFromTypeEnv x @loc.typesImportEnv) @lhs.functionIdent
-
     -- Pass types down to decls and assign them to each definition, so everyone knows their type.
       where.heliumTypes         = @loc.types
 
     -- Overwrite environment and pass it down to children.
-      loc  .newEnv              = overwriteImportEnv @loc.importEnvNoDef @lhs.topLevelTypes --IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
+      loc  .newEnv              = overwriteImportEnv @loc.typesImportEnv @lhs.topLevelTypes --IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
       where.topLevelTypes       = @loc.newEnv
       gexprs.topLevelTypes      = @loc.newEnv
-
--- Fetch function identifier to remove from import environment list
-sem FunBindR
-  | FunBindR
-      rhs.functionIdent         = Just $ toHeliumWithRanges @name.copy
 
 -- We now have the types of the declarations, pass those down to each individual definition.
 
