@@ -242,7 +242,10 @@ compile__ isPrelude contents options extraEnv doneModules =
         let when :: Bool -> (a -> a) -> a -> a
             when p f a = if p then f a else a
             ns = toplevelNames parsedModule
-            importEnvs = when isPrelude (filterImportEnvs ns) (extraEnv:H.importEnvs)
+            -- Need local definitions to shadow top-level definitions:
+            nonShadowedExtraEnvDefs = filterImportEnvs ns [extraEnv]
+            importEnvs = nonShadowedExtraEnvDefs ++ when isPrelude (filterImportEnvs ns) H.importEnvs
+
         
         -- Phase 4: Resolving operators
         resolvedModule <- 
@@ -271,7 +274,11 @@ compile__ isPrelude contents options extraEnv doneModules =
         
         return  (dictionaryEnv, afterTypeInferEnv, toplevelTypes, typeWarnings, resolvedModule)
 
-
+compile''' :: Bool -> String
+         -> ImportEnvironment
+         -> Either String
+             ( String
+             )
 compile''' isPrelude txt extraEnv = unsafePerformIO $ do
    ea <- run $ compile___ isPrelude txt [Overloading, UseTutor] extraEnv []
    case ea of
@@ -280,11 +287,7 @@ compile''' isPrelude txt extraEnv = unsafePerformIO $ do
 
 -- | Like compile_ but with an extra ImportEnvironment parameter.
 compile___ :: Bool -> String -> [Option] -> ImportEnvironment -> t
-         -> Compile ( DictionaryEnvironment
-                    , ImportEnvironment
-                    , TypeEnvironment
-                    , [Warning]
-                    , Module
+         -> Compile ( String
                     )
 compile___ isPrelude contents options extraEnv doneModules =
     do
@@ -309,7 +312,10 @@ compile___ isPrelude contents options extraEnv doneModules =
             when p f a = if p then f a else a
             ns = toplevelNames parsedModule
             importEnvs = when isPrelude (filterImportEnvs ns) (extraEnv:H.importEnvs)
+
+        return( show ((filterImportEnvs ns) [extraEnv]) ++ "\n\n\n" ++ show ns )
         
+{-
         -- Phase 4: Resolving operators
         resolvedModule <- 
             doPhaseWithExit $
@@ -336,6 +342,7 @@ compile___ isPrelude contents options extraEnv doneModules =
                phaseTypeInferencer "." fullName resolvedModule localEnv' beforeTypeInferEnv newOptions
         
         return  (dictionaryEnv, afterTypeInferEnv, toplevelTypes, typeWarnings, resolvedModule)
+-}
 
 -- | Adjusted code from CompileUtils
 doPhaseWithExit :: HasMessage err => Phase err a -> Compile a
