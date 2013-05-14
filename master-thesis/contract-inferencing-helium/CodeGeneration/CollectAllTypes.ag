@@ -20,34 +20,7 @@ import qualified ModuleSystem.ImportEnvironment as IE
 import qualified Data.Map as DM
 import qualified Data.Set as DS
 import qualified Data.Maybe as DJ
-}
-
-{
--- DEBUGGING
-
-{-
-top1 = H.compileWithExtraEnv "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" IE.emptyEnvironment
-top1NoGEnv = maybe (generateImportEnv $ H.extractTypes top1) (\x -> removeFromTypeEnv x (generateImportEnv $ H.extractTypes top1)) (Just $ toHeliumWithRanges (IdentR "g" noRangeR))
-combine1 = overwriteImportEnv top1NoGEnv IE.emptyEnvironment
-top2 = H.compile''' False "g x =\n   let\n       (z,zs) =\n           (f x,f [x]) in\n       zs" combine1
-combine2 = overwriteImportEnv (generateImportEnv $ H.extractTypes top2) combine1
-
-
-
-
-topn = H.compileWithExtraEnv "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" IE.emptyEnvironment
-topnNoFEnv = maybe (generateImportEnv $ H.extractTypes topn) (\x -> removeFromTypeEnv x (generateImportEnv $ H.extractTypes topn)) (Just $ toHeliumWithRanges (IdentR "f" noRangeR))
-combinen = overwriteImportEnv topnNoFEnv IE.emptyEnvironment
-topn' = H.compile'' False "z x y = x y" combinen
-combinen' = overwriteImportEnv (generateImportEnv $ H.extractTypes topn) combinen
-
-
-
--- FIXING EXAMPLE 1
-example1top = H.compileWithExtraEnv "f x = g x\n  where g x = [x]\ng f x = f x" IE.emptyEnvironment
-example1env = generateImportEnv $ H.extractTypes example1top
--}
-
+import qualified Data.List as DL
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -64,9 +37,9 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 --                   NoLocalDefinitions
 --}
 
+{- *** Start of semantics to get the types of functions and let-definitions *** -}
 -- Every node that has a (list of) declaration(s) has those declarations compiled
 -- by the Helium compiler to get their types.
-
 sem ExprR
    | LetR
     -- Generate types for this group of bindings.
@@ -119,9 +92,10 @@ sem RhsR
       loc  .newEnv              = overwriteImportEnv @loc.typesImportEnv @lhs.topLevelTypes --IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
       where.topLevelTypes       = @loc.newEnv
       gexprs.topLevelTypes      = @loc.newEnv
+{- *** End of semantics to get the types of functions and let-definitions *** -}
 
+{- *** Start of semantics to generate contracts for functions and let-definitions *** -}
 -- We now have the types of the declarations, pass those down to each individual definition.
-
 attr DeclsR DeclR FunBindsR FunBindR
   inh heliumTypes                                       :: {IE.TypeEnvironment}
 
@@ -149,15 +123,15 @@ sem DeclR
       -- Don't know if we'll need the contracts of patterns defined in tuples, but we might as well collect it, it's not too hard.
       loc.heliumType            = map (\name -> lookupHeliumType name @lhs.heliumTypes) @pat.localPatterns
       loc.heliumDebug           = @lhs.heliumTypes
+{- *** End of semantics to generate contracts for functions and let-definitions *** -}
 
-
-
+{- *** Start of semantics to get types from patterns of anonymous lambda functions *** -}
 sem ExprR
   | LambdaR
      --We need to get the types of the patterns inside a lambda, too.
      --We'll convert it to a function and then do the usual synthesis on it.
      loc.lambda                 = LambdaR @pats.copy @expr.copy @range.copy
-     loc.lambdaAsFunbind        = convertLambdaToFunBind @loc.lambda
+     loc.lambdaAsFunbind        = convertExprToFunBind @loc.lambda
      loc.lambdaAsModule         = makeModuleR [DFunBindsR [@loc.lambdaAsFunbind] noRangeR]
 
      loc.heliumResults          = H.compileWithExtraEnv (render $ pprint @loc.lambdaAsModule) @lhs.topLevelTypes
@@ -176,10 +150,43 @@ sem ExprR
 sem FunBindR
   | FunBindR
       lhs.functionHeliumTypes   = @loc.patternTypes
+{- *** End of semantics to get types from patterns of anonymous lambda functions *** -}
 
 
+{- *** Start of semantics to get the type of an expression in a case statement *** -}
+sem ExprR
+  | CaseR
+     -- Need to convert the expression to a ModuleR, then do synthesis on it.
+     loc.exprAsFunbind          = convertExprToFunBind @expr.copy
+     loc.exprAsModule           = makeModuleR [DFunBindsR [@loc.exprAsFunbind] noRangeR]
+
+     loc.heliumResults          = H.compileWithExtraEnv (render $ pprint @loc.exprAsModule) @lhs.topLevelTypes
+     loc.types                  = H.extractTypes @loc.heliumResults
+
+     -- Fetch the type, pass it to the AltR list.
+     -- There, it will be used to type the patterns.
+     loc.caseExpressionType     = lookupHeliumType (IdentR "__internalExpression__" noRangeR) @loc.types
+     alts.altType               = @loc.caseExpressionType
+{- *** End of semantics to get the type of an expression in a case statement *** -}
+
+{- *** Start of semantics to get the types of patterns in an AltR. *** -}
+attr AltsR AltR
+  inh altType                                           :: {S.TpScheme}
+
+sem AltR
+  | AltR
+      -- We need to get the types of the patterns. Pass the function type to the pattern list.
+      pat.patType              = Just @lhs.altType
+
+      -- Synthesize the list of patterns with their types, we'll add those to the import environment.
+      loc.patternTypes          = @pat.patternTypes
+
+      -- Add synthesized list of patterns with types to import environment.
+      rhs.topLevelTypes         = overwriteImportEnv (generateImportEnv @loc.patternTypes) @lhs.topLevelTypes
+{- *** End of semantics to get the types of patterns in an AltR. *** -}
 
 
+{- *** Start of semantics to calculate the type of a pattern. *** -}
 attr PatsR PatR ListPatsR TuplePatsR
   inh patType                                           :: {Maybe S.TpScheme}
   inh tuplePatType                                      :: {Maybe [S.TpScheme]}
@@ -215,7 +222,27 @@ sem PatR
 
   | PInfixConR
      -- TODO: Expand this.
-     lhs.patternTypes           = DM.empty
+     lhs.patternTypes           = DM.union @left.patternTypes @right.patternTypes
+     loc.possibleResult         = DL.elemIndex True @loc.listOfConstructors
+     loc.listOfConstructors     = [@loc.isListConstructor]
+
+     loc.inhLeft                = [@loc.listToLeft]
+     loc.inhright               = [@loc.listToRight]
+     loc.sendToleft             = case @loc.possibleResult of
+                                   (Just n) -> @loc.inhLeft !! n
+                                   _        -> Nothing
+     loc.sendToRight            = case @loc.possibleResult of
+                                   (Just n) -> @loc.inhright !! n
+                                   _        -> Nothing
+     left.patType               = @loc.sendToleft
+     right.patType              = @loc.sendToRight
+
+     loc.infixConstructor       = getVar @name.copy
+
+     -- List constructor
+     loc.isListConstructor      = @loc.infixConstructor == ":"
+     loc.listToLeft             = maybe Nothing (Just . getInnerListElem) @lhs.patType
+     loc.listToRight            = @lhs.patType
 
   | PListR
      lhs.patternTypes           = @pats.patternTypes
@@ -224,7 +251,7 @@ sem PatR
      lhs.patternTypes           = DM.empty
 
   | PParenR
-     lhs.patternTypes           = DM.empty
+     lhs.patternTypes           = @pat.patternTypes
 
   | PTupleR
      lhs.patternTypes           = @pats.patternTypes
@@ -265,3 +292,4 @@ sem ListPatsR
      tl .patType                = @lhs.patType
   | Nil
      lhs.patternTypes           = DM.empty
+{- *** End of semantics to calculate the type of a pattern. *** -}

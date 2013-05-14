@@ -90,11 +90,15 @@ makeModuleR :: DeclsR -> ModuleR
 makeModuleR []    = ModuleR NoNameR (BHoleR 0    noRangeR) noRangeR 
 makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
 
-convertLambdaToFunBind :: ExprR -> FunBindR
-convertLambdaToFunBind (LambdaR pats expr range) = 
- let nm = IdentR "__internalLambda__" noRangeR
+convertExprToFunBind :: ExprR -> FunBindR
+convertExprToFunBind (LambdaR pats expr range) = 
+ let nm = IdentR "__internalExpression__" noRangeR
      rhs = RhsR expr [] noRangeR
  in FunBindR Nothing nm pats rhs range
+convertExprToFunBind caseExpr = 
+ let nm = IdentR "__internalExpression__" noRangeR
+     rhs = RhsR caseExpr [] noRangeR
+ in FunBindR Nothing nm [] rhs noRangeR
 
 noRangeR :: RangeR
 noRangeR = RangeR UnknownR UnknownR
