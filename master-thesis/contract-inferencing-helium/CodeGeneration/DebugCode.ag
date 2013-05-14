@@ -31,29 +31,22 @@ showDebugExample3 = showDebug "f x = n x\n  where n x = g x\ng x = x" []
 showDebugExample4 :: IO ()
 showDebugExample4 = showDebug "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" []
 
+-- Shadowing test
 showDebugExample5 :: IO ()
 showDebugExample5 = showDebug "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" []
 
+-- AltR test
+showDebugExample6 :: IO ()
+showDebugExample6 = showDebug "g x = [x]\nf x = case (g x) of\n           (x:xs) -> let n = xs\n                     in n\n           []     -> error \"Test\"" []
 
-{-
--- Example that shows shadowing of declarations and where clauses
+-- PAsR test
+-- PTupleR test
+showDebugExample7 :: IO ()
+showDebugExample7 = showDebug "f n@(x,y,z) = (g z,n)\n  where g = x y" []
 
-f x = x
-g x = f [x]
-isort xs = foldr insert [] xs
-  where insert x [] = []
-        insert x (y:ys) = case x > y of
-                            True -> y : f x ys
-                            False -> x : g (y:ys)
-        f x ys = insert x ys
-        g ys = ys
-
-string :
-"f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys"
-
-"f x = x\ng x = let (z,zs) = (f x,f [x])\n      in zs"
--}
-
+-- Lambda test
+showDebugExample8 :: IO ()
+showDebugExample8 = showDebug "f x = (\\y -> let n = y\n             in n)" []
 }
 
 {
@@ -139,7 +132,6 @@ sem DeclR
                                                 [  horizontalLinesWith "*" $ text "DPatBindR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "HELIUM DEBUG:"          BOX.<+> text (show @loc.heliumDebug)
-                                                ,  text "Helium type(s):"        BOX.<+> text (show @loc.patternTypes)
                                                 ,  text "Contract:"              BOX.<+> pprint @loc.contract
                                                 ,  text "is top-level:"          BOX.<+> pprint @lhs.isTopLevel
                                                 ,  text "local idents known to RHS:"          BOX.<+> pprint @loc.localIdentifiers

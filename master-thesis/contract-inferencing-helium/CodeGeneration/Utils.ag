@@ -72,6 +72,13 @@ getVar (IdentR x _)    = x
 getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
 
+lookupHeliumType :: NameR -> IE.TypeEnvironment -> S.TpScheme
+lookupHeliumType nm env = 
+ let result = DM.lookup (toHeliumWithRanges nm) env
+ in case result of
+     (Just x) -> x
+     Nothing  -> error $ "Tried to look up " ++ show nm ++ " in type environment: " ++ show env
+
 calculateArity :: IE.TypeEnvironment -> FunctionArityEnvironment
 calculateArity env = DM.fromList $ map (\(name,ty) -> (fromHeliumWithRanges name, S.arityOfTpScheme ty)) (DM.toList env)
 
@@ -83,6 +90,11 @@ makeModuleR :: DeclsR -> ModuleR
 makeModuleR []    = ModuleR NoNameR (BHoleR 0    noRangeR) noRangeR 
 makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
 
+convertLambdaToFunBind :: ExprR -> FunBindR
+convertLambdaToFunBind (LambdaR pats expr range) = 
+ let nm = IdentR "__internalLambda__" noRangeR
+     rhs = RhsR expr [] noRangeR
+ in FunBindR Nothing nm pats rhs range
 
 noRangeR :: RangeR
 noRangeR = RangeR UnknownR UnknownR
