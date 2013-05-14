@@ -70,7 +70,6 @@ sem ExprR
       loc  .asModuleR           = makeModuleR @decls.copy
       loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
       loc  .types               = H.extractTypes @loc.heliumResults
-      loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
@@ -79,7 +78,7 @@ sem ExprR
       decls.heliumTypes         = @loc.types
 
     -- Combine environment and pass it down to children.
-      loc  .newEnv              = IE.combineImportEnvironments  @lhs.topLevelTypes @loc.importEnv --IE.combineImportEnvironments @loc.importEnv @lhs.topLevelTypes
+      loc  .newEnv              = overwriteImportEnv @loc.typesImportEnv @lhs.topLevelTypes
       decls.topLevelTypes       = @loc.newEnv
       expr .topLevelTypes       = @loc.newEnv
 
@@ -89,7 +88,6 @@ sem RhsR
       loc  .asModuleR           = makeModuleR @where.copy
       loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
       loc  .types               = H.extractTypes @loc.heliumResults
-      loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
@@ -107,7 +105,6 @@ sem RhsR
       loc  .asModuleR           = makeModuleR @where.copy
       loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
       loc  .types               = H.extractTypes @loc.heliumResults
-      loc  .importEnv           = H.extractImportEnv @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
@@ -133,7 +130,17 @@ sem FunBindR
   | FunBindR
       -- We'll use this local variable to generate contracts and contracted code.
       loc.heliumType            = DJ.fromJust $ DM.lookup (toHeliumWithRanges @name.copy) @lhs.heliumTypes
+
+      -- We need to get the types of all variables, too. Pass the function type to the pattern list.
+      pats.patType              = Just @loc.heliumType
+
+      -- Synthesize the list of patterns with their types, we'll add those to the import environment.
       loc.patternTypes          = @pats.patternTypes
+
+      -- Add synthesized list of patterns with types to import environment.
+      rhs.topLevelTypes           = overwriteImportEnv (generateImportEnv @loc.patternTypes) @lhs.topLevelTypes
+      
+
 sem DeclR
   | DPatBindR
       -- Don't know if we'll need the contracts of stuff defined in tuples, but we might as well collect it, it's not too hard.
@@ -142,19 +149,24 @@ sem DeclR
       loc.patternTypes          = zip @pat.localPatterns @loc.heliumType
 
 attr PatsR PatR ListPatsR TuplePatsR
-  inh patType                                           :: {S.TpScheme}
+  inh patType                                           :: {Maybe S.TpScheme}
+  inh tuplePatType                                      :: {Maybe [S.TpScheme]}
   inh patContract                                       :: {Contract}
   syn patternTypes                                      :: {IE.TypeEnvironment}
 
--- Split up the type-generated contract and pass it to a pattern.
+-- Semantics for splitting up a function type and assigning it to a pattern.
 sem PatsR
   | Cons
+     -- Split up the type-generated contract and pass it to a pattern.
      loc.splitContract          = splitFunctionContract @lhs.patContract
      hd .patContract            = fst @loc.splitContract
      tl .patContract            = snd @loc.splitContract
+     
+     -- Split up the type and pass it to a pattern.
+     loc.splitType              = maybe Nothing (Just . splitTopTypeScheme) @lhs.patType
+     hd .patType                = maybe Nothing (Just . fst) @loc.splitType
+     tl .patType                = maybe Nothing snd @loc.splitType
 
--- Split up the type and pass it to a pattern.
- 
 sem PatsR
   | Cons
      lhs.patternTypes           = DM.union @hd.patternTypes @tl.patternTypes
@@ -162,63 +174,62 @@ sem PatsR
      lhs.patternTypes           = DM.empty
 
 sem PatR
+  | PHoleR
+     lhs.patternTypes           = DM.empty
+
+  | PConR
+     -- TODO: Expand this.
+     lhs.patternTypes           = DM.empty 
+
+  | PInfixConR
+     -- TODO: Expand this.
+     lhs.patternTypes           = DM.empty
+
+  | PListR
+     lhs.patternTypes           = @pats.patternTypes
+  
+  | PLitR
+     lhs.patternTypes           = DM.empty
+
+  | PParenR
+     lhs.patternTypes           = DM.empty
+
+  | PTupleR
+     lhs.patternTypes           = @pats.patternTypes
+     pats.tuplePatType          = if @loc.lengthCheck 
+                                   then @loc.splitUpTuple
+                                   else error $ "Size of tuple as a pattern differs from size of tuple as a type! " ++
+                                                "Size of pattern tuple: " ++ (show @loc.lengthPats) ++ ", " ++ 
+                                                "Size of type tuple: " ++ (show @loc.lengthPatType)
+     loc.lengthCheck            = @loc.lengthPatType == @loc.lengthPats
+     loc.splitUpTuple           = maybe Nothing (Just . splitUpTuple) @lhs.patType
+     loc.lengthPatType          = maybe 0 length @loc.splitUpTuple
+     loc.lengthPats             = length @pats.copy
+
   | PVarR
+     lhs.patternTypes           = case @lhs.patType of
+                                   (Just x) -> DM.singleton (toHeliumWithRanges @name.copy) x
+                                   Nothing  -> DM.empty
+  | PAsR
+     lhs.patternTypes           = DM.union @loc.pAs @pat.patternTypes
+     loc.pAs                    = case @lhs.patType of
+                                   (Just x) -> DM.singleton (toHeliumWithRanges @name.copy) x
+                                   Nothing  -> DM.empty
+  | PWildcardR
+     lhs.patternTypes           = DM.empty
 
-{-
--- Pattern bindings also further propagate the Helium type downwards to the actual pattern, in case we need to generate contracts at that level.
+sem TuplePatsR
+  | Cons
+     lhs.patternTypes           = DM.union @hd.patternTypes @tl.patternTypes
+     hd .patType                = maybe Nothing (Just . head) @lhs.tuplePatType
+     tl .tuplePatType           = maybe Nothing (Just . tail) @lhs.tuplePatType
+  | Nil
+     lhs.patternTypes           = DM.empty
 
-attr PatsR PatR ListPatsR TuplePatsR
-  inh heliumTypes                                       :: {IE.TypeEnvironment}
-  syn contract                                          :: {Contract}
-
--- TODO: Populate patternTypes for other pat stuff.
-sem DeclR
-  | DPatBindR
-      pat.heliumTypes           = @lhs.heliumTypes
-
-
-sem PatR
-  | PVarR
-      loc.heliumType            = DJ.fromJust $ DM.lookup (toHeliumWithRanges @name.copy) @lhs.heliumTypes
--}
-
-
-{-
-
--- | Patterns
-data PatR
-   | PHoleR
-      id       :: HoleIDR
-      range    :: RangeR
-   | PConR
-      name     :: NameR
-      pats     :: PatsR
-      range    :: RangeR
-   | PInfixConR
-      left     :: PatR
-      name     :: NameR
-      right    :: PatR
-      range    :: RangeR
-   | PListR  -- We use a new type here because for lists, the inferred contracts must hold on all elements.
-      pats     :: ListPatsR
-      range    :: RangeR
-   | PLitR
-      lit      :: LiteralR
-      range    :: RangeR
-   | PParenR
-      pat      :: PatR
-      range    :: RangeR
-   | PTupleR
-      pats     :: TuplePatsR
-      range    :: RangeR
-   | PVarR
-      name     :: NameR
-      range    :: RangeR
-   | PAsR
-      name     :: NameR
-      pat      :: PatR
-      range    :: RangeR
-   | PWildcardR
-      range    :: RangeR
-
--}
+sem ListPatsR
+  | Cons
+     lhs.patternTypes           = DM.union @hd.patternTypes @tl.patternTypes
+     hd .patType                = maybe Nothing (Just . getInnerListElem) @lhs.patType
+     tl .patType                = @lhs.patType
+  | Nil
+     lhs.patternTypes           = DM.empty

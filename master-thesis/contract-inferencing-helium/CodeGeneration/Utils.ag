@@ -11,6 +11,7 @@ import qualified Top.Types.Schemes as S
 import qualified Top.Types.Primitive as P
 import qualified Top.Types.Qualification as QL
 import qualified Top.Types.Quantification as QN
+import qualified Top.Types.Classes as CLS
 import qualified ModuleSystem.ImportEnvironment as IE
 }
 
@@ -90,6 +91,23 @@ maximum' :: (Num a, Ord a) => [a] -> a
 maximum' [] = 0
 maximum' xs = maximum xs
 
+-- Disassembles a type scheme into the parts needed to reassemble it.
+stripTypeScheme :: S.TpScheme -> (P.Tp, CLS.Predicates, [Int])
+stripTypeScheme ty = 
+ let quants      = QN.quantifiers ty
+     noqnTy      = QN.unquantify ty
+     predicates  = QL.qualifiers noqnTy
+     simpleTy    = QL.unqualify noqnTy
+ in (simpleTy, predicates, quants)
+
+-- Reassembles a simple type into a type scheme again.
+assembleTypeScheme :: (P.Tp, CLS.Predicates, [Int]) -> S.TpScheme
+assembleTypeScheme (ty,pr,qu) = S.toTpScheme $ QN.quantify qu $ QL.qualify context pr ty
+ where context = ([]::[CLS.Predicate])
+
+allTypes :: P.Tp -> P.Tps
+allTypes ty = (\(x,y) -> x++[y]) $ P.functionSpine ty
+
 -- TODO: We generate fresh contract variables using maximum, but this may interfere with existing types???
 -- Perhaps first calculate the offset of the Helium types by synthesizing the highest value, and then passing that
 -- back down, passing it along as an offset to convertTopTypeToContract. That function then returns what it's used, which is
@@ -148,6 +166,41 @@ convertTopTypeToContract ty =
     error $ "Only tuples up to size 4 are currently supported. Tried to convert type: " ++ show x
    convert _ x = error $ "Was unable to convert the following type: " ++ show x 
 
+-- Splits up a function type scheme into two parts.
+splitTopTypeScheme :: S.TpScheme -> (S.TpScheme, Maybe S.TpScheme)
+splitTopTypeScheme ty = 
+ let (simpleTy,predicates,quants) = stripTypeScheme ty
+     allTps      = allTypes simpleTy
+     leftType    = assembleTypeScheme (head allTps,predicates,quants)
+     restTy      = case tail allTps of
+                     []  -> Nothing
+                     [x] -> Just x
+                     xs  -> Just $ foldr (P..->.) (last xs) (init xs)
+     maybeFunc   = \rest -> Just $ assembleTypeScheme (rest,predicates,quants)
+     restType    = maybe Nothing maybeFunc restTy
+ in (leftType, restType)
+
+splitUpTuple :: S.TpScheme -> [S.TpScheme]
+splitUpTuple ty =
+ let (simpleTy,predicates,quants) = stripTypeScheme ty
+     tuple      = head (allTypes simpleTy)
+     getTupleElems (P.TApp (P.TApp (P.TCon x) t1) t2) | P.isTupleConstructor x = [t1,t2]
+     getTupleElems (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) | P.isTupleConstructor x = [t1,t2,t3]
+     getTupleElems (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) | P.isTupleConstructor x = [t1,t2,t3,t4]
+     getTupleElems (P.TApp (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) t5) | P.isTupleConstructor x = [t1,t2,t3,t4,t5]
+     getTupleElems (P.TCon x) | P.isTupleConstructor x = error $ "Extend splitUpTuple with more tuple cases, only supports up to 5-tuples at the moment, tried to pattern match on: " ++ show x
+     getTupleElems x = error $ "Expected a tuple to be split up, got the following type: " ++ show x
+ in map (\x -> assembleTypeScheme (x,predicates,quants)) (getTupleElems tuple)
+
+
+-- Fetches the a from [a] in a type.
+getInnerListElem :: S.TpScheme -> S.TpScheme
+getInnerListElem ty = 
+ let (simpleTy,predicates,quants) = stripTypeScheme ty
+     list           = head (allTypes simpleTy)
+     getListElem (P.TApp (P.TCon "[]") t1) = t1
+     getListElem x = error $ "Expected a list, got the following type: " ++ show x
+ in assembleTypeScheme (getListElem list,predicates,quants) 
 
 {-
 apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR
