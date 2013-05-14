@@ -56,6 +56,9 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
   -- We get this from the Helium compiler.
   inh topLevelTypes                                     :: {IE.ImportEnvironment}
 
+   -- We need to be able to synthesize these for LambdaR.
+   syn functionHeliumTypes   use {DM.union}    {DM.empty}       :: {IE.TypeEnvironment}
+
 --{
 --data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
 --                   NoLocalDefinitions
@@ -129,7 +132,7 @@ sem BodyR
 sem FunBindR
   | FunBindR
       -- We'll use this local variable to generate contracts and contracted code.
-      loc.heliumType            = DJ.fromJust $ DM.lookup (toHeliumWithRanges @name.copy) @lhs.heliumTypes
+      loc.heliumType            = lookupHeliumType @name.copy @lhs.heliumTypes
 
       -- We need to get the types of all variables, too. Pass the function type to the pattern list.
       pats.patType              = Just @loc.heliumType
@@ -138,15 +141,44 @@ sem FunBindR
       loc.patternTypes          = @pats.patternTypes
 
       -- Add synthesized list of patterns with types to import environment.
-      rhs.topLevelTypes           = overwriteImportEnv (generateImportEnv @loc.patternTypes) @lhs.topLevelTypes
+      rhs.topLevelTypes         = overwriteImportEnv (generateImportEnv @loc.patternTypes) @lhs.topLevelTypes
       
 
 sem DeclR
   | DPatBindR
-      -- Don't know if we'll need the contracts of stuff defined in tuples, but we might as well collect it, it's not too hard.
-      loc.heliumType            = map (\name -> DJ.fromJust $ DM.lookup (toHeliumWithRanges name) @lhs.heliumTypes) @pat.localPatterns
-      loc.heliumDebug           = @lhs.heliumTypes --map (toHeliumWithRanges :: CastRange Helium.Name NameR => NameR -> Helium.Name) @pat.localPatterns
-      loc.patternTypes          = zip @pat.localPatterns @loc.heliumType
+      -- Don't know if we'll need the contracts of patterns defined in tuples, but we might as well collect it, it's not too hard.
+      loc.heliumType            = map (\name -> lookupHeliumType name @lhs.heliumTypes) @pat.localPatterns
+      loc.heliumDebug           = @lhs.heliumTypes
+
+
+
+sem ExprR
+  | LambdaR
+     --We need to get the types of the patterns inside a lambda, too.
+     --We'll convert it to a function and then do the usual synthesis on it.
+     loc.lambda                 = LambdaR @pats.copy @expr.copy @range.copy
+     loc.lambdaAsFunbind        = convertLambdaToFunBind @loc.lambda
+     loc.lambdaAsModule         = makeModuleR [DFunBindsR [@loc.lambdaAsFunbind] noRangeR]
+
+     loc.heliumResults          = H.compileWithExtraEnv (render $ pprint @loc.lambdaAsModule) @lhs.topLevelTypes
+     loc.types                  = H.extractTypes @loc.heliumResults
+     loc.typesImportEnv         = generateImportEnv @loc.types
+     loc.newEnv                 = overwriteImportEnv @loc.typesImportEnv @lhs.topLevelTypes
+
+     loc.sem_ModuleR            = sem_ModuleR @loc.lambdaAsModule
+     loc.inh_ModuleR            = Inh_ModuleR @lhs.entryFunction @lhs.localIdentifiers @loc.newEnv
+     loc.wrap_ModuleR           = wrap_ModuleR @loc.sem_ModuleR @loc.inh_ModuleR
+     loc.functionHeliumTypes    = functionHeliumTypes_Syn_ModuleR @loc.wrap_ModuleR
+
+     -- Update the import environment.
+     expr.topLevelTypes         = overwriteImportEnv (generateImportEnv @loc.functionHeliumTypes) @lhs.topLevelTypes
+
+sem FunBindR
+  | FunBindR
+      lhs.functionHeliumTypes   = @loc.patternTypes
+
+
+
 
 attr PatsR PatR ListPatsR TuplePatsR
   inh patType                                           :: {Maybe S.TpScheme}
