@@ -144,6 +144,7 @@ sem AltR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AltR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "pattern types:"     BOX.<+> text (show @loc.patternTypes)
                                                 ,  text "local idents known to RHS"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug
                                                 ,  nest 2 @rhs.debug
@@ -156,7 +157,7 @@ sem FunBindR
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "Helium type:"           BOX.<+> text (show @loc.heliumType)
                                                 ,  text "Contract:"              BOX.<+> pprint @loc.contract
-                                                ,  text "types of patterns:"     BOX.<+> text (show @loc.patternTypes)
+                                                ,  text "pattern types:"     BOX.<+> text (show @loc.patternTypes)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
@@ -206,6 +207,7 @@ sem ExprR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "LambdaR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "pattern types:"         BOX.<+> text (show @loc.functionHeliumTypes)
                                                 ,  text "local idents known to expr:"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pats.debug
                                                 ,  nest 2 @expr.debug
