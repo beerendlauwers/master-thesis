@@ -164,6 +164,7 @@ sem FunBindR
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "Helium type:"           BOX.<+> text (show @loc.heliumType)
                                                 ,  text "Contract:"              BOX.<+> pprint @loc.contract
+                                                ,  text "types of patterns:"     BOX.<+> text (show @loc.patternTypes)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
