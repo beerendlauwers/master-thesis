@@ -190,16 +190,16 @@ sem AltR
 attr PatsR PatR ListPatsR TuplePatsR
   inh patType                                           :: {Maybe S.TpScheme}
   inh tuplePatType                                      :: {Maybe [S.TpScheme]}
-  inh patContract                                       :: {Contract}
+--  inh patContract                                       :: {Contract}
   syn patternTypes                                      :: {IE.TypeEnvironment}
 
 -- Semantics for splitting up a function type and assigning it to a pattern.
 sem PatsR
   | Cons
      -- Split up the type-generated contract and pass it to a pattern.
-     loc.splitContract          = splitFunctionContract @lhs.patContract
-     hd .patContract            = fst @loc.splitContract
-     tl .patContract            = snd @loc.splitContract
+     --loc.splitContract          = splitFunctionContract @lhs.patContract
+     --hd .patContract            = fst @loc.splitContract
+     --tl .patContract            = snd @loc.splitContract
      
      -- Split up the type and pass it to a pattern.
      loc.splitType              = maybe Nothing (Just . splitTopTypeScheme) @lhs.patType
@@ -293,3 +293,30 @@ sem ListPatsR
   | Nil
      lhs.patternTypes           = DM.empty
 {- *** End of semantics to calculate the type of a pattern. *** -}
+
+{- *** Start of semantics to suppress some warnings concerning patterns. *** -}
+-- tuplePatType is populated inside the semantics above, so we can't give it a value from outside.
+sem FunBindR
+  | FunBindR
+     pats.tuplePatType          = Nothing
+
+-- Same as above.
+sem AltR
+  | AltR
+     pat.tuplePatType           = Nothing
+
+-- In a pattern binding, the Helium compiler automatically adds the patterns
+-- with their type to the type environment.
+sem DeclR
+  | DPatBindR
+     pat.tuplePatType           = Nothing
+     pat.patType                = Nothing
+
+-- We compile a lambda function using the Helium compiler as a named function,
+-- so any pattern type synthesis stuff is done via the FunBindR way. 
+sem ExprR
+  | LambdaR
+     pats.tuplePatType          = Nothing
+     pats.patType               = Nothing
+
+
