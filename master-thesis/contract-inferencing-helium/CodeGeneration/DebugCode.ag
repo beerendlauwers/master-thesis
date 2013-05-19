@@ -107,13 +107,23 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
   syn  debug     use {BOX.//}         {nullBox}      :: Box
 
 -- Debug info synthesis
+sem ModuleR
+  | ModuleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "ModuleR"
+                                                ,  nest 2 @body.debug
+                                                ]
 
 sem BodyR
   | BodyR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  text "BodyR"
+                                                [  horizontalLinesWith "*" $ text "BodyR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  nest 2 @decls.debug
+                                                ]
+  | BHoleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "BHoleR"
                                                 ]
 
 sem RhsR
@@ -127,6 +137,19 @@ sem RhsR
                                                 ]
 
 sem DeclR
+  | DHoleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "DHoleR"
+                                                ]
+  | DEmptyR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "DEmptyR"
+                                                ]
+  | DFunBindsR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "DFunBindsR",
+                                                   nest 2 @funbinds.debug
+                                                ]
   | DPatBindR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "DPatBindR"
@@ -139,7 +162,129 @@ sem DeclR
                                                 ,  nest 2 @rhs.debug
                                                 ]
 
+sem ExprR
+  | HoleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "HoleR"
+                                                ]
+  | FeedbackR
+     lhs   .debug                       = @expr.debug
+  | MustUseR
+     lhs   .debug                       = @expr.debug
+  | CaseR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "CaseR",
+                                                   nest 2 @expr.debug,
+                                                   nest 2 @alts.debug
+                                                ]
+  | ConR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "ConR",
+                                                   nest 2 @name.debug
+                                                ]
+
+  | IfR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "IfR",
+                                                   nest 2 @cond.debug,
+                                                   nest 2 @then.debug,
+                                                   nest 2 @else.debug
+                                                ]
+
+  | InfixAppR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "InfixAppR",
+                                                   nest 2 @left.debug,
+                                                   nest 2 @op.debug,
+                                                   nest 2 @right.debug
+                                                ]
+  | LambdaR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "LambdaR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "pattern types:"         BOX.<+> text (show @loc.functionHeliumTypes)
+                                                ,  text "local idents known to expr:"          BOX.<+> pprint @loc.localIdentifiers
+                                                ,  nest 2 @pats.debug
+                                                ,  nest 2 @expr.debug
+                                                ]
+
+  | LetR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "LetR",
+                                                   nest 2 @decls.debug,
+                                                   nest 2 @expr.debug
+                                                ]
+
+  | LitR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "LitR",
+                                                   nest 2 @lit.debug
+                                                ]
+
+  | AppR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "AppR",
+                                                   nest 2 @fun.debug,
+                                                   nest 2 @args.debug
+                                                ]
+
+  | ParenR
+     lhs   .debug                       = @expr.debug
+
+  | TupleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "TupleR",
+                                                   nest 2 @exprs.debug
+                                                ]
+
+  | VarR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
+                                                [  horizontalLinesWith "*" $ text "VarR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "orig ident:"            BOX.<+> pprint @name.copy
+                                                ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
+                                                ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
+                                                ,  text "local idents:"          BOX.<+> pprint @lhs.localIdentifiers
+                                                ]
+
+  | EnumR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "EnumR",
+                                                   nest 2 @from.debug,
+                                                   nest 2 @then.debug,
+                                                   nest 2 @to.debug
+                                                ]
+
+  | ListR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "ListR",
+                                                   nest 2 @exprs.debug
+                                                ]
+
+sem MaybeExprR
+  | NoExprR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "NoExprR"
+                                                ]
+  | JustExprR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "JustExprR",
+                                                   nest 2 @expr.debug
+                                                ]
+
+
+
+
 sem AltR
+  | AHoleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "AHoleR"
+                                                ]
+  | AltEmptyR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "AltEmptyR"
+                                                ]
+
   | AltR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AltR"
@@ -151,6 +296,10 @@ sem AltR
                                                 ]
 
 sem FunBindR
+  | FBHoleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "FBHoleR"
+                                                ]
   | FunBindR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "FunBindR"
@@ -168,7 +317,18 @@ sem FunBindR
                                                 ]
 
 sem PatR
-   | PInfixConR
+  | PHoleR
+     lhs    .debug                      = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "PHoleR"
+                                                ]
+  | PConR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "PConR",
+                                                   nest 2 @name.debug,
+                                                   nest 2 @pats.debug
+                                                ]
+    
+  | PInfixConR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "PInfixConR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
@@ -177,7 +337,26 @@ sem PatR
                                                 ,  nest 2 @name.debug
                                                 ,  nest 2 @right.debug
                                                 ]
-   | PVarR
+
+  | PListR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "PListR",
+                                                   nest 2 @pats.debug
+                                                ]
+
+  | PLitR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "PLitR",
+                                                   nest 2 @lit.debug
+                                                ]
+
+  | PTupleR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "PTupleR",
+                                                   nest 2 @pats.debug
+                                                ]
+
+  | PVarR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "PVarR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
@@ -193,25 +372,15 @@ sem PatR
                                                 ,  nest 2 @pat.debug
                                                 ]
 
-sem ExprR
-  | VarR
-     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
-                                                [  horizontalLinesWith "*" $ text "VarR"
-                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "orig ident:"            BOX.<+> pprint @name.copy
-                                                ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
-                                                ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
-                                                ,  text "local idents:"          BOX.<+> pprint @lhs.localIdentifiers
+  | PWildcardR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "PWildcardR"
                                                 ]
-  | LambdaR
-     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
-                                                [  horizontalLinesWith "*" $ text "LambdaR"
-                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "pattern types:"         BOX.<+> text (show @loc.functionHeliumTypes)
-                                                ,  text "local idents known to expr:"          BOX.<+> pprint @loc.localIdentifiers
-                                                ,  nest 2 @pats.debug
-                                                ,  nest 2 @expr.debug
-                                                ]
+
+
+sem LiteralR
+  | LCharR LFloatR LIntR LStringR
+     lhs   .debug                       = pprint @val
 
 sem NameR
   | IdentR
