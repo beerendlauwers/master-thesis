@@ -46,6 +46,9 @@ instance Pretty Char where
 instance Pretty Bool where
   pprint = text.show
 
+instance Pretty Float where
+  pprint = text.show
+
 instance Pretty NameR where
   pprint (IdentR n _)    = text n
   pprint (OperatorR n _) = text n
