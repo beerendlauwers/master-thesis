@@ -25,14 +25,15 @@ import qualified Data.List as DL
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
-   syn copy                                             :: self
+   syn copy                                                     :: self
 
   -- We get this from the Helium compiler.
-  inh topLevelTypes                                     :: {IE.ImportEnvironment}
+  inh topLevelTypes                                             :: {IE.ImportEnvironment}
 
-   -- We need to be able to synthesize these for LambdaR.
-   syn functionHeliumTypes   use {DM.union}    {DM.empty}       :: {IE.TypeEnvironment}
+  -- We need to be able to synthesize these for LambdaR.
+  syn functionHeliumTypes   use {DM.union}    {DM.empty}        :: {IE.TypeEnvironment}
 
+attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR
    -- Highest integer used in a Helium type. We'll use this as an offset when generating
    -- fresh contracts; we don't want to accidentally clash with an existing type variable! 
    syn contractVariableOffset use {max} {(0::Int)}              :: {Int}
@@ -40,10 +41,32 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
    -- First integer available for fresh contracts.
    chn freshContractVariable                                    :: {Int}
 
+  -- These contracts are generated and populated from the types Helium provides us.
+  inh heliumGeneratedContracts                                  :: {DM.Map NameR Contract}
+
 --{
 --data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
 --                   NoLocalDefinitions
 --}
+
+{- *** Start of semantics to get integer for fresh contract variables. *** -}
+sem ModuleR
+   | ModuleR
+      -- At the top of the AST, we just convert the types that are given to us from the top level.
+      loc  .types                  = getTypeEnv @lhs.topLevelTypes
+      loc  .identifiers            = map fst $ DM.toList @loc.types
+      loc  .onlyTypes              = map snd $ DM.toList @loc.types
+      loc  .conversionResults      = mapConvertTopTypeToContract (@body.contractVariableOffset + 1) @loc.onlyTypes
+      loc  .freshContractVariable  = fst @loc.conversionResults
+      loc  .contracts              = snd @loc.conversionResults
+
+      -- Add these contracts to the contract environment.
+      loc  .newContracts           = DM.fromList $ zip (map fromHeliumWithRanges @loc.identifiers) @loc.contracts
+      body .heliumGeneratedContracts    = @loc.newContracts
+
+      -- The first integer that is available for fresh contracts is one more than the highest one used by Helium.
+      body .freshContractVariable       = max (@loc.freshContractVariable + 1) (maximum' $ map getMaxVariable HIE.importEnvs)
+{- *** End of semantics to get integer for fresh contract variables. *** -}
 
 {- *** Start of semantics to get the types of functions and let-definitions *** -}
 -- Every node that has a (list of) declaration(s) has those declarations compiled
@@ -116,7 +139,7 @@ sem RhsR
      loc.newEnvMax              = getMaxVariable @loc.newEnv
 {- *** End of semantics to get highest type variable integer. *** -}
 
-{- *** Start of semantics to generate contracts for functions and let-definitions *** -}
+{- *** Start of semantics to pass down types to individual function definition node. *** -}
 -- We now have the types of the declarations, pass those down to each individual definition.
 attr DeclsR DeclR FunBindsR FunBindR
   inh heliumTypes                                       :: {IE.TypeEnvironment}
@@ -145,7 +168,7 @@ sem DeclR
       -- Don't know if we'll need the contracts of patterns defined in tuples, but we might as well collect it, it's not too hard.
       loc.heliumType            = map (\name -> lookupHeliumType name @lhs.heliumTypes) @pat.localPatterns
       loc.heliumDebug           = @lhs.heliumTypes
-{- *** End of semantics to generate contracts for functions and let-definitions *** -}
+{- *** End of of semantics to pass down types to individual function definition node. *** -}
 
 {- *** Start of semantics to get types from patterns of anonymous lambda functions *** -}
 sem ExprR
@@ -239,11 +262,11 @@ sem PatR
      lhs.patternTypes           = DM.empty
 
   | PConR
-     -- TODO: Expand this.
+     -- TODO: Expand this. We should use HIE.importEnvs.
      lhs.patternTypes           = DM.empty 
 
   | PInfixConR
-     -- TODO: Expand this.
+     -- TODO: Expand this. We should use HIE.importEnvs.
      lhs.patternTypes           = DM.union @left.patternTypes @right.patternTypes
      loc.possibleResult         = DL.elemIndex True @loc.listOfConstructors
      loc.listOfConstructors     = [@loc.isListConstructor]

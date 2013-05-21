@@ -111,8 +111,10 @@ sem ModuleR
   | ModuleR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "ModuleR"
+                                                ,  text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  nest 2 @body.debug
                                                 ]
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
 
 sem BodyR
   | BodyR
@@ -132,9 +134,25 @@ sem RhsR
                                                 [  horizontalLinesWith "*" $ text "RhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
+                                                ,  text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
+
                                                 ,  nest 2 @where.debug
                                                 ,  nest 2 @expr.debug
                                                 ]
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
+
+
+  | GRhsR
+     lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
+                                                [  horizontalLinesWith "*" $ text "RhsR"
+                                                ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
+                                                ,  text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
+
+                                                ,  nest 2 @where.debug
+                                                ,  nest 2 @gexprs.debug
+                                                ]
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
 
 sem DeclR
   | DHoleR
@@ -147,15 +165,13 @@ sem DeclR
                                                 ]
   | DFunBindsR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "DFunBindsR",
-                                                   nest 2 @funbinds.debug
+                                                [  horizontalLinesWith "*" $ text "DFunBindsR"
+                                                ,  nest 2 @funbinds.debug
                                                 ]
   | DPatBindR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "DPatBindR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "HELIUM DEBUG:"          BOX.<+> text (show @loc.heliumDebug)
-                                                ,  text "Contract:"              BOX.<+> pprint @loc.contract
                                                 ,  text "is top-level:"          BOX.<+> pprint @lhs.isTopLevel
                                                 ,  text "local idents known to RHS:"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug
@@ -173,30 +189,30 @@ sem ExprR
      lhs   .debug                       = @expr.debug
   | CaseR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "CaseR",
-                                                   nest 2 @expr.debug,
-                                                   nest 2 @alts.debug
+                                                [  horizontalLinesWith "*" $ text "CaseR"
+                                                ,  nest 2 @expr.debug
+                                                ,  nest 2 @alts.debug
                                                 ]
   | ConR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "ConR",
-                                                   nest 2 @name.debug
+                                                [  horizontalLinesWith "*" $ text "ConR"
+                                                ,  nest 2 @name.debug
                                                 ]
 
   | IfR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "IfR",
-                                                   nest 2 @cond.debug,
-                                                   nest 2 @then.debug,
-                                                   nest 2 @else.debug
+                                                [  horizontalLinesWith "*" $ text "IfR"
+                                                ,   nest 2 @cond.debug
+                                                ,   nest 2 @then.debug
+                                                ,   nest 2 @else.debug
                                                 ]
 
   | InfixAppR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "InfixAppR",
-                                                   nest 2 @left.debug,
-                                                   nest 2 @op.debug,
-                                                   nest 2 @right.debug
+                                                [  horizontalLinesWith "*" $ text "InfixAppR"
+                                                ,  nest 2 @left.debug
+                                                ,  nest 2 @op.debug
+                                                ,  nest 2 @right.debug
                                                 ]
   | LambdaR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
@@ -210,22 +226,24 @@ sem ExprR
 
   | LetR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "LetR",
-                                                   nest 2 @decls.debug,
-                                                   nest 2 @expr.debug
+                                                [  horizontalLinesWith "*" $ text "LetR"
+                                                ,   text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
+                                                ,   nest 2 @decls.debug
+                                                ,   nest 2 @expr.debug
                                                 ]
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
 
   | LitR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "LitR",
-                                                   nest 2 @lit.debug
+                                                [  horizontalLinesWith "*" $ text "LitR"
+                                                ,  nest 2 @lit.debug
                                                 ]
 
   | AppR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "AppR",
-                                                   nest 2 @fun.debug,
-                                                   nest 2 @args.debug
+                                                [  horizontalLinesWith "*" $ text "AppR"
+                                                ,  nest 2 @fun.debug
+                                                ,  nest 2 @args.debug
                                                 ]
 
   | ParenR
@@ -233,8 +251,8 @@ sem ExprR
 
   | TupleR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "TupleR",
-                                                   nest 2 @exprs.debug
+                                                [  horizontalLinesWith "*" $ text "TupleR"
+                                                ,  nest 2 @exprs.debug
                                                 ]
 
   | VarR
@@ -249,16 +267,16 @@ sem ExprR
 
   | EnumR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "EnumR",
-                                                   nest 2 @from.debug,
-                                                   nest 2 @then.debug,
-                                                   nest 2 @to.debug
+                                                [  horizontalLinesWith "*" $ text "EnumR"
+                                                ,  nest 2 @from.debug
+                                                ,  nest 2 @then.debug
+                                                ,  nest 2 @to.debug
                                                 ]
 
   | ListR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "ListR",
-                                                   nest 2 @exprs.debug
+                                                [  horizontalLinesWith "*" $ text "ListR"
+                                                ,  nest 2 @exprs.debug
                                                 ]
 
 sem MaybeExprR
@@ -268,8 +286,8 @@ sem MaybeExprR
                                                 ]
   | JustExprR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "JustExprR",
-                                                   nest 2 @expr.debug
+                                                [  horizontalLinesWith "*" $ text "JustExprR"
+                                                ,  nest 2 @expr.debug
                                                 ]
 
 
@@ -305,7 +323,6 @@ sem FunBindR
                                                 [  horizontalLinesWith "*" $ text "FunBindR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "Helium type:"           BOX.<+> text (show @loc.heliumType)
-                                                ,  text "Contract:"              BOX.<+> pprint @loc.contract
                                                 ,  text "pattern types:"     BOX.<+> text (show @loc.patternTypes)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
@@ -398,124 +415,3 @@ sem NameR
                                                 [  horizontalLinesWith "*" $ text "SpecialR"
                                                 ,  text "name:"                  BOX.<+> text @name
                                                 ]
-
-{-
-
--- OLD CODE
-
-
--- Some pretty-printed debug code so we can have a look at what's going on at each node in the AST.
-attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
-  syn  debug     use {$+$}         {empty}      :: Doc
-
--- Debug info synthesis
-
-sem BodyR
-  | BodyR
-     lhs   .debug                       = vcat  [  text "BodyR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  @loc.declsbox
-                                                ]
-     loc   .declsbox                    = (fromBox.addLeftLine.toBox) (nest 2 @decls.debug)
-
-sem RhsR
-  | RhsR
-     lhs   .debug                       = vcat  [  text "RhsR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "Generated types by where-clause:"       PP.<+> text (show @loc.types)
-                                                ,  nest 2 @where.debug
-                                                ,  nest 2 @expr.debug
-                                                ]
-
-sem DeclR
-  | DPatBindR
-     lhs   .debug                       = vcat  [  text "DPatBindR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "HELIUM DEBUG:"          PP.<+> text (show @loc.heliumDebug)
-                                                ,  text "Helium type(s):"        PP.<+> text (show @loc.patternTypes)
-                                                ,  text "Contract:"              PP.<+> pprint @loc.contract
-                                                ,  text "is top-level:"          PP.<+> pprint @lhs.isTopLevel
-                                                ,  text "local idents known to RHS:"          PP.<+> pprint @loc.localIdentifiers
-                                                ,  nest 2 @pat.debug
-                                                ,  nest 2 @rhs.debug
-                                                ]
-
-sem AltR
-  | AltR
-     lhs   .debug                       = vcat  [  text "AltR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "local idents known to RHS"          PP.<+> pprint @loc.localIdentifiers
-                                                ,  nest 2 @pat.debug
-                                                ,  nest 2 @rhs.debug
-                                                ]
-
-sem FunBindR
-  | FunBindR
-     lhs   .debug                       = vcat  [  text "FunBindR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "Helium type:"           PP.<+> text (show @loc.heliumType)
-                                                ,  text "Contract:"              PP.<+> pprint @loc.contract
-                                                ,  text "orig ident:"            PP.<+> pprint @name.copy
-                                                ,  text "updated ident:"         PP.<+> pprint @loc.updatedName
-                                                ,  text "point of entry:"        PP.<+> text @lhs.entryFunction
-                                                ,  text "local idents known to RHS:"          PP.<+> pprint @loc.localIdentifiers
-                                                ,  nest 2 @name.debug
-                                                ,  nest 2 @pats.debug
-                                                ,  nest 2 @rhs.debug
-                                                ]
-
-sem PatR
-   | PInfixConR
-     lhs   .debug                       = vcat  [  text "PInfixConR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "local patterns:"        PP.<+> pprint @loc.localPatterns
-                                                ,  nest 2 @left.debug
-                                                ,  nest 2 @name.debug
-                                                ,  nest 2 @right.debug
-                                                ]
-   | PVarR
-     lhs   .debug                       = vcat  [  text "PVarR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "local patterns:"        PP.<+> pprint @loc.localPatterns
-                                                ,  nest 2 @name.debug
-                                                ]
-   | PAsR
-     lhs   .debug                       = vcat  [  text "PAsR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "local patterns:"        PP.<+> pprint @loc.localPatterns
-                                                ,  nest 2 @name.debug
-                                                ,  nest 2 @pat.debug
-                                                ]
-
-sem ExprR
-  | VarR
-     lhs   .debug                       = vcat  [  text "VarR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "orig ident:"            PP.<+> pprint @name.copy
-                                                ,  text "updated ident:"         PP.<+> pprint @loc.updatedName
-                                                ,  text "point of entry:"        PP.<+> text @lhs.entryFunction
-                                                ,  text "local idents:"          PP.<+> pprint @lhs.localIdentifiers
-                                                ]
-  | LambdaR
-     lhs   .debug                       = vcat  [  text "LambdaR"
-                                                ,  text "code:"                  PP.$+$ pprint @loc.copy
-                                                ,  text "local idents known to expr:"          PP.<+> pprint @loc.localIdentifiers
-                                                ,  nest 2 @pats.debug
-                                                ,  nest 2 @expr.debug
-                                                ]
-
-sem NameR
-  | IdentR
-     lhs   .debug                       = vcat  [  text "IdentR"
-                                                ,  text "name:"                  PP.<+> text @name
-                                                ]
-  | OperatorR
-     lhs   .debug                       = vcat  [  text "OperatorR"
-                                                ,  text "name:"                  PP.<+> text @name
-                                                ]
-  | SpecialR
-     lhs   .debug                       = vcat  [  text "SpecialR"
-                                                ,  text "name:"                  PP.<+> text @name
-                                                ]
-
--}
