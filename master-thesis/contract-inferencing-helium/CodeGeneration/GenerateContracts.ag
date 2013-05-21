@@ -1,92 +1,61 @@
 -- Convert types to contracts.
-sem FunBindR
-  | FunBindR
-      loc.conversionResult        = convertTopTypeToContract @lhs.freshContractVariable @loc.heliumType
-      loc.contract                = snd @loc.conversionResult
-      loc.freshContractVariable   = fst @loc.conversionResult
-      rhs.freshContractVariable   = @loc.freshContractVariable
-      --loc.finalContract         = normalizeContract @lhs.offsetVarNumber @loc.contract
-      --rhs.offsetVarNumber       = fetchUsedVarNumber @lhs.offsetVarNumber @loc.contract
-
-sem DeclR
-  | DPatBindR
-      loc.contract              = map convertTopTypeToContract @loc.heliumType
-      -- TODO: Need to pass offsetVarNumber info from one part of the tuple to another.
-      --loc.finalContract         = map (\x -> normalizeContract @lhs.offsetVarNumber x) @loc.contract
-      --rhs.offsetVarNumber       = error "TODO: Need to pass offsetVarNumber info from one part of the tuple to another."
-
 
 -- Thread fresh contract vars accordingly.
+-- LetR and RhsR/GRhsR are the nodes in the AST where the Helium types are generated,
+-- so it makes sense to generate the contracts here immediately and store them in a shadowed environment.
 
+sem ExprR
+  | LetR
+     loc.identifiers            = map fst $ DM.toList @loc.types
+     loc.onlyTypes              = map snd $ DM.toList @loc.types
+     loc.conversionResults      = mapConvertTopTypeToContract @lhs.freshContractVariable @loc.onlyTypes
+     loc.freshContractVariable  = fst @loc.conversionResults
+     loc.contracts              = snd @loc.conversionResults
 
-{-
---TODO: Finish this if necessary?
+     -- Add these contracts to the contract environment.
+     loc.newContracts           = DM.fromList $ zip (map fromHeliumWithRanges @loc.identifiers) @loc.contracts
+     loc.newContractEnv         = DM.union @loc.newContracts @lhs.heliumGeneratedContracts
+     decls.heliumGeneratedContracts = @loc.newContractEnv
+     expr.heliumGeneratedContracts  = @loc.newContractEnv
 
-attr PatsR PatR ListPatsR TuplePatsR
-  syn contract                                          :: {Contract}
+     -- Route fresh contract variables.
+     decls.freshContractVariable = @loc.freshContractVariable
+     expr.freshContractVariable  = @decls.freshContractVariable
 
-sem PatR
-  | PVarR
-      lhs.contract              = error "PVarR" --TODO: Pass along the offset, convert to contract, etc
-  | PAsR
-      lhs.contract              = @pat.contract
-  | PParenR
-      lhs.contract              = @pat.contract
-  | PWildcardR
-      lhs.contract              = error "PWildcardR" --TODO: Pass along the offset, generate fresh contract, etc
-  | PHoleR
-      lhs.contract              = error "PHoleR" --TODO: Pass along the offset, generate fresh contract, etc
-  | PLitR
-      lhs.contract              = error "PLitR" --TODO: Pass along the offset, generate fresh contract, etc
-  | PListR
-      lhs.contract              = @pats.contract
-  | PInfixConR
-      lhs.contract              = error "PInfixConR" --TODO: pass along offset, convert to contracts, UNIFY????
-  | PConR
--}
+sem RhsR
+  | RhsR GRhsR 
+     loc.identifiers            = map fst $ DM.toList @loc.types
+     loc.onlyTypes              = map snd $ DM.toList @loc.types
+     loc.conversionResults      = mapConvertTopTypeToContract @lhs.freshContractVariable @loc.onlyTypes
+     loc.freshContractVariable  = fst @loc.conversionResults
+     loc.contracts              = snd @loc.conversionResults
 
+     -- Add these contracts to the contract environment.
+     loc.newContracts           = DM.fromList $ zip (map fromHeliumWithRanges @loc.identifiers) @loc.contracts
+     loc.newContractEnv         = DM.union @loc.newContracts @lhs.heliumGeneratedContracts
+     where.heliumGeneratedContracts = @loc.newContractEnv
 
+sem RhsR
+  | RhsR
+     -- Add these contracts to the contract environment.
+     expr.heliumGeneratedContracts  = @loc.newContractEnv
 
+     -- Route fresh contract variables.
+     where.freshContractVariable = @loc.freshContractVariable
+     expr.freshContractVariable  = @where.freshContractVariable
 
-{
-normalizeContract :: Int -> Contract -> Contract
-normalizeContract offset ctrt = 
- let convSubsts = DM.toList $ synthesizeAttribute conversionSubsts_Syn_Contract ctrt (Inh_Contract offset 0)
-     actualSubsts = foldr SComp SId $ map (\(x,y) -> SSubst x y) convSubsts
- in {- error $ show actualSubsts -} subst' actualSubsts ctrt
+  | GRhsR
+     -- Add these contracts to the contract environment.
+     gexprs.heliumGeneratedContracts  = @loc.newContractEnv
 
-fetchUsedVarNumber :: Int -> Contract -> Int
-fetchUsedVarNumber offset ctrt = synthesizeAttribute usedVarNumber_Syn_Contract ctrt (Inh_Contract offset 0)
-}
+     -- Route fresh contract variables.
+     where.freshContractVariable = @loc.freshContractVariable
+     gexprs.freshContractVariable  = @where.freshContractVariable
 
--- This is not really necessary, I think. The Helium types hold the correct information already.
-
--- TODO: Currentlty, substitutions are only local to a single definition. But mutually recursive will suffer from this.
-
--- Synthesize substitutions with unique variables.
--- The highest variable number is passed back to the rest of the AST and used as an offset.
 attr Contract MaybeConst
   syn  copy                                             :: self
-
-attr Contract
-  syn  conversionSubsts    use {DM.union}  {DM.empty}   :: {DM.Map Contract Contract}
-  syn  usedVarNumber   use {`max`}     {0}              :: {Int}
-  inh  offsetVarNumber                                  :: {Int}
-  chn  varcnt                                           :: {Int}
-
--- Semantics for generating substitutions for the contract that was generated from a Helium type.
-sem Contract
-  |  CVar
-      lhs.conversionSubsts      = DM.singleton @loc.copy (CVar ("v" ++ show @loc.variableNumber) @mc.copy)
-      loc.variableNumber        = @loc.num + @lhs.offsetVarNumber
-      lhs.usedVarNumber         = @loc.variableNumber
-      loc.num                   ::  uniqueref varcnt
-
 
 -- Synthesize free type variables for contract substutions.
-attr Contract MaybeConst
-  syn  copy                                             :: self
-
 attr Contract
   syn  fcv       use {`DS.union`}  {DS.empty}           :: {DS.Set Contract}
 

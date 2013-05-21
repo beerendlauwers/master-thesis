@@ -17,6 +17,9 @@ import qualified ModuleSystem.ImportEnvironment as IE
 
 {
 
+getTypeEnv :: IE.ImportEnvironment -> IE.TypeEnvironment
+getTypeEnv (IE.ImportEnvironment _ _ ty _ _ _) = ty
+
 generateImportEnv :: IE.TypeEnvironment -> IE.ImportEnvironment
 generateImportEnv tyenv = IE.emptyEnvironment { IE.typeEnvironment = tyenv }
 
@@ -134,6 +137,13 @@ assembleTypeScheme (ty,pr,qu) = S.toTpScheme $ QN.quantify qu $ QL.qualify conte
 allTypes :: P.Tp -> P.Tps
 allTypes ty = (\(x,y) -> x++[y]) $ P.functionSpine ty
 
+mapConvertTopTypeToContract :: Int -> [S.TpScheme] -> (Int,[Contract])
+mapConvertTopTypeToContract offset (ty:ts) = 
+ let (offset',ctrt) = convertTopTypeToContract offset ty
+     (finalOffset,ctrts) = mapConvertTopTypeToContract offset' ts
+ in (finalOffset,ctrt:ctrts)
+mapConvertTopTypeToContract offset [] = (offset,[])
+
 convertTopTypeToContract :: Int -> S.TpScheme -> (Int,Contract)
 convertTopTypeToContract offset ty = 
  let primType = (QL.unqualify . QN.unquantify) ty
@@ -143,7 +153,7 @@ convertTopTypeToContract offset ty =
      convertedTriple = convert [offset..] (head typeAsList)
      base = (\(_,c,_) -> c) convertedTriple
      usedVariables = map makeType $ (\(_,_,v) -> v) convertedTriple
-     nextAvailableContractVar = (maximum usedVariables) + 1
+     nextAvailableContractVar = (maximum' $ offset : ((\(_,_,v) -> v) convertedTriple)) + 1
  in (nextAvailableContractVar, foldr CQuant base (quantifiedVars $ varsToQuantify ++ usedVariables))
   where
    makeType :: Int -> String
