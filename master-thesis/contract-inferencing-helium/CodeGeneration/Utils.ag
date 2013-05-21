@@ -35,6 +35,13 @@ removeFromTypeEnv :: H.Name -> IE.ImportEnvironment -> IE.ImportEnvironment
 removeFromTypeEnv x (IE.ImportEnvironment a b tyenv c d e) =
  IE.ImportEnvironment a b (DM.delete x tyenv) c d e
 
+getMaxVariable :: IE.ImportEnvironment -> Int
+getMaxVariable (IE.ImportEnvironment a b c d e f) = 
+ maximum' $ map maxVar [c,d]
+  where maxVar :: DM.Map H.Name S.TpScheme -> Int
+        maxVar = DM.fold (\x xs -> max (getMaxInt x) xs) (0::Int)
+        getMaxInt = maximum'.thd.stripTypeScheme 
+
 getQuantifiers :: Contract -> [Contract]
 getQuantifiers (CQuant qv cs) = qv : getQuantifiers cs
 getQuantifiers x = []
@@ -107,6 +114,9 @@ maximum' :: (Num a, Ord a) => [a] -> a
 maximum' [] = 0
 maximum' xs = maximum xs
 
+thd :: (a,b,c) -> c
+thd (a,b,c) = c
+
 -- Disassembles a type scheme into the parts needed to reassemble it.
 stripTypeScheme :: S.TpScheme -> (P.Tp, CLS.Predicates, [Int])
 stripTypeScheme ty = 
@@ -124,20 +134,17 @@ assembleTypeScheme (ty,pr,qu) = S.toTpScheme $ QN.quantify qu $ QL.qualify conte
 allTypes :: P.Tp -> P.Tps
 allTypes ty = (\(x,y) -> x++[y]) $ P.functionSpine ty
 
--- TODO: We generate fresh contract variables using maximum, but this may interfere with existing types???
--- Perhaps first calculate the offset of the Helium types by synthesizing the highest value, and then passing that
--- back down, passing it along as an offset to convertTopTypeToContract. That function then returns what it's used, which is
--- given back to the rest of the AST...
-convertTopTypeToContract :: S.TpScheme -> Contract
-convertTopTypeToContract ty = 
+convertTopTypeToContract :: Int -> S.TpScheme -> (Int,Contract)
+convertTopTypeToContract offset ty = 
  let primType = (QL.unqualify . QN.unquantify) ty
      varsToQuantify = map makeType (P.variablesInType primType)
      quantifiedVars = map (\v -> CVar v Nothing)
      typeAsList = P.getTypes primType
-     convertedTriple = convert [((maximum' (P.variablesInType primType))+1)..] (head typeAsList)
+     convertedTriple = convert [offset..] (head typeAsList)
      base = (\(_,c,_) -> c) convertedTriple
      usedVariables = map makeType $ (\(_,_,v) -> v) convertedTriple
- in foldr CQuant base (quantifiedVars $ varsToQuantify ++ usedVariables)
+     nextAvailableContractVar = (maximum usedVariables) + 1
+ in (nextAvailableContractVar, foldr CQuant base (quantifiedVars $ varsToQuantify ++ usedVariables))
   where
    makeType :: Int -> String
    makeType i = "v" ++ show i

@@ -17,6 +17,7 @@ imports
 {
 import qualified Domain.FP.Helium as H
 import qualified ModuleSystem.ImportEnvironment as IE
+import qualified Domain.FP.HeliumImportEnvs as HIE
 import qualified Data.Map as DM
 import qualified Data.Set as DS
 import qualified Data.Maybe as DJ
@@ -31,6 +32,13 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 
    -- We need to be able to synthesize these for LambdaR.
    syn functionHeliumTypes   use {DM.union}    {DM.empty}       :: {IE.TypeEnvironment}
+
+   -- Highest integer used in a Helium type. We'll use this as an offset when generating
+   -- fresh contracts; we don't want to accidentally clash with an existing type variable! 
+   syn contractVariableOffset use {max} {(0::Int)}              :: {Int}
+
+   -- First integer available for fresh contracts.
+   chn freshContractVariable                                    :: {Int}
 
 --{
 --data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
@@ -93,6 +101,20 @@ sem RhsR
       where.topLevelTypes       = @loc.newEnv
       gexprs.topLevelTypes      = @loc.newEnv
 {- *** End of semantics to get the types of functions and let-definitions *** -}
+
+{- *** Start of semantics to get highest type variable integer. *** -}
+sem ExprR
+   | LetR   
+     lhs.contractVariableOffset = max @loc.topLevelTypesMax @loc.newEnvMax
+     loc.topLevelTypesMax       = getMaxVariable @lhs.topLevelTypes
+     loc.newEnvMax              = getMaxVariable @loc.newEnv
+
+sem RhsR
+   | RhsR GRhsR
+     lhs.contractVariableOffset = max @loc.topLevelTypesMax @loc.newEnvMax
+     loc.topLevelTypesMax       = getMaxVariable @lhs.topLevelTypes
+     loc.newEnvMax              = getMaxVariable @loc.newEnv
+{- *** End of semantics to get highest type variable integer. *** -}
 
 {- *** Start of semantics to generate contracts for functions and let-definitions *** -}
 -- We now have the types of the declarations, pass those down to each individual definition.

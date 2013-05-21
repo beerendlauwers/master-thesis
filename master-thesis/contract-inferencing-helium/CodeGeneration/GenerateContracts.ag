@@ -1,7 +1,10 @@
 -- Convert types to contracts.
 sem FunBindR
   | FunBindR
-      loc.contract              = convertTopTypeToContract @loc.heliumType
+      loc.conversionResult        = convertTopTypeToContract @lhs.freshContractVariable @loc.heliumType
+      loc.contract                = snd @loc.conversionResult
+      loc.freshContractVariable   = fst @loc.conversionResult
+      rhs.freshContractVariable   = @loc.freshContractVariable
       --loc.finalContract         = normalizeContract @lhs.offsetVarNumber @loc.contract
       --rhs.offsetVarNumber       = fetchUsedVarNumber @lhs.offsetVarNumber @loc.contract
 
@@ -11,6 +14,9 @@ sem DeclR
       -- TODO: Need to pass offsetVarNumber info from one part of the tuple to another.
       --loc.finalContract         = map (\x -> normalizeContract @lhs.offsetVarNumber x) @loc.contract
       --rhs.offsetVarNumber       = error "TODO: Need to pass offsetVarNumber info from one part of the tuple to another."
+
+
+-- Thread fresh contract vars accordingly.
 
 
 {-
@@ -40,7 +46,7 @@ sem PatR
 -}
 
 
-{-
+
 
 {
 normalizeContract :: Int -> Contract -> Contract
@@ -75,7 +81,7 @@ sem Contract
       loc.variableNumber        = @loc.num + @lhs.offsetVarNumber
       lhs.usedVarNumber         = @loc.variableNumber
       loc.num                   ::  uniqueref varcnt
--}
+
 
 -- Synthesize free type variables for contract substutions.
 attr Contract MaybeConst
