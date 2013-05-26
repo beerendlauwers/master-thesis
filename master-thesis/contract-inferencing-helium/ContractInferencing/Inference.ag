@@ -2,7 +2,7 @@ MODULE {Domain.FP.ContractInferencing.Inference}{}
 
 
 {
-type CEnv = Map Name Contract
+type CEnv = Map NameR Contract
 }
 
 --

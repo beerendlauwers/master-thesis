@@ -1,10 +1,20 @@
+--debug:
+-- ~/thesis/FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.ContractInferencing.SyntaxTransformations" Domain/FP/ContractInferencing/SyntaxTransformations.ag
 
-module Domain.FP.ContractInferencing.SyntaxTransformations where
+include "Domain/FP/SyntaxWithRangesTerm.ag"
 
-import Domain.FP.SyntaxWithRanges
-import qualified Data.Generics.Uniplate as U
+imports
+{
+--import qualified Data.Generics.Uniplate as U
 import Data.List (groupBy,nub,transpose)
 import Data.Maybe (fromJust)
+}
+
+{
+
+-- Applies all AST transformations.
+applyAllTransformations :: ModuleR -> ModuleR
+applyAllTransformations = transformLets . transformLambdas . transformApps . transformEnums
 
 -- Transform lambdas of the form \x y z to \x -> \y -> \z
 -- for easier contract inferencing.
@@ -12,7 +22,8 @@ expandLambdas :: ExprR -> ExprR
 expandLambdas (LambdaR (x:xs) body range) = LambdaR [x] (expandLambdas $ LambdaR xs body range) range
 expandLambdas (LambdaR [] body _) = body
 
-transformLambdas = U.transform f
+transformLambdas :: ModuleR -> ModuleR
+transformLambdas = transformBi f
   where f (LambdaR x b r) = expandLambdas (LambdaR x b r)
         f x = x
 
@@ -31,7 +42,8 @@ dropFromTail n xs =
              | i < cutoff = [x]
  in concatMap f l
 
-transformApps = U.transform f
+transformApps :: ModuleR -> ModuleR
+transformApps = transformBi f
   where f (AppR f p r) = expandApps (AppR f p r)
         f x = x
 
@@ -40,7 +52,8 @@ transformApps = U.transform f
 expandLets (LetR (x:xs) e r) = LetR [x] (expandLets $ LetR xs e r) r
 expandLets (LetR [] e _) = e
 
-transformLets = U.transform f
+transformLets :: ModuleR -> ModuleR
+transformLets = transformBi f
   where f (LetR dl e r) = expandLets (LetR dl e r)
         f x = x
 
@@ -52,7 +65,8 @@ transformEnum (EnumR fr NoExprR        NoExprR        range) = ListR [fr] range
 transformEnum (EnumR fr NoExprR        (JustExprR to) range) = ListR [fr,to] range
 transformEnum (EnumR fr (JustExprR th) (JustExprR to) range) = ListR [fr,th,to] range
 
-transformEnums = U.transform f
+transformEnums :: ModuleR -> ModuleR
+transformEnums = transformBi f
   where f e@(EnumR _ _ _ _) = transformEnum e
         f x = x
 
@@ -88,3 +102,5 @@ constructCase (m:ms) pats rhs =
      altExprs = map (\pat -> Alt Nothing pat (Rhs (constructCase ms (selectValsByAlt pat) rhs) [])) alts
  in Case m altExprs
 -}
+
+}
