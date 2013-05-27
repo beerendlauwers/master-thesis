@@ -13,7 +13,8 @@ sem ExprR
      loc.contracts              = snd @loc.conversionResults
 
      -- Add these contracts to the contract environment.
-     loc.newContracts           = DM.fromList $ zip (map fromHeliumWithRanges @loc.identifiers) @loc.contracts
+     loc.heliumIdents           = map (getVar.fromHeliumWithRanges) @loc.identifiers
+     loc.newContracts           = DM.fromList $ zip @loc.heliumIdents @loc.contracts
      loc.newContractEnv         = DM.union @loc.newContracts @lhs.heliumGeneratedContracts
      decls.heliumGeneratedContracts = @loc.newContractEnv
      expr.heliumGeneratedContracts  = @loc.newContractEnv
@@ -31,7 +32,8 @@ sem RhsR
      loc.contracts              = snd @loc.conversionResults
 
      -- Add these contracts to the contract environment.
-     loc.newContracts           = DM.fromList $ zip (map fromHeliumWithRanges @loc.identifiers) @loc.contracts
+     loc.heliumIdents           = map (getVar.fromHeliumWithRanges) @loc.identifiers
+     loc.newContracts           = DM.fromList $ zip @loc.heliumIdents @loc.contracts
      loc.newContractEnv         = DM.union @loc.newContracts @lhs.heliumGeneratedContracts
      where.heliumGeneratedContracts = @loc.newContractEnv
 
