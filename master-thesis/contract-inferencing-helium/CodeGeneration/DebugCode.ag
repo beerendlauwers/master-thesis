@@ -307,11 +307,12 @@ sem AltR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AltR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "pattern types:"     BOX.<+> text (show @loc.patternTypes)
+                                                ,  text "pattern types:"     BOX.<+> vcat BOX.left @loc.debugTypes
                                                 ,  text "local idents known to RHS"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug
                                                 ,  nest 2 @rhs.debug
                                                 ]
+     loc  .debugTypes                   = map (\(nm,ty) -> hcat BOX.left $ map text [show nm," : ",show ty]) ((DM.toList @loc.patternTypes)::[(H.Name,S.TpScheme)])
 
 sem FunBindR
   | FBHoleR
@@ -322,8 +323,8 @@ sem FunBindR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "FunBindR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "Helium type:"           BOX.<+> text (show @loc.heliumType)
-                                                ,  text "pattern types:"     BOX.<+> text (show @loc.patternTypes)
+                                                ,  text "pattern types:"     BOX.<+> vcat BOX.left @loc.debugTypes
+                                                ,  text "pattern contracts:" BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
@@ -332,6 +333,8 @@ sem FunBindR
                                                 ,  nest 2 @pats.debug
                                                 ,  nest 2 @rhs.debug
                                                 ]
+     loc  .debugTypes                   = map (\(nm,ty) -> hcat BOX.left $ map text [show nm," : ",show ty]) ((DM.toList @loc.patternTypes)::[(H.Name,S.TpScheme)])
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [text nm,text " : ",pprint ctrt]) ((DM.toList @loc.patternContracts)::[(String,Contract)])
 
 sem PatR
   | PHoleR

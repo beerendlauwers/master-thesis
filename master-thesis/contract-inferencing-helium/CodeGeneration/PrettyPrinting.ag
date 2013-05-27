@@ -1,6 +1,6 @@
 optpragmas
 {
-{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances, OverlappingInstances #-}
 }
 
 include "Domain/FP/CodeGeneration/Views.ag"
@@ -40,6 +40,9 @@ instance (Pretty a, Pretty b) => Pretty (a, b) where
 instance Pretty Int where
   pprint = text.show
 
+instance Pretty String where
+  pprint = text
+
 instance Pretty Char where
   pprint = text.show
 
@@ -55,28 +58,30 @@ instance Pretty NameR where
   pprint (SpecialR n _)  = text n
 
 instance Pretty ModuleR where
-  pprint = text . Helium.ppModule . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppModule . CL.build heliumWithRangesView
 
 instance Pretty BodyR where
-  pprint = text . Helium.ppBody . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppBody . CL.build heliumWithRangesView
 
 instance Pretty RhsR where
-  pprint = text . Helium.ppRhs . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppRhs . CL.build heliumWithRangesView
 
 instance Pretty FunBindR where
-  pprint = text . Helium.ppFunctionBinding . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppFunctionBinding . CL.build heliumWithRangesView
 
 instance Pretty DeclR where
-  pprint = text . Helium.ppDeclaration . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppDeclaration . CL.build heliumWithRangesView
 
 instance Pretty ExprR where
-  pprint = text . Helium.ppExpression . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppExpression . CL.build heliumWithRangesView
 
 instance Pretty AltR where
-  pprint = text . Helium.ppAlternative . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppAlternative . CL.build heliumWithRangesView
 
 instance Pretty PatR where
-  pprint = text . Helium.ppPattern . CL.build heliumWithRangesView
+  pprint = boxifyCode . Helium.ppPattern . CL.build heliumWithRangesView
+
+boxifyCode = (vcat BOX.left) . (map text) . lines
 
 instance Pretty Contract where
   pprint (CArr c1 c2) = parens $ pprint c1 BOX.<+> text ">->" BOX.<+> pprint c2

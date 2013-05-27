@@ -11,8 +11,8 @@ include "Domain/FP/CodeGeneration/Utils.ag"
 include "Domain/FP/CodeGeneration/DebugCode.ag"
 
 {
-type FunctionArityEnvironment = Map NameR Int
-type ParameterArityEnvironment = Map NameR [Int]
+type FunctionArityEnvironment = DM.Map NameR Int
+type ParameterArityEnvironment = DM.Map NameR [Int]
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -50,6 +50,9 @@ attr ExprR
   -- Example: __contracted_insert ctrt = assert "insert" ctrt funs
   --           where funs = fun (\x -> fun (\xs -> insert x xs))
   syn contractedFunction                                :: FunBindR
+
+  --
+  syn higherOrderParameters                             :: {DM.Map
 
   -- The applied contracted function identifier.
   -- Used to replace the non-contracted function call if it's not part of a higher-order function.

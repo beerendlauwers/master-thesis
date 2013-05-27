@@ -78,7 +78,7 @@ sem ExprR
     -- Generate types for this group of bindings.
       loc  .asModuleR           = makeModuleR @decls.copy
       loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
-      loc  .types               = H.extractTypes @loc.heliumResults
+      loc  .types               = extractTypeNoRange @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
@@ -96,7 +96,7 @@ sem RhsR
     -- Generate types for this group of bindings.
       loc  .asModuleR           = makeModuleR @where.copy
       loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
-      loc  .types               = H.extractTypes @loc.heliumResults
+      loc  .types               = extractTypeNoRange @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
@@ -113,7 +113,7 @@ sem RhsR
     -- Generate types for this group of bindings.
       loc  .asModuleR           = makeModuleR @where.copy
       loc  .heliumResults       = H.compileWithExtraEnv (render $ pprint @loc.asModuleR) @lhs.topLevelTypes
-      loc  .types               = H.extractTypes @loc.heliumResults
+      loc  .types               = extractTypeNoRange @loc.heliumResults
 
       -- Generate an import environment with the top-level types from Helium.
       loc  .typesImportEnv      = generateImportEnv @loc.types
@@ -152,14 +152,15 @@ sem BodyR
 
 sem FunBindR
   | FunBindR
-      -- We'll use this local variable to generate contracts and contracted code.
-      loc.heliumType            = lookupHeliumType @name.copy @lhs.heliumTypes
-
       -- We need to get the types of all variables, too. Pass the function type to the pattern list.
-      pats.patType              = Just @loc.heliumType
+      pats.patType              = Just $ lookupHeliumType @name.copy @lhs.heliumTypes
+
+      -- The contracts of each variable is also handy information to know.
+      pats.patContract          = DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts
+      loc.patternContracts      = @pats.patternContracts
 
       -- Synthesize the list of patterns with their types, we'll add those to the import environment.
-      loc.patternTypes          = @pats.patternTypes
+      loc.patternTypes          = scrubRangeInfo @pats.patternTypes
 
       -- Add synthesized list of patterns with types to import environment.
       rhs.topLevelTypes         = overwriteImportEnv (generateImportEnv @loc.patternTypes) @lhs.topLevelTypes
@@ -182,7 +183,7 @@ sem ExprR
      loc.lambdaAsModule         = makeModuleR [DFunBindsR [@loc.lambdaAsFunbind] noRangeR]
 
      loc.heliumResults          = H.compileWithExtraEnv (render $ pprint @loc.lambdaAsModule) @lhs.topLevelTypes
-     loc.types                  = H.extractTypes @loc.heliumResults
+     loc.types                  = extractTypeNoRange @loc.heliumResults
      loc.typesImportEnv         = generateImportEnv @loc.types
      loc.newEnv                 = overwriteImportEnv @loc.typesImportEnv @lhs.topLevelTypes
 
@@ -208,7 +209,7 @@ sem ExprR
      loc.exprAsModule           = makeModuleR [DFunBindsR [@loc.exprAsFunbind] noRangeR]
 
      loc.heliumResults          = H.compileWithExtraEnv (render $ pprint @loc.exprAsModule) @lhs.topLevelTypes
-     loc.types                  = H.extractTypes @loc.heliumResults
+     loc.types                  = extractTypeNoRange @loc.heliumResults
 
      -- Fetch the type, pass it to the AltR list.
      -- There, it will be used to type the patterns.
@@ -226,7 +227,7 @@ sem AltR
       pat.patType              = Just @lhs.altType
 
       -- Synthesize the list of patterns with their types, we'll add those to the import environment.
-      loc.patternTypes          = @pat.patternTypes
+      loc.patternTypes          = scrubRangeInfo @pat.patternTypes
 
       -- Add synthesized list of patterns with types to import environment.
       rhs.topLevelTypes         = overwriteImportEnv (generateImportEnv @loc.patternTypes) @lhs.topLevelTypes
@@ -237,16 +238,18 @@ sem AltR
 attr PatsR PatR ListPatsR TuplePatsR
   inh patType                                           :: {Maybe S.TpScheme}
   inh tuplePatType                                      :: {Maybe [S.TpScheme]}
---  inh patContract                                       :: {Contract}
+  inh patContract                                       :: {Maybe Contract}
+
   syn patternTypes                                      :: {IE.TypeEnvironment}
+  syn patternContracts                                  :: {DM.Map String Contract}
 
 -- Semantics for splitting up a function type and assigning it to a pattern.
 sem PatsR
   | Cons
      -- Split up the type-generated contract and pass it to a pattern.
-     --loc.splitContract          = splitFunctionContract @lhs.patContract
-     --hd .patContract            = fst @loc.splitContract
-     --tl .patContract            = snd @loc.splitContract
+     loc.splitContract          = maybe Nothing (Just . splitFunctionContract) @lhs.patContract
+     hd .patContract            = maybe Nothing (Just . fst) @loc.splitContract
+     tl .patContract            = maybe Nothing (Just . snd) @loc.splitContract
      
      -- Split up the type and pass it to a pattern.
      loc.splitType              = maybe Nothing (Just . splitTopTypeScheme) @lhs.patType
@@ -256,33 +259,41 @@ sem PatsR
 sem PatsR
   | Cons
      lhs.patternTypes           = DM.union @hd.patternTypes @tl.patternTypes
+     lhs.patternContracts       = DM.union @hd.patternContracts @tl.patternContracts
   | Nil
      lhs.patternTypes           = DM.empty
+     lhs.patternContracts       = DM.empty
 
 sem PatR
   | PHoleR
      lhs.patternTypes           = DM.empty
+     lhs.patternContracts       = DM.empty
 
   | PConR
      -- TODO: Expand this. We should use HIE.importEnvs.
-     lhs.patternTypes           = DM.empty 
+     lhs.patternTypes           = DM.empty
+     lhs.patternContracts       = DM.empty
 
   | PInfixConR
      -- TODO: Expand this. We should use HIE.importEnvs.
+
+     -- Pattern stuff
      lhs.patternTypes           = DM.union @left.patternTypes @right.patternTypes
      loc.possibleResult         = DL.elemIndex True @loc.listOfConstructors
      loc.listOfConstructors     = [@loc.isListConstructor]
 
      loc.inhLeft                = [@loc.listToLeft]
      loc.inhright               = [@loc.listToRight]
-     loc.sendToleft             = case @loc.possibleResult of
-                                   (Just n) -> @loc.inhLeft !! n
-                                   _        -> Nothing
-     loc.sendToRight            = case @loc.possibleResult of
-                                   (Just n) -> @loc.inhright !! n
-                                   _        -> Nothing
-     left.patType               = @loc.sendToleft
-     right.patType              = @loc.sendToRight
+
+     left.patType               = maybe Nothing ((!!) @loc.inhLeft ) @loc.possibleResult
+     right.patType              = maybe Nothing ((!!) @loc.inhright) @loc.possibleResult
+
+     -- Contract stuff
+     lhs.patternContracts       = DM.union @left.patternContracts @right.patternContracts
+     loc.ctrtLeft               = [@loc.listCtrtToLeft]
+     loc.ctrtRight              = [@loc.listCtrtToRight]
+     left.patContract           = maybe Nothing ((!!) @loc.ctrtLeft ) @loc.possibleResult
+     right.patContract          = maybe Nothing ((!!) @loc.ctrtRight) @loc.possibleResult
 
      loc.infixConstructor       = getVar @name.copy
 
@@ -290,15 +301,21 @@ sem PatR
      loc.isListConstructor      = @loc.infixConstructor == ":"
      loc.listToLeft             = maybe Nothing (Just . getInnerListElem) @lhs.patType
      loc.listToRight            = @lhs.patType
+     loc.listCtrtToLeft         = maybe Nothing (Just . getInnerListCtrt) @lhs.patContract
+     loc.listCtrtToRight        = @lhs.patContract
 
   | PListR
      lhs.patternTypes           = @pats.patternTypes
+     lhs.patternContracts       = @pats.patternContracts
   
   | PLitR
      lhs.patternTypes           = DM.empty
+     lhs.patternContracts       = DM.empty
 
   | PParenR
      lhs.patternTypes           = @pat.patternTypes
+     lhs.patternContracts       = @pat.patternContracts
+
 
   | PTupleR
      lhs.patternTypes           = @pats.patternTypes
@@ -312,33 +329,43 @@ sem PatR
      loc.lengthPatType          = maybe 0 length @loc.splitUpTuple
      loc.lengthPats             = length @pats.copy
 
+     lhs.patternContracts       = @pats.patternContracts
+     pats.patContract           = @lhs.patContract
+
   | PVarR
-     lhs.patternTypes           = case @lhs.patType of
-                                   (Just x) -> DM.singleton (toHeliumWithRanges @name.copy) x
-                                   Nothing  -> DM.empty
+     lhs.patternTypes           = maybe DM.empty (DM.singleton (toHeliumWithRanges @name.copy)) @lhs.patType
+     lhs.patternContracts       = maybe DM.empty (DM.singleton (getVar @name.copy)) @lhs.patContract
   | PAsR
      lhs.patternTypes           = DM.union @loc.pAs @pat.patternTypes
-     loc.pAs                    = case @lhs.patType of
-                                   (Just x) -> DM.singleton (toHeliumWithRanges @name.copy) x
-                                   Nothing  -> DM.empty
+     lhs.patternContracts       = DM.union @loc.pAsCtrt @pat.patternContracts
+     loc.pAs                    = maybe DM.empty (DM.singleton (toHeliumWithRanges @name.copy)) @lhs.patType
+     loc.pAsCtrt                = maybe DM.empty (DM.singleton (getVar @name.copy)) @lhs.patContract
   | PWildcardR
      lhs.patternTypes           = DM.empty
+     lhs.patternContracts       = DM.empty
 
 sem TuplePatsR
   | Cons
      lhs.patternTypes           = DM.union @hd.patternTypes @tl.patternTypes
      hd .patType                = maybe Nothing (Just . head) @lhs.tuplePatType
      tl .tuplePatType           = maybe Nothing (Just . tail) @lhs.tuplePatType
+
+     lhs.patternContracts       = DM.union @hd.patternContracts @tl.patternContracts
+     hd .patContract            = maybe Nothing (Just . fst . splitTupleContract) @lhs.patContract
+     tl .patContract            = maybe Nothing (Just . snd . splitTupleContract) @lhs.patContract
   | Nil
      lhs.patternTypes           = DM.empty
+     lhs.patternContracts       = DM.empty
 
 sem ListPatsR
   | Cons
      lhs.patternTypes           = DM.union @hd.patternTypes @tl.patternTypes
+     lhs.patternContracts       = DM.union @hd.patternContracts @tl.patternContracts
      hd .patType                = maybe Nothing (Just . getInnerListElem) @lhs.patType
      tl .patType                = @lhs.patType
   | Nil
      lhs.patternTypes           = DM.empty
+     lhs.patternContracts       = DM.empty
 {- *** End of semantics to calculate the type of a pattern. *** -}
 
 {- *** Start of semantics to suppress some warnings concerning patterns. *** -}

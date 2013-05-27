@@ -25,7 +25,8 @@ generateImportEnv tyenv = IE.emptyEnvironment { IE.typeEnvironment = tyenv }
 
 -- Replace definitions in old env with definitions in new env.
 overwriteImportEnv :: IE.ImportEnvironment -> IE.ImportEnvironment -> IE.ImportEnvironment
-overwriteImportEnv new@(IE.ImportEnvironment nc ns ne nv no nt) old@(IE.ImportEnvironment oc os oe ov oo ot) = IE.ImportEnvironment
+overwriteImportEnv (IE.ImportEnvironment nc ns ne nv no nt) (IE.ImportEnvironment oc os oe ov oo ot) = 
+ IE.ImportEnvironment
    { IE.typeConstructors  = DM.union nc oc
    , IE.typeSynonyms      = DM.union ns os
    , IE.typeEnvironment   = DM.union ne oe
@@ -39,7 +40,7 @@ removeFromTypeEnv x (IE.ImportEnvironment a b tyenv c d e) =
  IE.ImportEnvironment a b (DM.delete x tyenv) c d e
 
 getMaxVariable :: IE.ImportEnvironment -> Int
-getMaxVariable (IE.ImportEnvironment a b c d e f) = 
+getMaxVariable (IE.ImportEnvironment _ _ c d _ _) = 
  maximum' $ map maxVar [c,d]
   where maxVar :: DM.Map H.Name S.TpScheme -> Int
         maxVar = DM.fold (\x xs -> max (getMaxInt x) xs) (0::Int)
@@ -47,14 +48,14 @@ getMaxVariable (IE.ImportEnvironment a b c d e f) =
 
 getQuantifiers :: Contract -> [Contract]
 getQuantifiers (CQuant qv cs) = qv : getQuantifiers cs
-getQuantifiers x = []
+getQuantifiers _ = []
 
 stripQuantifiers :: Contract -> Contract
-stripQuantifiers (CQuant qv cs) = stripQuantifiers cs
+stripQuantifiers (CQuant _ cs) = stripQuantifiers cs
 stripQuantifiers x = x
 
 splitFunctionContract :: Contract -> (Contract,Contract)
-splitFunctionContract x@(CQuant qv cs) = splitFunctionContract' (stripQuantifiers x) (getQuantifiers x)
+splitFunctionContract x@(CQuant qv _) = splitFunctionContract' (stripQuantifiers x) (getQuantifiers x)
 splitFunctionContract x = splitFunctionContract' x []
 
 splitFunctionContract' :: Contract -> [Contract] -> (Contract,Contract)
@@ -88,6 +89,19 @@ lookupHeliumType nm env =
  in case result of
      (Just x) -> x
      Nothing  -> error $ "Tried to look up " ++ show nm ++ " in type environment: " ++ show env
+
+-- We need to remove range information because otherwise we could end up with multiple entries
+scrubRangeInfo :: IE.TypeEnvironment -> IE.TypeEnvironment
+scrubRangeInfo = DM.mapKeys removeRange
+  where
+   removeRange  :: H.Name -> H.Name
+   removeRange  = toHeliumWithRanges.removeRange'.fromHeliumWithRanges
+   removeRange' :: NameR -> NameR
+   removeRange' (IdentR x _)    = IdentR x noRangeR
+   removeRange' (OperatorR x _) = OperatorR x noRangeR
+   removeRange' (SpecialR x _)  = SpecialR x noRangeR
+
+extractTypeNoRange = scrubRangeInfo.(H.extractTypes)
 
 calculateArity :: IE.TypeEnvironment -> FunctionArityEnvironment
 calculateArity env = DM.fromList $ map (\(name,ty) -> (fromHeliumWithRanges name, S.arityOfTpScheme ty)) (DM.toList env)
@@ -233,7 +247,20 @@ getInnerListElem ty =
      list           = head (allTypes simpleTy)
      getListElem (P.TApp (P.TCon "[]") t1) = t1
      getListElem x = error $ "Expected a list, got the following type: " ++ show x
- in assembleTypeScheme (getListElem list,predicates,quants) 
+ in assembleTypeScheme (getListElem list,predicates,quants)
+
+-- Fetches the inner contract from a list contract.
+getInnerListCtrt :: Contract -> Contract
+getInnerListCtrt x@(CQuant qv cs) = foldr CQuant (getInnerListCtrt $ stripQuantifiers x) (getQuantifiers x)
+getInnerListCtrt (CFunctor _ i) = i
+getInnerListCtrt x = error $ "Tried to apply getInnerListCtrt to the following contract: " ++ show x
+
+splitTupleContract :: Contract -> (Contract,Contract)
+splitTupleContract x@(CQuant qv cs) =
+ let (hd,tl) = splitTupleContract $ stripQuantifiers x
+ in (foldr CQuant hd (getQuantifiers x),foldr CQuant tl (getQuantifiers x))
+splitTupleContract (CTuple (x:xs)) = (x, CTuple xs)
+splitTupleContract x = error $ "Tried to apply splitTupleContract to the following contract: " ++ show x
 
 {-
 apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR
