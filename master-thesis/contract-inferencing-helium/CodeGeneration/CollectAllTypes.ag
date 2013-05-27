@@ -42,7 +42,7 @@ attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR Gu
    chn freshContractVariable                                    :: {Int}
 
   -- These contracts are generated and populated from the types Helium provides us.
-  inh heliumGeneratedContracts                                  :: {DM.Map NameR Contract}
+  inh heliumGeneratedContracts                                  :: {DM.Map String Contract}
 
 --{
 --data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
@@ -61,7 +61,9 @@ sem ModuleR
       loc  .contracts              = snd @loc.conversionResults
 
       -- Add these contracts to the contract environment.
-      loc  .newContracts           = DM.fromList $ zip (map fromHeliumWithRanges @loc.identifiers) @loc.contracts
+      -- Strip ranges information, this can cause duplicates.
+      loc  .heliumIdents           = map (getVar.fromHeliumWithRanges) @loc.identifiers
+      loc  .newContracts           = DM.fromList $ zip @loc.heliumIdents @loc.contracts
       body .heliumGeneratedContracts    = @loc.newContracts
 
       -- The first integer that is available for fresh contracts is one more than the highest one used by Helium.

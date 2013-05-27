@@ -111,10 +111,10 @@ sem ModuleR
   | ModuleR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "ModuleR"
-                                                ,  text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
+                                                ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  nest 2 @body.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(String,Contract)])
 
 sem BodyR
   | BodyR
@@ -134,12 +134,12 @@ sem RhsR
                                                 [  horizontalLinesWith "*" $ text "RhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
-                                                ,  text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
-
+                                                ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
+                                                ,  text "Number of contracts:" BOX.<+> pprint ( length (DM.toList @loc.newContractEnv))
                                                 ,  nest 2 @where.debug
                                                 ,  nest 2 @expr.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContractEnv)::[(String,Contract)])
 
 
   | GRhsR
@@ -147,12 +147,12 @@ sem RhsR
                                                 [  horizontalLinesWith "*" $ text "RhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
-                                                ,  text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
+                                                ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
 
                                                 ,  nest 2 @where.debug
                                                 ,  nest 2 @gexprs.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContractEnv)::[(String,Contract)])
 
 sem DeclR
   | DHoleR
@@ -231,7 +231,7 @@ sem ExprR
                                                 ,   nest 2 @decls.debug
                                                 ,   nest 2 @expr.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(NameR,Contract)])
+     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContractEnv)::[(String,Contract)])
 
   | LitR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
