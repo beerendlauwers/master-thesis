@@ -1,3 +1,5 @@
+{-
+-- For debugging, uncomment this block.
 -- ~/thesis/FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.CodeGeneration.CollectAllTypes" Domain/FP/CodeGeneration/CollectAllTypes.ag
 
 -- Include simplified syntax used by Ask-Elle
@@ -27,6 +29,9 @@ import qualified Data.List as DL
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
    syn copy                                                     :: self
 
+-}
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
   -- We get this from the Helium compiler.
   inh topLevelTypes                                             :: {IE.ImportEnvironment}
 
