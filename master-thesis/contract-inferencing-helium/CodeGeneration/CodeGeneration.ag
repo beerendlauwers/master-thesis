@@ -1,3 +1,5 @@
+-- ~/thesis/FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.CodeGeneration.CodeGeneration" Domain/FP/CodeGeneration/CodeGeneration.ag
+
 -- Include simplified syntax used by Ask-Elle
 include "Domain/FP/SyntaxWithRanges.ag"
 
@@ -7,13 +9,34 @@ include "Domain/FP/CodeGeneration/CollectLocalIdents.ag"
 -- Include Utils.ag
 include "Domain/FP/CodeGeneration/Utils.ag"
 
--- Include debug statements
+-- Include code for generating Helium types for all function bindings and let bindings.
+include "Domain/FP/CodeGeneration/CollectAllTypes.ag"
+
+-- Include code to generate contracts for all function bindings and let bindings.
+include "Domain/FP/CodeGeneration/GenerateContracts.ag"
+
+-- Include code to apply substitutions
+include "Domain/FP/ContractInferencing/Substitution.ag"
+
+-- Include debug statement generating code
 include "Domain/FP/CodeGeneration/DebugCode.ag"
 
+imports
 {
-type FunctionArityEnvironment = DM.Map NameR Int
-type ParameterArityEnvironment = DM.Map NameR [Int]
+import qualified Domain.FP.Helium as H
+import qualified ModuleSystem.ImportEnvironment as IE
+import qualified Domain.FP.HeliumImportEnvs as HIE
+import qualified Data.Map as DM
+import qualified Data.Set as DS
+import qualified Data.Maybe as DJ
+import qualified Data.List as DL
 }
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+   syn copy                                                     :: self
+
+
+{-
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
   chn varcnt   :: {Int}
@@ -51,8 +74,9 @@ attr ExprR
   --           where funs = fun (\x -> fun (\xs -> insert x xs))
   syn contractedFunction                                :: FunBindR
 
-  --
-  syn higherOrderParameters                             :: {DM.Map
+  -- It's possible a parameter is higher-order. In that case, we need to generate a
+  -- higher-order version of it.
+  syn higherOrderParameter                             :: [FunBindR]
 
   -- The applied contracted function identifier.
   -- Used to replace the non-contracted function call if it's not part of a higher-order function.
@@ -118,23 +142,46 @@ sem ExprR
       loc  .whereClause                 = DFunBindsR [FunBindR Nothing (IdentR "funs" noRange) [] @loc.whereRhs noRange] noRange
       loc  .whereRhs                    = RhsR (makeFuns @loc.funsPatterns @loc.funsBase) [] noRange
       loc  .funsPatterns                = [ "__x" ++ @loc.num ++ show x | [1..@loc.parameterArity] ]
-      loc  .parameterArity              = calculateArity @lhs.localType -- TODO: Generate localType. -- TODO: Implement calculateArity.
+      loc  .arityEnv                    = calculateArity @lhs.localType -- TODO: Generate localType. -- TODO: Implement calculateArity.
       loc  .funsBase                    = AppR (makeVar @loc.functionIdent) (map makeVar @loc.funsPatterns) noRange
 
       loc  .num     ::  uniqueref varcnt
 
+-}
+
+
+
+{-
+-- Higher-order param generation
+sem ExprR
+  | AppR
+      -- First, get the types.
+      loc  .onlyTypes                   = (\(IE.ImportEnvironment _ _ typeEnv _ _ _) -> typeEnv) @lhs.topLevelTypes
+
+       -- Then, generate arity of these types.
+      loc  .arityEnv                    = calculateArity @loc.onlyTypes
+      
+      -- Get the type of the function that is being applied.
+      loc  .functionType                = case @fun.copy of
+                                           (VarR x _) -> maybe (error $ "Couldn't find this function in env: " ++ show x) id (DM.lookup x @loc.onlyTypes)
+                                           x          -> error $ "Tried to get function identifier from this expression: " ++ show x -- TODO: Might want to get the actual type for this thing if it's not a simple VarR.
+
+      -- Look up 
+      lhs  .functionWithContract        = FunBindR Nothing @loc.name [] @loc.rhs noRange
+-}
+
 {
 -- Given a list of patterns and a base value, generate a chain of 'fun' applications.
 -- Example: funs = fun (\x -> fun (\xs -> insert x xs))
-makeFuns :: [PVarR] -> ExprR -> ExprR
+makeFuns :: [PatsR] -> ExprR -> ExprR
 makeFuns xs b = foldr f b xs
-  where f pat rest = AppR (makeVar "fun") [LambdaR pat rest noRange] noRange
+  where f pat rest = AppR (makeVar "fun") [LambdaR pat rest noRangeR] noRangeR
 
-makePVar :: String -> PVarR
-makePVar s = PVarR (IdentR s noRange) noRange
+makePVar :: String -> PatR
+makePVar s = PVarR (IdentR s noRangeR) noRangeR
 
-makeVar :: String -> VarR
-makeVar s = VarR (IdentR s noRange) noRange
+makeVar :: String -> ExprR
+makeVar s = VarR (IdentR s noRangeR) noRangeR
 
 prefixFunctionWithContract :: NameR -> NameR
 prefixFunctionWithContract (IdentR name r)    = (IdentR ("__ctrt_"++name) r)
@@ -145,19 +192,4 @@ prefixcontractedFunction :: NameR -> NameR
 prefixcontractedFunction (IdentR name r)    = (IdentR ("__contracted_"++name) r)
 prefixcontractedFunction (OperatorR name r) = (OperatorR ("+++"++name++"+++") r)
 prefixcontractedFunction _ = error "prefixcontractedFunction: Haven't defined anything yet for SpecialR."
-
-isInToplevel :: ImportEnvironment -> NameR -> Bool
-isInToplevel (ImportEnvironment _ _ functions _ _ _) x = 
- let find = case x of
-             (IdentR name _) = Ident name
-             (OperatorR name _) = Operator name
-             (SpecialR name _) = Special name
- in member find functions
 }
-
-{
-nextUnique :: Int -> (Int, Int)
-nextUnique u = (u + 1, u)
-}
-
-

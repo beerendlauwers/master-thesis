@@ -63,8 +63,8 @@ splitFunctionContract' (CArr x y) quants = (foldr CQuant x quants,foldr CQuant y
 splitFunctionContract' x _ = (error.show) $ text "Not a function contract: " BOX.<+> pprint x
 
 
-type FunctionArityEnvironment = DM.Map NameR Int
-type ParameterArityEnvironment = DM.Map NameR [Int]
+type FunctionArityEnvironment = DM.Map String Int
+type ParameterArityEnvironment = DM.Map String [Int]
 
 updateName :: (NameR -> NameR) -> NameR -> String -> [NameR] -> NameR
 updateName f n entryPoint localIdents = 
@@ -104,10 +104,10 @@ scrubRangeInfo = DM.mapKeys removeRange
 extractTypeNoRange = scrubRangeInfo.(H.extractTypes)
 
 calculateArity :: IE.TypeEnvironment -> FunctionArityEnvironment
-calculateArity env = DM.fromList $ map (\(name,ty) -> (fromHeliumWithRanges name, S.arityOfTpScheme ty)) (DM.toList env)
+calculateArity env = DM.fromList $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, S.arityOfTpScheme ty)) (DM.toList env)
 
 calculateParameterArity :: IE.TypeEnvironment -> ParameterArityEnvironment
-calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> (fromHeliumWithRanges name, getParameterArity ty)) (DM.toList env)
+calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, getParameterArity ty)) (DM.toList env)
   where getParameterArity ty = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify) ty
 
 makeModuleR :: DeclsR -> ModuleR
