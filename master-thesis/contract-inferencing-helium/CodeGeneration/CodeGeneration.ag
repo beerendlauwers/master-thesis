@@ -34,8 +34,41 @@ import qualified Data.List as DL
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
    syn copy                                                     :: self
+   chn varcnt                                                   :: {Int}
 
+attr FunBindR
+   syn contractedFunction                                       :: FunBindR
 
+sem FunBindR
+  | FBHoleR
+      lhs  .contractedFunction          = undefined
+  | FunBindR
+      -- Example: __contracted_insert ctrt = assert "insert" ctrt funs
+      --           where funs = fun (\x -> fun (\xs -> insert x xs))
+      lhs  .contractedFunction          = @loc.contractedFunction
+      loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "ctrt"] @loc.contractedRhs
+
+      -- LHS --
+      loc  .functionIdentifier          = @name.copy
+      loc  .functionIdent               = getVar @loc.functionIdentifier
+      loc  .contractedName              = prefixcontractedFunction @loc.functionIdentifier
+
+      -- RHS --
+      loc  .assertApp                   = mkApp [mkVar "assert"
+                                                ,(mkLit.mkStrLit) @loc.functionIdent
+                                                ,mkVar "ctrt"
+                                                ,mkVar "funs"]
+      loc  .contractedRhs               = mkRhs @loc.assertApp [@loc.whereClause]
+
+      -- WHERE CLAUSE --
+      loc  .whereClause                 = mkDFunbinds [mkFunbind (mkIdent "funs") [] @loc.whereRhs]
+      loc  .whereRhs                    = mkRhs (makeFuns (map mkPVar @loc.funsPatterns) @loc.funsBase) []
+      loc  .funsPatterns                = [ "__x" ++ show @loc.num ++ show x | x <- [1.. @loc.parameterArity] ]
+      loc  .arityEnv                    = calculateArity $ getTypeEnv @lhs.topLevelTypes
+      loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup @loc.functionIdent @loc.arityEnv)
+      loc  .funsBase                    = mkApp $ map mkVar (@loc.functionIdent : @loc.funsPatterns)
+
+      loc  .num     ::  uniqueref varcnt
 {-
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -173,15 +206,10 @@ sem ExprR
 {
 -- Given a list of patterns and a base value, generate a chain of 'fun' applications.
 -- Example: funs = fun (\x -> fun (\xs -> insert x xs))
-makeFuns :: [PatsR] -> ExprR -> ExprR
+makeFuns :: PatsR -> ExprR -> ExprR
 makeFuns xs b = foldr f b xs
-  where f pat rest = AppR (makeVar "fun") [LambdaR pat rest noRangeR] noRangeR
+  where f pat rest = mkApp $ (mkVar "fun") : [LambdaR [pat] rest noRangeR]
 
-makePVar :: String -> PatR
-makePVar s = PVarR (IdentR s noRangeR) noRangeR
-
-makeVar :: String -> ExprR
-makeVar s = VarR (IdentR s noRangeR) noRangeR
 
 prefixFunctionWithContract :: NameR -> NameR
 prefixFunctionWithContract (IdentR name r)    = (IdentR ("__ctrt_"++name) r)

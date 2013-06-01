@@ -15,7 +15,7 @@ showDebug code pointOfEntry =
  let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
-     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv
+     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
  in printBox (debug_Syn_ModuleR wrapModule)
 
@@ -325,6 +325,7 @@ sem FunBindR
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "pattern types:"     BOX.<+> vcat BOX.left @loc.debugTypes
                                                 ,  text "pattern contracts:" BOX.<+> vcat BOX.left @loc.debugContracts
+                                                ,  text "__contracted code:" BOX.<+> pprint @loc.contractedFunction
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
