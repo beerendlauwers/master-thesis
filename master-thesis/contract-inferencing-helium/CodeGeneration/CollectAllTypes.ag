@@ -193,7 +193,7 @@ sem ExprR
      loc.newEnv                 = overwriteImportEnv @loc.typesImportEnv @lhs.topLevelTypes
 
      loc.sem_ModuleR            = sem_ModuleR @loc.lambdaAsModule
-     loc.inh_ModuleR            = Inh_ModuleR @lhs.entryFunction @lhs.localIdentifiers @loc.newEnv
+     loc.inh_ModuleR            = Inh_ModuleR @lhs.entryFunction @lhs.localIdentifiers @loc.newEnv 0
      loc.wrap_ModuleR           = wrap_ModuleR @loc.sem_ModuleR @loc.inh_ModuleR
      loc.functionHeliumTypes    = functionHeliumTypes_Syn_ModuleR @loc.wrap_ModuleR
 

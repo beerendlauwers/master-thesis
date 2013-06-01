@@ -262,6 +262,33 @@ splitTupleContract x@(CQuant qv cs) =
 splitTupleContract (CTuple (x:xs)) = (x, CTuple xs)
 splitTupleContract x = error $ "Tried to apply splitTupleContract to the following contract: " ++ show x
 
+mkIdent :: String -> NameR
+mkIdent x = IdentR x noRangeR
+
+mkFunbind :: NameR -> PatsR -> RhsR -> FunBindR
+mkFunbind nm pats rhs = FunBindR Nothing nm pats rhs noRangeR
+
+mkDFunbinds :: FunBindsR -> DeclR
+mkDFunbinds fs = DFunBindsR fs noRangeR
+
+mkRhs :: ExprR -> DeclsR -> RhsR
+mkRhs e wher = RhsR e wher noRangeR
+
+mkApp :: ExprsR -> ExprR
+mkApp (e:es) = AppR e es noRangeR
+
+mkPVar :: String -> PatR
+mkPVar s = PVarR (IdentR s noRangeR) noRangeR
+
+mkVar :: String -> ExprR
+mkVar s = VarR (mkIdent s) noRangeR
+
+mkStrLit :: String -> LiteralR
+mkStrLit s = LStringR s noRangeR
+
+mkLit :: LiteralR -> ExprR
+mkLit l = LitR l noRangeR
+
 {-
 apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR
 apps xs b = foldr f b (reverse xs)
