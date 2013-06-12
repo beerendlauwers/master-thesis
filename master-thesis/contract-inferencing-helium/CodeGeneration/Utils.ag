@@ -262,8 +262,25 @@ splitTupleContract x@(CQuant qv cs) =
 splitTupleContract (CTuple (x:xs)) = (x, CTuple xs)
 splitTupleContract x = error $ "Tried to apply splitTupleContract to the following contract: " ++ show x
 
+expandHigherOrderParams :: (Int,String) -> ExprR
+expandHigherOrderParams (arity,pat) = 
+ let v = mkVar pat
+     pats = take arity [x : show y | y <- [0..10], x <- ['a'..'z']  ]
+     lam = mkLambda (map mkPVar pats) apps
+     apps = insertApps base $ zip (replicate arity "tempPos") (map mkVar pats)
+     base = mkApp $ map mkVar (pat:pats)
+ in if arity > 1
+     then lam
+     else v
+
+insertApps :: ExprR -> [(ExprR,ExprR)] -> ExprR
+insertApps params = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar "app",xs,pos,var])
+
 mkIdent :: String -> NameR
 mkIdent x = IdentR x noRangeR
+
+mkParens :: ExprR -> ExprR
+mkParens e = ParenR e noRangeR
 
 mkFunbind :: NameR -> PatsR -> RhsR -> FunBindR
 mkFunbind nm pats rhs = FunBindR Nothing nm pats rhs noRangeR
@@ -273,6 +290,15 @@ mkDFunbinds fs = DFunBindsR fs noRangeR
 
 mkRhs :: ExprR -> DeclsR -> RhsR
 mkRhs e wher = RhsR e wher noRangeR
+
+mkLambda :: PatsR -> ExprR -> ExprR
+mkLambda p e = LambdaR p e noRangeR
+
+mkTuple :: ExprsR -> ExprR
+mkTuple es = TupleR es noRangeR
+
+mkPTuple :: PatsR -> PatR
+mkPTuple ps = PTupleR ps noRangeR
 
 mkApp :: ExprsR -> ExprR
 mkApp (e:es) = AppR e es noRangeR
