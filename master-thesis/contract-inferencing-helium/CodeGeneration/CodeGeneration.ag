@@ -36,6 +36,7 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
    syn copy                                                     :: self
    chn varcnt                                                   :: {Int}
 
+-- Semantics for contracted version of function.
 attr FunBindR
    syn contractedFunction                                       :: FunBindR
 
@@ -63,12 +64,47 @@ sem FunBindR
       -- WHERE CLAUSE --
       loc  .whereClause                 = mkDFunbinds [mkFunbind (mkIdent "funs") [] @loc.whereRhs]
       loc  .whereRhs                    = mkRhs (makeFuns (map mkPVar @loc.funsPatterns) @loc.funsBase) []
-      loc  .funsPatterns                = [ "__x" ++ show @loc.num ++ show x | x <- [1.. @loc.parameterArity] ]
+      loc  .funsPatterns                = ["__x" ++ show @loc.num ++ show x | x <- [1.. @loc.arity]]
       loc  .arityEnv                    = calculateArity $ getTypeEnv @lhs.topLevelTypes
-      loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup @loc.functionIdent @loc.arityEnv)
-      loc  .funsBase                    = mkApp $ map mkVar (@loc.functionIdent : @loc.funsPatterns)
+      loc  .arity                       = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup @loc.functionIdent @loc.arityEnv)
+      loc  .parameterArityEnv           = calculateParameterArity $ getTypeEnv @lhs.topLevelTypes
+      loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in parameterArity env!") id (DM.lookup @loc.functionIdent @loc.parameterArityEnv)
+      loc  .patsWithArity               = zip @loc.parameterArity @loc.funsPatterns
+      loc  .expandedFunsPatterns        = map expandHigherOrderParams @loc.patsWithArity
+      loc  .funsBase                    = mkApp $ mkVar @loc.functionIdent : @loc.expandedFunsPatterns
 
       loc  .num     ::  uniqueref varcnt
+
+-- Semantics to get 
+
+{-
+-- TODO: finish.
+-- Semantics for app version of function.
+attr FunBindR
+   syn appFunction                                              :: FunBindR
+
+sem FunBindR
+  | FBHoleR
+      lhs  .appFunction                 = undefined
+  | FunBindR
+      -- Example: __app_insert ctrt (posx,x) (posxs,xs) = 
+      --           app (app (__contracted_insert ctrt) posx x) posxs xs
+      lhs  .appFunction                 = @loc.appFunction
+      loc  .appFunction                 = mkFunbind @loc.appedName (@loc.ctrtParam:@loc.paramTuples) @loc.appedRhs 
+
+      -- LHS --
+      loc  .appedName                   = prefixAppFunction @loc.functionIdentifier
+      loc  .patternVars                 = map (:[]) ['a'..'z']
+      loc  .posPatternVars              = map (\x -> "pos" ++ x) @loc.posPatternVars
+      loc  .paramList                   = zip @loc.posPatternVars @loc.patternVars
+      loc  .paramTuples                 = map (\(pos,v) -> mkPTuple [mkPVar pos, mkPVar v]) @loc.paramList
+      loc  .ctrtParam                   = mkPVar "ctrt"
+      
+      -- RHS --
+      loc  .appedRhs                    = insertApps @loc.paramList @loc.appedRhsBase
+      loc  .appedRhsBase                = mkParens $ mkApp [@loc.contractedName, mkVar "ctrt"]
+-}
+
 {-
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -208,7 +244,7 @@ sem ExprR
 -- Example: funs = fun (\x -> fun (\xs -> insert x xs))
 makeFuns :: PatsR -> ExprR -> ExprR
 makeFuns xs b = foldr f b xs
-  where f pat rest = mkApp $ (mkVar "fun") : [LambdaR [pat] rest noRangeR]
+  where f pat rest = mkParens $ mkApp $ (mkVar "fun") : [LambdaR [pat] rest noRangeR]
 
 
 prefixFunctionWithContract :: NameR -> NameR
@@ -220,4 +256,9 @@ prefixcontractedFunction :: NameR -> NameR
 prefixcontractedFunction (IdentR name r)    = (IdentR ("__contracted_"++name) r)
 prefixcontractedFunction (OperatorR name r) = (OperatorR ("+++"++name++"+++") r)
 prefixcontractedFunction _ = error "prefixcontractedFunction: Haven't defined anything yet for SpecialR."
+
+prefixAppFunction :: NameR -> NameR
+prefixAppFunction (IdentR name r)    = (IdentR ("__app_"++name) r)
+prefixAppFunction (OperatorR name r) = (OperatorR ("___"++name++"___") r)
+prefixAppFunction _ = error "prefixAppFunction: Haven't defined anything yet for SpecialR."
 }
