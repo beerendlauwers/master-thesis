@@ -161,14 +161,13 @@ mapConvertTopTypeToContract offset [] = (offset,[])
 convertTopTypeToContract :: Int -> S.TpScheme -> (Int,Contract)
 convertTopTypeToContract offset ty = 
  let primType = (QL.unqualify . QN.unquantify) ty
-     varsToQuantify = map makeType (P.variablesInType primType)
      quantifiedVars = map (\v -> CVar v Nothing)
      typeAsList = P.getTypes primType
      convertedTriple = convert [offset..] (head typeAsList)
      base = (\(_,c,_) -> c) convertedTriple
      usedVariables = map makeType $ (\(_,_,v) -> v) convertedTriple
      nextAvailableContractVar = (maximum' $ offset : ((\(_,_,v) -> v) convertedTriple)) + 1
- in (nextAvailableContractVar, foldr CQuant base (quantifiedVars $ varsToQuantify ++ usedVariables))
+ in (nextAvailableContractVar, foldr CQuant base (quantifiedVars usedVariables))
   where
    makeType :: Int -> String
    makeType i = "v" ++ show i
@@ -179,8 +178,8 @@ convertTopTypeToContract offset ty =
    -- second [Int] is the list of used variable numbers, which are 
    -- collected for use in universal quantification.
    convert :: [Int] -> P.Tp -> ([Int],Contract,[Int])
-   convert n (P.TVar i) = 
-    (n, CVar (makeType i) Nothing,[])
+   convert (n:ns) (P.TVar i) = 
+    (ns, CVar (makeType n) Nothing,[n])
    convert n (P.TApp (P.TApp (P.TCon "->") t1) t2) = 
     let (n', ctrt1,q1) = convert n t1
         (n'',ctrt2,q2) = convert n' t2
@@ -267,14 +266,14 @@ expandHigherOrderParams (arity,pat) =
  let v = mkVar pat
      pats = take arity [x : show y | y <- [0..10], x <- ['a'..'z']  ]
      lam = mkLambda (map mkPVar pats) apps
-     apps = insertApps base $ zip (replicate arity "tempPos") (map mkVar pats)
+     apps = insertApps base $ zip (map mkVar $ replicate arity "tempPos") (map mkVar pats)
      base = mkApp $ map mkVar (pat:pats)
  in if arity > 1
      then lam
      else v
 
 insertApps :: ExprR -> [(ExprR,ExprR)] -> ExprR
-insertApps params = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar "app",xs,pos,var])
+insertApps = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar "app",xs,pos,var])
 
 mkIdent :: String -> NameR
 mkIdent x = IdentR x noRangeR
