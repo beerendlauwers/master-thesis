@@ -333,4 +333,16 @@ emergeinsertEnv :: CEnv
 emergeinsertEnv = DM.fromList []
 --emergeinsertEnv = DM.fromList [("emerge", CQuant (CVar "true1" Nothing) (CQuant (CVar "true2" Nothing) (ctrue <@> ctrue <@@> (CVar "true1" Nothing, CVar "true2" Nothing) >-> ctrue <@> ctrue <@@> (CVar "true1" Nothing, CVar "true2" Nothing))))]
 
+
+let simpleExample = fun' "g" (lams [var "x"] $ (ECons (var "x") ENil)) $ fun' "f" (lams [var "x"] $ (app (var "g") (var "x"))) $ fun "z" (EPair (app (var "f") (EConst (EInt 2))) (app (var "f") (EConst (EChar '5')))) 
+
+
+simpleExampleEnv :: CEnv
+simpleExampleEnv = DM.fromList  [ ( "z", foldr CQuant (CBifunctor (CVar "a1" Nothing) ((CVar "a2" Nothing) <@> CProp "isChar") ((CVar "a3" Nothing) <@> CProp "isChar")) [CVar "a1" Nothing,CVar "a2" Nothing,CVar "a2" Nothing] ) ]
+
+
+
+
+
+
 }
