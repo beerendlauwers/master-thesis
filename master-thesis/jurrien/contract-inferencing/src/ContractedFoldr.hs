@@ -211,6 +211,13 @@ __app_insert ctrt (posx,x) (posxs,xs) = appParam (appParam (__contracted_insert 
 -- We'll have to add another constructor to the Contract GADT for this, something like
 -- PropExtra that has a property and a String representing the property.
 
+-- Test of extra information generation idea:
+__contracted_map_extra ctrt = assert "map" ctrt funs
+  where funs = fun (\f -> fun (\xs -> map (\a -> appParam f "parameter 1 of map" a) xs))
+
+__app_map_extra ctrt (posf,f) (posx,x) = appParam (appParam (__contracted_map_extra ctrt) posf f) posx x
+
+__map_extra_test = __app_map_extra ((true >-> isNat_prop) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
 
 -- Next up: Making contracts more specific.
 -- Each AST node will have two lists of substitutions at their disposal:
@@ -269,6 +276,8 @@ __twocontracted_isort ctrt = assert "isort" ctrt funs
 
 isChar_prop = Prop (\x -> isAlphaNum x)
 isInt_prop = Prop (\x -> x == fromInteger (round x))
+isNat_prop = PropInfo (\x -> let n = fromInteger (round x) 
+                             in x == n && n >= 0) "The number must be a natural."
 
 isSorted :: Ord a => [a] -> [a] -> Bool
 isSorted xs ys = isNonDesc ys && isPerm
