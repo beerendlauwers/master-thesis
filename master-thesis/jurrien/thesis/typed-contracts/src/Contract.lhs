@@ -874,10 +874,12 @@ positive positions by |true|:
 \invisiblecomments
 
 > {- |positive (`o`) :: Contract aT -> Contract aT| -}
+> positive (PropInfo _ _)    =  true
 > positive (Prop _)          =  true
 > positive (Function c1 c2)  =  Function (negative c1) (\ x -> positive (c2 x))
 >
 > {- |negative (`o`) :: Contract aT -> Contract aT| -}
+> negative (PropInfo p i)    =  PropInfo p i
 > negative (Prop p)          =  Prop p
 > negative (Function c1 c2)  =  Function (positive c1) (\ x -> negative (c2 x))
 
@@ -958,6 +960,8 @@ Given these prerequisites, we can finally implement contract checking
 with proper blame assignment.
 
 > assert'                                       ::  Contract aT -> (Locs -> aT -> aT)
+> assert'  (PropInfo p i)    locs   a   | p a        = a
+>                                       | otherwise  = error (blame' locs i)
 > assert'  (Prop p)          locs   a   | p a        = a
 >                                       | otherwise  = error ("contract failed: " ++ blame locs)
 > assert'  (Function c1 c2)  locsf  f
@@ -1011,11 +1015,15 @@ terms of |prop'|, |function|, |pair'|, |list'| and `|<>|'. Then
 \begin{figure}[t]
 
 > varassert                    ::  Contract aT -> (aT :-> aT)
+> varassert  (PropInfo p i)    =   propinfo' p i
 > varassert  (Prop p)          =   prop' p
 > varassert  (Function c1 c2)  =   function (varassert c1) (varassert `o` c2)
 > varassert  (Pair c1 c2)      =   pair' (varassert c1) (varassert `o` c2)
 > varassert  (List c)          =   list' (varassert c)
 > varassert  (And c1 c2)       =   varassert c2 <> varassert c1
+>
+> propinfo'     ::  (aT -> Bool ) -> String -> (aT :-> aT)
+> propinfo' p i =   Fun (\ locs a -> if p a then a else error (blame' locs i))
 >
 > prop'         ::  (aT -> Bool) -> (aT :-> aT)
 > prop' p       =   Fun (\ locs a -> if p a then a else error ("contract failed: " ++ blame locs))
@@ -1049,19 +1057,23 @@ terms of |prop'|, |function|, |pair'|, |list'| and `|<>|'. Then
 > assert :: String -> Contract aT -> aT -> aT
 > assert s c = assert' c (makeloc (Def s)) -- note the swap of arguments
 
+> assertPos :: String -> String -> Contract aT -> aT -> aT
+> assertPos s pos c = assert' c (makeloc (DefPos s pos))
+
 > fun :: (aT -> bT) -> aT :-> bT
 > fun f        =  Fun (\ _ x -> f x)
 
 > app :: (aT :-> bT) -> Int -> aT -> bT
 > app f loc x  =  apply f (makeloc (App loc)) x
 
-> appString :: (aT :-> bT) -> String -> aT -> bT
-> appString f s x  =  apply f (makeloc (Def s)) x
+> appParam :: (aT :-> bT) -> String -> aT -> bT
+> appParam f s x = apply f (makeloc (Def s)) x
 
 > id        ::  aT :-> aT
 > id        =   fun (\ x -> x)
 
 > data Contract aT where
+>   PropInfo   ::  (aT -> Bool) -> String -> Contract aT
 >   Prop       ::  (aT -> Bool) -> Contract aT
 >   Function   ::  Contract aT -> (aT -> Contract bT) -> Contract (aT :-> bT)
 >   Pair       ::  Contract aT -> (aT -> Contract bT) -> Contract (aT, bT)
@@ -1960,7 +1972,6 @@ Redoing some of the why dependent types matter stuff. All rather trivial.
 > -}
 
 %endif
-
 
 
 > {-

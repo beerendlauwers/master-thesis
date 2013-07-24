@@ -1,6 +1,6 @@
 %if style==newcode
 
-> module Blame (module Loc, Locs, blame, makeloc, (+>))
+> module Blame (module Loc, Locs, blame, blame', makeloc, (+>))
 > where
 > import Loc
 
@@ -30,6 +30,14 @@ argument.
 \begin{figure}[t]
 
 > data Locs = NegPos { neg :: [Loc], pos :: [Loc] }
+>
+> blame'        ::  Locs -> String -> String
+> blame' locs i =   "Error: " ++ show (head (pos locs))
+>               ++  (  case tail (pos locs) of
+>                       []     ->  ": "
+>                       locs'  ->  " (the violation was caused by the expression(s) " ++
+>                                  concat (interleave ", " (map show locs')) ++ "): " )
+>               ++ i
 >
 > blame       ::  Locs -> String
 > blame locs  =   "the expression " ++ show (head (pos locs)) ++ " is to blame" 
