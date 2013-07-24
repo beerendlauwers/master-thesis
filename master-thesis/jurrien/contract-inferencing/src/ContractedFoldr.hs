@@ -219,6 +219,27 @@ __app_map_extra ctrt (posf,f) (posx,x) = appParam (appParam (__contracted_map_ex
 
 __map_extra_test = __app_map_extra ((true >-> isNat_prop) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
 
+-- Perhaps we could also infer from the contract extra information to display to the user?
+-- For example, the isNat_prop will just say that "the number must be a natural".
+-- Does the first parameter have to be a natural? Does the result have to be a natural?
+-- Need to think about how we can extract this from a contract.
+-- As a result, we could get something like this:
+--  Error: `(\x -> (+1) x) at Line Number 1, Column Number 22': The result of the function must be a natural.
+
+-- If we can give the "length" of a contract to the error generation code,
+-- We can do all these kinds of things.
+-- In case of a value, we could generate an error like "This value must be a natural."
+-- In case of function parameters, we could generate an error like "Parameter X of this function must be a natural."
+-- In case of higher-order functions... ?
+
+-- Remember that many functions will not be fully applied like this; we could display
+-- something like "Parameter X of function Y is a {function | result | value}, and" ++
+-- "parameter Z of this function" or "this value" or "the result of this function" ++
+-- "must be a natural."
+-- NOTE: this may not be necessary if we get fully applied functions in the AST, as one would expect for QuickCheck to work.
+
+
+
 -- Next up: Making contracts more specific.
 -- Each AST node will have two lists of substitutions at their disposal:
 -- 1. Substitutions that replace polymorphic contract variables.
