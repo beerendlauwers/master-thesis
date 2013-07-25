@@ -9,5 +9,5 @@
 >
 > instance Show Loc where
 >   show (Def s)  =  "`" ++ s ++ "'"
->   show (DefPos s pos) = "`" ++ s ++ "' " ++ pos
+>   show (DefPos s pos) = s ++ " " ++ pos
 >   show (App n)  =  "labelled `" ++ show n ++ "'"

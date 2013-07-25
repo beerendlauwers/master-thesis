@@ -212,12 +212,16 @@ __app_insert ctrt (posx,x) (posxs,xs) = appParam (appParam (__contracted_insert 
 -- PropExtra that has a property and a String representing the property.
 
 -- Test of extra information generation idea:
-__contracted_map_extra ctrt = assert "map" ctrt funs
-  where funs = fun (\f -> fun (\xs -> map (\a -> appParam f "parameter 1 of map" a) xs))
+__contracted_map_extra ctrt = assertPos "At the application of the higher-order function 'map'" "at Line Number 1, Column Number 1" ctrt funs
+  where funs = fun (\f -> fun (\xs -> map (\a -> appParam f "Parameter 1 of map" a) xs))
 
 __app_map_extra ctrt (posf,f) (posx,x) = appParam (appParam (__contracted_map_extra ctrt) posf f) posx x
 
 __map_extra_test = __app_map_extra ((true >-> isNat_prop) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
+
+__map_extra_test_2 = __app_map_extra ((isNat_prop >-> true) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
+
+__map_extra_test_3 = __app_map_extra ((true >-> true) >-> (true <@> isNat_prop))  ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
 
 -- Perhaps we could also infer from the contract extra information to display to the user?
 -- For example, the isNat_prop will just say that "the number must be a natural".
@@ -298,7 +302,71 @@ __twocontracted_isort ctrt = assert "isort" ctrt funs
 isChar_prop = Prop (\x -> isAlphaNum x)
 isInt_prop = Prop (\x -> x == fromInteger (round x))
 isNat_prop = PropInfo (\x -> let n = fromInteger (round x) 
-                             in x == n && n >= 0) "The number must be a natural."
+                             in x == n && n >= 0) (\p -> mkErrorMsg p "the number must always be a natural number.")
+
+mkErrorMsg p text = posInfoText p ++ "does not have the following property: " ++ text
+
+posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " parameter of this function "
+                        | pos == arity = "The result of this function "
+                        | (pos,arity) == (-1,-1) = "An unknown position "
+ where
+  showPos p | p == 1 = "first"
+            | p == 2 = "second"
+            | p == 3 = "third"
+            | p == 4 = "fourth"
+            | p == 5 = "fifth"
+            | p == 6 = "sixth"
+            | otherwise = show p
+
+
+
+
+
+
+-- Exercises.hs references "quickCheckTest = makeQuickCheckTest cfg modelCode", but this is commented out.
+-- Property.hs defines makeQuickCheckTest, providing access to prop_main. However, this code does not seem updated yet
+-- to use the Config record data type. This Config data type has a field 'properties' which holds all the properties.
+-- We should be able to extract the properties from there, but we may have to rewrite the config system a bit so we can easily access the error messages. Currently, all things prefixed with prop_ are added to the code that is used for Quickcheck.
+-- It shouldn't be hard to allow other prefixes as well so we can have something like:
+
+-- ORIGINAL:
+-- prop_Main = \xs -> whenFail (putStrLn "You have the incorrect answer") (palindrome (xs :: [Char]) == (reverse xs == xs))
+
+-- MODIFIED (this would not be automated):
+-- prop_Main = \xs -> whenFail (putStrLn error_Main) (property_Main xs)
+-- error_Main = "You have the incorrect answer"
+-- property_Main = \xs -> (palindrome (xs :: [Char]) == (reverse xs == xs))
+
+-- Any QuickCheck properties of the form x .&&. y .&&. z may also have to be rewritten,
+-- Or perhaps we need a way to generate both the QuickCheck property and the Contract from a slightly more abstracted definition.
+-- For example x .&&&. y .&&&. z would generate both:
+-- 1) x .&&. y .&&. z (QC Property)
+-- 2) x  & y & z (And'ed Contract)
+
+
+-- We could then use this info as follows:
+-- prop_Main_Info = PropInfo property_Main (\p -> mkErrorMsg p error_Main)
+
+-- Because QuickCheck can only say things about the result, we can generate a contract as such:
+-- (PARAMETERS) >-> prop_Main_Info
+-- (Remember, we have access to the type information of the function.)
+-- Or, if we need a contract that also checks parameters, we can just reference prop_Main_Info.
+
+
+-- Now, what if we have multiple inputs?
+-- Example:
+-- prop_Main = \xs i -> length xs > 0 && i >= 0 ==> prop_Length xs i .&&. prop_Elem xs i .&&. prop_Merge xs i
+
+-- Hmm, we may need dependent contracts for this...
+-- When a contracted function is applied to its arguments, every piece of the contract gets its argument and nothing more, except
+-- if you use dependent functions.
+
+-- Perhaps something like:
+--Contract ([a] -> [a])
+--is_permutation = true >>-> \i -> prop (\o -> null (o\\i)) 
+
+
+
 
 isSorted :: Ord a => [a] -> [a] -> Bool
 isSorted xs ys = isNonDesc ys && isPerm
