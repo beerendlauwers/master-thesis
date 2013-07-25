@@ -32,12 +32,15 @@ argument.
 > data Locs = NegPos { neg :: [Loc], pos :: [Loc] }
 >
 > blame'        ::  Locs -> String -> String
-> blame' locs i =   "Error: " ++ show (head (pos locs))
+> blame' locs fi =   
+>  "A part of your code does not have a required property. " ++ 
+>  show (head (pos locs))
 >               ++  (  case tail (pos locs) of
 >                       []     ->  ": "
->                       locs'  ->  " (the violation was caused by the expression(s) " ++
->                                  concat (interleave ", " (map show locs')) ++ "): " )
->               ++ i
+>                       locs'  ->  ", in the following higher-order parameter(s): " ++
+>                                  concat (interleave ", " (map show locs')) ++ ": " )
+>               ++ fi
+
 >
 > blame       ::  Locs -> String
 > blame locs  =   "the expression " ++ show (head (pos locs)) ++ " is to blame" 

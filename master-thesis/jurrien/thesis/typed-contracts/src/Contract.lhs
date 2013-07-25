@@ -879,7 +879,7 @@ positive positions by |true|:
 > positive (Function c1 c2)  =  Function (negative c1) (\ x -> positive (c2 x))
 >
 > {- |negative (`o`) :: Contract aT -> Contract aT| -}
-> negative (PropInfo p i)    =  PropInfo p i
+> negative (PropInfo p fi)    =  PropInfo p fi
 > negative (Prop p)          =  Prop p
 > negative (Function c1 c2)  =  Function (positive c1) (\ x -> negative (c2 x))
 
@@ -959,11 +959,35 @@ the type of the |Function| constructor.
 Given these prerequisites, we can finally implement contract checking
 with proper blame assignment.
 
+> -- infixr 4 >->
+> -- (>->) :: Contract aT -> Contract bT -> Contract (aT :-> bT)
+> -- pre >->   post  =  Function pre (const post)
+
+> -- Modified version of assert' that takes an tuple into account that tells you at what position a property is at.
+> -- (0,1) = first param, (1,1) = result.
+> type PosInfo = (Int,Int)
+> assert''                                       ::  Contract aT -> PosInfo -> (Locs -> aT -> aT)
+> assert''  (PropInfo p fi)    pos locs   a   | p a        = a
+>                                             | otherwise  = error (blame' locs (fi pos))
+> assert''  (Prop p)           pos locs   a   | p a        = a
+>                                             | otherwise  = error ("contract failed: " ++ blame locs)
+> assert''  (Function c1 c2)  (p,ar) locsf  f
+>   =  Fun (\ locx -> (\ x' -> (assert'' (c2 x') (p+1,ar) locsf `o` apply f locx) x') `o` assert'' c1 (p,ar) (locsf +> locx))
+> assert''  (Pair c1 c2)      pos locs   (a1, a2)      =   (\ a1' -> (a1' , assert'' (c2 a1') pos locs a2)) (assert'' c1 pos locs a1)
+> assert''  (List c)          pos locs   as            =   map (assert'' c pos locs) as
+> assert''  (Functor f)       pos locs   as            =   fmap (assert'' f pos locs) as
+> assert''  (Bifunctor f g)   pos locs   as            =   bimap (assert'' f pos locs) (assert'' g pos locs) as
+> assert''  (And c1 c2)       pos locs   a             =   (assert'' c2 pos locs `o` assert'' c1 pos locs) a
+
+> ctrtarity :: Contract aT -> Int
+> ctrtarity (Function c1 c2) = 1 + ctrtarity (c2 undefined)
+> ctrtarity _                = 0
+
 > assert'                                       ::  Contract aT -> (Locs -> aT -> aT)
-> assert'  (PropInfo p i)    locs   a   | p a        = a
->                                       | otherwise  = error (blame' locs i)
-> assert'  (Prop p)          locs   a   | p a        = a
->                                       | otherwise  = error ("contract failed: " ++ blame locs)
+> assert'  (PropInfo p fi)    locs   a   | p a        = a
+>                                        | otherwise  = error (blame' locs (fi (-1,-1)))
+> assert'  (Prop p)           locs   a   | p a        = a
+>                                        | otherwise  = error ("contract failed: " ++ blame locs)
 > assert'  (Function c1 c2)  locsf  f
 >   =  Fun (\ locx -> (\ x' -> (assert' (c2 x') locsf `o` apply f locx) x') `o` assert' c1 (locsf +> locx))
 > assert'  (Pair c1 c2)      locs   (a1, a2)      =   (\ a1' -> (a1' , assert' (c2 a1') locs a2)) (assert' c1 locs a1)
@@ -1015,7 +1039,7 @@ terms of |prop'|, |function|, |pair'|, |list'| and `|<>|'. Then
 \begin{figure}[t]
 
 > varassert                    ::  Contract aT -> (aT :-> aT)
-> varassert  (PropInfo p i)    =   propinfo' p i
+> varassert  (PropInfo p fi)   =   propinfo' p (fi (-1,-1))
 > varassert  (Prop p)          =   prop' p
 > varassert  (Function c1 c2)  =   function (varassert c1) (varassert `o` c2)
 > varassert  (Pair c1 c2)      =   pair' (varassert c1) (varassert `o` c2)
@@ -1023,7 +1047,7 @@ terms of |prop'|, |function|, |pair'|, |list'| and `|<>|'. Then
 > varassert  (And c1 c2)       =   varassert c2 <> varassert c1
 >
 > propinfo'     ::  (aT -> Bool ) -> String -> (aT :-> aT)
-> propinfo' p i =   Fun (\ locs a -> if p a then a else error (blame' locs i))
+> propinfo' p fi =   Fun (\ locs a -> if p a then a else error (blame' locs fi))
 >
 > prop'         ::  (aT -> Bool) -> (aT :-> aT)
 > prop' p       =   Fun (\ locs a -> if p a then a else error ("contract failed: " ++ blame locs))
@@ -1057,8 +1081,11 @@ terms of |prop'|, |function|, |pair'|, |list'| and `|<>|'. Then
 > assert :: String -> Contract aT -> aT -> aT
 > assert s c = assert' c (makeloc (Def s)) -- note the swap of arguments
 
+> -- This version of assert takes some position information and generates extra
+> -- information concerning at what position the property is at, so we can say things like
+> -- "This property failed at the first parameter", or "This property failed at the result".
 > assertPos :: String -> String -> Contract aT -> aT -> aT
-> assertPos s pos c = assert' c (makeloc (DefPos s pos))
+> assertPos s pos c = assert'' c (0, ctrtarity c) (makeloc (DefPos s pos))
 
 > fun :: (aT -> bT) -> aT :-> bT
 > fun f        =  Fun (\ _ x -> f x)
@@ -1073,7 +1100,7 @@ terms of |prop'|, |function|, |pair'|, |list'| and `|<>|'. Then
 > id        =   fun (\ x -> x)
 
 > data Contract aT where
->   PropInfo   ::  (aT -> Bool) -> String -> Contract aT
+>   PropInfo   ::  (aT -> Bool) -> (PosInfo -> String) -> Contract aT
 >   Prop       ::  (aT -> Bool) -> Contract aT
 >   Function   ::  Contract aT -> (aT -> Contract bT) -> Contract (aT :-> bT)
 >   Pair       ::  Contract aT -> (aT -> Contract bT) -> Contract (aT, bT)
