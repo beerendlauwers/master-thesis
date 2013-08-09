@@ -214,12 +214,15 @@ __app_insert ctrt (posx,x) (posxs,xs) = appParam (appParam (__contracted_insert 
 -- Test of extra information generation idea:
 __contracted_map_extra ctrt = assertPos "At the application of the higher-order function 'map'" "at Line Number 1, Column Number 1" ctrt funs
   where funs = fun (\f -> fun (\xs -> map (\a -> appParam f "Parameter 1 of map" a) xs))
+  -- Het argument waarop de functie wordt toegepast voldoet niet aan de volgende eigenschap.
 
 __app_map_extra ctrt (posf,f) (posx,x) = appParam (appParam (__contracted_map_extra ctrt) posf f) posx x
 
 __map_extra_test = __app_map_extra ((true >-> isNat_prop) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
 
 __map_extra_test_2 = __app_map_extra ((isNat_prop >-> true) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
+
+--mapc = assert "map" ((isNat_prop >-> true) >-> true) 
 
 __map_extra_test_3 = __app_map_extra ((true >-> true) >-> (true <@> isNat_prop))  ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
 
@@ -336,6 +339,10 @@ posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " paramete
 -- prop_Main = \xs -> whenFail (putStrLn error_Main) (property_Main xs)
 -- error_Main = "You have the incorrect answer"
 -- property_Main = \xs -> (palindrome (xs :: [Char]) == (reverse xs == xs))
+
+-- prop_Main_Ctrt = Prop (\b -> b == (reverse xs == xs))
+
+-- \res orig -> isOrdered res & isPerm res orig
 
 -- Any QuickCheck properties of the form x .&&. y .&&. z may also have to be rewritten,
 -- Or perhaps we need a way to generate both the QuickCheck property and the Contract from a slightly more abstracted definition.
