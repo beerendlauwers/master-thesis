@@ -44,19 +44,21 @@ sem FunBindR
   | FBHoleR
       lhs  .contractedFunction          = undefined
   | FunBindR
-      -- Example: __contracted_insert ctrt = assert "insert" ctrt funs
+      -- Example: __contracted_insert ctrt = assertPos "name info" "pos info" ctrt funs
       --           where funs = fun (\x -> fun (\xs -> insert x xs))
       lhs  .contractedFunction          = @loc.contractedFunction
       loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "ctrt"] @loc.contractedRhs
 
       -- LHS --
-      loc  .functionIdentifier          = @name.copy
+      loc  .functionIdentifier          = @name.copy 
       loc  .functionIdent               = getVar @loc.functionIdentifier
       loc  .contractedName              = prefixcontractedFunction @loc.functionIdentifier
 
       -- RHS --
-      loc  .assertApp                   = mkApp [mkVar "assert"
-                                                ,(mkLit.mkStrLit) @loc.functionIdent
+      loc  .posInfo                     = generatePositionInfo @range.copy (any (>1) @loc.parameterArity) @loc.functionIdent
+      loc  .assertApp                   = mkApp [mkVar "assertPos"
+                                                ,(mkLit.mkStrLit.fst) @loc.posInfo
+                                                ,(mkLit.mkStrLit.snd) @loc.posInfo
                                                 ,mkVar "ctrt"
                                                 ,mkVar "funs"]
       loc  .contractedRhs               = mkRhs @loc.assertApp [@loc.whereClause]
@@ -69,8 +71,8 @@ sem FunBindR
       loc  .arity                       = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup @loc.functionIdent @loc.arityEnv)
       loc  .parameterArityEnv           = calculateParameterArity $ getTypeEnv @lhs.topLevelTypes
       loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in parameterArity env!") id (DM.lookup @loc.functionIdent @loc.parameterArityEnv)
-      loc  .patsWithArity               = zip @loc.parameterArity @loc.funsPatterns
-      loc  .expandedFunsPatterns        = map expandHigherOrderParams @loc.patsWithArity
+      loc  .patsWithArity               = zip3 (take @loc.arity [1..]) @loc.parameterArity @loc.funsPatterns
+      loc  .expandedFunsPatterns        = map (expandHigherOrderParams @loc.functionIdent) @loc.patsWithArity
       loc  .funsBase                    = mkApp $ mkVar @loc.functionIdent : @loc.expandedFunsPatterns
 
       loc  .num     ::  uniqueref varcnt
