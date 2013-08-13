@@ -7,7 +7,7 @@ include "Domain/FP/CodeGeneration/Views.ag"
 
 imports
 {
-import qualified Common.Library as CL (build)
+import qualified  Ideas.Common.Library as CL (build)
 import qualified  Text.PrettyPrint as PP
 import            Text.PrettyPrint.Boxes as BOX
 --import qualified Domain.FP.Helium as Helium --Imported in Domain/FP/CodeGeneration/Views.ag

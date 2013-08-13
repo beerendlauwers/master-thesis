@@ -261,19 +261,39 @@ splitTupleContract x@(CQuant qv cs) =
 splitTupleContract (CTuple (x:xs)) = (x, CTuple xs)
 splitTupleContract x = error $ "Tried to apply splitTupleContract to the following contract: " ++ show x
 
-expandHigherOrderParams :: (Int,String) -> ExprR
-expandHigherOrderParams (arity,pat) = 
+expandHigherOrderParams :: String -> (Int,Int,String) -> ExprR
+expandHigherOrderParams funcName (listpos,arity,pat) = 
  let v = mkVar pat
      pats = take arity [x : show y | y <- [0..10], x <- ['a'..'z']  ]
      lam = mkLambda (map mkPVar pats) apps
-     apps = insertApps base $ zip (map mkVar $ replicate arity "tempPos") (map mkVar pats)
+     apps = insertApps "appParam" base $ zip (map mkVar $ appParamText (take arity [1..]) ) (map mkVar pats)
      base = mkApp $ map mkVar (pat:pats)
+     appParamText = map (\i -> showPos i ++ " argument of parameter " ++ show listpos ++ " of " ++ funcName)
  in if arity > 1
      then lam
      else v
 
-insertApps :: ExprR -> [(ExprR,ExprR)] -> ExprR
-insertApps = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar "app",xs,pos,var])
+showPos p | p == 1 = "first"
+          | p == 2 = "second"
+          | p == 3 = "third"
+          | p == 4 = "fourth"
+          | p == 5 = "fifth"
+          | p == 6 = "sixth"
+          | otherwise = show p
+
+
+
+generatePositionInfo :: RangeR -> Bool -> String -> (String,String)
+generatePositionInfo (RangeR (PositionR f l c) _) isHO name = 
+ let first  = "At the application of the" ++ isHOText isHO ++ "function '" ++ name ++ "'"
+     second = "at line number " ++ show l ++ ", column number " ++ show c 
+ in (first,second)
+  where isHOText b | b == True = " higher-order "
+                   | otherwise = " "
+
+
+insertApps :: String -> ExprR -> [(ExprR,ExprR)] -> ExprR
+insertApps appType = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar appType,xs,pos,var])
 
 mkIdent :: String -> NameR
 mkIdent x = IdentR x noRangeR
