@@ -111,6 +111,7 @@ sem ModuleR
   | ModuleR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "ModuleR"
+                                                ,  text "Available types:"                BOX.<+> text (show @loc.types)
                                                 ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  nest 2 @body.debug
                                                 ]
@@ -219,6 +220,7 @@ sem ExprR
                                                 [  horizontalLinesWith "*" $ text "LambdaR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "pattern types:"         BOX.<+> text (show @loc.functionHeliumTypes)
+                                                ,  text "types:"                 BOX.<+> text (show @loc.types)
                                                 ,  text "local idents known to expr:"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pats.debug
                                                 ,  nest 2 @expr.debug
@@ -242,6 +244,10 @@ sem ExprR
   | AppR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AppR"
+                                                ,  text "type:"                 BOX.<+> text (show @loc.functionType)
+                                                ,  text "is argument:"          BOX.<+> text (show @loc.isArgument)
+                                                ,  text "is fully applied:"     BOX.<+> text (show @loc.isFullyApplied)
+                                                ,  text "modified version:"      BOX.<+> text (show @loc.functionAppSelf)
                                                 ,  nest 2 @fun.debug
                                                 ,  nest 2 @args.debug
                                                 ]
@@ -259,6 +265,9 @@ sem ExprR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "VarR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "type:"                  BOX.<+> text (show @loc.functionType) BOX.<+> text ("(Arity: " ++ show @loc.arity ++ ")")
+                                                ,  text "is argument:"           BOX.<+> text (show @loc.isArgument)
+                                                ,  text "is fully applied:"      BOX.<+> text (show @loc.isFullyApplied)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
@@ -326,6 +335,7 @@ sem FunBindR
                                                 ,  text "pattern types:"     BOX.<+> vcat BOX.left @loc.debugTypes
                                                 ,  text "pattern contracts:" BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  text "__contracted code:" BOX.<+> pprint @loc.contractedFunction
+                                                ,  text "__app code:"        BOX.<+> pprint @loc.appFunction
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction

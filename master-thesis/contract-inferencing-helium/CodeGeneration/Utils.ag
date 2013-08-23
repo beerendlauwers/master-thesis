@@ -13,12 +13,19 @@ import qualified Top.Types.Qualification as QL
 import qualified Top.Types.Quantification as QN
 import qualified Top.Types.Classes as CLS
 import qualified ModuleSystem.ImportEnvironment as IE
+import qualified Control.Exception as CE
 }
 
 {
 
+searchTypeEnvs :: NameR -> [IE.ImportEnvironment] -> Maybe S.TpScheme
+searchTypeEnvs nm envs = (DJ.listToMaybe.DJ.catMaybes) $ map ((lookupHeliumTypeMaybe nm).getTypesAndValueConstructors) envs
+
 getTypeEnv :: IE.ImportEnvironment -> IE.TypeEnvironment
 getTypeEnv (IE.ImportEnvironment _ _ ty _ _ _) = ty
+
+getTypesAndValueConstructors :: IE.ImportEnvironment -> IE.TypeEnvironment
+getTypesAndValueConstructors (IE.ImportEnvironment _ _ ty vc _ _) = DM.union ty vc
 
 generateImportEnv :: IE.TypeEnvironment -> IE.ImportEnvironment
 generateImportEnv tyenv = IE.emptyEnvironment { IE.typeEnvironment = tyenv }
@@ -83,9 +90,12 @@ getVar (IdentR x _)    = x
 getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
 
+lookupHeliumTypeMaybe :: NameR -> IE.TypeEnvironment -> Maybe S.TpScheme
+lookupHeliumTypeMaybe nm env = DM.lookup (toHeliumWithRanges nm) env
+
 lookupHeliumType :: NameR -> IE.TypeEnvironment -> S.TpScheme
 lookupHeliumType nm env = 
- let result = DM.lookup (toHeliumWithRanges nm) env
+ let result = lookupHeliumTypeMaybe nm env
  in case result of
      (Just x) -> x
      Nothing  -> error $ "Tried to look up " ++ show nm ++ " in type environment: " ++ show env
@@ -281,16 +291,42 @@ showPos p | p == 1 = "first"
           | p == 6 = "sixth"
           | otherwise = show p
 
+isHOText b | b == True = " higher-order "
+           | otherwise = " "
 
+extractPositionData :: RangeR -> Maybe (Int,Int)
+extractPositionData (RangeR (PositionR f l c) _) = Just (l,c)
+extractPositionData _ = Nothing
 
-generatePositionInfo :: RangeR -> Bool -> String -> (String,String)
-generatePositionInfo (RangeR (PositionR f l c) _) isHO name = 
- let first  = "At the application of the" ++ isHOText isHO ++ "function '" ++ name ++ "'"
-     second = "at line number " ++ show l ++ ", column number " ++ show c 
- in (first,second)
-  where isHOText b | b == True = " higher-order "
-                   | otherwise = " "
+generatePositionText :: Bool -> String -> String
+generatePositionText isHO name = "At the application of the" ++ isHOText isHO ++ "function '" ++ name ++ "'"
 
+generatePositionData :: Maybe (Int,Int) -> String
+generatePositionData (Just (l,c)) = "at line number " ++ show l ++ ", column number " ++ show c 
+generatePositionData Nothing      = "at an unknown position"
+
+posDataAsLiterals :: Maybe (Int,Int) -> ExprR
+posDataAsLiterals (Just (l,c)) = mkAppParens [mkVar "Just", mkTuple [(mkLit.mkIntLit) l, (mkLit.mkIntLit) c]]
+posDataAsLiterals Nothing = mkVar "Nothing"
+
+fromJustMsg :: String -> Maybe a -> a
+fromJustMsg s = maybe (error s) id 
+
+indexMsg :: (Show a) => [a] -> Int -> a
+indexMsg xs pos | length xs > pos - 1 = xs !! pos
+                | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
+
+{-
+replaceArguments :: [(ExprR,Maybe S.TpScheme,Maybe ExprR,Maybe ExprR)]
+replaceArguments = map f
+ where 
+  f (e,ty,a,c) = if (S.arityOfTpScheme.checkTy) ty > 1
+                  then c -- contracted version, partially applied
+                  else a -- app version, fully applied
+  checkTy   e = fromJustMsg ("Could not find the type of the expression " ++ show e)
+  checkApp  e = fromJustMsg ("could not get an __app version of the expression " ++ show e)
+  checkCtrt e = fromJustMsg ("Could not get a __contracted version of the expression " ++ show e)
+-}
 
 insertApps :: String -> ExprR -> [(ExprR,ExprR)] -> ExprR
 insertApps appType = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar appType,xs,pos,var])
@@ -322,6 +358,9 @@ mkPTuple ps = PTupleR ps noRangeR
 mkApp :: ExprsR -> ExprR
 mkApp (e:es) = AppR e es noRangeR
 
+mkAppParens :: ExprsR -> ExprR
+mkAppParens = mkParens.mkApp
+
 mkPVar :: String -> PatR
 mkPVar s = PVarR (IdentR s noRangeR) noRangeR
 
@@ -330,6 +369,9 @@ mkVar s = VarR (mkIdent s) noRangeR
 
 mkStrLit :: String -> LiteralR
 mkStrLit s = LStringR s noRangeR
+
+mkIntLit :: Int -> LiteralR
+mkIntLit i = LIntR i noRangeR
 
 mkLit :: LiteralR -> ExprR
 mkLit l = LitR l noRangeR

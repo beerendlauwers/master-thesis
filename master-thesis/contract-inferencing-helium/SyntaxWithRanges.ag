@@ -17,7 +17,7 @@ type HoleIDR = Integer
 set Every = ModuleR BodyR DeclR ExprR PatR AltR FunBindR GuardedExprR LiteralR RhsR NameR
             MaybeExprR MaybeNameR RangeR PositionR
 
-deriving Every:  Eq, Show, Ord, Typeable, Data
+deriving Every:  Eq, Ord, Typeable, Data
 
 deriving Name: Read
 
