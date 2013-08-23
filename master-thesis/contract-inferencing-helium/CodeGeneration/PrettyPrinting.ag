@@ -53,33 +53,31 @@ instance Pretty Float where
   pprint = text.show
 
 instance Pretty NameR where
-  pprint (IdentR n _)    = text n
-  pprint (OperatorR n _) = text n
-  pprint (SpecialR n _)  = text n
+  pprint = text . show
 
 instance Pretty ModuleR where
-  pprint = boxifyCode . Helium.ppModule . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 instance Pretty BodyR where
-  pprint = boxifyCode . Helium.ppBody . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 instance Pretty RhsR where
-  pprint = boxifyCode . Helium.ppRhs . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 instance Pretty FunBindR where
-  pprint = boxifyCode . Helium.ppFunctionBinding . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 instance Pretty DeclR where
-  pprint = boxifyCode . Helium.ppDeclaration . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 instance Pretty ExprR where
-  pprint = boxifyCode . Helium.ppExpression . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 instance Pretty AltR where
-  pprint = boxifyCode . Helium.ppAlternative . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 instance Pretty PatR where
-  pprint = boxifyCode . Helium.ppPattern . CL.build heliumWithRangesView
+  pprint = boxifyCode . show
 
 boxifyCode = (vcat BOX.left) . (map text) . lines
 
@@ -95,4 +93,33 @@ instance Pretty Contract where
   pprint (CTuple (c:[])) = pprint c
   pprint (CTuple (c:cs)) = parens $ pprint c BOX.<+> comma BOX.<+> pprint (CTuple cs)
   pprint (CTuple [])     = nullBox
+
+instance Show NameR where
+  show (IdentR n _)    = n
+  show (OperatorR n _) = n
+  show (SpecialR n _)  = n
+
+instance Show ModuleR where
+  show = Helium.ppModule . CL.build heliumWithRangesView
+
+instance Show BodyR where
+  show = Helium.ppBody . CL.build heliumWithRangesView
+
+instance Show RhsR where
+  show = Helium.ppRhs . CL.build heliumWithRangesView
+
+instance Show FunBindR where
+  show = Helium.ppFunctionBinding . CL.build heliumWithRangesView
+
+instance Show DeclR where
+  show = Helium.ppDeclaration . CL.build heliumWithRangesView
+
+instance Show ExprR where
+  show = Helium.ppExpression . CL.build heliumWithRangesView
+
+instance Show AltR where
+  show = Helium.ppAlternative . CL.build heliumWithRangesView
+
+instance Show PatR where
+  show = Helium.ppPattern . CL.build heliumWithRangesView
 }

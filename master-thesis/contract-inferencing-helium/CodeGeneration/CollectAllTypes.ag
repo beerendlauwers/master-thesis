@@ -32,13 +32,16 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 -}
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
-  -- We get this from the Helium compiler.
+  -- We get this from the Helium compiler. These only contain our own types.
   inh topLevelTypes                                             :: {IE.ImportEnvironment}
 
   -- We need to be able to synthesize these for LambdaR.
   syn functionHeliumTypes   use {DM.union}    {DM.empty}        :: {IE.TypeEnvironment}
 
 attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR
+  -- These are the prelude types, currently equals HIE.importEnvs
+  inh preludeTypes                                              :: {[IE.ImportEnvironment]}
+
    -- Highest integer used in a Helium type. We'll use this as an offset when generating
    -- fresh contracts; we don't want to accidentally clash with an existing type variable! 
    syn contractVariableOffset use {max} {(0::Int)}              :: {Int}
@@ -48,6 +51,12 @@ attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR Gu
 
   -- These contracts are generated and populated from the types Helium provides us.
   inh heliumGeneratedContracts                                  :: {DM.Map String Contract}
+
+attr ExprR
+  -- This type is generated in ExprR nodes, and passed upwards to other ExprR nodes.
+  syn functionType                                              :: {Maybe S.TpScheme}
+attr ExprsR
+  syn functionType             use {(++)}    {[]}               :: {[Maybe S.TpScheme]}
 
 --{
 --data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
@@ -73,6 +82,8 @@ sem ModuleR
 
       -- The first integer that is available for fresh contracts is one more than the highest one used by Helium.
       body .freshContractVariable       = max (@loc.freshContractVariable + 1) (maximum' $ map getMaxVariable HIE.importEnvs)
+
+      body .preludeTypes                = HIE.importEnvs
 {- *** End of semantics to get integer for fresh contract variables. *** -}
 
 {- *** Start of semantics to get the types of functions and let-definitions *** -}
@@ -153,7 +164,7 @@ attr DeclsR DeclR FunBindsR FunBindR
 
 sem BodyR
   | BodyR
-      decls.heliumTypes         = (\(IE.ImportEnvironment _ _ typeEnv _ _ _) -> typeEnv) @lhs.topLevelTypes
+      decls.heliumTypes         = getTypeEnv @lhs.topLevelTypes
 
 sem FunBindR
   | FunBindR
@@ -205,6 +216,38 @@ sem FunBindR
       lhs.functionHeliumTypes   = @loc.patternTypes
 {- *** End of semantics to get types from patterns of anonymous lambda functions *** -}
 
+{- *** Start of semantics to get the type of an of anonymous lambda function *** -}
+sem ExprR
+  | LambdaR
+      lhs.functionType          = lookupHeliumTypeMaybe (IdentR "__internalExpression__" noRangeR) @loc.types
+{- *** End of semantics to get the type of an of anonymous lambda function *** -}
+  | AppR
+      -- The type of the entire AppR is the type of function being applied minus the arguments it's been applied to. 
+      loc.argumentCount         = length @args.copy
+      loc.splitTypes            = iterate (maybe Nothing (snd . splitTopTypeScheme)) @fun.functionType
+      loc.functionType          = @loc.splitTypes !! @loc.argumentCount
+      lhs.functionType          = @loc.functionType
+  | VarR ConR
+      -- Look up type in type env. Could also be a prelude type!
+      loc.functionType          = searchTypeEnvs @name.copy (@lhs.topLevelTypes : @lhs.preludeTypes)
+      lhs.functionType          = @loc.functionType
+  | ParenR FeedbackR MustUseR NegR
+      lhs.functionType          = @expr.functionType
+  | HoleR
+      lhs.functionType          = Nothing
+  | IfR
+      lhs.functionType          = @then.functionType
+  | ListR
+      lhs.functionType          = searchTypeEnvs (OperatorR "[]" noRangeR) (@lhs.topLevelTypes : @lhs.preludeTypes)
+
+  
+
+sem ExprsR
+  | Cons
+      lhs.functionType          = @hd.functionType : @tl.functionType
+  | Nil
+      lhs.functionType          = []
+
 
 {- *** Start of semantics to get the type of an expression in a case statement *** -}
 sem ExprR
@@ -219,6 +262,7 @@ sem ExprR
      -- Fetch the type, pass it to the AltR list.
      -- There, it will be used to type the patterns.
      loc.caseExpressionType     = lookupHeliumType (IdentR "__internalExpression__" noRangeR) @loc.types
+     lhs.functionType           = lookupHeliumTypeMaybe (IdentR "__internalExpression__" noRangeR) @loc.types
      alts.altType               = @loc.caseExpressionType
 {- *** End of semantics to get the type of an expression in a case statement *** -}
 
@@ -290,15 +334,15 @@ sem PatR
      loc.inhLeft                = [@loc.listToLeft]
      loc.inhright               = [@loc.listToRight]
 
-     left.patType               = maybe Nothing ((!!) @loc.inhLeft ) @loc.possibleResult
-     right.patType              = maybe Nothing ((!!) @loc.inhright) @loc.possibleResult
+     left.patType               = maybe Nothing (indexMsg @loc.inhLeft ) @loc.possibleResult
+     right.patType              = maybe Nothing (indexMsg @loc.inhright) @loc.possibleResult
 
      -- Contract stuff
      lhs.patternContracts       = DM.union @left.patternContracts @right.patternContracts
      loc.ctrtLeft               = [@loc.listCtrtToLeft]
      loc.ctrtRight              = [@loc.listCtrtToRight]
-     left.patContract           = maybe Nothing ((!!) @loc.ctrtLeft ) @loc.possibleResult
-     right.patContract          = maybe Nothing ((!!) @loc.ctrtRight) @loc.possibleResult
+     left.patContract           = maybe Nothing (indexMsg @loc.ctrtLeft ) @loc.possibleResult
+     right.patContract          = maybe Nothing (indexMsg @loc.ctrtRight) @loc.possibleResult
 
      loc.infixConstructor       = getVar @name.copy
 

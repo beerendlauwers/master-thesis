@@ -30,6 +30,7 @@ import qualified Data.Map as DM
 import qualified Data.Set as DS
 import qualified Data.Maybe as DJ
 import qualified Data.List as DL
+import qualified Control.Monad as CM
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -44,10 +45,10 @@ sem FunBindR
   | FBHoleR
       lhs  .contractedFunction          = undefined
   | FunBindR
-      -- Example: __contracted_insert ctrt = assertPos "name info" "pos info" ctrt funs
+      -- Example: __contracted_insert ctrt posinfo = assertPos "name info" (generatePositionData posinfo) ctrt funs
       --           where funs = fun (\x -> fun (\xs -> insert x xs))
       lhs  .contractedFunction          = @loc.contractedFunction
-      loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "ctrt"] @loc.contractedRhs
+      loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "ctrt", mkPVar "posinfo"] @loc.contractedRhs
 
       -- LHS --
       loc  .functionIdentifier          = @name.copy 
@@ -55,10 +56,10 @@ sem FunBindR
       loc  .contractedName              = prefixcontractedFunction @loc.functionIdentifier
 
       -- RHS --
-      loc  .posInfo                     = generatePositionInfo @range.copy (any (>1) @loc.parameterArity) @loc.functionIdent
+      loc  .posInfo                     = generatePositionText (any (>1) @loc.parameterArity) @loc.functionIdent
       loc  .assertApp                   = mkApp [mkVar "assertPos"
-                                                ,(mkLit.mkStrLit.fst) @loc.posInfo
-                                                ,(mkLit.mkStrLit.snd) @loc.posInfo
+                                                ,(mkLit.mkStrLit) @loc.posInfo
+                                                ,mkAppParens [mkVar "generatePositionData", mkVar "posinfo"]
                                                 ,mkVar "ctrt"
                                                 ,mkVar "funs"]
       loc  .contractedRhs               = mkRhs @loc.assertApp [@loc.whereClause]
@@ -77,10 +78,6 @@ sem FunBindR
 
       loc  .num     ::  uniqueref varcnt
 
--- Semantics to get 
-
-{-
--- TODO: finish.
 -- Semantics for app version of function.
 attr FunBindR
    syn appFunction                                              :: FunBindR
@@ -89,23 +86,189 @@ sem FunBindR
   | FBHoleR
       lhs  .appFunction                 = undefined
   | FunBindR
-      -- Example: __app_insert ctrt (posx,x) (posxs,xs) = 
-      --           app (app (__contracted_insert ctrt) posx x) posxs xs
+      -- Example: __app_insert ctrt posinfo (posx,x) (posxs,xs) = 
+      --           appParam (appParam (__contracted_insert ctrt posinfo) (generatePositionData posx) x) (generatePositionData posxs) xs
       lhs  .appFunction                 = @loc.appFunction
-      loc  .appFunction                 = mkFunbind @loc.appedName (@loc.ctrtParam:@loc.paramTuples) @loc.appedRhs 
+      loc  .appFunction                 = mkFunbind @loc.appedName (@loc.ctrtParam : mkPVar "posinfo" : @loc.paramTuples) (mkRhs @loc.appedRhs [])
 
       -- LHS --
       loc  .appedName                   = prefixAppFunction @loc.functionIdentifier
       loc  .patternVars                 = map (:[]) ['a'..'z']
-      loc  .posPatternVars              = map (\x -> "pos" ++ x) @loc.posPatternVars
-      loc  .paramList                   = zip @loc.posPatternVars @loc.patternVars
+      loc  .posPatternVars              = map (\x -> "pos" ++ x) @loc.patternVars
+      loc  .paramList                   = take @loc.arity $ zip @loc.posPatternVars @loc.patternVars
       loc  .paramTuples                 = map (\(pos,v) -> mkPTuple [mkPVar pos, mkPVar v]) @loc.paramList
       loc  .ctrtParam                   = mkPVar "ctrt"
       
       -- RHS --
-      loc  .appedRhs                    = insertApps @loc.paramList @loc.appedRhsBase
-      loc  .appedRhsBase                = mkParens $ mkApp [@loc.contractedName, mkVar "ctrt"]
+      loc  .appedRhs                    = insertApps "appParam" @loc.appedRhsBase (map (\(p,v) -> ( mkAppParens [mkVar "generatePositionData", mkVar p],mkVar v)) @loc.paramList) 
+      loc  .appedRhsBase                = mkAppParens [VarR @loc.contractedName noRangeR, mkVar "ctrt", mkVar "posinfo"]
+
+{-
+-- Semantics for final version of function.
+attr FunBindR
+   syn finalFunction                                            :: FunBindR
+
+sem FunBindR
+  | FBHoleR
+      lhs  .finalFunction               = undefined
+  | FunBindR
+      -- Example: f x = g x  becomes
+      -- __final_f x = __app_g ctrt (posx,x)
+      lhs  .finalFunction               = @loc.finalFunction
+
+      -- LHS --
+      loc  .finalName                   = prefixFinalFunction @loc.functionIdentifier
 -}
+
+-- TODO: Generate location information of function being applied, pass it through __app and through __contracted so
+-- there it says the correct location information!!!!
+
+-- Identify all function applications, convert from f to __app_f.
+--attr ExprR
+   --syn appedApplication                                         :: ExprR
+
+-- TODO: Put the contracts on their appropriate places in place of the VarRs.
+
+attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR
+   -- A transformation that transforms all function applications from f to __app_f or __contracted_f (whichever applies).
+   syn functionAppSelf                                            :: self
+
+sem ExprR
+   | VarR
+      loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
+      loc  .arity                       = S.arityOfTpScheme @loc.localType
+      loc  .identifierIsFunction        = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
+      loc  .update                      = if @lhs.isArgument && @loc.arity > 0 && not @lhs.isFullyApplied
+                                           then prefixcontractedFunction -- Partially applied function argument
+                                           else if @loc.arity > 0 && @lhs.isFullyApplied
+                                                 then prefixAppFunction -- Fully applied argument or top-level function
+                                                 else id -- Just a value
+
+      loc  .functionAppSelf             = VarR (@loc.update @name.copy) @range.copy
+      lhs  .functionAppSelf             = @loc.functionAppSelf
+
+      loc  .isArgument                  = @lhs.isArgument -- For debug purposes
+      loc  .isFullyApplied              = @lhs.isFullyApplied -- For debug purposes
+
+attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR
+   inh isArgument                                               :: {Bool}
+   inh isFullyApplied                                           :: {Bool}
+
+
+sem MaybeExprR
+   | JustExprR
+      expr.isArgument                   = False
+      expr.isFullyApplied               = False
+sem RhsR
+   | RhsR
+      expr.isArgument                   = False
+      expr.isFullyApplied               = False
+   | GRhsR
+      gexprs.isArgument                 = False
+      gexprs.isFullyApplied             = False
+
+sem ExprR
+   | AppR
+      -- Inform each argument that they are, in fact, an argument.
+      args .isArgument                  = True
+      fun  .isFullyApplied              = @loc.isFullyApplied
+      args .isFullyApplied              = False
+      loc  .isFullyApplied              = @loc.arity == 0
+      loc  .errorMsgFunctionType        = "Could not fetch function type of expression " ++ show @loc.copy
+      loc  .arity                       = S.arityOfTpScheme $ fromJustMsg @loc.errorMsgFunctionType @loc.functionType
+
+      loc  .isArgument                  = @lhs.isArgument -- For debug purposes
+
+
+
+{-
+
+      -- Example: f x y z becomes __app_f ctrt posinfo (posx,x) (posy,y) (posz,z)
+      lhs  .appedApplication            = @loc.appedApplication
+
+      -- Arguments --
+      loc  .rangeData                   = @exprs.rangeData
+      loc  .arguments                   = @exprs.copy
+
+      -- Make tuples of known arguments with position information.
+      loc  .knownArgs                   = map (\(pos,arg) -> mkTuple [arg,pos]) $ zip @loc.arguments (posDataAsLiterals $ extractPositionData @loc.rangeData)
+
+      -- Position information of the function application itself.
+      loc  .posInfo                     = extractPositionData @range.copy
+      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
+
+      -- TODO: Is this still necessary?
+      -- Check type of function that is being applied, perhaps it's partial.
+      -- In that case, we'll have to make it a lambda function to capture the rest of the arguments.
+      loc  .arity                       = S.arityOfTpScheme @loc.functionType
+      loc  .functionType                = fromJustMsg @loc.errorMsgFunctionType @fun.functionType
+      loc  .errorMsgFunctionType        = "Could not fetch function type of expression " ++ show @loc.copy
+      loc  .isFullyApplied              = @loc.arity > 1
+
+      -- Ensure the function being applied is replaced with its __app version.
+      loc  .functionApped               = @fun.functionApp
+
+      -- Replace arguments that are functions with their __contracted version, as higher-order functions expect
+      -- contracted functions.
+      loc  .argumentTypes               = @exprs.functionType
+      loc  .argumentAsApp               = @exprs.functionApp
+      loc  .argumentAsCtrt              = @exprs.functionCtrt
+      loc  .replacedArguments           = replaceArguments $ DL.zip4 @exprs.copy @loc.argumentTypes @loc.argumentAsApp @loc.argumentAsCtrt
+
+      -}
+
+      -- Construct new expression.
+      --loc  .appedApplication            = 
+
+-- Identify all function applications, convert from f x to __app_f x, even if the f is nested.
+-- (Lambdas will have been given a name and put in the where-clause by now.)
+
+{-
+attr ExprR
+   syn functionApp                                              :: {Maybe ExprR}
+sem ExprR
+   | AppR
+      lhs  .functionApp                 = Just $ mkApp [ @fun.functionApp : @args.copy ]
+   | VarR
+      lhs  .functionApp                 = Just $ VarR (prefixAppFunction @name.copy) @range.copy
+   | * - AppR VarR
+      lhs  .functionApp                 = Nothing
+
+attr ExprsR
+   syn functionApp      use {(++)} {[]}                        :: {Maybe ExprsR}
+sem ExprsR
+   | Cons
+      lhs  .functionApp                 = @hd.functionApp : @tl.functionApp
+   | Nil
+      lhs  .functionApp                 = []
+
+-- Similar to above, but now convert f x to __contracted_f x.
+attr ExprR
+   syn functionCtrt                                            :: {Maybe ExprR}
+sem ExprR
+   | AppR
+      lhs  .functionCtrt                = Just $ mkApp [ @fun.functionCtrt : @args.copy ]
+   | VarR
+      lhs  .functionCtrt                = Just $ VarR (prefixcontractedFunction @name.copy) @range.copy
+   | * - AppR VarR
+      lhs  .functionCtrt                = Nothing
+
+attr ExprsR
+   syn functionCtrt      use {(++)} {[]}                        :: {Maybe ExprsR}
+sem ExprsR
+   | Cons
+      lhs  .functionCtrt                = @hd.functionCtrt : @tl.functionCtrt
+   | Nil
+      lhs  .functionCtrt                = []
+-}
+
+-- Collect range information
+attr ExprR
+   syn rangeData        use {(++)} {[]}                         :: {[RangeR]}
+sem ExprR
+   | *
+     lhs  .rangeData                    = [@range.copy]
+
 
 {-
 
@@ -246,7 +409,7 @@ sem ExprR
 -- Example: funs = fun (\x -> fun (\xs -> insert x xs))
 makeFuns :: PatsR -> ExprR -> ExprR
 makeFuns xs b = foldr f b xs
-  where f pat rest = mkParens $ mkApp $ (mkVar "fun") : [LambdaR [pat] rest noRangeR]
+  where f pat rest = mkAppParens $ (mkVar "fun") : [LambdaR [pat] rest noRangeR]
 
 
 prefixFunctionWithContract :: NameR -> NameR
@@ -263,4 +426,9 @@ prefixAppFunction :: NameR -> NameR
 prefixAppFunction (IdentR name r)    = (IdentR ("__app_"++name) r)
 prefixAppFunction (OperatorR name r) = (OperatorR ("___"++name++"___") r)
 prefixAppFunction _ = error "prefixAppFunction: Haven't defined anything yet for SpecialR."
+
+prefixFinalFunction :: NameR -> NameR
+prefixFinalFunction (IdentR name r)    = (IdentR ("__final_"++name) r)
+prefixFinalFunction (OperatorR name r) = (OperatorR ("___"++name++"___") r)
+prefixFinalFunction _ = error "prefixAppFunction: Haven't defined anything yet for SpecialR."
 }
