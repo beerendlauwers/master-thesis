@@ -73,9 +73,9 @@ splitFunctionContract' x _ = (error.show) $ text "Not a function contract: " BOX
 type FunctionArityEnvironment = DM.Map String Int
 type ParameterArityEnvironment = DM.Map String [Int]
 
-updateName :: (NameR -> NameR) -> NameR -> String -> [NameR] -> NameR
+updateName :: (NameR -> NameR) -> NameR -> String -> [String] -> NameR
 updateName f n entryPoint localIdents = 
- if (getVar n == entryPoint) && not (elem n localIdents)
+ if (getVar n == entryPoint) && not (elem (getVar n) localIdents)
   then f n
   else n
 
@@ -106,10 +106,11 @@ scrubRangeInfo = DM.mapKeys removeRange
   where
    removeRange  :: H.Name -> H.Name
    removeRange  = toHeliumWithRanges.removeRange'.fromHeliumWithRanges
-   removeRange' :: NameR -> NameR
-   removeRange' (IdentR x _)    = IdentR x noRangeR
-   removeRange' (OperatorR x _) = OperatorR x noRangeR
-   removeRange' (SpecialR x _)  = SpecialR x noRangeR
+
+removeRange' :: NameR -> NameR
+removeRange' (IdentR x _)    = IdentR x noRangeR
+removeRange' (OperatorR x _) = OperatorR x noRangeR
+removeRange' (SpecialR x _)  = SpecialR x noRangeR
 
 extractTypeNoRange = scrubRangeInfo.(H.extractTypes)
 
@@ -317,8 +318,10 @@ indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
 
 -- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id
-determineUpdateFunction :: ExprR -> Bool -> Bool -> Bool -> Bool -> Int
-determineUpdateFunction expr isArg isFunc isFullyApplied isArgToFullyApplied
+determineUpdateFunction :: ExprR -> Bool -> Bool -> Bool -> Bool -> Bool -> Int
+determineUpdateFunction expr isArg isFunc isFullyApplied isArgToFullyApplied functionIsParameter
+ | t [isFunc, functionIsParameter] = 4
+ | t [isArg, functionIsParameter] = 4
  | t [isArg,isFunc,not isFullyApplied] = 1
  | t [isArg,isFunc, isFullyApplied]    = 3
  | t [isArg,not isFunc, isArgToFullyApplied] = 2
@@ -389,6 +392,10 @@ mkIntLit i = LIntR i noRangeR
 
 mkLit :: LiteralR -> ExprR
 mkLit l = LitR l noRangeR
+
+isVarR :: ExprR -> Bool
+isVarR (VarR _ _) = True
+isVarR _          = False
 
 {-
 apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR
