@@ -20,6 +20,19 @@ __example_g x = [x]
 
 __example_z = ( __app_f (isChar_prop >-> (true <@> isChar_prop)) (1,'2'), __app_f (isInt_prop >-> (true <@> isInt_prop)) (2,5) )
 
+-- Hoe werkt dit voor functies die een functie teruggeven???
+n x y z = x (x y z)
+__contracted_n ctrt = assert "n" ctrt funs
+  where funs = fun (\x -> fun (\y -> fun (\z -> __final_n (\x1 y1 -> app (app x 1 x1) 2 y1) y z)))
+__app_n ctrt x y z = app( app( app (__contracted_n ctrt) 3 x) 4 y) 5 z
+__final_n x y z = x (x y z) -- Correct????
+use_n = n (+) 1 2
+use_n_ctrt = __app_n true (ctrt_plus true) 1 2
+ctrt_plus ctrt = assert "(+)" ctrt (fun (\x -> fun (\y -> (+) x y)))
+
+use_n_2 = (n (+) 1 2) 3
+use_n_2_ctrt = (__app_n true (ctrt_plus true) 1 2) 3
+
 -- Nog een voorbeeld
 plusone :: [Int] -> [Int]
 plusone = map (+1)
@@ -205,6 +218,49 @@ __app_insert ctrt (posx,x) (posxs,xs) = appParam (appParam (__contracted_insert 
 --  in foldr f []
 -- Seems like we don't need to change anything here?
 
+
+-- Conversion test for partially applied functions:
+-- isort = foldr insert []
+-- becomes
+
+-- __final_isort :: (POSINFO,ARGUMENT) -> [a]
+-- __final_isort = __app_foldr CTRT POS (POS,__contracted_insert CTRT POS) (POS,[])
+-- Would we still need to add lambdas here? Seems unnecessary
+
+
+-- isort = foldr insert []
+-- isort [5,4,8,0]
+-- Becomes: __app_isort (_,_,[5,4,8,0])
+-- __app_isort ctrt posinfo (stra,posa,a) = appParam (__contracted_isort ctrt posinfo) posa a
+-- __contracted_isort ctrt posinfo = assert "isort" ctrt funs
+--  where funs = fun (\xs -> __final_isort xs)
+-- __final_isort = __app_foldr ctrt pos (_,__contracted_insert ctrt pos) (_,[])
+-- NEED TO CAPTURE VARIABLES HERE!!!
+
+--f :: x -> y -> (y -> z) -> z
+--g :: x -> y -> z
+--((__app_f x) (__app_g x y)::z (__contracted_g x)::y->z )::z
+--
+--g is fully applied in first instance, so it becomes app.
+--g is partially applied in second instance, so it becomes contracted.
+
+-- Steps in process:
+-- 1) Replace any lambdas in function application (= function + arguments) with references, place lambdas in where clause
+-- 2) Replace all arguments in function application with appropriate versions (either __app or __contracted)
+-- 3) Use new function application in __final version of functions, so we complete the cycle.
+-- 4) __final version of a function is referenced in __contracted version. This means that recursive calls are contracted as well, as well as calls to other functions.
+
+-- An example to clear up how the __app and __contracted versions should work:
+__final_const x y = x
+
+__contracted_const ctrt = assert "const" ctrt funs
+ where funs = fun (\x -> fun (\y -> __final_const x y))
+
+__app_const ctrt (posx,x) (posy,y) = app (app (__contracted_const ctrt) posx x) posy y
+
+
+
+
 -- Extra information generation:
 -- Inside higher-order __contracted versions, we could use a different 'app'
 -- that says something like "The following property does not hold on parameter 1: blablabla"
@@ -213,18 +269,18 @@ __app_insert ctrt (posx,x) (posxs,xs) = appParam (appParam (__contracted_insert 
 
 -- Test of extra information generation idea:
 __contracted_map_extra ctrt = assertPos "At the application of the higher-order function 'map'" "at Line Number 1, Column Number 1" ctrt funs
-  where funs = fun (\f -> fun (\xs -> map (\a -> appParam f "Parameter 1 of map" a) xs))
+  where funs = fun (\f -> fun (\xs -> map (\a -> appParam f "First argument of parameter 1 of map" a) xs))
   -- Het argument waarop de functie wordt toegepast voldoet niet aan de volgende eigenschap.
 
 __app_map_extra ctrt (posf,f) (posx,x) = appParam (appParam (__contracted_map_extra ctrt) posf f) posx x
 
 __map_extra_test = __app_map_extra ((true >-> isNat_prop) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
 
-__map_extra_test_2 = __app_map_extra ((isNat_prop >-> true) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
+__map_extra_test_2 = __app_map_extra ((isNat_prop >-> true) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[3,2,-3] at Line Number 1, Column Number 30",[3,2,-3])
 
 --mapc = assert "map" ((isNat_prop >-> true) >-> true) 
 
-__map_extra_test_3 = __app_map_extra ((true >-> true) >-> (true <@> isNat_prop))  ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
+__map_extra_test_3 = __app_map_extra ((true >-> true) >-> true >-> (true <@> isNat_prop))  ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
 
 -- Perhaps we could also infer from the contract extra information to display to the user?
 -- For example, the isNat_prop will just say that "the number must be a natural".
@@ -307,19 +363,20 @@ isInt_prop = Prop (\x -> x == fromInteger (round x))
 isNat_prop = PropInfo (\x -> let n = fromInteger (round x) 
                              in x == n && n >= 0) (\p -> mkErrorMsg p "the number must always be a natural number.")
 
-mkErrorMsg p text = posInfoText p ++ "does not have the following property: " ++ text
+mkErrorMsg p text = posInfoText p ++ "does not fullfil the following property: " ++ text
 
-posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " parameter of this function "
+posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " supplied argument of this function "
                         | pos == arity = "The result of this function "
                         | (pos,arity) == (-1,-1) = "An unknown position "
- where
-  showPos p | p == 1 = "first"
-            | p == 2 = "second"
-            | p == 3 = "third"
-            | p == 4 = "fourth"
-            | p == 5 = "fifth"
-            | p == 6 = "sixth"
-            | otherwise = show p
+
+
+showPos p | p == 1 = "first"
+          | p == 2 = "second"
+          | p == 3 = "third"
+          | p == 4 = "fourth"
+          | p == 5 = "fifth"
+          | p == 6 = "sixth"
+          | otherwise = show p
 
 
 
