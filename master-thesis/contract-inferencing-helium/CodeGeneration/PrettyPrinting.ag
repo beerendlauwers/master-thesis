@@ -94,6 +94,19 @@ instance Pretty Contract where
   pprint (CTuple (c:cs)) = parens $ pprint c BOX.<+> comma BOX.<+> pprint (CTuple cs)
   pprint (CTuple [])     = nullBox
 
+instance Show Contract where
+  show (CArr c1 c2) =  "(" ++ show c1 ++ " >-> " ++ show c2 ++ ")"
+  show (CProp p) = p
+  show (CFunctor o i) = show o ++ " <@> " ++ show i
+  show (CBifunctor o il ir) = "(" ++ show o ++ " <@@> " ++ "(" ++ show il ++ "," ++ show ir ++ ")" ++ ")"
+  show (CVar v mc) = v
+  show (CQuant cv cs) = case cv of
+                           (CVar v _) -> "forall " ++ v ++ ". " ++ show cs
+                           _          -> error "Quantifier needs variable"
+  show (CTuple (c:[])) = show c
+  show (CTuple (c:cs)) = "(" ++ show c ++ "," ++ show (CTuple cs) ++ ")"
+  show (CTuple [])     = ""
+
 instance Show NameR where
   show (IdentR n _)    = n
   show (OperatorR n _) = n

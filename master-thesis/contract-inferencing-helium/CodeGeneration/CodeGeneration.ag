@@ -56,7 +56,7 @@ sem FunBindR
       loc  .contractedName              = prefixcontractedFunction @loc.functionIdentifier
 
       -- RHS --
-      loc  .posInfo                     = generatePositionText (any (>1) @loc.parameterArity) @loc.functionIdent
+      loc  .posInfo                     = generatePositionText (any (>0) @loc.parameterArity) @loc.functionIdent
       loc  .assertApp                   = mkApp [mkVar "assertPos"
                                                 ,(mkLit.mkStrLit) @loc.posInfo
                                                 ,mkAppParens [mkVar "generatePositionData", mkVar "posinfo"]
@@ -70,6 +70,7 @@ sem FunBindR
       loc  .funsPatterns                = ["__x" ++ show @loc.num ++ show x | x <- [1.. @loc.arity]]
       loc  .arityEnv                    = calculateArity $ getTypeEnv @lhs.topLevelTypes
       loc  .arity                       = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup @loc.functionIdent @loc.arityEnv)
+      loc  .heliumType                  = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup (toHeliumWithRanges @loc.functionIdentifier) (getTypeEnv @lhs.topLevelTypes))
       loc  .parameterArityEnv           = calculateParameterArity $ getTypeEnv @lhs.topLevelTypes
       loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in parameterArity env!") id (DM.lookup @loc.functionIdent @loc.parameterArityEnv)
       loc  .patsWithArity               = zip3 (take @loc.arity [1..]) @loc.parameterArity @loc.funsPatterns
@@ -95,12 +96,13 @@ sem FunBindR
       loc  .appedName                   = prefixAppFunction @loc.functionIdentifier
       loc  .patternVars                 = map (:[]) ['a'..'z']
       loc  .posPatternVars              = map (\x -> "pos" ++ x) @loc.patternVars
-      loc  .paramList                   = take @loc.arity $ zip @loc.posPatternVars @loc.patternVars
-      loc  .paramTuples                 = map (\(pos,v) -> mkPTuple [mkPVar pos, mkPVar v]) @loc.paramList
+      loc  .strPatternVars              = map (\x -> "str" ++ x) @loc.patternVars
+      loc  .paramList                   = take @loc.arity $ zip3 @loc.strPatternVars @loc.posPatternVars @loc.patternVars
+      loc  .paramTuples                 = map (\(str,pos,v) -> mkPTuple [mkPVar str, mkPVar pos, mkPVar v]) @loc.paramList
       loc  .ctrtParam                   = mkPVar "ctrt"
       
       -- RHS --
-      loc  .appedRhs                    = insertApps "appParam" @loc.appedRhsBase (map (\(p,v) -> ( mkAppParens [mkVar "generatePositionData", mkVar p],mkVar v)) @loc.paramList) 
+      loc  .appedRhs                    = insertApps "appParam" @loc.appedRhsBase (map (\(s,p,v) -> ( mkAppParens [ mkVar s, mkVar "++", mkVar "generatePositionData", mkVar p],mkVar v)) (reverse @loc.paramList)) 
       loc  .appedRhsBase                = mkAppParens [VarR @loc.contractedName noRangeR, mkVar "ctrt", mkVar "posinfo"]
 
 {-
@@ -138,14 +140,33 @@ sem ExprR
       loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
       loc  .identifierIsFunction        = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
-      loc  .update                      = if @lhs.isArgument && @loc.arity > 0 && not @lhs.isFullyApplied
-                                           then prefixcontractedFunction -- Partially applied function argument
-                                           else if @loc.arity > 0 && @lhs.isFullyApplied
-                                                 then prefixAppFunction -- Fully applied argument or top-level function
-                                                 else id -- Just a value
+      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc
 
-      loc  .functionAppSelf             = VarR (@loc.update @name.copy) @range.copy
-      lhs  .functionAppSelf             = @loc.functionAppSelf
+
+
+      -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
+      -- OR PASS AROUND SUBSTITUTIONS 
+      loc  .varContract            = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
+      loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
+
+      loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id)]
+      loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
+
+      loc  .updateAsAppOrContracted     = mkAppParens [ @loc.updatedVar, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
+
+      loc  .posInfo                     = extractPositionData @range.copy
+      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
+      loc  .updateAsIdExtraInfo         = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar  ]
+
+      loc  .updateAsId                  = @loc.updatedVar
+
+
+      
+      lhs  .functionAppSelf             = case @loc.updateType of
+                                                1 -> @loc.updateAsAppOrContracted
+                                                2 -> @loc.updateAsIdExtraInfo
+                                                3 -> @loc.updateAsAppOrContracted
+                                                4 -> @loc.updateAsId
 
       loc  .isArgument                  = @lhs.isArgument -- For debug purposes
       loc  .isFullyApplied              = @lhs.isFullyApplied -- For debug purposes
@@ -153,19 +174,23 @@ sem ExprR
 attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR
    inh isArgument                                               :: {Bool}
    inh isFullyApplied                                           :: {Bool}
+   inh isArgumentToFullyAppliedFunc                             :: {Bool}
 
 
 sem MaybeExprR
    | JustExprR
       expr.isArgument                   = False
       expr.isFullyApplied               = False
+      expr.isArgumentToFullyAppliedFunc = False
 sem RhsR
    | RhsR
       expr.isArgument                   = False
       expr.isFullyApplied               = False
+      expr.isArgumentToFullyAppliedFunc = False
    | GRhsR
       gexprs.isArgument                 = False
       gexprs.isFullyApplied             = False
+      gexprs.isArgumentToFullyAppliedFunc = False
 
 sem ExprR
    | AppR
@@ -173,12 +198,25 @@ sem ExprR
       args .isArgument                  = True
       fun  .isFullyApplied              = @loc.isFullyApplied
       args .isFullyApplied              = False
+      args .isArgumentToFullyAppliedFunc = @loc.isFullyApplied
       loc  .isFullyApplied              = @loc.arity == 0
       loc  .errorMsgFunctionType        = "Could not fetch function type of expression " ++ show @loc.copy
       loc  .arity                       = S.arityOfTpScheme $ fromJustMsg @loc.errorMsgFunctionType @loc.functionType
 
       loc  .isArgument                  = @lhs.isArgument -- For debug purposes
 
+attr Contract
+   -- Converts a Contract datatype into an ExprR datatype ready for use in the AST.
+   syn makeContract                                             :: ExprR
+
+sem Contract
+  |  CArr        lhs.makeContract = mkParens $ mkApp [ @c1.makeContract, mkVar ">->", @c2.makeContract ]
+  |  CProp       lhs.makeContract = mkVar @p
+  |  CFunctor    lhs.makeContract = mkParens $ mkApp [ @o.makeContract, mkVar "<@>", @i.makeContract ]
+  |  CBifunctor  lhs.makeContract = mkParens $ mkApp [ @o.makeContract, mkVar "<@@>", mkTuple [ @il.makeContract, @ir.makeContract ] ]
+  |  CVar        lhs.makeContract = mkVar (replaceTrueContract @v) -- TODO: Default contract etc.
+  |  CQuant      lhs.makeContract = @cs.makeContract
+  |  CTuple      lhs.makeContract = error $ "The following CTuple got into contract inferencing: " ++ show @li
 
 
 {-
@@ -409,7 +447,7 @@ sem ExprR
 -- Example: funs = fun (\x -> fun (\xs -> insert x xs))
 makeFuns :: PatsR -> ExprR -> ExprR
 makeFuns xs b = foldr f b xs
-  where f pat rest = mkAppParens $ (mkVar "fun") : [LambdaR [pat] rest noRangeR]
+  where f pat rest = mkAppParens $ (mkVar "fun") : [mkParens $ mkLambda [pat] rest]
 
 
 prefixFunctionWithContract :: NameR -> NameR

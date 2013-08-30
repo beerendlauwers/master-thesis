@@ -33,7 +33,7 @@ argument.
 >
 > blame'        ::  Locs -> String -> String
 > blame' locs fi =   
->  "A part of your code does not have a required property. " ++ 
+>  "A part of your code, or a supplied argument to a function, does not fullfil a required property. " ++ 
 >  show (head (pos locs))
 >               ++  (  case tail (pos locs) of
 >                       []     ->  ": "

@@ -275,11 +275,11 @@ expandHigherOrderParams :: String -> (Int,Int,String) -> ExprR
 expandHigherOrderParams funcName (listpos,arity,pat) = 
  let v = mkVar pat
      pats = take arity [x : show y | y <- [0..10], x <- ['a'..'z']  ]
-     lam = mkLambda (map mkPVar pats) apps
-     apps = insertApps "appParam" base $ zip (map mkVar $ appParamText (take arity [1..]) ) (map mkVar pats)
-     base = mkApp $ map mkVar (pat:pats)
+     lam = mkParens $ mkLambda (map mkPVar pats) apps
+     apps = insertApps "appParam" base $ reverse $ zip (map (mkLit.mkStrLit) $ appParamText (take arity [1..]) ) (map mkVar pats)
+     base = v
      appParamText = map (\i -> showPos i ++ " argument of parameter " ++ show listpos ++ " of " ++ funcName)
- in if arity > 1
+ in if arity > 0
      then lam
      else v
 
@@ -316,17 +316,31 @@ indexMsg :: (Show a) => [a] -> Int -> a
 indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
 
-{-
-replaceArguments :: [(ExprR,Maybe S.TpScheme,Maybe ExprR,Maybe ExprR)]
-replaceArguments = map f
- where 
-  f (e,ty,a,c) = if (S.arityOfTpScheme.checkTy) ty > 1
-                  then c -- contracted version, partially applied
-                  else a -- app version, fully applied
-  checkTy   e = fromJustMsg ("Could not find the type of the expression " ++ show e)
-  checkApp  e = fromJustMsg ("could not get an __app version of the expression " ++ show e)
-  checkCtrt e = fromJustMsg ("Could not get a __contracted version of the expression " ++ show e)
--}
+-- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id
+determineUpdateFunction :: ExprR -> Bool -> Bool -> Bool -> Bool -> Int
+determineUpdateFunction expr isArg isFunc isFullyApplied isArgToFullyApplied
+ | t [isArg,isFunc,not isFullyApplied] = 1
+ | t [isArg,isFunc, isFullyApplied]    = 3
+ | t [isArg,not isFunc, isArgToFullyApplied] = 2
+ | t [not isArg, isFunc, isFullyApplied] = 3
+ | t [not isArg, isFunc, not isFullyApplied] = 3
+ | t [isArg,not isFunc, not isArgToFullyApplied] = 4
+ | t [not isArg,not isFunc, not isFullyApplied, not isArgToFullyApplied] = 4
+ | otherwise = error $ "Non-exhaustive pattern when checking expression " ++ show expr ++ "(isArg=" ++ show isArg ++ ", isFunc=" ++ show isFunc ++ ", isFullyApplied=" ++ show isFullyApplied ++ ", isArgToFullyApplied=" ++ show isArgToFullyApplied ++ ")"
+ where t = all (==True)
+
+isTrueContract :: String -> Bool
+isTrueContract (x:xs) = if x == 'c'
+                           then case (reads xs) :: [(Integer,String)] of
+                                 [(_,"")] -> True
+                                 _        -> False
+                           else False
+isTrueContract []      = False
+
+replaceTrueContract :: String -> String
+replaceTrueContract x = if isTrueContract x
+                         then "true"
+                         else x
 
 insertApps :: String -> ExprR -> [(ExprR,ExprR)] -> ExprR
 insertApps appType = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar appType,xs,pos,var])

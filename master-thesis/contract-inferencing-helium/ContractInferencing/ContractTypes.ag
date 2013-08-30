@@ -14,7 +14,7 @@ data Subst
   |  SComp   l  :: Subst     r  :: Subst
   |  SSubst  v  :: Contract  c  :: Contract
 
-deriving Contract: Show, Eq, Ord
+deriving Contract: Eq, Ord
 deriving Subst: Show
 
 {
@@ -29,4 +29,7 @@ infixr 4 >->
 infixr 6 `o`
 o :: Subst -> Subst -> Subst
 o = SComp
+
+proptrue :: Contract
+proptrue = CProp "true"
 }
