@@ -140,7 +140,7 @@ sem ExprR
       loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
       loc  .identifierIsFunction        = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
-      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc
+      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc @lhs.functionIsParameter
 
 
 
@@ -171,26 +171,105 @@ sem ExprR
       loc  .isArgument                  = @lhs.isArgument -- For debug purposes
       loc  .isFullyApplied              = @lhs.isFullyApplied -- For debug purposes
 
+{-
+attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR
+   -- Transformations that transforms all function applications from f to __app_f or __contracted_f (whichever applies).
+   syn varAsApp                                                 :: self
+   syn varAsCtrt                                                :: self
+   syn varAsExtraInfo                                           :: self
+   syn varAsId                                                  :: self
+
+sem ExprR
+   | VarR
+      lhs  .varAsId                     = @loc.copy
+
+      loc  .updatedVarToCtrt            = VarR (prefixcontractedFunction @name.copy) @range.copy
+      loc  .varContract                 = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
+      loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract )
+      loc  .posInfoAsLiterals           = posDataAsLiterals $ extractPositionData @range.copy
+      lhs  .varAsCtrt                   = mkAppParens [ @loc.updatedVarToCtrt, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
+
+      loc  .updatedVarToApp             = VarR (prefixAppFunction @name.copy) @range.copy
+      lhs  .varAsApp                    = mkAppParens [ @loc.updatedVarToCtrt, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
+
+      lhs  .varAsExtraInfo              = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.copy ]
+
+sem ExprR
+  | AppR
+
+      -- If the function being applied is a parameter, it means it has already been contracted, 
+      -- so we don't need to prefix it with anything.
+      loc  .isFunctionVarR              = isVarR @fun.copy
+      loc  .functionAsVarR              = case @fun.copy of
+                                           (VarR s r) -> Just $ VarR s r
+                                           otherwise  -> Nothing                
+      loc  .functionIsParameter         = DJ.isJust $ DL.lookup @loc.functionAsVarR @lhs.localIdentifiers
+
+      loc  .tranformedApp               = @loc.copy
+-}
+
+{-
+sem ExprR
+   | VarR
+      loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
+      loc  .arity                       = S.arityOfTpScheme @loc.localType
+      loc  .identifierIsFunction        = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
+      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc
+
+
+
+      -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
+      -- OR PASS AROUND SUBSTITUTIONS 
+      loc  .varContract            = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
+      loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
+
+      loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id)]
+      loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
+
+      loc  .updateAsAppOrContracted     = mkAppParens [ @loc.updatedVar, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
+
+      loc  .posInfo                     = extractPositionData @range.copy
+      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
+      loc  .updateAsIdExtraInfo         = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar  ]
+
+      loc  .updateAsId                  = @loc.updatedVar
+
+
+      
+      lhs  .functionAppSelf             = case @loc.updateType of
+                                                1 -> @loc.updateAsAppOrContracted
+                                                2 -> @loc.updateAsIdExtraInfo
+                                                3 -> @loc.updateAsAppOrContracted
+                                                4 -> @loc.updateAsId
+
+      loc  .isArgument                  = @lhs.isArgument -- For debug purposes
+      loc  .isFullyApplied              = @lhs.isFullyApplied -- For debug purposes
+-}
+
 attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR
    inh isArgument                                               :: {Bool}
    inh isFullyApplied                                           :: {Bool}
    inh isArgumentToFullyAppliedFunc                             :: {Bool}
-
+   inh functionIsParameter                                      :: {Bool}
+   syn functionIsParameter                                      :: {Bool}
 
 sem MaybeExprR
    | JustExprR
       expr.isArgument                   = False
       expr.isFullyApplied               = False
       expr.isArgumentToFullyAppliedFunc = False
+      expr.functionIsParameter          = False
 sem RhsR
    | RhsR
       expr.isArgument                   = False
       expr.isFullyApplied               = False
       expr.isArgumentToFullyAppliedFunc = False
+      expr.functionIsParameter          = False
    | GRhsR
       gexprs.isArgument                 = False
       gexprs.isFullyApplied             = False
       gexprs.isArgumentToFullyAppliedFunc = False
+      gexprs.functionIsParameter        = False
 
 sem ExprR
    | AppR
@@ -202,6 +281,13 @@ sem ExprR
       loc  .isFullyApplied              = @loc.arity == 0
       loc  .errorMsgFunctionType        = "Could not fetch function type of expression " ++ show @loc.copy
       loc  .arity                       = S.arityOfTpScheme $ fromJustMsg @loc.errorMsgFunctionType @loc.functionType
+
+      loc  .functionAsVarR              = case @fun.copy of
+                                           (VarR s r) -> Just (getVar s)
+                                           otherwise  -> Nothing                
+      loc  .functionIsParameter         = maybe False (\a -> DL.elem a @lhs.localIdentifiers) @loc.functionAsVarR
+      lhs  .functionIsParameter         = @loc.functionIsParameter
+      args .functionIsParameter         = @fun.functionIsParameter || @loc.functionIsParameter
 
       loc  .isArgument                  = @lhs.isArgument -- For debug purposes
 

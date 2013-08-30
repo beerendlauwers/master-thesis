@@ -25,7 +25,7 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
   syn uncontractedCode                                  :: self
 
   -- COPYPASTE FOR DEBUG - Identifiers that shadow the top-level identifiers.
-  inh localIdentifiers                                  :: {[NameR]}
+  inh localIdentifiers                                  :: {[String]}
 
   -- COPYPASTE FOR DEBUG - The 'main' function, the top-level point of entry. We'll start contract generation here.
   inh entryFunction                                     :: {String}
@@ -73,7 +73,7 @@ sem FunBindR
 -- Fetch locally-bound stuff from patterns.
 -- Most of this is auto-generated.
 attr PatR PatsR ListPatsR TuplePatsR
-  syn localPatterns use {++} {[]}                       :: {[NameR]}
+  syn localPatterns use {++} {[]}                       :: {[String]}
 
 sem PatR
    | PInfixConR
@@ -81,9 +81,9 @@ sem PatR
       loc  .localPatterns       = @left.localPatterns ++ @right.localPatterns
    | PVarR
       lhs  .localPatterns       = @loc.localPatterns
-      loc  .localPatterns       = [@name.copy]
+      loc  .localPatterns       = [getVar @name.copy]
    | PAsR
       lhs  .localPatterns       = @loc.localPatterns
-      loc  .localPatterns       = @name.copy : @pat.localPatterns
+      loc  .localPatterns       = getVar @name.copy : @pat.localPatterns
 
 
