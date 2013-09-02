@@ -9,6 +9,15 @@ include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
 
 {
 
+removeFreeLambdas :: String -> String -> IO ()
+removeFreeLambdas code pointOfEntry = 
+ let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
+     astCode = compileWithRanges code
+     semModule = sem_ModuleR astCode
+     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
+     wrapModule = wrap_ModuleR semModule inhModule
+ in print (removeFreeLambdas_Syn_ModuleR wrapModule)
+
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 

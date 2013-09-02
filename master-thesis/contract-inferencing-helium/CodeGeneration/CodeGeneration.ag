@@ -394,6 +394,32 @@ sem ExprR
      lhs  .rangeData                    = [@range.copy]
 
 
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+   syn removeFreeLambdas                                        :: self
+   syn allReplacedLambdas    use {(++)} {[]}                    :: {[FunBindR]}
+
+sem ExprR
+   | LambdaR
+     -- We copy over the range of the original lambda so when further code is generated, it refers
+     -- to the original lambda's location. 
+     lhs  .removeFreeLambdas            = VarR @loc.uniqueLambdaVar @range.copy
+
+     -- We'll generate a function binding in the gist of "__lam1 = (original lambda)" and put those in a where-clause.
+     lhs  .allReplacedLambdas           = [ mkFunbind @loc.uniqueLambdaVar [] (mkRhs @loc.removeFreeLambdas []) ]
+     loc  .uniqueLambdaVar              = IdentR ("__lam" ++ show @loc.num) @range.copy
+     loc  .num                          ::  uniqueref varcnt
+
+sem RhsR
+   | RhsR
+     loc  .newWhereClause               = DFunBindsR @expr.allReplacedLambdas noRangeR : @where.removeFreeLambdas
+     loc  .updatedRhsR                  = RhsR @expr.removeFreeLambdas @loc.newWhereClause @range.copy
+     lhs  .removeFreeLambdas            = @loc.updatedRhsR
+   | GRhsR
+     loc  .newWhereClause               = DFunBindsR @gexprs.allReplacedLambdas noRangeR : @where.removeFreeLambdas
+     loc  .updatedRhsR                  = GRhsR @gexprs.removeFreeLambdas @loc.newWhereClause @range.copy
+     lhs  .removeFreeLambdas            = @loc.updatedRhsR
+
+
 {-
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
