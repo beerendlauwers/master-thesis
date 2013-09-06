@@ -45,15 +45,16 @@ sem FunBindR
   | FBHoleR
       lhs  .contractedFunction          = undefined
   | FunBindR
-      -- Example: __contracted_insert ctrt posinfo = assertPos "name info" (generatePositionData posinfo) ctrt funs
-      --           where funs = fun (\x -> fun (\xs -> insert x xs))
+      -- Example: __contracted_insert ctrt posinfo argStrings = assertPos "name info" (generatePositionData posinfo) ctrt funs
+      --           where funs = fun (\x -> fun (\xs -> __final_insert (x,head argstrings) (xs,head.tail argstrings)))
       lhs  .contractedFunction          = @loc.contractedFunction
-      loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "ctrt", mkPVar "posinfo"] @loc.contractedRhs
+      loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "ctrt", mkPVar "posinfo", mkPVar "argstrings"] @loc.contractedRhs
 
       -- LHS --
       loc  .functionIdentifier          = @name.copy 
       loc  .functionIdent               = getVar @loc.functionIdentifier
-      loc  .contractedName              = prefixcontractedFunction @loc.functionIdentifier
+      loc  .finalName                   = VarR (prefixFinalFunction @loc.functionIdentifier) (getRange @loc.functionIdentifier)
+      loc  .contractedName              = prefixcontractedFunction @loc.functionIdentifier 
 
       -- RHS --
       loc  .posInfo                     = generatePositionText (any (>0) @loc.parameterArity) @loc.functionIdent
@@ -75,7 +76,9 @@ sem FunBindR
       loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in parameterArity env!") id (DM.lookup @loc.functionIdent @loc.parameterArityEnv)
       loc  .patsWithArity               = zip3 (take @loc.arity [1..]) @loc.parameterArity @loc.funsPatterns
       loc  .expandedFunsPatterns        = map (expandHigherOrderParams @loc.functionIdent) @loc.patsWithArity
-      loc  .funsBase                    = mkApp $ mkVar @loc.functionIdent : @loc.expandedFunsPatterns
+      loc  .argumentLookups             = map (\i -> mkInfixApp (mkVar "argstrings") (VarR (mkOp "!!") noRangeR) (mkLit $ mkIntLit i) ) [0.. @loc.arity] 
+      loc  .argumentsWithStr            = map (\(e,p) -> mkTuple [e,p]) (zip @loc.expandedFunsPatterns @loc.argumentLookups)
+      loc  .funsBase                    = mkApp $ @loc.finalName : @loc.argumentsWithStr
 
       loc  .num     ::  uniqueref varcnt
 
@@ -122,14 +125,31 @@ sem FunBindR
       loc  .finalName                   = prefixFinalFunction @loc.functionIdentifier
 -}
 
--- TODO: Generate location information of function being applied, pass it through __app and through __contracted so
--- there it says the correct location information!!!!
-
 -- Identify all function applications, convert from f to __app_f.
 --attr ExprR
    --syn appedApplication                                         :: ExprR
 
 -- TODO: Put the contracts on their appropriate places in place of the VarRs.
+
+attr ExprR
+   -- Is this VarR a locally-known identifier (from patterns, or where-clause, or let)
+   -- or a top-level function identifier?
+   -- We use this information to determine what kind of transformation is necessary.
+   syn isLocalParameter                                         :: {Bool}
+
+attr ExprR ExprsR GuardedExprsR
+   -- (AppR) We fetch the value of @fun.isLocalParameter and pass this down to its arguments.
+   inh isAppliedToLocalFunction                                 :: {Bool}
+
+sem ExprR
+   | VarR
+      lhs  .isLocalParameter            = @loc.isLocalParameter
+      loc  .isLocalParameter            = DL.elem (getVar @name.copy) @lhs.localIdentifiers
+   | AppR
+      lhs  .isLocalParameter            = @loc.isLocalParameter
+      loc  .isLocalParameter            = @fun.isLocalParameter
+   | HoleR TupleR ListR ConR
+      lhs  .isLocalParameter            = False
 
 attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR
    -- A transformation that transforms all function applications from f to __app_f or __contracted_f (whichever applies).
@@ -139,14 +159,47 @@ sem ExprR
    | VarR
       loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
-      loc  .identifierIsFunction        = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
-      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc @lhs.functionIsParameter
+      loc  .isFunction                  = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
+
+{-
+      -- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id
+      loc  .updateType                  = if @lhs.isBaseFunction
+                                           -- Base function
+                                           then if @loc.isLocalParameter
+                                                 then 4 -- id, it's already been contracted
+                                                 else 3 -- prefix __app, always prefix app to base function
+                                           -- An argument
+                                           else if @lhs.isAppliedToLocalFunction
+                                                 -- Argument is applied to a local function
+                                                 then if @loc.isFunction
+                                                       -- Argument itself is a function
+                                                       then if @loc.isLocalParameter
+                                                             -- Argument is a non-local function
+                                                             then 1 -- prefix __contract, because it is not yet contracted
+                                                             -- Argument is a locally-known function
+                                                             else 4 -- id, it's already been contracted
+                                                       -- Argument itself it not a function
+                                                       else 4 -- id, it does not have to be contracted
+
+ @loc.isLocalParameter
+                                                       then 
+
+                                                 -- Argument is a local identifier
+                                                 then if @loc.isFunction
+                                                       then 4 --id, it's already been contracted
+                                                       else 1 -- prefix __ctrt, because it's a function argument
+                                                 -- Argument is a non-local identifier
+                                                 else 3 -- prefix __app
 
 
+-}
+      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc @lhs.functionIsParameter @loc.isLocalParameter
+
+      -- TODO: make this work for InfixAppR too!
 
       -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
       -- OR PASS AROUND SUBSTITUTIONS 
-      loc  .varContract            = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
+      loc  .varContract                 = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
       loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
 
       loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id)]
@@ -252,29 +305,45 @@ attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR
    inh isArgumentToFullyAppliedFunc                             :: {Bool}
    inh functionIsParameter                                      :: {Bool}
    syn functionIsParameter                                      :: {Bool}
+   inh isBaseFunction                                           :: {Bool} -- Is the most deeply nested function being applied
 
 sem MaybeExprR
    | JustExprR
+      expr.isAppliedToLocalFunction     = False
       expr.isArgument                   = False
       expr.isFullyApplied               = False
       expr.isArgumentToFullyAppliedFunc = False
       expr.functionIsParameter          = False
+      expr.isBaseFunction               = True
 sem RhsR
    | RhsR
+      expr.isAppliedToLocalFunction     = False
       expr.isArgument                   = False
       expr.isFullyApplied               = False
       expr.isArgumentToFullyAppliedFunc = False
       expr.functionIsParameter          = False
+      expr.isBaseFunction               = True
    | GRhsR
+      gexprs.isAppliedToLocalFunction   = False
       gexprs.isArgument                 = False
       gexprs.isFullyApplied             = False
       gexprs.isArgumentToFullyAppliedFunc = False
       gexprs.functionIsParameter        = False
+      gexprs.isBaseFunction             = True
 
 sem ExprR
    | AppR
+      -- Determine the base function. example: f is the base function in (((f (g x)) y) z)
+      fun  .isBaseFunction              = @lhs.isBaseFunction
+      args .isBaseFunction              = False
+
+      -- Are the arguments being applied to a local identifier?
+      args .isAppliedToLocalFunction    = @fun.isLocalParameter
+
       -- Inform each argument that they are, in fact, an argument.
+      
       args .isArgument                  = True
+      fun  .isArgument                  = False
       fun  .isFullyApplied              = @loc.isFullyApplied
       args .isFullyApplied              = False
       args .isArgumentToFullyAppliedFunc = @loc.isFullyApplied

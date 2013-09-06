@@ -11,14 +11,14 @@ a4 = true
 __contracted_f ctrt = assert "f" ctrt funs
   where funs = fun (\x -> __example_f x)
 __app_f ctrt (posx,x) = app (__contracted_f ctrt) posx x
-__example_f x = __app_g (a5 >-> (a4 <@> a5)) (0,x)
+__example_f x = __app_g (a5 >-> (isSingleton <@> a5)) (0,x)
 
 __contracted_g ctrt = assert "g" ctrt funs
   where funs = fun (\x -> __example_g x)
 __app_g ctrt (posx,x) = app (__contracted_g ctrt) posx x
-__example_g x = [x]
+__example_g x = []
 
-__example_z = ( __app_f (isChar_prop >-> (true <@> isChar_prop)) (1,'2'), __app_f (isInt_prop >-> (true <@> isInt_prop)) (2,5) )
+__example_z = ( __app_f (isChar_prop >-> (isSingleton <@> isChar_prop)) (1,'2'), __app_f (isNat_prop >-> (isSingleton <@> isNat_prop)) (2,5) )
 
 -- Hoe werkt dit voor functies die een functie teruggeven???
 n x y z = x (x y z)
@@ -32,6 +32,39 @@ ctrt_plus ctrt = assert "(+)" ctrt (fun (\x -> fun (\y -> (+) x y)))
 
 use_n_2 = (n (+) 1 2) 3
 use_n_2_ctrt = (__app_n true (ctrt_plus true) 1 2) 3
+
+-- Voorbeeld hoe g eigenlijk ook de string representatie van argumenten moet meekrijgen voor waardevolle feedback.
+__appr_f ctrt (x,posx) = appParam (__contractedr_f ctrt [posx]) posx x
+__contractedr_f ctrt posinfo = assert "f" ctrt funs
+  where funs = fun (\x -> __exampler_f ctrt (x,head posinfo))
+__exampler_f ctrt (x,posx) = __appr_g (a5 >-> (isSingleton <@> a5)) (x,posx)
+
+__contractedr_g ctrt posinfo = assert "g" ctrt funs
+  where funs = fun (\x -> __exampler_g ctrt (x,head posinfo) )
+__appr_g ctrt (x,posx) = appParam (__contractedr_g ctrt [posx]) posx x
+__exampler_g ctrt (x,posinfo) = [x]
+
+__exampler_z = ( __appr_f (isChar_prop >-> (isSingleton <@> isChar_prop)) ('2',"Position 1"), __appr_f (isNat_prop >-> (isSingleton <@> isNat_prop)) (5,"Position 2") )
+
+-- Hoe werkt dit voor HO functies?
+__app_a ctrt (f,posf) (x,posx) = appParam (appParam (__contracted_a ctrt [posf,posx]) posf f) posx x
+__contracted_a ctrt posinfo = assertPos "the application of the higher-order function 'a'" "at Line Number 1, Column Number 1" ctrt funs
+  where funs = fun (\f -> fun (\x -> __final_a ctrt ((\(z,posz) -> (appParam f ("The first argument of the function " ++ head posinfo ++ " (defined at line number 1, column number 5), namely " ++ posz) z)),head posinfo) (x, head $ tail posinfo) ) )
+__final_a ctrt (f,posf) (x,posx) = f (x,posx)
+
+__example_ho_z = __app_a ((isBiggerThan_prop >-> true) >-> true) (__ctrt_const1 (isBiggerThan_prop >-> true),"(\\y -> const y [])") (5,"5")
+
+
+__ctrt_const1 ctrt = assertPos "const1" "(1,5)" ctrt (fun (\y -> __final_const y []))
+
+-- Note: Doesn't have the entire string-passing thing here
+__finalr_const x y = x
+
+__contractedr_const ctrt = assertPos "const" "(2,5)" ctrt funs
+ where funs = fun (\x -> fun (\y -> __finalr_const x y))
+
+__app_constr ctrt (posx,x) (posy,y) = appParam (appParam (__contractedr_const ctrt) posx x) posy y
+
 
 -- Nog een voorbeeld
 plusone :: [Int] -> [Int]
@@ -268,19 +301,19 @@ __app_const ctrt (posx,x) (posy,y) = app (app (__contracted_const ctrt) posx x) 
 -- PropExtra that has a property and a String representing the property.
 
 -- Test of extra information generation idea:
-__contracted_map_extra ctrt = assertPos "At the application of the higher-order function 'map'" "at Line Number 1, Column Number 1" ctrt funs
-  where funs = fun (\f -> fun (\xs -> map (\a -> appParam f "First argument of parameter 1 of map" a) xs))
+__contracted_map_extra ctrt argtext = assertPos "At the application of the higher-order function 'map'" "at Line Number 1, Column Number 1" ctrt funs
+  where funs = fun (\f -> fun (\xs -> map (\a -> appParam f (head argtext) a) xs))
   -- Het argument waarop de functie wordt toegepast voldoet niet aan de volgende eigenschap.
 
-__app_map_extra ctrt (posf,f) (posx,x) = appParam (appParam (__contracted_map_extra ctrt) posf f) posx x
+__app_map_extra ctrt (strf,posf,f) (strx,posx,x) = appParam (appParam (__contracted_map_extra ctrt [strf,strx]) (strf++posf) f) (strx++posx) x
 
-__map_extra_test = __app_map_extra ((true >-> isNat_prop) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
+__map_extra_test = __app_map_extra ((true >-> isNat_prop) >-> true) ("(\\x -> (+1) x)"," at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3]"," at Line Number 1, Column Number 30",[-3,2,3])
 
-__map_extra_test_2 = __app_map_extra ((isNat_prop >-> true) >-> true) ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[3,2,-3] at Line Number 1, Column Number 30",[3,2,-3])
+__map_extra_test_2 = __app_map_extra ((isNat_prop >-> true) >-> true) ("(\\x -> (+1) x)"," at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3]"," at Line Number 1, Column Number 30",[3,2,-3])
 
 --mapc = assert "map" ((isNat_prop >-> true) >-> true) 
 
-__map_extra_test_3 = __app_map_extra ((true >-> true) >-> true >-> (true <@> isNat_prop))  ("(\\x -> (+1) x) at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3] at Line Number 1, Column Number 30",[-3,2,3])
+__map_extra_test_3 = __app_map_extra ((true >-> true) >-> true >-> (true <@> isNat_prop))  ("(\\x -> (+1) x)"," at Line Number 1, Column Number 22",fun (\x -> (+1) x)) ("[-3,2,3]", " at Line Number 1, Column Number 30",[-3,2,3])
 
 -- Perhaps we could also infer from the contract extra information to display to the user?
 -- For example, the isNat_prop will just say that "the number must be a natural".
@@ -356,14 +389,20 @@ __twocontracted_isort ctrt = assert "isort" ctrt funs
         __contracted_foldr ctrt = assert "foldr" ctrt funs
          where funs = fun (\f -> fun (\b -> fun (\xs -> foldr (\a b -> app (app f 13 a) 14 b) b xs)))
 
+isBiggerThan_prop :: Enum a => Contract a
+isBiggerThan_prop = PropInfo (\x -> fromEnum x > 5 ) (\p -> mkErrorMsg p "the number must be larger than five.")
 
-
+isChar_prop :: Contract Char
 isChar_prop = Prop (\x -> isAlphaNum x)
+
 isInt_prop = Prop (\x -> x == fromInteger (round x))
-isNat_prop = PropInfo (\x -> let n = fromInteger (round x) 
+
+isNat_prop = PropInfo (\x -> let n = fromEnum x
                              in x == n && n >= 0) (\p -> mkErrorMsg p "the number must always be a natural number.")
 
-mkErrorMsg p text = posInfoText p ++ "does not fullfil the following property: " ++ text
+isSingleton = Prop (\xs -> length xs == 1)
+
+mkErrorMsg p text = {- posInfoText p ++ -} "does not fullfil the following property: " ++ text
 
 posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " supplied argument of this function "
                         | pos == arity = "The result of this function "
@@ -379,7 +418,28 @@ showPos p | p == 1 = "first"
           | otherwise = show p
 
 
+-- Hoe het moet zijn:
+--  where funs = fun (\f -> fun (\x -> __final_a ctrt ((\(z,posz) -> (appParam f ("The first argument of the function " ++ head posinfo ++ " (defined at line number 1, column number 5), namely " ++ posz) z)),head posinfo) (x, head $ tail posinfo) ) )
 
+-- Gegenereerde code test:
+__contracted_s ctrt posinfo argstrings =
+ assertPos "At the application of the higher-order function 'g'" (generatePositionData posinfo) ctrt funs
+  where funs = (fun (\ __x21 -> (fun (\ __x22 -> __final_s ((\ (a0,posa0) -> (appParam __x21 (concat ["The first argument of the function ",argstrings !! 0,", namely ",posa0]) a0)),argstrings !! 0) (__x22,argstrings !! 1)))))
+
+__final_s (f,posf) (x,posx) = f (x,posx)
+
+__app_s
+  :: Contract ((aT :-> bT) :-> aT :-> bT)
+     -> Maybe (Int, Int)
+     -> ([Char], Maybe (Int, Int), aT :-> bT)
+     -> ([Char], Maybe (Int, Int), aT)
+     -> bT
+__app_s ctrt posinfo (stra,posa,a) (strb,posb,b) = 
+ (appParam (appParam (__contracted_s ctrt posinfo [stra,strb]) (stra ++ generatePositionData posa) a) (strb ++ generatePositionData posb) b)
+
+generatePositionData :: Maybe (Int,Int) -> String
+generatePositionData (Just (l,c)) = "at line number " ++ show l ++ ", column number " ++ show c 
+generatePositionData Nothing      = "at an unknown position"
 
 
 
@@ -428,6 +488,26 @@ showPos p | p == 1 = "first"
 -- Perhaps something like:
 --Contract ([a] -> [a])
 --is_permutation = true >>-> \i -> prop (\o -> null (o\\i)) 
+
+
+
+-- Quick tests for something irrelevant
+qtest f x y | __lam1 x y = f x
+ where __lam1 = (\x y -> x == True)
+
+qtest2 x =
+    (__lam1)
+    where
+        __lam1 =
+            \ y -> z x y
+        z x y =
+            ((__lam3) x) y
+            where
+                __lam3 =
+                    \ n -> n
+
+z x y =
+    x y
 
 
 

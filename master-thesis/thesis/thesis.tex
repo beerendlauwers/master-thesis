@@ -41,6 +41,57 @@ In the "Future Work" section of the thesis, Stutterheim notes that the actual in
 This research proposal explores what needs to be done in order to attain that goal, as well as the effects it would have upon the tutor's capability to provide meaningful feedback.
 
 
+5:58:09 PM] : ][CW][ : Brutos: whats your thesis about?
+[5:58:14 PM] : ][CW][ : Brutos: well i guess about that :D
+[5:58:18 PM] : ][CW][ : Brutos: but more in detail
+[5:58:25 PM] =[BSID]= 1LT Beerdude26: Embedding contract inferencing in the Ask-Elle functional programming tutor
+[5:58:39 PM] =[BSID]= 1LT Beerdude26: You know that everything has a type in Haskell
+[5:58:50 PM] : ][CW][ : Brutos: yes
+[5:59:26 PM] =[BSID]= 1LT Beerdude26: Contracts are a refinement of those (in fact, many researchers go the way of refinement types, but those need solvers and a whole lot of other crap)
+[5:59:38 PM] =[BSID]= 1LT Beerdude26: So like, you have a function that goes from Int -> Int
+[5:59:57 PM] =[BSID]= 1LT Beerdude26: You could define a contract for it that says "Input must be below 0, output must be below 2"
+[6:00:10 PM] =[BSID]= 1LT Beerdude26: Or something like that, stupid example
+[6:00:21 PM] =[BSID]= 1LT Beerdude26: You can use arbitrary functions when defining contracts
+[6:00:30 PM] =[BSID]= 1LT Beerdude26: So it can also be that the input must be prime or something
+[6:00:46 PM] =[BSID]= 1LT Beerdude26: Do you know about type inference?
+[6:01:00 PM] : ][CW][ : Brutos: yes i did even learn one algorithm to do it
+[6:01:04 PM] =[BSID]= 1LT Beerdude26: Algorithm W
+[6:01:06 PM] =[BSID]= 1LT Beerdude26: Probably
+[6:01:07 PM] : ][CW][ : Brutos: but i forgot everything about it again ._.
+[6:01:07 PM] : ][CW][ : Brutos: :D
+[6:01:49 PM] =[BSID]= 1LT Beerdude26: Well, the guy whose work I'm building on found out that for a subset of the Contract datatype he was using, it is possible to infer contracts for expressions, just like you can for types
+[6:01:54 PM] : ][CW][ : Brutos: might be the notation in wiki looks somewhat familiar
+[6:02:17 PM] : ][CW][ : Brutos: so i have some code and i can infer that id > 0
+[6:02:18 PM] =[BSID]= 1LT Beerdude26: This is pretty nice; it allows you to define a "top-level" contract, and the rest of your code gets contracted appropriately
+[6:02:36 PM] : ][CW][ : Brutos: oh i say my id > 0 and the compiler checks it everywhere?
+[6:02:52 PM] =[BSID]= 1LT Beerdude26: Well
+[6:03:41 PM] =[BSID]= 1LT Beerdude26: It's more like, "I know that this output comes from this function, and this output has the constraint that it must be at least 10 items long"
+[6:04:01 PM] =[BSID]= 1LT Beerdude26: "So, I can infer that the constraint for the output of the function it came from must also be 10 items long"
+[6:04:05 PM] =[BSID]= 1LT Beerdude26: Etc etc
+[6:04:08 PM] =[BSID]= 1LT Beerdude26: Other tricks
+[6:04:27 PM] =[BSID]= 1LT Beerdude26: In the end, you have very specific contracts for deeply nested code
+[6:04:42 PM] : ][CW][ : Brutos: in 30 years it will make it into some kind of c++ standard :(
+[6:04:50 PM] =[BSID]= 1LT Beerdude26: Which is nice, because that means you can find out more easily where your code is going wrong
+[6:05:17 PM] =[BSID]= 1LT Beerdude26: The guy gave a nice example of insertion sort defined as a fold with insert: isort xs = foldr insert [] xs
+[6:05:41 PM] =[BSID]= 1LT Beerdude26: Then he defined a contract: the input of xs doesn't matter as long as it's a list, the output of xs must be ordered.
+[6:06:13 PM] =[BSID]= 1LT Beerdude26: Unfortunately, the inference does not support relations between input and output, so we can't say that the output must also be a permutation of the input
+[6:06:33 PM] : ][CW][ : Brutos: is that a limitation of the theory or of the tools?
+[6:06:38 PM] =[BSID]= 1LT Beerdude26: (Unless we transform our fold into paramorfism)
+[6:06:58 PM] =[BSID]= 1LT Beerdude26: Of the theory, the inferencing algorithm is very simple
+[6:07:15 PM] =[BSID]= 1LT Beerdude26: And cannot handle dependent functions
+[6:07:24 PM] =[BSID]= 1LT Beerdude26: That's why people look to refinement types, because they do support all this
+[6:07:37 PM] =[BSID]= 1LT Beerdude26: However, you need a constraint solver, some other fancy stuff
+[6:07:44 PM] =[BSID]= 1LT Beerdude26: Proving it all is fucking hard
+[6:07:52 PM] =[BSID]= 1LT Beerdude26: While proving this is pretty easy
+[6:08:00 PM] =[BSID]= 1LT Beerdude26: At the moment, I'm doing code generation
+[6:08:06 PM] : ][CW][ : Brutos: sounds like aweful big oh
+[6:08:23 PM] =[BSID]= 1LT Beerdude26: Yeah it's probably pretty slow, too
+[6:09:05 PM] =[BSID]= 1LT Beerdude26: The code generation I'm doing just takes Helium code (subset of Haskell 98 spec) and transforms it so it is fully contracted
+[6:09:47 PM] =[BSID]= 1LT Beerdude26: At the moment, it's just generic contracts that always resolve to "true", so in other words the contracts don't impose any restraints whatsoever
+[6:10:21 PM] =[BSID]= 1LT Beerdude26: However, I can then inject substitutions into the code generation bit
+[6:10:37 PM] =[BSID]= 1LT Beerdude26: So then suddenly you have specific contracts that are being passed around
+[6:11:34 PM] =[BSID]= 1LT Beerdude26: I think I'll copy this convo in my thesis text, it's a nice overview of what I have and have not done lol
+
 \tableofcontents
 
 \section{Introduction}
@@ -188,6 +239,9 @@ After processing the results, we will present our findings in a presentation, as
 
 \todo{Explain modifications to typed-contracts}
 \todo{Explain how we can't use QuickCheck properties that are predefined for many Ask-Elle exercises. It had to do with how QuickCheck properties may require dependent contracts if it takes more than a single input.}
+
+\subsection{Using Ask-Elle's QuickCheck properties}
+
 
 \section{Code Generation}
 
