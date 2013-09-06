@@ -9,20 +9,21 @@ include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
 
 {
 
-removeFreeLambdas :: String -> String -> IO ()
+removeFreeLambdas :: String -> String -> ModuleR
 removeFreeLambdas code pointOfEntry = 
  let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
- in print (removeFreeLambdas_Syn_ModuleR wrapModule)
+ in removeFreeLambdas_Syn_ModuleR wrapModule
 
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
- let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
-     astCode = compileWithRanges code
+ let noFreeLambdaCode = show $ removeFreeLambdas code pointOfEntry
+     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False noFreeLambdaCode
+     astCode = compileWithRanges noFreeLambdaCode
      semModule = sem_ModuleR astCode
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
@@ -279,6 +280,8 @@ sem ExprR
                                                 ,  text "contract:"              BOX.<+> pprint @loc.contractAsExprR
                                                 ,  text "is argument:"           BOX.<+> text (show @loc.isArgument)
                                                 ,  text "is fully applied:"      BOX.<+> text (show @loc.isFullyApplied)
+                                                ,  text "is parameter:"          BOX.<+> text (show @lhs.functionIsParameter)
+                                                ,  text "available types:"       BOX.<+> text (show @lhs.topLevelTypes)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction

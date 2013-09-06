@@ -90,6 +90,12 @@ getVar (IdentR x _)    = x
 getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
 
+-- If we need more, we should turn this into a class
+getRange :: NameR -> RangeR
+getRange (IdentR _ r)    = r
+getRange (OperatorR _ r) = r
+getRange (SpecialR _ r)  = r
+
 lookupHeliumTypeMaybe :: NameR -> IE.TypeEnvironment -> Maybe S.TpScheme
 lookupHeliumTypeMaybe nm env = DM.lookup (toHeliumWithRanges nm) env
 
@@ -276,10 +282,15 @@ expandHigherOrderParams :: String -> (Int,Int,String) -> ExprR
 expandHigherOrderParams funcName (listpos,arity,pat) = 
  let v = mkVar pat
      pats = take arity [x : show y | y <- [0..10], x <- ['a'..'z']  ]
-     lam = mkParens $ mkLambda (map mkPVar pats) apps
-     apps = insertApps "appParam" base $ reverse $ zip (map (mkLit.mkStrLit) $ appParamText (take arity [1..]) ) (map mkVar pats)
+     tuplepats = map (\pat -> mkPTuple [mkPVar pat, mkPVar $ "pos" ++ pat]) pats
+     lam = mkParens $ mkLambda tuplepats apps
+     apps = insertApps "appParam" base $ reverse $ zip (map appParamText (take arity [1..]) ) (map mkVar pats)
      base = v
-     appParamText = map (\i -> showPos i ++ " argument of parameter " ++ show listpos ++ " of " ++ funcName)
+     appParamText i = mkAppParens [mkVar "concat", mkList [startText i, lookupStr i, endText i, generatePosStr i] ]
+     generatePosStr i = mkVar $ "pos" ++ (pats !! (i-1))
+     endText i = (mkLit.mkStrLit) ", namely "
+     startText i =  (mkLit.mkStrLit) $ "The " ++ showPos i ++ " argument of the function "
+     lookupStr i = mkInfixApp (mkVar "argstrings") (VarR (mkOp "!!") noRangeR) (mkLit $ mkIntLit (i-1))
  in if arity > 0
      then lam
      else v
@@ -318,8 +329,11 @@ indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
 
 -- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id
-determineUpdateFunction :: ExprR -> Bool -> Bool -> Bool -> Bool -> Bool -> Int
-determineUpdateFunction expr isArg isFunc isFullyApplied isArgToFullyApplied functionIsParameter
+determineUpdateFunction :: ExprR -> Bool -> Bool -> Bool -> Bool -> Bool -> Bool -> Int
+determineUpdateFunction expr isArg isFunc isFullyApplied isArgToFullyApplied functionIsParameter isLocalParameter
+ | t [isArg, isFunc, isLocalParameter, functionIsParameter] = 4
+ | t [isArg, isFunc, isLocalParameter, not functionIsParameter] = 2
+ | t [isFunc, isLocalParameter] = 4
  | t [isFunc, functionIsParameter] = 4
  | t [isArg, functionIsParameter] = 4
  | t [isArg,isFunc,not isFullyApplied] = 1
@@ -351,8 +365,14 @@ insertApps appType = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar appType,xs,
 mkIdent :: String -> NameR
 mkIdent x = IdentR x noRangeR
 
+mkOp :: String -> NameR
+mkOp x = OperatorR x noRangeR
+
 mkParens :: ExprR -> ExprR
 mkParens e = ParenR e noRangeR
+
+mkList :: ListExprR -> ExprR
+mkList xs = ListR xs noRangeR
 
 mkFunbind :: NameR -> PatsR -> RhsR -> FunBindR
 mkFunbind nm pats rhs = FunBindR Nothing nm pats rhs noRangeR
@@ -374,6 +394,9 @@ mkPTuple ps = PTupleR ps noRangeR
 
 mkApp :: ExprsR -> ExprR
 mkApp (e:es) = AppR e es noRangeR
+
+mkInfixApp :: ExprR -> ExprR -> ExprR -> ExprR
+mkInfixApp l m r = InfixAppR (JustExprR l) m (JustExprR r) noRangeR
 
 mkAppParens :: ExprsR -> ExprR
 mkAppParens = mkParens.mkApp

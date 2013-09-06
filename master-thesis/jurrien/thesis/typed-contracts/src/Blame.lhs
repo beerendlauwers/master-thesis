@@ -3,16 +3,12 @@
 > module Blame (module Loc, Locs, blame, blame', makeloc, (+>))
 > where
 > import Loc
-
-> interleave :: a -> [a] -> [a]
-> interleave _    []   = []
-> interleave _    [a]  = [a]
-> interleave sep  (a1 : a2 : as) = a1 : sep : interleave sep (a2 : as)
+> import Data.List (intersperse)
 
 > cause       ::  [Loc] -> String
 > cause []    =   ""
 > cause locs  =   " (the violation was caused by the expression(s) " 
->             ++  concat (interleave ", " (map show locs)) ++ ")"
+>             ++  concat (intersperse ", " (map show locs)) ++ ")"
 
 %endif
 
@@ -33,12 +29,12 @@ argument.
 >
 > blame'        ::  Locs -> String -> String
 > blame' locs fi =   
->  "A part of your code, or a supplied argument to a function, does not fullfil a required property. " ++ 
+>  "\nA part of your code, or a supplied argument to a function, does not fullfil a required property. This occurred at " ++ 
 >  show (head (pos locs))
 >               ++  (  case tail (pos locs) of
 >                       []     ->  ": "
->                       locs'  ->  ", in the following higher-order parameter(s): " ++
->                                  concat (interleave ", " (map show locs')) ++ ": " )
+>                       locs'  ->  ", in the following higher-order parameter(s):\n\n" ++
+>                                  concat (intersperse ", \n" (map (\s -> "--> " ++ show s) locs')) ++ ",\n" )
 >               ++ fi
 
 >
@@ -47,7 +43,7 @@ argument.
 >             ++  (  case tail (pos locs) of
 >                    []     ->  "."
 >                    locs'  ->  " (the violation was caused by the expression(s) " ++
->                               concat (interleave ", " (map show locs')) ++ ")." )
+>                               concat (intersperse ", " (map show locs')) ++ ")." )
 >
 > makeloc      ::  Loc -> Locs
 > makeloc loc  =   NegPos [] [loc]

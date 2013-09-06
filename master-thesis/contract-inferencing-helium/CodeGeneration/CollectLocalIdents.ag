@@ -52,23 +52,23 @@ sem DeclR
   | DPatBindR
       rhs.localIdentifiers      = @loc.localIdentifiers
       loc.localIdentifiers      = if not @lhs.isTopLevel 
-                                   then @pat.localPatterns ++ @lhs.localIdentifiers
+                                   then DL.union @pat.localPatterns @lhs.localIdentifiers
                                    else @lhs.localIdentifiers
 
 sem AltR
   | AltR
       rhs.localIdentifiers      = @loc.localIdentifiers
-      loc.localIdentifiers      = @pat.localPatterns ++ @lhs.localIdentifiers
+      loc.localIdentifiers      = DL.union @pat.localPatterns @lhs.localIdentifiers
 
 sem ExprR
   | LambdaR
       expr.localIdentifiers     = @loc.localIdentifiers
-      loc.localIdentifiers      = @pats.localPatterns ++ @lhs.localIdentifiers
+      loc.localIdentifiers      = DL.union @pats.localPatterns @lhs.localIdentifiers
 
 sem FunBindR
   | FunBindR
       rhs.localIdentifiers      = @loc.localIdentifiers
-      loc.localIdentifiers      = @pats.localPatterns ++ @lhs.localIdentifiers
+      loc.localIdentifiers      = DL.union @pats.localPatterns @lhs.localIdentifiers
 
 -- Fetch locally-bound stuff from patterns.
 -- Most of this is auto-generated.
