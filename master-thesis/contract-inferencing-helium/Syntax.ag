@@ -22,9 +22,9 @@ MODULE {Domain.FP.Syntax}{}
 
 {
 import Control.Monad
-import Common.Environment
-import Common.Rewriting.Term
-import Common.View
+import Ideas.Common.Environment
+import Ideas.Common.Rewriting.Term
+import Ideas.Common.View
 import Data.Char
 import Data.Data
 import Data.Generics.Uniplate.Direct

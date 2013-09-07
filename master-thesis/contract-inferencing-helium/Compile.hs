@@ -16,7 +16,7 @@ module Domain.FP.Compile
      compile, safeCompile, compilePrelude
    ) where
 
-import Common.Library
+import Ideas.Common.Library
 import qualified Domain.FP.Helium as H
 import Domain.FP.Syntax
 import Domain.FP.Views

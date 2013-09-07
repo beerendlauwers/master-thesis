@@ -23,7 +23,7 @@ module Domain.FP.Views (
    ,  Cast
    ) where
 
-import Common.Library hiding (from, to)
+import Ideas.Common.Library hiding (from, to)
 import Data.Char (readLitChar)
 import Domain.FP.Helium hiding (Module, Body, Name, Literal, MaybeName)
 import Domain.FP.HeliumInstances ()
