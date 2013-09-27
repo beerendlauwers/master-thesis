@@ -171,13 +171,6 @@ sem DeclR
       loc  .allFunctions                = @funbinds.functionAppSelf ++ @loc.generatedFunctions
       loc  .generatedFunctions          = concatMap DJ.catMaybes [@funbinds.finalFunction, @funbinds.contractedFunction, @funbinds.appFunction]
 
-{-
-sem RhsR
-   | RhsR
-      lhs  .functionAppSelf             = RhsR @expr.functionAppSelf @loc.newWhereClauseWithAll @range.copy
-      loc  .newWhereClauseWithAll       = @where.functionAppSelf ++ [mkDFunbinds $ DJ.catMaybes [@lhs.contractedFunction, @lhs.appFunction]]
--}
-
 sem ExprR
    | VarR
       loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
@@ -242,114 +235,19 @@ sem ExprR
                                                 5 -> @loc.updateAsCtrtExtraInfo
                                                 6 -> @loc.updateAsIdWithPos
 
-      loc  .isArgument                  = @lhs.isArgument -- For debug purposes
-      loc  .isFullyApplied              = @lhs.isFullyApplied -- For debug purposes
-
-{-
-attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR
-   -- Transformations that transforms all function applications from f to __app_f or __contracted_f (whichever applies).
-   syn varAsApp                                                 :: self
-   syn varAsCtrt                                                :: self
-   syn varAsExtraInfo                                           :: self
-   syn varAsId                                                  :: self
-
-sem ExprR
-   | VarR
-      lhs  .varAsId                     = @loc.copy
-
-      loc  .updatedVarToCtrt            = VarR (prefixcontractedFunction @name.copy) @range.copy
-      loc  .varContract                 = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
-      loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract )
-      loc  .posInfoAsLiterals           = posDataAsLiterals $ extractPositionData @range.copy
-      lhs  .varAsCtrt                   = mkAppParens [ @loc.updatedVarToCtrt, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
-
-      loc  .updatedVarToApp             = VarR (prefixAppFunction @name.copy) @range.copy
-      lhs  .varAsApp                    = mkAppParens [ @loc.updatedVarToCtrt, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
-
-      lhs  .varAsExtraInfo              = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.copy ]
-
-sem ExprR
-  | AppR
-
-      -- If the function being applied is a parameter, it means it has already been contracted, 
-      -- so we don't need to prefix it with anything.
-      loc  .isFunctionVarR              = isVarR @fun.copy
-      loc  .functionAsVarR              = case @fun.copy of
-                                           (VarR s r) -> Just $ VarR s r
-                                           otherwise  -> Nothing                
-      loc  .functionIsParameter         = DJ.isJust $ DL.lookup @loc.functionAsVarR @lhs.localIdentifiers
-
-      loc  .tranformedApp               = @loc.copy
--}
-
-{-
-sem ExprR
-   | VarR
-      loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
-      loc  .arity                       = S.arityOfTpScheme @loc.localType
-      loc  .identifierIsFunction        = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
-      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc
-
-
-
-      -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
-      -- OR PASS AROUND SUBSTITUTIONS 
-      loc  .varContract            = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
-      loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
-
-      loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id)]
-      loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
-
-      loc  .updateAsAppOrContracted     = mkAppParens [ @loc.updatedVar, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
-
-      loc  .posInfo                     = extractPositionData @range.copy
-      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
-      loc  .updateAsIdExtraInfo         = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar  ]
-
-      loc  .updateAsId                  = @loc.updatedVar
-
-
-      
-      lhs  .functionAppSelf             = case @loc.updateType of
-                                                1 -> @loc.updateAsAppOrContracted
-                                                2 -> @loc.updateAsIdExtraInfo
-                                                3 -> @loc.updateAsAppOrContracted
-                                                4 -> @loc.updateAsId
-
-      loc  .isArgument                  = @lhs.isArgument -- For debug purposes
-      loc  .isFullyApplied              = @lhs.isFullyApplied -- For debug purposes
--}
-
 attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR
-   inh isArgument                                               :: {Bool}
-   inh isFullyApplied                                           :: {Bool}
-   inh isArgumentToFullyAppliedFunc                             :: {Bool}
-   inh functionIsParameter                                      :: {Bool}
-   syn functionIsParameter                                      :: {Bool}
    inh isBaseFunction                                           :: {Bool} -- Is the most deeply nested function being applied
 
 sem MaybeExprR
    | JustExprR
       expr.isAppliedToLocalFunction     = False
-      expr.isArgument                   = False
-      expr.isFullyApplied               = False
-      expr.isArgumentToFullyAppliedFunc = False
-      expr.functionIsParameter          = False
       expr.isBaseFunction               = True
 sem RhsR
    | RhsR
       expr.isAppliedToLocalFunction     = False
-      expr.isArgument                   = False
-      expr.isFullyApplied               = False
-      expr.isArgumentToFullyAppliedFunc = False
-      expr.functionIsParameter          = False
       expr.isBaseFunction               = True
    | GRhsR
       gexprs.isAppliedToLocalFunction   = False
-      gexprs.isArgument                 = False
-      gexprs.isFullyApplied             = False
-      gexprs.isArgumentToFullyAppliedFunc = False
-      gexprs.functionIsParameter        = False
       gexprs.isBaseFunction             = True
 
 sem ExprR
@@ -361,25 +259,6 @@ sem ExprR
       -- Are the arguments being applied to a local identifier?
       args .isAppliedToLocalFunction    = @fun.isLocalParameter
 
-      -- Inform each argument that they are, in fact, an argument.
-      
-      args .isArgument                  = True
-      fun  .isArgument                  = False
-      fun  .isFullyApplied              = @loc.isFullyApplied
-      args .isFullyApplied              = False
-      args .isArgumentToFullyAppliedFunc = @loc.isFullyApplied
-      loc  .isFullyApplied              = @loc.arity == 0
-      loc  .errorMsgFunctionType        = "Could not fetch function type of expression " ++ show @loc.copy
-      loc  .arity                       = S.arityOfTpScheme $ fromJustMsg @loc.errorMsgFunctionType @loc.functionType
-
-      loc  .functionAsVarR              = case @fun.copy of
-                                           (VarR s r) -> Just (getVar s)
-                                           otherwise  -> Nothing                
-      loc  .functionIsParameter         = maybe False (\a -> DL.elem a @lhs.localIdentifiers) @loc.functionAsVarR
-      lhs  .functionIsParameter         = @loc.functionIsParameter
-      args .functionIsParameter         = @fun.functionIsParameter || @loc.functionIsParameter
-
-      loc  .isArgument                  = @lhs.isArgument -- For debug purposes
 
 attr Contract
    -- Converts a Contract datatype into an ExprR datatype ready for use in the AST.
@@ -393,109 +272,6 @@ sem Contract
   |  CVar        lhs.makeContract = mkVar (replaceTrueContract @v) -- TODO: Default contract etc.
   |  CQuant      lhs.makeContract = @cs.makeContract
   |  CTuple      lhs.makeContract = error $ "The following CTuple got into contract inferencing: " ++ show @li
-
-
-{-
--- Identify all function applications, convert from f to __app_f.
-attr ExprR
-   syn appedApplication                                         :: ExprR
-
-sem ExprR
-   | AppR
-      -- Example: f x y z becomes __app_f ctrt posinfo (posx,x) (posy,y) (posz,z)
-      lhs  .appedApplication            = @loc.appedApplication
-
-      -- Construct new expression.
-      loc  .appedApplication            = AppR @fun.functionAppSelf @args.functionAppSelf @self.range
--}
-
-{-
-
-      -- Example: f x y z becomes __app_f ctrt posinfo (posx,x) (posy,y) (posz,z)
-      lhs  .appedApplication            = @loc.appedApplication
-
-      -- Arguments --
-      loc  .rangeData                   = @exprs.rangeData
-      loc  .arguments                   = @exprs.copy
-
-      -- Make tuples of known arguments with position information.
-      loc  .knownArgs                   = map (\(pos,arg) -> mkTuple [arg,pos]) $ zip @loc.arguments (posDataAsLiterals $ extractPositionData @loc.rangeData)
-
-      -- Position information of the function application itself.
-      loc  .posInfo                     = extractPositionData @range.copy
-      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
-
-      -- TODO: Is this still necessary?
-      -- Check type of function that is being applied, perhaps it's partial.
-      -- In that case, we'll have to make it a lambda function to capture the rest of the arguments.
-      loc  .arity                       = S.arityOfTpScheme @loc.functionType
-      loc  .functionType                = fromJustMsg @loc.errorMsgFunctionType @fun.functionType
-      loc  .errorMsgFunctionType        = "Could not fetch function type of expression " ++ show @loc.copy
-      loc  .isFullyApplied              = @loc.arity > 1
-
-      -- Ensure the function being applied is replaced with its __app version.
-      loc  .functionApped               = @fun.functionApp
-
-      -- Replace arguments that are functions with their __contracted version, as higher-order functions expect
-      -- contracted functions.
-      loc  .argumentTypes               = @exprs.functionType
-      loc  .argumentAsApp               = @exprs.functionApp
-      loc  .argumentAsCtrt              = @exprs.functionCtrt
-      loc  .replacedArguments           = replaceArguments $ DL.zip4 @exprs.copy @loc.argumentTypes @loc.argumentAsApp @loc.argumentAsCtrt
-
-      -}
-
-      -- Construct new expression.
-      --loc  .appedApplication            = 
-
--- Identify all function applications, convert from f x to __app_f x, even if the f is nested.
--- (Lambdas will have been given a name and put in the where-clause by now.)
-
-{-
-attr ExprR
-   syn functionApp                                              :: {Maybe ExprR}
-sem ExprR
-   | AppR
-      lhs  .functionApp                 = Just $ mkApp [ @fun.functionApp : @args.copy ]
-   | VarR
-      lhs  .functionApp                 = Just $ VarR (prefixAppFunction @name.copy) @range.copy
-   | * - AppR VarR
-      lhs  .functionApp                 = Nothing
-
-attr ExprsR
-   syn functionApp      use {(++)} {[]}                        :: {Maybe ExprsR}
-sem ExprsR
-   | Cons
-      lhs  .functionApp                 = @hd.functionApp : @tl.functionApp
-   | Nil
-      lhs  .functionApp                 = []
-
--- Similar to above, but now convert f x to __contracted_f x.
-attr ExprR
-   syn functionCtrt                                            :: {Maybe ExprR}
-sem ExprR
-   | AppR
-      lhs  .functionCtrt                = Just $ mkApp [ @fun.functionCtrt : @args.copy ]
-   | VarR
-      lhs  .functionCtrt                = Just $ VarR (prefixcontractedFunction @name.copy) @range.copy
-   | * - AppR VarR
-      lhs  .functionCtrt                = Nothing
-
-attr ExprsR
-   syn functionCtrt      use {(++)} {[]}                        :: {Maybe ExprsR}
-sem ExprsR
-   | Cons
-      lhs  .functionCtrt                = @hd.functionCtrt : @tl.functionCtrt
-   | Nil
-      lhs  .functionCtrt                = []
--}
-
--- Collect range information
-attr ExprR
-   syn rangeData        use {(++)} {[]}                         :: {[RangeR]}
-sem ExprR
-   | *
-     lhs  .rangeData                    = [@range.copy]
 
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
@@ -522,141 +298,6 @@ sem RhsR
      loc  .newWhereClause               = DFunBindsR @gexprs.allReplacedLambdas noRangeR : @where.removeFreeLambdas
      loc  .updatedRhsR                  = GRhsR @gexprs.removeFreeLambdas @loc.newWhereClause @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
-
-
-{-
-
-attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
-  chn varcnt   :: {Int}
-
-attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
-   syn copy                                             :: self
-
-  -- We get this from the Helium compiler.
-  inh topLevelTypes                                     :: {ImportEnvironment}
-
-  -- Identifiers that shadow the top-level identifiers.
-  inh localIdentifiers                                  :: {[NameR]}
-
-  -- The 'main' function, the top-level point of entry. We'll start contract generation here.
-  inh entryFunction                                     :: {String}
-
-  -- We induce a contract from the type.
-  inh contract                                          :: {Contract}
-
-  -- Arity of parameters of a function. Example: foldr = [2,0,0]
-  inh parameterArity                                    :: {ParameterArityEnvironment}
-
-  -- Arity of function itself. Example: foldr = 3
-  inh identifierArity                                   :: {FunctionArityEnvironment}
-
-attr ExprR
-  -- Function with contract applied to it.
-  -- Used when passing a contracted function to higher-order function.
-  -- Example: __ctrt_insert = __contracted_insert CONTRACT
-  syn functionWithContract                              :: FunBindR
-
-  -- The function identifier in contract wrappers.
-  -- Used in the non-contracted function call if it's not part of a higher-order function.
-  -- Example: __contracted_insert ctrt = assert "insert" ctrt funs
-  --           where funs = fun (\x -> fun (\xs -> insert x xs))
-  syn contractedFunction                                :: FunBindR
-
-  -- It's possible a parameter is higher-order. In that case, we need to generate a
-  -- higher-order version of it.
-  syn higherOrderParameter                             :: [FunBindR]
-
-  -- The applied contracted function identifier.
-  -- Used to replace the non-contracted function call if it's not part of a higher-order function.
-  -- Example: __app_insert (posx,x) (posxs,xs) = app (app __ctrt_insert posx x) posxs xs
-  syn appliedContractedFunction                         :: FunBindR
-
-
-
-
-attr ModuleR BodyR DeclR ExprR PatR AltR FunBindR GuardedExprR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR
-  -- The contracted version of the code.
-  syn contractedCode                                    :: self
-
--- TODO: We can add this after generating the contracted code?
-{-
-sem DeclR
-   | DPatBindR
-      -- We need to replace the original point of entry with a call to the contracted version.
-      -- That's what we do here.
-      lhs  .contractedCode      = case @pat.copy of
-                                   (PVarR (IdentR x ri) rv) | x == @lhs.entryFunction -> DPatBindR (PVarR (IdentR x ri) rv) @loc.rhs @range.copy
-                                   otherwise -> @self.copy
-      loc  .rhs                 = RhsR @lhs.functionWithContract [] noRange
--}
-
--- TODO: Change functionWithContract, etc... to MaybeFunBindR and not FunBindR.
--- TODO: We need to take into account anonymous functions as well. We could contract those, too.
--- TODO: This will get generated for each and every function application, so there may be doubles. Perhaps an env?
-sem ExprR
-  | AppR
-      -- TODO: Would this be necessary or even wanted? What if insert is called twice, like in (insert x xs,insert y ys) ?
-      -- Example: __ctrt_insert = __contracted_insert CONTRACT
-      lhs  .functionWithContract        = FunBindR Nothing @loc.name [] @loc.rhs noRange
-
-      -- LHS
-      -- (IdentR "insert" _) goes in, (IdentR "__ctrt_insert" _) goes out
-      loc  .name                        = (IdentR (prefixFunctionWithContract @loc.functionIdentifier) noRange)
-      loc  .isFunction                  = elem @loc.functionIdentifier @lhs.localIdentifiers || isInToplevel @loc.functionIdentifier
-      loc  .functionIdentifier          = case @expr.copy of
-                                           (VarR x _) -> x
-                                           otherwise -> IdentR "_" noRange
-
-      -- RHS --
-      loc  .rhs                         = RhsR @loc.app [] noRange
-      loc  .app                         = AppR @loc.rhsAppIdent [@loc.contract] noRange
-      loc  .rhsAppIdent                 = VarR (prefixcontractedFunction @loc.functionIdentifier) noRange
-      loc  .contract                    = @lhs.contract
-
-      -- Example: __contracted_insert ctrt = assert "insert" ctrt funs
-      --           where funs = fun (\x -> fun (\xs -> insert x xs))
-      lhs  .contractedFunction          = FunBindR Nothing @loc.contractedName [makePVar "ctrt"] @loc.contractedRhs noRange
-
-      -- LHS --
-      -- (IdentR "insert" _) goes in, (IdentR "__contracted_insert" _) goes out
-      loc  .contractedName              = (IdentR (prefixcontractedFunction @loc.functionIdentifier) noRange)
-
-      -- RHS --
-      loc  .contractedRhs               = RhsR @loc.assertApp [ makeVar "assert" 
-                                                              , LStringR @loc.functionIdent noRange
-                                                              , makeVar "ctrt"
-                                                              , makeVar "funs" ]
-      loc  .functionIdent               = (\(IdentR x _) -> x) @loc.functionIdentifier
-      loc  .whereClause                 = DFunBindsR [FunBindR Nothing (IdentR "funs" noRange) [] @loc.whereRhs noRange] noRange
-      loc  .whereRhs                    = RhsR (makeFuns @loc.funsPatterns @loc.funsBase) [] noRange
-      loc  .funsPatterns                = [ "__x" ++ @loc.num ++ show x | [1..@loc.parameterArity] ]
-      loc  .arityEnv                    = calculateArity @lhs.localType -- TODO: Generate localType. -- TODO: Implement calculateArity.
-      loc  .funsBase                    = AppR (makeVar @loc.functionIdent) (map makeVar @loc.funsPatterns) noRange
-
-      loc  .num     ::  uniqueref varcnt
-
--}
-
-
-
-{-
--- Higher-order param generation
-sem ExprR
-  | AppR
-      -- First, get the types.
-      loc  .onlyTypes                   = (\(IE.ImportEnvironment _ _ typeEnv _ _ _) -> typeEnv) @lhs.topLevelTypes
-
-       -- Then, generate arity of these types.
-      loc  .arityEnv                    = calculateArity @loc.onlyTypes
-      
-      -- Get the type of the function that is being applied.
-      loc  .functionType                = case @fun.copy of
-                                           (VarR x _) -> maybe (error $ "Couldn't find this function in env: " ++ show x) id (DM.lookup x @loc.onlyTypes)
-                                           x          -> error $ "Tried to get function identifier from this expression: " ++ show x -- TODO: Might want to get the actual type for this thing if it's not a simple VarR.
-
-      -- Look up 
-      lhs  .functionWithContract        = FunBindR Nothing @loc.name [] @loc.rhs noRange
--}
 
 {
 -- Given a list of patterns and a base value, generate a chain of 'fun' applications.

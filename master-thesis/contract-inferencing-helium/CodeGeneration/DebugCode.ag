@@ -257,8 +257,6 @@ sem ExprR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AppR"
                                                 ,  text "type:"                 BOX.<+> text (show @loc.functionType)
-                                                ,  text "is argument:"          BOX.<+> text (show @loc.isArgument)
-                                                ,  text "is fully applied:"     BOX.<+> text (show @loc.isFullyApplied)
                                                 ,  text "original code:"        BOX.<+> pprint @loc.copy
                                                 ,  text "modified version:"      BOX.<+> text (show @loc.functionAppSelf)
                                                 ,  nest 2 @fun.debug
