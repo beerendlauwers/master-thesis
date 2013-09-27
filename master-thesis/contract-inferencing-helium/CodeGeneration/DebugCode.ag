@@ -258,6 +258,7 @@ sem ExprR
                                                 ,  text "type:"                 BOX.<+> text (show @loc.functionType)
                                                 ,  text "is argument:"          BOX.<+> text (show @loc.isArgument)
                                                 ,  text "is fully applied:"     BOX.<+> text (show @loc.isFullyApplied)
+                                                ,  text "original code:"        BOX.<+> pprint @loc.copy
                                                 ,  text "modified version:"      BOX.<+> text (show @loc.functionAppSelf)
                                                 ,  nest 2 @fun.debug
                                                 ,  nest 2 @args.debug
@@ -278,9 +279,11 @@ sem ExprR
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "type:"                  BOX.<+> text (show @loc.functionType) BOX.<+> text ("(Arity: " ++ show @loc.arity ++ ")")
                                                 ,  text "contract:"              BOX.<+> pprint @loc.contractAsExprR
-                                                ,  text "is argument:"           BOX.<+> text (show @loc.isArgument)
-                                                ,  text "is fully applied:"      BOX.<+> text (show @loc.isFullyApplied)
-                                                ,  text "is parameter:"          BOX.<+> text (show @lhs.functionIsParameter)
+                                                ,  text "is base function:"      BOX.<+> text (show @lhs.isBaseFunction)
+                                                ,  text "is applied to local function:"           BOX.<+> text (show @lhs.isAppliedToLocalFunction)
+                                                ,  text "is a local identifier:"      BOX.<+> text (show @loc.isLocalParameter)
+                                                ,  text "is a function identifier:"          BOX.<+> text (show @loc.isFunction)
+                                                ,  text "update type:"           BOX.<+> text (show @loc.updateType)
                                                 ,  text "available types:"       BOX.<+> text (show @lhs.topLevelTypes)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName

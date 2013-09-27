@@ -278,18 +278,22 @@ splitTupleContract x@(CQuant qv cs) =
 splitTupleContract (CTuple (x:xs)) = (x, CTuple xs)
 splitTupleContract x = error $ "Tried to apply splitTupleContract to the following contract: " ++ show x
 
-expandHigherOrderParams :: String -> (Int,Int,String) -> ExprR
-expandHigherOrderParams funcName (listpos,arity,pat) = 
+expandHigherOrderParams :: String -> String -> (Int,Int,String) -> ExprR
+expandHigherOrderParams funcName funcText (listpos,arity,pat) = 
  let v = mkVar pat
      pats = take arity [x : show y | y <- [0..10], x <- ['a'..'z']  ]
      tuplepats = map (\pat -> mkPTuple [mkPVar pat, mkPVar $ "pos" ++ pat]) pats
      lam = mkParens $ mkLambda tuplepats apps
      apps = insertApps "appParam" base $ reverse $ zip (map appParamText (take arity [1..]) ) (map mkVar pats)
      base = v
-     appParamText i = mkAppParens [mkVar "concat", mkList [startText i, lookupStr i, endText i, generatePosStr i] ]
+
+     -- Generation of the error text for higher-order parameters.
+     appParamText i = mkAppParens [mkVar "concat", mkList [parentText, positionData, startText i, lookupStr i, endText i, generatePosStr i] ]
      generatePosStr i = mkVar $ "pos" ++ (pats !! (i-1))
+     parentText = (mkLit.mkStrLit) (funcText ++ " ")
+     positionData = mkAppParens [mkVar "generatePositionData", mkVar "posinfo"]
      endText i = (mkLit.mkStrLit) ", namely "
-     startText i =  (mkLit.mkStrLit) $ "The " ++ showPos i ++ " argument of the function "
+     startText i =  (mkLit.mkStrLit) $ ". The " ++ showPos i ++ " argument of the function "
      lookupStr i = mkInfixApp (mkVar "argstrings") (VarR (mkOp "!!") noRangeR) (mkLit $ mkIntLit (i-1))
  in if arity > 0
      then lam
@@ -311,7 +315,7 @@ extractPositionData (RangeR (PositionR f l c) _) = Just (l,c)
 extractPositionData _ = Nothing
 
 generatePositionText :: Bool -> String -> String
-generatePositionText isHO name = "At the application of the" ++ isHOText isHO ++ "function '" ++ name ++ "'"
+generatePositionText isHO name = "the application of the" ++ isHOText isHO ++ "function '" ++ name ++ "'"
 
 generatePositionData :: Maybe (Int,Int) -> String
 generatePositionData (Just (l,c)) = "at line number " ++ show l ++ ", column number " ++ show c 
