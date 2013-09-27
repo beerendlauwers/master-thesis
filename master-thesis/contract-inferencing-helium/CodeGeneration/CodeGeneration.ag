@@ -33,7 +33,7 @@ import qualified Data.List as DL
 import qualified Control.Monad as CM
 }
 
-attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
    syn copy                                                     :: self
    chn varcnt                                                   :: {Int}
 
@@ -147,20 +147,6 @@ attr ExprR
    -- We use this information to determine what kind of transformation is necessary.
    syn isLocalParameter                                         :: {Bool}
 
-attr ExprR ExprsR GuardedExprsR ListExprR TupleExprR
-   -- (AppR) We fetch the value of @fun.isLocalParameter and pass this down to its arguments.
-   inh isAppliedToLocalFunction                                 :: {Bool}
-
-sem ExprR
-   | VarR
-      lhs  .isLocalParameter            = @loc.isLocalParameter
-      loc  .isLocalParameter            = DL.elem (getVar @name.copy) @lhs.localIdentifiers
-   | AppR
-      lhs  .isLocalParameter            = @loc.isLocalParameter
-      loc  .isLocalParameter            = @fun.isLocalParameter
-   | HoleR TupleR ListR ConR
-      lhs  .isLocalParameter            = False
-
 attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR BodyR
    -- A transformation that transforms all function applications from f to __app_f or __contracted_f (whichever applies).
    syn functionAppSelf                                            :: self
@@ -235,7 +221,21 @@ sem ExprR
                                                 5 -> @loc.updateAsCtrtExtraInfo
                                                 6 -> @loc.updateAsIdWithPos
 
-attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR
+attr ExprR ExprsR GuardedExprsR ListExprR TupleExprR MaybeConst
+   -- (AppR) We fetch the value of @fun.isLocalParameter and pass this down to its arguments.
+   inh isAppliedToLocalFunction                                 :: {Bool}
+
+sem ExprR
+   | VarR
+      lhs  .isLocalParameter            = @loc.isLocalParameter
+      loc  .isLocalParameter            = DL.elem (getVar @name.copy) @lhs.localIdentifiers
+   | AppR
+      lhs  .isLocalParameter            = @loc.isLocalParameter
+      loc  .isLocalParameter            = @fun.isLocalParameter
+   | HoleR TupleR ListR ConR LitR
+      lhs  .isLocalParameter            = False
+
+attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR MaybeConst
    inh isBaseFunction                                           :: {Bool} -- Is the most deeply nested function being applied
 
 sem MaybeExprR

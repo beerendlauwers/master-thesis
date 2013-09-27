@@ -54,7 +54,7 @@ sem RhsR
      where.freshContractVariable = @loc.freshContractVariable
      gexprs.freshContractVariable  = @where.freshContractVariable
 
-attr Contract MaybeConst
+attr Contract
   syn  copy                                             :: self
 
 -- Synthesize free type variables for contract substutions.

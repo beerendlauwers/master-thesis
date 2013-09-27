@@ -31,14 +31,14 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 
 -}
 
-attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
   -- We get this from the Helium compiler. These only contain our own types.
   inh topLevelTypes                                             :: {IE.ImportEnvironment}
 
   -- We need to be able to synthesize these for LambdaR.
   syn functionHeliumTypes   use {DM.union}    {DM.empty}        :: {IE.TypeEnvironment}
 
-attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR
+attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
   -- These are the prelude types, currently equals HIE.importEnvs
   inh preludeTypes                                              :: {[IE.ImportEnvironment]}
 
@@ -427,6 +427,7 @@ sem FunBindR
 sem AltR
   | AltR
      pat.tuplePatType           = Nothing
+     pat.patContract            = Nothing
 
 -- In a pattern binding, the Helium compiler automatically adds the patterns
 -- with their type to the type environment.
@@ -441,5 +442,6 @@ sem ExprR
   | LambdaR
      pats.tuplePatType          = Nothing
      pats.patType               = Nothing
+     pats.patContract           = Nothing
 
 
