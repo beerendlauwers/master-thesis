@@ -279,22 +279,23 @@ splitTupleContract (CTuple (x:xs)) = (x, CTuple xs)
 splitTupleContract x = error $ "Tried to apply splitTupleContract to the following contract: " ++ show x
 
 expandHigherOrderParams :: String -> String -> (Int,Int,String) -> ExprR
-expandHigherOrderParams funcName funcText (listpos,arity,pat) = 
+expandHigherOrderParams funcText funcName (listpos,arity,pat) = 
  let v = mkVar pat
      pats = take arity [x : show y | y <- [0..10], x <- ['a'..'z']  ]
-     tuplepats = map (\pat -> mkPTuple [mkPVar pat, mkPVar $ "pos" ++ pat]) pats
-     lam = mkParens $ mkLambda tuplepats apps
+     pvars = map mkPVar pats
+     lam = mkParens $ mkLambda pvars apps
      apps = insertApps "appParam" base $ reverse $ zip (map appParamText (take arity [1..]) ) (map mkVar pats)
      base = v
 
      -- Generation of the error text for higher-order parameters.
-     appParamText i = mkAppParens [mkVar "concat", mkList [parentText, positionData, startText i, lookupStr i, endText i, generatePosStr i] ]
-     generatePosStr i = mkVar $ "pos" ++ (pats !! (i-1))
+     appParamText i = mkAppParens [mkVar "concat", mkList [parentText, positionData, posText, startText i, endText i, generatePosStr i] ]
+     generatePosStr i = mkApp [mkVar "show", mkVar (pats !! (i-1))]
      parentText = (mkLit.mkStrLit) (funcText ++ " ")
      positionData = mkAppParens [mkVar "generatePositionData", mkVar "posinfo"]
+     posText = (mkLit.mkStrLit) $ ". " ++ funcName ++ " has a function as its " ++ showPos listpos ++ " argument."
      endText i = (mkLit.mkStrLit) ", namely "
-     startText i =  (mkLit.mkStrLit) $ ". The " ++ showPos i ++ " argument of the function "
-     lookupStr i = mkInfixApp (mkVar "argstrings") (VarR (mkOp "!!") noRangeR) (mkLit $ mkIntLit (i-1))
+     startText i =  (mkLit.mkStrLit) $ " The " ++ showPos i ++ " argument of that function"
+     --lookupStr i = mkApp [mkVar "show", v]
  in if arity > 0
      then lam
      else v
