@@ -3,6 +3,7 @@
 import Contract hiding (foldr, foldr', insert', f)
 import Data.List (permutations)
 import Data.Char (isAlpha, isAlphaNum)
+import TypeOf
 
 -- Gecontracteerde gegenereerde voorbeeldcode
 a5 = true
@@ -402,7 +403,7 @@ isNat_prop = PropInfo (\x -> let n = fromEnum x
 
 isSingleton = Prop (\xs -> length xs == 1)
 
-mkErrorMsg p text = {- posInfoText p ++ -} "does not fullfil the following property: " ++ text
+mkErrorMsg p text = {- posInfoText p ++ -} {-"it does not fullfil the following property: "++ -}  text
 
 posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " supplied argument of this function "
                         | pos == arity = "The result of this function "
@@ -417,31 +418,56 @@ showPos p | p == 1 = "first"
           | p == 6 = "sixth"
           | otherwise = show p
 
+silly_text f x = g n
+ where g x = f x
+       n = x
 
--- Hoe het moet zijn:
---  where funs = fun (\f -> fun (\x -> __final_a ctrt ((\(z,posz) -> (appParam f ("The first argument of the function " ++ head posinfo ++ " (defined at line number 1, column number 5), namely " ++ posz) z)),head posinfo) (x, head $ tail posinfo) ) )
 
--- Gegenereerde code test:
-__contracted_s ctrt posinfo argstrings =
- assertPos "At the application of the higher-order function 'g'" (generatePositionData posinfo) ctrt funs
-  where funs = (fun (\ __x21 -> (fun (\ __x22 -> __final_s ((\ (a0,posa0) -> (appParam __x21 (concat ["The first argument of the function ",argstrings !! 0,", namely ",posa0]) a0)),argstrings !! 0) (__x22,argstrings !! 1)))))
+__contracted_s ctrt posinfo = 
+ assertPos "At the application of the higher-order function 's'" (generatePositionData posinfo) ctrt funs
+  where funs = (fun (\ __x21 -> (fun (\ __x22 -> __final_s (\ a0 -> (appParam __x21 (concat ["the application of the higher-order function 'g' ",(generatePositionData posinfo),". g has a function as its first argument."," The first argument of that function ",", namely ",show a0]) a0)) __x22))))
 
-__final_s (f,posf) (x,posx) = f (x,posx)
+__app_s ctrt posinfo (posa,a) (posb,b) = 
+ appParam (appParam (__contracted_s ctrt posinfo) (show a ++ generatePositionData posa) a) (show b ++ generatePositionData posb) b
 
-__app_s
-  :: Contract ((aT :-> bT) :-> aT :-> bT)
-     -> Maybe (Int, Int)
-     -> ([Char], Maybe (Int, Int), aT :-> bT)
-     -> ([Char], Maybe (Int, Int), aT)
-     -> bT
-__app_s ctrt posinfo (stra,posa,a) (strb,posb,b) = 
- (appParam (appParam (__contracted_s ctrt posinfo [stra,strb]) (stra ++ generatePositionData posa) a) (strb ++ generatePositionData posb) b)
+__final_s f x = f x         
 
 generatePositionData :: Maybe (Int,Int) -> String
 generatePositionData (Just (l,c)) = "at line number " ++ show l ++ ", column number " ++ show c 
 generatePositionData Nothing      = "at an unknown position"
 
+__contracted_id ctrt posinfo argstrings =
+ assertPos "At the application of the function 'id'" (generatePositionData posinfo) ctrt funs
+  where funs = (fun (\x -> __final_id (x,argstrings !! 0)))
+__final_id (x,posx) = x
+__app_id ctrt posinfo (strx,posx,x) = appParam (__contracted_id ctrt posinfo [strx]) (strx ++ generatePositionData posx) x
 
+example_s = __app_s true (Just (1,1)) (Just (1,5),__contracted_id (isNat_prop >-> true) (Just (2,3)) []) (Just (1,3), -5)
+
+
+__contracted_r ctrt posinfo =
+ assertPos "At the application of the higher-order function 'r'" (generatePositionData posinfo) ctrt funs
+  where funs = (fun (\ __x21 -> (fun (\ __x22 -> __final_r (\ a0 -> (appParam __x21 (concat ["the application of the higher-order function 'r' ", (generatePositionData posinfo), ". The first argument of the function ",show __x21,", namely ",show a0]) a0)) __x22))))
+
+__final_r f x = f x
+
+__app_r
+  :: (Show aT, Show bT) => Contract ((aT :-> bT) :-> aT :-> bT)
+     -> Maybe (Int, Int)
+     -> (Maybe (Int, Int), aT :-> bT)
+     -> (Maybe (Int, Int), aT)
+     -> bT
+__app_r ctrt posinfo (posa,a) (posb,b) = 
+ (appParam (appParam (__contracted_r ctrt posinfo) (show a ++ generatePositionData posa) a) (show b ++ generatePositionData posb) b)
+
+
+example_r = __app_r true (Just (1,1)) (Just (1,5),__contracted_id (isNat_prop >-> true) (Just (2,3)) []) (Just (1,3), -5)
+
+instance Show (aT :-> bT) where
+	showsPrec _ a = showString "<function>"
+
+-- In GHC, we could use the following for a Show instance.
+th_example = $(getStaticType '__final_r)
 
 -- Exercises.hs references "quickCheckTest = makeQuickCheckTest cfg modelCode", but this is commented out.
 -- Property.hs defines makeQuickCheckTest, providing access to prop_main. However, this code does not seem updated yet
