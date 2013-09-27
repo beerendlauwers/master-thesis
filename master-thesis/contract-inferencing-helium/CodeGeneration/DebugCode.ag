@@ -124,6 +124,7 @@ sem ModuleR
                                                 [  horizontalLinesWith "*" $ text "ModuleR"
                                                 ,  text "Available types:"                BOX.<+> text (show @loc.types)
                                                 ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
+                                                ,  text "Final code:"                     BOX.<+> pprint @body.functionAppSelf
                                                 ,  nest 2 @body.debug
                                                 ]
      loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(String,Contract)])
@@ -356,6 +357,7 @@ sem FunBindR
                                                 ,  text "pattern contracts:" BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  text "__contracted code:" BOX.<+> pprint @loc.contractedFunction
                                                 ,  text "__app code:"        BOX.<+> pprint @loc.appFunction
+                                                ,  text "__final code:"      BOX.<+> pprint @loc.finalFunction
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
