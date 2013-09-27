@@ -333,24 +333,6 @@ indexMsg :: (Show a) => [a] -> Int -> a
 indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
 
--- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id
-determineUpdateFunction :: ExprR -> Bool -> Bool -> Bool -> Bool -> Bool -> Bool -> Int
-determineUpdateFunction expr isArg isFunc isFullyApplied isArgToFullyApplied functionIsParameter isLocalParameter
- | t [isArg, isFunc, isLocalParameter, functionIsParameter] = 4
- | t [isArg, isFunc, isLocalParameter, not functionIsParameter] = 2
- | t [isFunc, isLocalParameter] = 4
- | t [isFunc, functionIsParameter] = 4
- | t [isArg, functionIsParameter] = 4
- | t [isArg,isFunc,not isFullyApplied] = 1
- | t [isArg,isFunc, isFullyApplied]    = 3
- | t [isArg,not isFunc, isArgToFullyApplied] = 2
- | t [not isArg, isFunc, isFullyApplied] = 3
- | t [not isArg, isFunc, not isFullyApplied] = 3
- | t [isArg,not isFunc, not isArgToFullyApplied] = 4
- | t [not isArg,not isFunc, not isFullyApplied, not isArgToFullyApplied] = 4
- | otherwise = error $ "Non-exhaustive pattern when checking expression " ++ show expr ++ "(isArg=" ++ show isArg ++ ", isFunc=" ++ show isFunc ++ ", isFullyApplied=" ++ show isFullyApplied ++ ", isArgToFullyApplied=" ++ show isArgToFullyApplied ++ ")"
- where t = all (==True)
-
 isTrueContract :: String -> Bool
 isTrueContract (x:xs) = if x == 'c'
                            then case (reads xs) :: [(Integer,String)] of
