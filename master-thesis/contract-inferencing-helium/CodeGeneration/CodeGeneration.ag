@@ -59,7 +59,7 @@ sem FunBindR
       -- RHS --
       loc  .posInfo                     = generatePositionText (any (>0) @loc.parameterArity) @loc.functionIdent
       loc  .assertApp                   = mkApp [mkVar "assertPos"
-                                                ,(mkLit.mkStrLit) @loc.posInfo
+                                                ,(mkLit.mkStrLit) ("At " ++ @loc.posInfo)
                                                 ,mkAppParens [mkVar "generatePositionData", mkVar "posinfo"]
                                                 ,mkVar "ctrt"
                                                 ,mkVar "funs"]
@@ -75,7 +75,7 @@ sem FunBindR
       loc  .parameterArityEnv           = calculateParameterArity $ getTypeEnv @lhs.topLevelTypes
       loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in parameterArity env!") id (DM.lookup @loc.functionIdent @loc.parameterArityEnv)
       loc  .patsWithArity               = zip3 (take @loc.arity [1..]) @loc.parameterArity @loc.funsPatterns
-      loc  .expandedFunsPatterns        = map (expandHigherOrderParams @loc.functionIdent) @loc.patsWithArity
+      loc  .expandedFunsPatterns        = map (expandHigherOrderParams @loc.functionIdent @loc.posInfo) @loc.patsWithArity
       loc  .argumentLookups             = map (\i -> mkInfixApp (mkVar "argstrings") (VarR (mkOp "!!") noRangeR) (mkLit $ mkIntLit i) ) [0.. @loc.arity] 
       loc  .argumentsWithStr            = map (\(e,p) -> mkTuple [e,p]) (zip @loc.expandedFunsPatterns @loc.argumentLookups)
       loc  .funsBase                    = mkApp $ @loc.finalName : @loc.argumentsWithStr
@@ -108,7 +108,7 @@ sem FunBindR
       loc  .appedRhs                    = insertApps "appParam" @loc.appedRhsBase (map (\(s,p,v) -> ( mkAppParens [ mkVar s, mkVar "++", mkVar "generatePositionData", mkVar p],mkVar v)) (reverse @loc.paramList)) 
       loc  .appedRhsBase                = mkAppParens [VarR @loc.contractedName noRangeR, mkVar "ctrt", mkVar "posinfo"]
 
-{-
+
 -- Semantics for final version of function.
 attr FunBindR
    syn finalFunction                                            :: FunBindR
@@ -118,16 +118,14 @@ sem FunBindR
       lhs  .finalFunction               = undefined
   | FunBindR
       -- Example: f x = g x  becomes
-      -- __final_f x = __app_g ctrt (posx,x)
+      -- __final_f (x,posx) = __app_g ctrt (posx,x)
       lhs  .finalFunction               = @loc.finalFunction
 
       -- LHS --
-      loc  .finalName                   = prefixFinalFunction @loc.functionIdentifier
--}
+      loc  .finalName                   = IdentR (prefixFinalFunction @loc.functionIdentifier) (getRange @name.copy)
+      loc  .finalPats                   = 
+      loc  .finalFunction               = FunBindR @feedback.copy @loc.finalName 
 
--- Identify all function applications, convert from f to __app_f.
---attr ExprR
-   --syn appedApplication                                         :: ExprR
 
 -- TODO: Put the contracts on their appropriate places in place of the VarRs.
 
@@ -137,7 +135,7 @@ attr ExprR
    -- We use this information to determine what kind of transformation is necessary.
    syn isLocalParameter                                         :: {Bool}
 
-attr ExprR ExprsR GuardedExprsR
+attr ExprR ExprsR GuardedExprsR ListExprR TupleExprR
    -- (AppR) We fetch the value of @fun.isLocalParameter and pass this down to its arguments.
    inh isAppliedToLocalFunction                                 :: {Bool}
 
@@ -159,10 +157,9 @@ sem ExprR
    | VarR
       loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
-      loc  .isFunction                  = DJ.isJust $ lookupHeliumTypeMaybe @name.copy (getTypeEnv @lhs.topLevelTypes)
+      loc  .isFunction                  = @loc.arity > 0 
 
-{-
-      -- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id
+      -- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id, 5 = 1 + 2, 6 = id with string
       loc  .updateType                  = if @lhs.isBaseFunction
                                            -- Base function
                                            then if @loc.isLocalParameter
@@ -174,26 +171,23 @@ sem ExprR
                                                  then if @loc.isFunction
                                                        -- Argument itself is a function
                                                        then if @loc.isLocalParameter
-                                                             -- Argument is a non-local function
-                                                             then 1 -- prefix __contract, because it is not yet contracted
                                                              -- Argument is a locally-known function
-                                                             else 4 -- id, it's already been contracted
+                                                             then 4 -- id, it's already been contracted
+                                                             -- Argument is a non-local function
+                                                             else 1 -- prefix __contract, because it is not yet contracted
+                                                       -- Argument itself it not a function
+                                                       else 6 -- id with string representation
+                                                 -- Argument is applied to a non-local function
+                                                 else if @loc.isFunction
+                                                       -- Argument itself is a function
+                                                       then if @loc.isLocalParameter
+                                                             -- Argument is a locally-known function
+                                                             then 2 -- add information to give to the non-local function
+                                                             -- Argument is a non-local function
+                                                             else 5 -- prefix __contract and add information
                                                        -- Argument itself it not a function
                                                        else 4 -- id, it does not have to be contracted
 
- @loc.isLocalParameter
-                                                       then 
-
-                                                 -- Argument is a local identifier
-                                                 then if @loc.isFunction
-                                                       then 4 --id, it's already been contracted
-                                                       else 1 -- prefix __ctrt, because it's a function argument
-                                                 -- Argument is a non-local identifier
-                                                 else 3 -- prefix __app
-
-
--}
-      loc  .updateType                  = determineUpdateFunction @loc.copy @lhs.isArgument (@loc.arity > 0) @lhs.isFullyApplied @lhs.isArgumentToFullyAppliedFunc @lhs.functionIsParameter @loc.isLocalParameter
 
       -- TODO: make this work for InfixAppR too!
 
@@ -202,24 +196,26 @@ sem ExprR
       loc  .varContract                 = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
       loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
 
-      loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id)]
+      loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id),(5,prefixcontractedFunction),(6,id)]
       loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
 
       loc  .updateAsAppOrContracted     = mkAppParens [ @loc.updatedVar, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
 
       loc  .posInfo                     = extractPositionData @range.copy
       loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
-      loc  .updateAsIdExtraInfo         = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar  ]
+      loc  .updateAsIdExtraInfo         = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar ]
+      loc  .updateAsCtrtExtraInfo       = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar ]
 
       loc  .updateAsId                  = @loc.updatedVar
+      loc  .updateAsIdWithString        = mkTuple [ @loc.updatedVar, (mkLit.mkStrLit.show) @name.copy ]
 
-
-      
       lhs  .functionAppSelf             = case @loc.updateType of
                                                 1 -> @loc.updateAsAppOrContracted
                                                 2 -> @loc.updateAsIdExtraInfo
                                                 3 -> @loc.updateAsAppOrContracted
                                                 4 -> @loc.updateAsId
+                                                5 -> @loc.updateAsCtrtExtraInfo
+                                                6 -> @loc.updateAsIdWithString
 
       loc  .isArgument                  = @lhs.isArgument -- For debug purposes
       loc  .isFullyApplied              = @lhs.isFullyApplied -- For debug purposes
@@ -373,6 +369,20 @@ sem Contract
   |  CQuant      lhs.makeContract = @cs.makeContract
   |  CTuple      lhs.makeContract = error $ "The following CTuple got into contract inferencing: " ++ show @li
 
+
+{-
+-- Identify all function applications, convert from f to __app_f.
+attr ExprR
+   syn appedApplication                                         :: ExprR
+
+sem ExprR
+   | AppR
+      -- Example: f x y z becomes __app_f ctrt posinfo (posx,x) (posy,y) (posz,z)
+      lhs  .appedApplication            = @loc.appedApplication
+
+      -- Construct new expression.
+      loc  .appedApplication            = AppR @fun.functionAppSelf @args.functionAppSelf @self.range
+-}
 
 {-
 
