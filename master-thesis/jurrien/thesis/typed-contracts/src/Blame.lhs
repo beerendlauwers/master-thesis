@@ -32,7 +32,7 @@ argument.
 >  "\nA part of your code, or a supplied argument to a function, does not fullfil a required property. This occurred at " ++ 
 >  show (head (pos locs))
 >               ++  (  case tail (pos locs) of
->                       []     ->  ": "
+>                       []     ->  ", does not fullfil the following property: "
 >                       locs'  ->  ", in the following higher-order parameter(s):\n\n" ++
 >                                  concat (intersperse ", \n" (map (\s -> "--> " ++ show s) locs')) ++ ",\n" )
 >               ++ fi
