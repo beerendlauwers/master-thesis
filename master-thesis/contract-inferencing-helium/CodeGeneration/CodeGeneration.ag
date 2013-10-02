@@ -114,27 +114,18 @@ sem FunBindR
   | FBHoleR
       lhs  .finalFunction               = Nothing
   | FunBindR
-      -- Example: f x = g x  becomes
-      -- __final_f (x,posx) = __app_g ctrt (posx,x)
+      -- Example: f x = g x could become
+      -- __final_f x = __app_g ctrt (posx,x)
       lhs  .finalFunction               = Just @loc.finalFunction
       loc  .finalFunction               = FunBindR @feedback @loc.finalName @pats.copy @rhs.functionAppSelf @range.copy
       loc  .finalName                   = prefixFinalFunction @loc.functionIdentifier
+      
 
 -- Pass new definitions upwards to DeclR node.
 attr FunBindsR
-   syn contractedFunction                                       :: {[Maybe FunBindR]}
-   syn appFunction                                              :: {[Maybe FunBindR]}
-   syn finalFunction                                            :: {[Maybe FunBindR]}
-
-sem FunBindsR
-   | Cons
-      lhs  .contractedFunction          = @hd.contractedFunction : @tl.contractedFunction
-      lhs  .appFunction                 = @hd.appFunction : @tl.appFunction
-      lhs  .finalFunction               = @hd.finalFunction : @tl.finalFunction
-   | Nil
-      lhs  .contractedFunction          = []
-      lhs  .appFunction                 = []
-      lhs  .finalFunction               = []
+   syn contractedFunction use {:} {[]}                         :: {[Maybe FunBindR]}
+   syn appFunction        use {:} {[]}                         :: {[Maybe FunBindR]}
+   syn finalFunction      use {:} {[]}                         :: {[Maybe FunBindR]}
 
 
 
@@ -158,7 +149,7 @@ sem DeclR
       loc  .generatedFunctions          = concatMap DJ.catMaybes [@funbinds.finalFunction, @funbinds.contractedFunction, @funbinds.appFunction]
 
 sem ExprR
-   | VarR
+   | VarR ConR
       loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
       loc  .isFunction                  = @loc.arity > 0 
@@ -207,8 +198,8 @@ sem ExprR
 
       loc  .posInfo                     = extractPositionData @range.copy
       loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
-      loc  .updateAsIdExtraInfo         = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar ]
-      loc  .updateAsCtrtExtraInfo       = mkTuple [ (mkLit.mkStrLit.show) @name.copy, @loc.posInfoAsLiterals, @loc.updatedVar ]
+      loc  .updateAsIdExtraInfo         = mkTuple [ @loc.posInfoAsLiterals, @loc.updatedVar ]
+      loc  .updateAsCtrtExtraInfo       = mkTuple [ @loc.posInfoAsLiterals, mkApp [@loc.updatedVar, @loc.contractAsExprR] ]
 
       loc  .updateAsId                  = @loc.updatedVar
       loc  .updateAsIdWithPos           = mkTuple [ @loc.posInfoAsLiterals, @loc.updatedVar ]
@@ -233,7 +224,8 @@ sem ExprR
       lhs  .isLocalParameter            = @loc.isLocalParameter
       loc  .isLocalParameter            = @fun.isLocalParameter
    | HoleR TupleR ListR ConR LitR
-      lhs  .isLocalParameter            = False
+      lhs  .isLocalParameter            = @loc.isLocalParameter
+      loc  .isLocalParameter            = False
 
 attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR MaybeConst
    inh isBaseFunction                                           :: {Bool} -- Is the most deeply nested function being applied
@@ -291,13 +283,87 @@ sem ExprR
 
 sem RhsR
    | RhsR
-     loc  .newWhereClause               = DFunBindsR @expr.allReplacedLambdas noRangeR : @where.removeFreeLambdas
-     loc  .updatedRhsR                  = RhsR @expr.removeFreeLambdas @loc.newWhereClause @range.copy
+     loc  .newWhereClause               = case length @loc.funbindclause of 
+                                           0 -> []
+                                           _ -> [DFunBindsR @loc.funbindclause noRangeR]
+     loc  .funbindclause                = @expr.allReplacedLambdas
+     loc  .updatedRhsR                  = RhsR @expr.removeFreeLambdas (@loc.newWhereClause ++ @where.removeFreeLambdas) @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
    | GRhsR
-     loc  .newWhereClause               = DFunBindsR @gexprs.allReplacedLambdas noRangeR : @where.removeFreeLambdas
-     loc  .updatedRhsR                  = GRhsR @gexprs.removeFreeLambdas @loc.newWhereClause @range.copy
+     loc  .newWhereClause               = case length @loc.funbindclause of 
+                                           0 -> []
+                                           _ -> [DFunBindsR @loc.funbindclause noRangeR]
+     loc  .funbindclause                = @gexprs.allReplacedLambdas
+     loc  .updatedRhsR                  = GRhsR @gexprs.removeFreeLambdas (@loc.newWhereClause ++ @where.removeFreeLambdas) @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
+
+
+-- Convert all DPatBindR that are actually functions to DFunBindsR so we don't have to duplicate our code.
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+   syn patBindToFunBind                                         :: self
+
+attr RhsR GuardedExprsR GuardedExprR
+   -- When converting from DPatBindR to DFunBindsR, we'll generate a few new patterns that correspond to our
+   -- arguments. We need to pass these down to RhsR so we can apply the expression to them.
+   inh argumentsToBeAddedToExpr                                 :: {[String]}
+
+sem DeclR
+   | DPatBindR
+     lhs  .patBindToFunBind             = @loc.conversion
+     loc  .conversion                   = case @loc.arity > 0 of
+                                           True  -> DFunBindsR [@loc.funBindFromPatBind] @range.copy
+                                           False -> DPatBindR @pat.copy @rhs.copy @range.copy
+
+     -- Get function name
+     loc  .arity                        = snd $ head $ DM.toList $ calculateArity @loc.heliumTypes
+     loc  .functionNameFromPatBind      = case @pat.copy of
+                                           (PVarR nm _) -> nm
+                                           x            -> error $ "DPatBindR that defines a function, but does not bind it to a name! Code: " ++ show x
+
+      -- Generate new patterns for our FunBindR
+      loc  .uncaughtPatternVars         = ["__" ++ x : show y | x <- ['a'..'z'], y <- [0..9]]
+      loc  .newPatternVars              = take @loc.arity @loc.uncaughtPatternVars
+
+
+     -- Update RHS with new patterns
+     rhs  .argumentsToBeAddedToExpr     = @loc.newPatternVars
+     loc  .funBindFromPatBind           = FunBindR Nothing @loc.functionNameFromPatBind (map mkPVar @loc.newPatternVars) @rhs.patBindToFunBind @range.copy
+
+sem RhsR
+   | RhsR
+     lhs  .patBindToFunBind             = RhsR (mkApp (mkParens @expr.patBindToFunBind : @loc.newPatternVars)) @where.patBindToFunBind @range.copy
+     loc  .newPatternVars               = map mkVar @lhs.argumentsToBeAddedToExpr
+
+   | GRhsR
+     lhs  .patBindToFunBind             = GRhsR @gexprs.patBindToFunBind @where.patBindToFunBind @range.copy
+
+sem GuardedExprR
+   | GExprR
+     lhs  .patBindToFunBind             = GExprR @guard.patBindToFunBind (mkApp (mkParens @expr.patBindToFunBind : @loc.newPatternVars)) @range.copy
+     loc  .newPatternVars               = map mkVar @lhs.argumentsToBeAddedToExpr
+
+
+
+{-
+data GuardedExprR
+   | GExprR
+      guard    :: ExprR
+      expr     :: ExprR
+      range    :: RangeR
+
+type GuardedExprsR = [GuardedExprR]
+
+-- | Right hand side
+data RhsR
+   | RhsR
+      expr     :: ExprR
+      where    :: DeclsR
+      range    :: RangeR
+   | GRhsR
+      gexprs   :: GuardedExprsR
+      where    :: DeclsR
+      range    :: RangeR
+-}
 
 {
 -- Given a list of patterns and a base value, generate a chain of 'fun' applications.

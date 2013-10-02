@@ -6,14 +6,25 @@ import            Text.PrettyPrint.Boxes as BOX
 
 include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
 
+include "Domain/FP/CodeGeneration/FlatDebugCode.ag"
+
 
 {
 
-removeFreeLambdas :: String -> String -> ModuleR
-removeFreeLambdas code pointOfEntry = 
+convertPatBindToFunBind :: String -> String -> ModuleR
+convertPatBindToFunBind code pointOfEntry = 
  let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
+     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
+     wrapModule = wrap_ModuleR semModule inhModule
+ in patBindToFunBind_Syn_ModuleR wrapModule
+
+removeFreeLambdas :: String -> String -> ModuleR
+removeFreeLambdas code pointOfEntry = 
+ let convertedPatBinds = convertPatBindToFunBind code pointOfEntry
+     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
+     semModule = sem_ModuleR convertedPatBinds
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
  in removeFreeLambdas_Syn_ModuleR wrapModule
@@ -21,14 +32,14 @@ removeFreeLambdas code pointOfEntry =
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
- let noFreeLambdaCode = show $ removeFreeLambdas code pointOfEntry
-     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False noFreeLambdaCode
-     astCode = compileWithRanges noFreeLambdaCode
-     semModule = sem_ModuleR astCode
+ let noFreeLambdaCode = removeFreeLambdas code pointOfEntry
+     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False (show noFreeLambdaCode)
+     semModule = sem_ModuleR noFreeLambdaCode
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
  in do printBox (debug_Syn_ModuleR wrapModule)
        writeFile "debugOutput" (render $ debug_Syn_ModuleR wrapModule)
+
 
 showDebugExample1 :: IO ()
 showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" []
@@ -58,7 +69,9 @@ showDebugExample7 = showDebug "f n@(x,y,z) = (g z,n)\n  where g = x y" []
 -- Lambda test
 showDebugExample8 :: IO ()
 showDebugExample8 = showDebug "f x = (\\y -> let n = y\n             in n)" []
+
 }
+
 
 {
 -- Prettyprinting helper functions
@@ -146,6 +159,7 @@ sem RhsR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "RhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "Code fed to Helium compiler:"           BOX.<+> pprint @loc.asModuleR
                                                 ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
                                                 ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  text "Number of contracts:" BOX.<+> pprint ( length (DM.toList @loc.newContractEnv))
@@ -157,7 +171,7 @@ sem RhsR
 
   | GRhsR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "RhsR"
+                                                [  horizontalLinesWith "*" $ text "GRhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
                                                 ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
                                                 ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
@@ -185,6 +199,7 @@ sem DeclR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "DPatBindR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "helium arity:"           BOX.<+> (text.show) @loc.arity
                                                 ,  text "is top-level:"          BOX.<+> pprint @lhs.isTopLevel
                                                 ,  text "local idents known to RHS:"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug

@@ -185,7 +185,7 @@ sem FunBindR
 sem DeclR
   | DPatBindR
       -- Don't know if we'll need the contracts of patterns defined in tuples, but we might as well collect it, it's not too hard.
-      loc.heliumType            = map (\name -> lookupHeliumType (mkIdent name) @lhs.heliumTypes) @pat.localPatterns
+      loc.heliumTypes           = DM.fromList $ map (\name -> (toHeliumWithRanges $ mkIdent name, lookupHeliumType (mkIdent name) @lhs.heliumTypes)) @pat.localPatterns
       loc.heliumDebug           = @lhs.heliumTypes
 {- *** End of of semantics to pass down types to individual function definition node. *** -}
 
