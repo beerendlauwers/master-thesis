@@ -24,7 +24,7 @@ sem ExprR
   | HoleR       lhs   .simpledebug                       = "HoleR\n"
   | FeedbackR   lhs   .simpledebug                       = @expr.simpledebug
   | MustUseR    lhs   .simpledebug                       = @expr.simpledebug
-  | CaseR       lhs   .simpledebug                       = "CaseR\n" ++ @expr.simpledebug ++ @alts.simpledebug
+  | CaseR       lhs   .simpledebug                       = "CaseR\n" ++ "Helium types available: " ++ show @lhs.topLevelTypes ++ "\n" ++ @expr.simpledebug ++ @alts.simpledebug
   | ConR        lhs   .simpledebug                       = "ConR\n" ++ @name.simpledebug
   | IfR         lhs   .simpledebug                       = "IfR\n" ++ @cond.simpledebug ++ @then.simpledebug ++ @else.simpledebug
   | InfixAppR   lhs   .simpledebug                       = "InfixAppR\n" ++ @left.simpledebug ++ @op.simpledebug ++ @right.simpledebug

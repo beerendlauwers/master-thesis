@@ -387,12 +387,12 @@ prefixFunctionWithContract _ = error "prefixFunctionWithContract: Haven't define
 prefixcontractedFunction :: NameR -> NameR
 prefixcontractedFunction (IdentR name r)    = (IdentR ("__contracted_"++name) r)
 prefixcontractedFunction (OperatorR name r) = (OperatorR ("+++"++name++"+++") r)
-prefixcontractedFunction _ = error "prefixcontractedFunction: Haven't defined anything yet for SpecialR."
+prefixcontractedFunction x = x --SpecialR is used for the empty list, tuple constructors and unit. Nothing you can usefully contract.
 
 prefixAppFunction :: NameR -> NameR
 prefixAppFunction (IdentR name r)    = (IdentR ("__app_"++name) r)
 prefixAppFunction (OperatorR name r) = (OperatorR ("___"++name++"___") r)
-prefixAppFunction _ = error "prefixAppFunction: Haven't defined anything yet for SpecialR."
+prefixAppFunction x = x --SpecialR is used for the empty list, tuple constructors and unit. Nothing you can usefully contract.
 
 prefixFinalFunction :: NameR -> NameR
 prefixFinalFunction (IdentR name r)    = (IdentR ("__final_"++name) r)
