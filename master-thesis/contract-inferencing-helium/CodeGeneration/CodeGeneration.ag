@@ -343,6 +343,12 @@ sem GuardedExprR
      loc  .newPatternVars               = map mkVar @lhs.argumentsToBeAddedToExpr
 
 
+sem FunBindR
+   | FunBindR
+     rhs  .argumentsToBeAddedToExpr     = [] -- This is already a function binding, nothing to be added here.
+sem AltR
+   | AltR
+     rhs  .argumentsToBeAddedToExpr     = [] -- An AltR pattern binding isn't going to be a function that we need to contract.
 
 {-
 data GuardedExprR
