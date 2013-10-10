@@ -31,6 +31,164 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 
 -}
 
+-- These imports are for getting the type tree from Helium.
+imports
+{
+import StaticAnalysis.Miscellaneous.DoublyLinkedTree ( parent, attribute, children, DoublyLinkedTree(..) )
+import StaticAnalysis.Miscellaneous.ConstraintInfo ( InfoTree, assignedType, self, LocalInfo(..) )
+import qualified Main.Args as OPT ( Option ( Overloading, UseTutor ) )
+import Top.Types.Substitution ( FixpointSubstitution )
+import Top.Solver ( substitutionFromResult, qualifiersFromResult )
+import StaticAnalysis.Inferencers.TypeInferencing ( sem_Module, Inh_Module(..), wrap_Module, importEnvironment_Inh_Module, options_Inh_Module, solveResult_Syn_Module, solveResult_Syn_Module, infoTree_Syn_Module, typeInferencing )
+import qualified  StaticAnalysis.Miscellaneous.UHA_Source as UHASRC
+import qualified  Top.Types.Substitution as TOPSUBST
+
+}
+
+{
+type TypeTree = DoublyLinkedTree ((Maybe S.TpScheme,String,UHASRC.UHA_Source))
+mkTypeTree p a c = DoublyLinkedTree p a c
+mkTypeTreeWith tr f = DoublyLinkedTree (parent tr) (attribute tr) (f $ children tr)
+
+
+debugTypeInferencing :: [OPT.Option] -> IE.ImportEnvironment -> H.Module -> TypeTree
+debugTypeInferencing options importEnv module_ =
+   let res = wrap_Module (sem_Module module_) Inh_Module {
+       	         importEnvironment_Inh_Module = importEnv,
+		 options_Inh_Module = options }
+       localTypeSchemes = typeSchemesAsInfoTree (substitutionFromResult $ solveResult_Syn_Module res)
+                                                (qualifiersFromResult $ solveResult_Syn_Module res) 
+                                                (infoTree_Syn_Module res)
+   in localTypeSchemes
+
+doDebugTypeInferencing s = 
+ let result = either error id $ H.compile s
+ in debugTypeInferencing [OPT.Overloading, OPT.UseTutor] IE.emptyEnvironment result
+
+doHeliumTypeInferencing s = 
+ let result = either error id $ H.compile s
+ in typeInferencing [OPT.Overloading, OPT.UseTutor] IE.emptyEnvironment result
+
+typeSchemesAsInfoTree :: FixpointSubstitution -> CLS.Predicates -> InfoTree -> TypeTree
+typeSchemesAsInfoTree subst ps infoTree = 
+ let local = attribute infoTree
+     typedPar = case parent infoTree of
+                      Just p -> Just $ typeSchemesAsInfoTree subst ps p
+                      Nothing -> Nothing
+     typedChildren = map (typeSchemesAsInfoTree subst ps) (children infoTree)
+     typedLocal = case assignedType local of
+                        Just tp -> let is     = TOPSUBST.ftv tp 
+                                       ps'    = filter (any (`elem` is) . TOPSUBST.ftv) ps
+                                       scheme = QN.generalizeAll (subst TOPSUBST.|-> (ps' QL..=>. tp))
+                                   in Just scheme
+                        Nothing -> Nothing
+                        
+ in DoublyLinkedTree typedPar (typedLocal,UHASRC.descriptionOfSource $ self local, self local) typedChildren
+}
+
+attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
+  -- We get this from the Helium compiler. It's a tree with types that resembles our AST.
+  inh typeTree                                                  :: {TypeTree}
+
+sem ModuleR
+  | ModuleR
+      body .typeTree            = doDebugTypeInferencing $ show @loc.copy -- Generate the type tree from our code.
+
+-- Slice up the type tree we get from the Helium compiler.
+sem DeclsR FunBindsR PatsR ListPatsR TuplePatsR TupleExprR ExprsR ListExprR
+  | Cons
+     hd    .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     tl    .typeTree            = mkTypeTreeWith @lhs.typeTree tail
+
+sem FunBindR -- Need a type for this
+  | FunBindR
+     loc   .numPatterns         = length @pats.copy
+     pats  .typeTree            = mkTypeTreeWith @lhs.typeTree (take @loc.numPatterns)
+     rhs   .typeTree            = let newParent = (head.(drop @loc.numPatterns)) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+
+sem PatR -- Need a type for this
+  | PInfixConR
+     left  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     right .typeTree            = let newParent = (head.tail) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+  -- TODO: PAsR ???
+
+sem RhsR
+  | RhsR
+     expr  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     where .typeTree            = let newParent = (head.tail) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+
+  | GRhsR
+      -- Odd format here; attribute list is of the form [guard,expr,guard,expr,...,wheredecls]
+     loc   .numGexprs           = (length @gexprs.copy) * 2
+     gexprs.typeTree            = mkTypeTreeWith @lhs.typeTree (take @loc.numGexprs)
+     where .typeTree            = let newParent = (head.(drop @loc.numGexprs)) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+
+sem GuardedExprsR
+  | Cons
+     hd    .typeTree            = mkTypeTreeWith @lhs.typeTree (take 2)
+     tl    .typeTree            = mkTypeTreeWith @lhs.typeTree (drop 2)
+
+sem GuardedExprR
+  | GExprR
+     guard .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     expr  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
+
+sem ExprR -- Need a type for this
+  | LambdaR
+     loc   .numPatterns         = length @pats.copy
+     pats  .typeTree            = mkTypeTreeWith @lhs.typeTree (take @loc.numPatterns)
+     expr  .typeTree            = mkTypeTreeWith @lhs.typeTree (drop @loc.numPatterns)
+
+  | IfR
+     cond  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     then  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ drop 1 (children @lhs.typeTree)
+     else  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ drop 2 (children @lhs.typeTree)
+
+  | CaseR
+     expr  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     -- An Alternative has two entries in the attribute list, one for the lhs, and one for the rhs.
+     alts  .typeTree            = mkTypeTreeWith @lhs.typeTree tail
+
+  | InfixAppR
+     left  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     op    .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
+     right .typeTree            = let newParent = (head.tail.tail) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+
+  | AppR
+     fun   .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     args  .typeTree            = mkTypeTreeWith @lhs.typeTree tail
+
+  | LetR
+     decls .typeTree            = let newParent = head $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+     expr  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
+
+sem AltsR
+  | Cons
+     hd    .typeTree            = mkTypeTreeWith @lhs.typeTree (take 2)
+     tl    .typeTree            = mkTypeTreeWith @lhs.typeTree (drop 2)
+
+sem AltR
+  | AltR
+     pat   .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     rhs   .typeTree            = let newParent = (head.tail) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+
+-- Getting types from type tree
+attr PatR
+  syn typeTreeType                                              :: {Maybe S.TpScheme}
+
+sem PatR
+  | *
+     lhs   .typeTreeType        = @loc.typeTreeType
+     loc   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute @lhs.typeTree
+     loc   .typeTreeCode        = (\(_,_,src) -> src) $ attribute @lhs.typeTree
+
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
   -- We get this from the Helium compiler. These only contain our own types.
   inh topLevelTypes                                             :: {IE.ImportEnvironment}

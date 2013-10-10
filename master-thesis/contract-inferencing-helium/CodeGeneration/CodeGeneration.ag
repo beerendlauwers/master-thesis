@@ -241,6 +241,12 @@ sem RhsR
    | GRhsR
       gexprs.isAppliedToLocalFunction   = False
       gexprs.isBaseFunction             = True
+sem GuardedExprR
+   | GExprR
+      expr.isAppliedToLocalFunction     = False
+      expr.isBaseFunction               = True
+      guard.isAppliedToLocalFunction    = False
+      guard.isBaseFunction              = True
 
 sem ExprR
    | AppR
@@ -268,7 +274,7 @@ sem Contract
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
    syn removeFreeLambdas                                        :: self
-   syn allReplacedLambdas    use {(++)} {[]}                    :: {[FunBindR]}
+   syn allReplacedLambdas    use {(++)} {[]}                    :: {[DeclR]}
 
 sem ExprR
    | LambdaR
@@ -277,7 +283,7 @@ sem ExprR
      lhs  .removeFreeLambdas            = VarR @loc.uniqueLambdaVar @range.copy
 
      -- We'll generate a function binding in the gist of "__lam1 = (original lambda)" and put those in a where-clause.
-     lhs  .allReplacedLambdas           = [ mkFunbind @loc.uniqueLambdaVar [] (mkRhs @loc.removeFreeLambdas []) ]
+     lhs  .allReplacedLambdas           = [ mkDPatBind (PVarR @loc.uniqueLambdaVar @range.copy) (mkRhs @loc.removeFreeLambdas []) ]
      loc  .uniqueLambdaVar              = IdentR ("__lam" ++ show @loc.num) @range.copy
      loc  .num                          ::  uniqueref varcnt
 
@@ -285,14 +291,14 @@ sem RhsR
    | RhsR
      loc  .newWhereClause               = case length @loc.funbindclause of 
                                            0 -> []
-                                           _ -> [DFunBindsR @loc.funbindclause noRangeR]
+                                           _ -> @loc.funbindclause
      loc  .funbindclause                = @expr.allReplacedLambdas
      loc  .updatedRhsR                  = RhsR @expr.removeFreeLambdas (@loc.newWhereClause ++ @where.removeFreeLambdas) @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
    | GRhsR
      loc  .newWhereClause               = case length @loc.funbindclause of 
                                            0 -> []
-                                           _ -> [DFunBindsR @loc.funbindclause noRangeR]
+                                           _ -> @loc.funbindclause
      loc  .funbindclause                = @gexprs.allReplacedLambdas
      loc  .updatedRhsR                  = GRhsR @gexprs.removeFreeLambdas (@loc.newWhereClause ++ @where.removeFreeLambdas) @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
@@ -331,7 +337,9 @@ sem DeclR
 
 sem RhsR
    | RhsR
-     lhs  .patBindToFunBind             = RhsR (mkApp (mkParens @expr.patBindToFunBind : @loc.newPatternVars)) @where.patBindToFunBind @range.copy
+     lhs  .patBindToFunBind             = case @loc.newPatternVars of
+                                           [] -> RhsR @expr.patBindToFunBind @where.patBindToFunBind @range.copy
+                                           _  -> RhsR (mkApp (mkParens @expr.patBindToFunBind : @loc.newPatternVars)) @where.patBindToFunBind @range.copy
      loc  .newPatternVars               = map mkVar @lhs.argumentsToBeAddedToExpr
 
    | GRhsR
@@ -339,7 +347,9 @@ sem RhsR
 
 sem GuardedExprR
    | GExprR
-     lhs  .patBindToFunBind             = GExprR @guard.patBindToFunBind (mkApp (mkParens @expr.patBindToFunBind : @loc.newPatternVars)) @range.copy
+     lhs  .patBindToFunBind             = case @loc.newPatternVars of
+                                           [] -> GExprR @guard.patBindToFunBind @expr.patBindToFunBind @range.copy
+                                           _  -> GExprR @guard.patBindToFunBind (mkApp (mkParens @expr.patBindToFunBind : @loc.newPatternVars)) @range.copy
      loc  .newPatternVars               = map mkVar @lhs.argumentsToBeAddedToExpr
 
 

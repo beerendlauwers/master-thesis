@@ -467,7 +467,13 @@ instance Show (aT :-> bT) where
 	showsPrec _ a = showString "<function>"
 
 -- In GHC, we could use the following for a Show instance.
-th_example = $(getStaticType '__final_r)
+--th_example = $(getStaticType '__final_r)
+
+-- Random test.
+blabla x | x == True = True
+         | x == blabla x = False
+
+-- (__app_foldr true (Just (2,5))) ((Just (2,11)),__contracted_const) [] 
 
 -- Exercises.hs references "quickCheckTest = makeQuickCheckTest cfg modelCode", but this is commented out.
 -- Property.hs defines makeQuickCheckTest, providing access to prop_main. However, this code does not seem updated yet

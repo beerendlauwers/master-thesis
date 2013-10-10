@@ -135,14 +135,17 @@ instance Show AltR where
 
 instance Show PatR where
   show = Helium.ppPattern . CL.build heliumWithRangesView
+
+instance Show GuardedExprR where
+  show = Helium.ppGuardedExpression . CL.build heliumWithRangesView
 }
 
 
 {
 -- TEST
-instance Show CONSTRINFO.LocalInfo where
-  show (CONSTRINFO.LocalInfo src mtp tps) = "SOURCE:\n" ++ show src ++ "\nMAYBE TP:\n" ++ show mtp ++ "\nMONOS:\n" ++ show tps
+instance Show LocalInfo where
+  show (LocalInfo src mtp tps) = "SOURCE:\n" ++ show src ++ "\nMAYBE TP:\n" ++ show mtp ++ "\nMONOS:\n" ++ show tps
 
-instance (Show a) => Show (DLNKTREE.DoublyLinkedTree a) where
-  show (DLNKTREE.DoublyLinkedTree p attrs c) = "\nATTRS:\n" ++ show attrs ++ "\nCHILDREN\n" ++ show c
+instance (Show a) => Show (DoublyLinkedTree a) where
+  show (DoublyLinkedTree p attrs c) = "\nATTRS:\n" ++ show attrs ++ "\nCHILDREN\n" ++ show c
 }
