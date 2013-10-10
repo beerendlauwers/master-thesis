@@ -18,6 +18,13 @@ import qualified Control.Exception as CE
 
 {
 
+headErr :: String -> [a] -> a
+headErr m [] = error m
+headErr m xs = head xs
+
+trMsg :: TypeTree -> String -> String
+trMsg tr m = show tr ++ m
+
 searchTypeEnvs :: NameR -> [IE.ImportEnvironment] -> Maybe S.TpScheme
 searchTypeEnvs nm envs = (DJ.listToMaybe.DJ.catMaybes) $ map ((lookupHeliumTypeMaybe nm).getTypesAndValueConstructors) envs
 
@@ -363,6 +370,9 @@ mkList xs = ListR xs noRangeR
 
 mkFunbind :: NameR -> PatsR -> RhsR -> FunBindR
 mkFunbind nm pats rhs = FunBindR Nothing nm pats rhs noRangeR
+
+mkDPatBind :: PatR -> RhsR -> DeclR
+mkDPatBind p rhs = DPatBindR p rhs noRangeR
 
 mkDFunbinds :: FunBindsR -> DeclR
 mkDFunbinds fs = DFunBindsR fs noRangeR

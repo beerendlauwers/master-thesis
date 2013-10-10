@@ -20,7 +20,7 @@ module Domain.FP.Helium
      -- * Helium syntax data types
    , module Syntax.UHA_Syntax, module Syntax.UHA_Range
      -- * Pretty printing
-   , ppModule, ppBody, ppRhs, ppDeclaration, ppExpression, ppAlternative, ppFunctionBinding, ppPattern
+   , ppModule, ppBody, ppRhs, ppDeclaration, ppExpression, ppAlternative, ppFunctionBinding, ppPattern, ppGuardedExpression
      -- * Miscellaneous functions
    , patternVars, phaseDesugarer
    ) where
@@ -76,6 +76,9 @@ ppFunctionBinding f = show $
 ppPattern :: Pattern -> String
 ppPattern p = show $
   PP.text_Syn_Pattern (PP.wrap_Pattern (PP.sem_Pattern p) PP.Inh_Pattern)
+ppGuardedExpression :: GuardedExpression -> String
+ppGuardedExpression e = show $ 
+  PP.text_Syn_GuardedExpression (PP.wrap_GuardedExpression (PP.sem_GuardedExpression e) PP.Inh_GuardedExpression) PPL.empty
 
 filterImportEnvs :: [Name] -> [ImportEnvironment] -> [ImportEnvironment]
 filterImportEnvs ns env = map f env

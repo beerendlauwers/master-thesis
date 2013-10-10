@@ -2,12 +2,6 @@ imports
 {
 import qualified  Text.PrettyPrint as PP
 import            Text.PrettyPrint.Boxes as BOX
-
--- TEST
-import qualified  StaticAnalysis.Inferencers.TypeInferencing as TYPINF
-import qualified  Main.Args as HELIUMARGS
-import qualified  StaticAnalysis.Miscellaneous.ConstraintInfo as CONSTRINFO
-import qualified  StaticAnalysis.Miscellaneous.DoublyLinkedTree as DLNKTREE
 }
 
 include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
@@ -17,14 +11,7 @@ include "Domain/FP/CodeGeneration/FlatDebugCode.ag"
 
 {
 -- TEST
-debugTypeInferencing :: [HELIUMARGS.Option] -> IE.ImportEnvironment -> H.Module -> CONSTRINFO.InfoTree 
-debugTypeInferencing options importEnv module_ =
-   let res = TYPINF.wrap_Module (TYPINF.sem_Module module_) TYPINF.Inh_Module {
-       	         TYPINF.importEnvironment_Inh_Module = importEnv,
-		 TYPINF.options_Inh_Module = options }          
-   in (TYPINF.infoTree_Syn_Module res)
 
-doDebugTypeInferencing m = debugTypeInferencing [HELIUMARGS.Overloading, HELIUMARGS.UseTutor] IE.emptyEnvironment m
 
 {-
 -- TEST
@@ -65,7 +52,7 @@ TYPINF.proximaTypeInferencing [HELIUMARGS.Overloading, HELIUMARGS.UseTutor] IE.e
 
 flatDebug :: String -> String -> IO ()
 flatDebug code pointOfEntry = 
- let noFreeLambdaCode = removeFreeLambdas code pointOfEntry
+ let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
      topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False (show noFreeLambdaCode)
      semModule = sem_ModuleR noFreeLambdaCode
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
@@ -74,18 +61,18 @@ flatDebug code pointOfEntry =
 
 convertPatBindToFunBind :: String -> String -> ModuleR
 convertPatBindToFunBind code pointOfEntry = 
- let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
-     astCode = compileWithRanges code
-     semModule = sem_ModuleR astCode
+ let noFreeLambdas = removeFreeLambdas code pointOfEntry
+     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
+     semModule = sem_ModuleR noFreeLambdas
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
  in patBindToFunBind_Syn_ModuleR wrapModule
 
 removeFreeLambdas :: String -> String -> ModuleR
 removeFreeLambdas code pointOfEntry = 
- let convertedPatBinds = convertPatBindToFunBind code pointOfEntry
-     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
-     semModule = sem_ModuleR convertedPatBinds
+ let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
+     astCode = compileWithRanges code
+     semModule = sem_ModuleR astCode
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
  in removeFreeLambdas_Syn_ModuleR wrapModule
@@ -93,7 +80,7 @@ removeFreeLambdas code pointOfEntry =
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
- let noFreeLambdaCode = removeFreeLambdas code pointOfEntry
+ let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
      topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False (show noFreeLambdaCode)
      semModule = sem_ModuleR noFreeLambdaCode
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
@@ -447,18 +434,24 @@ sem PatR
   | PHoleR
      lhs    .debug                      = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "PHoleR"
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
                                                 ]
   | PConR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "PConR",
-                                                   nest 2 @name.debug,
-                                                   nest 2 @pats.debug
+                                                [  horizontalLinesWith "*" $ text "PConR"
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
+                                                ,  nest 2 @name.debug
+                                                ,  nest 2 @pats.debug
                                                 ]
     
   | PInfixConR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "PInfixConR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
                                                 ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @left.debug
                                                 ,  nest 2 @name.debug
@@ -467,26 +460,34 @@ sem PatR
 
   | PListR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "PListR",
-                                                   nest 2 @pats.debug
+                                                [  horizontalLinesWith "*" $ text "PListR"
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
+                                                ,  nest 2 @pats.debug
                                                 ]
 
   | PLitR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "PLitR",
-                                                   nest 2 @lit.debug
+                                                [  horizontalLinesWith "*" $ text "PLitR"
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
+                                                ,  nest 2 @lit.debug
                                                 ]
 
   | PTupleR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
-                                                [  horizontalLinesWith "*" $ text "PTupleR",
-                                                   nest 2 @pats.debug
+                                                [  horizontalLinesWith "*" $ text "PTupleR"
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
+                                                ,  nest 2 @pats.debug
                                                 ]
 
   | PVarR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "PVarR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
                                                 ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @name.debug
                                                 ]
@@ -494,6 +495,8 @@ sem PatR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "PAsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
                                                 ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @name.debug
                                                 ,  nest 2 @pat.debug
@@ -502,6 +505,8 @@ sem PatR
   | PWildcardR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "PWildcardR"
+                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
                                                 ]
 
 

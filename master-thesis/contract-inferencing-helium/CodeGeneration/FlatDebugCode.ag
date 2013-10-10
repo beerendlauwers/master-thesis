@@ -11,24 +11,24 @@ sem BodyR
   | BHoleR      lhs   .simpledebug                       = "BHoleR\n"
 
 sem RhsR
-  | RhsR        lhs   .simpledebug                       = "RhsR\n      Code that will be compiled: " ++ (show $ show @loc.asModuleR) ++ "\n" ++ @where.simpledebug ++ @expr.simpledebug
-  | GRhsR       lhs   .simpledebug                       = "GRhsR\n      Code that will be compiled: " ++ (show $ show @loc.asModuleR) ++ "\n" ++ @where.simpledebug ++ @gexprs.simpledebug
+  | RhsR        lhs   .simpledebug                       = "RhsR\n      Code that will be compiled: " ++ (show $ show @loc.asModuleR) ++ "\n      Type tree:" ++ show @lhs.typeTree ++ @where.simpledebug ++ @expr.simpledebug
+  | GRhsR       lhs   .simpledebug                       = "GRhsR\n      Code that will be compiled: " ++ (show $ show @loc.asModuleR) ++ "\n      Type tree:" ++ show @lhs.typeTree ++ "\n GExprRs length:" ++ show @loc.numGexprs ++ "\n" ++ @where.simpledebug ++ @gexprs.simpledebug
 
 sem DeclR
   | DHoleR      lhs   .simpledebug                       = "DHoleR\n"
   | DEmptyR     lhs   .simpledebug                       = "DEmptyR\n"
-  | DFunBindsR  lhs   .simpledebug                       = "DFunBindsR\n" ++ @funbinds.simpledebug
-  | DPatBindR   lhs   .simpledebug                       = "DPatBindR\n" ++ @pat.simpledebug ++ @rhs.simpledebug
+  | DFunBindsR  lhs   .simpledebug                       = "DFunBindsR\n      Type tree:" ++ show @lhs.typeTree ++ @funbinds.simpledebug
+  | DPatBindR   lhs   .simpledebug                       = "DPatBindR\n      Type tree:" ++ show @lhs.typeTree ++ @pat.simpledebug ++ @rhs.simpledebug
 
 sem ExprR
   | HoleR       lhs   .simpledebug                       = "HoleR\n"
   | FeedbackR   lhs   .simpledebug                       = @expr.simpledebug
   | MustUseR    lhs   .simpledebug                       = @expr.simpledebug
-  | CaseR       lhs   .simpledebug                       = "CaseR\n" ++ "Helium types available: " ++ show @lhs.topLevelTypes ++ "\n" ++ @expr.simpledebug ++ @alts.simpledebug
+  | CaseR       lhs   .simpledebug                       = "CaseR\n" ++ "Helium types available: " ++ show @lhs.topLevelTypes ++ "\n      Type tree:" ++ show @lhs.typeTree  ++ @expr.simpledebug ++ @alts.simpledebug
   | ConR        lhs   .simpledebug                       = "ConR\n" ++ @name.simpledebug
   | IfR         lhs   .simpledebug                       = "IfR\n" ++ @cond.simpledebug ++ @then.simpledebug ++ @else.simpledebug
   | InfixAppR   lhs   .simpledebug                       = "InfixAppR\n" ++ @left.simpledebug ++ @op.simpledebug ++ @right.simpledebug
-  | LambdaR     lhs   .simpledebug                       = "LambdaR\n   Code that will be compiled: " ++ show @loc.lambdaAsModule ++ "\n" ++ @pats.simpledebug ++ @expr.simpledebug
+  | LambdaR     lhs   .simpledebug                       = "LambdaR\n   Code that will be compiled: " ++ show @loc.lambdaAsModule ++ "\n      Type tree:" ++ show @lhs.typeTree  ++ @pats.simpledebug ++ @expr.simpledebug
   | LetR        lhs   .simpledebug                       = "LetR\n      Code that will be compiled:" ++ show @loc.asModuleR ++ "\n" ++ @decls.simpledebug ++ @expr.simpledebug
   | LitR        lhs   .simpledebug                       = "LitR\n" ++ @lit.simpledebug
   | AppR        lhs   .simpledebug                       = "AppR\n" ++ @fun.simpledebug ++ @args.simpledebug
@@ -49,7 +49,7 @@ sem AltR
 
 sem FunBindR
   | FBHoleR     lhs   .simpledebug                       = "FBHoleR\n"
-  | FunBindR    lhs   .simpledebug                       = "FunBindR\n   Function type:" ++ show @loc.heliumType ++ "\n" ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
+  | FunBindR    lhs   .simpledebug                       = "FunBindR\n   Function type:" ++ show @loc.heliumType ++ "\n      Type tree:" ++ show @lhs.typeTree ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
 
 sem PatR
   | PHoleR      lhs   .simpledebug                       = "PHoleR\n"
@@ -65,6 +65,15 @@ sem PatR
 sem LiteralR
   | LCharR LFloatR LIntR LStringR
      lhs   .simpledebug                                  = show @val
+
+sem GuardedExprR
+  | GExprR      lhs   .simpledebug                       = "GExprR      Type tree:" ++ show @lhs.typeTree  ++ "\n" ++ @guard.simpledebug ++ @expr.simpledebug
+
+sem FunBindsR
+  | Cons        lhs   .simpledebug                       = "Cons FunBindsR\n" ++ "      Type tree:" ++ show @lhs.typeTree ++ "\n" ++ @hd.simpledebug ++ @tl.simpledebug
+
+sem DeclsR
+  | Cons        lhs   .simpledebug                       = "Cons DeclsR\n" ++ "      Type tree:" ++ show @lhs.typeTree ++ "\n" ++ @hd.simpledebug ++ @tl.simpledebug   
 
 sem NameR
   | IdentR      lhs   .simpledebug                       = "IdentR\n" ++ show @name
