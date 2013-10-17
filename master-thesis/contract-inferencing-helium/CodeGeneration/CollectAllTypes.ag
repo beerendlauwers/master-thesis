@@ -61,13 +61,37 @@ debugTypeInferencing options importEnv module_ =
                                                 (infoTree_Syn_Module res)
    in localTypeSchemes
 
+-- NOTES:
+-- Expression VarR which refer to a function often appear to be incorrectly typed.
+-- However, we do receive the correct types from the type inferencer, so perhaps
+-- we could keep a shadowed environment of functions and look them up as necessary?
+-- This system is still much more robust than what we have now, as we don't have to worry
+-- about patterns getting the right types, those are done automatically and in one go.
+-- Same goes for non-function expressions.
+
+-- The good news is that we no longer have to split up the code and feed it to the compiler in bits, we can just get the type tree and top-level environment for the entire module and feed it to the AST appropriately.
+-- H.compile' gives us the correct types for functions.
+-- The type tree gives us the correct types for expressions.
+
+-- TODO: Have FunBindR look up its identifier in the shadowed environment for its type.
+
+-- TODO: Voorbeeld van Johan van een interessante functie
+-- swap :: (a,b) -> (b,a)
+-- cswap ;; cP ca cb >-> cP' cb ca
+-- Is contract van cP en cP' hetzelfde? Eigenlijk zou het leuk zijn als dit kan gebeuren.
+
+
+
+
 doDebugTypeInferencing s = 
  let result = either error id $ H.compile s
- in debugTypeInferencing [OPT.Overloading, OPT.UseTutor] IE.emptyEnvironment result
+     topLevelEnv = (\(Right (_,i,_,_,_)) -> i) $ H.compile' False s
+ in debugTypeInferencing [OPT.Overloading, OPT.UseTutor] topLevelEnv result
 
 doHeliumTypeInferencing s = 
  let result = either error id $ H.compile s
- in typeInferencing [OPT.Overloading, OPT.UseTutor] IE.emptyEnvironment result
+     topLevelEnv = (\(Right (_,i,_,_,_)) -> i) $ H.compile' False s
+ in typeInferencing [OPT.Overloading, OPT.UseTutor] topLevelEnv result
 
 typeSchemesAsInfoTree :: FixpointSubstitution -> CLS.Predicates -> InfoTree -> TypeTree
 typeSchemesAsInfoTree subst ps infoTree = 
@@ -84,6 +108,21 @@ typeSchemesAsInfoTree subst ps infoTree =
                         Nothing -> Nothing
                         
  in DoublyLinkedTree typedPar (typedLocal,UHASRC.descriptionOfSource $ self local, self local) typedChildren
+
+{-
+-- For Proxima
+typeSchemesInInfoTree :: FixpointSubstitution -> Predicates -> InfoTree -> [(Range, TpScheme)]
+typeSchemesInInfoTree subst ps infoTree =
+   let local = attribute infoTree
+       rest  = concatMap (typeSchemesInInfoTree subst ps) (children infoTree)
+   in case assignedType local of 
+         Just tp -> let is     = ftv tp 
+                        ps'    = filter (any (`elem` is) . ftv) ps
+                        scheme = generalizeAll (subst |-> (ps' .=>. tp))
+                    in (rangeOfSource (self local), scheme) : rest
+         Nothing -> rest
+
+-}
 }
 
 attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
@@ -99,6 +138,12 @@ sem DeclsR FunBindsR PatsR ListPatsR TuplePatsR TupleExprR ExprsR ListExprR
   | Cons
      hd    .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
      tl    .typeTree            = mkTypeTreeWith @lhs.typeTree tail
+
+sem DeclR
+  | DPatBindR
+     pat   .typeTree		= headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     rhs   .typeTree		= let newParent = (head.tail) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
 
 sem FunBindR -- Need a type for this
   | FunBindR
@@ -180,12 +225,12 @@ sem AltR
                                   in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
 
 -- Getting types from type tree
-attr PatR
-  syn typeTreeType                                              :: {Maybe S.TpScheme}
+--attr PatR ExprR AltR FunBindR
+--  syn typeTreeType                                              :: {Maybe S.TpScheme}
 
-sem PatR
+sem PatR ExprR AltR FunBindR
   | *
-     lhs   .typeTreeType        = @loc.typeTreeType
+--     lhs   .typeTreeType        = @loc.typeTreeType
      loc   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute @lhs.typeTree
      loc   .typeTreeCode        = (\(_,_,src) -> src) $ attribute @lhs.typeTree
 
