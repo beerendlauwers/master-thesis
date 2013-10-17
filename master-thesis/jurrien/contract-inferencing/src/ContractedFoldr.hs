@@ -467,7 +467,7 @@ instance Show (aT :-> bT) where
 	showsPrec _ a = showString "<function>"
 
 -- In GHC, we could use the following for a Show instance.
---th_example = $(getStaticType '__final_r)
+-- th_example = $(getStaticType '__final_r)
 
 -- Random test.
 blabla x | x == True = True
