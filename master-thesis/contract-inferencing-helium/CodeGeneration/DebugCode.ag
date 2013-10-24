@@ -17,6 +17,8 @@ flatDebug code pointOfEntry =
      inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn (simpledebug_Syn_ModuleR wrapModule)
+       writeFile "flatDebugOutput" (simpledebug_Syn_ModuleR wrapModule)
+
 
 convertPatBindToFunBind :: String -> String -> ModuleR
 convertPatBindToFunBind code pointOfEntry = 
