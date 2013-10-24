@@ -157,7 +157,8 @@ sem PatR -- Need a type for this
      left  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
      right .typeTree            = let newParent = (head.tail) $ children @lhs.typeTree
                                   in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
-  -- TODO: PAsR ???
+  | PAsR
+     pat   .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
 
 sem RhsR
   | RhsR
@@ -186,7 +187,8 @@ sem ExprR -- Need a type for this
   | LambdaR
      loc   .numPatterns         = length @pats.copy
      pats  .typeTree            = mkTypeTreeWith @lhs.typeTree (take @loc.numPatterns)
-     expr  .typeTree            = mkTypeTreeWith @lhs.typeTree (drop @loc.numPatterns)
+     expr  .typeTree            = let newParent = (head.(drop @loc.numPatterns)) $ children @lhs.typeTree
+                                  in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
 
   | IfR
      cond  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
