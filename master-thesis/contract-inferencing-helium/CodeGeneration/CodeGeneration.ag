@@ -12,9 +12,6 @@ include "Domain/FP/CodeGeneration/Utils.ag"
 -- Include code for generating Helium types for all function bindings and let bindings.
 include "Domain/FP/CodeGeneration/CollectAllTypes.ag"
 
--- Include code to generate contracts for all function bindings and let bindings.
-include "Domain/FP/CodeGeneration/GenerateContracts.ag"
-
 -- Include code to apply substitutions
 include "Domain/FP/ContractInferencing/Substitution.ag"
 
@@ -35,7 +32,6 @@ import qualified Control.Monad as CM
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
    syn copy                                                     :: self
-   chn varcnt                                                   :: {Int}
 
 -- Semantics for contracted version of function.
 attr FunBindR
@@ -359,26 +355,36 @@ sem AltR
    | AltR
      rhs  .argumentsToBeAddedToExpr     = [] -- An AltR pattern binding isn't going to be a function that we need to contract.
 
-{-
-data GuardedExprR
-   | GExprR
-      guard    :: ExprR
-      expr     :: ExprR
-      range    :: RangeR
 
-type GuardedExprsR = [GuardedExprR]
+attr Contract
+  syn  copy                                             :: self
 
--- | Right hand side
-data RhsR
-   | RhsR
-      expr     :: ExprR
-      where    :: DeclsR
-      range    :: RangeR
-   | GRhsR
-      gexprs   :: GuardedExprsR
-      where    :: DeclsR
-      range    :: RangeR
--}
+-- Synthesize free type variables for contract substutions.
+attr Contract
+  syn  fcv       use {`DS.union`}  {DS.empty}           :: {DS.Set Contract}
+
+-- Semantics for obtaining free contract variables.
+sem Contract
+  | CQuant
+      lhs.fcv                   = DS.delete @cv.copy @cs.fcv
+
+  | CVar
+      lhs.fcv                   = DS.singleton @loc.copy
+   
+
+{
+
+getFreeContractVars :: Contract -> DS.Set Contract
+getFreeContractVars ctrt = synthesizeAttribute fcv_Syn_Contract ctrt
+
+synthesizeAttribute :: (Syn_Contract -> a) -> Contract -> a
+synthesizeAttribute attr ctrt = attr $ wrap_Contract (sem_Contract ctrt) Inh_Contract
+
+nextUnique :: Int -> (Int, Int)
+nextUnique u = (u + 1, u)
+
+}
+
 
 {
 -- Given a list of patterns and a base value, generate a chain of 'fun' applications.
