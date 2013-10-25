@@ -138,6 +138,28 @@ instance Show PatR where
 
 instance Show GuardedExprR where
   show = Helium.ppGuardedExpression . CL.build heliumWithRangesView
+
+instance Show LiteralR where
+  show (LCharR x _) = show x
+  show (LFloatR x _) = show x
+  show (LIntR x _) = show x
+  show (LStringR x _) = show x
+
+instance Show RangeR where
+  show (RangeR a b) = show a ++ " - " ++ show b
+
+instance Show PositionR where
+  show (PositionR file a b) = "(" ++ show a ++ "," ++ show b ++ ")"
+  show UnknownR = "unknown position"
+
+instance Show MaybeNameR where
+  show NoNameR = []
+  show (JustNameR x) = show x
+
+instance Show MaybeExprR where
+  show NoExprR = []
+  show (JustExprR x) = show x
+
 }
 
 

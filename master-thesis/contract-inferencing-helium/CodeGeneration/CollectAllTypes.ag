@@ -50,6 +50,9 @@ type TypeTree = DoublyLinkedTree ((Maybe S.TpScheme,String,UHASRC.UHA_Source))
 mkTypeTree p a c = DoublyLinkedTree p a c
 mkTypeTreeWith tr f = DoublyLinkedTree (parent tr) (attribute tr) (f $ children tr)
 
+emptyTree :: TypeTree
+emptyTree = DoublyLinkedTree Nothing (Nothing,[],UHASRC.UHA_Def (Name_Identifier noRange [] [])) []
+
 
 debugTypeInferencing :: [OPT.Option] -> IE.ImportEnvironment -> H.Module -> TypeTree
 debugTypeInferencing options importEnv module_ =
@@ -215,6 +218,20 @@ sem ExprR -- Need a type for this
                                   in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
      expr  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
 
+  -- FeedbackR and MustUseR (and NegR)?
+
+  -- EnumR is a bit ugly, because the type tree is ambiguous:
+  -- Both [1..2] and [1,2..] return the same type tree.
+  -- We have to inspect the AST to determine where to send what types.
+  | EnumR
+     from  .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     then  .typeTree            = case @then.copy of
+                                   NoExprR   -> emptyTree -- Dead end
+                                   otherwise -> headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
+     to    .typeTree            = case @then.copy of
+                                   NoExprR   -> headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
+                                   otherwise -> headErr (trMsg @lhs.typeTree $ show @loc.copy) $ drop 2 $ children @lhs.typeTree
+
 sem AltsR
   | Cons
      hd    .typeTree            = mkTypeTreeWith @lhs.typeTree (take 2)
@@ -225,14 +242,80 @@ sem AltR
      pat   .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
      rhs   .typeTree            = let newParent = (head.tail) $ children @lhs.typeTree
                                   in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
+{-
+
+  | DFunBindsR
+     loc   .typeTreeType        = @funbinds.typeTreeType
+
+attr FunBindsR FunBindR RhsR PatR
+  -- A group of function bindings has the same type, we pass this upwards to the DeclR node.
+  syn typeTreeType                                              :: {Maybe S.TpScheme}
+
+attr PatsR
+  syn typeTreeType            use {(++)}    {[]}                :: {[Maybe S.TpScheme]}
+
+sem PatR
+  | *
+     lhs   .typeTreeType        = @loc.typeTreeType
+
+sem FunBindsR
+  | Cons
+     lhs   .typeTreeType        = @hd.typeTreeType
+  | Nil
+     lhs   .typeTreeType        = Nothing
+
+-- We can stitch together a type for every function binding that will serve our purposes of generating a contract.
+sem FunBindR
+  | FBHoleR
+     lhs   .typeTreeType        = Nothing
+  | FunBindR
+     lhs   .typeTreeType        = @loc.typeTreeType
+     loc   .typeTreeType        = 
+     -- First, collect all the types from the patterns
+     loc   .patSplitTypes       = map stripTypeScheme @pats.typeTreeType
+     loc   .rhsSplitType        = stripTypeScheme @rhs.typeTreeType
+     loc   .rhsSimpleType       = (\(ty,_,_) -> ty) @loc.rhsSplitType
+     -- Get the type from RHS
+     loc   .rhsType             = (\(mty,_,_) -> mty) $ attribute $ headErr (trMsg @loc.rhsTypeTree $ show @loc.copy) $ children @loc.rhsTypeTree
+     loc   .rhsTypeTree         = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ drop @loc.numPatterns $ children @lhs.typeTree
+-}
 
 -- Getting types from type tree
---attr PatR ExprR AltR FunBindR
---  syn typeTreeType                                              :: {Maybe S.TpScheme}
+sem DeclR
+  | DPatBindR -- a DPatBindR has a single pattern, which holds the type of the pattern binding. 
+     loc   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute $ headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+     loc   .typeTreeCode        = (\(_,s,src) -> s ++ " " ++ show src) $ attribute @lhs.typeTree
 
-sem PatR ExprR AltR FunBindR
+sem FunBindR
+  | FunBindR
+     -- We can get the arity of a function binding by summing pattern count with arity count of the RHS.
+     loc   .typeTreeArity       = @loc.numPatterns + @loc.rhsArity
+     loc   .rhsArity            = calculateTypeArity (maybeErr @loc.typeTreeCode @rhs.typeTreeType)
+
+     -- String to be used in case of an error message
+     loc   .typeTreeCode        = (\(_,s,src) -> s ++ " " ++ show src) $ attribute @lhs.typeTree
+
+     -- Parameter arity is similar.
+     loc   .typeTreeParameterArity = @loc.fixedPatParamArity ++ @loc.rhsParameterArity
+     -- Get parameter arity from patterns
+     loc   .patsTreeTypes       = map (\x -> (\(mty,_,_) -> mty) $ attribute x) $ take @loc.numPatterns $ children @lhs.typeTree
+     loc   .fixedPatParamArity  = map (head.emptyListToZero) @loc.patParameterArity
+     loc   .patParameterArity   = map (\ty -> calculateTypeParameterArity $ maybeErr @loc.typeTreeCode ty) @loc.patsTreeTypes
+     -- Get parameter arity from RHS
+     loc   .rhsParameterArity   = calculateTypeParameterArity $ maybeErr @loc.typeTreeCode @rhs.typeTreeType
+
+attr RhsR
+  -- RhsR and GRhsR have a different structure to get to the full expression on the right-hand side
+  syn typeTreeType                                              :: {Maybe S.TpScheme}
+
+sem RhsR
+  | RhsR
+     lhs   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute $ headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
+  | GRhsR
+     lhs   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute $ headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
+
+sem PatR ExprR AltR
   | *
---     lhs   .typeTreeType        = @loc.typeTreeType
      loc   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute @lhs.typeTree
      loc   .typeTreeCode        = (\(_,_,src) -> src) $ attribute @lhs.typeTree
 
@@ -263,10 +346,7 @@ attr ExprR
 attr ExprsR
   syn functionType             use {(++)}    {[]}               :: {[Maybe S.TpScheme]}
 
---{
---data NestedEnv a = WithLocalDefinitions (Map NameR a) (NestedEnv a) |
---                   NoLocalDefinitions
---}
+
 
 {- *** Start of semantics to get integer for fresh contract variables. *** -}
 sem ModuleR

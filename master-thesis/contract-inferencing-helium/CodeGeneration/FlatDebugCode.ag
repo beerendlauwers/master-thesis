@@ -49,7 +49,7 @@ sem AltR
 
 sem FunBindR
   | FBHoleR     lhs   .simpledebug                       = "FBHoleR\n"
-  | FunBindR    lhs   .simpledebug                       = "FunBindR\n   Function type:" ++ show @loc.heliumType ++ "\n      Type tree:" ++ show @lhs.typeTree ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
+  | FunBindR    lhs   .simpledebug                       = "FunBindR\n   Type tree:" ++ show @lhs.typeTree ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
 
 sem PatR
   | PHoleR      lhs   .simpledebug                       = "PHoleR\n"

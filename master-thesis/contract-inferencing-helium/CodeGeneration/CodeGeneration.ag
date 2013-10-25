@@ -69,11 +69,8 @@ sem FunBindR
       loc  .whereClause                 = mkDFunbinds [mkFunbind (mkIdent "funs") [] @loc.whereRhs]
       loc  .whereRhs                    = mkRhs (makeFuns (map mkPVar @loc.funsPatterns) @loc.funsBase) []
       loc  .funsPatterns                = ["__x" ++ show @loc.num ++ show x | x <- [1.. @loc.arity]]
-      loc  .arityEnv                    = calculateArity $ getTypeEnv @lhs.topLevelTypes
-      loc  .arity                       = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup @loc.functionIdent @loc.arityEnv)
-      loc  .heliumType                  = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in arity env!") id (DM.lookup (toHeliumWithRanges @loc.functionIdentifier) (getTypeEnv @lhs.topLevelTypes))
-      loc  .parameterArityEnv           = calculateParameterArity $ getTypeEnv @lhs.topLevelTypes
-      loc  .parameterArity              = maybe (error $ "Tried to look up " ++ @loc.functionIdent ++ " in parameterArity env!") id (DM.lookup @loc.functionIdent @loc.parameterArityEnv)
+      loc  .arity                       = @loc.typeTreeArity
+      loc  .parameterArity              = @loc.typeTreeParameterArity
       loc  .patsWithArity               = zip3 (take @loc.arity [1..]) @loc.parameterArity @loc.funsPatterns
       loc  .expandedFunsPatterns        = map (expandHigherOrderParams @loc.posInfo @loc.functionIdent) @loc.patsWithArity
       loc  .funsBase                    = mkApp $ @loc.finalFunctionIdent : @loc.expandedFunsPatterns
@@ -150,7 +147,10 @@ sem DeclR
 
 sem ExprR
    | VarR ConR
-      loc  .localType                   = fromJustMsg ("Could not find a type for variable " ++ getVar @name.copy) @loc.functionType
+      loc  .conversionResults           = convertTopTypeToContract @lhs.freshContractVariable @loc.localType
+      loc  .varContract                 = snd @loc.conversionResults
+      lhs  .freshContractVariable       = fst @loc.conversionResults
+      loc  .localType                   = maybeErr (show @loc.typeTreeCode) @loc.typeTreeType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
       loc  .isFunction                  = @loc.arity > 0 
 
@@ -188,7 +188,6 @@ sem ExprR
 
       -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
       -- OR PASS AROUND SUBSTITUTIONS 
-      loc  .varContract                 = maybe proptrue id (DM.lookup (getVar @name.copy) @lhs.heliumGeneratedContracts)
       loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
 
       loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id),(5,prefixcontractedFunction),(6,id)]
@@ -321,7 +320,7 @@ sem DeclR
                                            False -> DPatBindR @pat.copy @rhs.copy @range.copy
 
      -- Get function name
-     loc  .arity                        = snd $ head $ DM.toList $ calculateArity @loc.heliumTypes
+     loc  .arity                        = calculateTypeArity (maybeErr @loc.typeTreeCode @loc.typeTreeType)
      loc  .functionNameFromPatBind      = case @pat.copy of
                                            (PVarR nm _) -> nm
                                            x            -> error $ "DPatBindR that defines a function, but does not bind it to a name! Code: " ++ show x
