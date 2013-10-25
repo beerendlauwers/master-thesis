@@ -381,10 +381,11 @@ sem FunBindR
                                                 [  horizontalLinesWith "*" $ text "FunBindR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
-						,  text "tree type:"		 BOX.<+> text (show @loc.typeTreeType)	 
-                                                ,  text "helium type:"           BOX.<+> (text.show) @loc.heliumType
+						,  text "tree arity:"		 BOX.<+> text (show @loc.typeTreeArity)
                                                 ,  text "arity:"                 BOX.<+> pprint @loc.arity
-                                                ,  text "arity params:"          BOX.<+> pprint @loc.parameterArity
+                                                ,  text "arity params:"          BOX.<+> text (show @loc.parameterArity)
+                                                ,  text "pattern tree types:"    BOX.<+> vcat BOX.left (map (\ty -> text $ show ty) @loc.patsTreeTypes)
+                                                ,  text "type from rhs:"        BOX.<+> text (show @rhs.typeTreeType)
                                                 ,  text "pattern types:"     BOX.<+> vcat BOX.left @loc.debugTypes
                                                 ,  text "pattern contracts:" BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  text "__contracted code:" BOX.<+> pprint @loc.contractedFunction

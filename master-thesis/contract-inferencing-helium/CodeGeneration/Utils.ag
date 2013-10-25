@@ -22,6 +22,10 @@ headErr :: String -> [a] -> a
 headErr m [] = error m
 headErr m xs = head xs
 
+maybeErr :: String -> Maybe a -> a
+maybeErr m Nothing = error $ m ++ " does not have a type available."
+maybeErr m (Just x) = x
+
 trMsg :: TypeTree -> String -> String
 trMsg tr m = show tr ++ m
 
@@ -127,12 +131,21 @@ removeRange' (SpecialR x _)  = SpecialR x noRangeR
 
 extractTypeNoRange = scrubRangeInfo.(H.extractTypes)
 
+calculateTypeArity :: S.TpScheme -> Int
+calculateTypeArity = S.arityOfTpScheme
+
+calculateTypeParameterArity :: S.TpScheme -> [Int]
+calculateTypeParameterArity = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify)
+
 calculateArity :: IE.TypeEnvironment -> FunctionArityEnvironment
-calculateArity env = DM.fromList $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, S.arityOfTpScheme ty)) (DM.toList env)
+calculateArity env = DM.fromList $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, calculateTypeArity ty)) (DM.toList env)
 
 calculateParameterArity :: IE.TypeEnvironment -> ParameterArityEnvironment
-calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, getParameterArity ty)) (DM.toList env)
-  where getParameterArity ty = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify) ty
+calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, calculateTypeParameterArity ty)) (DM.toList env)
+
+emptyListToZero :: [Int] -> [Int]
+emptyListToZero [] = [0]
+emptyListToZero xs = xs
 
 makeModuleR :: DeclsR -> ModuleR
 makeModuleR []    = ModuleR NoNameR (BHoleR 0    noRangeR) noRangeR 
