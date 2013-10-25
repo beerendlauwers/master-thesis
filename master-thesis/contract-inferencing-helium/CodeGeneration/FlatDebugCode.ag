@@ -4,15 +4,15 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
 
 -- simpledebug info synthesis
 sem ModuleR
-  | ModuleR     lhs   .simpledebug                       = "ModuleR\n" ++ show @loc.types ++ "\n" ++ @body.simpledebug
+  | ModuleR     lhs   .simpledebug                       = "ModuleR\n" ++ @body.simpledebug
 
 sem BodyR
   | BodyR       lhs   .simpledebug                       = "BodyR\n" ++ @decls.simpledebug
   | BHoleR      lhs   .simpledebug                       = "BHoleR\n"
 
 sem RhsR
-  | RhsR        lhs   .simpledebug                       = "RhsR\n      Code that will be compiled: " ++ (show $ show @loc.asModuleR) ++ "\n      Type tree:" ++ show @lhs.typeTree ++ @where.simpledebug ++ @expr.simpledebug
-  | GRhsR       lhs   .simpledebug                       = "GRhsR\n      Code that will be compiled: " ++ (show $ show @loc.asModuleR) ++ "\n      Type tree:" ++ show @lhs.typeTree ++ "\n GExprRs length:" ++ show @loc.numGexprs ++ "\n" ++ @where.simpledebug ++ @gexprs.simpledebug
+  | RhsR        lhs   .simpledebug                       = "RhsR\n      Type tree:" ++ show @lhs.typeTree ++ @where.simpledebug ++ @expr.simpledebug
+  | GRhsR       lhs   .simpledebug                       = "GRhsR\n      Type tree:" ++ show @lhs.typeTree ++ "\n GExprRs length:" ++ show @loc.numGexprs ++ "\n" ++ @where.simpledebug ++ @gexprs.simpledebug
 
 sem DeclR
   | DHoleR      lhs   .simpledebug                       = "DHoleR\n"
@@ -24,17 +24,17 @@ sem ExprR
   | HoleR       lhs   .simpledebug                       = "HoleR\n"
   | FeedbackR   lhs   .simpledebug                       = @expr.simpledebug
   | MustUseR    lhs   .simpledebug                       = @expr.simpledebug
-  | CaseR       lhs   .simpledebug                       = "CaseR\n" ++ "Helium types available: " ++ show @lhs.topLevelTypes ++ "\n      Type tree:" ++ show @lhs.typeTree  ++ @expr.simpledebug ++ @alts.simpledebug
+  | CaseR       lhs   .simpledebug                       = "CaseR\n      Type tree:" ++ show @lhs.typeTree  ++ @expr.simpledebug ++ @alts.simpledebug
   | ConR        lhs   .simpledebug                       = "ConR\n" ++ @name.simpledebug
   | IfR         lhs   .simpledebug                       = "IfR\n" ++ @cond.simpledebug ++ @then.simpledebug ++ @else.simpledebug
   | InfixAppR   lhs   .simpledebug                       = "InfixAppR\n" ++ @left.simpledebug ++ @op.simpledebug ++ @right.simpledebug
-  | LambdaR     lhs   .simpledebug                       = "LambdaR\n   Code that will be compiled: " ++ show @loc.lambdaAsModule ++ "\n      Type tree:" ++ show @lhs.typeTree  ++ @pats.simpledebug ++ @expr.simpledebug
-  | LetR        lhs   .simpledebug                       = "LetR\n      Code that will be compiled:" ++ show @loc.asModuleR ++ "\n" ++ @decls.simpledebug ++ @expr.simpledebug
+  | LambdaR     lhs   .simpledebug                       = "LambdaR\n      Type tree:" ++ show @lhs.typeTree  ++ @pats.simpledebug ++ @expr.simpledebug
+  | LetR        lhs   .simpledebug                       = "LetR\n" ++ @decls.simpledebug ++ @expr.simpledebug
   | LitR        lhs   .simpledebug                       = "LitR\n" ++ @lit.simpledebug
   | AppR        lhs   .simpledebug                       = "AppR\n" ++ @fun.simpledebug ++ @args.simpledebug
   | ParenR      lhs   .simpledebug                       = @expr.simpledebug
   | TupleR      lhs   .simpledebug                       = "TupleR\n" ++ @exprs.simpledebug
-  | VarR        lhs   .simpledebug                       = "VarR\n" ++ "Helium types available: " ++ show @lhs.topLevelTypes ++ "\n" ++ "    Variable type:" ++ show @loc.functionType ++ "\n"
+  | VarR        lhs   .simpledebug                       = "VarR\n"
   | EnumR       lhs   .simpledebug                       = "EnumR\n" ++ @from.simpledebug ++ @then.simpledebug ++ @to.simpledebug
   | ListR       lhs   .simpledebug                       = "ListR\n" ++ @exprs.simpledebug
 

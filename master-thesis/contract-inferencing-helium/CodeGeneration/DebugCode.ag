@@ -14,7 +14,7 @@ flatDebug code pointOfEntry =
  let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
      topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False (show noFreeLambdaCode)
      semModule = sem_ModuleR noFreeLambdaCode
-     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
+     inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn (simpledebug_Syn_ModuleR wrapModule)
        writeFile "flatDebugOutput" (simpledebug_Syn_ModuleR wrapModule)
@@ -25,7 +25,7 @@ convertPatBindToFunBind code pointOfEntry =
  let noFreeLambdas = removeFreeLambdas code pointOfEntry
      topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      semModule = sem_ModuleR noFreeLambdas
-     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
+     inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
  in patBindToFunBind_Syn_ModuleR wrapModule
 
@@ -34,7 +34,7 @@ removeFreeLambdas code pointOfEntry =
  let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
-     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
+     inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
  in removeFreeLambdas_Syn_ModuleR wrapModule
 
@@ -44,7 +44,7 @@ showDebug code pointOfEntry =
  let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
      topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False (show noFreeLambdaCode)
      semModule = sem_ModuleR noFreeLambdaCode
-     inhModule = Inh_ModuleR pointOfEntry [] topLevelEnv 0
+     inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
  in do printBox (debug_Syn_ModuleR wrapModule)
        writeFile "debugOutput" (render $ debug_Syn_ModuleR wrapModule)
@@ -144,12 +144,9 @@ sem ModuleR
   | ModuleR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "ModuleR"
-                                                ,  text "Available types:"                BOX.<+> text (show @loc.types)
-                                                ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  text "Final code:"                     BOX.<+> pprint @body.functionAppSelf
                                                 ,  nest 2 @body.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContracts)::[(String,Contract)])
 
 sem BodyR
   | BodyR
@@ -168,27 +165,19 @@ sem RhsR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "RhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "Code fed to Helium compiler:"           BOX.<+> pprint @loc.asModuleR
-                                                ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
-                                                ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
-                                                ,  text "Number of contracts:" BOX.<+> pprint ( length (DM.toList @loc.newContractEnv))
                                                 ,  nest 2 @where.debug
                                                 ,  nest 2 @expr.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContractEnv)::[(String,Contract)])
 
 
   | GRhsR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "GRhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "Generated types by where-clause:"       BOX.<+> text (show @loc.types)
-                                                ,  text "Available contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
 
                                                 ,  nest 2 @where.debug
                                                 ,  nest 2 @gexprs.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContractEnv)::[(String,Contract)])
 
 sem DeclR
   | DHoleR
@@ -257,8 +246,6 @@ sem ExprR
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
 						,  text "tree type:"		 BOX.<+> text (show @loc.typeTreeType)	 
-                                                ,  text "pattern types:"         BOX.<+> text (show @loc.functionHeliumTypes)
-                                                ,  text "types:"                 BOX.<+> text (show @loc.types)
                                                 ,  text "local idents known to expr:"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pats.debug
                                                 ,  nest 2 @expr.debug
@@ -267,11 +254,9 @@ sem ExprR
   | LetR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "LetR"
-                                                ,   text "Contracts:"            BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,   nest 2 @decls.debug
                                                 ,   nest 2 @expr.debug
                                                 ]
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [pprint nm,text " : ",pprint ctrt]) ((DM.toList @loc.newContractEnv)::[(String,Contract)])
 
   | LitR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
@@ -282,7 +267,6 @@ sem ExprR
   | AppR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AppR"
-                                                ,  text "type:"                 BOX.<+> text (show @loc.functionType)
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
 						,  text "tree type:"		 BOX.<+> text (show @loc.typeTreeType)	 
                                                 ,  text "original code:"        BOX.<+> pprint @loc.copy
@@ -306,14 +290,12 @@ sem ExprR
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
 						,  text "tree type:"		 BOX.<+> text (show @loc.typeTreeType)	 
-                                                ,  text "type:"                  BOX.<+> text (show @loc.functionType) BOX.<+> text ("(Arity: " ++ show @loc.arity ++ ")")
                                                 ,  text "contract:"              BOX.<+> pprint @loc.contractAsExprR
                                                 ,  text "is base function:"      BOX.<+> text (show @lhs.isBaseFunction)
                                                 ,  text "is applied to local function:"           BOX.<+> text (show @lhs.isAppliedToLocalFunction)
                                                 ,  text "is a local identifier:"      BOX.<+> text (show @loc.isLocalParameter)
                                                 ,  text "is a function identifier:"          BOX.<+> text (show @loc.isFunction)
                                                 ,  text "update type:"           BOX.<+> text (show @loc.updateType)
-                                                ,  text "available types:"       BOX.<+> text (show @lhs.topLevelTypes)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
@@ -364,12 +346,10 @@ sem AltR
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
 						,  text "tree type:"		 BOX.<+> text (show @loc.typeTreeType)	 
-                                                ,  text "pattern types:"     BOX.<+> vcat BOX.left @loc.debugTypes
                                                 ,  text "local idents known to RHS"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @pat.debug
                                                 ,  nest 2 @rhs.debug
                                                 ]
-     loc  .debugTypes                   = map (\(nm,ty) -> hcat BOX.left $ map text [show nm," : ",show ty]) ((DM.toList @loc.patternTypes)::[(H.Name,S.TpScheme)])
 
 sem FunBindR
   | FBHoleR
@@ -386,8 +366,6 @@ sem FunBindR
                                                 ,  text "arity params:"          BOX.<+> text (show @loc.parameterArity)
                                                 ,  text "pattern tree types:"    BOX.<+> vcat BOX.left (map (\ty -> text $ show ty) @loc.patsTreeTypes)
                                                 ,  text "type from rhs:"        BOX.<+> text (show @rhs.typeTreeType)
-                                                ,  text "pattern types:"     BOX.<+> vcat BOX.left @loc.debugTypes
-                                                ,  text "pattern contracts:" BOX.<+> vcat BOX.left @loc.debugContracts
                                                 ,  text "__contracted code:" BOX.<+> pprint @loc.contractedFunction
                                                 ,  text "__app code:"        BOX.<+> pprint @loc.appFunction
                                                 ,  text "__final code:"      BOX.<+> pprint @loc.finalFunction
@@ -399,8 +377,6 @@ sem FunBindR
                                                 ,  nest 2 @pats.debug
                                                 ,  nest 2 @rhs.debug
                                                 ]
-     loc  .debugTypes                   = map (\(nm,ty) -> hcat BOX.left $ map text [show nm," : ",show ty]) ((DM.toList @loc.patternTypes)::[(H.Name,S.TpScheme)])
-     loc  .debugContracts               = map (\(nm,ctrt) -> hcat BOX.left [text nm,text " : ",pprint ctrt]) ((DM.toList @loc.patternContracts)::[(String,Contract)])
 
 sem PatR
   | PHoleR

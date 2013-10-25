@@ -131,10 +131,16 @@ typeSchemesInInfoTree subst ps infoTree =
 attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
   -- We get this from the Helium compiler. It's a tree with types that resembles our AST.
   inh typeTree                                                  :: {TypeTree}
+  chn varcnt                                                    :: {Int}
 
 sem ModuleR
   | ModuleR
       body .typeTree            = doDebugTypeInferencing $ show @loc.copy -- Generate the type tree from our code.
+      name .typeTree            = emptyTree
+      range.typeTree            = emptyTree
+      body .varcnt              = 0
+      name .varcnt              = @body.varcnt
+      range.varcnt              = @name.varcnt
 
 -- Slice up the type tree we get from the Helium compiler.
 sem DeclsR FunBindsR PatsR ListPatsR TuplePatsR TupleExprR ExprsR ListExprR
@@ -242,43 +248,6 @@ sem AltR
      pat   .typeTree            = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ children @lhs.typeTree
      rhs   .typeTree            = let newParent = (head.tail) $ children @lhs.typeTree
                                   in mkTypeTree (Just newParent) (attribute newParent) (children newParent)
-{-
-
-  | DFunBindsR
-     loc   .typeTreeType        = @funbinds.typeTreeType
-
-attr FunBindsR FunBindR RhsR PatR
-  -- A group of function bindings has the same type, we pass this upwards to the DeclR node.
-  syn typeTreeType                                              :: {Maybe S.TpScheme}
-
-attr PatsR
-  syn typeTreeType            use {(++)}    {[]}                :: {[Maybe S.TpScheme]}
-
-sem PatR
-  | *
-     lhs   .typeTreeType        = @loc.typeTreeType
-
-sem FunBindsR
-  | Cons
-     lhs   .typeTreeType        = @hd.typeTreeType
-  | Nil
-     lhs   .typeTreeType        = Nothing
-
--- We can stitch together a type for every function binding that will serve our purposes of generating a contract.
-sem FunBindR
-  | FBHoleR
-     lhs   .typeTreeType        = Nothing
-  | FunBindR
-     lhs   .typeTreeType        = @loc.typeTreeType
-     loc   .typeTreeType        = 
-     -- First, collect all the types from the patterns
-     loc   .patSplitTypes       = map stripTypeScheme @pats.typeTreeType
-     loc   .rhsSplitType        = stripTypeScheme @rhs.typeTreeType
-     loc   .rhsSimpleType       = (\(ty,_,_) -> ty) @loc.rhsSplitType
-     -- Get the type from RHS
-     loc   .rhsType             = (\(mty,_,_) -> mty) $ attribute $ headErr (trMsg @loc.rhsTypeTree $ show @loc.copy) $ children @loc.rhsTypeTree
-     loc   .rhsTypeTree         = headErr (trMsg @lhs.typeTree $ show @loc.copy) $ drop @loc.numPatterns $ children @lhs.typeTree
--}
 
 -- Getting types from type tree
 sem DeclR
@@ -318,6 +287,20 @@ sem PatR ExprR AltR
   | *
      loc   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute @lhs.typeTree
      loc   .typeTreeCode        = (\(_,_,src) -> src) $ attribute @lhs.typeTree
+
+{
+type ContractOffset = Int
+}
+
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
+   -- Highest integer used in a Helium type. We'll use this as an offset when generating
+   -- fresh contracts; we don't want to accidentally clash with an existing type variable! 
+   syn contractVariableOffset use {max} {(0::Int)}              :: {ContractOffset}
+
+   -- First integer available for fresh contracts.
+   chn freshContractVariable                                    :: {ContractOffset}
+
+{-
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
   -- We get this from the Helium compiler. These only contain our own types.
@@ -729,4 +712,4 @@ sem ExprR
      pats.patType               = Nothing
      pats.patContract           = Nothing
 
-
+-}
