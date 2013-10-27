@@ -12,7 +12,6 @@ include "Domain/FP/CodeGeneration/FlatDebugCode.ag"
 flatDebug :: String -> String -> IO ()
 flatDebug code pointOfEntry = 
  let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
-     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False (show noFreeLambdaCode)
      semModule = sem_ModuleR noFreeLambdaCode
      inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
@@ -23,7 +22,6 @@ flatDebug code pointOfEntry =
 convertPatBindToFunBind :: String -> String -> ModuleR
 convertPatBindToFunBind code pointOfEntry = 
  let noFreeLambdas = removeFreeLambdas code pointOfEntry
-     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
      semModule = sem_ModuleR noFreeLambdas
      inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
@@ -31,8 +29,7 @@ convertPatBindToFunBind code pointOfEntry =
 
 removeFreeLambdas :: String -> String -> ModuleR
 removeFreeLambdas code pointOfEntry = 
- let topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False code
-     astCode = compileWithRanges code
+ let astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
      inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
@@ -42,7 +39,6 @@ removeFreeLambdas code pointOfEntry =
 showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
  let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
-     topLevelEnv = generateImportEnv $ H.extractTypes $ H.compile' False (show noFreeLambdaCode)
      semModule = sem_ModuleR noFreeLambdaCode
      inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
