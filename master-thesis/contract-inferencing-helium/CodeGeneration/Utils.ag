@@ -20,42 +20,13 @@ import qualified Control.Exception as CE
 
 headErr :: String -> [a] -> a
 headErr m [] = error m
-headErr m xs = head xs
+headErr _ xs = head xs
 
 maybeErr :: String -> Maybe a -> a
-maybeErr m Nothing = error $ m ++ " does not have a type available."
-maybeErr m (Just x) = x
+maybeErr s = fromJustMsg (s ++ " does not have a type available.")
 
 trMsg :: TypeTree -> String -> String
 trMsg tr m = show tr ++ m
-
-searchTypeEnvs :: NameR -> [IE.ImportEnvironment] -> Maybe S.TpScheme
-searchTypeEnvs nm envs = (DJ.listToMaybe.DJ.catMaybes) $ map ((lookupHeliumTypeMaybe nm).getTypesAndValueConstructors) envs
-
-getTypeEnv :: IE.ImportEnvironment -> IE.TypeEnvironment
-getTypeEnv (IE.ImportEnvironment _ _ ty _ _ _) = ty
-
-getTypesAndValueConstructors :: IE.ImportEnvironment -> IE.TypeEnvironment
-getTypesAndValueConstructors (IE.ImportEnvironment _ _ ty vc _ _) = DM.union ty vc
-
-generateImportEnv :: IE.TypeEnvironment -> IE.ImportEnvironment
-generateImportEnv tyenv = IE.emptyEnvironment { IE.typeEnvironment = tyenv }
-
--- Replace definitions in old env with definitions in new env.
-overwriteImportEnv :: IE.ImportEnvironment -> IE.ImportEnvironment -> IE.ImportEnvironment
-overwriteImportEnv (IE.ImportEnvironment nc ns ne nv no nt) (IE.ImportEnvironment oc os oe ov oo ot) = 
- IE.ImportEnvironment
-   { IE.typeConstructors  = DM.union nc oc
-   , IE.typeSynonyms      = DM.union ns os
-   , IE.typeEnvironment   = DM.union ne oe
-   , IE.valueConstructors = DM.union nv ov
-   , IE.operatorTable     = DM.union no oo
-   , IE.typingStrategies  = nt ++ ot
-   }
-
-removeFromTypeEnv :: H.Name -> IE.ImportEnvironment -> IE.ImportEnvironment
-removeFromTypeEnv x (IE.ImportEnvironment a b tyenv c d e) =
- IE.ImportEnvironment a b (DM.delete x tyenv) c d e
 
 getMaxVariable :: IE.ImportEnvironment -> Int
 getMaxVariable (IE.ImportEnvironment _ _ c d _ _) = 
@@ -80,10 +51,6 @@ splitFunctionContract' :: Contract -> [Contract] -> (Contract,Contract)
 splitFunctionContract' (CArr x y) quants = (foldr CQuant x quants,foldr CQuant y quants)
 splitFunctionContract' x _ = (error.show) $ text "Not a function contract: " BOX.<+> pprint x
 
-
-type FunctionArityEnvironment = DM.Map String Int
-type ParameterArityEnvironment = DM.Map String [Int]
-
 updateName :: (NameR -> NameR) -> NameR -> String -> [String] -> NameR
 updateName f n entryPoint localIdents = 
  if (getVar n == entryPoint) && not (elem (getVar n) localIdents)
@@ -107,16 +74,6 @@ getRange (IdentR _ r)    = r
 getRange (OperatorR _ r) = r
 getRange (SpecialR _ r)  = r
 
-lookupHeliumTypeMaybe :: NameR -> IE.TypeEnvironment -> Maybe S.TpScheme
-lookupHeliumTypeMaybe nm env = DM.lookup (toHeliumWithRanges nm) env
-
-lookupHeliumType :: NameR -> IE.TypeEnvironment -> S.TpScheme
-lookupHeliumType nm env = 
- let result = lookupHeliumTypeMaybe nm env
- in case result of
-     (Just x) -> x
-     Nothing  -> error $ "Tried to look up " ++ show nm ++ " in type environment: " ++ show env
-
 -- We need to remove range information because otherwise we could end up with multiple entries
 scrubRangeInfo :: IE.TypeEnvironment -> IE.TypeEnvironment
 scrubRangeInfo = DM.mapKeys removeRange
@@ -129,37 +86,15 @@ removeRange' (IdentR x _)    = IdentR x noRangeR
 removeRange' (OperatorR x _) = OperatorR x noRangeR
 removeRange' (SpecialR x _)  = SpecialR x noRangeR
 
-extractTypeNoRange = scrubRangeInfo.(H.extractTypes)
-
 calculateTypeArity :: S.TpScheme -> Int
 calculateTypeArity = S.arityOfTpScheme
 
 calculateTypeParameterArity :: S.TpScheme -> [Int]
 calculateTypeParameterArity = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify)
 
-calculateArity :: IE.TypeEnvironment -> FunctionArityEnvironment
-calculateArity env = DM.fromList $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, calculateTypeArity ty)) (DM.toList env)
-
-calculateParameterArity :: IE.TypeEnvironment -> ParameterArityEnvironment
-calculateParameterArity env = DM.fromList  $ map (\(name,ty) -> ((getVar.fromHeliumWithRanges) name, calculateTypeParameterArity ty)) (DM.toList env)
-
 emptyListToZero :: [Int] -> [Int]
 emptyListToZero [] = [0]
 emptyListToZero xs = xs
-
-makeModuleR :: DeclsR -> ModuleR
-makeModuleR []    = ModuleR NoNameR (BHoleR 0    noRangeR) noRangeR 
-makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
-
-convertExprToFunBind :: ExprR -> FunBindR
-convertExprToFunBind (LambdaR pats expr range) = 
- let nm = IdentR "__internalExpression__" noRangeR
-     rhs = RhsR expr [] noRangeR
- in FunBindR Nothing nm pats rhs range
-convertExprToFunBind caseExpr = 
- let nm = IdentR "__internalExpression__" noRangeR
-     rhs = RhsR caseExpr [] noRangeR
- in FunBindR Nothing nm [] rhs noRangeR
 
 noRangeR :: RangeR
 noRangeR = RangeR UnknownR UnknownR
@@ -180,20 +115,8 @@ stripTypeScheme ty =
      simpleTy    = QL.unqualify noqnTy
  in (simpleTy, predicates, quants)
 
--- Reassembles a simple type into a type scheme again.
-assembleTypeScheme :: (P.Tp, CLS.Predicates, [Int]) -> S.TpScheme
-assembleTypeScheme (ty,pr,qu) = S.toTpScheme $ QN.quantify qu $ QL.qualify context pr ty
- where context = ([]::[CLS.Predicate])
-
 allTypes :: P.Tp -> P.Tps
 allTypes ty = (\(x,y) -> x++[y]) $ P.functionSpine ty
-
-mapConvertTopTypeToContract :: Int -> [S.TpScheme] -> (Int,[Contract])
-mapConvertTopTypeToContract offset (ty:ts) = 
- let (offset',ctrt) = convertTopTypeToContract offset ty
-     (finalOffset,ctrts) = mapConvertTopTypeToContract offset' ts
- in (finalOffset,ctrt:ctrts)
-mapConvertTopTypeToContract offset [] = (offset,[])
 
 convertTopTypeToContract :: Int -> S.TpScheme -> (Int,Contract)
 convertTopTypeToContract offset ty = 
@@ -238,65 +161,18 @@ convertTopTypeToContract offset ty =
         (n2, ctrt2,q2) = convert n1 t2
         (n3, ctrt3,q3) = convert n2 t3
         (n4, ctrt4,q4) = convert n3 t4
-    in (n4, CTuple [ctrt1,ctrt2,ctrt3,ctrt4],q1++q2++q3++q4)
+        o = CVar (makeType $ head n4) Nothing
+    in (tail n4, CBifunctor o ctrt1 (CFunctor ctrt2 (CFunctor ctrt3 ctrt4)),q1++q2++q3++q4++[head n4])
    -- 3-tuple
    convert n (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) | P.isTupleConstructor x =
     let (n1, ctrt1,q1) = convert n t1
         (n2, ctrt2,q2) = convert n1 t2
         (n3, ctrt3,q3) = convert n2 t3
-    in (n3, CTuple [ctrt1,ctrt2,ctrt3],q1++q2++q3)
+        o = CVar (makeType $ head n3) Nothing
+    in (tail n3, CBifunctor o ctrt1 (CFunctor ctrt2 ctrt3),q1++q2++q3++[head n3])
    convert n (P.TCon x) | P.isTupleConstructor x = 
     error $ "Only tuples up to size 4 are currently supported. Tried to convert type: " ++ show x
    convert _ x = error $ "Was unable to convert the following type: " ++ show x 
-
--- Splits up a function type scheme into two parts.
-splitTopTypeScheme :: S.TpScheme -> (S.TpScheme, Maybe S.TpScheme)
-splitTopTypeScheme ty = 
- let (simpleTy,predicates,quants) = stripTypeScheme ty
-     allTps      = allTypes simpleTy
-     leftType    = assembleTypeScheme (head allTps,predicates,quants)
-     restTy      = case tail allTps of
-                     []  -> Nothing
-                     [x] -> Just x
-                     xs  -> Just $ foldr (P..->.) (last xs) (init xs)
-     maybeFunc   = \rest -> Just $ assembleTypeScheme (rest,predicates,quants)
-     restType    = maybe Nothing maybeFunc restTy
- in (leftType, restType)
-
-splitUpTuple :: S.TpScheme -> [S.TpScheme]
-splitUpTuple ty =
- let (simpleTy,predicates,quants) = stripTypeScheme ty
-     tuple      = head (allTypes simpleTy)
-     getTupleElems (P.TApp (P.TApp (P.TCon x) t1) t2) | P.isTupleConstructor x = [t1,t2]
-     getTupleElems (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) | P.isTupleConstructor x = [t1,t2,t3]
-     getTupleElems (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) | P.isTupleConstructor x = [t1,t2,t3,t4]
-     getTupleElems (P.TApp (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) t5) | P.isTupleConstructor x = [t1,t2,t3,t4,t5]
-     getTupleElems (P.TCon x) | P.isTupleConstructor x = error $ "Extend splitUpTuple with more tuple cases, only supports up to 5-tuples at the moment, tried to pattern match on: " ++ show x
-     getTupleElems x = error $ "Expected a tuple to be split up, got the following type: " ++ show x
- in map (\x -> assembleTypeScheme (x,predicates,quants)) (getTupleElems tuple)
-
-
--- Fetches the a from [a] in a type.
-getInnerListElem :: S.TpScheme -> S.TpScheme
-getInnerListElem ty = 
- let (simpleTy,predicates,quants) = stripTypeScheme ty
-     list           = head (allTypes simpleTy)
-     getListElem (P.TApp (P.TCon "[]") t1) = t1
-     getListElem x = error $ "Expected a list, got the following type: " ++ show x
- in assembleTypeScheme (getListElem list,predicates,quants)
-
--- Fetches the inner contract from a list contract.
-getInnerListCtrt :: Contract -> Contract
-getInnerListCtrt x@(CQuant qv cs) = foldr CQuant (getInnerListCtrt $ stripQuantifiers x) (getQuantifiers x)
-getInnerListCtrt (CFunctor _ i) = i
-getInnerListCtrt x = error $ "Tried to apply getInnerListCtrt to the following contract: " ++ show x
-
-splitTupleContract :: Contract -> (Contract,Contract)
-splitTupleContract x@(CQuant qv cs) =
- let (hd,tl) = splitTupleContract $ stripQuantifiers x
- in (foldr CQuant hd (getQuantifiers x),foldr CQuant tl (getQuantifiers x))
-splitTupleContract (CTuple (x:xs)) = (x, CTuple xs)
-splitTupleContract x = error $ "Tried to apply splitTupleContract to the following contract: " ++ show x
 
 expandHigherOrderParams :: String -> String -> (Int,Int,String) -> ExprR
 expandHigherOrderParams funcText funcName (listpos,arity,pat) = 
@@ -308,18 +184,19 @@ expandHigherOrderParams funcText funcName (listpos,arity,pat) =
      base = v
 
      -- Generation of the error text for higher-order parameters.
-     appParamText i = mkAppParens [mkVar "concat", mkList [parentText, positionData, posText, startText i, endText i, generatePosStr i] ]
+     appParamText i = mkAppParens [mkVar "concat", mkList [parentText, positionData, posText, startText i, endText, generatePosStr i] ]
      generatePosStr i = mkApp [mkVar "show", mkVar (pats !! (i-1))]
      parentText = (mkLit.mkStrLit) (funcText ++ " ")
      positionData = mkAppParens [mkVar "generatePositionData", mkVar "posinfo"]
      posText = (mkLit.mkStrLit) $ ". " ++ funcName ++ " has a function as its " ++ showPos listpos ++ " argument."
-     endText i = (mkLit.mkStrLit) ", namely "
+     endText = (mkLit.mkStrLit) ", namely "
      startText i =  (mkLit.mkStrLit) $ " The " ++ showPos i ++ " argument of that function"
      --lookupStr i = mkApp [mkVar "show", v]
  in if arity > 0
      then lam
      else v
 
+showPos :: Int -> String
 showPos p | p == 1 = "first"
           | p == 2 = "second"
           | p == 3 = "third"
@@ -328,11 +205,12 @@ showPos p | p == 1 = "first"
           | p == 6 = "sixth"
           | otherwise = show p
 
+isHOText :: Bool -> String
 isHOText b | b == True = " higher-order "
            | otherwise = " "
 
 extractPositionData :: RangeR -> Maybe (Int,Int)
-extractPositionData (RangeR (PositionR f l c) _) = Just (l,c)
+extractPositionData (RangeR (PositionR _ l c) _) = Just (l,c)
 extractPositionData _ = Nothing
 
 generatePositionText :: Bool -> String -> String
@@ -368,6 +246,10 @@ replaceTrueContract x = if isTrueContract x
 
 insertApps :: String -> ExprR -> [(ExprR,ExprR)] -> ExprR
 insertApps appType = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar appType,xs,pos,var])
+
+makeModuleR :: DeclsR -> ModuleR
+makeModuleR []    = ModuleR NoNameR (BHoleR 0    noRangeR) noRangeR 
+makeModuleR decls = ModuleR NoNameR (BodyR decls noRangeR) noRangeR
 
 mkIdent :: String -> NameR
 mkIdent x = IdentR x noRangeR
@@ -429,14 +311,5 @@ mkLit l = LitR l noRangeR
 isVarR :: ExprR -> Bool
 isVarR (VarR _ _) = True
 isVarR _          = False
-
-{-
-apps :: [(ExprR,RangeR)] ->  ExprR -> ExprR
-apps xs b = foldr f b (reverse xs)
-  where f (y,pos) ys = AppR (makeVar "appWithPos") [ys, makeAppPos pos, y]
-        makeAppPos (RangeR start stop) = AppR (ConR (IdentR "PositionR" noRange) noRange) [makeRange start,makeRange stop] noRange
-        makeRange (PositionR f l c) = AppR (ConR (IdentR "PositionR" noRange) noRange) [LitR (LStringR f noRange) noRange,LitR (LIntR l noRange),LitR (LIntR c noRange)] noRange
-        makeRange UnknownR = ConR (IdentR "UnknownR" noRange) noRange
--}
 
 }

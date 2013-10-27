@@ -356,11 +356,11 @@ sem AltR
      rhs  .argumentsToBeAddedToExpr     = [] -- An AltR pattern binding isn't going to be a function that we need to contract.
 
 
-attr Contract
+attr Contract 
   syn  copy                                             :: self
 
 -- Synthesize free type variables for contract substutions.
-attr Contract
+attr Contract 
   syn  fcv       use {`DS.union`}  {DS.empty}           :: {DS.Set Contract}
 
 -- Semantics for obtaining free contract variables.
