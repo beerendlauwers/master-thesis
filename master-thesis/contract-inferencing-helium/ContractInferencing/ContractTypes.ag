@@ -9,6 +9,7 @@ data Contract
   |  CQuant      cv     :: Contract  cs  :: Contract
   |  CTuple      li     :: {[Contract]} -- Helium AST portrays tuples as lists, this seems like the best way
 
+
 data Subst
   |  SId
   |  SComp   l  :: Subst     r  :: Subst
@@ -25,6 +26,13 @@ infixr 4 +->
 infixr 4 >->
 (>->) :: Contract -> Contract -> Contract
 (>->) = CArr
+
+-- Foralls the contracts
+infixr 4 >!>
+(>!>) :: Contract -> Contract -> Contract
+c1 >!> c2 = 
+ let allForalls = DL.nub $ concatMap getGeneralizedContracts [c1,c2]
+ in addQuantifiers (CArr (stripQuantifiers c1) (stripQuantifiers c2)) allForalls
 
 infixr 6 `o`
 o :: Subst -> Subst -> Subst

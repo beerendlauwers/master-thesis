@@ -38,8 +38,8 @@ removeFreeLambdas code pointOfEntry =
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
- let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
-     semModule = sem_ModuleR noFreeLambdaCode
+ let transformedCode = transformApps $ convertPatBindToFunBind code pointOfEntry
+     semModule = sem_ModuleR transformedCode
      inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
  in do printBox (debug_Syn_ModuleR wrapModule)
@@ -263,10 +263,12 @@ sem ExprR
   | AppR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AppR"
+                                                ,  text "Inferred contract:"    BOX.<+> text (show @loc.infer')
+                                                ,  text "Substitutions:"        BOX.<+> text (show @loc.ths)
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
-						,  text "tree type:"		 BOX.<+> text (show @loc.typeTreeType)	 
+						,  text "tree type:"		BOX.<+> text (show @loc.typeTreeType)	 
                                                 ,  text "original code:"        BOX.<+> pprint @loc.copy
-                                                ,  text "modified version:"      BOX.<+> text (show @loc.functionAppSelf)
+                                                ,  text "modified version:"     BOX.<+> text (show @loc.functionAppSelf)
                                                 ,  nest 2 @fun.debug
                                                 ,  nest 2 @args.debug
                                                 ]

@@ -7,18 +7,15 @@ optpragmas
 {-# OPTIONS -fno-warn-name-shadowing #-}
 }
 
-include "Domain/FP/SyntaxWithRanges.ag"
-
 imports
 {
 import Control.Monad
-import Common.Environment
-import Common.Rewriting.Term
-import Common.View
+import Ideas.Common.Environment
+import Ideas.Common.Rewriting.Term
 import Data.Char
 import GHC.Float
 import Test.QuickCheck
-import Data.Generics.Uniplate.Direct
+import Data.Generics.Uniplate.Direct hiding (children)
 }
 
 {

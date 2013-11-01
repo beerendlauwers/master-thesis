@@ -17,7 +17,24 @@ import qualified Control.Exception as CE
 }
 
 {
+-- Contract Inferencing Utils
 
+isInQuantifier :: Contract -> Contract -> Bool
+isInQuantifier c qc = c `elem` (getQuantifiers qc)
+
+-- Checks if a substitution on a contract is local or global
+-- If a contract c is not universally quantified, and is used to
+-- substitute a universally quantified contract, it is local.
+isLocalSubst :: Contract -> Subst -> Bool
+isLocalSubst _ SId = False
+isLocalSubst rhc (SSubst v c) = isInQuantifier c rhc
+isLocalSubst rhc (SComp l r) = isLocalSubst rhc l -- Only check the first one
+
+mkCtrt :: Int -> Contract
+mkCtrt n = CVar ("v" ++ show n) Nothing
+
+
+-- Code Generation Utils
 headErr :: String -> [a] -> a
 headErr m [] = error m
 headErr _ xs = head xs
@@ -38,6 +55,18 @@ getMaxVariable (IE.ImportEnvironment _ _ c d _ _) =
 getQuantifiers :: Contract -> [Contract]
 getQuantifiers (CQuant qv cs) = qv : getQuantifiers cs
 getQuantifiers _ = []
+
+getGeneralizedContracts :: Contract -> [Contract]
+getGeneralizedContracts (CArr c1 c2) = concatMap getGeneralizedContracts [c1,c2]
+getGeneralizedContracts (CProp p) = []
+getGeneralizedContracts (CFunctor o i) = concatMap getGeneralizedContracts [o,i]
+getGeneralizedContracts (CBifunctor o il ir) = concatMap getGeneralizedContracts [o,il,ir]
+getGeneralizedContracts (CVar v m) = map (\x -> CVar x m) $ filter isTrueContract [v]
+getGeneralizedContracts (CQuant cv cs) = cv : getGeneralizedContracts cs
+getGeneralizedContracts (CTuple li) = concatMap getGeneralizedContracts li
+
+addQuantifiers :: Contract -> [Contract] -> Contract
+addQuantifiers = foldr CQuant
 
 stripQuantifiers :: Contract -> Contract
 stripQuantifiers (CQuant _ cs) = stripQuantifiers cs
@@ -232,7 +261,7 @@ indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
 
 isTrueContract :: String -> Bool
-isTrueContract (x:xs) = if x == 'c'
+isTrueContract (x:xs) = if x == 'v'
                            then case (reads xs) :: [(Integer,String)] of
                                  [(_,"")] -> True
                                  _        -> False
