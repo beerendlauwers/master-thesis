@@ -47,6 +47,7 @@ unifyC :: Contract -> Contract -> Subst
 unifyC c1              c2 | c1 == c2   = SId
 unifyC v@CVar{}        c               = unifyCVars v c
 unifyC c               v@CVar{}        = unifyCVars v c
+unifyC (CQuant qv1 cs1) (CQuant qv2 cs2) = unifyC cs1 cs2 -- Skip over forall'd variables, those are irrelevent in unification
 unifyC (CArr cl1 cr1)  (CArr cl2 cr2)  =
   let  th1  = unifyC cl1 cl2
        th2  = unifyC (subst th1 cr1) (subst th1 cr2)
@@ -78,7 +79,7 @@ unifyCVars _         _                         = error "unifyCVars"
 
 unifyErr :: String -> Contract -> Contract -> a
 unifyErr msg c1 c2 = error $ msg ++ stdMsg
-  where stdMsg =  " trying to unify '" ++ show (pprint c1) ++
-                  "' and '" ++ show (pprint c2) ++ "'"
+  where stdMsg =  " trying to unify '" ++ show c1 ++
+                  "' and '" ++ show c2 ++ "'"
 
 }

@@ -18,6 +18,12 @@ include "Domain/FP/ContractInferencing/Substitution.ag"
 -- Include debug statement generating code
 include "Domain/FP/CodeGeneration/DebugCode.ag"
 
+-- DEBUG: Inferencing code
+include "Domain/FP/ContractInferencing/InferenceExprR.ag"
+
+-- Include syntax transformations
+include "Domain/FP/ContractInferencing/SyntaxTransformations.ag"
+
 imports
 {
 import qualified Domain.FP.Helium as H

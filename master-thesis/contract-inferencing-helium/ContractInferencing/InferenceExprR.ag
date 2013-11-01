@@ -1,0 +1,82 @@
+-- ~/thesis/FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.ContractInferencing.InferenceExprR" Domain/FP/ContractInferencing/InferenceExprR.ag
+
+-- Include simplified syntax used by Ask-Elle
+--include "Domain/FP/SyntaxWithRanges.ag"
+
+-- Include contract types
+--include "Domain/FP/ContractInferencing/ContractTypes.ag"
+
+-- Include utility functions
+--include "Domain/FP/CodeGeneration/Utils.ag"
+
+attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
+   inh availableContractVars                                    :: {ContractOffset}
+
+sem ModuleR
+  | ModuleR
+      body .availableContractVars = @body.contractVariableOffset
+
+-- We want two kinds of substitutions:
+-- LOCAL substitutions are substitutions that substitute a polymorphic contract
+-- variable for a monomorphic one. Such substitutions are sent downwards in the AST.
+-- GLOBAL substitutions substitute one polymorphic contract variable for another. 
+-- These are synthesized to the top of the AST, where they are collected.
+-- These are to be applied first to a contract, and presumably to the list of of LOCAL
+-- substitutions as well. Afterwards, the local substitutions are applied to the contract
+-- to get the final contract.
+
+-- Data we have from code generation:
+-- Contracts have been generated for each VarR, which are based upon
+-- types from the type tree. These types are already the most specific for a
+-- certain function application.
+
+
+attr ExprR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+
+sem ExprR
+  | VarR
+      lhs  .infer   =   @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
+           .subst   =   SId
+
+  | AppR
+      lhs  .infer   =   @loc.infer'
+           .subst   =   @loc.ths
+      
+
+      loc  .infer'  =   subst @loc.th3 @loc.alpha
+           .ths     =   let  ths = @loc.th3 `o` @loc.th2 `o` @loc.th1
+                        in   ths --case @lhs.cann of
+                             --  (Just ann)  -> unifyC ann @loc.infer' `o` ths
+                             --  _           -> ths
+           .c1      =   @fun.infer
+           .th1     =   @fun.subst
+           -- .e2env   =   subst @loc.th1 @lhs.env
+           .c2      =   @args.infer
+           .th2     =   @args.subst
+           .c1st    =   subst @loc.th2 @loc.c1
+           .carr    =   @loc.c2 >!> @loc.alpha
+           .th3     =   unifyC @loc.c1st @loc.carr
+           .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+      loc  .num     ::  uniqueref varcnt
+
+      -- args .env     =   subst @loc.th1 @loc.e2env
+
+      --fun  .cann    =   Nothing
+      --args .cann    =   Nothing
+
+attr ExprsR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+
+--ExprsR is only used in AppR.
+sem ExprsR
+  | Cons 
+      lhs  .infer   =   @hd.infer -- We've transformed the AST so each AppR only has a single argument.
+           .subst   =   @hd.subst
+   | Nil
+      lhs  .infer   =   mkCtrt @loc.num
+           .subst   =   SId
+
+      loc  .num     ::  uniqueref varcnt

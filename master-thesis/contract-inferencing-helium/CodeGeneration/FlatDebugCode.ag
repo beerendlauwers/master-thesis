@@ -31,7 +31,8 @@ sem ExprR
   | LambdaR     lhs   .simpledebug                       = "LambdaR\n      Type tree:" ++ show @lhs.typeTree  ++ @pats.simpledebug ++ @expr.simpledebug
   | LetR        lhs   .simpledebug                       = "LetR\n" ++ @decls.simpledebug ++ @expr.simpledebug
   | LitR        lhs   .simpledebug                       = "LitR\n" ++ @lit.simpledebug
-  | AppR        lhs   .simpledebug                       = "AppR\n" ++ @fun.simpledebug ++ @args.simpledebug
+--  | AppR        lhs   .simpledebug                       = "AppR\n      Inferred contract: " ++ show @loc.infer' ++ "\n      Substitutions:" ++ show @loc.ths ++ "\n" ++ @fun.simpledebug ++ @args.simpledebug
+  | AppR        lhs   .simpledebug                       = "AppR\n      Inferred contract: " ++ show @fun.infer ++ "\n loc.carr:" ++ show @loc.carr ++ "\n loc.c1st:" ++ show @loc.c1st ++ "\n loc.th3:" ++ show @loc.th3 ++ "\n" ++ @fun.simpledebug ++ @args.simpledebug
   | ParenR      lhs   .simpledebug                       = @expr.simpledebug
   | TupleR      lhs   .simpledebug                       = "TupleR\n" ++ @exprs.simpledebug
   | VarR        lhs   .simpledebug                       = "VarR\n"

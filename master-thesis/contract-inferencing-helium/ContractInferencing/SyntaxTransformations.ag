@@ -3,13 +3,6 @@
 
 include "Domain/FP/SyntaxWithRangesTerm.ag"
 
-imports
-{
---import qualified Data.Generics.Uniplate as U
-import Data.List (groupBy,nub,transpose)
-import Data.Maybe (fromJust)
-}
-
 {
 
 -- Applies all AST transformations.
