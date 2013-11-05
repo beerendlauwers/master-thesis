@@ -37,6 +37,9 @@ instance Pretty a => Pretty [a] where
 instance (Pretty a, Pretty b) => Pretty (a, b) where
   pprint (l, r) = parens $ pprint l BOX.<> comma BOX.<+> pprint r
 
+instance (Show a, Show b) => Pretty (DM.Map a b) where
+  pprint = text.show
+
 instance Pretty Int where
   pprint = text.show
 

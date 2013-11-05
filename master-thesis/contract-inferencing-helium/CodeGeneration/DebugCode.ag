@@ -42,7 +42,9 @@ showDebug code pointOfEntry =
      semModule = sem_ModuleR transformedCode
      inhModule = Inh_ModuleR pointOfEntry 0 []
      wrapModule = wrap_ModuleR semModule inhModule
- in do printBox (debug_Syn_ModuleR wrapModule)
+ in do putStrLn "Code that will be used:"
+       putStrLn $ render $ pprint transformedCode
+       printBox (debug_Syn_ModuleR wrapModule)
        writeFile "debugOutput" (render $ debug_Syn_ModuleR wrapModule)
 
 
@@ -149,6 +151,7 @@ sem BodyR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "BodyR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "contracts:"             BOX.<+> pprint @decls.functionEnv
                                                 ,  nest 2 @decls.debug
                                                 ]
   | BHoleR
@@ -161,6 +164,7 @@ sem RhsR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "RhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
+                                                ,  text "contracts:"             BOX.<+> pprint @loc.env
                                                 ,  nest 2 @where.debug
                                                 ,  nest 2 @expr.debug
                                                 ]
@@ -170,7 +174,7 @@ sem RhsR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "GRhsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-
+                                                ,  text "contracts:"             BOX.<+> pprint @loc.env
                                                 ,  nest 2 @where.debug
                                                 ,  nest 2 @gexprs.debug
                                                 ]
@@ -250,6 +254,7 @@ sem ExprR
   | LetR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "LetR"
+                                                ,  text "contracts:"             BOX.<+> pprint @loc.env
                                                 ,   nest 2 @decls.debug
                                                 ,   nest 2 @expr.debug
                                                 ]

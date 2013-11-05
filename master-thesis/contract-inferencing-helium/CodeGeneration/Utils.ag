@@ -91,6 +91,10 @@ prefixPointOfEntry (IdentR name r)    = (IdentR ("__original_"++name) r)
 prefixPointOfEntry (OperatorR name r) = (OperatorR ("***"++name++"***") r)
 prefixPointOfEntry _ = error "prefixPointOfEntry: Haven't defined anything yet for SpecialR."
 
+envLU :: String -> CEnv -> Contract
+envLU s env = maybe (error msg) id (DM.lookup s env)
+ where msg = "Attempted to look up " ++ s ++ " in environement " ++ show env ++ "."
+
 -- Just fetches the string out of a NameR
 getVar :: NameR -> String
 getVar (IdentR x _)    = x
@@ -135,6 +139,12 @@ maximum' xs = maximum xs
 thd :: (a,b,c) -> c
 thd (a,b,c) = c
 
+fst3 :: (a,b,c) -> a
+fst3 (a,b,c) = a
+
+snd3 :: (a,b,c) -> b
+snd3 (a,b,c) = b
+
 -- Disassembles a type scheme into the parts needed to reassemble it.
 stripTypeScheme :: S.TpScheme -> (P.Tp, CLS.Predicates, [Int])
 stripTypeScheme ty = 
@@ -144,8 +154,20 @@ stripTypeScheme ty =
      simpleTy    = QL.unqualify noqnTy
  in (simpleTy, predicates, quants)
 
+-- Reassembles a simple type into a type scheme again.
+assembleTypeScheme :: (P.Tp, CLS.Predicates, [Int]) -> S.TpScheme
+assembleTypeScheme (ty,pr,qu) = S.toTpScheme $ QN.quantify qu $ QL.qualify context pr ty
+ where context = ([]::[CLS.Predicate])
+
 allTypes :: P.Tp -> P.Tps
 allTypes ty = (\(x,y) -> x++[y]) $ P.functionSpine ty
+
+mapConvertTopTypeToContract :: Int -> [S.TpScheme] -> (Int,[Contract])
+mapConvertTopTypeToContract offset (ty:ts) = 
+ let (offset',ctrt) = convertTopTypeToContract offset ty
+     (finalOffset,ctrts) = mapConvertTopTypeToContract offset' ts
+ in (finalOffset,ctrt:ctrts)
+mapConvertTopTypeToContract offset [] = (offset,[])
 
 convertTopTypeToContract :: Int -> S.TpScheme -> (Int,Contract)
 convertTopTypeToContract offset ty = 

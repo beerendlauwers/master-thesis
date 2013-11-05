@@ -42,10 +42,11 @@ import Top.Solver ( substitutionFromResult, qualifiersFromResult )
 import StaticAnalysis.Inferencers.TypeInferencing ( sem_Module, Inh_Module(..), wrap_Module, importEnvironment_Inh_Module, options_Inh_Module, solveResult_Syn_Module, solveResult_Syn_Module, infoTree_Syn_Module, typeInferencing )
 import qualified  StaticAnalysis.Miscellaneous.UHA_Source as UHASRC
 import qualified  Top.Types.Substitution as TOPSUBST
-
 }
 
 {
+type CEnv = DM.Map String Contract
+
 type TypeTree = DoublyLinkedTree ((Maybe S.TpScheme,String,UHASRC.UHA_Source))
 mkTypeTree p a c = DoublyLinkedTree p a c
 mkTypeTreeWith tr f = DoublyLinkedTree (parent tr) (attribute tr) (f $ children tr)
@@ -268,6 +269,9 @@ sem RhsR
   | GRhsR
      lhs   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute $ headErr (trMsg @lhs.typeTree $ show @loc.copy) $ tail $ children @lhs.typeTree
 
+attr ExprR PatR AltR FunBindR RhsR GuardedExprR
+  syn astType                                                   :: {S.TpScheme}
+
 sem PatR ExprR AltR
   | *
      loc   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute @lhs.typeTree
@@ -276,8 +280,94 @@ sem PatR ExprR AltR
 
      lhs   .astType             = @loc.astType
 
-attr ExprR PatR AltR
-  syn astType                                                   :: {S.TpScheme}
+sem RhsR
+  | RhsR
+     lhs   .astType             = @expr.astType
+  | GRhsR
+     lhs   .astType             = head @gexprs.astTypes
+
+sem FunBindR
+  | FunBindR
+     lhs   .astType             = @loc.assembledType
+     
+     -- Construct a type for this function binding.
+     loc   .patTypes            = map stripTypeScheme @pats.astTypes
+     loc   .rhsType             = stripTypeScheme @rhs.astType
+     loc   .finalType           = foldr (P..->.) (fst3 @loc.rhsType) (map fst3 @loc.patTypes)
+     loc   .finalPredicates     = concatMap snd3 $ @loc.rhsType : @loc.patTypes
+     loc   .finalInts           = concatMap thd $ @loc.rhsType : @loc.patTypes
+     loc   .assembledType       = assembleTypeScheme (@loc.finalType, @loc.finalPredicates, @loc.finalInts)
+
+attr FunBindsR GuardedExprsR PatsR
+  syn astTypes           use {(++)}     {[]}                    :: {[S.TpScheme]}
+
+sem FunBindsR GuardedExprsR PatsR
+  | Cons
+     lhs   .astTypes            = @hd.astType : @tl.astTypes
+
+attr DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
+   -- An environment that holds the contracts for all functions in scope. We need this to support mutrec functions.
+   inh env                                                      :: {CEnv}
+
+
+attr FunBindsR FunBindR
+  syn functionIdent                                             :: {String}
+
+sem FunBindsR
+  | Cons
+     lhs   .functionIdent       = @hd.functionIdent
+  | Nil
+     lhs   .functionIdent       = []
+
+sem FunBindR
+  | FBHoleR
+     lhs   .functionIdent       = []
+  | FunBindR
+     lhs   .functionIdent       = getVar @name.copy
+
+attr DeclR DeclsR PatR
+  syn functionEnv           use {`DM.union`}     {DM.empty}     :: {CEnv}                                   
+
+-- Collect function identifier contracts.
+sem DeclR
+  | DFunBindsR
+     funbinds.env               = DM.union @loc.functionEnv @lhs.env
+     lhs   .functionEnv         = @loc.functionEnv
+     loc   .functionEnv         = DM.singleton @funbinds.functionIdent (snd @loc.conversionResults)
+     loc   .conversionResults   = convertTopTypeToContract @lhs.freshContractVariable (head @funbinds.astTypes)
+     funbinds.freshContractVariable = fst @loc.conversionResults
+
+  | DPatBindR
+     lhs   .functionEnv         = @pat.functionEnv
+
+sem PatR
+  | PVarR
+     lhs   .functionEnv         = DM.union @loc.functionEnv @lhs.env
+     loc   .functionEnv         = DM.singleton (getVar @name.copy) (snd @loc.conversionResults)
+     loc   .conversionResults   = convertTopTypeToContract @lhs.freshContractVariable @loc.astType
+     lhs   .freshContractVariable = fst @loc.conversionResults
+
+-- Pass down function identifier contracts.
+sem BodyR
+  | BHoleR BodyR
+     range.env                  = DM.empty
+  | BodyR
+     decls.env                  = @decls.functionEnv
+
+sem RhsR
+  | RhsR
+     expr .env                  = @loc.env 
+     loc  .env                  = DM.union @where.functionEnv @lhs.env
+  | GRhsR
+     gexprs.env                 = @loc.env 
+     loc  .env                  = DM.union @where.functionEnv @lhs.env
+
+sem ExprR
+  | LetR
+     expr .env                  = @loc.env 
+     loc  .env                  = DM.union @decls.functionEnv @lhs.env
+
+
 
 {
 type ContractOffset = Int
