@@ -47,7 +47,7 @@ unifyC :: Contract -> Contract -> Subst
 unifyC c1              c2 | c1 == c2   = SId
 unifyC v@CVar{}        c               = unifyCVars v c
 unifyC c               v@CVar{}        = unifyCVars v c
-unifyC (CQuant qv1 cs1) (CQuant qv2 cs2) = unifyC cs1 cs2 -- Skip over forall'd variables, those are irrelevent in unification
+unifyC qc1@(CQuant qv1 cs1) qc2@(CQuant qv2 cs2) = unifyC (stripQuantifiers qc1) (stripQuantifiers qc2) -- Skip over forall'd variables, those are irrelevent in unification
 unifyC (CArr cl1 cr1)  (CArr cl2 cr2)  =
   let  th1  = unifyC cl1 cl2
        th2  = unifyC (subst th1 cr1) (subst th1 cr2)

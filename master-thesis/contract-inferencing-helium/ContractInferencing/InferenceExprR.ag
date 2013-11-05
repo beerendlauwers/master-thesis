@@ -37,7 +37,7 @@ attr ExprR
 
 sem ExprR
   | VarR
-      lhs  .infer   =   @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
+      lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
            .subst   =   SId
 
   | AppR
@@ -56,7 +56,7 @@ sem ExprR
            .c2      =   @args.infer
            .th2     =   @args.subst
            .c1st    =   subst @loc.th2 @loc.c1
-           .carr    =   @loc.c2 >!> @loc.alpha
+           .carr    =   @loc.c2 >-> @loc.alpha
            .th3     =   unifyC @loc.c1st @loc.carr
            .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
       loc  .num     ::  uniqueref varcnt

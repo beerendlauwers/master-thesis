@@ -150,7 +150,9 @@ sem DeclR
 sem ExprR
    | VarR ConR
       loc  .conversionResults           = convertTopTypeToContract @lhs.freshContractVariable @loc.localType
-      loc  .varContract                 = snd @loc.conversionResults
+      loc  .varContract                 = if @loc.isFunction
+                                           then envLU (getVar @name.copy) @lhs.env
+                                           else snd @loc.conversionResults
       lhs  .freshContractVariable       = fst @loc.conversionResults
       loc  .localType                   = maybeErr (show @loc.typeTreeCode) @loc.typeTreeType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
@@ -268,7 +270,8 @@ sem Contract
   |  CProp       lhs.makeContract = mkVar @p
   |  CFunctor    lhs.makeContract = mkParens $ mkApp [ @o.makeContract, mkVar "<@>", @i.makeContract ]
   |  CBifunctor  lhs.makeContract = mkParens $ mkApp [ @o.makeContract, mkVar "<@@>", mkTuple [ @il.makeContract, @ir.makeContract ] ]
-  |  CVar        lhs.makeContract = mkVar (replaceTrueContract @v) -- TODO: Default contract etc.
+  |  CVar        lhs.makeContract = mkVar @v -- TODO: Default contract etc.
+--  |  CVar        lhs.makeContract = mkVar (replaceTrueContract @v) -- TODO: Default contract etc.
   |  CQuant      lhs.makeContract = @cs.makeContract
   |  CTuple      lhs.makeContract = error $ "The following CTuple got into contract inferencing: " ++ show @li
 
