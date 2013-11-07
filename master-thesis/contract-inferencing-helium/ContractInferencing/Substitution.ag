@@ -24,6 +24,7 @@ instance Substitutable Contract where
   subst SId             c           = c
   subst (SComp s1 s2)   c           = subst s1 (subst s2 c)
   subst (SSubst v c')   c | v == c  = c'
+  subst s qc@(CQuant qv cs) = subst s (stripQuantifiers qc) -- TODO: get rid of these quantifiers!
   subst s@(SSubst v _) (CQuant qv cs)
     | v == qv                       = CQuant qv cs
     | otherwise                     = CQuant qv (subst s cs)

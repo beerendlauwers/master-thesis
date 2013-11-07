@@ -16,7 +16,6 @@ data Subst
   |  SSubst  v  :: Contract  c  :: Contract
 
 deriving Contract: Eq, Ord
-deriving Subst: Show
 
 {
 infixr 4 +->

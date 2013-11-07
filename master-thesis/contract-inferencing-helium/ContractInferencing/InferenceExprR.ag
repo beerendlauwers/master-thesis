@@ -34,6 +34,7 @@ sem ModuleR
 attr ExprR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
+  inh  subst                                         :: Subst
 
 sem ExprR
   | ListR
@@ -42,6 +43,13 @@ sem ExprR
   | VarR
       lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
            .subst   =   SId
+
+  | ConR
+      lhs  .infer   =   stripQuantifiers $ snd @loc.results
+      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType
+           .subst   =   SId
+           .freshContractVariable = fst @loc.results
+
 
   | AppR
       lhs  .infer   =   @loc.infer'
@@ -60,7 +68,7 @@ sem ExprR
            .th2     =   @args.subst
            .c1st    =   subst @loc.th2 @loc.c1
            .carr    =   @loc.c2 >-> @loc.alpha
-           .th3     =   unifyC @loc.c1st @loc.carr
+           .th3     =   unifyC @loc.carr @loc.c1st -- TODO: I swapped the arguments around. What are the implications?
            .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
       loc  .num     ::  uniqueref varcnt
 
