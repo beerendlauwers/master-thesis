@@ -72,6 +72,10 @@ stripQuantifiers :: Contract -> Contract
 stripQuantifiers (CQuant _ cs) = stripQuantifiers cs
 stripQuantifiers x = x
 
+lastc :: Contract -> Contract
+lastc (CArr x y) = lastc y
+lastc x = x
+
 splitFunctionContract :: Contract -> (Contract,Contract)
 splitFunctionContract x@(CQuant qv _) = splitFunctionContract' (stripQuantifiers x) (getQuantifiers x)
 splitFunctionContract x = splitFunctionContract' x []
@@ -189,8 +193,8 @@ convertTopTypeToContract offset ty =
    -- second [Int] is the list of used variable numbers, which are 
    -- collected for use in universal quantification.
    convert :: [Int] -> P.Tp -> ([Int],Contract,[Int])
-   convert (n:ns) (P.TVar i) = 
-    (ns, CVar (makeType n) Nothing,[n])
+   convert ns (P.TVar i) = 
+    (ns, CVar (makeType i) Nothing,[i])
    convert n (P.TApp (P.TApp (P.TCon "->") t1) t2) = 
     let (n', ctrt1,q1) = convert n t1
         (n'',ctrt2,q2) = convert n' t2

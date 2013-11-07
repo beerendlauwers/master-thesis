@@ -32,7 +32,17 @@ sem ExprR
   | LetR        lhs   .simpledebug                       = "LetR\n" ++ @decls.simpledebug ++ @expr.simpledebug
   | LitR        lhs   .simpledebug                       = "LitR\n" ++ @lit.simpledebug
 --  | AppR        lhs   .simpledebug                       = "AppR\n" ++ @args.simpledebug ++ "\n      Inferred contract: " ++ show @loc.infer' ++ "\n      Substitutions:" ++ show @loc.ths ++ "\n" ++ @fun.simpledebug 
-  | AppR        lhs   .simpledebug                       = "AppR\n" ++ "Code: " ++ show @loc.copy ++ "\nInferred contract: " ++ show @fun.infer ++ "\n loc.carr:" ++ show @loc.carr ++ "\n loc.c1st:" ++ show @loc.c1st ++ "\n loc.th3:" ++ show @loc.th3 ++ "\n" ++ @fun.simpledebug ++ @args.simpledebug
+  | AppR        lhs   .simpledebug                       = "AppR\n" ++ "Code: " ++ 
+                                                           show @loc.copy ++ 
+                                                                "\nInferred contract: " ++ show @loc.infer' ++ 
+                                                                "\n loc.c2 (args) :" ++ show @loc.c2 ++ 
+                                                                "\n loc.alpha: " ++ show @loc.alpha ++ 
+                                                                "\n loc.carr: " ++ show @loc.carr ++ 
+                                                                "\n loc.th2 (args): " ++ show @loc.th2 ++ 
+                                                                "\n loc.c1 (fun): " ++ show @loc.c1 ++ 
+                                                                "\n loc.c1st: " ++ show @loc.c1st ++ 
+                                                                "\n loc.th3: " ++ show @loc.th3 ++ 
+                                                                "\n" ++ @fun.simpledebug ++ @args.simpledebug
   | ParenR      lhs   .simpledebug                       = @expr.simpledebug
   | TupleR      lhs   .simpledebug                       = "TupleR\n" ++ @exprs.simpledebug
   | VarR        lhs   .simpledebug                       = "VarR\n"
@@ -50,7 +60,11 @@ sem AltR
 
 sem FunBindR
   | FBHoleR     lhs   .simpledebug                       = "FBHoleR\n"
-  | FunBindR    lhs   .simpledebug                       = "FunBindR\n" ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
+  | FunBindR    lhs   .simpledebug                       = "FunBindR\n"  ++ 
+                                                                "\n loc.clhs :" ++ show @loc.clhs ++ 
+                                                                "\n loc.crhs :" ++ show @loc.crhs ++ 
+                                                                "\n loc.subst' :" ++ show @loc.subst' ++ 
+                                                                "\n" ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
 
 sem PatR
   | PHoleR      lhs   .simpledebug                       = "PHoleR\n"

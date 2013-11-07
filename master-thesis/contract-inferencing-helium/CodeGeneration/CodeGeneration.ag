@@ -20,6 +20,8 @@ include "Domain/FP/CodeGeneration/DebugCode.ag"
 
 -- DEBUG: Inferencing code
 include "Domain/FP/ContractInferencing/InferenceExprR.ag"
+include "Domain/FP/ContractInferencing/InferenceFunBindR.ag"
+include "Domain/FP/ContractInferencing/InferenceRhsR.ag"
 
 -- Include syntax transformations
 include "Domain/FP/ContractInferencing/SyntaxTransformations.ag"

@@ -1,0 +1,16 @@
+attr FunBindR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+
+sem FunBindR
+  | FBHoleR
+      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .subst   =   SId
+      loc  .num     ::  uniqueref varcnt
+  | FunBindR
+      lhs  .infer   =   @loc.clhs -- TODO: check if correct!
+           .subst   =   @loc.subst' `o` @rhs.subst
+      loc  .clhs    =   lastc $ stripQuantifiers $ envLU (getVar @name.copy) @lhs.env
+           .crhs    =   @rhs.infer
+           .subst'  =   unifyC @loc.clhs @loc.crhs
+  
