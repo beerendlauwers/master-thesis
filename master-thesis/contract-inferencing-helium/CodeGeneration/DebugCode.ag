@@ -13,7 +13,7 @@ flatDebug :: String -> String -> IO ()
 flatDebug code pointOfEntry = 
  let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
      semModule = sem_ModuleR noFreeLambdaCode
-     inhModule = Inh_ModuleR pointOfEntry 0 []
+     inhModule = Inh_ModuleR pointOfEntry []
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn (simpledebug_Syn_ModuleR wrapModule)
        writeFile "flatDebugOutput" (simpledebug_Syn_ModuleR wrapModule)
@@ -23,7 +23,7 @@ convertPatBindToFunBind :: String -> String -> ModuleR
 convertPatBindToFunBind code pointOfEntry = 
  let noFreeLambdas = removeFreeLambdas code pointOfEntry
      semModule = sem_ModuleR noFreeLambdas
-     inhModule = Inh_ModuleR pointOfEntry 0 []
+     inhModule = Inh_ModuleR pointOfEntry []
      wrapModule = wrap_ModuleR semModule inhModule
  in patBindToFunBind_Syn_ModuleR wrapModule
 
@@ -31,7 +31,7 @@ removeFreeLambdas :: String -> String -> ModuleR
 removeFreeLambdas code pointOfEntry = 
  let astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
-     inhModule = Inh_ModuleR pointOfEntry 0 []
+     inhModule = Inh_ModuleR pointOfEntry []
      wrapModule = wrap_ModuleR semModule inhModule
  in removeFreeLambdas_Syn_ModuleR wrapModule
 
@@ -40,7 +40,7 @@ showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
  let transformedCode = transformApps $ convertPatBindToFunBind code pointOfEntry
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry 0 []
+     inhModule = Inh_ModuleR pointOfEntry []
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
        putStrLn $ render $ pprint transformedCode
@@ -143,6 +143,7 @@ sem ModuleR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "ModuleR"
                                                 ,  text "Final code:"                     BOX.<+> pprint @body.functionAppSelf
+                                                ,  text "maxVariable:"           BOX.<+> pprint (getMaxVariableFromTypeTree @loc.typeTree)
                                                 ,  nest 2 @body.debug
                                                 ]
 
@@ -292,7 +293,7 @@ sem ExprR
                                                 [  horizontalLinesWith "*" $ text "VarR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
-						,  text "tree type:"		 BOX.<+> text (show @loc.typeTreeType)	 
+						,  text "tree type:"		 BOX.<+> text (show $ fst3 $ stripTypeScheme $ maybeErr [] @loc.typeTreeType)	 	 
                                                 ,  text "contract:"              BOX.<+> pprint @loc.contractAsExprR
                                                 ,  text "is base function:"      BOX.<+> text (show @lhs.isBaseFunction)
                                                 ,  text "is applied to local function:"           BOX.<+> text (show @lhs.isAppliedToLocalFunction)
@@ -437,7 +438,7 @@ sem PatR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "PVarR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree type:"             BOX.<+> text (show $ fst3 $ stripTypeScheme $ maybeErr [] @loc.typeTreeType)	 	 
                                                 ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
                                                 ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @name.debug
@@ -446,7 +447,7 @@ sem PatR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left  
                                                 [  horizontalLinesWith "*" $ text "PAsR"
                                                 ,  text "code:"                  BOX.<+> pprint @loc.copy
-                                                ,  text "tree type:"             BOX.<+> text (show @loc.typeTreeType)
+                                                ,  text "tree type:"             BOX.<+> text (show $ fst3 $ stripTypeScheme $ maybeErr [] @loc.typeTreeType)	 	 
                                                 ,  text "tree code:"             BOX.<+> text (show @loc.typeTreeCode)
                                                 ,  text "local patterns:"        BOX.<+> pprint @loc.localPatterns
                                                 ,  nest 2 @name.debug

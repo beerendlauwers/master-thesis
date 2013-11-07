@@ -36,6 +36,9 @@ attr ExprR
   syn  subst                                         :: Subst
 
 sem ExprR
+  | ListR
+      lhs  .infer   =   @exprs.infer
+           .subst   =   @exprs.subst
   | VarR
       lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
            .subst   =   SId
@@ -66,7 +69,7 @@ sem ExprR
       --fun  .cann    =   Nothing
       --args .cann    =   Nothing
 
-attr ExprsR
+attr ExprsR ListExprR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
 
@@ -80,3 +83,37 @@ sem ExprsR
            .subst   =   SId
 
       loc  .num     ::  uniqueref varcnt
+
+-- ListExprR is only used in ListR
+sem ListExprR
+  | Cons
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.ths
+
+      loc  .inf     =   subst @loc.ths @loc.cfunc
+           .cfunc   =   CFunctor @loc.var1 @loc.hdc
+           .th1     =   @hd.subst
+           .th2     =   @tl.subst
+           .th3     =   unifyC @tl.infer (subst @loc.th2 @loc.cfunc)
+           .ths     =   @loc.th3 `o` @loc.th2 `o` @loc.th1
+--           .const   =   @hd.isConst && @tl.isConst
+--           .var1    =   if @loc.const
+--                          then  mkVarConst @loc.num @loc.copy
+--                          else  mkVar @loc.num
+           .var1    =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .hdc     =   @hd.infer
+--           .hdc     =   if @loc.const
+--                          then  mkPlainC @hd.infer
+--                          else  @hd.infer
+      loc  .num     ::  uniqueref varcnt
+
+  | Nil
+      lhs  .infer   =   @loc.inf
+           .subst   =   @loc.sub
+
+      loc  .inf     =   CFunctor  (mkCtrt (@loc.num1 + @lhs.availableContractVars))
+                                  (mkCtrt (@loc.num2 + @lhs.availableContractVars))
+           .sub     =   SId
+
+      loc  .num1    ::  uniqueref varcnt
+      loc  .num2    ::  uniqueref varcnt

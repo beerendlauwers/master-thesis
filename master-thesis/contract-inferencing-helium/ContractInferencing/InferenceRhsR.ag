@@ -1,0 +1,11 @@
+attr RhsR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+
+sem RhsR
+  | RhsR
+      lhs  .infer   =   @expr.infer
+           .subst   =   @expr.subst -- TODO: check if correct
+--  | GRhsR
+--      lhs  .infer   =   @gexprs.infer
+--           .subst   =   @gexprs.subst -- TODO: check if correct

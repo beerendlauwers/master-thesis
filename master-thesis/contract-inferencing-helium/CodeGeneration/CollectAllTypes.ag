@@ -112,6 +112,14 @@ typeSchemesAsInfoTree subst ps infoTree =
                         Nothing -> Nothing
                         
  in DoublyLinkedTree typedPar (typedLocal,UHASRC.descriptionOfSource $ self local, self local) typedChildren
+
+getMaxVariableFromTypeTree :: TypeTree -> Int
+getMaxVariableFromTypeTree tree = 
+ let localVal = case (fst3 $ attribute tree) of
+                 Nothing  -> 0
+                 (Just ty) -> foldr max 0 $ P.variablesInType $ fst3 $ stripTypeScheme ty 
+     childrenVals = map getMaxVariableFromTypeTree (children tree)
+ in foldr max 0 (localVal : childrenVals )
 }
 
 attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
@@ -121,9 +129,11 @@ attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR Gu
 
 sem ModuleR
   | ModuleR
-      body .typeTree            = doDebugTypeInferencing $ show @loc.copy -- Generate the type tree from our code.
+      body .typeTree            = @loc.typeTree
+      loc  .typeTree            = doDebugTypeInferencing $ show @loc.copy -- Generate the type tree from our code.
       name .typeTree            = emptyTree
       range.typeTree            = emptyTree
+      body .freshContractVariable = (getMaxVariableFromTypeTree @loc.typeTree) + 1
       body .varcnt              = 0
       name .varcnt              = @body.varcnt
       range.varcnt              = @name.varcnt
@@ -368,7 +378,6 @@ sem ExprR
      loc  .env                  = DM.union @decls.functionEnv @lhs.env
 
 
-
 {
 type ContractOffset = Int
 }
@@ -378,5 +387,6 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
    -- fresh contracts; we don't want to accidentally clash with an existing type variable! 
    syn contractVariableOffset use {max} {_lhsOfreshContractVariable}              :: {ContractOffset}
 
+attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
    -- First integer available for fresh contracts.
    chn freshContractVariable                                    :: {ContractOffset}
