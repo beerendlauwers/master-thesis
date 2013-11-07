@@ -1,16 +1,24 @@
-attr FunBindR
-  syn  infer                                         :: Contract
+attr FunBindR FunBindsR
+--  syn  infer                                         :: Contract
   syn  subst                                         :: Subst
+  inh  subst                                         :: Subst
 
 sem FunBindR
   | FBHoleR
-      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
-           .subst   =   SId
-      loc  .num     ::  uniqueref varcnt
+      lhs   .subst  =   SId
   | FunBindR
-      lhs  .infer   =   @loc.clhs -- TODO: check if correct!
-           .subst   =   @loc.subst' `o` @rhs.subst
-      loc  .clhs    =   lastc $ stripQuantifiers $ envLU (getVar @name.copy) @lhs.env
+      lhs  .subst   =   @loc.subst'
+      loc  .clhs    =   lastc $ stripQuantifiers $ @loc.cfunc
+           .cfunc   =   envLU (getVar @name.copy) @lhs.env
            .crhs    =   @rhs.infer
-           .subst'  =   unifyC @loc.clhs @loc.crhs
+           .unify   =   unifyC @loc.clhs @loc.crhs
+           .subst'  =   @loc.unify `o` @rhs.subst
+           .infer'  =   subst @loc.subst' @loc.cfunc
   
+sem FunBindsR
+  | Cons
+      lhs   .subst  =   @hd.subst `o` @tl.subst -- TODO: Collect substitution information of all definitions?
+  | Nil
+      lhs   .subst  =   SId
+
+

@@ -9,6 +9,17 @@ include "Domain/FP/CodeGeneration/FlatDebugCode.ag"
 
 {
 
+debugTypeVarsTypeTree :: TypeTree -> DoublyLinkedTree ([Int],String,UHASRC.UHA_Source)
+debugTypeVarsTypeTree tree = 
+ let localVal = case (fst3 $ attribute tree) of
+                 Nothing  -> []
+                 (Just ty) -> P.variablesInType $ fst3 $ stripTypeScheme ty 
+     childrenVals = map debugTypeVarsTypeTree (children tree)
+     sndVal = snd3 $ attribute tree
+     thdVal = thd $ attribute tree
+ in DoublyLinkedTree Nothing (localVal,sndVal, thdVal) childrenVals
+
+
 flatDebug :: String -> String -> IO ()
 flatDebug code pointOfEntry = 
  let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry

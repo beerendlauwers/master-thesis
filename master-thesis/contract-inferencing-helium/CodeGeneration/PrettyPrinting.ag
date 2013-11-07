@@ -97,6 +97,11 @@ instance Pretty Contract where
   pprint (CTuple (c:cs)) = parens $ pprint c BOX.<+> comma BOX.<+> pprint (CTuple cs)
   pprint (CTuple [])     = nullBox
 
+instance Show Subst where
+  show SId = "Id"
+  show (SComp l r) = show l ++ " . " ++ show r
+  show (SSubst v c) = "(" ++ show v ++ "+->" ++ show c ++ ")"
+
 instance Show Contract where
   show (CArr c1 c2) =  "(" ++ show c1 ++ " >-> " ++ show c2 ++ ")"
   show (CProp p) = p

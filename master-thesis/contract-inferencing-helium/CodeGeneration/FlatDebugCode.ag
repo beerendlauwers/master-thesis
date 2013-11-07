@@ -61,6 +61,7 @@ sem AltR
 sem FunBindR
   | FBHoleR     lhs   .simpledebug                       = "FBHoleR\n"
   | FunBindR    lhs   .simpledebug                       = "FunBindR\n"  ++ 
+                                                                "\n loc.infer' :" ++ show @loc.infer' ++ 
                                                                 "\n loc.clhs :" ++ show @loc.clhs ++ 
                                                                 "\n loc.crhs :" ++ show @loc.crhs ++ 
                                                                 "\n loc.subst' :" ++ show @loc.subst' ++ 

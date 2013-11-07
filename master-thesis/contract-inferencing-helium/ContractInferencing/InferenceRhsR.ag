@@ -1,6 +1,7 @@
 attr RhsR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
+  inh  subst                                         :: Subst
 
 sem RhsR
   | RhsR
