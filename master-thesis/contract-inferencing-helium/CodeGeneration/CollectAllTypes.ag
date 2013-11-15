@@ -352,7 +352,7 @@ sem DeclR
 
 sem PatR
   | PVarR
-     lhs   .functionEnv         = DM.union @loc.functionEnv @lhs.env
+     lhs   .functionEnv         = @loc.functionEnv
      loc   .functionEnv         = DM.singleton (getVar @name.copy) (snd @loc.conversionResults)
      loc   .conversionResults   = convertTopTypeToContract @lhs.freshContractVariable @loc.astType
      lhs   .freshContractVariable = fst @loc.conversionResults

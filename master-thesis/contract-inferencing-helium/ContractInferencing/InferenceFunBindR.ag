@@ -11,7 +11,7 @@ sem FunBindR
       loc  .clhs    =   lastc $ stripQuantifiers $ @loc.cfunc
            .cfunc   =   envLU (getVar @name.copy) @lhs.env
            .crhs    =   @rhs.infer
-           .unify   =   unifyC @loc.clhs @loc.crhs
+           .unify   =   unifyC @loc.crhs @loc.clhs
            .subst'  =   @loc.unify `o` @rhs.subst
            .infer'  =   subst @loc.subst' @loc.cfunc
   
