@@ -100,7 +100,7 @@ instance Pretty Contract where
 instance Show Subst where
   show SId = "Id"
   show (SComp l r) = show l ++ " . " ++ show r
-  show (SSubst v c) = "(" ++ show v ++ "+->" ++ show c ++ ")"
+  show (SSubst v c) = "(" ++ show v ++ " +-> " ++ show c ++ ")"
 
 instance Show Contract where
   show (CArr c1 c2) =  "(" ++ show c1 ++ " >-> " ++ show c2 ++ ")"

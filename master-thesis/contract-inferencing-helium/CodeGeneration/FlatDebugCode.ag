@@ -42,6 +42,7 @@ sem ExprR
                                                                 "\n loc.c1 (fun): " ++ show @loc.c1 ++ 
                                                                 "\n loc.c1st: " ++ show @loc.c1st ++ 
                                                                 "\n loc.th3: " ++ show @loc.th3 ++ 
+                                                                "\n loc.localsubsts: " ++ show @loc.localsubsts ++ 
                                                                 "\n" ++ @fun.simpledebug ++ @args.simpledebug
   | ParenR      lhs   .simpledebug                       = @expr.simpledebug
   | TupleR      lhs   .simpledebug                       = "TupleR\n" ++ @exprs.simpledebug
@@ -61,9 +62,10 @@ sem AltR
 sem FunBindR
   | FBHoleR     lhs   .simpledebug                       = "FBHoleR\n"
   | FunBindR    lhs   .simpledebug                       = "FunBindR\n"  ++ 
-                                                                "\n loc.infer' :" ++ show @loc.infer' ++ 
                                                                 "\n loc.clhs :" ++ show @loc.clhs ++ 
                                                                 "\n loc.crhs :" ++ show @loc.crhs ++ 
+                                                                "\n loc.infer' :" ++ show @loc.infer' ++ 
+                                                                "\n loc.localsubsts :" ++ show @loc.localsubsts ++ 
                                                                 "\n loc.subst' :" ++ show @loc.subst' ++ 
                                                                 "\n" ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
 

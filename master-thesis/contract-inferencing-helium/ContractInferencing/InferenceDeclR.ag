@@ -1,6 +1,6 @@
 attr DeclR DeclsR
   syn  subst                                         :: Subst
-  inh  subst                                         :: Subst
+--  inh  locsubst                                      :: Subst
 
 sem DeclR
   | DHoleR DEmptyR
@@ -12,11 +12,11 @@ sem DeclR
 
 sem DeclsR
   | Cons
-      tl    .subst  =   @hd.subst -- Pass down the subsitutions to the next function declaration.
+      --tl    .subst  =   @hd.subst -- Pass down the subsitutions to the next function declaration.
       lhs   .subst  =   @hd.subst `o` @tl.subst
   | Nil
       lhs   .subst  =   SId
 
-sem BodyR
-  | BodyR
-      decls .subst  =   SId
+--sem BodyR
+--  | BodyR
+--      decls .locsubst  =   SId

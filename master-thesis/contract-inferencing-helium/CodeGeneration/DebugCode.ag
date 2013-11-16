@@ -281,7 +281,8 @@ sem ExprR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "AppR"
                                                 ,  text "Inferred contract:"    BOX.<+> text (show @loc.infer')
-                                                ,  text "Substitutions:"        BOX.<+> text (show @loc.ths)
+                                                ,  text "Global Substitutions:" BOX.<+> text (show @loc.ths)
+                                                ,  text "Local substitutions:"  BOX.<+> text (show @loc.localsubsts)
 						,  text "tree code:"	        BOX.<+> text (show @loc.typeTreeCode)
 						,  text "tree type:"		BOX.<+> text (show @loc.typeTreeType)	 
                                                 ,  text "original code:"        BOX.<+> pprint @loc.copy
