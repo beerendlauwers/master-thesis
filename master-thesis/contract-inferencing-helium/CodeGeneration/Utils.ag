@@ -22,13 +22,24 @@ import qualified Control.Exception as CE
 isInQuantifier :: Contract -> Contract -> Bool
 isInQuantifier c qc = c `elem` (getQuantifiers qc)
 
--- Checks if a substitution on a contract is local or global
--- If a contract c is not universally quantified, and is used to
--- substitute a universally quantified contract, it is local.
-isLocalSubst :: Contract -> Subst -> Bool
-isLocalSubst _ SId = False
-isLocalSubst rhc (SSubst v c) = isInQuantifier c rhc
-isLocalSubst rhc (SComp l r) = isLocalSubst rhc l -- Only check the first one
+isLocalSubst :: Subst -> Bool
+isLocalSubst SId = False
+isLocalSubst (SSubst v c) = isMonomorphic c && not (isMonomorphic v) -- If v is polymorphic and c isn't, it's a local subst
+isLocalSubst (SComp l r) = isLocalSubst l -- Only check the first one
+
+splitSubsts :: Subst -> (Subst, Subst)
+splitSubsts SId = (SId,SId)
+splitSubsts s@(SSubst v c) | isMonomorphic c && not (isMonomorphic v) = (SId,s)
+                           | otherwise = (s,SId)
+splitSubsts (SComp l r) = 
+ let (lg,ll) = splitSubsts l
+     (rg,rl) = splitSubsts r
+ in (lg `o` rg,ll `o` rl) 
+
+isMonomorphic :: Contract -> Bool
+isMonomorphic (CVar v _) = not $ isTrueContract v
+isMonomorphic (CProp _) = True
+isMonomorphic _ = False
 
 mkCtrt :: Int -> Contract
 mkCtrt n = CVar ("v" ++ show n) Nothing
@@ -215,16 +226,19 @@ convertTopTypeToContract offset ty =
     let (n1, ctrt1,q1) = convert n t1
         (n2, ctrt2,q2) = convert n1 t2
         (n3, ctrt3,q3) = convert n2 t3
-        (n4, ctrt4,q4) = convert n3 t4
-        o = CVar (makeType $ head n4) Nothing
-    in (tail n4, CBifunctor o ctrt1 (CFunctor ctrt2 (CFunctor ctrt3 ctrt4)),q1++q2++q3++q4++[head n4])
+        (n4:n5:n6:n7, ctrt4,q4) = convert n3 t4
+        o1 = CVar (makeType n4) Nothing
+        o2 = CVar (makeType n5) Nothing
+        o3 = CVar (makeType n6) Nothing
+    in (n7, CBifunctor o1 ctrt1 (CBifunctor o2 ctrt2 (CBifunctor o3 ctrt3 ctrt4)),n4:n5:n6:q1++q2++q3++q4)
    -- 3-tuple
    convert n (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) | P.isTupleConstructor x =
     let (n1, ctrt1,q1) = convert n t1
         (n2, ctrt2,q2) = convert n1 t2
-        (n3, ctrt3,q3) = convert n2 t3
-        o = CVar (makeType $ head n3) Nothing
-    in (tail n3, CBifunctor o ctrt1 (CFunctor ctrt2 ctrt3),q1++q2++q3++[head n3])
+        (n3:n4:n5, ctrt3,q3) = convert n2 t3
+        o1 = CVar (makeType n3) Nothing
+        o2 = CVar (makeType n4) Nothing 
+    in (n5, CBifunctor o1 ctrt1 (CBifunctor o2 ctrt2 ctrt3),n3:n4:q1++q2++q3)
    convert n (P.TCon x) | P.isTupleConstructor x = 
     error $ "Only tuples up to size 4 are currently supported. Tried to convert type: " ++ show x
    convert _ x = error $ "Was unable to convert the following type: " ++ show x 

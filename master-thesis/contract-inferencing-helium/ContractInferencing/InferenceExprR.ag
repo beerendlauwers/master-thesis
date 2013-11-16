@@ -34,12 +34,13 @@ sem ModuleR
 attr ExprR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
-  inh  subst                                         :: Subst
+--  inh  locsubst                                      :: Subst
 
 sem ExprR
-  | ListR
+  | ListR TupleR
       lhs  .infer   =   @exprs.infer
            .subst   =   @exprs.subst
+
   | VarR
       lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
            .subst   =   SId
@@ -59,13 +60,19 @@ sem ExprR
   | AppR
       lhs  .infer   =   @loc.infer'
            .subst   =   @loc.ths
+
+--      fun  .locsubst   =   @loc.localsubsts -- TODO: Local substs will probably refer to old variables, may need to update those.
+--      args .locsubst   =   @loc.localsubsts
+
+      loc  .localsubsts = snd @loc.th3'
       
 
       loc  .infer'  =   subst @loc.th3 @loc.alpha
-           .ths     =   let  ths = @loc.th3 `o` @loc.th2 `o` @loc.th1
+           .ths     =   let  ths = fst @loc.th3' `o` @loc.th2 `o` @loc.th1
                         in   ths --case @lhs.cann of
                              --  (Just ann)  -> unifyC ann @loc.infer' `o` ths
                              --  _           -> ths
+           .th3'    =   splitSubsts @loc.th3
            .c1      =   @fun.infer
            .th1     =   @fun.subst
            -- .e2env   =   subst @loc.th1 @lhs.env
@@ -75,6 +82,7 @@ sem ExprR
            .carr    =   @loc.c2 >-> @loc.alpha
            .th3     =   unifyC @loc.c1st @loc.carr
 --           .th3     =   unifyC @loc.carr @loc.c1st -- TODO: I swapped the arguments around. What are the implications?
+                                                   -- Seems to just change the way global substitutions flow. Should check locals
            .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
       loc  .num     ::  uniqueref varcnt
 
@@ -132,3 +140,24 @@ sem ListExprR
 
       loc  .num1    ::  uniqueref varcnt
       loc  .num2    ::  uniqueref varcnt
+
+attr TupleExprR
+  syn  infer                                         :: Contract
+  syn  minfer                                        :: {Maybe Contract}
+  syn  subst                                         :: Subst
+
+-- TupleExprR is only used in TupleR
+sem TupleExprR
+  | Cons
+      lhs  .infer   =   case @tl.minfer of
+                         (Just tl) -> CBifunctor (mkCtrt (@loc.num + @lhs.availableContractVars)) @hd.infer tl
+                         Nothing -> @hd.infer
+           .minfer  =   Just @tl.infer
+           .subst   =   @tl.subst `o` @hd.subst 
+      loc  .num     ::  uniqueref varcnt
+
+  | Nil
+      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .minfer  =   Nothing
+           .subst   =   SId
+      loc  .num     ::  uniqueref varcnt

@@ -1,18 +1,21 @@
 attr FunBindR FunBindsR
 --  syn  infer                                         :: Contract
   syn  subst                                         :: Subst
-  inh  subst                                         :: Subst
+--  inh  locsubst                                      :: Subst
 
 sem FunBindR
   | FBHoleR
       lhs   .subst  =   SId
   | FunBindR
       lhs  .subst   =   @loc.subst'
+--      rhs  .locsubst   =   @loc.localsubsts
       loc  .clhs    =   lastc $ stripQuantifiers $ @loc.cfunc
            .cfunc   =   envLU (getVar @name.copy) @lhs.env
            .crhs    =   @rhs.infer
            .unify   =   unifyC @loc.crhs @loc.clhs
-           .subst'  =   @loc.unify `o` @rhs.subst
+           .unify'  =   splitSubsts @loc.unify
+           .localsubsts = snd @loc.unify'
+           .subst'  =   fst @loc.unify' `o` @rhs.subst
            .infer'  =   subst @loc.subst' @loc.cfunc
   
 sem FunBindsR
