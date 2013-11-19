@@ -22,7 +22,7 @@ debugTypeVarsTypeTree tree =
 
 flatDebug :: String -> String -> IO ()
 flatDebug code pointOfEntry = 
- let noFreeLambdaCode = convertPatBindToFunBind code pointOfEntry
+ let noFreeLambdaCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry
      semModule = sem_ModuleR noFreeLambdaCode
      inhModule = Inh_ModuleR pointOfEntry []
      wrapModule = wrap_ModuleR semModule inhModule
@@ -49,7 +49,7 @@ removeFreeLambdas code pointOfEntry =
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> IO ()
 showDebug code pointOfEntry = 
- let transformedCode = transformApps $ convertPatBindToFunBind code pointOfEntry
+ let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry
      semModule = sem_ModuleR transformedCode
      inhModule = Inh_ModuleR pointOfEntry []
      wrapModule = wrap_ModuleR semModule inhModule

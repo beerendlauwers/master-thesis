@@ -8,7 +8,17 @@ sem DeclR
   | DFunBindsR
       lhs   .subst  =   @funbinds.subst
   | DPatBindR
-      lhs   .subst  =   @rhs.subst -- TODO: Do we want to update those patterns here, or is that not needed?
+      lhs   .subst  =   @loc.subst' -- TODO: Do we want to update those patterns here, or is that not needed?
+            .infer  =   @loc.infer'
+      loc   .results =   convertTopTypeToContract @lhs.freshContractVariable @pat.astType
+            .clhs   =   stripQuantifiers $ snd @loc.results
+            .crhs   =   @rhs.infer
+            .unify  =   unifyC @loc.crhs @loc.clhs
+            .unify' =   splitSubsts @loc.unify
+            .localsubsts = snd @loc.unify'
+            .subst' =   fst @loc.unify' `o` @rhs.subst
+            .infer' =   subst @loc.subst' @loc.clhs
+       pat  .freshContractVariable = fst @loc.results
 
 sem DeclsR
   | Cons

@@ -18,7 +18,12 @@ sem DeclR
   | DHoleR      lhs   .simpledebug                       = "DHoleR\n"
   | DEmptyR     lhs   .simpledebug                       = "DEmptyR\n"
   | DFunBindsR  lhs   .simpledebug                       = "DFunBindsR\n" ++ @funbinds.simpledebug
-  | DPatBindR   lhs   .simpledebug                       = "DPatBindR\n" ++ @pat.simpledebug ++ @rhs.simpledebug
+  | DPatBindR   lhs   .simpledebug                       = "DPatBindR" ++ 
+						 	   "\nloc.clhs: " ++ show @loc.clhs ++
+							   "\nloc.crhs: " ++ show @loc.crhs ++
+							   "\nloc.unify': " ++ show @loc.unify' ++	
+						           "\nloc.infer': " ++ show @loc.infer' ++ "\n" ++
+							   @pat.simpledebug ++ @rhs.simpledebug
 
 sem ExprR
   | HoleR       lhs   .simpledebug                       = "HoleR\n"
@@ -92,6 +97,11 @@ sem FunBindsR
 
 sem DeclsR
   | Cons        lhs   .simpledebug                       = "Cons DeclsR\n" ++ @hd.simpledebug ++ @tl.simpledebug   
+
+sem TupleExprR
+  | Cons        lhs   .simpledebug			 = "Cons TupleExprR\n" ++
+							   "@loc.infer: " ++ show @loc.infer ++ "\n" 
+						           ++ @hd.simpledebug ++ @tl.simpledebug
 
 sem NameR
   | IdentR      lhs   .simpledebug                       = "IdentR\n" ++ show @name ++ "\n"
