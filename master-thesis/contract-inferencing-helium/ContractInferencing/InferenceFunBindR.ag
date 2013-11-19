@@ -9,8 +9,8 @@ sem FunBindR
   | FunBindR
       lhs  .subst   =   @loc.subst'
 --      rhs  .locsubst   =   @loc.localsubsts
-      loc  .clhs    =   lastc $ stripQuantifiers $ @loc.cfunc
-           .cfunc   =   envLU (getVar @name.copy) @lhs.env
+      loc  .clhs    =   lastc $ @loc.cfunc
+           .cfunc   =   stripQuantifiers $ envLU (getVar @name.copy) @lhs.env
            .crhs    =   @rhs.infer
            .unify   =   unifyC @loc.crhs @loc.clhs
            .unify'  =   splitSubsts @loc.unify

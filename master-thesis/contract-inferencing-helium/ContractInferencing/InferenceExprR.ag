@@ -37,9 +37,25 @@ attr ExprR
 --  inh  locsubst                                      :: Subst
 
 sem ExprR
+  | HoleR
+      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .subst   =   SId
+      loc  .num     ::  uniqueref varcnt
+
+  | FeedbackR MustUseR NegR ParenR
+      lhs  .infer   =   @expr.infer
+           .subst   =   @expr.subst
+
   | ListR TupleR
       lhs  .infer   =   @exprs.infer
            .subst   =   @exprs.subst
+
+  | IfR
+      lhs  .infer   =   subst @loc.subst @then.infer
+           .subst   =   @loc.subst
+      loc  .subst   =   fst @loc.unify `o` @cond.subst `o` @then.subst `o` @else.subst
+      loc  .unify   =   splitSubsts $ unifyC @then.infer @else.infer
+           .localsubsts = snd @loc.unify
 
   | VarR
       lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
@@ -47,15 +63,15 @@ sem ExprR
 
   | ConR -- TODO: This will give odd results when using constructors many times, I think.
       lhs  .infer   =   stripQuantifiers $ snd @loc.results
-      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType
            .subst   =   SId
-           .freshContractVariable = fst @loc.results
+      name .freshContractVariable = fst @loc.results
+      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType
 
   | LitR -- TODO: check if this is returning correct (= monomorphic) contracts
       lhs  .infer   =   stripQuantifiers $ snd @loc.results
-      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType
            .subst   =   SId
-           .freshContractVariable = fst @loc.results   
+      lit  .freshContractVariable = fst @loc.results
+      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType 
 
   | AppR
       lhs  .infer   =   @loc.infer'
@@ -90,6 +106,10 @@ sem ExprR
 
       --fun  .cann    =   Nothing
       --args .cann    =   Nothing
+
+  | LetR
+      lhs  .infer   =   @expr.infer
+           .subst   =   @expr.subst `o` @decls.subst
 
 attr ExprsR ListExprR
   syn  infer                                         :: Contract
@@ -149,10 +169,11 @@ attr TupleExprR
 -- TupleExprR is only used in TupleR
 sem TupleExprR
   | Cons
-      lhs  .infer   =   case @tl.minfer of
+      loc  .infer   =   case @tl.minfer of
                          (Just tl) -> CBifunctor (mkCtrt (@loc.num + @lhs.availableContractVars)) @hd.infer tl
                          Nothing -> @hd.infer
-           .minfer  =   Just @tl.infer
+      lhs  .infer   =	@loc.infer
+      lhs  .minfer  =   Just @hd.infer
            .subst   =   @tl.subst `o` @hd.subst 
       loc  .num     ::  uniqueref varcnt
 

@@ -50,6 +50,17 @@ transformLets = transformBi f
   where f (LetR dl e r) = expandLets (LetR dl e r)
         f x = x
 
+replaceInfixApps :: ExprR -> ExprR
+replaceInfixApps (InfixAppR (JustExprR l) o (JustExprR r) p) = AppR o [l,r] p
+replaceInfixApps (InfixAppR NoExprR  o (JustExprR r) p) = AppR o [r] p
+replaceInfixApps (InfixAppR (JustExprR l) o NoExprR  p) = AppR o [l] p
+replaceInfixApps (InfixAppR NoExprR  o NoExprR  p) = o
+
+transformInfixApps :: ModuleR -> ModuleR
+transformInfixApps = transformBi f
+  where f i@(InfixAppR _ _ _ _) = replaceInfixApps i
+        f x = x
+
 
 -- Transform enums into lists
 -- for easier contract inferencing.
