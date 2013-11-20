@@ -22,11 +22,13 @@ debugTypeVarsTypeTree tree =
 
 flatDebug :: String -> String -> IO ()
 flatDebug code pointOfEntry = 
- let noFreeLambdaCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry
-     semModule = sem_ModuleR noFreeLambdaCode
+ let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry
+     semModule = sem_ModuleR transformedCode
      inhModule = Inh_ModuleR pointOfEntry []
      wrapModule = wrap_ModuleR semModule inhModule
- in do putStrLn (simpledebug_Syn_ModuleR wrapModule)
+ in do putStrLn "Code that will be used:"
+       putStrLn $ render $ pprint transformedCode
+       putStrLn (simpledebug_Syn_ModuleR wrapModule)
        writeFile "flatDebugOutput" (simpledebug_Syn_ModuleR wrapModule)
 
 

@@ -58,7 +58,7 @@ sem ExprR
            .localsubsts = snd @loc.unify
 
   | VarR
-      lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
+      lhs  .infer   = stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
            .subst   =   SId
 
   | ConR -- TODO: This will give odd results when using constructors many times, I think.

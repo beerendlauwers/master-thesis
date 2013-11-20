@@ -152,10 +152,10 @@ sem DeclR
 
 sem ExprR
    | VarR ConR
-      loc  .conversionResults           = convertTopTypeToContract @lhs.freshContractVariable @loc.localType
-      loc  .varContract                 = if @loc.isFunction
-                                           then envLU (getVar @name.copy) @lhs.env
-                                           else snd @loc.conversionResults
+      loc  .conversionResults           = if @loc.isFunction
+                                           then envLU @lhs.freshContractVariable @name.copy @lhs.env
+                                           else convertTopTypeToContract @lhs.freshContractVariable @loc.localType
+      loc  .varContract                 = snd @loc.conversionResults
       lhs  .freshContractVariable       = fst @loc.conversionResults
       loc  .localType                   = maybeErr (show @loc.typeTreeCode) @loc.typeTreeType
       loc  .arity                       = S.arityOfTpScheme @loc.localType

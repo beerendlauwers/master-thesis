@@ -1,7 +1,6 @@
 attr FunBindR FunBindsR
 --  syn  infer                                         :: Contract
   syn  subst                                         :: Subst
---  inh  locsubst                                      :: Subst
 
 sem FunBindR
   | FBHoleR
@@ -9,8 +8,10 @@ sem FunBindR
   | FunBindR
       lhs  .subst   =   @loc.subst'
 --      rhs  .locsubst   =   @loc.localsubsts
-      loc  .clhs    =   lastc $ @loc.cfunc
-           .cfunc   =   stripQuantifiers $ envLU (getVar @name.copy) @lhs.env
+      pats .freshContractVariable = fst @loc.conversionResults
+      loc  .clhs    =   lastc $ stripQuantifiers $ @loc.cfunc
+           .conversionResults = envLU @lhs.freshContractVariable @name.copy @lhs.env
+           .cfunc   =   snd @loc.conversionResults
            .crhs    =   @rhs.infer
            .unify   =   unifyC @loc.crhs @loc.clhs
            .unify'  =   splitSubsts @loc.unify
@@ -19,7 +20,7 @@ sem FunBindR
            .infer'  =   subst @loc.subst' @loc.cfunc
   
 sem FunBindsR
-  | Cons
+  | Cons 
       lhs   .subst  =   @hd.subst `o` @tl.subst -- TODO: Collect substitution information of all definitions?
   | Nil
       lhs   .subst  =   SId

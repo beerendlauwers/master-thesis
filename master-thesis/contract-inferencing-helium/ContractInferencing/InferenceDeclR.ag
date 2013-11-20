@@ -1,12 +1,13 @@
 attr DeclR DeclsR
   syn  subst                                         :: Subst
---  inh  locsubst                                      :: Subst
+  inh  locsubst                                      :: Subst
 
 sem DeclR
   | DHoleR DEmptyR
       lhs   .subst  =   SId
   | DFunBindsR
       lhs   .subst  =   @funbinds.subst
+      funbinds.env  =   subst @lhs.locsubst @loc.funbindsEnv
   | DPatBindR
       lhs   .subst  =   @loc.subst' -- TODO: Do we want to update those patterns here, or is that not needed?
             .infer  =   @loc.infer'
@@ -22,11 +23,13 @@ sem DeclR
 
 sem DeclsR
   | Cons
-      --tl    .subst  =   @hd.subst -- Pass down the subsitutions to the next function declaration.
+      tl    .locsubst  =   @hd.subst -- Pass down the subsitutions to the next function declaration.
+      tl    .env    =   @loc.newenv
+      loc   .newenv =   subst @hd.subst @lhs.env
       lhs   .subst  =   @hd.subst `o` @tl.subst
   | Nil
       lhs   .subst  =   SId
 
---sem BodyR
---  | BodyR
---      decls .locsubst  =   SId
+sem BodyR
+  | BodyR
+      decls .locsubst  =   SId

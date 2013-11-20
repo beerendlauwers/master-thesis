@@ -56,6 +56,16 @@ maybeErr s = fromJustMsg (s ++ " does not have a type available.")
 trMsg :: TypeTree -> String -> String
 trMsg tr m = show tr ++ m
 
+envLU :: Int -> NameR -> CEnv -> (Int,Contract)
+envLU i s env = maybe (convertTopTypeToContract i $ lookupInImportEnvs s) (\r -> (i,r)) (DM.lookup (getVar s) env)
+
+lookupInImportEnvs :: NameR -> S.TpScheme
+lookupInImportEnvs s = 
+ let asHeliumName = toHeliumWithRanges s
+     typeEnv = foldr DM.union DM.empty $ map (\(IE.ImportEnvironment _ _ tyenv valenv _ _) -> DM.union tyenv valenv) HIE.importEnvs
+     msg = "Attempted to look up " ++ getVar s ++ " in HIE.importEnvs and local env."
+ in maybe (error msg) id (DM.lookup asHeliumName typeEnv)
+
 getMaxVariable :: IE.ImportEnvironment -> Int
 getMaxVariable (IE.ImportEnvironment _ _ c d _ _) = 
  maximum' $ map maxVar [c,d]
@@ -106,10 +116,6 @@ prefixPointOfEntry (IdentR name r)    = (IdentR ("__original_"++name) r)
 prefixPointOfEntry (OperatorR name r) = (OperatorR ("***"++name++"***") r)
 prefixPointOfEntry _ = error "prefixPointOfEntry: Haven't defined anything yet for SpecialR."
 
-envLU :: String -> CEnv -> Contract
-envLU s env = maybe (error msg) id (DM.lookup s env)
- where msg = "Attempted to look up " ++ s ++ " in environement " ++ show env ++ "."
-
 -- Just fetches the string out of a NameR
 getVar :: NameR -> String
 getVar (IdentR x _)    = x
@@ -121,6 +127,10 @@ getRange :: NameR -> RangeR
 getRange (IdentR _ r)    = r
 getRange (OperatorR _ r) = r
 getRange (SpecialR _ r)  = r
+
+getRangeE :: ExprR -> RangeR
+getRangeE (VarR _ r)      = r
+getRangeE _               = error "Expand getRangeE!"
 
 -- We need to remove range information because otherwise we could end up with multiple entries
 scrubRangeInfo :: IE.TypeEnvironment -> IE.TypeEnvironment

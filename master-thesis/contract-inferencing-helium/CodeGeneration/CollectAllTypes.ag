@@ -341,7 +341,7 @@ attr DeclR DeclsR PatR
 -- Collect function identifier contracts.
 sem DeclR
   | DFunBindsR
-     funbinds.env               = DM.union @loc.functionEnv @lhs.env
+     loc.funbindsEnv            = DM.union @loc.functionEnv @lhs.env
      lhs   .functionEnv         = @loc.functionEnv
      loc   .functionEnv         = DM.singleton @funbinds.functionIdent (snd @loc.conversionResults)
      loc   .conversionResults   = convertTopTypeToContract @lhs.freshContractVariable (head @funbinds.astTypes)
