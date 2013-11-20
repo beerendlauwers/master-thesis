@@ -51,10 +51,10 @@ transformLets = transformBi f
         f x = x
 
 replaceInfixApps :: ExprR -> ExprR
-replaceInfixApps (InfixAppR (JustExprR l) o (JustExprR r) p) = AppR o [l,r] p
-replaceInfixApps (InfixAppR NoExprR  o (JustExprR r) p) = AppR o [r] p
-replaceInfixApps (InfixAppR (JustExprR l) o NoExprR  p) = AppR o [l] p
-replaceInfixApps (InfixAppR NoExprR  o NoExprR  p) = o
+replaceInfixApps (InfixAppR (JustExprR l) o (JustExprR r) p) = AppR (ParenR o (getRangeE o)) [l,r] p
+replaceInfixApps (InfixAppR NoExprR  o (JustExprR r) p) = AppR (ParenR o (getRangeE o)) [r] p
+replaceInfixApps (InfixAppR (JustExprR l) o NoExprR  p) = AppR (ParenR o (getRangeE o)) [l] p
+replaceInfixApps (InfixAppR NoExprR  o NoExprR  p) = ParenR o p
 
 transformInfixApps :: ModuleR -> ModuleR
 transformInfixApps = transformBi f
