@@ -122,15 +122,32 @@ getVar (IdentR x _)    = x
 getVar (OperatorR x _) = x
 getVar (SpecialR x _)  = x
 
--- If we need more, we should turn this into a class
-getRange :: NameR -> RangeR
-getRange (IdentR _ r)    = r
-getRange (OperatorR _ r) = r
-getRange (SpecialR _ r)  = r
+class GetRange a where
+  getRange :: a -> RangeR
 
-getRangeE :: ExprR -> RangeR
-getRangeE (VarR _ r)      = r
-getRangeE _               = error "Expand getRangeE!"
+instance GetRange NameR where
+ getRange (IdentR _ r)    = r
+ getRange (OperatorR _ r) = r
+ getRange (SpecialR _ r)  = r
+
+instance GetRange ExprR where
+ getRange (VarR _ r)          = r
+ getRange (HoleR _ r)         = r
+ getRange (FeedbackR _ _ r)   = r
+ getRange (MustUseR _ r)      = r
+ getRange (CaseR _ _ r)       = r
+ getRange (ConR _ r)          = r
+ getRange (IfR _ _ _ r)       = r
+ getRange (InfixAppR _ _ _ r) = r
+ getRange (LambdaR _ _ r)     = r
+ getRange (LetR _ _ r)        = r
+ getRange (LitR _ r)          = r
+ getRange (AppR _ _ r)        = r
+ getRange (ParenR _ r)        = r
+ getRange (TupleR _ r)        = r
+ getRange (EnumR _ _ _ r)     = r
+ getRange (ListR _ r)         = r
+ getRange (NegR _ r)          = r
 
 -- We need to remove range information because otherwise we could end up with multiple entries
 scrubRangeInfo :: IE.TypeEnvironment -> IE.TypeEnvironment

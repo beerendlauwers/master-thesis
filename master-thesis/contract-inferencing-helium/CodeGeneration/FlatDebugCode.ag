@@ -9,6 +9,8 @@ sem ModuleR
 sem BodyR
   | BodyR       lhs   .simpledebug                       = "BodyR\n" 
                                                            ++ "env we start with: " ++ show @decls.functionEnv ++ "\n"
+                                                           ++ "all substitutions: " ++ show @loc.allSubsts ++ "\n"
+                                                           ++ "final top env: " ++ show @loc.finalTopEnv ++ "\n"
                                                            ++ @decls.simpledebug
   | BHoleR      lhs   .simpledebug                       = "BHoleR\n"
 
