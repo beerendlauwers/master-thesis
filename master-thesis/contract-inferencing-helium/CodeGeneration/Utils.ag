@@ -93,6 +93,11 @@ stripQuantifiers :: Contract -> Contract
 stripQuantifiers (CQuant _ cs) = stripQuantifiers cs
 stripQuantifiers x = x
 
+dropc :: Int -> Contract -> Contract
+dropc n (CArr x y) | n > 0  = dropc (n-1) y
+                   | n == 0 = y
+dropc n x = x
+
 lastc :: Contract -> Contract
 lastc (CArr x y) = lastc y
 lastc x = x
