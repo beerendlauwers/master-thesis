@@ -26,6 +26,10 @@ infixr 4 >->
 (>->) :: Contract -> Contract -> Contract
 (>->) = CArr
 
+infixr 4 <@>
+(<@>) :: Contract -> Contract -> Contract
+(<@>) = CFunctor
+
 -- Foralls the contracts
 infixr 4 >!>
 (>!>) :: Contract -> Contract -> Contract
