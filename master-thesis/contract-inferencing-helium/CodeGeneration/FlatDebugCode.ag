@@ -9,8 +9,6 @@ sem ModuleR
 sem BodyR
   | BodyR       lhs   .simpledebug                       = "BodyR\n" 
                                                            ++ "env we start with: " ++ show @decls.functionEnv ++ "\n"
-                                                           ++ "all substitutions: " ++ show @loc.allSubsts ++ "\n"
-                                                           ++ "final top env: " ++ show @loc.finalTopEnv ++ "\n"
                                                            ++ @decls.simpledebug
   | BHoleR      lhs   .simpledebug                       = "BHoleR\n"
 
@@ -77,6 +75,8 @@ sem AltR
 sem FunBindR
   | FBHoleR     lhs   .simpledebug                       = "FBHoleR\n"
   | FunBindR    lhs   .simpledebug                       = "FunBindR\n"  ++ 
+                                                                "\n pats.astTypes :" ++ show @pats.astTypes ++ 
+                                                                "\n loc.cfuns :" ++ show @loc.cfunc ++ 
                                                                 "\n loc.clhs :" ++ show @loc.clhs ++ 
                                                                 "\n loc.crhs :" ++ show @loc.crhs ++ 
                                                                 "\n loc.infer' :" ++ show @loc.infer' ++ 
@@ -109,7 +109,6 @@ sem FunBindsR
 
 sem DeclsR
   | Cons        lhs   .simpledebug                       = "Cons DeclsR" ++ 
-                                                           "\ntl.env: " ++ show @loc.newenv ++
                                                            "\n" ++ @hd.simpledebug ++ @tl.simpledebug   
 
 sem TupleExprR

@@ -335,7 +335,7 @@ sem FunBindR
   | FunBindR
      lhs   .functionIdent       = getVar @name.copy
 
-attr DeclR DeclsR PatR
+attr DeclR DeclsR PatR PatsR
   syn functionEnv           use {`DM.union`}     {DM.empty}     :: {CEnv}                                   
 
 -- Collect function identifier contracts.
