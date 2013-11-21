@@ -62,10 +62,8 @@ sem ExprR
            .subst   =   SId
 
   | ConR -- TODO: This will give odd results when using constructors many times, I think.
-      lhs  .infer   =   stripQuantifiers $ snd @loc.results
+      lhs  .infer   =   stripQuantifiers $ @loc.varContract
            .subst   =   SId
-      name .freshContractVariable = fst @loc.results
-      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType
 
   | LitR -- TODO: check if this is returning correct (= monomorphic) contracts
       lhs  .infer   =   stripQuantifiers $ snd @loc.results

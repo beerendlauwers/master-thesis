@@ -7,23 +7,23 @@ sem DeclR
       lhs   .subst  =   SId
   | DFunBindsR
       lhs   .subst  =   @funbinds.subst
-      funbinds.env  =   subst @lhs.locsubst @loc.funbindsEnv
+--      funbinds.env  =   subst @lhs.locsubst @loc.funbindsEnv
   | DPatBindR
       lhs   .subst  =   @loc.subst' -- TODO: Do we want to update those patterns here, or is that not needed?
             .infer  =   @loc.infer'
       loc   .results =   convertTopTypeToContract @lhs.freshContractVariable @pat.astType
             .clhs   =   stripQuantifiers $ snd @loc.results
             .crhs   =   @rhs.infer
-            .unify  =   unifyC @loc.crhs @loc.clhs
+            .unify  =   unifyC @loc.clhs @loc.crhs
             .unify' =   splitSubsts @loc.unify
             .localsubsts = snd @loc.unify'
             .subst' =   fst @loc.unify' `o` @rhs.subst
             .infer' =   subst @loc.subst' @loc.clhs
-       pat  .freshContractVariable = fst @loc.results
+--       pat  .freshContractVariable = fst @loc.results
 
 sem DeclsR
   | Cons
-      tl    .locsubst  =   @hd.subst -- Pass down the subsitutions to the next function declaration.
+--      tl    .locsubst  =   @hd.subst -- Pass down the subsitutions to the next function declaration.
       tl    .env    =   @loc.newenv
       loc   .newenv =   subst @hd.subst @lhs.env
       lhs   .subst  =   @hd.subst `o` @tl.subst
@@ -33,3 +33,5 @@ sem DeclsR
 sem BodyR
   | BodyR
       decls .locsubst  =   SId
+      loc   .allSubsts =   @decls.subst
+      loc   .finalTopEnv = subst @decls.subst @decls.functionEnv

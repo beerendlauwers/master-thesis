@@ -8,12 +8,12 @@ sem FunBindR
   | FunBindR
       lhs  .subst   =   @loc.subst'
 --      rhs  .locsubst   =   @loc.localsubsts
-      pats .freshContractVariable = fst @loc.conversionResults
+--      pats .freshContractVariable = fst @loc.conversionResults
       loc  .clhs    =   lastc $ stripQuantifiers $ @loc.cfunc
            .conversionResults = envLU @lhs.freshContractVariable @name.copy @lhs.env
            .cfunc   =   snd @loc.conversionResults
            .crhs    =   @rhs.infer
-           .unify   =   unifyC @loc.crhs @loc.clhs
+           .unify   =   unifyC  @loc.clhs @loc.crhs
            .unify'  =   splitSubsts @loc.unify
            .localsubsts = snd @loc.unify'
            .subst'  =   fst @loc.unify' `o` @rhs.subst

@@ -156,7 +156,7 @@ sem ExprR
                                            then envLU @lhs.freshContractVariable @name.copy @lhs.env
                                            else convertTopTypeToContract @lhs.freshContractVariable @loc.localType
       loc  .varContract                 = snd @loc.conversionResults
-      lhs  .freshContractVariable       = fst @loc.conversionResults
+      name .freshContractVariable       = fst @loc.conversionResults
       loc  .localType                   = maybeErr (show @loc.typeTreeCode) @loc.typeTreeType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
       loc  .isFunction                  = @loc.arity > 0 
