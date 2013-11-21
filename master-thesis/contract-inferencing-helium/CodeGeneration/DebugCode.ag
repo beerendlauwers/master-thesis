@@ -20,11 +20,11 @@ debugTypeVarsTypeTree tree =
  in DoublyLinkedTree Nothing (localVal,sndVal, thdVal) childrenVals
 
 
-flatDebug :: String -> String -> IO ()
-flatDebug code pointOfEntry = 
- let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry
+flatDebug :: String -> String -> CEnv -> IO ()
+flatDebug code pointOfEntry env = 
+ let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry []
+     inhModule = Inh_ModuleR pointOfEntry [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
        putStrLn $ render $ pprint transformedCode
@@ -32,28 +32,28 @@ flatDebug code pointOfEntry =
        writeFile "flatDebugOutput" (simpledebug_Syn_ModuleR wrapModule)
 
 
-convertPatBindToFunBind :: String -> String -> ModuleR
-convertPatBindToFunBind code pointOfEntry = 
- let noFreeLambdas = removeFreeLambdas code pointOfEntry
+convertPatBindToFunBind :: String -> String -> CEnv -> ModuleR
+convertPatBindToFunBind code pointOfEntry env = 
+ let noFreeLambdas = removeFreeLambdas code pointOfEntry env
      semModule = sem_ModuleR noFreeLambdas
-     inhModule = Inh_ModuleR pointOfEntry []
+     inhModule = Inh_ModuleR pointOfEntry [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in patBindToFunBind_Syn_ModuleR wrapModule
 
-removeFreeLambdas :: String -> String -> ModuleR
-removeFreeLambdas code pointOfEntry = 
+removeFreeLambdas :: String -> String -> CEnv -> ModuleR
+removeFreeLambdas code pointOfEntry env = 
  let astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
-     inhModule = Inh_ModuleR pointOfEntry []
+     inhModule = Inh_ModuleR pointOfEntry [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in removeFreeLambdas_Syn_ModuleR wrapModule
 
 -- Expects the code as a string and the point of entry.
-showDebug :: String -> String -> IO ()
-showDebug code pointOfEntry = 
- let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry
+showDebug :: String -> String -> CEnv -> IO ()
+showDebug code pointOfEntry env = 
+ let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry []
+     inhModule = Inh_ModuleR pointOfEntry [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
        putStrLn $ render $ pprint transformedCode
@@ -62,33 +62,49 @@ showDebug code pointOfEntry =
 
 
 showDebugExample1 :: IO ()
-showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" []
+showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" [] (DM.fromList [])
 
 showDebugExample2 :: IO ()
-showDebugExample2 = showDebug "f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys" []
+showDebugExample2 = showDebug "f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys" [] (DM.fromList [])
 
 showDebugExample3 :: IO ()
-showDebugExample3 = showDebug "f x = n x\n  where n x = g x\ng x = x" []
+showDebugExample3 = showDebug "f x = n x\n  where n x = g x\ng x = x" [] (DM.fromList [])
 
 showDebugExample4 :: IO ()
-showDebugExample4 = showDebug "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" []
+showDebugExample4 = showDebug "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" [] (DM.fromList [])
 
 -- Shadowing test
 showDebugExample5 :: IO ()
-showDebugExample5 = showDebug "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" []
+showDebugExample5 = showDebug "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" [] (DM.fromList [])
 
 -- AltR test
 showDebugExample6 :: IO ()
-showDebugExample6 = showDebug "g x = [x]\nf x = case (g x) of\n           (x:xs) -> let n = xs\n                     in n\n           []     -> error \"Test\"" []
+showDebugExample6 = showDebug "g x = [x]\nf x = case (g x) of\n           (x:xs) -> let n = xs\n                     in n\n           []     -> error \"Test\"" [] (DM.fromList [])
 
 -- PAsR test
 -- PTupleR test
 showDebugExample7 :: IO ()
-showDebugExample7 = showDebug "f n@(x,y,z) = (g z,n)\n  where g = x y" []
+showDebugExample7 = showDebug "f n@(x,y,z) = (g z,n)\n  where g = x y" [] (DM.fromList [])
 
 -- Lambda test
 showDebugExample8 :: IO ()
-showDebugExample8 = showDebug "f x = (\\y -> let n = y\n             in n)" []
+showDebugExample8 = showDebug "f x = (\\y -> let n = y\n             in n)" [] (DM.fromList [])
+
+
+-- Some debug contracts
+cIsChar :: Contract
+cIsChar = CProp "isChar"
+
+cIsInt :: Contract
+cIsInt = CProp "isInt"
+
+v999, v998, v997 :: Contract
+v999 = CVar "v999" Nothing
+v998 = CVar "v998" Nothing
+v997 = CVar "v997" Nothing
+
+cZ :: Contract
+cZ = CBifunctor v999 (v998 <@> cIsChar) (v997 <@> cIsInt)
 
 }
 

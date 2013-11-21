@@ -7,12 +7,17 @@ sem DeclR
       lhs   .subst  =   SId
   | DFunBindsR
       lhs   .subst  =   @funbinds.subst
---      funbinds.env  =   subst @lhs.locsubst @loc.funbindsEnv
+      funbinds.env  =   if @lhs.isTopLevel
+                         then DM.union @lhs.topLevelEnvOverride @loc.funbindsEnv
+                         else @loc.funbindsEnv
   | DPatBindR
       lhs   .subst  =   @loc.subst' -- TODO: Do we want to update those patterns here, or is that not needed?
             .infer  =   @loc.infer'
-      loc   .results =   convertTopTypeToContract @lhs.freshContractVariable @pat.astType
-            .clhs   =   stripQuantifiers $ snd @loc.results
+      loc   .results =  if length @pat.localPatterns == 1 
+                         -- If we have a very simple pattern, we can easily get the contract from the env.
+                         then envLU @lhs.freshContractVariable (mkIdent (head @pat.localPatterns)) @lhs.env
+                         else convertTopTypeToContract @lhs.freshContractVariable @pat.astType
+            .clhs    =  stripQuantifiers $ snd @loc.results
             .crhs   =   @rhs.infer
             .unify  =   unifyC @loc.clhs @loc.crhs
             .unify' =   splitSubsts @loc.unify

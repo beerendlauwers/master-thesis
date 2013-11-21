@@ -362,7 +362,7 @@ sem BodyR
   | BHoleR BodyR
      range.env                  = DM.empty
   | BodyR
-     decls.env                  = @decls.functionEnv
+     decls.env                  = DM.union @lhs.topLevelEnvOverride @decls.functionEnv
 
 sem RhsR
   | RhsR
