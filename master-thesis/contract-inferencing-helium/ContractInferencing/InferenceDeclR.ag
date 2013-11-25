@@ -8,8 +8,8 @@ sem DeclR
   | DFunBindsR
       lhs   .subst  =   @funbinds.subst
       funbinds.env  =   if @lhs.isTopLevel
-                         then DM.union @lhs.topLevelEnvOverride @loc.funbindsEnv
-                         else @loc.funbindsEnv
+                         then DM.union @lhs.topLevelEnvOverride @lhs.env
+                         else @lhs.env
   | DPatBindR
       lhs   .subst  =   @loc.subst' -- TODO: Do we want to update those patterns here, or is that not needed?
             .infer  =   @loc.infer'
