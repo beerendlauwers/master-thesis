@@ -30,11 +30,30 @@ sem ModuleR
 -- types from the type tree. These types are already the most specific for a
 -- certain function application.
 
+{-
+   | HoleR              DONE
+   | FeedbackR		    DONE
+   | MustUseR		    DONE
+   | CaseR	            DONE
+   | ConR		        DONE
+   | IfR		        DONE
+   | InfixAppR		    cONVERTED TO APPR
+   | LambdaR            DONE
+   | LetR               DONE
+   | LitR               DONE 
+   | AppR               DONE
+   | ParenR             DONE
+   | TupleR		        DONE
+   | VarR               DONE
+   | EnumR              DONE
+   | ListR              DONE 
+   | NegR		        DONE
+-}
+
 
 attr ExprR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
---  inh  locsubst                                      :: Subst
 
 sem ExprR
   | HoleR
@@ -49,7 +68,38 @@ sem ExprR
   | ListR TupleR
       lhs  .infer   =   @exprs.infer
            .subst   =   @exprs.subst
+           
+  | CaseR
+      lhs  .infer   =   subst @loc.subst @alts.infer
+           .subst   =   @loc.subst
 
+      -- Unify expression with head of list of alternatives,
+      -- which, in turn, was unified with the tail of list of alts
+      loc  .unify   =   splitSubsts $ unifyC @expr.infer @alts.infer
+           .subst   =   fst @loc.unify `o` @alts.subst `o` @expr.subst
+           
+  | EnumR
+      lhs  .infer   =   subst @loc.subst @from.infer
+           .subst   =   @loc.subst
+      loc  .subst   =   fst @loc.unify `o` @from.subst `o` @then.subst `o` @to.subst 
+           .hasThen =   case @then.copy of
+                              (JustExprR _) -> True
+                              otherwise     -> False
+           .hasTo   =   case @to.copy of
+                              (JustExprR _) -> True
+                              otherwise     -> False
+           .unify   =   if @loc.hasThen && @loc.hasTo
+                         then let firstSubsts = unifyC @from.infer @then.infer
+                                  gSubsts = fst $ splitSubsts firstSubsts
+                                  secondSubsts = unifyC (subst gSubsts @then.infer) @to.infer
+                               in splitSubsts $ firstSubsts `o` secondSubsts
+                         else if @loc.hasThen
+                               then splitSubsts $ unifyC @from.infer @then.infer
+                               else if @loc.hasTo
+                                     then splitSubsts $ unifyC @from.infer @to.infer
+                                     else SId
+                              
+      
   | IfR
       lhs  .infer   =   subst @loc.subst @then.infer
            .subst   =   @loc.subst
@@ -58,7 +108,7 @@ sem ExprR
            .localsubsts = snd @loc.unify
 
   | VarR
-      lhs  .infer   = stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
+      lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
            .subst   =   SId
 
   | ConR -- TODO: This will give odd results when using constructors many times, I think.
@@ -70,6 +120,16 @@ sem ExprR
            .subst   =   SId
       lit  .freshContractVariable = fst @loc.results
       loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType 
+
+  | LambdaR
+      lhs  .infer   =   subst @loc.subst' @loc.clhs
+           .subst   =   fst @loc.unify' `o` @expr.subst
+      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @pat.astType
+           .clhs    =   stripQuantifiers $ snd @loc.results
+           .crhs    =   @expr.infer
+           .unify   =   unifyC @loc.clhs @loc.crhs
+           .unify'  =   splitSubsts @loc.unify
+           .localsubsts = snd @loc.unify'
 
   | AppR
       lhs  .infer   =   @loc.infer'
@@ -112,7 +172,6 @@ sem ExprR
 attr ExprsR ListExprR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
-  inh  subst                                         :: Subst
 
 --ExprsR is only used in AppR.
 sem ExprsR
@@ -180,3 +239,38 @@ sem TupleExprR
            .minfer  =   Nothing
            .subst   =   SId
       loc  .num     ::  uniqueref varcnt
+      
+attr MaybeExprR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+      
+sem MaybeExprR
+  | NoExprR
+      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .subst   =   SId
+      loc  .num     ::  uniqueref varcnt
+
+  | JustExprR
+      lhs  .infer   =   @expr.infer
+           .subst   =   @expr.subst
+           
+attr GuardedExprR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+           
+sem GuardedExprR
+  | GExprR
+      lhs  .infer   =   @expr.infer
+           .subst   =   @guard.subst `o` @expr.subst
+           
+attr GuardedExprsR
+  syn  infer                                         :: Contract
+  syn  subst           use {`o`) (SId)               :: Subst
+  
+sem GuardedExprsR
+  | Cons
+      lhs  .infer   =   @hd.infer
+  | Nil
+      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+      loc  .num     ::  uniqueref varcnt
+           

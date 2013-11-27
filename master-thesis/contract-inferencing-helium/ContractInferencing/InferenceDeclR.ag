@@ -1,6 +1,5 @@
 attr DeclR DeclsR
   syn  subst                                         :: Subst
-  inh  locsubst                                      :: Subst
 
 sem DeclR
   | DHoleR DEmptyR
@@ -24,11 +23,10 @@ sem DeclR
             .localsubsts = snd @loc.unify'
             .subst' =   fst @loc.unify' `o` @rhs.subst
             .infer' =   subst @loc.subst' @loc.clhs
---       pat  .freshContractVariable = fst @loc.results
+--       pat  .freshContractVariable = fst @loc.results -- TODO: try and get this working uncommented
 
 sem DeclsR
   | Cons
---      tl    .locsubst  =   @hd.subst -- Pass down the subsitutions to the next function declaration.
       tl    .env    =   @loc.newenv
       loc   .newenv =   subst @hd.subst @lhs.env
       lhs   .subst  =   @hd.subst `o` @tl.subst
@@ -37,6 +35,5 @@ sem DeclsR
 
 sem BodyR
   | BodyR
-      decls .locsubst  =   SId
       loc   .allSubsts =   @decls.subst
       loc   .finalTopEnv = subst @decls.subst @decls.functionEnv
