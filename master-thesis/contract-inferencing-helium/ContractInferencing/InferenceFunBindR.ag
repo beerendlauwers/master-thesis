@@ -1,5 +1,4 @@
 attr FunBindR FunBindsR
---  syn  infer                                         :: Contract
   syn  subst                                         :: Subst
 
 sem FunBindR
@@ -17,7 +16,6 @@ sem FunBindR
            .unify'  =   splitSubsts @loc.unify
            .localsubsts = snd @loc.unify'
            .subst'  =   fst @loc.unify' `o` @rhs.subst
-           .infer'  =   subst @loc.subst' @loc.cfunc
 
       -- Patterns should also be made available to RHS, because they may shadow other vars.
       rhs  .env     =   DM.union @pats.functionEnv @lhs.env
