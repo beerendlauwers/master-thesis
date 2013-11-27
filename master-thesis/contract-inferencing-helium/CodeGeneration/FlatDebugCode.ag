@@ -25,8 +25,7 @@ sem DeclR
   | DPatBindR   lhs   .simpledebug                       = "DPatBindR" ++ 
 						 	   "\nloc.clhs: " ++ show @loc.clhs ++
 							   "\nloc.crhs: " ++ show @loc.crhs ++
-							   "\nloc.unify': " ++ show @loc.unify' ++	
-						           "\nloc.infer': " ++ show @loc.infer' ++ "\n" ++
+							   "\nloc.unify': " ++ show @loc.unify' ++
 							   @pat.simpledebug ++ @rhs.simpledebug
 
 sem ExprR
@@ -79,7 +78,6 @@ sem FunBindR
                                                                 "\n loc.cfuns :" ++ show @loc.cfunc ++ 
                                                                 "\n loc.clhs :" ++ show @loc.clhs ++ 
                                                                 "\n loc.crhs :" ++ show @loc.crhs ++ 
-                                                                "\n loc.infer' :" ++ show @loc.infer' ++ 
                                                                 "\n loc.localsubsts :" ++ show @loc.localsubsts ++ 
                                                                 "\n loc.subst' :" ++ show @loc.subst' ++ 
                                                                 "\n" ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug

@@ -97,7 +97,7 @@ sem ExprR
                                then splitSubsts $ unifyC @from.infer @then.infer
                                else if @loc.hasTo
                                      then splitSubsts $ unifyC @from.infer @to.infer
-                                     else SId
+                                     else (SId, SId)
                               
       
   | IfR
@@ -122,9 +122,11 @@ sem ExprR
       loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType 
 
   | LambdaR
-      lhs  .infer   =   subst @loc.subst' @loc.clhs
-           .subst   =   fst @loc.unify' `o` @expr.subst
-      loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @pat.astType
+      lhs  .infer   =   subst @loc.subst @loc.clhs
+           .subst   =   @loc.subst
+      loc  .subst   =   fst @loc.unify' `o` @expr.subst
+           .results =   convertTopTypeToContract @lhs.freshContractVariable (head @pats.astTypes) --TODO: Check if we're splitting up lambdas to one pattern at a time.
+           -- TODO: Send snd @loc.results to somewhere else!
            .clhs    =   stripQuantifiers $ snd @loc.results
            .crhs    =   @expr.infer
            .unify   =   unifyC @loc.clhs @loc.crhs
@@ -155,8 +157,6 @@ sem ExprR
            .c1st    =   subst @loc.th2 @loc.c1
            .carr    =   @loc.c2 >-> @loc.alpha
            .th3     =   unifyC @loc.c1st @loc.carr
---           .th3     =   unifyC @loc.carr @loc.c1st -- TODO: I swapped the arguments around. What are the implications?
-                                                   -- Seems to just change the way global substitutions flow. Should check locals
            .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
       loc  .num     ::  uniqueref varcnt
 
@@ -265,7 +265,7 @@ sem GuardedExprR
            
 attr GuardedExprsR
   syn  infer                                         :: Contract
-  syn  subst           use {`o`) (SId)               :: Subst
+  syn  subst           use {`o`} {SId}               :: Subst
   
 sem GuardedExprsR
   | Cons

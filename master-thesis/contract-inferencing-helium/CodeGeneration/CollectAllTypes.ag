@@ -297,6 +297,10 @@ sem RhsR
      lhs   .astType             = head @gexprs.astTypes
 
 sem FunBindR
+  | FBHoleR
+     lhs   .astType             = maybeErr (show @loc.typeTreeCode) @loc.typeTreeType
+     loc   .typeTreeType        = (\(mty,_,_) -> mty) $ attribute @lhs.typeTree
+     loc   .typeTreeCode        = (\(_,_,src) -> src) $ attribute @lhs.typeTree
   | FunBindR
      lhs   .astType             = @loc.assembledType
      
@@ -315,7 +319,7 @@ sem FunBindsR GuardedExprsR PatsR
   | Cons
      lhs   .astTypes            = @hd.astType : @tl.astTypes
 
-attr DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
+attr DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
    -- An environment that holds the contracts for all functions in scope. We need this to support mutrec functions.
    inh env                                                      :: {CEnv}
 
@@ -359,8 +363,6 @@ sem PatR
 
 -- Pass down function identifier contracts.
 sem BodyR
-  | BHoleR BodyR
-     range.env                  = DM.empty
   | BodyR
      decls.env                  = DM.union @lhs.topLevelEnvOverride @decls.functionEnv
 
@@ -376,6 +378,11 @@ sem ExprR
   | LetR
      expr .env                  = @loc.env 
      loc  .env                  = DM.union @decls.functionEnv @lhs.env
+
+sem AltR
+  | AltR
+     rhs .env                  = @loc.env 
+     loc  .env                  = DM.union @pat.functionEnv @lhs.env
 
 
 {
