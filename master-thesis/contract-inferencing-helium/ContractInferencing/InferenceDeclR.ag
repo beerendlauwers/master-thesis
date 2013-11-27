@@ -11,7 +11,7 @@ sem DeclR
                          else @lhs.env
   | DPatBindR
       lhs   .subst  =   @loc.subst' -- TODO: Do we want to update those patterns here, or is that not needed?
-            .infer  =   @loc.infer'
+--            .infer  =   @loc.infer'
       loc   .results =  if length @pat.localPatterns == 1 
                          -- If we have a very simple pattern, we can easily get the contract from the env.
                          then envLU @lhs.freshContractVariable (mkIdent (head @pat.localPatterns)) @lhs.env
@@ -22,7 +22,7 @@ sem DeclR
             .unify' =   splitSubsts @loc.unify
             .localsubsts = snd @loc.unify'
             .subst' =   fst @loc.unify' `o` @rhs.subst
-            .infer' =   subst @loc.subst' @loc.clhs
+--            .infer' =   subst @loc.subst' @loc.clhs
 --       pat  .freshContractVariable = fst @loc.results -- TODO: try and get this working uncommented
 
 sem DeclsR

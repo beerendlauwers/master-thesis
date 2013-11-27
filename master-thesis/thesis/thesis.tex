@@ -224,6 +224,34 @@ After processing the results, we will present our findings in a presentation, as
 	\item{\textbf{Step 2}} Report findings and problems encountered / lessons learned during this thesis in a presentation.
 \end{description}
 
+\section{Source of types}
+While developing the code generation code, it quickly became clear that the types of an identifier would be required.
+Generating contracted version of higher-order functions, for example, needed both the arity of the entire type and the arity of each of its arguments.
+
+Contract inferencing also benefited from having the types available, as they could be used to kickstart the contract inferencing and prevent the need for analysis for mutually recursive structures.
+
+A first attempt at producing such a source of types was very ad-hoc.
+An initial type environment was produced by taking the string representation of the code and passing it to the Helium compiler, which returned the types of all top-level identifiers.
+Identifiers defined in patterns were given a type by breaking it up piece by piece and passing it through the AST.
+Every time a where-clause, let-binding or even a lambda function was encountered, the environment would be passed to the Helium compiler along with the string version of the code block.
+Then, the existing environment would be updated accordingly and passed downwards in the AST.
+By breaking up the types, much information was lost, such as type class prerequisites.
+In turn, this caused compilation errors when the Helium compiler expected an identifier to have a type class prerequisite.
+
+Looking through the Helium compiler options did not show any way of solely extracting the types from a piece of code and returning it in a structured manner.
+
+However, in the Helium codebase, we discovered a function named 'proximaTypeInferencing' that returned a list of tuples that contained a range and a type scheme.
+Intrigued, we dug deeper and discovered that it first collected the types of the entire AST in a doubly-linked tree data structure that closely resembled the original Helium AST.
+
+Through some trial and error, it was possible to deconstruct this "type tree" as it was passed downwards into an AST.
+The information this tree held was very rich indeed: not only did it have types for every identifier in patterns and expressions, but those types were also the final ones.
+Most importantly, the integers that represented a unique type variable could be used to seed an initial contract for each identifier.
+Because type inferencing had already taken place, contract inferencing could piggyback on the relations between types of different identifiers.
+
+\todo{Give example of how this simplifies contract inferencing a LOT}
+
+With this new source in place, it was trivial to keep a type environment updated without too much changes required to the rest of the codebase.
+
 \section{Contract Inferencing}
 
 \todo{Tell a bit about contract inferencing for functional languages}

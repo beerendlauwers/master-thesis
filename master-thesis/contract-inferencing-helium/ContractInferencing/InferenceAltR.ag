@@ -1,0 +1,30 @@
+attr AltR AltsR
+  syn  infer                                         :: Contract
+  syn  subst                                         :: Subst
+
+sem AltsR
+   | Cons
+      -- Substitute head alternative contract with information of all previous
+      -- substitutions, pass that to CaseR
+      lhs  .infer   =   subst @loc.allSubsts @hd.infer
+           .subst   =   @loc.allSubsts
+
+      -- Unify head and tail 
+      -- TODO: Is it desired to unify all alternatives?
+      loc  .unifyCtrt = splitSubsts $ unifyC @hd.infer @tl.infer
+           .allSubsts = fst @loc.unifyCtrt `o` @hd.subst `o` @tl.subst
+
+   | Nil
+      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .subst   =   SId
+      loc  .num     ::  uniqueref varcnt
+
+sem AltR
+  | AHoleR AltEmptyR
+      lhs  .infer   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .subst   =   SId
+      loc  .num     ::  uniqueref varcnt
+
+  | AltR
+      lhs  .infer   =   @rhs.infer
+           .subst   =   @rhs.subst
