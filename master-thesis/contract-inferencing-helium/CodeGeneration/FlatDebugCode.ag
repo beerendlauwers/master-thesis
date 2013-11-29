@@ -74,6 +74,7 @@ sem AltR
 sem FunBindR
   | FBHoleR     lhs   .simpledebug                       = "FBHoleR\n"
   | FunBindR    lhs   .simpledebug                       = "FunBindR\n"  ++ 
+                                                                "\n rhs.env :" ++ show (DM.union @pats.functionEnv @lhs.env) ++
                                                                 "\n pats.astTypes :" ++ show @pats.astTypes ++ 
                                                                 "\n loc.cfuns :" ++ show @loc.cfunc ++ 
                                                                 "\n loc.clhs :" ++ show @loc.clhs ++ 

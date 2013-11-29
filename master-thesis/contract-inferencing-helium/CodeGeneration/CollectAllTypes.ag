@@ -339,7 +339,7 @@ sem FunBindR
   | FunBindR
      lhs   .functionIdent       = getVar @name.copy
 
-attr DeclR DeclsR PatR PatsR
+attr DeclR DeclsR PatR PatsR TuplePatsR ListPatsR
   syn functionEnv           use {`DM.union`}     {DM.empty}     :: {CEnv}                                   
 
 -- Collect function identifier contracts.
@@ -360,6 +360,11 @@ sem PatR
      loc   .functionEnv         = DM.singleton (getVar @name.copy) (snd @loc.conversionResults)
      loc   .conversionResults   = convertTopTypeToContract @lhs.freshContractVariable @loc.astType
      lhs   .freshContractVariable = fst @loc.conversionResults
+  | PAsR
+     lhs   .functionEnv         = DM.union @loc.functionEnv @pat.functionEnv
+     loc   .functionEnv         = DM.singleton (getVar @name.copy) (snd @loc.conversionResults)
+     loc   .conversionResults   = convertTopTypeToContract @lhs.freshContractVariable @loc.astType
+     pat   .freshContractVariable = fst @loc.conversionResults
 
 -- Pass down function identifier contracts.
 sem BodyR
@@ -382,7 +387,12 @@ sem ExprR
 sem AltR
   | AltR
      rhs .env                  = @loc.env 
-     loc  .env                  = DM.union @pat.functionEnv @lhs.env
+     loc  .env                 = DM.union @pat.functionEnv @lhs.env
+
+sem FunBindR
+  | FunBindR
+      -- Patterns should also be made available to RHS, because they may shadow other vars.
+     rhs  .env                 = DM.union @pats.functionEnv @lhs.env
 
 
 {
