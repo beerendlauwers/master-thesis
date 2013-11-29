@@ -158,10 +158,6 @@ sem DeclR
 
 sem ExprR
    | VarR ConR
-      loc  .conversionResults           = if @loc.isFunction
-                                           then envLU @lhs.freshContractVariable @name.copy @lhs.env
-                                           else convertTopTypeToContract @lhs.freshContractVariable @loc.localType
-      loc  .varContract                 = snd @loc.conversionResults
 --      lhs .freshContractVariable       = fst @loc.conversionResults
       loc  .localType                   = maybeErr (show @loc.typeTreeCode) @loc.typeTreeType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
@@ -197,8 +193,6 @@ sem ExprR
                                                        else 6 -- id + position, it's for an app'ed version
 
 
-      -- TODO: make this work for InfixAppR too!
-
       -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
       -- OR PASS AROUND SUBSTITUTIONS 
       loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
@@ -223,6 +217,15 @@ sem ExprR
                                                 4 -> @loc.updateAsId
                                                 5 -> @loc.updateAsCtrtExtraInfo
                                                 6 -> @loc.updateAsIdWithPos
+
+sem ExprR
+   | VarR 
+      loc  .varContract                 = snd $ envLU @lhs.freshContractVariable @name.copy @lhs.env
+
+   | ConR
+      loc  .varContract                 = snd $ convertTopTypeToContract @lhs.freshContractVariable @loc.localType
+
+
 
 attr ExprR ExprsR GuardedExprsR ListExprR TupleExprR MaybeConst
    -- (AppR) We fetch the value of @fun.isLocalParameter and pass this down to its arguments.
