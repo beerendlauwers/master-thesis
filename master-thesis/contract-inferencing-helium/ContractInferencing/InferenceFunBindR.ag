@@ -17,9 +17,6 @@ sem FunBindR
            .localsubsts = snd @loc.unify'
            .subst'  =   fst @loc.unify' `o` @rhs.subst
 
-      -- Patterns should also be made available to RHS, because they may shadow other vars.
-      rhs  .env     =   DM.union @pats.functionEnv @lhs.env
-  
 sem FunBindsR
   | Cons 
       lhs   .subst  =   @hd.subst `o` @tl.subst -- TODO: Collect substitution information of all definitions?
