@@ -122,16 +122,14 @@ sem ExprR
       loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType 
 
   | LambdaR
-      lhs  .infer   =   subst @loc.subst @loc.clhs
-           .subst   =   @loc.subst
-      loc  .subst   =   fst @loc.unify' `o` @expr.subst
+      lhs  .infer   =   @loc.infer'
+           .subst   =   @loc.th
+
+      loc  .infer'  =   subst @loc.th $ @loc.x >-> @loc.c2
+           .c2      =   @expr.infer
+           .th      =   @expr.subst
+           .x       =   stripQuantifiers $ snd @loc.results
            .results =   convertTopTypeToContract @lhs.freshContractVariable (head @pats.astTypes) --TODO: Check if we're splitting up lambdas to one pattern at a time.
-           -- TODO: Send snd @loc.results to somewhere else!
-           .clhs    =   stripQuantifiers $ snd @loc.results
-           .crhs    =   @expr.infer
-           .unify   =   unifyC @loc.clhs @loc.crhs
-           .unify'  =   splitSubsts @loc.unify
-           .localsubsts = snd @loc.unify'
 
   | AppR
       lhs  .infer   =   @loc.infer'

@@ -394,6 +394,10 @@ sem FunBindR
       -- Patterns should also be made available to RHS, because they may shadow other vars.
      rhs  .env                 = DM.union @pats.functionEnv @lhs.env
 
+sem ExprR
+  | LambdaR
+    expr  .env                 = DM.union @pats.functionEnv @lhs.env
+
 
 {
 type ContractOffset = Int
