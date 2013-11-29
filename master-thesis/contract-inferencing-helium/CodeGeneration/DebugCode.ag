@@ -22,7 +22,7 @@ debugTypeVarsTypeTree tree =
 
 flatDebug :: String -> String -> CEnv -> IO ()
 flatDebug code pointOfEntry env = 
- let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
      semModule = sem_ModuleR transformedCode
      inhModule = Inh_ModuleR pointOfEntry [] env
      wrapModule = wrap_ModuleR semModule inhModule
@@ -51,7 +51,7 @@ removeFreeLambdas code pointOfEntry env =
 -- Expects the code as a string and the point of entry.
 showDebug :: String -> String -> CEnv -> IO ()
 showDebug code pointOfEntry env = 
- let transformedCode = transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
      semModule = sem_ModuleR transformedCode
      inhModule = Inh_ModuleR pointOfEntry [] env
      wrapModule = wrap_ModuleR semModule inhModule
