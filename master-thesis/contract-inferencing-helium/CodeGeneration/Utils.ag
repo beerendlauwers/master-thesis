@@ -154,6 +154,18 @@ instance GetRange ExprR where
  getRange (ListR _ r)         = r
  getRange (NegR _ r)          = r
 
+instance GetRange PatR where
+ getRange (PHoleR _ r)        = r
+ getRange (PConR _ _ r)       = r
+ getRange (PInfixConR _ _ _ r) = r
+ getRange (PListR _ r)        = r
+ getRange (PLitR _ r)         = r
+ getRange (PParenR _ r)       = r
+ getRange (PTupleR _ r)       = r
+ getRange (PVarR _ r)         = r
+ getRange (PAsR _ _ r)        = r
+ getRange (PWildcardR r)      = r
+
 -- We need to remove range information because otherwise we could end up with multiple entries
 scrubRangeInfo :: IE.TypeEnvironment -> IE.TypeEnvironment
 scrubRangeInfo = DM.mapKeys removeRange
