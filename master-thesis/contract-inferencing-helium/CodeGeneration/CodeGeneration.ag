@@ -25,6 +25,7 @@ include "Domain/FP/ContractInferencing/InferenceRhsR.ag"
 include "Domain/FP/ContractInferencing/InferenceDeclR.ag"
 include "Domain/FP/ContractInferencing/InferenceModuleR.ag"
 include "Domain/FP/ContractInferencing/InferenceAltR.ag"
+include "Domain/FP/ContractInferencing/InferenceBodyR.ag"
 
 include "Domain/FP/ContractInferencing/Tests.ag"
 
@@ -195,7 +196,8 @@ sem ExprR
 
       -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
       -- OR PASS AROUND SUBSTITUTIONS 
-      loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.varContract ) Inh_Contract   
+      loc  .inferencedContract          = subst @lhs.globalSubsts @loc.varContract
+      loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.inferencedContract ) Inh_Contract   
 
       loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id),(5,prefixcontractedFunction),(6,id)]
       loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
@@ -292,6 +294,9 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
    syn removeFreeLambdas                                        :: self
    syn allReplacedLambdas    use {(++)} {[]}                    :: {[DeclR]}
 
+attr ExprR ExprsR GuardedExprR GuardedExprsR
+   inh availablePatterns                                        :: {PatsR}
+
 sem ExprR
    | LambdaR
      -- We copy over the range of the original lambda so when further code is generated, it refers
@@ -299,12 +304,19 @@ sem ExprR
      lhs  .removeFreeLambdas            = VarR @loc.uniqueLambdaVar @range.copy
 
      -- We'll generate a function binding in the gist of "__lam1 = (original lambda)" and put those in a where-clause.
-     lhs  .allReplacedLambdas           = [ mkDPatBind (PVarR @loc.uniqueLambdaVar @range.copy) (mkRhs @loc.removeFreeLambdas []) ]
+     lhs  .allReplacedLambdas           = @loc.lambdaFunbind : @expr.allReplacedLambdas
+     loc  .lambdaFunbind                = case length @lhs.availablePatterns of
+                                           0 -> DPatBindR (PVarR @loc.uniqueLambdaVar @range.copy) (mkRhs @loc.removeFreeLambdas []) @range.copy
+                                           _ -> DFunBindsR [FunBindR Nothing @loc.uniqueLambdaVar @lhs.availablePatterns (mkRhs @loc.removeFreeLambdas []) @range.copy] noRangeR
      loc  .uniqueLambdaVar              = IdentR ("__lam" ++ show @loc.num) @range.copy
      loc  .num                          ::  uniqueref varcnt
 
+     -- Nested lambdas need access to the variables that this lambda captured.
+     expr .availablePatterns            = @pats.copy
+
 sem RhsR
    | RhsR
+     expr.availablePatterns             = []
      loc  .newWhereClause               = case length @loc.funbindclause of 
                                            0 -> []
                                            _ -> @loc.funbindclause
@@ -312,6 +324,7 @@ sem RhsR
      loc  .updatedRhsR                  = RhsR @expr.removeFreeLambdas (@loc.newWhereClause ++ @where.removeFreeLambdas) @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
    | GRhsR
+     gexprs.availablePatterns           = []
      loc  .newWhereClause               = case length @loc.funbindclause of 
                                            0 -> []
                                            _ -> @loc.funbindclause

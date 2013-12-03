@@ -108,7 +108,7 @@ sem ExprR
            .localsubsts = snd @loc.unify
 
   | VarR
-      lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
+      lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars --TODO: Currently, this is looking it up in env. This might cause polymorphic contract vars in containers to be unified that we don't want unified!
            .subst   =   SId
 
   | ConR -- TODO: This will give odd results when using constructors many times, I think.
@@ -122,14 +122,14 @@ sem ExprR
       loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType 
 
   | LambdaR
-      lhs  .infer   =   @loc.infer'
+      lhs  .infer   =   fst @loc.infer'
            .subst   =   @loc.th
 
-      loc  .infer'  =   subst @loc.th $ @loc.x >-> @loc.c2
+      loc  .infer'  =   splitSubst $ subst @loc.th $ @loc.x >-> @loc.c2
            .c2      =   @expr.infer
            .th      =   @expr.subst
            .x       =   stripQuantifiers $ snd @loc.results
-           .results =   convertTopTypeToContract @lhs.freshContractVariable (head @pats.astTypes) --TODO: Check if we're splitting up lambdas to one pattern at a time.
+           .results =   convertTopTypeToContract @lhs.freshContractVariable (head @pats.astTypes)
 
   | AppR
       lhs  .infer   =   @loc.infer'
