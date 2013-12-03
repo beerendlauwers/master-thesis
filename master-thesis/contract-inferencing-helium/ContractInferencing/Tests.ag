@@ -1,0 +1,19 @@
+{
+
+doTest s = showDebug s [] (DM.fromList [])
+
+-- Status: OK
+-- My contract: (v34 <@> v28) >-> v35
+-- Jurrien's contract: c6 <@> c7 >-> c10
+test_isempty = doTest "test = \\xs -> case xs of\n          []     -> True\n          (y:ys) -> False"
+
+-- Status: OK
+test_id = doTest "test = \\x -> x"
+
+-- Status: OK
+-- My contract: (v43 <@> v40) >-> (v45 <@> v40)
+-- Jurrien's  contract: c0 <@> c1 >-> c2 <@> c1
+test_listid = doTest "listid = \\xs -> case xs of\n                    [] -> []\n                    (y:ys) -> (y:ys)" 
+
+test_listapp = doTest "listapp = \\xs -> \\f -> case xs of\n                        [] -> []\n                        (y:ys) -> f (y:ys)"
+}

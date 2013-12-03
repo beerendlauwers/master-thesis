@@ -1,0 +1,6 @@
+attr BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR MaybeExprR ListExprR TupleExprR ListPatsR TuplePatsR
+  inh  globalSubsts                                        :: Subst
+
+sem BodyR
+  | BodyR
+      decls   .globalSubsts =   @loc.allSubsts
