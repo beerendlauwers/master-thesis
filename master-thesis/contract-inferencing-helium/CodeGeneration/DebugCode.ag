@@ -31,6 +31,17 @@ flatDebug code pointOfEntry env =
        putStrLn (simpledebug_Syn_ModuleR wrapModule)
        writeFile "flatDebugOutput" (simpledebug_Syn_ModuleR wrapModule)
 
+debugRemoveFreeLambdas :: String -> String -> CEnv -> IO ()
+debugRemoveFreeLambdas code pointOfEntry env = 
+ let transformedCode = removeFreeLambdas code pointOfEntry env
+     semModule = sem_ModuleR transformedCode
+     inhModule = Inh_ModuleR pointOfEntry [] env
+     wrapModule = wrap_ModuleR semModule inhModule
+ in do putStrLn "Code that will be used:"
+       putStrLn $ render $ pprint transformedCode
+       putStrLn (simpledebug_Syn_ModuleR wrapModule)
+
+
 
 convertPatBindToFunBind :: String -> String -> CEnv -> ModuleR
 convertPatBindToFunBind code pointOfEntry env = 

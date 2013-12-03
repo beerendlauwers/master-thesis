@@ -16,4 +16,8 @@ test_id = doTest "test = \\x -> x"
 test_listid = doTest "listid = \\xs -> case xs of\n                    [] -> []\n                    (y:ys) -> (y:ys)" 
 
 test_listapp = doTest "listapp = \\xs -> \\f -> case xs of\n                        [] -> []\n                        (y:ys) -> f (y:ys)"
+
+listapp = \xs -> \f -> case xs of
+                        [] -> []
+                        (y:ys) -> f (y:ys)
 }

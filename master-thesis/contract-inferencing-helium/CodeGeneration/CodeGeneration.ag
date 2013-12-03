@@ -294,43 +294,75 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
    syn removeFreeLambdas                                        :: self
    syn allReplacedLambdas    use {(++)} {[]}                    :: {[DeclR]}
 
-attr ExprR ExprsR GuardedExprR GuardedExprsR
+attr ExprR ExprsR ListExprR TupleExprR GuardedExprR GuardedExprsR
    inh availablePatterns                                        :: {PatsR}
+   inh patternAliases                                           :: {[NameR]}
 
 sem ExprR
    | LambdaR
      -- We copy over the range of the original lambda so when further code is generated, it refers
      -- to the original lambda's location. 
-     lhs  .removeFreeLambdas            = VarR @loc.uniqueLambdaVar @range.copy
+     lhs  .removeFreeLambdas            = case length @lhs.patternAliases of
+                                           0 -> VarR @loc.uniqueLambdaVar @range.copy
+                                           _ -> AppR (VarR @loc.uniqueLambdaVar @range.copy) @loc.patternAliasesAsVars @range.copy
+--     lhs  .removeFreeLambdas            = VarR @loc.uniqueLambdaVar @range.copy
+     loc  .patternAliasesAsVars         = map (\n -> VarR n (getRange n)) @lhs.patternAliases
 
      -- We'll generate a function binding in the gist of "__lam1 = (original lambda)" and put those in a where-clause.
-     lhs  .allReplacedLambdas           = @loc.lambdaFunbind : @expr.allReplacedLambdas
+     lhs  .allReplacedLambdas           = [@loc.lambdaFunbind]
+     loc  .lambdaWithRHS                = (mkRhs @loc.removeFreeLambdas @expr.allReplacedLambdas)
      loc  .lambdaFunbind                = case length @lhs.availablePatterns of
-                                           0 -> DPatBindR (PVarR @loc.uniqueLambdaVar @range.copy) (mkRhs @loc.removeFreeLambdas []) @range.copy
-                                           _ -> DFunBindsR [FunBindR Nothing @loc.uniqueLambdaVar @lhs.availablePatterns (mkRhs @loc.removeFreeLambdas []) @range.copy] noRangeR
+                                           0 -> DPatBindR (PVarR @loc.uniqueLambdaVar @range.copy) @loc.lambdaWithRHS @range.copy
+                                           _ -> DFunBindsR [FunBindR Nothing @loc.uniqueLambdaVar @lhs.availablePatterns @loc.lambdaWithRHS @range.copy] noRangeR
+--     loc  .lambdaFunbind                = DPatBindR (PVarR @loc.uniqueLambdaVar @range.copy) @loc.lambdaWithRHS @range.copy
+     loc  .removeFreeLambdas            = LambdaR @pats.addAliasToPats @expr.removeFreeLambdas @range.copy
      loc  .uniqueLambdaVar              = IdentR ("__lam" ++ show @loc.num) @range.copy
      loc  .num                          ::  uniqueref varcnt
 
+     -- Nested lambdas will need to be applied to the captured variables.
+     expr .patternAliases               = @pats.usedAliases
+
      -- Nested lambdas need access to the variables that this lambda captured.
-     expr .availablePatterns            = @pats.copy
+     expr .availablePatterns            = @pats.copy ++ @lhs.availablePatterns
 
 sem RhsR
    | RhsR
-     expr.availablePatterns             = []
+     expr .availablePatterns            = []
+     expr .patternAliases               = []
      loc  .newWhereClause               = case length @loc.funbindclause of 
                                            0 -> []
                                            _ -> @loc.funbindclause
      loc  .funbindclause                = @expr.allReplacedLambdas
      loc  .updatedRhsR                  = RhsR @expr.removeFreeLambdas (@loc.newWhereClause ++ @where.removeFreeLambdas) @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
+     lhs  .allReplacedLambdas           = []
    | GRhsR
      gexprs.availablePatterns           = []
+     gexprs.patternAliases              = []
      loc  .newWhereClause               = case length @loc.funbindclause of 
                                            0 -> []
                                            _ -> @loc.funbindclause
      loc  .funbindclause                = @gexprs.allReplacedLambdas
      loc  .updatedRhsR                  = GRhsR @gexprs.removeFreeLambdas (@loc.newWhereClause ++ @where.removeFreeLambdas) @range.copy
      lhs  .removeFreeLambdas            = @loc.updatedRhsR
+     lhs  .allReplacedLambdas           = []
+
+attr NameR RangeR PositionR LiteralR PatR PatsR ListPatsR TuplePatsR
+   syn addAliasToPats                                           :: self
+
+attr PatsR ListPatsR TuplePatsR
+   syn usedAliases                                              :: {[NameR]}
+
+sem PatsR ListPatsR TuplePatsR
+   | Cons
+     lhs  .addAliasToPats               = PAsR (mkIdent @loc.patternAlias) (PParenR @hd.copy (getRange @hd.copy)) (getRange @hd.copy) : @tl.addAliasToPats
+     loc  .patternAlias                 = "__lAs" ++ show @loc.num
+     lhs  .usedAliases                  = (IdentR @loc.patternAlias (getRange @hd.copy)) : @tl.usedAliases
+     loc  .num                          ::  uniqueref varcnt
+ 
+  | Nil
+     lhs  .usedAliases                  = []
+
 
 
 -- Convert all DPatBindR that are actually functions to DFunBindsR so we don't have to duplicate our code.

@@ -23,6 +23,8 @@ sem DeclR
                                                            " env at node: " ++ show @lhs.env ++ "\n"
                                                            ++ @funbinds.simpledebug
   | DPatBindR   lhs   .simpledebug                       = "DPatBindR" ++ 
+                                                           "\nloc.arity: " ++ show @loc.arity ++ 
+                                                           "\nloc.typetreetype: " ++ show @loc.typeTreeType ++ 
 						 	   "\nloc.clhs: " ++ show @loc.clhs ++
 							   "\nloc.crhs: " ++ show @loc.crhs ++
 							   "\nloc.unify': " ++ show @loc.unify' ++
@@ -56,6 +58,7 @@ sem ExprR
   | TupleR      lhs   .simpledebug                       = "TupleR\n" ++ @exprs.simpledebug
   | VarR        lhs   .simpledebug                       = "VarR\n" ++
                                                            " variable: " ++ show @name.copy ++ "\n" ++
+                                                           " type: "     ++ show @loc.typeTreeType ++ "\n" ++
                                                            " loc.isFunction: " ++ show @loc.isFunction ++ "\n" ++ 
                                                            " loc.varContract: " ++ show @loc.varContract ++ "\n" ++
                                                            " env at node: " ++ show @lhs.env ++ "\n"
