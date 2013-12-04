@@ -9,6 +9,7 @@ sem ModuleR
 sem BodyR
   | BodyR       lhs   .simpledebug                       = "BodyR\n" 
                                                            ++ "env we start with: " ++ show @decls.functionEnv ++ "\n"
+                                                           ++ "final top env: " ++ show @loc.finalTopEnv ++ "\n"
                                                            ++ @decls.simpledebug
   | BHoleR      lhs   .simpledebug                       = "BHoleR\n"
 
@@ -23,19 +24,25 @@ sem DeclR
                                                            " env at node: " ++ show @lhs.env ++ "\n"
                                                            ++ @funbinds.simpledebug
   | DPatBindR   lhs   .simpledebug                       = "DPatBindR" ++ 
-                                                           "\nloc.arity: " ++ show @loc.arity ++ 
-                                                           "\nloc.typetreetype: " ++ show @loc.typeTreeType ++ 
-						 	   "\nloc.clhs: " ++ show @loc.clhs ++
-							   "\nloc.crhs: " ++ show @loc.crhs ++
-							   "\nloc.unify': " ++ show @loc.unify' ++
+                                                           "\n loc.arity: " ++ show @loc.arity ++ 
+                                                           "\n loc.typetreetype: " ++ show @loc.typeTreeType ++ 
+						 	   "\n loc.clhs: " ++ show @loc.clhs ++
+							   "\n loc.crhs: " ++ show @loc.crhs ++
+							   "\n loc.unify': " ++ show @loc.unify' ++
 							   @pat.simpledebug ++ @rhs.simpledebug
 
 sem ExprR
   | HoleR       lhs   .simpledebug                       = "HoleR\n"
   | FeedbackR   lhs   .simpledebug                       = @expr.simpledebug
   | MustUseR    lhs   .simpledebug                       = @expr.simpledebug
-  | CaseR       lhs   .simpledebug                       = "CaseR\n" ++ @expr.simpledebug ++ @alts.simpledebug
-  | ConR        lhs   .simpledebug                       = "ConR\n" ++ @name.simpledebug
+  | CaseR       lhs   .simpledebug                       = "CaseR\n"
+                                                           ++ " loc.infer: " ++ show @loc.infer ++ "\n"
+                                                           ++ " loc.subst: " ++ show @loc.subst ++ "\n"
+                                                           ++ @expr.simpledebug ++ @alts.simpledebug
+  | ConR        lhs   .simpledebug                       = "ConR\n" ++ 
+                                                           " loc.varContract: " ++ show @loc.varContract ++ "\n" ++ 
+                                                           " lhs.freshContractVariable:" ++ show @lhs.freshContractVariable ++ "\n" ++
+                                                           @name.simpledebug
   | IfR         lhs   .simpledebug                       = "IfR\n" ++ @cond.simpledebug ++ @then.simpledebug ++ @else.simpledebug
   | InfixAppR   lhs   .simpledebug                       = "InfixAppR\n" ++ @left.simpledebug ++ @op.simpledebug ++ @right.simpledebug
   | LambdaR     lhs   .simpledebug                       = "LambdaR\n" ++ @pats.simpledebug ++ @expr.simpledebug
@@ -44,7 +51,7 @@ sem ExprR
 --  | AppR        lhs   .simpledebug                       = "AppR\n" ++ @args.simpledebug ++ "\n      Inferred contract: " ++ show @loc.infer' ++ "\n      Substitutions:" ++ show @loc.ths ++ "\n" ++ @fun.simpledebug 
   | AppR        lhs   .simpledebug                       = "AppR\n" ++ "Code: " ++ 
                                                            show @loc.copy ++ 
-                                                                "\nInferred contract: " ++ show @loc.infer' ++ 
+                                                                "\n Inferred contract: " ++ show @loc.infer' ++ 
                                                                 "\n loc.c2 (args) :" ++ show @loc.c2 ++ 
                                                                 "\n loc.alpha: " ++ show @loc.alpha ++ 
                                                                 "\n loc.carr: " ++ show @loc.carr ++ 
