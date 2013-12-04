@@ -1,6 +1,6 @@
 {
 
-doTest s = showDebug s [] (DM.fromList [])
+doTest s = flatDebug s [] (DM.fromList [])
 
 -- Status: OK
 -- My contract: (v34 <@> v28) >-> v35
@@ -12,7 +12,7 @@ test_id = doTest "test = \\x -> x"
 
 -- Status: OK
 -- My contract: (v43 <@> v40) >-> (v45 <@> v40)
--- Jurrien's  contract: c0 <@> c1 >-> c2 <@> c1
+-- Jurrien's contract: c0 <@> c1 >-> c2 <@> c1
 test_listid = doTest "listid = \\xs -> case xs of\n                    [] -> []\n                    (y:ys) -> (y:ys)" 
 
 test_listapp = doTest "listapp = \\xs -> \\f -> case xs of\n                        [] -> []\n                        (y:ys) -> f (y:ys)"
@@ -20,4 +20,17 @@ test_listapp = doTest "listapp = \\xs -> \\f -> case xs of\n                    
 listapp = \xs -> \f -> case xs of
                         [] -> []
                         (y:ys) -> f (y:ys)
+
+-- Status: OK
+-- My contract: ((v21 >-> (v43 >-> v43)) >-> (v43 >-> (v28 <@> v21 >-> v43))))
+-- Jurrien's contract: (c29 >-> (c30 >-> c30)) >-> (c30 >-> (c31 <@> c29 >-> c30))
+test_foldr = doTest "efoldr f b xs = case xs of\n                  [] -> b\n                  (y:ys) -> f y (efoldr f b ys)"
+
+-- Status: OK
+-- My contract: (v65 >-> (v71 <@> v65 >-> v78 <@> v65)))
+-- Jurrien's contract: c1 >-> (c0 <@> c1 >-> c2 <@> c1)
+test_insert = doTest "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z : z' : zs'\n                                False -> z' : insert z zs'"
+
+
+
 }

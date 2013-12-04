@@ -70,13 +70,15 @@ sem ExprR
            .subst   =   @exprs.subst
            
   | CaseR
-      lhs  .infer   =   subst @loc.subst @alts.infer
+      lhs  .infer   =   @loc.infer
            .subst   =   @loc.subst
+      
+      loc  .infer   =   subst @loc.subst @alts.infer
 
       -- Unify expression with head of list of alternatives,
       -- which, in turn, was unified with the tail of list of alts
-      loc  .unify   =   splitSubsts $ unifyC @expr.infer @alts.infer
-           .subst   =   fst @loc.unify `o` @alts.subst `o` @expr.subst
+      --loc  .unify   =   splitSubsts $ unifyC @expr.infer @alts.infer
+           .subst   =   @alts.subst `o` @expr.subst
            
   | EnumR
       lhs  .infer   =   subst @loc.subst @from.infer
@@ -122,10 +124,10 @@ sem ExprR
       loc  .results =   convertTopTypeToContract @lhs.freshContractVariable @loc.astType 
 
   | LambdaR
-      lhs  .infer   =   fst @loc.infer'
+      lhs  .infer   =   @loc.infer'
            .subst   =   @loc.th
 
-      loc  .infer'  =   splitSubst $ subst @loc.th $ @loc.x >-> @loc.c2
+      loc  .infer'  =   subst @loc.th $ @loc.x >-> @loc.c2
            .c2      =   @expr.infer
            .th      =   @expr.subst
            .x       =   stripQuantifiers $ snd @loc.results
