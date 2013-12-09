@@ -37,3 +37,4 @@ sem BodyR
   | BodyR
       loc   .allSubsts =   @decls.subst
       loc   .finalTopEnv = subst @decls.subst @decls.functionEnv
+      decls .debugFinalSubsts = @decls.subst

@@ -9,8 +9,10 @@ sem ModuleR
 sem BodyR
   | BodyR       lhs   .simpledebug                       = "BodyR\n" 
                                                            ++ "env we start with: " ++ show @decls.functionEnv ++ "\n"
-                                                           ++ "final top env: " ++ show @loc.finalTopEnv ++ "\n"
+
                                                            ++ @decls.simpledebug
+
+--                                                            ++ "final top env: " ++ show @loc.finalTopEnv ++ "\n"
   | BHoleR      lhs   .simpledebug                       = "BHoleR\n"
 
 sem RhsR
@@ -48,19 +50,19 @@ sem ExprR
   | LambdaR     lhs   .simpledebug                       = "LambdaR\n" ++ @pats.simpledebug ++ @expr.simpledebug
   | LetR        lhs   .simpledebug                       = "LetR\n" ++ @decls.simpledebug ++ @expr.simpledebug
   | LitR        lhs   .simpledebug                       = "LitR\n" ++ @lit.simpledebug
---  | AppR        lhs   .simpledebug                       = "AppR\n" ++ @args.simpledebug ++ "\n      Inferred contract: " ++ show @loc.infer' ++ "\n      Substitutions:" ++ show @loc.ths ++ "\n" ++ @fun.simpledebug 
   | AppR        lhs   .simpledebug                       = "AppR\n" ++ "Code: " ++ 
-                                                           show @loc.copy ++ 
-                                                                "\n Inferred contract: " ++ show @loc.infer' ++ 
+                                                           show @loc.copy ++
+                                                                "\n" ++ @fun.simpledebug ++ @args.simpledebug ++
                                                                 "\n loc.c2 (args) :" ++ show @loc.c2 ++ 
+                                                                "\n loc.c1 (fun): " ++ show @loc.c1 ++ 
+                                                                "\n lhs.arity (fun): " ++ show @fun.arity ++
                                                                 "\n loc.alpha: " ++ show @loc.alpha ++ 
                                                                 "\n loc.carr: " ++ show @loc.carr ++ 
                                                                 "\n loc.th2 (args): " ++ show @loc.th2 ++ 
-                                                                "\n loc.c1 (fun): " ++ show @loc.c1 ++ 
                                                                 "\n loc.c1st: " ++ show @loc.c1st ++ 
                                                                 "\n loc.th3: " ++ show @loc.th3 ++ 
                                                                 "\n loc.localsubsts: " ++ show @loc.localsubsts ++ 
-                                                                "\n" ++ @fun.simpledebug ++ @args.simpledebug
+                                                                "\n Inferred contract: " ++ show @loc.infer' 
   | ParenR      lhs   .simpledebug                       = "ParenR\n" ++ @expr.simpledebug
   | TupleR      lhs   .simpledebug                       = "TupleR\n" ++ @exprs.simpledebug
   | VarR        lhs   .simpledebug                       = "VarR\n" ++
@@ -87,10 +89,12 @@ sem FunBindR
                                                                 "\n pats.astTypes :" ++ show @pats.astTypes ++ 
                                                                 "\n loc.cfuns :" ++ show @loc.cfunc ++ 
                                                                 "\n loc.clhs :" ++ show @loc.clhs ++ 
-                                                                "\n loc.crhs :" ++ show @loc.crhs ++ 
-                                                                "\n loc.localsubsts :" ++ show @loc.localsubsts ++ 
-                                                                "\n loc.subst' :" ++ show @loc.subst' ++ 
-                                                                "\n" ++ @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
+                                                                @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
+
+--                                                                "\n loc.crhs :" ++ show @loc.crhs ++ 
+--                                                                "\n loc.localsubsts :" ++ show @loc.localsubsts ++ 
+--                                                                "\n loc.subst' :" ++ show @loc.subst' ++ 
+--                                                                "\n" ++ 
 
 sem PatR
   | PHoleR      lhs   .simpledebug                       = "PHoleR\n"

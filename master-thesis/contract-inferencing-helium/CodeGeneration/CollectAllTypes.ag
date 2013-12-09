@@ -323,6 +323,9 @@ attr DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedE
    -- An environment that holds the contracts for all functions in scope. We need this to support mutrec functions.
    inh env                                                      :: {CEnv}
 
+   -- Final list of substs
+   inh  debugFinalSubsts                                        :: {Subst}
+
 
 attr FunBindsR FunBindR
   syn functionIdent                                             :: {String}

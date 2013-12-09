@@ -50,10 +50,17 @@ sem ModuleR
    | NegR		        DONE
 -}
 
+attr ExprR
+  syn  arity                                         :: {Int}
+
+sem ExprR
+   | *
+      lhs  .arity   =    S.arityOfTpScheme @loc.astType
 
 attr ExprR
   syn  infer                                         :: Contract
   syn  subst                                         :: Subst
+
 
 sem ExprR
   | HoleR
@@ -157,7 +164,8 @@ sem ExprR
            .c1st    =   subst @loc.th2 @loc.c1
            .carr    =   @loc.c2 >-> @loc.alpha
            .th3     =   unifyC @loc.c1st @loc.carr
-           .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
+           .alpha   =   dropc 1 $ stripQuantifiers $ @loc.c1
+           -- .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
       loc  .num     ::  uniqueref varcnt
 
       -- args .env     =   subst @loc.th1 @loc.e2env
