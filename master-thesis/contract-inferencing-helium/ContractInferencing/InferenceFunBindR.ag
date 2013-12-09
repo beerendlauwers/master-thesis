@@ -8,7 +8,7 @@ sem FunBindR
       lhs  .subst   =   @loc.subst'
 --      rhs  .locsubst   =   @loc.localsubsts
       name .freshContractVariable = fst @loc.conversionResults
-      loc  .clhs    =   dropc ((length @pats.astTypes) - 1) $ stripQuantifiers $ @loc.cfunc
+      loc  .clhs    =   dropc (length @pats.astTypes) $ stripQuantifiers $ @loc.cfunc
            .conversionResults = envLU @lhs.freshContractVariable @name.copy @lhs.env
            .cfunc   =   snd @loc.conversionResults
            .crhs    =   @rhs.infer

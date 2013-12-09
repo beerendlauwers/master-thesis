@@ -6,6 +6,7 @@ import            Text.PrettyPrint.Boxes as BOX
 
 include "Domain/FP/CodeGeneration/PrettyPrinting.ag"
 include "Domain/FP/CodeGeneration/FlatDebugCode.ag"
+include "Domain/FP/CodeGeneration/ContractDebugCode.ag"
 
 {
 
@@ -19,6 +20,16 @@ debugTypeVarsTypeTree tree =
      thdVal = thd $ attribute tree
  in DoublyLinkedTree Nothing (localVal,sndVal, thdVal) childrenVals
 
+contractDebug :: String -> String -> CEnv -> IO ()
+contractDebug code pointOfEntry env = 
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+     semModule = sem_ModuleR transformedCode
+     inhModule = Inh_ModuleR pointOfEntry [] env
+     wrapModule = wrap_ModuleR semModule inhModule
+ in do putStrLn "Code that will be used:"
+       putStrLn $ render $ pprint transformedCode
+       putStrLn (contractdebug_Syn_ModuleR wrapModule)
+       writeFile "contractDebugOutput" (contractdebug_Syn_ModuleR wrapModule)
 
 flatDebug :: String -> String -> CEnv -> IO ()
 flatDebug code pointOfEntry env = 

@@ -1,0 +1,119 @@
+-- Debugging code that annotates each piece of code with its final contract (global + local substs).
+attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR
+  syn  contractdebug     use {++}         {[]}      :: {String}
+
+-- contractdebug info synthesis
+sem ModuleR
+  | ModuleR     lhs   .contractdebug                       = @body.contractdebug
+
+sem BodyR
+  | BodyR       lhs   .contractdebug                       = @decls.contractdebug
+
+sem RhsR
+  | RhsR        lhs   .contractdebug                       = @expr.contractdebug 
+                                                             ++ (if length @where.contractdebug > 0 then "\nwhere\n" else [])
+                                                             ++ @where.contractdebug 
+  | GRhsR       lhs   .contractdebug                       = @gexprs.contractdebug
+                                                             ++ (if length @where.contractdebug > 0 then "\nwhere\n" else [])
+                                                             ++ @where.contractdebug
+
+sem DeclR
+  | DFunBindsR  lhs   .contractdebug                       = @funbinds.contractdebug
+  | DPatBindR   lhs   .contractdebug                       = @pat.contractdebug ++ @rhs.contractdebug
+
+sem ExprR
+  | FeedbackR   lhs   .contractdebug                       = @expr.contractdebug
+  | MustUseR    lhs   .contractdebug                       = @expr.contractdebug
+  | CaseR       lhs   .contractdebug                       = "case " 
+                                                             ++ @expr.contractdebug 
+                                                             ++ " of\n"
+                                                             ++ @alts.contractdebug
+  | ConR        lhs   .contractdebug                       = @name.contractdebug
+  | IfR         lhs   .contractdebug                       = @cond.contractdebug ++ @then.contractdebug ++ @else.contractdebug
+  | InfixAppR   lhs   .contractdebug                       = @left.contractdebug ++ @op.contractdebug ++ @right.contractdebug
+  | LambdaR     lhs   .contractdebug                       = "(\\"
+                                                             ++ @pats.contractdebug
+                                                             ++ " -> "
+                                                             ++ @expr.contractdebug
+                                                             ++ ")"
+  | LetR        lhs   .contractdebug                       = "\nlet"
+                                                             ++ @decls.contractdebug 
+                                                             ++ "\nin\n"
+                                                             ++ @expr.contractdebug
+  | LitR        lhs   .contractdebug                       = @lit.contractdebug
+  | AppR        lhs   .contractdebug                       = @fun.contractdebug ++ " " ++ @args.contractdebug
+  | ParenR      lhs   .contractdebug                       = "(" ++ @expr.contractdebug ++ ")"
+  | TupleR      lhs   .contractdebug                       = "(" ++ @exprs.contractdebug ++ ")"
+  | VarR        lhs   .contractdebug                       = @name.contractdebug
+                                                             ++ "[ "
+                                                             ++ show (finalSubst @lhs.debugFinalSubsts @loc.varContract)
+                                                             ++ " ]"
+  | EnumR       lhs   .contractdebug                       = "[" ++ @from.contractdebug ++ @then.contractdebug ++ @to.contractdebug ++ "]"
+  | ListR       lhs   .contractdebug                       = "[" ++ @exprs.contractdebug ++ "]"
+
+sem MaybeExprR
+  | JustExprR   lhs   .contractdebug                       = @expr.contractdebug
+
+sem AltR
+  | AltR        lhs   .contractdebug                       = @pat.contractdebug ++ " -> " ++ @rhs.contractdebug
+
+sem FunBindR
+  | FunBindR    lhs   .contractdebug                       = @name.contractdebug
+                                                             ++ "[ "
+                                                             ++ show (finalEnvLU @name.copy @lhs.env @lhs.debugFinalSubsts)
+                                                             ++ " ]"
+                                                             ++ " "
+                                                             ++ @pats.contractdebug
+                                                             ++ "=\n"
+                                                             ++ @rhs.contractdebug
+
+sem PatR
+  | PConR       lhs   .contractdebug                       = @name.contractdebug
+                                                             ++ " "
+                                                             ++ @pats.contractdebug
+  | PInfixConR  lhs   .contractdebug                       = @left.contractdebug
+                                                             ++ " "
+                                                             ++ @name.contractdebug
+                                                             ++ " "
+                                                             ++ @right.contractdebug
+  | PListR      lhs   .contractdebug                       = "[" ++ @pats.contractdebug ++ "]"
+  | PLitR       lhs   .contractdebug                       = @lit.contractdebug
+  | PTupleR     lhs   .contractdebug                       = "(" ++ @pats.contractdebug ++ ")"
+  | PVarR       lhs   .contractdebug                       = @name.contractdebug
+                                                             ++ "[ "
+                                                             ++ show (finalSubst @lhs.debugFinalSubsts (snd @loc.conversionResults))
+                                                             ++ " ]"
+  | PAsR        lhs   .contractdebug                       = @name.contractdebug 
+                                                             ++ "[ "
+                                                             ++ show (finalSubst @lhs.debugFinalSubsts (snd @loc.conversionResults))
+                                                             ++ " ]"
+                                                             ++ "@"
+                                                             ++ "(" 
+                                                             ++ @pat.contractdebug
+                                                             ++ ")" 
+  | PWildcardR  lhs   .contractdebug                       = "*"
+
+sem PatsR
+  | Cons        lhs   .contractdebug                       = @hd.contractdebug ++ " " ++ @tl.contractdebug
+
+
+sem LiteralR
+  | LCharR LFloatR LIntR
+     lhs   .contractdebug                                  = show @val
+  | LStringR
+     lhs   .contractdebug                                  = @val
+
+sem GuardedExprR
+  | GExprR      lhs   .contractdebug                       = @guard.contractdebug ++ " | " ++ @expr.contractdebug
+
+sem FunBindsR
+  | Cons        lhs   .contractdebug                       = @hd.contractdebug ++ @tl.contractdebug
+
+sem DeclsR AltsR
+  | Cons        lhs   .contractdebug                       = @hd.contractdebug ++ "\n" ++ @tl.contractdebug
+
+sem TupleExprR TuplePatsR ListExprR ListPatsR
+  | Cons        lhs   .contractdebug			   = @hd.contractdebug ++ "," ++ @tl.contractdebug
+
+sem NameR
+  | *           lhs   .contractdebug                       = @name
