@@ -9,10 +9,10 @@ sem ModuleR
 sem BodyR
   | BodyR       lhs   .simpledebug                       = "BodyR\n" 
                                                            ++ "env we start with: " ++ show @decls.functionEnv ++ "\n"
-
+                                                           ++ "final top env: " ++ show @loc.finalTopEnv ++ "\n"
+                                                           ++ "all global substs: " ++ show @decls.subst ++ "\n"
                                                            ++ @decls.simpledebug
 
---                                                            ++ "final top env: " ++ show @loc.finalTopEnv ++ "\n"
   | BHoleR      lhs   .simpledebug                       = "BHoleR\n"
 
 sem RhsR
@@ -89,12 +89,13 @@ sem FunBindR
                                                                 "\n pats.astTypes :" ++ show @pats.astTypes ++ 
                                                                 "\n loc.cfuns :" ++ show @loc.cfunc ++ 
                                                                 "\n loc.clhs :" ++ show @loc.clhs ++ 
+                                                                "\n loc.crhs :" ++ show @loc.crhs ++ 
+                                                                "\n loc.localsubsts :" ++ show @loc.localsubsts ++ 
+                                                                "\n loc.subst' :" ++ show @loc.subst' ++ 
+                                                                "\n" ++ 
                                                                 @name.simpledebug ++ @pats.simpledebug ++ @rhs.simpledebug
 
---                                                                "\n loc.crhs :" ++ show @loc.crhs ++ 
---                                                                "\n loc.localsubsts :" ++ show @loc.localsubsts ++ 
---                                                                "\n loc.subst' :" ++ show @loc.subst' ++ 
---                                                                "\n" ++ 
+
 
 sem PatR
   | PHoleR      lhs   .simpledebug                       = "PHoleR\n"

@@ -29,7 +29,8 @@ isLocalSubst (SComp l r) = isLocalSubst l -- Only check the first one
 
 splitSubsts :: Subst -> (Subst, Subst)
 splitSubsts SId = (SId,SId)
-splitSubsts s@(SSubst v c) | isMonomorphic c && not (isMonomorphic v) = (SId,s)
+splitSubsts s@(SSubst v c) | isMonomorphic c && not (isMonomorphic v) = (SId,s) -- poly -> mono = local subst
+splitSubsts s@(SSubst v c) | isMonomorphic v && not (isMonomorphic c) = (SId,SId) -- TODO: CHECK THIS: mono -> poly = drop ???
                            | otherwise = (s,SId)
 splitSubsts (SComp l r) = 
  let (lg,ll) = splitSubsts l
@@ -287,11 +288,11 @@ convertTopTypeToContract offset ty =
     error $ "Only tuples up to size 4 are currently supported. Tried to convert type: " ++ show x
    convert _ x = error $ "Was unable to convert the following type: " ++ show x 
 
-finalEnvLU :: NameR -> CEnv -> Subst -> Contract
-finalEnvLU nm env s = subst s $ stripQuantifiers $ snd $ envLU 0 nm env
+finalEnvLU :: NameR -> CEnv -> Subst -> Subst -> Contract
+finalEnvLU nm env locals s = subst locals $ subst s $ stripQuantifiers $ snd $ envLU 0 nm env
 
-finalSubst :: Subst -> Contract -> Contract
-finalSubst s c = subst s $ stripQuantifiers c
+finalSubst :: Subst -> Subst -> Contract -> Contract
+finalSubst locals s c = subst locals $ subst s $ stripQuantifiers c
 
 expandHigherOrderParams :: String -> String -> (Int,Int,String) -> ExprR
 expandHigherOrderParams funcText funcName (listpos,arity,pat) = 

@@ -22,6 +22,7 @@ sem DeclR
             .unify' =   splitSubsts @loc.unify
             .localsubsts = snd @loc.unify'
             .subst' =   fst @loc.unify' `o` @rhs.subst
+      rhs   .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
 --            .infer' =   subst @loc.subst' @loc.clhs
 --       pat  .freshContractVariable = fst @loc.results -- TODO: try and get this working uncommented
 
@@ -38,3 +39,4 @@ sem BodyR
       loc   .allSubsts =   @decls.subst
       loc   .finalTopEnv = subst @decls.subst @decls.functionEnv
       decls .debugFinalSubsts = @decls.subst
+      decls .localsubsts      = SId
