@@ -87,7 +87,7 @@ boxifyCode = (vcat BOX.left) . (map text) . lines
 instance Pretty Contract where
   pprint (CArr c1 c2) = parens $ pprint c1 BOX.<+> text ">->" BOX.<+> pprint c2
   pprint (CProp p) = text p
-  pprint (CFunctor o i) = pprint o BOX.<+> text "<@>" BOX.<+> pprint i
+  pprint (CFunctor o i) = parens (pprint o BOX.<+> text "<@>" BOX.<+> pprint i)
   pprint (CBifunctor o il ir) = parens $ pprint o BOX.<+> text "<@@>" BOX.<+> parens (pprint il BOX.<> comma BOX.<+> pprint ir)
   pprint (CVar v mc) = text v
   pprint (CQuant cv cs) = case cv of
@@ -98,14 +98,14 @@ instance Pretty Contract where
   pprint (CTuple [])     = nullBox
 
 instance Show Subst where
-  show SId = "Id"
-  show (SComp l r) = show l ++ " . " ++ show r
+  show SId = "SId"
+  show (SComp l r) = show l ++ " `o` " ++ show r
   show (SSubst v c) = "(" ++ show v ++ " +-> " ++ show c ++ ")"
 
 instance Show Contract where
   show (CArr c1 c2) =  "(" ++ show c1 ++ " >-> " ++ show c2 ++ ")"
   show (CProp p) = p
-  show (CFunctor o i) = show o ++ " <@> " ++ show i
+  show (CFunctor o i) = "(" ++ show o ++ " <@> " ++ show i ++ ")"
   show (CBifunctor o il ir) = "(" ++ show o ++ " <@@> " ++ "(" ++ show il ++ "," ++ show ir ++ ")" ++ ")"
   show (CVar v mc) = v
   show (CQuant cv cs) = case cv of

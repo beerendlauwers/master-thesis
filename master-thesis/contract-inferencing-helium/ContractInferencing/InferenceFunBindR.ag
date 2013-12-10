@@ -6,7 +6,7 @@ sem FunBindR
       lhs   .subst  =   SId
   | FunBindR
       lhs  .subst   =   @loc.subst'
---      rhs  .locsubst   =   @loc.localsubsts
+      rhs  .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
       name .freshContractVariable = fst @loc.conversionResults
       loc  .clhs    =   dropc (length @pats.astTypes) $ stripQuantifiers $ @loc.cfunc
            .conversionResults = envLU @lhs.freshContractVariable @name.copy @lhs.env

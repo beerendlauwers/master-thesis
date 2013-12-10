@@ -19,7 +19,9 @@ sem RhsR
 
 sem DeclR
   | DFunBindsR  lhs   .contractdebug                       = @funbinds.contractdebug
-  | DPatBindR   lhs   .contractdebug                       = @pat.contractdebug ++ @rhs.contractdebug
+  | DPatBindR   lhs   .contractdebug                       = @pat.contractdebug 
+                                                             ++ " = "
+                                                             ++ @rhs.contractdebug
 
 sem ExprR
   | FeedbackR   lhs   .contractdebug                       = @expr.contractdebug
@@ -36,7 +38,7 @@ sem ExprR
                                                              ++ " -> "
                                                              ++ @expr.contractdebug
                                                              ++ ")"
-  | LetR        lhs   .contractdebug                       = "\nlet"
+  | LetR        lhs   .contractdebug                       = "\nlet\n"
                                                              ++ @decls.contractdebug 
                                                              ++ "\nin\n"
                                                              ++ @expr.contractdebug
@@ -46,7 +48,7 @@ sem ExprR
   | TupleR      lhs   .contractdebug                       = "(" ++ @exprs.contractdebug ++ ")"
   | VarR        lhs   .contractdebug                       = @name.contractdebug
                                                              ++ "[ "
-                                                             ++ show (finalSubst @lhs.debugFinalSubsts @loc.varContract)
+                                                             ++ show (finalSubst @loc.localsubsts @lhs.debugFinalSubsts @loc.varContract)
                                                              ++ " ]"
   | EnumR       lhs   .contractdebug                       = "[" ++ @from.contractdebug ++ @then.contractdebug ++ @to.contractdebug ++ "]"
   | ListR       lhs   .contractdebug                       = "[" ++ @exprs.contractdebug ++ "]"
@@ -60,7 +62,7 @@ sem AltR
 sem FunBindR
   | FunBindR    lhs   .contractdebug                       = @name.contractdebug
                                                              ++ "[ "
-                                                             ++ show (finalEnvLU @name.copy @lhs.env @lhs.debugFinalSubsts)
+                                                             ++ show (finalEnvLU @name.copy @lhs.env (@loc.localsubsts `o` @lhs.localsubsts) @lhs.debugFinalSubsts)
                                                              ++ " ]"
                                                              ++ " "
                                                              ++ @pats.contractdebug
@@ -81,11 +83,11 @@ sem PatR
   | PTupleR     lhs   .contractdebug                       = "(" ++ @pats.contractdebug ++ ")"
   | PVarR       lhs   .contractdebug                       = @name.contractdebug
                                                              ++ "[ "
-                                                             ++ show (finalSubst @lhs.debugFinalSubsts (snd @loc.conversionResults))
+                                                             ++ show (finalSubst SId @lhs.debugFinalSubsts (snd @loc.conversionResults))
                                                              ++ " ]"
   | PAsR        lhs   .contractdebug                       = @name.contractdebug 
                                                              ++ "[ "
-                                                             ++ show (finalSubst @lhs.debugFinalSubsts (snd @loc.conversionResults))
+                                                             ++ show (finalSubst SId @lhs.debugFinalSubsts (snd @loc.conversionResults))
                                                              ++ " ]"
                                                              ++ "@"
                                                              ++ "(" 

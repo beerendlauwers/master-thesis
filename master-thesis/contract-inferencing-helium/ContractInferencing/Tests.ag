@@ -1,6 +1,6 @@
 {
 
-doTest s = flatDebug s [] (DM.fromList [])
+doTest s = contractDebug s [] (DM.fromList [])
 
 -- Status: OK
 -- My contract: (v34 <@> v28) >-> v35
@@ -31,6 +31,24 @@ test_foldr = doTest "efoldr f b xs = case xs of\n                  [] -> b\n    
 -- Jurrien's contract: c1 >-> (c0 <@> c1 >-> c2 <@> c1)
 test_insert = doTest "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z : z' : zs'\n                                False -> z' : insert z zs'"
 
+-- Status: OK
+-- My contract: (v142 <@> v122 >-> v145 <@> v122)
+-- Jurrien's contract: c1 <@> c0 >-> c2 <@> c0
+test_isort = doTest "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z : z' : zs'\n                                False -> z' : insert z zs'\nefoldr f b xs = case xs of\n                  [] -> b\n                  (y:ys) -> f y (efoldr f b ys)\nisort us = efoldr insert [] us"
+
+test_isort_env = contractDebug "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z : z' : zs'\n                                False -> z' : insert z zs'\nefoldr f b xs = case xs of\n                  [] -> b\n                  (y:ys) -> f y (efoldr f b ys)\nisort us = efoldr insert [] us" [] isortenv
+ where
+  isortenv = DM.fromList [("isort", sortC)]
+  sortC = (ctrue <@> ctrue) >-> (cord <@> ctrue)
+  ctrue = CVar "true" Nothing
+  cord  = CProp "ord"
+
+test_isort_env_flat = flatDebug "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z : z' : zs'\n                                False -> z' : insert z zs'\nefoldr f b xs = case xs of\n                  [] -> b\n                  (y:ys) -> f y (efoldr f b ys)\nisort us = efoldr insert [] us" [] isortenv
+ where
+  isortenv = DM.fromList [("isort", sortC)]
+  sortC = (ctrue <@> ctrue) >-> (cord <@> ctrue)
+  ctrue = CVar "true" Nothing
+  cord  = CProp "ord"
 
 
 }

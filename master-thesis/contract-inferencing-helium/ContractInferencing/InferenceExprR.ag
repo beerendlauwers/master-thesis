@@ -115,10 +115,14 @@ sem ExprR
       loc  .subst   =   fst @loc.unify `o` @cond.subst `o` @then.subst `o` @else.subst
       loc  .unify   =   splitSubsts $ unifyC @then.infer @else.infer
            .localsubsts = snd @loc.unify
+      cond .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
+      then .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
+      else .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
 
   | VarR
       lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars --TODO: Currently, this is looking it up in env. This might cause polymorphic contract vars in containers to be unified that we don't want unified!
            .subst   =   SId
+      loc  .localsubsts = SId
 
   | ConR -- TODO: This will give odd results when using constructors many times, I think.
       lhs  .infer   =   stripQuantifiers $ @loc.varContract
@@ -143,14 +147,12 @@ sem ExprR
   | AppR
       lhs  .infer   =   @loc.infer'
            .subst   =   @loc.ths
-
---      fun  .locsubst   =   @loc.localsubsts -- TODO: Local substs will probably refer to old variables, may need to update those.
---      args .locsubst   =   @loc.localsubsts
+      fun  .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
+      args .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
+      -- TODO: Local substs will probably refer to old variables, may need to update those.
 
       loc  .localsubsts = snd @loc.th3'
-      
-
-      loc  .infer'  =   subst @loc.th3 @loc.alpha
+           .infer'  =   subst @loc.th3 @loc.alpha
            .ths     =   let  ths = fst @loc.th3' `o` @loc.th2 `o` @loc.th1
                         in   ths --case @lhs.cann of
                              --  (Just ann)  -> unifyC ann @loc.infer' `o` ths
@@ -164,9 +166,7 @@ sem ExprR
            .c1st    =   subst @loc.th2 @loc.c1
            .carr    =   @loc.c2 >-> @loc.alpha
            .th3     =   unifyC @loc.c1st @loc.carr
-           .alpha   =   dropc 1 $ stripQuantifiers $ @loc.c1
-           -- .alpha   =   mkCtrt (@loc.num + @lhs.availableContractVars)
-      loc  .num     ::  uniqueref varcnt
+           .alpha   =   dropc 1 $ stripQuantifiers $ @loc.c1 -- TODO: Check if this is a good idea!
 
       -- args .env     =   subst @loc.th1 @loc.e2env
 
