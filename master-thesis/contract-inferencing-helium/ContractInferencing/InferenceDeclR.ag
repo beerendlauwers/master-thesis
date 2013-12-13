@@ -40,3 +40,9 @@ sem BodyR
       loc   .finalTopEnv = subst @decls.subst @decls.functionEnv
       decls .debugFinalSubsts = @loc.allSubsts
       decls .localsubsts      = SId
+
+sem PatR
+  | PVarR PAsR
+      loc   .finalContract = if @lhs.isUnderDPatBindR
+                              then finalEnvLU @name.copy @lhs.env @lhs.localsubsts @lhs.debugFinalSubsts
+                              else finalContract @lhs.localsubsts @lhs.debugFinalSubsts (snd @loc.conversionResults)

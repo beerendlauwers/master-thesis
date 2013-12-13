@@ -92,3 +92,21 @@ sem PatR
       loc  .localPatterns       = getVar @name.copy : @pat.localPatterns
 
 
+
+attr PatR PatsR ListPatsR TuplePatsR
+ inh  isUnderDPatBindR                          :: {Bool}
+
+sem DeclR
+  | DPatBindR   pat   .isUnderDPatBindR = True
+
+sem AltR
+  | AltR        pat   .isUnderDPatBindR = False
+
+sem ExprR
+  | LambdaR     pats  .isUnderDPatBindR = False
+sem FunBindR
+  | FunBindR    pats  .isUnderDPatBindR = False
+
+  
+
+
