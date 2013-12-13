@@ -289,10 +289,33 @@ convertTopTypeToContract offset ty =
    convert _ x = error $ "Was unable to convert the following type: " ++ show x 
 
 finalEnvLU :: NameR -> CEnv -> Subst -> Subst -> Contract
-finalEnvLU nm env locals s = subst locals $ subst s $ stripQuantifiers $ snd $ envLU 0 nm env
+finalEnvLU nm env locals globals = subst locals $ findFixedContractInLimitedSteps globals $ stripQuantifiers $ snd $ envLU 0 nm env
 
 finalSubst :: Subst -> Subst -> Contract -> Contract
-finalSubst locals s c = subst locals $ subst s $ stripQuantifiers c
+finalSubst locals globals c = subst locals $ findFixedContractInLimitedSteps globals $ stripQuantifiers c
+
+findFixedContractInLimitedSteps :: Subst -> Contract -> Contract
+findFixedContractInLimitedSteps s c = 
+ let trimmedSubsts = trimSubsts s
+ in findFixedContract (countSubst trimmedSubsts) trimmedSubsts c
+
+findFixedContract :: Int -> Subst -> Contract -> Contract
+findFixedContract 0 s c = error "Could not find a fixed contract."
+findFixedContract n s c = 
+ let r = subst s c
+ in if r == c
+     then c
+     else findFixedContract (n-1) s r
+
+trimSubsts :: Subst -> Subst
+trimSubsts (SComp SId r) = trimSubsts r
+trimSubsts (SComp l   r) = l `o` trimSubsts r
+trimSubsts (SComp l SId) = l
+trimSubsts x = x
+
+countSubst :: Subst -> Int
+countSubst (SComp l r) = 1 + countSubst r
+countSubst x = 1
 
 expandHigherOrderParams :: String -> String -> (Int,Int,String) -> ExprR
 expandHigherOrderParams funcText funcName (listpos,arity,pat) = 

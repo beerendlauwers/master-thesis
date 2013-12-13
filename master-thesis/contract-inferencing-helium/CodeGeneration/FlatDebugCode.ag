@@ -62,7 +62,7 @@ sem ExprR
                                                                 "\n loc.c1st: " ++ show @loc.c1st ++ 
                                                                 "\n loc.th3: " ++ show @loc.th3 ++ 
                                                                 "\n loc.localsubsts: " ++ show @loc.localsubsts ++ 
-                                                                "\n Inferred contract: " ++ show @loc.infer' 
+                                                                "\n Inferred contract: " ++ show @loc.infer' ++ "\n"
   | ParenR      lhs   .simpledebug                       = "ParenR\n" ++ @expr.simpledebug
   | TupleR      lhs   .simpledebug                       = "TupleR\n" ++ @exprs.simpledebug
   | VarR        lhs   .simpledebug                       = "VarR\n" ++
@@ -70,7 +70,9 @@ sem ExprR
                                                            " type: "     ++ show @loc.typeTreeType ++ "\n" ++
                                                            " loc.isFunction: " ++ show @loc.isFunction ++ "\n" ++ 
                                                            " loc.varContract: " ++ show @loc.varContract ++ "\n" ++
-                                                           " env at node: " ++ show @lhs.env ++ "\n"
+                                                           " lhs.debugFinalSubsts: " ++ show @lhs.debugFinalSubsts ++ "\n"
+
+--                                                           " env at node: " ++ show @lhs.env ++ "\n"
   | EnumR       lhs   .simpledebug                       = "EnumR\n" ++ @from.simpledebug ++ @then.simpledebug ++ @to.simpledebug
   | ListR       lhs   .simpledebug                       = "ListR\n" ++ @exprs.simpledebug
 

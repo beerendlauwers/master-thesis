@@ -48,7 +48,7 @@ sem ExprR
   | TupleR      lhs   .contractdebug                       = "(" ++ @exprs.contractdebug ++ ")"
   | VarR        lhs   .contractdebug                       = @name.contractdebug
                                                              ++ "[ "
-                                                             ++ show (finalSubst @loc.localsubsts @lhs.debugFinalSubsts @loc.varContract)
+                                                             ++ show (finalSubst (@loc.localsubsts `o` @lhs.localsubsts) @lhs.debugFinalSubsts @loc.varContract)
                                                              ++ " ]"
   | EnumR       lhs   .contractdebug                       = "[" ++ @from.contractdebug ++ @then.contractdebug ++ @to.contractdebug ++ "]"
   | ListR       lhs   .contractdebug                       = "[" ++ @exprs.contractdebug ++ "]"
