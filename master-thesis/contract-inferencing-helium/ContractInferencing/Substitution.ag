@@ -20,6 +20,16 @@ instance Substitutable a => Substitutable [a] where
   subst s = fmap (subst s)
   subst' x y = subst x y
 
+instance Substitutable Subst where
+   subst SId            s           = s
+   subst (SComp s1 s2)  SId         = SId
+   subst s            (SComp s1 s2) = SComp (subst s s1) (subst s s2)
+   subst (SComp s1 s2) s@(SSubst _ _) = subst s1 (subst s2 s)
+   subst (SSubst v1 v2) SId         = SId
+   subst (SSubst v1 v2) (SSubst v1' v2') | v1 == v1' = SSubst v2 v2'
+                                         | otherwise = SSubst v1' v2'
+   subst s              s'          = error $ "Tried to subst " ++ show s ++ " with " ++ show s'
+
 instance Substitutable Contract where
   subst SId             c           = c
   subst (SComp s1 s2)   c           = subst s1 (subst s2 c)

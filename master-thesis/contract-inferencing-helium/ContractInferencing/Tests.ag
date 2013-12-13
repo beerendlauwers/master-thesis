@@ -1,5 +1,10 @@
 {
 
+m21 = CVar "m21" Nothing
+m19 = CVar "m19" Nothing
+m23 = CVar "m23" Nothing
+m22 = CVar "m22" Nothing
+
 v0 = CVar "v0" Nothing
 v1 = CVar "v1" Nothing
 v2 = CVar "v2" Nothing
@@ -242,16 +247,14 @@ test_isort = doTest "insert z zs = case zs of\n                [] -> [z]\n      
 test_isort_env = contractDebug "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z : z' : zs'\n                                False -> z' : insert z zs'\nefoldr f b xs = case xs of\n                  [] -> b\n                  (y:ys) -> f y (efoldr f b ys)\nisort us = efoldr insert [] us" [] isortenv
  where
   isortenv = DM.fromList [("isort", sortC)]
-  sortC = (ctrue <@> ctrue) >-> (cord <@> ctrue)
-  ctrue = CProp "true"
-  cord  = CProp "ord"
 
 test_isort_env_flat = flatDebug "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z : z' : zs'\n                                False -> z' : insert z zs'\nefoldr f b xs = case xs of\n                  [] -> b\n                  (y:ys) -> f y (efoldr f b ys)\nisort us = efoldr insert [] us" [] isortenv
  where
   isortenv = DM.fromList [("isort", sortC)]
-  sortC = (ctrue <@> ctrue) >-> (cord <@> ctrue)
-  ctrue = CProp "true"
-  cord  = CProp "ord"
 
-
+sortC = (ctrue <@> ctrue) >-> (cord <@> ctrue)
+ctrue = CProp "true"
+cord  = CProp "ord"
+cnum  = CProp "num"
+cchar = CProp "char"
 }

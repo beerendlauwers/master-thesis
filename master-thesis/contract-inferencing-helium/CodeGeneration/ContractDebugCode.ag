@@ -7,7 +7,10 @@ sem ModuleR
   | ModuleR     lhs   .contractdebug                       = @body.contractdebug
 
 sem BodyR
-  | BodyR       lhs   .contractdebug                       = @decls.contractdebug
+  | BodyR       lhs   .contractdebug                       = "Global substs: "
+                                                             ++ show @loc.allSubsts
+                                                             ++ "\n"
+                                                             ++ @decls.contractdebug
 
 sem RhsR
   | RhsR        lhs   .contractdebug                       = @expr.contractdebug 
@@ -48,7 +51,7 @@ sem ExprR
   | TupleR      lhs   .contractdebug                       = "(" ++ @exprs.contractdebug ++ ")"
   | VarR        lhs   .contractdebug                       = @name.contractdebug
                                                              ++ "[ "
-                                                             ++ show (finalSubst (@loc.localsubsts `o` @lhs.localsubsts) @lhs.debugFinalSubsts @loc.varContract)
+                                                             ++ show (finalContract (@loc.localsubsts `o` @lhs.localsubsts) @lhs.debugFinalSubsts @loc.varContract)
                                                              ++ " ]"
   | EnumR       lhs   .contractdebug                       = "[" ++ @from.contractdebug ++ @then.contractdebug ++ @to.contractdebug ++ "]"
   | ListR       lhs   .contractdebug                       = "[" ++ @exprs.contractdebug ++ "]"
@@ -83,11 +86,11 @@ sem PatR
   | PTupleR     lhs   .contractdebug                       = "(" ++ @pats.contractdebug ++ ")"
   | PVarR       lhs   .contractdebug                       = @name.contractdebug
                                                              ++ "[ "
-                                                             ++ show (finalSubst SId @lhs.debugFinalSubsts (snd @loc.conversionResults))
+                                                             ++ show (finalEnvLU @name.copy @lhs.env @lhs.localsubsts @lhs.debugFinalSubsts)
                                                              ++ " ]"
   | PAsR        lhs   .contractdebug                       = @name.contractdebug 
                                                              ++ "[ "
-                                                             ++ show (finalSubst SId @lhs.debugFinalSubsts (snd @loc.conversionResults))
+                                                             ++ show (finalContract @lhs.localsubsts @lhs.debugFinalSubsts (snd @loc.conversionResults))
                                                              ++ " ]"
                                                              ++ "@"
                                                              ++ "(" 
