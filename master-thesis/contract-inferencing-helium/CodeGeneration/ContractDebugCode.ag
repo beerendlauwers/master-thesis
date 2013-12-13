@@ -86,11 +86,11 @@ sem PatR
   | PTupleR     lhs   .contractdebug                       = "(" ++ @pats.contractdebug ++ ")"
   | PVarR       lhs   .contractdebug                       = @name.contractdebug
                                                              ++ "[ "
-                                                             ++ show (finalEnvLU @name.copy @lhs.env @lhs.localsubsts @lhs.debugFinalSubsts)
+                                                             ++ show @loc.finalContract
                                                              ++ " ]"
   | PAsR        lhs   .contractdebug                       = @name.contractdebug 
                                                              ++ "[ "
-                                                             ++ show (finalContract @lhs.localsubsts @lhs.debugFinalSubsts (snd @loc.conversionResults))
+                                                             ++ show @loc.finalContract
                                                              ++ " ]"
                                                              ++ "@"
                                                              ++ "(" 
