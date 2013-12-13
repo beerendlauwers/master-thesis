@@ -70,7 +70,8 @@ sem ExprR
                                                            " type: "     ++ show @loc.typeTreeType ++ "\n" ++
                                                            " loc.isFunction: " ++ show @loc.isFunction ++ "\n" ++ 
                                                            " loc.varContract: " ++ show @loc.varContract ++ "\n" ++
-                                                           " lhs.debugFinalSubsts: " ++ show @lhs.debugFinalSubsts ++ "\n"
+                                                           " finalLocalSubsts: " ++ show (finalLocalSubsts (@loc.localsubsts `o` @lhs.localsubsts) @lhs.debugFinalSubsts) ++ "\n" ++
+                                                           " final contract (no locals): " ++ show (findFixedItemInLimitedSteps @lhs.debugFinalSubsts $ stripQuantifiers @loc.varContract) ++ "\n"
 
 --                                                           " env at node: " ++ show @lhs.env ++ "\n"
   | EnumR       lhs   .simpledebug                       = "EnumR\n" ++ @from.simpledebug ++ @then.simpledebug ++ @to.simpledebug
@@ -106,7 +107,10 @@ sem PatR
   | PListR      lhs   .simpledebug                       = "PListR\n" ++ @pats.simpledebug
   | PLitR       lhs   .simpledebug                       = "PLitR\n" ++ @lit.simpledebug
   | PTupleR     lhs   .simpledebug                       = "PTupleR\n" ++ @pats.simpledebug
-  | PVarR       lhs   .simpledebug                       = "PVarR\n" ++ @name.simpledebug
+  | PVarR       lhs   .simpledebug                       = "PVarR" ++
+                                                           "\n finalLocalSubsts: " ++ show (finalLocalSubsts @lhs.localsubsts @lhs.debugFinalSubsts) ++
+                                                           "\n final contract (no locals): " ++ show (findFixedItemInLimitedSteps @lhs.debugFinalSubsts $ stripQuantifiers (snd @loc.conversionResults)) ++ 
+                                                           "\n" ++ @name.simpledebug
   | PAsR        lhs   .simpledebug                       = "PAsR\n" ++ @name.simpledebug ++ @pat.simpledebug
   | PWildcardR  lhs   .simpledebug                       = "PWildrCardR\n"
 

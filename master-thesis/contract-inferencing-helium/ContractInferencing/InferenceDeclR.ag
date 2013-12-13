@@ -36,7 +36,7 @@ sem DeclsR
 
 sem BodyR
   | BodyR
-      loc   .allSubsts =   @decls.subst
+      loc   .allSubsts =  trimSubsts (@decls.subst)
       loc   .finalTopEnv = subst @decls.subst @decls.functionEnv
-      decls .debugFinalSubsts = @decls.subst
+      decls .debugFinalSubsts = @loc.allSubsts
       decls .localsubsts      = SId

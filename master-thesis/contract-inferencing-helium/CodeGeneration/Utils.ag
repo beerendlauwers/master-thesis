@@ -31,6 +31,7 @@ splitSubsts :: Subst -> (Subst, Subst)
 splitSubsts SId = (SId,SId)
 splitSubsts s@(SSubst v c) | isMonomorphic c && not (isMonomorphic v) = (SId,s) -- poly -> mono = local subst
 splitSubsts s@(SSubst v c) | isMonomorphic v && not (isMonomorphic c) = (SId,SId) -- TODO: CHECK THIS: mono -> poly = drop ???
+                           | all isMonomorphic [v,c] = (SId,s) -- mono -> mono = local subst 
                            | otherwise = (s,SId)
 splitSubsts (SComp l r) = 
  let (lg,ll) = splitSubsts l
@@ -242,6 +243,8 @@ convertTopTypeToContract offset ty =
   where
    makeType :: Int -> String
    makeType i = "v" ++ show i
+   makeMonotype :: Int -> String
+   makeMonotype i = "m" ++ show i
 
    -- Here, we convert a primitive type to a contract recursively.
    -- First [Int] parameter is just a list of fresh variable numbers.
@@ -265,7 +268,7 @@ convertTopTypeToContract offset ty =
         (n'',rightInner,q2) = convert n' t2
     in (n'', CBifunctor outer leftInner rightInner,n:q1++q2)
    convert (n:ns) (P.TCon x) | x `elem` ["Int","Char","Float","Bool","String"] = 
-    (ns, CVar (makeType n) Nothing,[n])
+    (ns, CVar (makeMonotype n) Nothing,[n])
    -- 4-tuple
    convert n (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) | P.isTupleConstructor x =
     let (n1, ctrt1,q1) = convert n t1
@@ -289,28 +292,33 @@ convertTopTypeToContract offset ty =
    convert _ x = error $ "Was unable to convert the following type: " ++ show x 
 
 finalEnvLU :: NameR -> CEnv -> Subst -> Subst -> Contract
-finalEnvLU nm env locals globals = subst locals $ findFixedContractInLimitedSteps globals $ stripQuantifiers $ snd $ envLU 0 nm env
+finalEnvLU nm env locals globals = 
+ findFixedItemInLimitedSteps (finalLocalSubsts locals globals) $ findFixedItemInLimitedSteps globals $ stripQuantifiers $ snd $ envLU 0 nm env
 
-finalSubst :: Subst -> Subst -> Contract -> Contract
-finalSubst locals globals c = subst locals $ findFixedContractInLimitedSteps globals $ stripQuantifiers c
+finalContract :: Subst -> Subst -> Contract -> Contract
+finalContract locals globals c = 
+ findFixedItemInLimitedSteps (finalLocalSubsts locals globals) $ findFixedItemInLimitedSteps globals $ stripQuantifiers c
 
-findFixedContractInLimitedSteps :: Subst -> Contract -> Contract
-findFixedContractInLimitedSteps s c = 
+finalLocalSubsts :: Subst -> Subst -> Subst
+finalLocalSubsts locals globals = findFixedItemInLimitedSteps globals locals
+
+findFixedItemInLimitedSteps :: (Substitutable a, Eq a) => Subst -> a -> a
+findFixedItemInLimitedSteps s a = 
  let trimmedSubsts = trimSubsts s
- in findFixedContract (countSubst trimmedSubsts) trimmedSubsts c
+ in findFixedItemBySubstitution (countSubst trimmedSubsts) trimmedSubsts a
 
-findFixedContract :: Int -> Subst -> Contract -> Contract
-findFixedContract 0 s c = error "Could not find a fixed contract."
-findFixedContract n s c = 
- let r = subst s c
- in if r == c
-     then c
-     else findFixedContract (n-1) s r
+findFixedItemBySubstitution :: (Substitutable a, Eq a) => Int -> Subst -> a -> a
+findFixedItemBySubstitution 0 s a = error "Could not find a fixed result."
+findFixedItemBySubstitution n s a = 
+ let r = subst s a
+ in if r == a
+     then a
+     else findFixedItemBySubstitution (n-1) s r
 
 trimSubsts :: Subst -> Subst
 trimSubsts (SComp SId r) = trimSubsts r
+trimSubsts (SComp l SId) = trimSubsts l
 trimSubsts (SComp l   r) = l `o` trimSubsts r
-trimSubsts (SComp l SId) = l
 trimSubsts x = x
 
 countSubst :: Subst -> Int
