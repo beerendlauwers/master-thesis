@@ -1,6 +1,8 @@
 {
 
 m21 = CVar "m21" Nothing
+m13 = CVar "m13" Nothing
+m14 = CVar "m14" Nothing
 m19 = CVar "m19" Nothing
 m23 = CVar "m23" Nothing
 m22 = CVar "m22" Nothing
@@ -257,4 +259,27 @@ ctrue = CProp "true"
 cord  = CProp "ord"
 cnum  = CProp "num"
 cchar = CProp "char"
+
+
+-- Test: "f x = [x]\nz = (f 5, f '2')" [] (DM.fromList [("z", v100 <@@> ((ctrue <@> ctrue),ctrue <@> ctrue))])
+{-
+f x =
+    [x]
+__final_f substs x =
+    [x]
+__contracted_f substs ctrt posinfo =
+    CTRT.assertPos "At the application of the function 'f'" (generatePositionData posinfo) ctrt funs
+    where
+        funs =
+            (CTRT.fun (\ __x01 -> __final_f substs __x01))
+__app_f substs ctrt posinfo (posa
+                            ,a) =
+    (CTRT.appParam (__contracted_f substs ctrt posinfo) (show a ++ generatePositionData posa) a)
+z =
+    ((__app_f (SId `o` (v5 +-> m13) `o` (m14 +-> true) `o` SId `o` (m13 +-> true) `o` (v17 +-> true)) (subst (SId `o` (v5 +-> m13) `o` (m14 +-> true) `o` SId `o` (m13 +-> true) `o` (v17 +-> true)) (v5 >-> (v17 <@> v5))) (Just (2
+                                                                                                                                                                                                                                  ,6))) 5
+    ,(__app_f (SId `o` (v5 +-> m14) `o` (m14 +-> true) `o` SId `o` (m13 +-> true) `o` (v17 +-> true)) (subst (SId `o` (v5 +-> m14) `o` (m14 +-> true) `o` SId `o` (m13 +-> true) `o` (v17 +-> true)) (v5 >-> (v17 <@> v5))) (Just (2
+                                                                                                                                                                                                                                  ,11))) '2')
+-}
+
 }

@@ -110,6 +110,7 @@ sem PatR
   | PVarR       lhs   .simpledebug                       = "PVarR" ++
                                                            "\n finalLocalSubsts: " ++ show (finalLocalSubsts @lhs.localsubsts @lhs.debugFinalSubsts) ++
                                                            "\n final contract (no locals): " ++ show (findFixedItemInLimitedSteps @lhs.debugFinalSubsts $ stripQuantifiers (snd @loc.conversionResults)) ++ 
+                                                           "\n loc.finalContract: " ++ show @loc.finalContract ++
                                                            "\n" ++ @name.simpledebug
   | PAsR        lhs   .simpledebug                       = "PAsR\n" ++ @name.simpledebug ++ @pat.simpledebug
   | PWildcardR  lhs   .simpledebug                       = "PWildrCardR\n"

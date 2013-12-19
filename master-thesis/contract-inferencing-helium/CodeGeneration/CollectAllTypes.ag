@@ -261,11 +261,10 @@ sem FunBindR
      loc   .typeTreeCode        = (\(_,s,src) -> s ++ " " ++ show src) $ attribute @lhs.typeTree
 
      -- Parameter arity is similar.
-     loc   .typeTreeParameterArity = @loc.fixedPatParamArity ++ @loc.rhsParameterArity
+     loc   .typeTreeParameterArity = @loc.patParameterArity ++ @loc.rhsParameterArity
      -- Get parameter arity from patterns
      loc   .patsTreeTypes       = map (\x -> (\(mty,_,_) -> mty) $ attribute x) $ take @loc.numPatterns $ children @lhs.typeTree
-     loc   .fixedPatParamArity  = map (head.emptyListToZero) @loc.patParameterArity
-     loc   .patParameterArity   = map (\ty -> calculateTypeParameterArity $ maybeErr @loc.typeTreeCode ty) @loc.patsTreeTypes
+     loc   .patParameterArity   = map (\ty -> calculateTypeArity $ maybeErr @loc.typeTreeCode ty) @loc.patsTreeTypes
      -- Get parameter arity from RHS
      loc   .rhsParameterArity   = calculateTypeParameterArity $ maybeErr @loc.typeTreeCode @rhs.typeTreeType
 
