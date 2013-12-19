@@ -44,6 +44,7 @@ import qualified Data.Set as DS
 import qualified Data.Maybe as DJ
 import qualified Data.List as DL
 import qualified Control.Monad as CM
+import qualified Contract as CTRT
 }
 
 attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunBindsR GuardedExprR GuardedExprsR LiteralR RhsR NameR MaybeExprR MaybeNameR RangeR PositionR ListExprR TupleExprR ListPatsR TuplePatsR MaybeConst
@@ -60,7 +61,7 @@ sem FunBindR
       -- Example: __contracted_insert ctrt posinfo = assertPos "name info" (generatePositionData posinfo) ctrt funs
       --           where funs = fun (\x -> fun (\xs -> __final_insert x xs))
       lhs  .contractedFunction          = Just @loc.contractedFunction
-      loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "ctrt", mkPVar "posinfo"] @loc.contractedRhs
+      loc  .contractedFunction          = mkFunbind @loc.contractedName [mkPVar "substs", mkPVar "ctrt", mkPVar "posinfo"] @loc.contractedRhs
 
       -- LHS --
       loc  .functionIdentifier          = @name.copy 
@@ -85,7 +86,7 @@ sem FunBindR
       loc  .parameterArity              = @loc.typeTreeParameterArity
       loc  .patsWithArity               = zip3 (take @loc.arity [1..]) @loc.parameterArity @loc.funsPatterns
       loc  .expandedFunsPatterns        = map (expandHigherOrderParams @loc.posInfo @loc.functionIdent) @loc.patsWithArity
-      loc  .funsBase                    = mkApp $ @loc.finalFunctionIdent : @loc.expandedFunsPatterns
+      loc  .funsBase                    = mkApp $ @loc.finalFunctionIdent : mkVar "substs" : @loc.expandedFunsPatterns
 
       loc  .num     ::  uniqueref varcnt
 
@@ -100,7 +101,7 @@ sem FunBindR
       -- Example: __app_insert ctrt posinfo (posx,x) (posxs,xs) = 
       --           appParam (appParam (__contracted_insert ctrt posinfo) (generatePositionData posx) x) (generatePositionData posxs) xs
       lhs  .appFunction                 = Just @loc.appFunction
-      loc  .appFunction                 = mkFunbind @loc.appedName (@loc.ctrtParam : mkPVar "posinfo" : @loc.paramTuples) (mkRhs @loc.appedRhs [])
+      loc  .appFunction                 = mkFunbind @loc.appedName (mkPVar "substs" : @loc.ctrtParam : mkPVar "posinfo" : @loc.paramTuples) (mkRhs @loc.appedRhs [])
 
       -- LHS --
       loc  .appedName                   = prefixAppFunction @loc.functionIdentifier
@@ -112,7 +113,7 @@ sem FunBindR
       
       -- RHS --
       loc  .appedRhs                    = insertApps "appParam" @loc.appedRhsBase (map (\(p,v) -> ( mkAppParens [ mkVar "show", mkVar v, mkVar "++", mkVar "generatePositionData", mkVar p],mkVar v)) (reverse @loc.paramList)) 
-      loc  .appedRhsBase                = mkAppParens [VarR @loc.contractedName noRangeR, mkVar "ctrt", mkVar "posinfo"]
+      loc  .appedRhsBase                = mkAppParens [VarR @loc.contractedName noRangeR, mkVar "substs", mkVar "ctrt", mkVar "posinfo"]
 
 
 -- Semantics for final version of function.
@@ -126,7 +127,8 @@ sem FunBindR
       -- Example: f x = g x could become
       -- __final_f x = __app_g ctrt (posx,x)
       lhs  .finalFunction               = Just @loc.finalFunction
-      loc  .finalFunction               = FunBindR @feedback @loc.finalName @pats.copy @rhs.functionAppSelf @range.copy
+      loc  .patsPlusCtrt                = mkPVar "substs" : @pats.copy
+      loc  .finalFunction               = FunBindR @feedback @loc.finalName @loc.patsPlusCtrt @rhs.functionAppSelf @range.copy
       loc  .finalName                   = prefixFinalFunction @loc.functionIdentifier
       
 
@@ -147,7 +149,7 @@ attr ExprR
    -- We use this information to determine what kind of transformation is necessary.
    syn isLocalParameter                                         :: {Bool}
 
-attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR BodyR
+attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR BodyR ModuleR
    -- A transformation that transforms all function applications from f to __app_f or __contracted_f (whichever applies).
    syn functionAppSelf                                            :: self
 
@@ -193,20 +195,18 @@ sem ExprR
                                                        else 6 -- id + position, it's for an app'ed version
 
 
-      -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
-      -- OR PASS AROUND SUBSTITUTIONS 
-      loc  .inferencedContract          = subst @lhs.globalSubsts @loc.varContract
       loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.inferencedContract ) Inh_Contract   
+      loc  .contractAppliedtoSubsts     = mkParens $ mkApp [mkVar "subst", mkParens $ mkVar @loc.allLocalSubstsAsString, @loc.contractAsExprR]
 
       loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id),(5,prefixcontractedFunction),(6,id)]
       loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
 
-      loc  .updateAsAppOrContracted     = mkAppParens [ @loc.updatedVar, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
+      loc  .updateAsAppOrContracted     = mkAppParens [ @loc.updatedVar, mkParens $ mkVar @loc.allLocalSubstsAsString, @loc.contractAppliedtoSubsts, @loc.posInfoAsLiterals ]
 
       loc  .posInfo                     = extractPositionData @range.copy
       loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
       loc  .updateAsIdExtraInfo         = mkTuple [ @loc.posInfoAsLiterals, @loc.updatedVar ]
-      loc  .updateAsCtrtExtraInfo       = mkTuple [ @loc.posInfoAsLiterals, mkApp [@loc.updatedVar, @loc.contractAsExprR] ]
+      loc  .updateAsCtrtExtraInfo       = mkTuple [ @loc.posInfoAsLiterals, mkApp [@loc.updatedVar, @loc.contractAppliedtoSubsts] ]
 
       loc  .updateAsId                  = @loc.updatedVar
       loc  .updateAsIdWithPos           = mkTuple [ @loc.posInfoAsLiterals, @loc.updatedVar ]
@@ -222,11 +222,16 @@ sem ExprR
 sem ExprR
    | VarR 
       loc  .varContract                 = snd $ envLU @lhs.freshContractVariable @name.copy @lhs.env
+      loc  .inferencedContract          = finalContract SId @lhs.debugFinalSubsts @loc.varContract
+      loc  .allLocalSubstsAsString      = show $ trimSubsts $ (finalLocalSubsts (@loc.localsubsts `o` @lhs.localsubsts) @lhs.debugFinalSubsts)
+--     
 
    | ConR
       loc  .varContract                 = snd @loc.conversionResults
       loc  .conversionResults           = convertTopTypeToContract @lhs.freshContractVariable @loc.localType
       lhs .freshContractVariable        = fst @loc.conversionResults
+      loc  .inferencedContract          = subst @lhs.globalSubsts @loc.varContract --TODO: finish this up?
+      loc  .allLocalSubstsAsString      = show SId
 
 
 
@@ -421,7 +426,6 @@ sem FunBindR
 sem AltR
    | AltR
      rhs  .argumentsToBeAddedToExpr     = [] -- An AltR pattern binding isn't going to be a function that we need to contract.
-
 
 attr Contract 
   syn  copy                                             :: self

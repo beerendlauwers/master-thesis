@@ -83,6 +83,18 @@ showDebug code pointOfEntry env =
        printBox (debug_Syn_ModuleR wrapModule)
        writeFile "debugOutput" (render $ debug_Syn_ModuleR wrapModule)
 
+showGeneratedCode :: String -> String -> CEnv -> IO ()
+showGeneratedCode code pointOfEntry env = 
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+     semModule = sem_ModuleR transformedCode
+     inhModule = Inh_ModuleR pointOfEntry [] env
+     wrapModule = wrap_ModuleR semModule inhModule
+ in do putStrLn "Code that will be used:"
+       putStrLn $ render $ pprint (removeFreeLambdas code pointOfEntry env)
+       putStrLn "\nGenerated code:"
+       putStrLn (show $ functionAppSelf_Syn_ModuleR wrapModule)
+       writeFile "debugOutput" (show $ functionAppSelf_Syn_ModuleR wrapModule)
+
 
 showDebugExample1 :: IO ()
 showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" [] (DM.fromList [])
@@ -421,6 +433,8 @@ sem FunBindR
 						,  text "tree arity:"		 BOX.<+> text (show @loc.typeTreeArity)
                                                 ,  text "arity:"                 BOX.<+> pprint @loc.arity
                                                 ,  text "arity params:"          BOX.<+> text (show @loc.parameterArity)
+                                                ,  text "raw pattern param arity:" BOX.<+> text (show @loc.patParameterArity)
+                                                ,  text "raw pats types:"       BOX.<+> text (show @loc.patsTreeTypes)
                                                 ,  text "pattern tree types:"    BOX.<+> vcat BOX.left (map (\ty -> text $ show ty) @loc.patsTreeTypes)
                                                 ,  text "type from rhs:"        BOX.<+> text (show @rhs.typeTreeType)
                                                 ,  text "__contracted code:" BOX.<+> pprint @loc.contractedFunction

@@ -305,7 +305,7 @@ finalLocalSubsts locals globals = findFixedItemInLimitedSteps globals locals
 findFixedItemInLimitedSteps :: (Substitutable a, Eq a) => Subst -> a -> a
 findFixedItemInLimitedSteps s a = 
  let trimmedSubsts = trimSubsts s
- in findFixedItemBySubstitution (countSubst trimmedSubsts) trimmedSubsts a
+ in findFixedItemBySubstitution ((countSubst trimmedSubsts) + 1) trimmedSubsts a
 
 findFixedItemBySubstitution :: (Substitutable a, Eq a) => Int -> Subst -> a -> a
 findFixedItemBySubstitution 0 s a = error "Could not find a fixed result."
@@ -381,6 +381,12 @@ fromJustMsg s = maybe (error s) id
 indexMsg :: (Show a) => [a] -> Int -> a
 indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
+
+type PropertyEnv = DM.Map String CTRT.Contract
+
+convertContract :: PropertyEnv -> Contract -> CTRT.Contract
+convertContract _ (CArr c1 c2) = (convertContract c1) CTRT.>-> (convertContract c2)
+convertContract env (CProp s)  = DJ.fromMaybe $ DM.lookup s env 
 
 isTrueContract :: String -> Bool
 isTrueContract (x:xs) = if x == 'v'

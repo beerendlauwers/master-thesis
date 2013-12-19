@@ -31,6 +31,10 @@ infixr 4 <@>
 (<@>) :: Contract -> Contract -> Contract
 (<@>) = CFunctor
 
+infixr 4 <@@>
+(<@@>) :: Contract -> (Contract, Contract) -> Contract
+o <@@> (il,ir) = CBifunctor o il ir
+
 -- Foralls the contracts
 infixr 4 >!>
 (>!>) :: Contract -> Contract -> Contract
