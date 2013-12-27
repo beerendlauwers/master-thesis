@@ -1,6 +1,9 @@
 optpragmas
 {
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeOperators #-}
 }
 
 include "../ContractInferencing/ContractTypes.ag"
@@ -14,6 +17,7 @@ import qualified Top.Types.Quantification as QN
 import qualified Top.Types.Classes as CLS
 import qualified ModuleSystem.ImportEnvironment as IE
 import qualified Control.Exception as CE
+import qualified Data.Bifunctor as BIFUNC
 }
 
 {
@@ -382,11 +386,59 @@ indexMsg :: (Show a) => [a] -> Int -> a
 indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
 
-type PropertyEnv = DM.Map String CTRT.Contract
+type PropertyEnv = forall aT. DM.Map String (CTRT.Contract aT)
 
-convertContract :: PropertyEnv -> Contract -> CTRT.Contract
-convertContract _ (CArr c1 c2) = (convertContract c1) CTRT.>-> (convertContract c2)
-convertContract env (CProp s)  = DJ.fromMaybe $ DM.lookup s env 
+{-
+convertContract :: forall aT. PropertyEnv -> Contract -> (CTRT.Contract aT)
+convertContract e (CArr c1 c2) = (CTRT.>->) (convertContract e c1) (convertContract e c2)
+convertContract env (CProp s)  = fromJustMsg ("Could not find a property called " ++ s ++ " in environment " ++ show env) (DM.lookup s env)
+convertContract e (CVar s _)   = undefined --CTRT.true -- TODO: check if every non-property variable can be replaced by true...
+convertContract e (CFunctor o i) = (convertContract e o) CTRT.<@> (convertContract e i) 
+convertContract e (CBifunctor o il ir) = (convertContract e o) CTRT.<@@> (convertContract e il,convertContract e ir)
+convertContract e c@(CQuant _ _) = convertContract e $ stripQuantifiers c
+-}
+
+class ConvertContract aT where
+ convert :: Contract -> (CTRT.Contract aT)
+
+instance ConvertContract aT where
+ convert (CVar s _) = CTRT.true
+-- convert (CProp s) = searchEnvTuple s testEnvTuple
+
+instance ConvertContract (aT CTRT.:-> bT) where
+ convert (CArr c1 c2) = (CTRT.>->) (convert c1) (convert c2)
+
+instance BIFUNC.Bifunctor f => ConvertContract (f aT bT) where
+ convert (CBifunctor o il ir) = (convert o) CTRT.<@@> (convert il,convert ir)
+
+instance Functor f => ConvertContract (f aT) where
+ convert (CFunctor o i) = (convert o) CTRT.<@> (convert i) 
+
+testEnvTuple
+  :: (Functor f, Ord a1, Ord aT1, RealFrac a2) =>
+     (([Char], CTRT.Contract (f a CTRT.:-> [a1])),
+      (([Char], CTRT.Contract aT),
+       (([Char], CTRT.Contract [aT1]),
+        (([Char], CTRT.Contract Char),
+         (([Char], CTRT.Contract a2), ([a3], CTRT.Contract aT2))))))
+testEnvTuple = ( ("isort",sortCtrt), ( ("ctrue",CTRT.true), ( ("ord",CTRT.ord), ( ("isChar_prop",isChar_prop), ( ("isInt_prop", isInt_prop), ([], CTRT.true) ) ) ) ) )
+
+testEnvTuple2 = ( ("isort",sortCtrt), ("ctrue",CTRT.true), ("ord",CTRT.ord), ("isChar_prop",isChar_prop), ("isInt_prop", isInt_prop) )
+
+--class LookupEnvTuple tupleType where
+-- lookupEnvTuple :: String -> tupleType -> (CTRT.Contract aT)
+
+--instance LookupEnvTuple (String, CTRT.Contract aT) where
+-- lookupEnvTuple nm (key,val) = if nm == key then val else error "nope"
+
+
+--searchEnvTuple nm ( (key,val), rest ) | key == [] = error "Could not find property " ++ key ++ " in property environment."
+--                                      | key == nm = val
+--                                      | otherwise = searchEnvTuple nm rest
+
+testEnv :: PropertyEnv
+--testEnv = DM.fromList [("isBiggerThan_prop", CTRT.PropInfo (\x -> fromEnum x > 5 ) (\p -> "the number must be larger than five."))]
+testEnv = DM.empty
 
 isTrueContract :: String -> Bool
 isTrueContract (x:xs) = if x == 'v'
