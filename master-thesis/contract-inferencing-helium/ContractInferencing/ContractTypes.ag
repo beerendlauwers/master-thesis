@@ -2,7 +2,7 @@ type MaybeConst  = maybe ExprR
 
 data Contract
   |  CArr        c1     :: Contract  c2  :: Contract
-  |  CProp       p      :: String -- Expr TODO: This is nasty, but it beats debugging AGs
+  |  CProp       p      :: {String}
   |  CFunctor    o      :: Contract  i   :: Contract
   |  CBifunctor  o      :: Contract  il  :: Contract    ir :: Contract
   |  CVar        v      :: String    mc  :: MaybeConst
@@ -17,6 +17,23 @@ data Subst
 
 deriving Contract: Eq, Ord
 deriving Subst: Eq
+
+
+-- instance Eq Contract where
+--   (==) (CProp a) (CProp b) = a == b
+--   (==) a         b 
+
+{
+-- data PropertyContract = forall aT. PropertyContract (CTRT.Contract aT)
+
+-- Because we've hidden the type, we have to be happy with a function that works for everything.
+-- These particular instances don't really get used, though.
+--instance Eq PropertyContract where
+-- (==) (PropertyContract a) (PropertyContract b) = True
+
+--instance Ord PropertyContract where
+-- compare (PropertyContract a) (PropertyContract b) = EQ
+}
 
 {
 infixr 4 +->
@@ -46,6 +63,6 @@ infixr 6 `o`
 o :: Subst -> Subst -> Subst
 o = SComp
 
-proptrue :: Contract
-proptrue = CProp "true"
+--proptrue :: Contract
+--proptrue = CProp (PropertyContract CTRT.true) "true"
 }

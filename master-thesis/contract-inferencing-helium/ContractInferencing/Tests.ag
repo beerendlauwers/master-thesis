@@ -260,7 +260,15 @@ cord  = CProp "ord"
 cnum  = CProp "isInt_prop"
 cchar = CProp "isChar_prop"
 
+--isChar_prop :: CTRT.Contract PropIsChar
 isChar_prop = CTRT.Prop (\x -> isAlphaNum x)
+
+newtype IsIntProp aT = IsIntProp aT
+--type PropIsInt aT = aT 
+
+--type PropIsInt = RealFrac a => CTRT.Contract a
+--isInt_prop :: PropIsInt
+isInt_prop :: RealFrac (IsIntProp aT) => CTRT.Contract (IsIntProp aT)
 isInt_prop = CTRT.Prop (\x -> x == fromInteger (round x))
 sortCtrt = (CTRT.true CTRT.<@> CTRT.true) CTRT.>-> (CTRT.ord CTRT.<@> CTRT.true)
 
