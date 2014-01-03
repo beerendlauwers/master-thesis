@@ -257,20 +257,8 @@ test_isort_env_flat = flatDebug "insert z zs = case zs of\n                [] ->
 sortC = (ctrue <@> ctrue) >-> (cord <@> ctrue)
 ctrue = CProp "true"
 cord  = CProp "ord"
-cnum  = CProp "isInt_prop"
-cchar = CProp "isChar_prop"
-
---isChar_prop :: CTRT.Contract PropIsChar
-isChar_prop = CTRT.Prop (\x -> isAlphaNum x)
-
-newtype IsIntProp aT = IsIntProp aT
---type PropIsInt aT = aT 
-
---type PropIsInt = RealFrac a => CTRT.Contract a
---isInt_prop :: PropIsInt
-isInt_prop :: RealFrac (IsIntProp aT) => CTRT.Contract (IsIntProp aT)
-isInt_prop = CTRT.Prop (\x -> x == fromInteger (round x))
-sortCtrt = (CTRT.true CTRT.<@> CTRT.true) CTRT.>-> (CTRT.ord CTRT.<@> CTRT.true)
+cnum  = CProp "num"
+cchar = CProp "char"
 
 
 -- Test: "f x = [x]\nz = (f 5, f '2')" [] (DM.fromList [("z", v100 <@@> ((ctrue <@> ctrue),ctrue <@> ctrue))])

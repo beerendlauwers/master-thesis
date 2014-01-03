@@ -1,11 +1,6 @@
 optpragmas
 {
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE UndecidableInstances #-}
 }
 
 include "../ContractInferencing/ContractTypes.ag"
@@ -19,9 +14,6 @@ import qualified Top.Types.Quantification as QN
 import qualified Top.Types.Classes as CLS
 import qualified ModuleSystem.ImportEnvironment as IE
 import qualified Control.Exception as CE
-import qualified Data.Bifunctor as BIFUNC
-import Language.Haskell.TH hiding (Range, pprint)
-import qualified Language.Haskell.TH as TH
 }
 
 {
@@ -389,121 +381,6 @@ fromJustMsg s = maybe (error s) id
 indexMsg :: (Show a) => [a] -> Int -> a
 indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
-
-type PropertyEnv = forall aT. DM.Map String (CTRT.Contract aT)
-
-getTypeInfo = 
- $(do
-    res <- reify (mkName "isInt_prop")
-    let str = TH.pprint res
-    return $ LitE (StringL str)
-  )
-
-{-
-convertContract :: forall aT. PropertyEnv -> Contract -> (CTRT.Contract aT)
-convertContract e (CArr c1 c2) = (CTRT.>->) (convertContract e c1) (convertContract e c2)
-convertContract env (CProp s)  = fromJustMsg ("Could not find a property called " ++ s ++ " in environment " ++ show env) (DM.lookup s env)
-convertContract e (CVar s _)   = undefined --CTRT.true -- TODO: check if every non-property variable can be replaced by true...
-convertContract e (CFunctor o i) = (convertContract e o) CTRT.<@> (convertContract e i) 
-convertContract e (CBifunctor o il ir) = (convertContract e o) CTRT.<@@> (convertContract e il,convertContract e ir)
-convertContract e c@(CQuant _ _) = convertContract e $ stripQuantifiers c
--}
-
---class ConvertContract2 aT where
--- convert2 :: Contract -> aT
-
---instance ConvertContract2 PropIsInt where
--- convert2 (CProp p) = isInt_prop
-
---type IsIntProp aT = aT
-
--- Vreemd idee: maak typeclass voor contracted functions:
-newtype App1 aT = App1 { fromApp1 :: aT }
-toApp1 = App1
-
-sortCtrt2 :: (Functor f, Ord (App1 bT)) => CTRT.Contract (f aT CTRT.:-> [App1 bT])
-sortCtrt2 = (CTRT.true CTRT.<@> CTRT.true) CTRT.>-> (CTRT.ord CTRT.<@> CTRT.true)
-
-newtype App2 aT = App2 { fromApp2 :: aT }
-toApp2 = App2
-
-class ContractedF aT where
- __contracted_f :: Subst -> Contract -> CTRT.PosInfo -> aT
-
-instance (Functor f, Ord (App1 bT)) => ContractedF (App1 (f aT CTRT.:-> [App1 bT])) where
- __contracted_f subst ctrt posinfo = undefined -- CTRT.assertPos [] [] 
-
--- Origineel typeclass idee
-
-class ConvertContract aT where
- convert :: Contract -> (CTRT.Contract aT)
-
---instance RealFrac (IsIntProp aT) => ConvertContract (IsIntProp aT) where
--- convert (CProp p) | p == "isInt_prop" = isInt_prop
-
-instance ConvertContract Char where
- convert (CProp p) | p == "isChar_prop" = isChar_prop
-
-instance (Functor f, Ord bT) =>  ConvertContract (f aT CTRT.:-> [bT]) where
- convert (CProp p) | p == "sortCtrt" = sortCtrt
-
---type PropIsChar = Char
---trueContract = CTRT.Prop (\_ -> True)
---instance ConvertContract PropTrue where
---  convert (Cprop _) = CTRT.true
-
---instance RealFrac (IsIntProp aT) => ConvertContract (IsIntProp aT) where
--- convert (CProp p) | p == "isInt_prop" = isInt_prop
-
-instance ConvertContract aT where
- convert (CVar s _) = CTRT.true
-
-{-
- convert (CProp p ) | p == "isort" = sortCtrt
-                    | p == "ctrue" = CTRT.true
-                    | p == "ord"   = CTRT.ord
-                    | p == "isChar_prop" = isChar_prop
-                    | p == "isInt_prop"  = isInt_prop
-                    | otherwise = CTRT.true
--}
--- convert (CProp (PropertyContract p) _) = convert2 p
-
-instance ConvertContract (aT CTRT.:-> bT) where
- convert (CArr c1 c2) = (CTRT.>->) (convert c1) (convert c2)
-
-instance BIFUNC.Bifunctor f => ConvertContract (f aT bT) where
- convert (CBifunctor o il ir) = (convert o) CTRT.<@@> (convert il,convert ir)
-
-instance Functor f => ConvertContract (f aT) where
- convert (CFunctor o i) = (convert o) CTRT.<@> (convert i) 
-
-{-
-testEnvTuple
-  :: (Functor f, Ord a1, Ord aT1, RealFrac a2) =>
-     (([Char], CTRT.Contract (f a CTRT.:-> [a1])),
-      (([Char], CTRT.Contract aT),
-       (([Char], CTRT.Contract [aT1]),
-        (([Char], CTRT.Contract Char),
-         (([Char], CTRT.Contract a2), ([a3], CTRT.Contract aT2))))))
-testEnvTuple = ( ("isort",sortCtrt), ( ("ctrue",CTRT.true), ( ("ord",CTRT.ord), ( ("isChar_prop",isChar_prop), ( ("isInt_prop", isInt_prop), ([], CTRT.true) ) ) ) ) )
-
-testEnvTuple2 = ( ("isort",sortCtrt), ("ctrue",CTRT.true), ("ord",CTRT.ord), ("isChar_prop",isChar_prop), ("isInt_prop", isInt_prop) )
--}
-
---class LookupEnvTuple tupleType where
--- lookupEnvTuple :: String -> tupleType -> (CTRT.Contract aT)
-
---instance LookupEnvTuple (String, CTRT.Contract aT) where
--- lookupEnvTuple nm (key,val) = if nm == key then val else error "nope"
-
-
---searchEnvTuple nm ( (key,val), rest ) | key == [] = error "Could not find property " ++ key ++ " in property environment."
---                                      | key == nm = val
---                                      | otherwise = searchEnvTuple nm rest
-
-testEnv :: PropertyEnv
---testEnv = DM.fromList [("isBiggerThan_prop", CTRT.PropInfo (\x -> fromEnum x > 5 ) (\p -> "the number must be larger than five."))]
-testEnv = DM.empty
 
 isTrueContract :: String -> Bool
 isTrueContract (x:xs) = if x == 'v'
