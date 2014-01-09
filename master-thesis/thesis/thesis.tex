@@ -229,13 +229,105 @@ During the writing of this thesis, several problems were encountered, sometimes 
 The most significant problems are as follows:
 
 \begin{itemize}
+\item Stutterheim's code generation system did not work correctly out of the box, and required some tinkering to get to work, a short description of which can be found at subsection ~\ref{figuringoutcodegeneration}. A more detailed overview of the final code generation system can be found at section ~\ref{codegeneration}.
 \item The existing 'typed-contracts' library provided poor feedback messages and required expansion. Subsection ~\ref{attemptsextendingtypecontracts} expands upon the attempts, and section ~\ref{modificationstotypedcontracts} explains the final modifications to the library in depth.
 \item Code generation and some AST transformations required a reliable and robust source of types. The attempts can be found subsection ~\ref{attemptssourceoftypes}, and a description of the workings of the final system is at section ~\ref{sourceoftypes}.
-\item Stutterheim's code generation system did not work correctly out of the box, and required some tinkering to get to work, a short description of which can be found at subsection ~\ref{figuringoutcodegeneration}. A more detailed overview of the final code generation system can be found at section ~\ref{codegeneration}.
+\item The last problem encountered was an underestimated one: moving from monomorphic to polymorphic contracts. Further exploration of this problem is located in subsection ~\ref{monotopolyproblem}.
 \end{itemize} 
 
 \subsection{Figuring out code generation}
 \label{figuringoutcodegeneration}
+
+\subsubsection{Short description}
+Stutterheim's code generation system takes the AST of the code to be contracted along with information about identifiers' types and contracts, and uses those to transform the original code into a fully-contracted version.
+
+A very simple example:
+
+\begin{lstlisting}
+let g x = x
+in let f x = g x
+   in (\x -> f x)
+\end{lstlisting}
+
+This would be converted into something like:
+
+\begin{lstlisting}
+let g x = x
+in let __ctrt_g ctrt x = apply (assert "g" ctrt) (app (fun (g x)))
+   in let f x = __ctrt_g {CONTRACT} x
+      in let __ctrt_f ctrt x = apply (assert "f" ctrt) (app (fun (f x)))
+         in (\x -> __ctrt_f {CONTRACT} x)
+\end{lstlisting}
+
+In short, the AST is traversed and every function definition receives a contracted version which calls the original code.
+On top of that, every function application is replaced with this contracted version and a contract is added as another parameter.
+
+\subsubsection{Issues in original code}
+The code generation proof-of-concept in Stutterheim's thesis did not generate code that compiled in GHC, as it contained several errors:
+
+\begin{itemize}
+\item Capture and application of arguments using the 'fun' and 'app' functions, respectively, was done incorrectly, resulting in an incorrectly typed contract (if valid at all). 
+\item Higher-order functions were not taken into account.
+\end{itemize}
+
+Function arguments of a higher-order function  should be not replaced by a fully-applied contracted version of the function, but by something else.
+We began by splitting up the application of arguments to a contracted function and the definition and assertion of a contracted function itself.
+As an example, the function definition
+
+\begin{lstlisting}
+f x = x
+\end{lstlisting}
+
+would now generate two more definitions:
+
+\begin{lstlisting}
+__contracted_f ctrt = assert "f" ctrt funs
+ where funs = fun (\x -> f x)
+__app_f ctrt x = app (__contracted_f ctrt) 0 x
+\end{lstlisting}
+
+This allowed us to use the \_\_contracted version for a function argument,
+and the \_\_app version for fully-applied function applications of 'f'.
+
+Expanding the code generation system was necessary to accommodate for this feature.
+But to be able to do so, we needed some information about the type of a function, namely its arity and the arity of its arguments.
+Using this information, it would be possible to differentiate between partially-applied and fully applied function applications.
+This source of type information was recovered from the contracts themselves, which closely mimick the type of a function.
+
+Differentiating between these two versions uncovered another issue, however:
+function arguments in a higher-order function must be expanded to be able to apply any other arguments to it.
+Another example:
+
+\begin{lstlisting}
+f g x = g x
+\end{lstlisting}
+
+generates the following \_\_contracted definition:
+
+\begin{lstlisting}
+__contracted_f ctrt = assert "f" ctrt funs
+ where funs = fun (\g -> (fun (\x -> f (\y -> app g y) x)))
+\end{lstlisting}
+
+This is because the argument 'g' passed to 'f' is already a contracted version of 'g'.
+Hence, we need to use 'app' to apply 'y' to 'g'.
+
+After these modifications, code was correctly generated for Stutterheim's simple language.
+
+Of course, we still lacked many features that were required for the successful (and useful!) contracting of Helium code:
+
+\begin{itemize}
+\item The use of nested lets made use of mutually recursive functions hard to do.
+\item Because of a global list of substitutions, applying a function twice to different arguments resulted in one of the functions being contracted incorrectly. In this sense, generated code was monomorphic with regard to contracts.
+\item There was no way to point to a certain location in the code, and feedback was minimal.
+\item Anonymous functions were not contracted.
+\end{itemize}
+
+Supporting mutually recursive functions proved to be relatively easy if we modeled the non-inferenced contracts after the types from the Helium compiler \todo{make section?}.
+
+Making generated code polymorphic with regard to contracts needed far more attention, the details of which can be found in subsection ~\ref{monotopolyproblem}.
+
+Providing rich feedback was also a goal. The next subsection details the initial experiments, and section ~\ref{providingricherfeedback} explains the working of the final system.
 
 \subsection{Attempts at extending typed-contracts}
 \label{attemptsextendingtypecontracts}
@@ -243,10 +335,13 @@ The most significant problems are as follows:
 \subsection{Attempts at finding a source of types}
 \label{attemptssourceoftypes}
 
+\subsection{Exploring the conversion from monomorphic to polymorphic contracts}
+\label{monotopolyproblem}
+
 \section{Source of types}
 \label{sourceoftypes}
 While developing the code generation code, it quickly became clear that the types of an identifier would be required.
-Generating contracted version of higher-order functions, for example, needed both the arity of the entire type and the arity of each of its arguments.
+Generating a contracted version of higher-order functions, for example, needed both the arity of the entire type and the arity of each of its arguments.
 
 Contract inferencing also benefited from having the types available, as they could be used to kickstart the contract inferencing and prevent the need for analysis for mutually recursive structures.
 
@@ -278,6 +373,7 @@ With this new source in place, it was trivial to keep a type environment updated
 \todo{Explain what problems there were with Jurriens code generation system and how you spent a month or two working it out}
 
 \section{Providing richer feedback}
+\label{providingricherfeedback}
 
 \subsection{Modifications to typed-contracts}
 \label{modificationstotypedcontracts}
