@@ -1,7 +1,8 @@
 \documentclass[10pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
+\usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[numbers]{natbib}
+\usepackage{bussproofs}
 \usepackage{color}
 \usepackage{listings}
 \usepackage{ amssymb }
@@ -10,10 +11,19 @@
 \lstset{language=Haskell}
 \lstset{breaklines=true}
 \lstset{basicstyle=\scriptsize\sffamily}
+\lstset{frame=single}
+\lstset{showstringspaces=false}
+\lstset{captionpos=b}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{pdfpages}
 
+
+
+\newcommand{\W}{$\mathcal{W}$}
+\newcommand{\CW}{$\mathcal{CW}$}
+\newcommand{\CHW}{$\mathcal{CHW}$}
 
 \newcommand{\sref}[1]{Section~\ref{#1}}
 \newcommand{\annotate}[3]{
@@ -41,7 +51,7 @@
 \maketitle
 
 
-\section{Abstract}
+\chapter{Abstract}
 \todo{Finish up abstract}
 Ask-Elle is a programming tutor created by Alex \citet{Gerdes:2012:phd} for his PhD Thesis. It utilizes (transformations of) model solutions to provide feedback to students on their progress.
 However, if a student's program cannot be reduced to such a model solution, providing helpful feedback becomes hard to do. 
@@ -103,15 +113,15 @@ This research proposal explores what needs to be done in order to attain that go
 
 \tableofcontents
 
-\section{Introduction}
+\chapter{Introduction}
 \todo{Talk about Ask-Elle and Jurriens work}
 In this thesis, we extend the contract inferencing system developed by Jurri\"en Stutterheim and integrate it with the Ask-Elle programming tutor.
 
 There are three main parts to this thesis:
 firstly, the modifications to the original contract inferencing system are discussed and implemented. Secondly, code generation of contracted code is explained; Thirdly, the integration with the Ask-Elle programming tutor is laid out and developed.
 
-\section{Problem description}
-\subsection{Research question}
+\chapter{Problem description}
+\section{Research question}
 Having embedded contract inferencing in Ask-Elle, does this new functionality provide students with more detailed feedback than without?
 Three main research goals are set up to achieve this.
 
@@ -121,7 +131,7 @@ Three main research goals are set up to achieve this.
 	\item{\textbf{Goal three}} Analyze the testing results and report our findings.
 \end{description}
 
-\subsubsection{Goal One: Embedding the contract inferencing system}
+\subsection{Goal One: Embedding the contract inferencing system}
 
 
 Figure depicts an overview of the steps involved in using the contract inferencing system.
@@ -170,7 +180,7 @@ This transformed error message will be returned to the student. The final step o
 	\item{\textbf{Step 4}} Implement an error message transformer that "cleans up" the generated error message so it is understandable by the student, and feed it to the Ask-Elle feedback mechanism.
 \end{description}
 
-\subsubsection{Goal Two: Perform testing with students}
+\subsection{Goal Two: Perform testing with students}
 
 In August, Utrecht University hosts an Applied Functional Programming summer school.
 This summer school course specifically targets students and participants who are not yet very knowledgeable about functional programming in general, and Haskell in particular.
@@ -219,7 +229,7 @@ So, our final steps for this goal are:
 	\item{\textbf{Step 5}} Collect survey results.
 \end{description}
 
-\subsubsection{Goal Three: Analyze the testing results and report findings}
+\subsection{Goal Three: Analyze the testing results and report findings}
 
 Having collected the survey results, all that remains to be done is to analyze them and determine if the embedding of the contract inferencing system in Ask-Elle has increased the usefulness of feedback containing a counterexample provided to students, or not:
 
@@ -233,16 +243,21 @@ After processing the results, we will present our findings in a presentation, as
 	\item{\textbf{Step 2}} Report findings and problems encountered / lessons learned during this thesis in a presentation.
 \end{description}
 
-\section{Background}
+\chapter{Background}
+In this chapter, we will familiarize the reader with some concepts that will be used onwards in this thesis, the most important ones being contracts and the notion of inferring types and contracts.
+
+
 \section{Contracts}
-\subsection{Inferencing}
-\subsection{Attribute grammars}
+\section{Inferencing}
+\section{Attribute grammars}
 
-\section{Encountered issues}
-During the writing of this thesis, several problems were encountered, sometimes producing more in the process of solving them.
-The most significant problems are as follows:
+\chapter{Approach}
+Our first order of affairs was to read and test the source code provided by Stutterheim, which contained the contract inferencing system and the code generation system.
+The latter system had some issues, and working those out provided the first step to our final code generation system.
+On the way, we encountered several more problems, which we will discuss in the remainder of this section.
+Each subsection focuses on initial research and attempts at solving the problem, and concludes with a reference to a section describing the workings of the final solution.
 
-\subsection{Overview}
+\section{Overview}
 
 \begin{itemize}
 \item Stutterheim's code generation system did not work correctly out of the box, and required some tinkering to get to work, a short description of which can be found at subsection ~\ref{figuringoutcodegeneration}. A more detailed overview of the final code generation system can be found at section ~\ref{codegeneration}.
@@ -251,15 +266,15 @@ The most significant problems are as follows:
 \item The last problem encountered was an underestimated one: moving from monomorphic to polymorphic contracts. Further exploration of this problem is located in subsection ~\ref{monotopolyproblem}.
 \end{itemize} 
 
-\subsection{Figuring out code generation}
+\section{Figuring out code generation}
 \label{figuringoutcodegeneration}
 
-\subsubsection{Short description}
+\subsection{Short description}
 Stutterheim's code generation system takes the AST of the code to be contracted along with information about identifiers' types and contracts, and uses those to transform the original code into a fully-contracted version.
 
 A very simple example:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=A simple expression in Stutterheim's $\lambda_c$ language.]
 let g x = x
 in let f x = g x
    in (\x -> f x)
@@ -267,7 +282,7 @@ in let f x = g x
 
 This would be converted into something like:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=The same expression after going through code generation.]
 let g x = x
 in let __ctrt_g ctrt x = apply (assert "g" ctrt) (app (fun (g x)))
    in let f x = __ctrt_g {CONTRACT} x
@@ -278,7 +293,7 @@ in let __ctrt_g ctrt x = apply (assert "g" ctrt) (app (fun (g x)))
 In short, the AST is traversed and every function definition receives a contracted version which calls the original code.
 On top of that, every function application is replaced with this contracted version and a contract is added as another parameter.
 
-\subsubsection{Issues in original code}
+\subsection{Issues in original code}
 The code generation proof-of-concept in Stutterheim's thesis did not generate code that compiled in GHC, as it contained several errors:
 
 \begin{itemize}
@@ -320,7 +335,7 @@ f g x = g x
 
 generates the following \code{\_\_contracted} definition:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Output of the \_\_contracted function definition of the above example.]
 __contracted_f ctrt = assert "f" ctrt funs
  where funs = fun (\g -> (fun (\x -> f (\y -> app g y) x)))
 \end{lstlisting}
@@ -348,10 +363,9 @@ Providing rich feedback was also a goal. Details can be found in section ~\ref{p
 
 \todo{Section for transformations done?}
 
-Finding a reliable source of types proved daunting. The next subsection goes into greater detail.
-An explanation of the final system can be found in section ~\ref{sourceoftypes}.
+Finding a reliable source of types proved daunting, which is what the next subsection will cover.
 
-\subsection{Attempts at finding a source of types}
+\section{Attempts at finding a source of types}
 \label{attemptssourceoftypes}
 While developing the code generation code, it quickly became clear that the types of an identifier would be required.
 
@@ -392,29 +406,35 @@ As an added bonus, this type collection needed to be ran only once: a vast impro
 
 Further details on the final source of types can be found in section ~\ref{sourceoftypes}.
 
-\subsection{Exploring the conversion from monomorphic to polymorphic contracts}
+\section{Exploring the conversion from monomorphic to polymorphic contracts}
 \label{monotopolyproblem}
 
 Stutterheim's contract inferencing algorithm is monomorphic with relation to contracts.
 What this means is that if a contracted function is applied more than once, to different arguments, only one of the function applications will yield a valid contract.
+Naturally, we would like to be able to apply a function to different arguments without issue.
 
 Let's look at a short example to clarify the problem.
 
-\subsubsection{Problem example}
+\subsection{Problem example}
 We want to run contract inferencing on the following piece of code:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=An example code snippet that may generate incorrect code under Stutterheim's contract inferencing algorithm.]
 f x = [x]
 z = (f 'a', f 5)
 \end{lstlisting}
 
-We can either leave the contract environment empty, or seed it with some initial values, which we will do here.
-The contract of \code{z} will be \code{true <@@> (true <@> isChar, true <@> isNum)}, where \code{true} is the most general contract you can have and never fails, and \code{isChar} and \code{isNum} check if the argument that is provided to them is a character or a number, respectively.
+We can either leave the contract environment empty, or seed it with some initial values, as you can see in listing \ref{lst.contractz}.
+
+\begin{lstlisting}[caption=Contract of \code{z}.,label=lst.contractz]
+true <@@> (true <@> isChar, true <@> isNum)}
+\end{lstlisting}
+
+The used contract are as follows: \code{true} is the most general contract you can have and never fails. \code{isChar} and \code{isNum} check if the argument that is provided to them is a character or a number, respectively.
 \todo{We should write this all a bit more formally, of course.}
 
 With this environment, contract inferencing generates the following substitutions:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=List of substitutions generated by running Stutterheim's contract inferencing algorithm.]
 (m8 +-> (true <@> isNum)) `o` (m7 +-> (true <@> isChar)) `o` (v1 +-> m8) `o` (v1 +-> m7)
 \end{lstlisting}
 
@@ -425,7 +445,7 @@ Both types of variables are converted to the \code{true} contract during code ge
 Armed with this knowledge, let's look at the universally quantified contract for \code{f}:
 
 \todo{This contract is incorrect, update.}
-\begin{lstlisting}
+\begin{lstlisting}[caption=The inferred contract for \code{f}.]
 (v1 >-> v1)
 \end{lstlisting}
 
@@ -434,7 +454,7 @@ The problem with placing local substitutions among global ones becomes apparent:
 In our example, the contracted version of \code{z} could be as follows:
 
 \todo{This contract is incorrect, update.}
-\begin{lstlisting}
+\begin{lstlisting}[caption=Contracted version of \code{z} that will fail typechecking.]
 z = (__app_f (true <@> isNum) 'a', __app_f (true <@> isNum) 5)
 \end{lstlisting}
 
@@ -444,7 +464,7 @@ For instance, it is possible to have a contract that checks if a number is a nat
 If such a contract were to be erroneously applied to a number that is not a natural number, the generated code would typecheck, but fail during runtime.
 This breaks Stutterheim's proposition that "(an) inferred contract will never fail assertion for that expression". \todo{Source diiis}
 
-\subsubsection{Proposed solution}
+\subsection{Proposed solution}
 Global and local substitutions must be kept apart from each other.
 Whenever unification between two contracts takes place, the resulting substitutions are to be split up in a global and local group:
 \begin{itemize}
@@ -459,7 +479,7 @@ However, these local substitutions will refer to old global contract variables, 
 At first, it appears logical to apply these substitutions during code generation, and not during runtime, but this is not optimal.
 Let us look at an example to see why.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Expanded version of the previous code snippet.]
 f x = g x
 g x = f [x]
 z = (f 'a', f 5)
@@ -468,15 +488,16 @@ z = (f 'a', f 5)
 The example has been expanded to include function \code{g}, which is called by \code{f}.
 The contract environment remains the same as before.
 The inferred contract for both \code{f} and \code{g} is once again '(v1 >-> v1)'. \todo{This contract is incorrect, update.}
-The contracted code for \code{z} also remains the same:
+The contracted code for \code{z} is now correct:
 \todo{This contract is incorrect, update.}
-\begin{lstlisting}
-z = (__app_f (true <@> isNum) 'a', __app_f (true <@> isNum) 5)
+
+\begin{lstlisting}[caption=Contracted version of \code{z} now typechecks.]
+z = (__app_f (true <@> isChar) 'a', __app_f (true <@> isNum) 5)
 \end{lstlisting}
 
 Let's look at the rest of the generated code:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Rest of the output of code generation.]
 __app_f ctrt x = appParam (__contracted_f ctrt) x
 __contracted_f ctrt = assertPos "f" ctrt funs
     where
@@ -494,13 +515,15 @@ Calling the contracted version of \code{f} will call the contracted version of \
 In other words, the local substitutions which made the contract that was passed to \code{\_\_app\_f} more specific, are not utilized by \code{\_\_app\_g}.
 The solution appears trivial: pass the local substitutions as another argument to the \code{\_\_app} and \code{\_\_contracted} functions and apply them at runtime.
 
+\subsection{Applying substitutions at runtime}
+
 Unfortunately, it is not so simple.
 Doing substitutions at runtime instead of statically means a runtime conversion is necessary between the AST contract datatype and the datatype from the \code{typed-contracts} library:
 The AST datatype is a simple UUAGC-generated datatype without a phantom type, and \code{typed-contracts}'s datatype is a GADT with a phantom type used for a type-level representation of the contract.
 Conversion between the two means we need to be able to tell what this phantom type should be. This is especially a problem when we need to convert between property contracts (\code{Prop} and \code{PropInfo}), because each property contract has a different phantom type, and the only information available in the AST datatype equivalent is a \code{String}.
 Several ideas were tested to complete the conversion, the first of which was to use a typeclass:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Attempt at using a typeclass to recover the extra type information.]
 class ConvertContract aT where
  convert :: Contract -> (Contract aT)
 
@@ -539,7 +562,7 @@ Even if phantom types were supported, the generation code would have had to have
 
 What about using type synonyms and the aforementioned typeclass?
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Attempt at using type synonyms to choose the correct instances.]
 instance ConvertContract aT where
   convert (CVar s _) = true
 type IsIntProp aT = aT
@@ -552,7 +575,7 @@ Simon Peyton-Jones and Oleg Kiselyov (http://www.haskell.org/haskellwiki/GHC/Adv
 
 After type synonyms, newtypes were tried:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Attempt at using newtypes to choose the correct instances.]
 newtype IsIntProp aT = IsIntProp aT
 instance RealFrac (IsIntProp aT) => ConvertContract (IsIntProp aT) where
   convert (CProp p) | p == "isInt_prop" = isInt_prop
@@ -582,21 +605,666 @@ Some of the proposed solutions are promising, but could not be explored further 
 As such, the current code generation system generates monomorphic code that may fail when a function is applied to different contracts.
 Rolling back to the polymorphic version is, of course, still possible, and is left as future work (see section ~\ref{futurework}).
 
-\section{Source of types}
+\chapter{Final system design}
+This chapter explores the details of the final design of the entire code generation system.
+
+First, we introduce the syntax for our abstract syntax tree (AST), which is a slightly modified version of the syntax Ask-Elle uses.
+We will then follow the flow of the abstract syntax tree as it goes through the entire system, starting with several AST transformations, after which we will enter the code generation system, which consists of contract generation and -inferencing, and code generation.
+The next two pages provide a visual overview of the system's flow.
+Each node has a number that will be used when referring to it in the description.
+
+\todo{Add these numbers to the image.}
+
+\section{Syntax}
+We have slightly modified the syntax used by the rest of the Ask-Elle system:
+\begin{itemize}
+	\item Fields to store range information were added. Range information consists of the line and column number of the node and its source (standard input, file, unknown) if this information is available.
+	\item In Ask-Elle, constructors that use a list of patterns or expressions use the \code{Pats} and \code{Exprs} type synonyms, respectively. For example, expressions that describe a tuple or a list both use \code{Exprs}. However, from the viewpoint of contract inferencing, these expressions could not be more different! The solution is simple: tuples and lists in patterns and expressions use the type synonyms \code{ListPatsR}, \code{TuplePatsR}, \code{ListExprR} and \code{TupleExprR}. All other constructors remain unchanged.
+\end{itemize}
+
+This modified syntax can be downcast to the regular Ask-Elle syntax, and partially upcast to the Helium syntax, as during conversion from the Helium AST to the Ask-Elle syntax, some nodes are thrown away or only partially mapped.
+
+\begin{lstlisting}[caption=Our modified Ask-Elle syntax.]
+-- | A Haskell source module
+data ModuleR
+   | ModuleR
+      name     :: MaybeNameR
+      body     :: BodyR
+      range    :: RangeR
+
+data BodyR
+   | BHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | BodyR
+      decls    :: DeclsR
+      range    :: RangeR
+
+-- | Declarations
+data DeclR
+   | DHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | DEmptyR
+      range    :: RangeR
+   | DFunBindsR
+      funbinds :: FunBindsR
+      range    :: RangeR
+   | DPatBindR
+      pat      :: PatR
+      rhs      :: RhsR
+      range    :: RangeR
+
+type DeclsR = [DeclR]
+
+-- | Expressions
+data ExprR
+   | HoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | FeedbackR
+      feedback :: String
+      expr     :: ExprR
+      range    :: RangeR
+   | MustUseR
+      expr     :: ExprR
+      range    :: RangeR
+   | CaseR
+      expr     :: ExprR
+      alts     :: AltsR
+      range    :: RangeR
+   | ConR
+      name     :: NameR
+      range    :: RangeR
+   | IfR
+      cond     :: ExprR
+      then     :: ExprR
+      else     :: ExprR
+      range    :: RangeR
+   | InfixAppR
+      left     :: MaybeExprR
+      op       :: ExprR
+      right    :: MaybeExprR
+      range    :: RangeR
+   | LambdaR
+      pats     :: PatsR
+      expr     :: ExprR
+      range    :: RangeR
+   | LetR
+      decls    :: DeclsR
+      expr     :: ExprR
+      range    :: RangeR
+   | LitR
+      lit      :: LiteralR
+      range    :: RangeR
+   | AppR
+      fun      :: ExprR
+      args     :: ExprsR
+      range    :: RangeR
+   | ParenR
+      expr     :: ExprR
+      range    :: RangeR
+   | TupleR
+      exprs    :: TupleExprR
+      range    :: RangeR
+   | VarR
+      name     :: NameR
+      range    :: RangeR
+   | EnumR
+      from     :: ExprR
+      then     :: MaybeExprR
+      to       :: MaybeExprR
+      range    :: RangeR
+   | ListR
+      exprs    :: ListExprR -- We use a new type here because for lists, the inferred contracts must hold on all elements.
+      range    :: RangeR
+   | NegR
+      expr     :: ExprR
+      range    :: RangeR
+
+type ExprsR = [ExprR]
+type ListExprR = [ExprR]
+type TupleExprR = [ExprR]
+
+data MaybeExprR
+   | NoExprR
+   | JustExprR
+      expr     :: ExprR
+
+-- | Alternatives
+data AltR
+   | AHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | AltR
+      feedback :: {Maybe String}
+      pat      :: PatR
+      rhs      :: RhsR
+      range    :: RangeR
+   | AltEmptyR
+      range    :: RangeR
+
+type AltsR = [AltR]
+
+-- | Function bindings
+data FunBindR
+   | FBHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | FunBindR
+      feedback :: {Maybe String}
+      name     :: NameR
+      pats     :: PatsR
+      rhs      :: RhsR
+      range    :: RangeR
+
+type FunBindsR = [FunBindR]
+
+-- | Guarded expressions
+data GuardedExprR
+   | GExprR
+      guard    :: ExprR
+      expr     :: ExprR
+      range    :: RangeR
+
+type GuardedExprsR = [GuardedExprR]
+
+-- | Literal values
+data LiteralR
+   | LCharR
+      val      :: Char
+      range    :: RangeR
+   | LFloatR
+      val      :: Float
+      range    :: RangeR
+   | LIntR
+      val      :: Int
+      range    :: RangeR
+   | LStringR
+      val      :: String
+      range    :: RangeR
+
+-- | Names
+data NameR
+   | IdentR
+      name     :: String
+      range    :: RangeR
+   | OperatorR
+      name     :: String
+      range    :: RangeR
+   | SpecialR
+      name     :: String
+      range    :: RangeR
+
+data MaybeNameR
+   | NoNameR
+   | JustNameR
+      name     :: NameR
+
+-- | Patterns
+data PatR
+   | PHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | PConR
+      name     :: NameR
+      pats     :: PatsR
+      range    :: RangeR
+   | PInfixConR
+      left     :: PatR
+      name     :: NameR
+      right    :: PatR
+      range    :: RangeR
+   | PListR  -- We use a new type here because for lists, the inferred contracts must hold on all elements.
+      pats     :: ListPatsR
+      range    :: RangeR
+   | PLitR
+      lit      :: LiteralR
+      range    :: RangeR
+   | PParenR
+      pat      :: PatR
+      range    :: RangeR
+   | PTupleR
+      pats     :: TuplePatsR
+      range    :: RangeR
+   | PVarR
+      name     :: NameR
+      range    :: RangeR
+   | PAsR
+      name     :: NameR
+      pat      :: PatR
+      range    :: RangeR
+   | PWildcardR
+      range    :: RangeR
+
+type PatsR = [PatR]
+type ListPatsR = [PatR]
+type TuplePatsR = [PatR]
+
+-- | Right hand side
+data RhsR
+   | RhsR
+      expr     :: ExprR
+      where    :: DeclsR
+      range    :: RangeR
+   | GRhsR
+      gexprs   :: GuardedExprsR
+      where    :: DeclsR
+      range    :: RangeR
+
+data RangeR
+    | RangeR
+        rangestart                    :: PositionR
+        rangestop                     :: PositionR
+
+data PositionR
+    | PositionR
+        filename                 :: String
+        line                     :: Int
+        column                   :: Int
+    | UnknownR
+\end{lstlisting}
+
+\section{Overview}
+
+\includepdf[pages={1}]{systemoverview.pdf}
+\includepdf[pages={2}]{systemoverview.pdf}
+
+\section{AST transformations}
+Before passing the AST to the code generation system, we apply several transformations to it to facilitate contract inferencing and code generation.
+
+\subsection{Capture lambdas}
+Anonymous functions cannot be contracted, as a name is required to properly  perform code generation.
+Our solution is simple: bind all lambda functions to a generated name and place them in the where-clause of the original definition.
+A simple example:
+
+\begin{lstlisting}
+f = \x -> x
+\end{lstlisting}
+
+is transformed into
+
+\begin{lstlisting}[caption=Result of lambda capture transformation.]
+f = __lam0                   
+ where                    
+  __lam0 = \x -> x
+\end{lstlisting}
+
+Because of referential transparency, the behaviour of the program is not altered.
+
+\subsection{Rewrite point-free functions}
+The library of our choice, \code{typed-contracts}, does not support asserting partially applied functions.
+Because of this, all function arguments are made available on the left-hand side and applied to the right-hand side of a definition.
+To continue with our previous example,
+
+\begin{lstlisting}
+f = __lam0                   
+ where                    
+  __lam0 = \x -> x
+\end{lstlisting}
+
+is now transformed into
+
+\begin{lstlisting}[caption=Result of $\eta$-abstraction transformation.]
+f __a0 = (__lam0) __a0                
+ where                    
+  __lam0 __a0 = (\x -> x) __a0
+\end{lstlisting}
+
+This is essentially $\eta$-abstraction.
+The information required for this transformation is provided by the type source,  which resides inside the code generation system.
+
+\subsection{Rewrite infix function applications}
+To cut down on duplicate code for both contract inferencing and code generation, we convert infix function applications to regular function applications.
+In other words, we remove a layer of syntactic sugar.
+
+\subsection{Expand function applications}
+To keep contract inferencing simple, we split up function applications that are applied to multiple arguments into several nested function applications.
+For example:
+
+\begin{lstlisting}
+f g x y z = g x y z
+\end{lstlisting}
+
+is transformed into
+
+\begin{lstlisting}[caption=Result of function application expansion transformation.]
+f g x y z = ((g x) y) z
+\end{lstlisting}
+
+This allows us to use Stutterheim's original contract inferencing code for function applications.
+
+\subsection{Expand lambda arguments}
+The reasons for this transformation are similar as the previous one: keeping contract inferencing simple and being able to reuse Stutterheim's contract inferencing code.
+A lambda function with multiple arguments is split up into nested lambda functions:
+
+\begin{lstlisting}
+f = \g x y z -> g x y z
+\end{lstlisting}
+
+is transformed into
+
+\begin{lstlisting}[caption=Result of lambda argument expansion transformation.]
+f = \g -> (\x -> (\y -> (\z -> g x y z)))
+\end{lstlisting}
+
+\section{Source of types and initial contracts}
 \label{sourceoftypes}
+After these transformations, the AST is passed to the type source and to the code generator.
 
+\subsection{Type source}
+The type source takes the AST and calls a modified version of the Helium type inferencing code, which produces as doubly linked tree that resembles the input AST.
+Each node in the tree holds an attribute list of a 3-tuple of information: 
+\begin{itemize}
+\item A textual representation of the piece of code, for debugging purposes.
+\item A Helium AST of the piece of code.
+\item If applicable, the type of the piece of code.
+\end{itemize}
 
-\todo{Give example of how this simplifies contract inferencing a LOT}
+This "type tree" is generated in the \code{ModuleR} node of the AST, and is then passed down to the body of the module.
 
+For the most part, the type tree format is the same as the code AST, the biggest discrepancies being situated in the following nodes:
 
+\begin{description}
+	\item{GRhsR:} The attribute list is of the form:
+\begin{lstlisting}
+[guard,expr,guard,expr,...,wheredecls]
+\end{lstlisting}
+	\item{CaseR:} An alternative has two entries in the attribute list: one for the left-hand side, and one for the right-hand side.
+	\item{EnumR:} The type tree is ambiguous here: both \code{[1..2]} and \code{[1,2..]} return the same type tree. The code AST is inspected to determine what form is used, and the type tree is split up accordingly.
+	\item{FunBindR:} A type is not available for a function binding, so we must synthesize one. This is done by concatenating all the types of any patterns of the function binding and the type of the right-hand side. 
+\end{description}
+
+Types are available for every constructor of the following AST types:
+\begin{itemize}
+	\item ExprR
+	\item PatR
+	\item AltR
+	\item FunBindR
+	\item RhsR
+	\item GuardedExprR
+\end{itemize}
+
+\subsection{Initial contracts}
+After providing types, a contract environment is constructed that holds the contracts for all identifiers (which consists of function identifiers and pattern identifiers) currently in scope at a certain node of the AST.
+
+The initial contracts are generated by passing a \code{TpScheme} value (from the \code{top} library) to the \code{convertTopTypeToContract} function, which strips down the type scheme to its primitive type and inspects it, converting it appropriately.
+This list shows which pattern match relates to which action:
+\begin{description}
+	\item{\code{(TVar i)} :} A \code{TVar} contains an integer \code{i} that corresponds to a specific type. That integer is prefixed with the character 'v' to indicate the initial contract is a universally quantified contract variable. For example, the type \code{a -> a} will be converted to the contract \code{v1 >-> v1}.
+	\item{\code{(P.TApp (P.TApp (P.TCon "->") t1) t2)} :} A function application. \code{t1} and \code{t2} are also converted and put in a non-dependent function contract. For example, the type \code{a -> b} will be converted to the contract \code{v1 >-> v2}.
+	\item{\code{(P.TApp (P.TCon x) t1) | x `elem` ["Maybe","[]"]} :} Both the \code{Maybe} type and the list type are converted to a functor contract.
+	\item{\code{(P.TApp (P.TApp (P.TCon x) t1) t2) | x `elem` ["Either","(,)"]} :} Both the \code{Either} type and the 2-tuple type are converted to a bifunctor contract.
+	\item{\code{(P.TCon x) | x `elem` ["Int","Char","Float","Bool","String"]} :} Literals of these types are converted to a universally quantified contract variable. Such a contract variable is provided with a fresh integer that does not collide with the set of integers used in the \code{TVar} constructors.
+\end{description}
+
+3-tuples and 4-tuples are also supported, but have been left out for brevity.
+
+At the moment, user-defined data types are unsupported.
+However, a data type environment is available and could be queried for the data type's general form and its name, allowing us to construct a pattern match.
+Alternatively, one could generate a typeclass instance for each defined data type using Template Haskell or some other form of preprocessing.
+Manually adding new data types to the conversion function is possible as well, of course.
+
+These initial contracts are of great use for mutually recursive functions.
+Let's look at the initial contracts that are generated for the following (not quite useful) example:
+
+\begin{lstlisting}[caption=Simple mutually recursive function example.]
+f x = g x
+g x = f x
+\end{lstlisting}
+
+which generate the following types:
+\begin{description}
+	\item{\code{f} :} \code{v1 >-> v2}
+	\item{\code{g} :} \code{v1 >-> v2}
+\end{description}
+
+From the types, it is obvious that the two functions are very closely intertwined, as they both take the same form of contracted input and the same form of contracted output.
+
+These initial contracts are passed to the contract inferencing system to simplify inferencing greatly.
 
 \section{Contract Inferencing}
+Our contract inferencing system is based upon Stutterheim's work, and it is advised you read the chapters on contract inferencing if you are interested in the details, which we may leave out if they are the same.
 
-\todo{Tell a bit about contract inferencing for functional languages}
-\todo{Explain what problems there were with Jurriens code generation system and how you spent a month or two working it out}
+Our algorithm is also based on the Damas and Milner type inferencing system, with a few modifications and simplifications due to our use of a type source.
+
+Our goals for contract inferencing remain the same as Stutterheim's:
+\begin{enumerate}
+	\item Infer a well-typed contract for each function in a program;
+	\item Inferred contracts must allow a (possibly non-strict) subset of the values that the type allows, and
+	\item The most general contract inferred by the inferencing system must never fail during assertion.
+\end{enumerate}
+
+Because we use Algorithm \CW ~as a starting point, our algorithm, too, is based on Milner's Algorithm \W, and we make use of Robinson's unification algorithm as well.
+The resulting algorithm is called Algorithm \CHW, and is discussed in
+
+\subsection{Formal description of the contract language}
+Figure \ref{fig:contract-grammar} described our contract language, which is a subset of that of Stutterheim's contract language.
+
+While Stutterheim preferred to have specific terminals for data types literals, we felt this over-encumbered the contract language.
+Instead, we have replaced this multitude of terminals with a single \code{literal} terminal.
+
+\begin{figure}[ht]
+\begin{center}
+\begin{lstlisting}[mathescape]
+  -- Contracts
+  c ::=  $\rho_{\alpha}$			-- User-defined concrete contract
+      |  $c_{\alpha}$ >-> $c_{\beta}$			-- Function contracts
+      |  $c_{\alpha}$ <@> $c_{\beta}$			-- Functor contracts
+      |  $c_{\alpha}$ <@@> ($c_{\beta}$, $c_{\gamma}$)		-- Bifunctor contracts
+      |  $true_{\alpha}$			-- true contract
+      |  $false_{\alpha}$			-- false contract
+      |  $literal_{\alpha}$			-- literal contract
+\end{lstlisting}
+\end{center}
+\caption{\label{fig:contract-grammar}Simplified grammar for the contract language.}
+\end{figure}
+
+Stutterheim describes several definitions, properties and relations between contracts in his thesis.
+These remain valid in our system.
+
+\todo{Most of this was done by Jurrien, although we can leave out some parts.}
+
+
+
+\subsection{The contract inferencing system}
+In this section, we will explore a system that allows us to infer a contract from an expression.
+This system is based upon Stutterheim's work, and this section will roughly follow the same structure as the section in his thesis.
+
+In our system, we use a contract environment $\Gamma$ which maps contract variables to contracts.
+\todo{Should we just say that we use the same env system as Jurrien?}
+A contract environment is defined as such:
+
+\begin{figure}[ht]
+$\Gamma ::= [\!~]\!~||\!~\Gamma_1[x \mapsto c]$
+\end{figure}
+
+So, $\Gamma$ can either be completely empty, or consist of an environment $\Gamma_1$ that is extended by a mapping from a contract variable $x$ to a contract $c$.
+
+We use the same notation as Stutterheim for contract environments:
+\begin{itemize}
+	\item $\Gamma(x)=c$ means that the right-most binding for $x$ in $\Gamma$ maps $x$ to $c$.
+	\item $\Gamma \vdash e : c$ denotes that, in environment $\Gamma$, the expression $e$ has the contract $c$.
+	\item $fc(\sigma)$ indicates the set of $true$ contracts that are free in contract schema $\sigma$.
+	\item $fc(\Gamma)$ indicates the set of $true$ contracts that are free in the codomain of $\Gamma$.
+\end{itemize}
+
+The \code{gen} and \code{inst} support functions used by Stutterheim are deprecated by our use of a type source, so we will omit them in our description.
+In place of these functions, we define the support function \code{ts}, which takes an identifier $i$ and as many fresh $true$ contracts as necessary to perform a conversion from the type of $i$ to a contract $c$.
+
+\subsubsection{Typing rules}
+
+\begin{figure}[ht]
+\begin{center}
+  \RightLabel{\textsc{C-PHole}}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $? :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PWildcard}}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $* :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PCon}}
+  \AxiomC{$\Gamma \vdash$ $e_1 :: c_2 >-> c$}
+  \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
+  \BinaryInfC{$\Gamma \vdash$ $e_1$ $e_2 :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PVar}\quad}
+  \AxiomC{$\forall{i}\in[0\ldots{n}]$ $fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $p :: ts(p,[0\ldots{n}])$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PAs}\quad}
+  \AxiomC{$\forall{i}\in[0\ldots{n}]$ $fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $p@(ps) :: ts(p,[0\ldots{n}])$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PCons}\quad}
+  \AxiomC{$\Gamma \vdash$ $x :: c$}
+  \AxiomC{$\Gamma \vdash$ $xs :: list <@> c$}
+  \BinaryInfC{$\Gamma \vdash$ $(x : xs) :: list <@> c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PNil}\quad}
+  \AxiomC{$fresh(i, j)$}
+  \UnaryInfC{$\Gamma \vdash$ $[] :: true_i <@> true_j$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PTuple}\quad}
+  \AxiomC{$\Gamma \vdash$ $x :: c_1$}
+  \AxiomC{$\Gamma \vdash$ $y :: c_2$}
+  \AxiomC{$fresh(i)$}
+  \TrinaryInfC{$\Gamma \vdash$ $(x, y) :: true_i <@@> (c_1, c_2)$}
+  \DisplayProof
+  \vskip 0.5em
+%  \RightLabel{\textsc{C-PTupleNil}\quad}
+%  \AxiomC{$\forall{i}\in[0\ldots{n}]$ $\Gamma \vdash$ $t_i :: c_i$}
+%  \AxiomC{$\forall{j}\in[0\ldots{n-1}]$ $fresh(j)$}
+%  \BinaryInfC{$\Gamma \vdash$ $(t_0, ..., t_i) :: true_0 <@@> (c_0, true_1 <@@> (..., true_j <@@> (c_i-1, c_i) ) )$}
+%  \DisplayProof
+%  \vskip 0.5em
+  \RightLabel{\textsc{C-PLit}}
+  \AxiomC{l is a literal}
+  \AxiomC{$fresh(i)$}
+  \BinaryInfC{$\Gamma \vdash$ $l :: literal_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PParen}\quad}
+  \AxiomC{$\Gamma \vdash$ $p :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $(p) :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-PInfixCon}}
+  \AxiomC{$\Gamma \vdash$ $e_1 :: c_1$}
+  \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
+  \AxiomC{$\Gamma \vdash \oplus$ $:: c_1 >-> c_2 >-> c_3$}
+  \TrinaryInfC{$\Gamma \vdash e_1 \oplus e_2 :: c_3$}
+  \DisplayProof
+\end{center}
+\caption{\label{fig:pattern-inference-rules}Contracting rules for patterns.}
+\end{figure}
+
+Contracts for patterns are collected purely from the type source using the \code{ts} support function, which is used in the \code{C-PVar} and \code{C-PAs} contracting rules.
+Let us go over the rules in figure \ref{fig:pattern-inference-rules}, except for \code{PCon}, which is the same as in Damas and Milner's work.
+
+Please note that while our syntax contains a \code{PListR} data constructor, we use the two contracting rules \code{C-PCons} and \code{C-PNil} to describe its contracting behaviour. 
+This is how the \code{PListR} constructor works behind the scenes.
+We will follow this convention for all constructors that describe lists.
+
+\begin{description}
+	\item{\code{C-PHole} and \code{C-PWildcard} :} In both cases, a fresh contract is generated because a more specific contract cannot be provided.
+	\item{\code{C-PVar} and \code{C-PAs} :} Because the type source may require a number of fresh contracts between $0$ and $n$, we ensure that we create sufficient fresh contracts. The pattern identifier $p$ is then passed to \code{ts} along with the fresh contracts, which generates the final contract for $p$.
+	\item{\code{C-PNil} :} Because we know nothing about the inner or outer contract, we generate fresh $true$ contracts for both.
+	\item{\code{C-PCons} :} In this case, we know about the contracts of the tail and head of the list. The inner contract of the list tail must be the same as the contract of the head of the list. The resulting contract is the same as the list tail.
+	\item{\code{C-PTuple} :} For a tuple; we know about each contract of the tuple's members. We generate a nested bifunctor contract for tuples larger than 2, nesting in $c_2$ until we have accomodated every member of the tuple. For each bifunctor contract, we require a fresh contract for the outer contract, which means we require $n-1$ fresh contracts, $n$ being the size of the tuple.
+	\item{\code{C-PLit} :} A pattern literal is given a fresh $literal$ contract.
+	\item{\code{C-PParen} :} Parentheses simply copy the contract of the enclosed pattern.
+	\item{\code{C-PInfixCon} :} An infix operator in Helium only supports two arguments, so the contracting rule is a slight variation of regular function application.
+\end{description}
+
+
+\begin{figure}[ht]
+\begin{center}
+%  \RightLabel{C-Inst\quad}
+%  \AxiomC{$\Gamma \vdash$ |e ::| $\forall{\alpha}.\sigma$}
+%  \UnaryInfC{$\Gamma \vdash$ |e ::| $[\alpha \mapsto c]\sigma$}
+%  \DisplayProof
+  \RightLabel{\textsc{C-Var}\quad}
+  \AxiomC{$\Gamma(x) = c$}
+  \UnaryInfC{$\Gamma \vdash$ $x :: c$}
+  \DisplayProof
+  \RightLabel{\textsc{C-Lam}\quad}
+  \AxiomC{$\Gamma[x \mapsto c_1] \vdash$ $e :: c_2$}
+  \UnaryInfC{$\Gamma \vdash$ $\ x -> e :: c_1 >-> c_2$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-App}\quad}
+  \AxiomC{$\Gamma \vdash$ $e_1 :: c_2 >-> c$}
+  \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
+  \BinaryInfC{$\Gamma \vdash$ $e_1$ $e_2 :: c$}
+  \DisplayProof
+  \RightLabel{\textsc{C-True}\quad}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $e :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+%  \RightLabel{C-Gen\quad}
+%  \AxiomC{$\Gamma \vdash$ |e ::| $\sigma$}
+%  \AxiomC{$\alpha \notin fc(\Gamma)$}
+%  \BinaryInfC{$\Gamma \vdash$ |e :: forall ALPHA. SCHEME|}
+%  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Let}\quad}
+  %\AxiomC{$\Gamma[x \mapsto fresh(c_0)] \vdash$ |e_1 :: c_1|}
+  \AxiomC{$\Gamma[x \mapsto c_1] \vdash$ $e_1 :: c_1$}
+  \AxiomC{$\Gamma[x \mapsto gen_{\Gamma}(c_1)] \vdash$ $e_2 :: c$}
+  \BinaryInfC{$\Gamma \vdash$ let x = $e_1$ in $e_2 :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Cons}\quad}
+  \AxiomC{$\Gamma \vdash$ $x :: c$}
+  \AxiomC{$\Gamma \vdash$ $xs :: list <@> c$}
+  \BinaryInfC{$\Gamma \vdash$ $(x : xs) :: list <@> c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Nil}\quad}
+  \AxiomC{$fresh(i, j)$}
+  \UnaryInfC{$\Gamma \vdash$ $[] :: true_i <@> true_j$}
+  \DisplayProof
+  \vskip 0.5em
+%  \RightLabel{C-Finalize}
+%  \AxiomC{$\Gamma(x) = c$}
+%  \UnaryInfC{$\Gamma \vdash$ |x :: finalize(c)|}
+%  \DisplayProof
+  \RightLabel{\textsc{C-Hole}}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $? :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Literal}}
+  \AxiomC{l is a literal}
+  \AxiomC{$fresh(i)$}
+  \BinaryInfC{$\Gamma \vdash$ $l :: literal_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Case}}
+  \AxiomC{$\Gamma \vdash$ $m :: c_1$}
+  \AxiomC{$\forall{i}\in[0\ldots{n}] \Gamma \vdash$ $p_i :: c_1$}
+  \AxiomC{$\forall{i}\in{[0\ldots{n}]} \Gamma \vdash$ $e_i :: c_2$}
+  \TrinaryInfC{$\Gamma \vdash$ case m of ${p_0 -> e_0; ...; p_n -> e_n} :: c_2$}
+  \DisplayProof
+  \vskip 0.5em
+\end{center}
+\caption{\label{fig:inference-rules}Contracting rules}
+\end{figure}
+
 
 \section{Providing richer feedback}
 \label{providingricherfeedback}
+\todo{Might have to split some of this stuff up and move it to Approach and initial research}
 
 \subsection{Modifications to typed-contracts}
 \label{modificationstotypedcontracts}
@@ -873,31 +1541,103 @@ __app_foldr (_,_,__contracted_insert [ctrt] [pos]) (_,[]) (_,[5,4,7,0,10])
 This expression is a good example of what the user will provide.
 Of course, if the user provides a partially applied function, there is not much that can be done, in the same manner as the uncontracted version of the code.
 
-\subsection{Other notes}
-
-\subsubsection{Contracting of anonmyous functions}
-We have only given examples for named functions, but what about lambda functions? Our solution is quite simple: rename all lambda functions and place them in a where-clause, after which code generation can proceed as normal.
-Thus, anonymous functions are fully contracted as well, and can take part in contract inferencing and code generation.
-
-\subsubsection{Contracting of pointfree functions}
-Pointfree functions pose a problem for the generation of feedback, as we would like to pass both position and value of each argument to our contracted version.
-Again, we apply a very simple transformation: function arguments are added on the left hand side and are applied to a parenthesized right hand side.
-A short example:
-
-\begin{lstlisting}
-isort = foldr insert []
-\end{lstlisting}
-
-is transformed into
-
-\begin{lstlisting}
-isort __x0 = (foldr insert []) __x0
-\end{lstlisting}
-
-\todo{This is eta-abstraction, right?}
-
-\section{Future work}
+\chapter{Discussion and future work}
 \label{futurework}
+
+\section{Using paramorphisms to tackle dependent contracts}
+Johan Jeuring provided a wonderful idea to be able to run contract inferencing on some catamorphisms with dependent contracts by converting them to a paramorphism, which is a catamorphism that provides its function argument with the original input as well:
+
+\begin{lstlisting}
+para  :: (a -> [a] -> b -> b) -> b -> [a] -> b
+foldr :: (a ->        b -> b) -> b -> [a] -> b
+
+para  c n (x : xs) = c x xs (para c n xs)
+foldr c n (x : xs) = c x    (foldr c n xs)
+para  c n []       = n
+foldr c n []       = n
+\end{lstlisting}
+\todo{Courtesy of pigworker, http://stackoverflow.com/questions/13317242/what-are-paramorphisms}
+
+This functionality is of great use for dependent contracts that need access to the original argument, as can be seen in the following example code (courtesy of Johan Jeuring):
+
+\begin{lstlisting}
+-- GList      ::  Contract aT -> ([aT] -> Bool) -> Contract [aT]
+sortc =  GList int (const True) >-> \xs -> GList int (\r -> nonDesc r && isPerm xs r)
+isPerm xs ys = null (xs \\ ys)
+
+sort_perm'         :: Ord a => [a] -> [a]
+sort_perm'         =  foldr insert_notPerm []
+insert_notPerm ::  Ord a => a -> [a] -> [a]
+insert_notPerm x []                    =  [x]
+insert_notPerm x (y:ys)  |  x <= y     =  x:y:ys
+                         |  otherwise  =  insert_notPerm x ys
+                         
+sort_permWrong        =  foldr insert_notPerm [] 
+sort_permNotViolated  =  assert sortc sort_permWrong [3,2,4]
+\end{lstlisting}
+
+In the above example the input, \code{xs}, is needed in the \code{sortc} contract to be able to express the permutation property, but this introduces a dependent contract, which means the contract cannot be used for contract inferencing.
+
+This is where the paramorphism comes in, as it provides that \code{xs} value.
+The contract for the \code{para} function is, then:
+
+\begin{lstlisting}
+parac
+  :: Contract aT
+     -> ([aT] -> Bool)
+     -> ([aT] -> Contract bT)
+     -> Contract ((aT -> [aT] -> bT -> bT) -> bT -> [aT] -> bT)
+parac aT p bT =   (aT >-> \x -> GList aT p >-> \xs -> bT xs >- bT (x:xs))
+              >-  bT []
+              >-  GList aT p
+              >-> \xs -> bT xs
+              
+psort  =  para (\x xs ys -> insert_correct x ys) []
+\end{lstlisting}
+
+Unifying \code{sortc} and \code{parac} gives us:
+
+\begin{lstlisting}
+GList aT  p             >->  \xs -> bT xs
+GList int (const True)  >->  \xs -> GList int (\r -> nonDesc r && isPerm xs r)
+
+aT  :=  int
+p   :=  const True
+bT  :=  \xs -> GList int (\r -> nonDesc r && isPerm xs r)
+\end{lstlisting}
+
+Applying these substitutions, we see that \code{bT []} will get the contract:  
+
+\begin{lstlisting}
+GList int (\r -> nonDesc r && isPerm [] r)
+\end{lstlisting}
+
+And the contract for \code{insert} becomes:
+
+\begin{lstlisting}
+insertc'  =    int 
+          >->  \x  -> GList int (const True) 
+          >->  \xs -> GList int (\r -> nonDesc r && isPerm xs r)
+          >-   GList int (\r -> nonDesc r && isPerm (x:xs) r)
+cinsert_notPerm_violated = assert insertc' (\x xs ys -> insert_notPerm x ys) 3 [2,4] [2,4]
+\end{lstlisting}
+
+Note that by using a paramorphism instead of a catamorphism, \code{insert} is supplied with an argument it does not require, so it is wrapped in a lambda function and the superfluous argument is ignored.
+
+How do we relate this contracted paramorphism to the original user's \code{foldr} call?
+By defining \code{foldr} as a paramorphism, which is quite simple:
+
+\begin{lstlisting}
+pfoldr f e = para (\x xs r -> f x r) e
+sort_perm''        =  pfoldr insert_notPerm []
+sort_permViolated' =  assert sortc' sort_perm'' [3,2,4]
+\end{lstlisting}
+
+In short, this implies it is possible to convert some functions that use catamorphisms with dependent contracts, into paramorphisms with non-dependent contracts.
+
+Some feedback problems do pop up: how do we meaningfully inform the user of a violated contract in  \code{(\textbackslash x xs r -> f x r)} ? 
+And what if the \code{para} contract is violated, how do we report that?
+It is possible to modify the feedback messages in contract generation to "cloak" the use of a paramorphism, but this has not yet been investigated further.
 
 
 \end{document}
