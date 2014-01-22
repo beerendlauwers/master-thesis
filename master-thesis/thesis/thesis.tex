@@ -19,7 +19,8 @@
 \usepackage{xcolor}
 \usepackage{pdfpages}
 
-
+\newcommand{\functor}{<\!\!\!@\!\!\!>}
+\newcommand{\bifunctor}{<\!\!\!@\!\!@\!\!\!>}
 
 \newcommand{\W}{$\mathcal{W}$}
 \newcommand{\CW}{$\mathcal{CW}$}
@@ -1092,7 +1093,9 @@ We use the same notation as Stutterheim for contract environments:
 The \code{gen} and \code{inst} support functions used by Stutterheim are deprecated by our use of a type source, so we will omit them in our description.
 In place of these functions, we define the support function \code{ts}, which takes an identifier $i$ and as many fresh $true$ contracts as necessary to perform a conversion from the type of $i$ to a contract $c$.
 
-\subsubsection{Typing rules}
+\subsubsection{Contracting rules}
+
+We will begin the contracting rules with those for patterns, as many of the rules are similar to those for declarations, right-hand sides, (guarded) expressions and alternatives.
 
 \begin{figure}[ht]
 \begin{center}
@@ -1107,37 +1110,36 @@ In place of these functions, we define the support function \code{ts}, which tak
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PCon}}
-  \AxiomC{$\Gamma \vdash$ $e_1 :: c_2 >-> c$}
+  \AxiomC{$\Gamma \vdash$ $e_1 :: c_2 \rightarrowtail c$}
   \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
   \BinaryInfC{$\Gamma \vdash$ $e_1$ $e_2 :: c$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PVar}\quad}
   \AxiomC{$\forall{i}\in[0\ldots{n}]$ $fresh(i)$}
-  \UnaryInfC{$\Gamma \vdash$ $p :: ts(p,[0\ldots{n}])$}
+  \UnaryInfC{$\Gamma \vdash$ $p :: ts(p,[true_0\ldots{true_n}])$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PAs}\quad}
   \AxiomC{$\forall{i}\in[0\ldots{n}]$ $fresh(i)$}
-  \UnaryInfC{$\Gamma \vdash$ $p@(ps) :: ts(p,[0\ldots{n}])$}
+  \UnaryInfC{$\Gamma \vdash$ $p@(ps) :: ts(p,[true_0\ldots{true_n}])$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PCons}\quad}
   \AxiomC{$\Gamma \vdash$ $x :: c$}
-  \AxiomC{$\Gamma \vdash$ $xs :: list <@> c$}
-  \BinaryInfC{$\Gamma \vdash$ $(x : xs) :: list <@> c$}
+  \AxiomC{$\Gamma \vdash$ $xs :: list \functor c$}
+  \BinaryInfC{$\Gamma \vdash$ $(x : xs) :: list \functor c$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PNil}\quad}
   \AxiomC{$fresh(i, j)$}
-  \UnaryInfC{$\Gamma \vdash$ $[] :: true_i <@> true_j$}
+  \UnaryInfC{$\Gamma \vdash$ $[] :: true_i \functor true_j$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PTuple}\quad}
-  \AxiomC{$\Gamma \vdash$ $x :: c_1$}
-  \AxiomC{$\Gamma \vdash$ $y :: c_2$}
-  \AxiomC{$fresh(i)$}
-  \TrinaryInfC{$\Gamma \vdash$ $(x, y) :: true_i <@@> (c_1, c_2)$}
+  \AxiomC{$\forall{i}\in{[0\ldots{n}]} \Gamma \vdash$ $e_i :: c_i$}
+  \AxiomC{$fresh(j)$}
+  \BinaryInfC{$\Gamma \vdash$ $(e_0, .., e_i) :: true_j \bifunctor (c_1, .., c_i)$}
   \DisplayProof
   \vskip 0.5em
 %  \RightLabel{\textsc{C-PTupleNil}\quad}
@@ -1160,7 +1162,7 @@ In place of these functions, we define the support function \code{ts}, which tak
   \RightLabel{\textsc{C-PInfixCon}}
   \AxiomC{$\Gamma \vdash$ $e_1 :: c_1$}
   \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
-  \AxiomC{$\Gamma \vdash \oplus$ $:: c_1 >-> c_2 >-> c_3$}
+  \AxiomC{$\Gamma \vdash \oplus$ $:: c_1 \rightarrowtail c_2 \rightarrowtail c_3$}
   \TrinaryInfC{$\Gamma \vdash e_1 \oplus e_2 :: c_3$}
   \DisplayProof
 \end{center}
@@ -1185,82 +1187,220 @@ We will follow this convention for all constructors that describe lists.
 	\item{\code{C-PInfixCon} :} An infix operator in Helium only supports two arguments, so the contracting rule is a slight variation of regular function application.
 \end{description}
 
-
 \begin{figure}[ht]
 \begin{center}
-%  \RightLabel{C-Inst\quad}
-%  \AxiomC{$\Gamma \vdash$ |e ::| $\forall{\alpha}.\sigma$}
-%  \UnaryInfC{$\Gamma \vdash$ |e ::| $[\alpha \mapsto c]\sigma$}
-%  \DisplayProof
-  \RightLabel{\textsc{C-Var}\quad}
-  \AxiomC{$\Gamma(x) = c$}
-  \UnaryInfC{$\Gamma \vdash$ $x :: c$}
-  \DisplayProof
-  \RightLabel{\textsc{C-Lam}\quad}
-  \AxiomC{$\Gamma[x \mapsto c_1] \vdash$ $e :: c_2$}
-  \UnaryInfC{$\Gamma \vdash$ $\ x -> e :: c_1 >-> c_2$}
-  \DisplayProof
-  \vskip 0.5em
-  \RightLabel{\textsc{C-App}\quad}
-  \AxiomC{$\Gamma \vdash$ $e_1 :: c_2 >-> c$}
-  \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
-  \BinaryInfC{$\Gamma \vdash$ $e_1$ $e_2 :: c$}
-  \DisplayProof
-  \RightLabel{\textsc{C-True}\quad}
-  \AxiomC{$fresh(i)$}
-  \UnaryInfC{$\Gamma \vdash$ $e :: true_i$}
-  \DisplayProof
-  \vskip 0.5em
-%  \RightLabel{C-Gen\quad}
-%  \AxiomC{$\Gamma \vdash$ |e ::| $\sigma$}
-%  \AxiomC{$\alpha \notin fc(\Gamma)$}
-%  \BinaryInfC{$\Gamma \vdash$ |e :: forall ALPHA. SCHEME|}
-%  \DisplayProof
-  \vskip 0.5em
-  \RightLabel{\textsc{C-Let}\quad}
-  %\AxiomC{$\Gamma[x \mapsto fresh(c_0)] \vdash$ |e_1 :: c_1|}
-  \AxiomC{$\Gamma[x \mapsto c_1] \vdash$ $e_1 :: c_1$}
-  \AxiomC{$\Gamma[x \mapsto gen_{\Gamma}(c_1)] \vdash$ $e_2 :: c$}
-  \BinaryInfC{$\Gamma \vdash$ let x = $e_1$ in $e_2 :: c$}
-  \DisplayProof
-  \vskip 0.5em
-  \RightLabel{\textsc{C-Cons}\quad}
-  \AxiomC{$\Gamma \vdash$ $x :: c$}
-  \AxiomC{$\Gamma \vdash$ $xs :: list <@> c$}
-  \BinaryInfC{$\Gamma \vdash$ $(x : xs) :: list <@> c$}
-  \DisplayProof
-  \vskip 0.5em
-  \RightLabel{\textsc{C-Nil}\quad}
-  \AxiomC{$fresh(i, j)$}
-  \UnaryInfC{$\Gamma \vdash$ $[] :: true_i <@> true_j$}
-  \DisplayProof
-  \vskip 0.5em
-%  \RightLabel{C-Finalize}
-%  \AxiomC{$\Gamma(x) = c$}
-%  \UnaryInfC{$\Gamma \vdash$ |x :: finalize(c)|}
-%  \DisplayProof
-  \RightLabel{\textsc{C-Hole}}
+  \RightLabel{\textsc{C-DHole}}
   \AxiomC{$fresh(i)$}
   \UnaryInfC{$\Gamma \vdash$ $? :: true_i$}
   \DisplayProof
   \vskip 0.5em
-  \RightLabel{\textsc{C-Literal}}
-  \AxiomC{l is a literal}
+  \RightLabel{\textsc{C-DEmpty}}
   \AxiomC{$fresh(i)$}
-  \BinaryInfC{$\Gamma \vdash$ $l :: literal_i$}
+  \UnaryInfC{$\Gamma \vdash$ $ :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-DFunBinds}}
+  \AxiomC{$\Gamma \vdash$ $d :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $(d:ds) :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-DPatBind}\quad}
+  \AxiomC{$\forall{i}\in[0\ldots{n}]$ $fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $p = rhs :: ts(p,[true_0\ldots{true_n}])$}
+  \DisplayProof
+\end{center}
+\caption{\label{fig:declaration-inference-rules}Contracting rules for declarations.}
+\end{figure}
+
+Figure \ref{fig:declaration-inference-rules} shows the contracting rules for declarations. The rules \code{C-DHole} and \code{C-DEmpty} are trivial, but the remaining two warrant a little more explanation:
+
+\begin{description}
+	\item{\code{C-DFunBinds} :} In this rule, we select the contract of the very first element of the list of function bindings and use that as the contract of the entire list. This makes sense because function bindings must have the same number of arguments and the same result, meaning that the contract is also the same.
+	\item{\code{C-DPatBind} :} A pattern binding will look up its contract in the type source, in the same manner as \code{C-PVar}.
+\end{description}
+
+\begin{figure}[ht]
+\begin{center}
+  \RightLabel{\textsc{C-FBHole}}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $? :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-FunBind}}
+  \AxiomC{$\Gamma \vdash$ $ident :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $ident$ $ps = rhs :: c$}
+  \DisplayProof
+\end{center}
+\caption{\label{fig:funbinds-inference-rules}Contracting rules for function bindings.}
+\end{figure}
+
+The contracting rules for function bindings in figure \ref{fig:funbinds-inference-rules} are straightforward: \code{C-FBHole} works as all others holes, and \code{C-FunBind} looks up the identifier in the contract environment and assigns that contract to the entire function binding.
+
+\begin{figure}[ht]
+\begin{center}
+  \RightLabel{\textsc{C-Rhs}}
+  \AxiomC{$\Gamma \vdash$ $e :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $e$ \textbf{where} $d :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-GRhs}}
+  \AxiomC{$\Gamma \vdash$ $e :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $|$ $g = e$ \textbf{where} $d :: c$}
+  \DisplayProof
+\end{center}
+\caption{\label{fig:rhs-inference-rules}Contracting rules for right-hand sides.}
+\end{figure}
+
+\begin{figure}[ht]
+\begin{center}
+  \RightLabel{\textsc{C-GExpr}}
+  \AxiomC{$\Gamma \vdash$ $e :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $g$ $|$ $e :: c$}
+  \DisplayProof
+\end{center}
+\caption{\label{fig:guardedexpr-inference-rules}Contracting rules for guarded expressions.}
+\end{figure}
+
+Right-hand side contracting rules (see figure \ref{fig:rhs-inference-rules}) are equally simple: the contract of $e$ is looked up in the contract environment and is used for the entire right-hand side.
+The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-rules}).
+
+\begin{figure}[ht]
+\begin{center}
+  \RightLabel{\textsc{C-Hole}\quad}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $? :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Feedback}\quad}
+  \AxiomC{$\Gamma \vdash$ $e :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $e :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-MustUse}\quad}
+  \AxiomC{$\Gamma \vdash$ $e :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $e :: c$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-Case}}
   \AxiomC{$\Gamma \vdash$ $m :: c_1$}
   \AxiomC{$\forall{i}\in[0\ldots{n}] \Gamma \vdash$ $p_i :: c_1$}
   \AxiomC{$\forall{i}\in{[0\ldots{n}]} \Gamma \vdash$ $e_i :: c_2$}
-  \TrinaryInfC{$\Gamma \vdash$ case m of ${p_0 -> e_0; ...; p_n -> e_n} :: c_2$}
+  \TrinaryInfC{$\Gamma \vdash$ \textbf{case} $m$ \textbf{of} \{${p_0 -> e_0; ...; p_n -> e_n}$\} $:: c_2$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Con}\quad}
+  \AxiomC{$\Gamma(x) = c$}
+  \UnaryInfC{$\Gamma \vdash$ $x :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-If}\quad}
+  \AxiomC{$\Gamma \vdash$ $t :: c$}
+  \AxiomC{$\Gamma \vdash$ $e :: c$}
+  \BinaryInfC{$\Gamma \vdash$ \textbf{if} $cond$ \textbf{then} $t$ \textbf{else} $e :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Lambda}\quad}
+  \AxiomC{$\Gamma[x \mapsto c_1] \vdash$ $e :: c_2$}
+  \UnaryInfC{$\Gamma \vdash$ $\ x -> e :: c_1 \rightarrowtail c_2$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Let}\quad}
+  \AxiomC{$\Gamma \vdash$ $e_2 :: c$}
+  \UnaryInfC{$\Gamma \vdash$ \textbf{let x =} $e_1$ \textbf{in} $e_2 :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Lit}}
+  \AxiomC{$l$ is a literal}
+  \AxiomC{$fresh(i)$}
+  \BinaryInfC{$\Gamma \vdash$ $l :: literal_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-App}\quad}
+  \AxiomC{$\Gamma \vdash$ $e_1 :: c_2 \rightarrowtail c$}
+  \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
+  \BinaryInfC{$\Gamma \vdash$ $e_1$ $e_2 :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Paren}\quad}
+  \AxiomC{$\Gamma \vdash$ $p :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $(p) :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Tuple}\quad}
+  \AxiomC{$\forall{i}\in{[0\ldots{n}]} \Gamma \vdash$ $e_i :: c_i$}
+  \AxiomC{$fresh(j)$}
+  \BinaryInfC{$\Gamma \vdash$ $(e_0, .., e_i) :: true_j \bifunctor (c_1, .., c_i)$}  
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Var}\quad}
+  \AxiomC{$\Gamma(x) = c$}
+  \UnaryInfC{$\Gamma \vdash$ $x :: c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Enum}\quad}
+  \AxiomC{$fresh(i)$ $\Gamma \vdash$ $x :: c$}
+  \AxiomC{$\Gamma \vdash$ $y :: c$}
+  \AxiomC{$\Gamma \vdash$ $z :: c$}
+  \TrinaryInfC{$\Gamma \vdash$ [$x$ .. ($y$) .. ($z$)] $ :: true_i \functor c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Cons}\quad}
+  \AxiomC{$\Gamma \vdash$ $x :: c$}
+  \AxiomC{$\Gamma \vdash$ $xs :: list \functor c$}
+  \BinaryInfC{$\Gamma \vdash$ $(x : xs) :: list \functor c$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Nil}\quad}
+  \AxiomC{$fresh(i, j)$}
+  \UnaryInfC{$\Gamma \vdash$ $[] :: true_i \functor true_j$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Neg}\quad}
+  \AxiomC{$\Gamma \vdash$ $e :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $-e :: c$}
   \DisplayProof
   \vskip 0.5em
 \end{center}
-\caption{\label{fig:inference-rules}Contracting rules}
+\caption{\label{fig:expr-inference-rules}Contracting rules for expressions.}
 \end{figure}
 
+Figure \ref{fig:expr-inference-rules} details the contracting rules for expressions, which have large overlaps with those for patterns.
+Note how there is no rule \code{C-InfixApp}.
+This is because infix function applications are converted to regular function applications before contract inferencing occurs.
+As such, there is no need for such a rule.
+
+Rules that are either trivial or similar to those of patterns are: \code{C-Hole}, \code{C-Feedback}, \code{C-MustUse}, \code{C-Lit}, \code{C-App}, \code{C-Paren}, \code{C-Tuple}, \code{C-Cons}, \code{C-Nil} and \code{C-Neg}.
+The rest of the contracting rules are discussed hereafter.
+
+\begin{description}
+	\item{\code{C-Case} :} This rule describes contracting of a case statement for an arbitrary number of cases. The contract of the expression being evaluated, $m$, must be the same as the contracts of the patterns $p_i$, namely $c_1$. The contract of the entire case statement is $c_2$, which is the contract that is given to each alternative.
+	\item{\code{C-If} :} Syntactic sugar for a boolean case statement. Like its generalized version, the contract of the entire statement is the same of each alternative, in this case $c$. 
+	\item{\code{C-Lam} :} This contracting rule is the same as in Damas \& Milner's work.
+	\item{\code{C-Let} :} A non-generalized let. This is not necessary because every contract variable is polymorphic in the global contract environment. 
+	\item{\code{C-Enum} :} A list generator. $y$ and $z$ are fully optional, but if they are present, they must have the same contract as that of $x$, namely $c$. A fresh outer contract is generated to complete the final contract.
+\end{description}
+
+\begin{figure}[ht]
+\begin{center}
+  \RightLabel{\textsc{C-AHole}}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $? :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-AltEmpty}}
+  \AxiomC{$fresh(i)$}
+  \UnaryInfC{$\Gamma \vdash$ $ :: true_i$}
+  \DisplayProof
+  \vskip 0.5em
+  \RightLabel{\textsc{C-Alt}}
+  \AxiomC{$\Gamma \vdash$ $rhs :: c$}
+  \UnaryInfC{$\Gamma \vdash$ $p$ $\rightarrow$ $rhs :: c$}
+  \DisplayProof
+\end{center}
+\caption{\label{fig:alternatives-inference-rules}Contracting rules for alternatives.}
+\end{figure}
+
+The contracting rules for alternatives in figure \ref{fig:alternatives-inference-rules} are quite simple. \code{C-AHole} and \code{C-AltEmpty} are trivial, and \code{C-Alt} takes the contract of the right-hand side as the contract of the entire alternative.
 
 \section{Providing richer feedback}
 \label{providingricherfeedback}
