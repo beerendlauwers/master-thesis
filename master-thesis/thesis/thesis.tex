@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[10pt]{report}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[numbers]{natbib}
@@ -247,10 +247,162 @@ After processing the results, we will present our findings in a presentation, as
 \chapter{Background}
 In this chapter, we will familiarize the reader with some concepts that will be used onwards in this thesis, the most important ones being contracts and the notion of inferring types and contracts.
 
+This thesis concerns itself with contract inferencing.
+Let us break up these terms and investigate them thoroughly before moving on.
 
 \section{Contracts}
+In programming, a $contract$ is very much like its real-world counterpart: it stipulates prerequisites and guarantees between two parties.
+In our case, the parties are the function being called (the $callee$) and the function receiving the result (the $caller$).
+
+As a simple example, one could specify a contract that a function will only accept a natural number: a prerequisite.
+Likewise, it is possible to state that a function must also always return a natural number: a guarantee.
+By combining prerequisites and guarantees for arguments and results, respectively, it is possible to construct very specific contracts that are quite useful for tracking down bugs.
+Because just like in real life, these contracts can be violated, which may halt the program with an exception detailing which contract was violated at what position in the code.
+
+When this happens, blame must be assigned.
+A prerequisite violation is to be blamed on the $caller$: it was this function that should have provided a valid argument.
+Likewise, a guarantee violation is to be blamed on the $callee$: there is a fault in the function being called that causes it to return an invalid result.
+
+In other words, adding contracts to one's code adds an element of automated testing and aids in debugging any faults that may arise by being able to specify what exactly went wrong, and where.
+
+The concept of contracts dates back to the Eiffel programming language \cite{Meyer:1988wp} in 1988, which included it as a language feature.
+Many other languages support contracts, or have libraries available to achieve the same functionality.
+
+In a functional setting, contracts are less popular, but there has been a lot of research in this field.
+Initial steps were taken by Findler and Felleisen \cite{Findler:2002:CHF:583852.581484}, who defined a typed lambda calculus with support for contracts for higher-order functions in the Scheme language.
+For Haskell, Hinze et al. \cite{Hinze06typedcontracts} developed a dynamic contract library that builds upon Findler and Felleisen's findings. 
+A static approach was taken by Xu et al. \cite{Xu:2006ul, Xu:2009:SCC:1594834.1480889}, allowing contracts to be checked using symbolic computation at compile-time. This technique is similar to that of refinement types, which we will cover in a later paragraph.
+
+Degen et al. \cite{DegenThiemannWehr2009} provide an overview of contract implementation in lazy languages and their pitfalls, demonstrating how each form of dynamic contract monitoring (eager, semi-eager and lazy) are inherently flawed, either changing program behavior or ignoring contract violations.
+The article also touches upon Xu's work on static contract systems, which the authors argue is similar to the eager monitoring style they discuss in their article.
+Eager contract monitoring is preferred by the authors as all contracts defined in it are faithful: they will always evaluate to their actual value, which implies that, if a program terminates, all of the contracts within it will have evaluated to true.
+
+Other researchers have explored enriching the type system to replace the functionality offered by contracts, producing what is commonly called "refinement types".
+Rondon et al. \cite{rondon2008liquid} have developed a set of data types called Logically Qualified Data Types, often shortened to Liquid Types.
+Using liquid types, they are able to embed a decidable subset of dependent typing functionality in a Hindley-Milner typing system.
+With only the HM types and a predefined set of logical qualifiers, their algorithm is able to infer liquid types, which are dependent types that consist of conjunctions of the aforementioned logical qualifiers.
+After inferring these liquid types, they can be resolved using an SMT solver.
+In the end, one ends up with the strongest constraint possible on the expression that can be generated with the provided set of logical qualifiers.
+Implementations of liquid typing are available for OCaml \cite{rondon2008liquid} and Haskell (using GHC) \cite{rondon2013refinement}.
+The Haskell implementation is able to provide feedback if type checking fails, indicating the position(s) in the source code where things have gone wrong.
+Additionally, a HTML file is generated of the processed source code annotated with the inferred types.
+
+A similar approach was taken by Vytiniotis et al. \cite{Vytiniotis:2013ww}, whose framework converts contracts written in Haskell into a simpler lambda calculus, which itself is translated into first-order logic formulae.
+Finally, these formulae are solved using an off-the-shelf theorem solver.
+
+Terauchi \cite{terauchi2010dependent} also builds upon the recent developments in refinement types to present a system that is able to infer dependent types for a subset of the OCaml language without external input.
+Instead of taking a user-provided set of formulas, the algorithm uses counterexample guided abstraction refinement (CEGAR) to iteratively refine a lattice of candidate dependent types.
+Counterexamples are parts of the program that are untypable with the current lattice of candidate types.
+The algorithm then attempts to type the program with all available types instead of the lattice.
+If typing succeeds, the new candidates are added to the lattice and a new counterexample is selected.
+If it fails, then the program is untypable.
+As the algorithm itself generates the set of candidates, users can be sure that if the program is untypable, it really is untypable.
+On the other hand, because the types are inferred automatically, they are not necessarily the strongest types available.
+
+Ranjit et al. \cite{jhala2010refinement} take another route to attain refinement types: they first attain refinement type constraints using the implementation of Rondon et al. \cite{rondon2008liquid}, and then translate these types to a first-order imperative program.
+Iff the assertions of this imperative program hold, the higher-order program typechecks.
+This verification can be done using several abstract interpretation techniques (of which CEGAR is one), which have readily available implementations for imperative languages.
+The proof of safety of the imperative program translates to the solutions of the refinement type constraints.
+Thus, these can be used to annotate the original higher-order program, obtaining the refinement types.
+
+The articles of Dimoulas \& Felleisen \cite{Dimoulas:2011:CSH:2039346.2039348} and Greenberg et al. \cite{Greenberg:2010:CMM:1707801.1706341} provide an excellent overview of recent developments pertaining to contracts, as well as as detailed comparisons between the different libraries and frameworks. \cite{Dimoulas:2011:CSH:2039346.2039348} also goes into greater detail of the semantics of contract satisfaction.
+
+Another form of type enrichment that enforces constraints is dimensional typing.
+In short, a (usually numerical) value is given a dimension (time, length, mass, etc.).
+Either through static analysis and inferencing or through type-level programming, these constraints can be enforced, ensuring that nonsensical operations, such as adding a time value and a mass value, are caught at compile-time.
+Kennedy's thesis \cite{langanddim} explores this domain extensively for the ML language. 
+A number of dimensional typing libraries are available for Haskell, most of which are defined using type-level programming or using type families.
+Some simply constrain the input and output of functions, while others perform automatic conversion between compatible types, for example between meters and inches.
+
+This thesis builds upon the thesis of Stutterheim \cite{Stutterheim:2013:thesis}, who developed an algorithm for contract inferencing on a simple recursive let lambda language with support for holes.
+While Stutterheim's contract grammar is library-agnostic, he chose to generate code for the 'typed-contracts' library by Hinze et al. \cite{Hinze06typedcontracts}. 
+Also of interest is the library by Chitil \cite{Chitil:2012ua}, which is based on the work of Hinze et al.
+
+\subsection{The 'typed-contracts' library}
+Let us examine the library for which code will be generated.
+Contracts in the 'typed-contracts' library are of the same shape as the type of the function that it being defined for.
+This makes it possible to go over the type and generate a generic contract for a function, a capability that will be of great use during contract inferencing.
+But we are getting ahead of ourselves; let us first look at a few simple examples of function contracts.
+
+The very first example is the one we used when first introducing the concept of contracts, namely a contract that constrains a function such that it demands a natural number as its input, and the guarantee that it will return a natural number, too:
+
+\begin{lstlisting}[mathescape]
+natInNatOut :: Contract (int >-> int)
+nat $\rightarrowtail$ nat
+\end{lstlisting}
+
+We need a way to attach this contract to such a function, which is what the \code{assert} function is for:
+
+\begin{lstlisting}[mathescape]
+increase :: Int -> Int
+increase = assert (nat $\rightarrowtail$ nat) (\n -> 1 + n)
+\end{lstlisting}
+
+Note how the type of \code{increase} does not reflect the constraints imposed by the contract, because the contract is asserted at runtime.
+An advantage of this is that the contracted version of a function can replace its regular version without issue.
+In other words, the \code{assert} function acts as a partial identity function, because it either raises an exception during contract violation, or it returns the constrained value unmodified.
+This behaviour is clearly reflected in the type of \code{assert}:
+
+\begin{lstlisting}[mathescape]
+assert :: Contract a -> (a -> a)
+\end{lstlisting}
+
+Hinze et al. define the \code{Contract} type using a GADT:
+
+\begin{lstlisting}[mathescape]
+data Contract aT where
+   Prop      ::  (aT -> Bool) -> Contract aT
+   Function  ::  Contract aT -> (aT -> Contract bT) -> Contract (aT >-> bT)
+   Pair      ::  Contract aT -> (aT -> Contract bT) -> Contract (aT, bT)
+   List      ::  Contract aT -> Contract [aT]
+   Functor   ::  Functor f => Contract aT -> Contract (f aT)
+   Bifunctor ::  Bifunctor f => Contract aT -> Contract bT -> Contract (f aT bT)
+   And       ::  Contract aT -> Contract aT -> Contract aT
+\end{lstlisting}
+
+Let us go over each data constructor:
+\begin{description}
+	\item{\code{Prop} } is what one uses to actually define a constraint or property on a value. Given a function that expects a value of type \code{aT} and which returns a Boolean, it produces a contract for something of type \code{aT}.
+	\item{\code{Function} } is used to define a dependent function contract.
+	\item{\code{Pair} } similarly defines a dependent pair contract.
+	\item{\code{List} } is straightforward: it lifts contracts to the list level.
+	\item{\code{Functor} } is a container that can house types of kind * -> *.
+	\item{\code{Bifunctor} } is the same as \code{Functor}, but takes types of kind * -> * -> * into account.
+	\item{\code{And} } is used to chain several contracts together: all of them are asserted when a value is provided. 
+\end{description}
+
+Now that we know how a \code{Contract} is constructed, let us see how it is applied, or asserted, to a compatible value by examining the definition of \code{assert}.
+Note that we will simplify the definition somewhat, leaving out arguments pertaining to location information.
+
+\begin{lstlisting}[mathescape]
+assert ::  Contract aT -> (aT -> aT)
+
+assert (Prop p)         a   = if p a then a else error "contract failed"
+
+assert (Function c$_1$ c$_2$) f	    = ($\lambda$ -> (assert (c$_2$ x) . f) x) . assert c$_1$
+
+assert (Pair c$_1$ c$_2$) (a$_1$,a$_2$)     = ($\lambda$a$'_1 \rightarrow$(a$'_1$,assert (c$_2$ a$'_1$) a$_2$)) (assert c$_1$ a$_1$)
+
+assert (List c)         as  = map (assert c) as
+
+assert (Functor f)      as  = fmap (assert f) as
+
+assert (Bifunctor c$_1$ c$_2$) as   = bimap (assert c$_1$) (assert c$_2$s) as
+
+assert (And c$_1$ c$_2$)        a   = (assert c$_2$ . assert c$_1$) a
+\end{lstlisting}
+
+Let's go over each pattern match to understand what happens:
+
+\begin{description}
+	\item{\code{Prop} :}
+\end{description}
+
 \section{Inferencing}
-\section{Attribute grammars}
+
+Cousot et al. \cite{cousotabstract} have implemented automatic contract inference for method extraction, a common refactoring technique.
+The inferred contract satisfies four requirements: (i) it is valid for the extracted method; (ii) the contract takes into account language and programmer assertions; (iii) the contract of the refactored code is as precise as the non-refactored code, and (iv) the contract is as general as possible.
+The authors use an iterative approximation algorithm to attain contracts that fulfil these requirements, and prove that an exact solution is uncomputable.
 
 \chapter{Approach}
 Our first order of affairs was to read and test the source code provided by Stutterheim, which contained the contract inferencing system and the code generation system.
@@ -986,7 +1138,8 @@ Types are available for every constructor of the following AST types:
 	\item GuardedExprR
 \end{itemize}
 
-\subsection{Initial contracts}
+\subsection{Contract generation}
+\label{subsection:contractgeneration}
 After providing types, a contract environment is constructed that holds the contracts for all identifiers (which consists of function identifiers and pattern identifiers) currently in scope at a certain node of the AST.
 
 The initial contracts are generated by passing a \code{TpScheme} value (from the \code{top} library) to the \code{convertTopTypeToContract} function, which strips down the type scheme to its primitive type and inspects it, converting it appropriately.
@@ -1045,14 +1198,14 @@ Figure \ref{fig:contract-grammar} described our contract language, which is a su
 While Stutterheim preferred to have specific terminals for data types literals, we felt this over-encumbered the contract language.
 Instead, we have replaced this multitude of terminals with a single \code{literal} terminal.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
 \begin{lstlisting}[mathescape]
   -- Contracts
   c ::=  $\rho_{\alpha}$			-- User-defined concrete contract
-      |  $c_{\alpha}$ >-> $c_{\beta}$			-- Function contracts
-      |  $c_{\alpha}$ <@> $c_{\beta}$			-- Functor contracts
-      |  $c_{\alpha}$ <@@> ($c_{\beta}$, $c_{\gamma}$)		-- Bifunctor contracts
+      |  $c_{\alpha} \rightarrowtail c_{\beta}$			-- Function contracts
+      |  $c_{\alpha} \functor c_{\beta}$			-- Functor contracts
+      |  $c_{\alpha} \bifunctor (c_{\beta}, c_{\gamma})$			-- Bifunctor contracts
       |  $true_{\alpha}$			-- true contract
       |  $false_{\alpha}$			-- false contract
       |  $literal_{\alpha}$			-- literal contract
@@ -1076,7 +1229,7 @@ In our system, we use a contract environment $\Gamma$ which maps contract variab
 \todo{Should we just say that we use the same env system as Jurrien?}
 A contract environment is defined as such:
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 $\Gamma ::= [\!~]\!~||\!~\Gamma_1[x \mapsto c]$
 \end{figure}
 
@@ -1097,7 +1250,7 @@ In place of these functions, we define the support function \code{ts}, which tak
 
 We will begin the contracting rules with those for patterns, as many of the rules are similar to those for declarations, right-hand sides, (guarded) expressions and alternatives.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-PHole}}
   \AxiomC{$fresh(i)$}
@@ -1187,7 +1340,7 @@ We will follow this convention for all constructors that describe lists.
 	\item{\code{C-PInfixCon} :} An infix operator in Helium only supports two arguments, so the contracting rule is a slight variation of regular function application.
 \end{description}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-DHole}}
   \AxiomC{$fresh(i)$}
@@ -1219,7 +1372,7 @@ Figure \ref{fig:declaration-inference-rules} shows the contracting rules for dec
 	\item{\code{C-DPatBind} :} A pattern binding will look up its contract in the type source, in the same manner as \code{C-PVar}.
 \end{description}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-FBHole}}
   \AxiomC{$fresh(i)$}
@@ -1236,7 +1389,7 @@ Figure \ref{fig:declaration-inference-rules} shows the contracting rules for dec
 
 The contracting rules for function bindings in figure \ref{fig:funbinds-inference-rules} are straightforward: \code{C-FBHole} works as all others holes, and \code{C-FunBind} looks up the identifier in the contract environment and assigns that contract to the entire function binding.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-Rhs}}
   \AxiomC{$\Gamma \vdash$ $e :: c$}
@@ -1251,7 +1404,7 @@ The contracting rules for function bindings in figure \ref{fig:funbinds-inferenc
 \caption{\label{fig:rhs-inference-rules}Contracting rules for right-hand sides.}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-GExpr}}
   \AxiomC{$\Gamma \vdash$ $e :: c$}
@@ -1264,7 +1417,7 @@ The contracting rules for function bindings in figure \ref{fig:funbinds-inferenc
 Right-hand side contracting rules (see figure \ref{fig:rhs-inference-rules}) are equally simple: the contract of $e$ is looked up in the contract environment and is used for the entire right-hand side.
 The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-rules}).
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-Hole}\quad}
   \AxiomC{$fresh(i)$}
@@ -1380,7 +1533,7 @@ The rest of the contracting rules are discussed hereafter.
 	\item{\code{C-Enum} :} A list generator. $y$ and $z$ are fully optional, but if they are present, they must have the same contract as that of $x$, namely $c$. A fresh outer contract is generated to complete the final contract.
 \end{description}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-AHole}}
   \AxiomC{$fresh(i)$}
@@ -1401,6 +1554,64 @@ The rest of the contracting rules are discussed hereafter.
 \end{figure}
 
 The contracting rules for alternatives in figure \ref{fig:alternatives-inference-rules} are quite simple. \code{C-AHole} and \code{C-AltEmpty} are trivial, and \code{C-Alt} takes the contract of the right-hand side as the contract of the entire alternative.
+
+\todo{May want to add contracting rules for interesting lists like those for alts.}
+
+\todo{A few simple examples of applying the rules?}
+
+\subsubsection{Substitutions and unification}
+
+We use the same substitutions grammar as that of Stutterheim.
+Our unification algorithm, too, is identical to that of Stutterheim, which itself is based upon Robinson's unification algorithm.
+We refer you to subsection 3.4.2 of Stutterheim's thesis for a description of the unification algorithm and the substitutions it generates.
+When you are done reading, we will note a caveat in his description of the algorithm.
+
+It merits mentioning that although Stutterheim's unification algorithm supports concrete contract refinement in theory, in code this is unsupported.
+In fact, the example posed by Stutterheim
+
+\begin{figure}[htbp]
+$\mathcal{U}$ $(int,nat)$
+\end{figure}
+
+results in an error message, as evidenced by the following relevant pattern matches of the \code{unifyC} function:
+
+\begin{lstlisting}
+unifyC :: Contract -> Contract -> Subst
+unifyC c1              c2 | c1 == c2   = SId
+unifyC v@CVar{}        c               = unifyCVars v c
+unifyC c               v@CVar{}        = unifyCVars v c
+...
+unifyC c1 c2 = unifyErr "No such unification case when" c1 c2
+\end{lstlisting}
+
+This is because the $int$ and $nat$ contracts are in fact defined as user-defined concrete contracts in the system's code.
+The default contracts that Stutterheim refers to in figure 3.2 of his thesis do not exist in the Haskell data type, which only supports the inhabitants of our simplified grammar as show in figure \ref{fig:contract-grammar}.
+Relations between contracts that allow for refinement are thus non-existent.
+While these relations can be mapped out manually, a better idea would be to look towards true refinement types. \todo{Finish up refinement type info stuff, refer to it here.}
+
+%\begin{figure}[htbp]
+%\begin{center}
+%\begin{lstlisting}[mathescape]
+%$\theta$  ::=  Id		-- Identity substitution
+%    |    $\theta_1 \circ \theta_2$		-- Substitution composition
+%    |    [$c_1 \mapsto c_2$]		-- Substitution for $c_1$ with a contract $c_2$
+%\end{lstlisting}
+%\end{center}
+%\caption{\label{fig:subst-grammar} The substitution grammar as defined by Stutterheim.}
+%\end{figure}
+
+\subsubsection{Algorithm \CHW}
+Now that we have reviewed the contracting rules and the unification algorithm, let us define the contract inferencing algorithm \CHW.
+This algorithm takes a \code{Module} and infers contracts for each declaration, pattern, right-hand side, (guarded) expression and alternative that resides in the module.
+
+Our starting point was Stuterheim's algorithm $\mathcal{CW}$, which has been extensively modified.
+
+To infer a contract, a number of elements are required:
+\begin{enumerate}
+	\item The contract environment $\Gamma$, which has been populated beforehand with initial contracts from the type source as described in subsection \ref{subsection:contractgeneration}.
+	\item The type source $\Xi$, which contains the raw types of the contractable non-terminals. When needed, these raw types will be converted to a unique initial contract. An example of this would be the list constructor, which for obvious reasons must have a unique initial contract every time it is encountered.
+\end{enumerate}
+
 
 \section{Providing richer feedback}
 \label{providingricherfeedback}
@@ -1681,12 +1892,15 @@ __app_foldr (_,_,__contracted_insert [ctrt] [pos]) (_,[]) (_,[5,4,7,0,10])
 This expression is a good example of what the user will provide.
 Of course, if the user provides a partially applied function, there is not much that can be done, in the same manner as the uncontracted version of the code.
 
+\subsection{Generation of final contracts}
+
 \chapter{Discussion and future work}
 \label{futurework}
 
 \section{Using paramorphisms to tackle dependent contracts}
 Johan Jeuring provided a wonderful idea to be able to run contract inferencing on some catamorphisms with dependent contracts by converting them to a paramorphism, which is a catamorphism that provides its function argument with the original input as well:
 
+\begin{figure}[htps]
 \begin{lstlisting}
 para  :: (a -> [a] -> b -> b) -> b -> [a] -> b
 foldr :: (a ->        b -> b) -> b -> [a] -> b
@@ -1696,7 +1910,8 @@ foldr c n (x : xs) = c x    (foldr c n xs)
 para  c n []       = n
 foldr c n []       = n
 \end{lstlisting}
-\todo{Courtesy of pigworker, http://stackoverflow.com/questions/13317242/what-are-paramorphisms}
+\texttt{\scriptsize{Source: http://stackoverflow.com/questions/13317242/what-are-paramorphisms}}
+\end{figure}
 
 This functionality is of great use for dependent contracts that need access to the original argument, as can be seen in the following example code (courtesy of Johan Jeuring):
 
@@ -1779,5 +1994,6 @@ Some feedback problems do pop up: how do we meaningfully inform the user of a vi
 And what if the \code{para} contract is violated, how do we report that?
 It is possible to modify the feedback messages in contract generation to "cloak" the use of a paramorphism, but this has not yet been investigated further.
 
-
+\bibliographystyle{plain}
+\bibliography{bibliography}
 \end{document}
