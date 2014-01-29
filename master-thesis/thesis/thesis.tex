@@ -32,7 +32,13 @@
 	\textcolor{#1}{\textbf{#2}~\textit{#3}}
 	\end{scriptsize}\newline}
 \newcommand{\todo}[1]{\annotate{red} {TODO:} {#1}}
-\newcommand{\review}{\annotate{blue} {REVIEW:} {Please read the following, and make improvements. \newline}}
+\newcommand{\review}{\annotate{blue} {REVIEW:} {Please review the following text. \newline}}
+
+\newcommand{\explain}[1]{\quad\{\;\text{#1}\;\}}
+\newcommand{\justify}[1]{\quad\{\;\text{#1}\;\}}
+\newcommand{\johan}[1]{[\textit{Johan says:}~#1]}
+\newcommand{\augusto}[1]{[\textit{Augusto says:}~#1]}
+
 
 \definecolor{light-gray}{gray}{0.95}
 \newcommand{\code}[1]{%
@@ -59,58 +65,6 @@ However, if a student's program cannot be reduced to such a model solution, prov
 The Master Thesis of Jurri\"en \citet{Stutterheim:2013:thesis} focuses on the development of a contract inferencing system for functional programs, with the goal to embed this functionality in the Ask-Elle programming tutor, so as to provide a new source of meaningful feedback to students using the tutor.
 In the "Future Work" section of the thesis, Stutterheim notes that the actual integration of the contract inferencing system in Ask-Elle still remains to be done.
 This research proposal explores what needs to be done in order to attain that goal, as well as the effects it would have upon the tutor's capability to provide meaningful feedback.
-
-
-%5:58:09 PM] : ][CW][ : Brutos: whats your thesis about?
-%[5:58:14 PM] : ][CW][ : Brutos: well i guess about that :D
-%[5:58:18 PM] : ][CW][ : Brutos: but more in detail
-%[5:58:25 PM] =[BSID]= 1LT Beerdude26: Embedding contract inferencing in the Ask-Elle functional programming tutor
-%[5:58:39 PM] =[BSID]= 1LT Beerdude26: You know that everything has a type in Haskell
-%[5:58:50 PM] : ][CW][ : Brutos: yes
-%[5:59:26 PM] =[BSID]= 1LT Beerdude26: Contracts are a refinement of those (in fact, many researchers go the way of refinement types, but those need solvers and a whole lot of other crap)
-%[5:59:38 PM] =[BSID]= 1LT Beerdude26: So like, you have a function that goes from Int -> Int
-%[5:59:57 PM] =[BSID]= 1LT Beerdude26: You could define a contract for it that says "Input must be below 0, output must be below 2"
-%[6:00:10 PM] =[BSID]= 1LT Beerdude26: Or something like that, stupid example
-%[6:00:21 PM] =[BSID]= 1LT Beerdude26: You can use arbitrary functions when defining contracts
-%[6:00:30 PM] =[BSID]= 1LT Beerdude26: So it can also be that the input must be prime or something
-%[6:00:46 PM] =[BSID]= 1LT Beerdude26: Do you know about type inference?
-%[6:01:00 PM] : ][CW][ : Brutos: yes i did even learn one algorithm to do it
-%[6:01:04 PM] =[BSID]= 1LT Beerdude26: Algorithm W
-%[6:01:06 PM] =[BSID]= 1LT Beerdude26: Probably
-%[6:01:07 PM] : ][CW][ : Brutos: but i forgot everything about it again ._.
-%[6:01:07 PM] : ][CW][ : Brutos: :D
-%[6:01:49 PM] =[BSID]= 1LT Beerdude26: Well, the guy whose work I'm building on found out that for a subset of the Contract datatype he was using, it is possible to infer contracts for expressions, just like you can for types
-%[6:01:54 PM] : ][CW][ : Brutos: might be the notation in wiki looks somewhat familiar
-%[6:02:17 PM] : ][CW][ : Brutos: so i have some code and i can infer that id > 0
-%[6:02:18 PM] =[BSID]= 1LT Beerdude26: This is pretty nice; it allows you to define a "top-level" contract, and the rest of your code gets contracted appropriately
-%[6:02:36 PM] : ][CW][ : Brutos: oh i say my id > 0 and the compiler checks it everywhere?
-%[6:02:52 PM] =[BSID]= 1LT Beerdude26: Well
-%[6:03:41 PM] =[BSID]= 1LT Beerdude26: It's more like, "I know that this output comes from this function, and this output has the constraint that it must be at least 10 items long"
-%[6:04:01 PM] =[BSID]= 1LT Beerdude26: "So, I can infer that the constraint for the output of the function it came from must also be 10 items long"
-%[6:04:05 PM] =[BSID]= 1LT Beerdude26: Etc etc
-%[6:04:08 PM] =[BSID]= 1LT Beerdude26: Other tricks
-%[6:04:27 PM] =[BSID]= 1LT Beerdude26: In the end, you have very specific contracts for deeply nested code
-%[6:04:42 PM] : ][CW][ : Brutos: in 30 years it will make it into some kind of c++ standard :(
-%[6:04:50 PM] =[BSID]= 1LT Beerdude26: Which is nice, because that means you can find out more easily where your code is going wrong
-%[6:05:17 PM] =[BSID]= 1LT Beerdude26: The guy gave a nice example of insertion sort defined as a fold with insert: isort xs = foldr insert [] xs
-%[6:05:41 PM] =[BSID]= 1LT Beerdude26: Then he defined a contract: the input of xs doesn't matter as long as it's a list, the output of xs must be ordered.
-%[6:06:13 PM] =[BSID]= 1LT Beerdude26: Unfortunately, the inference does not support relations between input and output, so we can't say that the output must also be a permutation of the input
-%[6:06:33 PM] : ][CW][ : Brutos: is that a limitation of the theory or of the tools?
-%[6:06:38 PM] =[BSID]= 1LT Beerdude26: (Unless we transform our fold into paramorfism)
-%[6:06:58 PM] =[BSID]= 1LT Beerdude26: Of the theory, the inferencing algorithm is very simple
-%[6:07:15 PM] =[BSID]= 1LT Beerdude26: And cannot handle dependent functions
-%[6:07:24 PM] =[BSID]= 1LT Beerdude26: That's why people look to refinement types, because they do support all this
-%[6:07:37 PM] =[BSID]= 1LT Beerdude26: However, you need a constraint solver, some other fancy stuff
-%[6:07:44 PM] =[BSID]= 1LT Beerdude26: Proving it all is fucking hard
-%[6:07:52 PM] =[BSID]= 1LT Beerdude26: While proving this is pretty easy
-%[6:08:00 PM] =[BSID]= 1LT Beerdude26: At the moment, I'm doing code generation
-%[6:08:06 PM] : ][CW][ : Brutos: sounds like aweful big oh
-%[6:08:23 PM] =[BSID]= 1LT Beerdude26: Yeah it's probably pretty slow, too
-%[6:09:05 PM] =[BSID]= 1LT Beerdude26: The code generation I'm doing just takes Helium code (subset of Haskell 98 spec) and transforms it so it is fully contracted
-%[6:09:47 PM] =[BSID]= 1LT Beerdude26: At the moment, it's just generic contracts that always resolve to "true", so in other words the contracts don't impose any restraints whatsoever
-%[6:10:21 PM] =[BSID]= 1LT Beerdude26: However, I can then inject substitutions into the code generation bit
-%[6:10:37 PM] =[BSID]= 1LT Beerdude26: So then suddenly you have specific contracts that are being passed around
-%[6:11:34 PM] =[BSID]= 1LT Beerdude26: I think I'll copy this convo in my thesis text, it's a nice overview of what I have and have not done lol
 
 \tableofcontents
 
@@ -245,6 +199,9 @@ After processing the results, we will present our findings in a presentation, as
 \end{description}
 
 \chapter{Background}
+
+\review
+
 In this chapter, we will familiarize the reader with some concepts that will be used onwards in this thesis, the most important ones being contracts and the notion of inferring types and contracts.
 
 This thesis concerns itself with contract inferencing.
@@ -264,55 +221,6 @@ A prerequisite violation is to be blamed on the $caller$: it was this function t
 Likewise, a guarantee violation is to be blamed on the $callee$: there is a fault in the function being called that causes it to return an invalid result.
 
 In other words, adding contracts to one's code adds an element of automated testing and aids in debugging any faults that may arise by being able to specify what exactly went wrong, and where.
-
-The concept of contracts dates back to the Eiffel programming language \cite{Meyer:1988wp} in 1988, which included it as a language feature.
-Many other languages support contracts, or have libraries available to achieve the same functionality.
-
-In a functional setting, contracts are less popular, but there has been a lot of research in this field.
-Initial steps were taken by Findler and Felleisen \cite{Findler:2002:CHF:583852.581484}, who defined a typed lambda calculus with support for contracts for higher-order functions in the Scheme language.
-For Haskell, Hinze et al. \cite{Hinze06typedcontracts} developed a dynamic contract library that builds upon Findler and Felleisen's findings. 
-A static approach was taken by Xu et al. \cite{Xu:2006ul, Xu:2009:SCC:1594834.1480889}, allowing contracts to be checked using symbolic computation at compile-time. This technique is similar to that of refinement types, which we will cover in a later paragraph.
-
-Degen et al. \cite{DegenThiemannWehr2009} provide an overview of contract implementation in lazy languages and their pitfalls, demonstrating how each form of dynamic contract monitoring (eager, semi-eager and lazy) are inherently flawed, either changing program behavior or ignoring contract violations.
-The article also touches upon Xu's work on static contract systems, which the authors argue is similar to the eager monitoring style they discuss in their article.
-Eager contract monitoring is preferred by the authors as all contracts defined in it are faithful: they will always evaluate to their actual value, which implies that, if a program terminates, all of the contracts within it will have evaluated to true.
-
-Other researchers have explored enriching the type system to replace the functionality offered by contracts, producing what is commonly called "refinement types".
-Rondon et al. \cite{rondon2008liquid} have developed a set of data types called Logically Qualified Data Types, often shortened to Liquid Types.
-Using liquid types, they are able to embed a decidable subset of dependent typing functionality in a Hindley-Milner typing system.
-With only the HM types and a predefined set of logical qualifiers, their algorithm is able to infer liquid types, which are dependent types that consist of conjunctions of the aforementioned logical qualifiers.
-After inferring these liquid types, they can be resolved using an SMT solver.
-In the end, one ends up with the strongest constraint possible on the expression that can be generated with the provided set of logical qualifiers.
-Implementations of liquid typing are available for OCaml \cite{rondon2008liquid} and Haskell (using GHC) \cite{rondon2013refinement}.
-The Haskell implementation is able to provide feedback if type checking fails, indicating the position(s) in the source code where things have gone wrong.
-Additionally, a HTML file is generated of the processed source code annotated with the inferred types.
-
-A similar approach was taken by Vytiniotis et al. \cite{Vytiniotis:2013ww}, whose framework converts contracts written in Haskell into a simpler lambda calculus, which itself is translated into first-order logic formulae.
-Finally, these formulae are solved using an off-the-shelf theorem solver.
-
-Terauchi \cite{terauchi2010dependent} also builds upon the recent developments in refinement types to present a system that is able to infer dependent types for a subset of the OCaml language without external input.
-Instead of taking a user-provided set of formulas, the algorithm uses counterexample guided abstraction refinement (CEGAR) to iteratively refine a lattice of candidate dependent types.
-Counterexamples are parts of the program that are untypable with the current lattice of candidate types.
-The algorithm then attempts to type the program with all available types instead of the lattice.
-If typing succeeds, the new candidates are added to the lattice and a new counterexample is selected.
-If it fails, then the program is untypable.
-As the algorithm itself generates the set of candidates, users can be sure that if the program is untypable, it really is untypable.
-On the other hand, because the types are inferred automatically, they are not necessarily the strongest types available.
-
-Ranjit et al. \cite{jhala2010refinement} take another route to attain refinement types: they first attain refinement type constraints using the implementation of Rondon et al. \cite{rondon2008liquid}, and then translate these types to a first-order imperative program.
-Iff the assertions of this imperative program hold, the higher-order program typechecks.
-This verification can be done using several abstract interpretation techniques (of which CEGAR is one), which have readily available implementations for imperative languages.
-The proof of safety of the imperative program translates to the solutions of the refinement type constraints.
-Thus, these can be used to annotate the original higher-order program, obtaining the refinement types.
-
-The articles of Dimoulas \& Felleisen \cite{Dimoulas:2011:CSH:2039346.2039348} and Greenberg et al. \cite{Greenberg:2010:CMM:1707801.1706341} provide an excellent overview of recent developments pertaining to contracts, as well as as detailed comparisons between the different libraries and frameworks. \cite{Dimoulas:2011:CSH:2039346.2039348} also goes into greater detail of the semantics of contract satisfaction.
-
-Another form of type enrichment that enforces constraints is dimensional typing.
-In short, a (usually numerical) value is given a dimension (time, length, mass, etc.).
-Either through static analysis and inferencing or through type-level programming, these constraints can be enforced, ensuring that nonsensical operations, such as adding a time value and a mass value, are caught at compile-time.
-Kennedy's thesis \cite{langanddim} explores this domain extensively for the ML language. 
-A number of dimensional typing libraries are available for Haskell, most of which are defined using type-level programming or using type families.
-Some simply constrain the input and output of functions, while others perform automatic conversion between compatible types, for example between meters and inches.
 
 This thesis builds upon the thesis of Stutterheim \cite{Stutterheim:2013:thesis}, who developed an algorithm for contract inferencing on a simple recursive let lambda language with support for holes.
 While Stutterheim's contract grammar is library-agnostic, he chose to generate code for the 'typed-contracts' library by Hinze et al. \cite{Hinze06typedcontracts}. 
@@ -362,7 +270,7 @@ data Contract aT where
 
 Let us go over each data constructor:
 \begin{description}
-	\item{\code{Prop} } is what one uses to actually define a constraint or property on a value. Given a function that expects a value of type \code{aT} and which returns a Boolean, it produces a contract for something of type \code{aT}.
+	\item{\code{Prop} } is what one uses to actually define a constraint or property on a value. Given a function that expects a value of type \code{aT} and which returns a Boolean, it produces a contract for something of type \code{aT}. In other words, it lifts a function to a contract.
 	\item{\code{Function} } is used to define a dependent function contract.
 	\item{\code{Pair} } similarly defines a dependent pair contract.
 	\item{\code{List} } is straightforward: it lifts contracts to the list level.
@@ -375,11 +283,11 @@ Now that we know how a \code{Contract} is constructed, let us see how it is appl
 Note that we will simplify the definition somewhat, leaving out arguments pertaining to location information.
 
 \begin{lstlisting}[mathescape]
-assert ::  Contract aT -> (aT -> aT)
+assert ::  Contract aT $\rightarrow$ (aT $\rightarrow$ aT)
 
 assert (Prop p)         a   = if p a then a else error "contract failed"
 
-assert (Function c$_1$ c$_2$) f	    = ($\lambda$ -> (assert (c$_2$ x) . f) x) . assert c$_1$
+assert (Function c$_1$ c$_2$) f	    = ($\lambda$x $\rightarrow$ (assert (c$_2$ x) . f) x) . assert c$_1$
 
 assert (Pair c$_1$ c$_2$) (a$_1$,a$_2$)     = ($\lambda$a$'_1 \rightarrow$(a$'_1$,assert (c$_2$ a$'_1$) a$_2$)) (assert c$_1$ a$_1$)
 
@@ -395,16 +303,185 @@ assert (And c$_1$ c$_2$)        a   = (assert c$_2$ . assert c$_1$) a
 Let's go over each pattern match to understand what happens:
 
 \begin{description}
-	\item{\code{Prop} :}
+	\item{\code{Prop} :} When asserting a property, we apply the predicate to the supplied value. If the predicate holds, this function acts as the identity function. If it does not hold, however, an exception is raised. In the unabridged code, the exception message also includes the position of the violation in the source code.
+	\item{\code{Function} :} For a \code{Function} contract, we first assert $c_1$ on the input of the function $f$. If this assertion holds, we pass the value $x$ to $f$, as can be seen in the lambda function. The result of $f x$ is then used to assert the codomain of the function using $c_2$.
+	\item{\code{Pair} :} Similarly, the \code{Pair} contract first asserts the contract $c_1$ to the first element in the pair. Provided it succeeds, the first element is passed to $c_2$. The resulting contract $(c_2$ $a'_1)$ is then used to assert the second element of the pair.
+	\item{\code{List}, \code{Functor}, \code{Bifunctor} :} These are all quite similar. The contract to be asserted is mapped over the elements of a container.
+	\item{\code{And} :} This contract is used to combine two contracts, so asserting one implies that both contracts hold on the provided value.
 \end{description}
 
+Now that we know how contracts are constructed and asserted, let us look at some convenience functions that will be used throughout this thesis:
+
+\begin{lstlisting}[mathescape]
+c$_1$ $\rightarrowtail$ c$_2$		= Function c$_1$ (const c$_2$)
+(&)		= And
+c$_1$ $\functor$ c$_2$		= c$_1$ & Functor c$_2$
+c$_1$ $\bifunctor$ (c$_2$,c$_2$)	= c$_1$ & Bifunctor c$_2$ c$_3$
+\end{lstlisting}
+
+The first definition allows us to define a non-dependent function contract, and the second is some simple syntactical sugar.
+The last two definitions merit some more detail.
+Along with (a) contract(s) for the elements of a container, a contract for the container in its entirety is provided as well in the form of $c_1$.
+A simple example why this is useful, is the guarantee that a list is sorted when it is returned by a sorting function.
+Such a property cannot be captured by any contract for a container's elements, as these elements only know about themselves, and not about other elements in the container.
+Therefore, we require container-wide contracts, which are also called "outer contracts".
+Conversely, contracts for a container's elements are referred to as "inner contracts".
+
+With these functions, we can easily describe complex contracts.
+Let us look at an example.
+First, we define two fundamental contracts, namely \code{true} and \code{false}, which always succeed and always fail, respectively, regardless of its input:
+
+\begin{lstlisting}[mathescape]
+true, false :: Contract aT
+true  = Prop ($\lambda$_ $\rightarrow$ True)
+false = Prop ($\lambda$_ $\rightarrow$ False)
+\end{lstlisting}
+
+Let us construct a few contracts for the \code{head} function that will not raise an exception.
+The very first contract is simply the \code{true} contract itself, which will take the entire \code{head} function as an argument.
+But the contract could be made more specific:
+
+\begin{lstlisting}[mathescape]
+true $\rightarrowtail$ true :: Contract (aT $\rightarrowtail$ aT)
+\end{lstlisting}
+
+In this case, the \code{true} contract is asserted on both the input and output of the \code{head} function, but no longer on the function in its entirety.
+We can make it even more specific:
+
+\begin{lstlisting}[mathescape]
+(true $\functor$ true) $\rightarrowtail$ true :: Contract ([aT] $\rightarrowtail$ aT)
+\end{lstlisting}
+
+Using the functor contract $\functor$, the \code{true} contract is asserted on the input list in its entirety, as well as each of its elements, along with the output of the function.
+
+Up until now, we've only used the \code{true} contract.
+But we can also use contract variables to express relations between the input and output of a function. 
+A further refinement of the contract for \code{head} exemplifies this:
+
+\begin{lstlisting}[mathescape]
+(c$_{out}$ $\functor$ c$_{in}$) $\rightarrowtail$ c$_{in}$ :: Contract ([aT] $\rightarrowtail$ aT)
+\end{lstlisting}
+
+It makes sense that the element that is extracted from the list still obeys the contract $c_{in}$.
+With this knowledge, let us look at a higher-order example: \code{fmap}.
+By using the functor contract again, we can define a contract for \code{fmap}:
+
+\begin{lstlisting}[mathescape]
+(c$_1$ $\rightarrowtail$ c$_2$) $\rightarrowtail$ (c$_3$ $\functor$ c$_1$) $\rightarrowtail$ (c$_4$ $\functor$ c$_2$)
+\end{lstlisting}
+
+Note how the contract variables of the contract are very similar to the type variables of the type of \code{fmap}:
+
+\begin{lstlisting}[mathescape]
+fmap :: (a $\rightarrow$ b) $\rightarrow$ f a $\rightarrow$ f b
+\end{lstlisting}
+
+The contract variables $c_1$ and $c_2$ correspond to type variables $a$ and $b$, respectively.
+Generally, we cannot perform such a mapping over containers, so they are assigned different contract variables: $c_3$ and $c_4$.
+During contract inferencing, it may turn out that these variables are equal, but this information is usually not deducible from the function's type.
+
+
+\subsection{Related work}
+The concept of contracts dates back to the Eiffel programming language \cite{Meyer:1988wp} in 1988, which included it as a language feature.
+Many other languages support contracts, or have libraries available to achieve the same functionality.
+
+In a functional setting, contracts are less popular, but there has been a lot of research in this field.
+Initial steps were taken by Findler and Felleisen \cite{Findler:2002:CHF:583852.581484}, who defined a typed lambda calculus with support for contracts for higher-order functions in the Scheme language.
+For Haskell, Hinze et al. \cite{Hinze06typedcontracts} developed a dynamic contract library that builds upon Findler and Felleisen's findings. 
+A static approach was taken by Xu et al. \cite{Xu:2006ul, Xu:2009:SCC:1594834.1480889}, allowing contracts to be checked using symbolic computation at compile-time. This technique is similar to that of refinement types, which we will cover in a later paragraph.
+
+Degen et al. \cite{DegenThiemannWehr2009} provide an overview of contract implementation in lazy languages and their pitfalls, demonstrating how each form of dynamic contract monitoring (eager, semi-eager and lazy) are inherently flawed, either changing program behavior or ignoring contract violations.
+The article also touches upon Xu's work on static contract systems, which the authors argue is similar to the eager monitoring style they discuss in their article.
+Eager contract monitoring is preferred by the authors as all contracts defined in it are faithful: they will always evaluate to their actual value, which implies that, if a program terminates, all of the contracts within it will have evaluated to true.
+
+Other researchers have explored enriching the type system to replace the functionality offered by contracts, producing what is commonly called "refinement types".
+Rondon et al. \cite{rondon2008liquid} have developed a set of data types called Logically Qualified Data Types, often shortened to Liquid Types.
+Using liquid types, they are able to embed a decidable subset of dependent typing functionality in a Hindley-Milner typing system.
+With only the HM types and a predefined set of logical qualifiers, their algorithm is able to infer liquid types, which are dependent types that consist of conjunctions of the aforementioned logical qualifiers.
+After inferring these liquid types, they can be resolved using an SMT solver.
+In the end, one ends up with the strongest constraint possible on the expression that can be generated with the provided set of logical qualifiers.
+Implementations of liquid typing are available for OCaml \cite{rondon2008liquid} and Haskell (using GHC) \cite{rondon2013refinement}.
+The Haskell implementation is able to provide feedback if type checking fails, indicating the position(s) in the source code where things have gone wrong.
+Additionally, a HTML file is generated of the processed source code annotated with the inferred types.
+
+A similar approach was taken by Vytiniotis et al. \cite{Vytiniotis:2013ww}, whose framework converts contracts written in Haskell into a simpler lambda calculus, which itself is translated into first-order logic formulae.
+Finally, these formulae are solved using an off-the-shelf theorem solver.
+
+Terauchi \cite{terauchi2010dependent} also builds upon the recent developments in refinement types to present a system that is able to infer dependent types for a subset of the OCaml language without external input.
+Instead of taking a user-provided set of formulas, the algorithm uses counterexample guided abstraction refinement (CEGAR) to iteratively refine a lattice of candidate dependent types.
+Counterexamples are parts of the program that are untypable with the current lattice of candidate types.
+The algorithm then attempts to type the program with all available types instead of the lattice.
+If typing succeeds, the new candidates are added to the lattice and a new counterexample is selected.
+If it fails, then the program is untypable.
+As the algorithm itself generates the set of candidates, users can be sure that if the program is untypable, it really is untypable.
+On the other hand, because the types are inferred automatically, they are not necessarily the strongest types available.
+
+Ranjit et al. \cite{jhala2010refinement} take another route to attain refinement types: they first attain refinement type constraints using the implementation of Rondon et al. \cite{rondon2008liquid}, and then translate these types to a first-order imperative program.
+Iff the assertions of this imperative program hold, the higher-order program typechecks.
+This verification can be done using several abstract interpretation techniques (of which CEGAR is one), which have readily available implementations for imperative languages.
+The proof of safety of the imperative program translates to the solutions of the refinement type constraints.
+Thus, these can be used to annotate the original higher-order program, obtaining the refinement types.
+
+The articles of Dimoulas \& Felleisen \cite{Dimoulas:2011:CSH:2039346.2039348} and Greenberg et al. \cite{Greenberg:2010:CMM:1707801.1706341} provide an excellent overview of recent developments pertaining to contracts, as well as as detailed comparisons between the different libraries and frameworks. \cite{Dimoulas:2011:CSH:2039346.2039348} also goes into greater detail of the semantics of contract satisfaction.
+
+Another form of type enrichment that enforces constraints is dimensional typing.
+In short, a (usually numerical) value is given a dimension (time, length, mass, etc.).
+Either through static analysis and inferencing or through type-level programming, these constraints can be enforced, ensuring that nonsensical operations, such as adding a time value and a mass value, are caught at compile-time.
+Kennedy's thesis \cite{langanddim} explores this domain extensively for the ML language. 
+A number of dimensional typing libraries are available for Haskell, most of which are defined using type-level programming or using type families.
+Some simply constrain the input and output of functions, while others perform automatic conversion between compatible types, for example between meters and inches.
+
 \section{Inferencing}
+
+
+
+Can we refine the contract even more without risking raising an exception?
+It appears we cannot: we have reached a fixed point for a contract that will never raise an exception, regardless of the values it is provided.
+
+In section 3.3 of his thesis, Stutterheim defines relations between contracts by "regarding contracts as sets of Haskell values" and using set-theoretic operations on these sets.
+With these relations, he is able to define the notion of a \textit{most specific} contract:
+
+\begin{quotation}
+"..the inferred contract is also the most specific contract. I.e., the semantics of the inferred contract is a subset of any other contract that can be described in the contract system. (..) Intuitively, this seems true, because \textit{(contract inferencing algorithm)} \CW ~will infer contracts specific to certain types."
+\end{quotation}
+
+The contract in figure \ref{fig:head-contract-fixed-point} is close to being a \textit{most specific} contract.
+The only difference between our contract and the most specific contract, is that latter has been passed through Stutterheim's contract inferencing algorithm.
+
+Comparing this contract with the type of \code{head} shows that they are very similar:
+
+\begin{figure}[htbp]
+\begin{lstlisting}[mathescape]
+head_ctrt :: Contract ([aT] $\rightarrowtail$ aT)
+head_ctrt = (true $\functor$ true) $\rightarrowtail$ true
+
+head :: [a] $\rightarrow$ a
+\end{lstlisting}
+\caption{\label{fig:resemblance-contract-type}A strong resemblance between contracts and types.}
+\end{figure}
+
+This is not a random occurence: in Conjecture 1 of Stutterheim's thesis, he speculates that, 
+
+
+
+The example we have just viewed showed us how we can increase the specificity of a contract, starting from the \code{true} contract and working towards a very specific contract from there.
+This is how Stutterheim's contract inferencing system operates.
+In this thesis, we will exploit the resemblance shown in figure \ref{resemblance-contract-type} to simplify contract inferencing by providing the inferencing algorithm with the generalized version of the most specific contract for a given expression.
+A generalized contract is one that purely uses 
+
+ relation the fact that we can generate a most specific contract from a type
+
+In fact, it is possible to generate a most specific generic contract from the type of the expression.
+
 
 Cousot et al. \cite{cousotabstract} have implemented automatic contract inference for method extraction, a common refactoring technique.
 The inferred contract satisfies four requirements: (i) it is valid for the extracted method; (ii) the contract takes into account language and programmer assertions; (iii) the contract of the refactored code is as precise as the non-refactored code, and (iv) the contract is as general as possible.
 The authors use an iterative approximation algorithm to attain contracts that fulfil these requirements, and prove that an exact solution is uncomputable.
 
 \chapter{Approach}
+
+\review
+
 Our first order of affairs was to read and test the source code provided by Stutterheim, which contained the contract inferencing system and the code generation system.
 The latter system had some issues, and working those out provided the first step to our final code generation system.
 On the way, we encountered several more problems, which we will discuss in the remainder of this section.
@@ -759,6 +836,9 @@ As such, the current code generation system generates monomorphic code that may 
 Rolling back to the polymorphic version is, of course, still possible, and is left as future work (see section ~\ref{futurework}).
 
 \chapter{Final system design}
+
+\review
+
 This chapter explores the details of the final design of the entire code generation system.
 
 First, we introduce the syntax for our abstract syntax tree (AST), which is a slightly modified version of the syntax Ask-Elle uses.
@@ -1898,6 +1978,9 @@ Of course, if the user provides a partially applied function, there is not much 
 \label{futurework}
 
 \section{Using paramorphisms to tackle dependent contracts}
+
+\review
+
 Johan Jeuring provided a wonderful idea to be able to run contract inferencing on some catamorphisms with dependent contracts by converting them to a paramorphism, which is a catamorphism that provides its function argument with the original input as well:
 
 \begin{figure}[htps]
