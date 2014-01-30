@@ -202,7 +202,7 @@ After processing the results, we will present our findings in a presentation, as
 
 \review
 
-In this chapter, we will familiarize the reader with some concepts that will be used onwards in this thesis, the most important ones being contracts and the notion of inferring types and contracts.
+In this chapter, we will familiarize the reader with some concepts that will be used in the rest of this thesis, the most important ones being contracts and the notion of inferring types and contracts.
 
 This thesis concerns itself with contract inferencing.
 Let us break up these terms and investigate them thoroughly before moving on.
@@ -214,7 +214,7 @@ In our case, the parties are the function being called (the $callee$) and the fu
 As a simple example, one could specify a contract that a function will only accept a natural number: a prerequisite.
 Likewise, it is possible to state that a function must also always return a natural number: a guarantee.
 By combining prerequisites and guarantees for arguments and results, respectively, it is possible to construct very specific contracts that are quite useful for tracking down bugs.
-Because just like in real life, these contracts can be violated, which may halt the program with an exception detailing which contract was violated at what position in the code.
+Just like in real life, these contracts can be violated, which will halt the program with an exception detailing which contract was violated at what position in the code.
 
 When this happens, blame must be assigned.
 A prerequisite violation is to be blamed on the $caller$: it was this function that should have provided a valid argument.
@@ -235,15 +235,15 @@ But we are getting ahead of ourselves; let us first look at a few simple example
 The very first example is the one we used when first introducing the concept of contracts, namely a contract that constrains a function such that it demands a natural number as its input, and the guarantee that it will return a natural number, too:
 
 \begin{lstlisting}[mathescape]
-natInNatOut :: Contract (int >-> int)
-nat $\rightarrowtail$ nat
+natInNatOut :: Contract (int $\rightarrowtail$ int)
+natInNatOut = nat $\rightarrowtail$ nat
 \end{lstlisting}
 
 We need a way to attach this contract to such a function, which is what the \code{assert} function is for:
 
 \begin{lstlisting}[mathescape]
-increase :: Int -> Int
-increase = assert (nat $\rightarrowtail$ nat) (\n -> 1 + n)
+increase :: Int $\rightarrow$ Int
+increase = assert natInNatOut (\n $\rightarrow$ 1 + n)
 \end{lstlisting}
 
 Note how the type of \code{increase} does not reflect the constraints imposed by the contract, because the contract is asserted at runtime.
@@ -252,7 +252,7 @@ In other words, the \code{assert} function acts as a partial identity function, 
 This behaviour is clearly reflected in the type of \code{assert}:
 
 \begin{lstlisting}[mathescape]
-assert :: Contract a -> (a -> a)
+assert :: Contract a $\rightarrow$ (a $\rightarrow$ a)
 \end{lstlisting}
 
 Hinze et al. define the \code{Contract} type using a GADT:
@@ -378,7 +378,9 @@ fmap :: (a $\rightarrow$ b) $\rightarrow$ f a $\rightarrow$ f b
 
 The contract variables $c_1$ and $c_2$ correspond to type variables $a$ and $b$, respectively.
 Generally, we cannot perform such a mapping over containers, so they are assigned different contract variables: $c_3$ and $c_4$.
-During contract inferencing, it may turn out that these variables are equal, but this information is usually not deducible from the function's type.
+During a process called inferencing, it may turn out that these variables are equal, but this information is usually not deducible from the function's type.
+
+Section \ref{background-inferencing} will explain the concept of inferencing and its use in refining contracts even further.
 
 
 \subsection{Related work}
@@ -390,7 +392,7 @@ Initial steps were taken by Findler and Felleisen \cite{Findler:2002:CHF:583852.
 For Haskell, Hinze et al. \cite{Hinze06typedcontracts} developed a dynamic contract library that builds upon Findler and Felleisen's findings. 
 A static approach was taken by Xu et al. \cite{Xu:2006ul, Xu:2009:SCC:1594834.1480889}, allowing contracts to be checked using symbolic computation at compile-time. This technique is similar to that of refinement types, which we will cover in a later paragraph.
 
-Degen et al. \cite{DegenThiemannWehr2009} provide an overview of contract implementation in lazy languages and their pitfalls, demonstrating how each form of dynamic contract monitoring (eager, semi-eager and lazy) are inherently flawed, either changing program behavior or ignoring contract violations.
+Degen et al. \cite{DegenThiemannWehr2009} provide an overview of contract implementation in lazy languages and their pitfalls, demonstrating how each form of dynamic contract monitoring (eager, semi-eager and lazy) is inherently flawed, either changing program behavior or ignoring contract violations.
 The article also touches upon Xu's work on static contract systems, which the authors argue is similar to the eager monitoring style they discuss in their article.
 Eager contract monitoring is preferred by the authors as all contracts defined in it are faithful: they will always evaluate to their actual value, which implies that, if a program terminates, all of the contracts within it will have evaluated to true.
 
@@ -417,7 +419,7 @@ As the algorithm itself generates the set of candidates, users can be sure that 
 On the other hand, because the types are inferred automatically, they are not necessarily the strongest types available.
 
 Ranjit et al. \cite{jhala2010refinement} take another route to attain refinement types: they first attain refinement type constraints using the implementation of Rondon et al. \cite{rondon2008liquid}, and then translate these types to a first-order imperative program.
-Iff the assertions of this imperative program hold, the higher-order program typechecks.
+If and only if the assertions of this imperative program hold, the higher-order program typechecks.
 This verification can be done using several abstract interpretation techniques (of which CEGAR is one), which have readily available implementations for imperative languages.
 The proof of safety of the imperative program translates to the solutions of the refinement type constraints.
 Thus, these can be used to annotate the original higher-order program, obtaining the refinement types.
@@ -432,7 +434,9 @@ A number of dimensional typing libraries are available for Haskell, most of whic
 Some simply constrain the input and output of functions, while others perform automatic conversion between compatible types, for example between meters and inches.
 
 \section{Inferencing}
+\label{background-inferencing}
 
+In computer science, the notion of \textit{inference} most often refers to the method of \textit{type inferencing}, which automatically deduces types for expressions written in a programming language.
 
 
 Can we refine the contract even more without risking raising an exception?
@@ -477,6 +481,34 @@ In fact, it is possible to generate a most specific generic contract from the ty
 Cousot et al. \cite{cousotabstract} have implemented automatic contract inference for method extraction, a common refactoring technique.
 The inferred contract satisfies four requirements: (i) it is valid for the extracted method; (ii) the contract takes into account language and programmer assertions; (iii) the contract of the refactored code is as precise as the non-refactored code, and (iv) the contract is as general as possible.
 The authors use an iterative approximation algorithm to attain contracts that fulfil these requirements, and prove that an exact solution is uncomputable.
+
+\chapter{Approach}
+
+The contract inferencing system devised by Stutterheim is a solid base upon which we can build to support a language such as Haskell:
+
+\begin{itemize}
+	\item The grammar to describe a contract is library-agnostic. It takes several elements from the 'typed-contracts' library by Hinze et al. \cite{Hinze06typedcontracts}, which it uses as the example library to describe its code generation procedure.
+	\item Using simple set-theoretic operations, Stutterheim defines relations between contracts, which he uses to prove how a contract can be more general than another.
+	\item The language used, $\lambda_c$, is a simple let-polymorphic lambda calculus.
+	\item His contract inferencing algorithm \CW ~is based upon Milner's Algorithm \W ~and uses Robinson's unification algorithm, two well-understood algorithms.
+\end{itemize}
+
+There are a few limitations in Stutterheim's system that we improve upon:
+
+\begin{itemize}
+	\item A system for code generation is left implicit in Stutterheim's thesis. Feedback towards a user is also not discussed.
+	\item Substitutions generated by algorithm \CW ~are in placed in a global set. Conflicting substitutions may result in an inferred contract causing a violation during assertion.
+\end{itemize}
+
+We improve upon Stutterheim's system in the following ways:
+\begin{itemize}
+	\item  We provide a system to generate code for the 'typed-contracts' library.
+	\item The language we use is a slightly simplified version of the Helium language, a dialect of Haskell that is a subset of the Haskell 98 specification.
+	\item Using type information, we perform AST transformations to simplify the contract inferencing algorithm.
+	\item With the same information, we generate a set of initial contracts that simplify contract inferencing even further. \todo{Does it also allow us to ignore mutually recursive functions??? Does stutterheim's system allow mutrecs?}
+\end{itemize}
+
+
 
 \chapter{Approach}
 
