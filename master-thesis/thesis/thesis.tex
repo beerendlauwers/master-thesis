@@ -19,6 +19,9 @@
 \usepackage{xcolor}
 \usepackage{pdfpages}
 
+\usepackage{attrib}
+\usepackage{framed}
+
 \newcommand{\functor}{<\!\!\!@\!\!\!>}
 \newcommand{\bifunctor}{<\!\!\!@\!\!@\!\!\!>}
 
@@ -382,8 +385,177 @@ During a process called inferencing, it may turn out that these variables are eq
 
 Section \ref{background-inferencing} will explain the concept of inferencing and its use in refining contracts even further.
 
+\section{Contract inferencing}
+\label{background-inferencing}
 
-\subsection{Related work}
+In computer science, the notion of \textit{inference} most often refers to the method of \textit{type inferencing}, which automatically deduces types for expressions written in a programming language.
+
+For functional programs, the Hindley-Milner type inferencing system described by Damas and Milner \cite{Damas:1982ve} is the most well-known.
+The thesis of Stutterheim \cite{Stutterheim:2013:thesis} builds upon this system, producing an algorithm for deducing \textit{contracts} from expressions written in a simple let-polymorphic lambda calculus.
+
+\subsection{Goals of contract inferencing}
+Stutterheim set out three goals for his contract inferencing system, shown in figure \ref{fig:goals-stutterheim-contract-inferencing}.
+
+\begin{figure}[htps]
+\begin{framed}
+\begin{center}
+\begin{itemize}
+	\item Infer a well-typed contract for every function in a program
+	\item Inferred contracts must allow a (non-strict) subset of the values allowed
+by the types
+	\item The most general inferred contract must never fail an assertion
+\end{itemize}
+\end{center}
+\end{framed}
+\attrib{{\em{Contract Inferencing for Functional Programs}}, page 12}
+\caption{\label{fig:goals-stutterheim-contract-inferencing}Stutterheim's goals for contract inferencing.}
+\end{figure}
+
+The first goal describes the notion of a \textit{fully contracted} expression: every function application is provided with a contract that can be used to assert it.
+The second goal is sensible: any values constrained by the contract of an expression should be a subset of the inhabitants of the type of that expression.
+Lastly, the third goal implies that asserting any inferred contract is equal to the identity function.
+
+\subsection{Language used}
+
+The contract inferencing algorithm works on $\lambda_c$, a let-polymorphic lambda calculus:
+
+\begin{figure}[htps]
+\begin{lstlisting}[mathescape]
+$expr$      ::=   x				-- Variable
+        |   $\lambda$$expr$ $\rightarrow$ $expr$				-- Lambda abstraction
+        |   $expr$ $expr$				-- Application
+        |   let $expr$ = $expr$ in $expr$			-- Let binding
+        |   case $expr$ of			-- Case block
+              { $expr$ $\rightarrow$ $expr$ (; $expr$ $\rightarrow$ $expr$)* }
+        |   $const$				-- Constants
+        |   $expr$ : $expr$				-- List cons constructor
+        |   []				-- List nil constructor
+        |   Just $expr$			-- Maybe Just constructor
+        |   Nothing			-- Maybe Nothing constructor
+        |   ($expr$, $expr$)			-- Pair
+        |   Left $expr$			-- Either left constructor
+        |   Right $expr$			-- Either right constructor
+        |   $expr$ $\oplus$ $expr$				-- Binary operation
+        |   ?				-- Holes
+
+
+$const$      ::=   n				-- Integers
+        |   b				-- Booleans
+        |   c				-- Characters
+        |   s				-- Strings
+\end{lstlisting}
+\caption{The $\lambda_c$ language.}
+\end{figure}
+
+\subsection{Contract grammar}
+
+Contracts are generated in an intermediate language-agnostic grammar, which can be converted to library-specific contracts (figure \ref{fig:stutterheim-intermediate-contract-grammar}).
+
+\begin{figure}[htps]
+\begin{center}
+\begin{lstlisting}[mathescape]
+  -- Contracts
+  c ::=  $\rho_{\alpha}$			-- User-defined concrete contract
+      |  $true_{\alpha}$			-- true contract
+      |  $false_{\alpha}$			-- false contract
+      |  $c_{\alpha} \rightarrowtail c_{\beta}$			-- Function contracts
+      |  $c_{\alpha} \functor c_{\beta}$			-- Functor contracts
+      |  $c_{\alpha} \bifunctor (c_{\beta}, c_{\gamma})$			-- Bifunctor contracts
+      |  $int_{\alpha}$			-- Succeeds for all integers
+      |  $bool_{\alpha}$			-- Succeeds for all booleans
+      |  $char_{\alpha}$			-- Succeeds for all characters
+      |  $string_{\alpha}$			-- Succeeds for all strings
+      |  $list_{\alpha}$			-- Succeeds for all lists
+      |  $either_{\alpha}$			-- Succeeds for all $Either$s
+      |  $maybe_{\alpha}$			-- Succeeds for all $Maybe$s
+      |  $pair_{\alpha}$			-- Succeeds for all pairs
+  -- Contract schemes
+  $\sigma$ ::=  $c$			-- Contract
+      |    $\forall{true_{\alpha}}.\sigma$			-- Universal quantification for contract 
+				-- indices
+\end{lstlisting}
+\end{center}
+\caption{\label{fig:stutterheim-intermediate-contract-grammar}Intermediate grammar for the contracts.}
+\end{figure}
+
+We have already seen some examples of user-defined contracts as well as the definitions of the \code{true} and \code{false} contracts.
+But in this grammar, these contracts also have an index $\alpha$ that is used to differentiate between different instances of the same type of contract.
+This index serves the same purpose as fresh type variables in Algorithm \W.
+"Generating a fresh contract" is a commonly used phrase that refers to a fresh indexed \code{true} contract.
+
+Before the algorithm itself is described, Stutterheim defines relations between contracts by "regarding contracts as sets of Haskell values" and using set-theoretic operations on these sets.
+He uses these relations to formally define the notion of \textit{contract refinement}, where a contract that constrains a set of values is replaced by another contract that constrains a subset of those values.
+This concept is what drives the contract inferencing algorithm.
+
+\subsection{Algorithm \CW}
+The algorithm itself is very much alike Algorithm \W:
+
+\begin{itemize}
+	\item A contract environment $\Gamma$ is defined that maps variables to contracts.
+	\item Use of generalization and instantiation to introduce and remove universally quantified \code{true} contracts, respectively.
+	\item A modified version of Robinson's unification algorithm that checks for free \textit{contracts} during the occurs check. It also ensures that substitutions always refine the contract.
+\end{itemize}
+
+Stutterheim proves that the algorithm is sound with respect to the contracting rules in his thesis.
+For brevity, we do not replicate the proofs, contracting rules, unification rules nor code for Algorithm \CW ~here.
+These elements can be found in subsection 3.4 of Stutterheim's thesis \cite{Stutterheim:2013:thesis}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%Can we refine the contract even more without risking raising an exception?
+%It appears we cannot: we have reached a fixed point for a contract that will never raise an exception, regardless of the values it is provided.
+%
+%In section 3.3 of his thesis, Stutterheim defines relations between contracts by "regarding contracts as sets of Haskell values" and using set-theoretic operations on these sets.
+%With these relations, he is able to define the notion of a \textit{most specific} contract:
+%
+%\begin{quotation}
+%"..the inferred contract is also the most specific contract. I.e., the semantics of the inferred contract is a subset of any other contract that can be described in the contract system. (..) Intuitively, this seems true, because \textit{(contract inferencing algorithm)} \CW ~will infer contracts specific to certain types."
+%\end{quotation}
+%
+%The contract in figure \ref{fig:head-contract-fixed-point} is close to being a \textit{most specific} contract.
+%The only difference between our contract and the most specific contract, is that latter has been passed through Stutterheim's contract inferencing algorithm.
+%
+%Comparing this contract with the type of \code{head} shows that they are very similar:
+%
+%\begin{figure}[htbp]
+%\begin{lstlisting}[mathescape]
+%head_ctrt :: Contract ([aT] $\rightarrowtail$ aT)
+%head_ctrt = (true $\functor$ true) $\rightarrowtail$ true
+%
+%head :: [a] $\rightarrow$ a
+%\end{lstlisting}
+%\caption{\label{fig:resemblance-contract-type}A strong resemblance between contracts and types.}
+%\end{figure}
+%
+%This is not a random occurence: in Conjecture 1 of Stutterheim's thesis, he speculates that, 
+%
+%
+%
+%The example we have just viewed showed us how we can increase the specificity of a contract, starting from the \code{true} contract and working towards a very specific contract from there.
+%This is how Stutterheim's contract inferencing system operates.
+%In this thesis, we will exploit the resemblance shown in figure \ref{resemblance-contract-type} to simplify contract inferencing by providing the inferencing algorithm with the generalized version of the most specific contract for a given expression.
+%A generalized contract is one that purely uses 
+%
+% relation the fact that we can generate a most specific contract from a type
+%
+%In fact, it is possible to generate a most specific generic contract from the type of the expression.
+
+\section{Related work}
 The concept of contracts dates back to the Eiffel programming language \cite{Meyer:1988wp} in 1988, which included it as a language feature.
 Many other languages support contracts, or have libraries available to achieve the same functionality.
 
@@ -424,6 +596,10 @@ This verification can be done using several abstract interpretation techniques (
 The proof of safety of the imperative program translates to the solutions of the refinement type constraints.
 Thus, these can be used to annotate the original higher-order program, obtaining the refinement types.
 
+Cousot et al. \cite{cousotabstract} have implemented automatic contract inference for method extraction, a common refactoring technique.
+The inferred contract satisfies four requirements: (i) it is valid for the extracted method; (ii) the contract takes into account language and programmer assertions; (iii) the contract of the refactored code is as precise as the non-refactored code, and (iv) the contract is as general as possible.
+The authors use an iterative approximation algorithm to attain contracts that fulfil these requirements, and prove that an exact solution is uncomputable.
+
 The articles of Dimoulas \& Felleisen \cite{Dimoulas:2011:CSH:2039346.2039348} and Greenberg et al. \cite{Greenberg:2010:CMM:1707801.1706341} provide an excellent overview of recent developments pertaining to contracts, as well as as detailed comparisons between the different libraries and frameworks. \cite{Dimoulas:2011:CSH:2039346.2039348} also goes into greater detail of the semantics of contract satisfaction.
 
 Another form of type enrichment that enforces constraints is dimensional typing.
@@ -432,55 +608,6 @@ Either through static analysis and inferencing or through type-level programming
 Kennedy's thesis \cite{langanddim} explores this domain extensively for the ML language. 
 A number of dimensional typing libraries are available for Haskell, most of which are defined using type-level programming or using type families.
 Some simply constrain the input and output of functions, while others perform automatic conversion between compatible types, for example between meters and inches.
-
-\section{Inferencing}
-\label{background-inferencing}
-
-In computer science, the notion of \textit{inference} most often refers to the method of \textit{type inferencing}, which automatically deduces types for expressions written in a programming language.
-
-
-Can we refine the contract even more without risking raising an exception?
-It appears we cannot: we have reached a fixed point for a contract that will never raise an exception, regardless of the values it is provided.
-
-In section 3.3 of his thesis, Stutterheim defines relations between contracts by "regarding contracts as sets of Haskell values" and using set-theoretic operations on these sets.
-With these relations, he is able to define the notion of a \textit{most specific} contract:
-
-\begin{quotation}
-"..the inferred contract is also the most specific contract. I.e., the semantics of the inferred contract is a subset of any other contract that can be described in the contract system. (..) Intuitively, this seems true, because \textit{(contract inferencing algorithm)} \CW ~will infer contracts specific to certain types."
-\end{quotation}
-
-The contract in figure \ref{fig:head-contract-fixed-point} is close to being a \textit{most specific} contract.
-The only difference between our contract and the most specific contract, is that latter has been passed through Stutterheim's contract inferencing algorithm.
-
-Comparing this contract with the type of \code{head} shows that they are very similar:
-
-\begin{figure}[htbp]
-\begin{lstlisting}[mathescape]
-head_ctrt :: Contract ([aT] $\rightarrowtail$ aT)
-head_ctrt = (true $\functor$ true) $\rightarrowtail$ true
-
-head :: [a] $\rightarrow$ a
-\end{lstlisting}
-\caption{\label{fig:resemblance-contract-type}A strong resemblance between contracts and types.}
-\end{figure}
-
-This is not a random occurence: in Conjecture 1 of Stutterheim's thesis, he speculates that, 
-
-
-
-The example we have just viewed showed us how we can increase the specificity of a contract, starting from the \code{true} contract and working towards a very specific contract from there.
-This is how Stutterheim's contract inferencing system operates.
-In this thesis, we will exploit the resemblance shown in figure \ref{resemblance-contract-type} to simplify contract inferencing by providing the inferencing algorithm with the generalized version of the most specific contract for a given expression.
-A generalized contract is one that purely uses 
-
- relation the fact that we can generate a most specific contract from a type
-
-In fact, it is possible to generate a most specific generic contract from the type of the expression.
-
-
-Cousot et al. \cite{cousotabstract} have implemented automatic contract inference for method extraction, a common refactoring technique.
-The inferred contract satisfies four requirements: (i) it is valid for the extracted method; (ii) the contract takes into account language and programmer assertions; (iii) the contract of the refactored code is as precise as the non-refactored code, and (iv) the contract is as general as possible.
-The authors use an iterative approximation algorithm to attain contracts that fulfil these requirements, and prove that an exact solution is uncomputable.
 
 \chapter{Approach}
 
@@ -493,7 +620,7 @@ The contract inferencing system devised by Stutterheim is a solid base upon whic
 	\item His contract inferencing algorithm \CW ~is based upon Milner's Algorithm \W ~and uses Robinson's unification algorithm, two well-understood algorithms.
 \end{itemize}
 
-There are a few limitations in Stutterheim's system that we improve upon:
+There are a few limitations in Stutterheim's system that we address:
 
 \begin{itemize}
 	\item A system for code generation is left implicit in Stutterheim's thesis. Feedback towards a user is also not discussed.
@@ -502,11 +629,15 @@ There are a few limitations in Stutterheim's system that we improve upon:
 
 We improve upon Stutterheim's system in the following ways:
 \begin{itemize}
-	\item  We provide a system to generate code for the 'typed-contracts' library.
 	\item The language we use is a slightly simplified version of the Helium language, a dialect of Haskell that is a subset of the Haskell 98 specification.
 	\item Using type information, we perform AST transformations to simplify the contract inferencing algorithm.
 	\item With the same information, we generate a set of initial contracts that simplify contract inferencing even further. \todo{Does it also allow us to ignore mutually recursive functions??? Does stutterheim's system allow mutrecs?}
+	\item Algorithm \CW ~is extended to support the Helium dialect, producing Algorithm \CHW.
+	\item Substitutions are divided into two sets: global and local. This avoids the problem of contract violations by inferred contracts inherent in the original system.
+	\item We provide a system to generate code for the 'typed-contracts' library.
 \end{itemize}
+
+Furthermore, we modify the 'typed-contracts' library to allow for a richer form of feedback.
 
 
 
