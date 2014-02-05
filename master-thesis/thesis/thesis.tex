@@ -209,10 +209,10 @@ After processing the results, we will present our findings in a presentation, as
 
 \review
 
-In this chapter, we will familiarize the reader with some concepts that will be used in the rest of this thesis, the most important ones being contracts and the notion of inferring types and contracts.
+In this chapter, we familiarize the reader with some concepts that are used in the rest of this thesis, the most important ones being \textit{contracts} and the notion of \textit{inferring} types and contracts.
 
-This thesis concerns itself with contract inferencing.
-Let us break up these terms and investigate them thoroughly before moving on.
+This thesis concerns itself with \textit{contract inferencing}.
+Let us break up this term and investigate each element thoroughly before moving on.
 
 \section{Contracts}
 In programming, a $contract$ is very much like its real-world counterpart: it stipulates prerequisites and guarantees between two parties.
@@ -235,63 +235,70 @@ Also of interest is the library by Chitil \cite{Chitil:2012ua}, which is based o
 
 \subsection{The 'typed-contracts' library}
 Let us examine the library for which code will be generated.
-Contracts in the 'typed-contracts' library are of the same shape as the type of the function that it being defined for.
-This makes it possible to go over the type and generate a generic contract for a function, a capability that will be of great use during contract inferencing.
-But we are getting ahead of ourselves; let us first look at a few simple examples of function contracts.
+Hinze et al. define the \code{Contract} type using a GADT:
 
+\begin{lstlisting}[mathescape]
+data Contract a where
+   Prop      :: (a $\rightarrow$ Bool) $\rightarrow$ Contract a
+   Function  :: Contract a $\rightarrow$ (a $\rightarrow$ Contract b) $\rightarrow$ Contract (a $\rightarrowtail$ b)
+   Pair      :: Contract a $\rightarrow$ (a $\rightarrow$ Contract b) $\rightarrow$ Contract (a, b)
+   List      :: Contract a $\rightarrow$ Contract [a]
+   Functor   :: Functor f $\Rightarrow$ Contract a $\rightarrow$ Contract (f a)
+   Bifunctor :: Bifunctor f $\Rightarrow$ Contract a $\rightarrow$ Contract b $\rightarrow$ Contract (f a b)
+   And       :: Contract a $\rightarrow$ Contract a $\rightarrow$ Contract a
+\end{lstlisting}
+
+Let us go over each data constructor:
+\begin{description}
+	\item{\code{Prop} } is what one uses to actually define a constraint or property on a value. Given a function that expects a value of type \code{a} and which returns a Boolean, it produces a contract for something of type \code{a}. In other words, it lifts a function to a contract.
+	\item{\code{Function} } is used to define a dependent function contract.
+	\item{\code{Pair} } similarly defines a dependent pair contract.
+	\item{\code{List} } is straightforward: it lifts contracts to the list level.
+	\item{\code{Functor} } is a container that can house types of kind $* \rightarrow *$.
+	\item{\code{Bifunctor} } is the same as \code{Functor}, but takes types of kind $* \rightarrow * \rightarrow *$ into account.
+	\item{\code{And} } is used to chain several contracts together: all of them are asserted when a value is provided. 
+\end{description}
+
+Now that we know how a \code{Contract} can be constructed, let us look at a few examples. 
 The very first example is the one we used when first introducing the concept of contracts, namely a contract that constrains a function such that it demands a natural number as its input, and the guarantee that it will return a natural number, too:
 
 \begin{lstlisting}[mathescape]
-natInNatOut :: Contract (int $\rightarrowtail$ int)
+natInNatOut :: Contract (Int $\rightarrowtail$ Int)
 natInNatOut = nat $\rightarrowtail$ nat
 \end{lstlisting}
 
 We need a way to attach this contract to such a function, which is what the \code{assert} function is for:
 
 \begin{lstlisting}[mathescape]
-increase :: Int $\rightarrow$ Int
-increase = assert natInNatOut (\n $\rightarrow$ 1 + n)
+increase :: Int $\rightarrowtail$ Int
+increase = assert "increase" natInNatOut (fun ($\lambda$n $\rightarrow$ 1 + n))
 \end{lstlisting}
 
-Note how the type of \code{increase} does not reflect the constraints imposed by the contract, because the contract is asserted at runtime.
-An advantage of this is that the contracted version of a function can replace its regular version without issue.
-In other words, the \code{assert} function acts as a partial identity function, because it either raises an exception during contract violation, or it returns the constrained value unmodified.
+Note how the type of \code{increase} does not reflect the natural number constraints imposed by the contract, because the contract is asserted at runtime.
+
+The \code{fun} function lifts a function to a contracted one, one argument at a time:
+
+\begin{lstlisting}[mathescape]
+fun :: (a $\rightarrow$ b) $\rightarrow$ (a $\rightarrowtail$ b)
+\end{lstlisting}
+
+Conversely, the \code{app} function lifts function application to contracts:
+
+\begin{lstlisting}[mathescape]
+app :: (a $\rightarrowtail$ b) $\rightarrow$ Int $\rightarrow$ a $\rightarrow$ b
+\end{lstlisting}
+
+By applying these functions accordingly, the contracted version of a function can replace its regular version without issue.
+In this way, the contract mechanism acts as a partial identity function, because it either raises an exception during contract violation, or it returns the asserted value unmodified.
 This behaviour is clearly reflected in the type of \code{assert}:
 
 \begin{lstlisting}[mathescape]
-assert :: Contract a $\rightarrow$ (a $\rightarrow$ a)
+assert :: String $\rightarrow$ Contract a $\rightarrow$ (a $\rightarrow$ a)
 \end{lstlisting}
 
-Hinze et al. define the \code{Contract} type using a GADT:
+To clearly illustrate how \code{assert} works, we leave out the first \code{String} argument, which is used in feedback, and some code pertaining to location information, also used for feedback purposes.
 
 \begin{lstlisting}[mathescape]
-data Contract aT where
-   Prop      ::  (aT -> Bool) -> Contract aT
-   Function  ::  Contract aT -> (aT -> Contract bT) -> Contract (aT >-> bT)
-   Pair      ::  Contract aT -> (aT -> Contract bT) -> Contract (aT, bT)
-   List      ::  Contract aT -> Contract [aT]
-   Functor   ::  Functor f => Contract aT -> Contract (f aT)
-   Bifunctor ::  Bifunctor f => Contract aT -> Contract bT -> Contract (f aT bT)
-   And       ::  Contract aT -> Contract aT -> Contract aT
-\end{lstlisting}
-
-Let us go over each data constructor:
-\begin{description}
-	\item{\code{Prop} } is what one uses to actually define a constraint or property on a value. Given a function that expects a value of type \code{aT} and which returns a Boolean, it produces a contract for something of type \code{aT}. In other words, it lifts a function to a contract.
-	\item{\code{Function} } is used to define a dependent function contract.
-	\item{\code{Pair} } similarly defines a dependent pair contract.
-	\item{\code{List} } is straightforward: it lifts contracts to the list level.
-	\item{\code{Functor} } is a container that can house types of kind * -> *.
-	\item{\code{Bifunctor} } is the same as \code{Functor}, but takes types of kind * -> * -> * into account.
-	\item{\code{And} } is used to chain several contracts together: all of them are asserted when a value is provided. 
-\end{description}
-
-Now that we know how a \code{Contract} is constructed, let us see how it is applied, or asserted, to a compatible value by examining the definition of \code{assert}.
-Note that we will simplify the definition somewhat, leaving out arguments pertaining to location information.
-
-\begin{lstlisting}[mathescape]
-assert ::  Contract aT $\rightarrow$ (aT $\rightarrow$ aT)
-
 assert (Prop p)         a   = if p a then a else error "contract failed"
 
 assert (Function c$_1$ c$_2$) f	    = ($\lambda$x $\rightarrow$ (assert (c$_2$ x) . f) x) . assert c$_1$
@@ -330,7 +337,7 @@ The first definition allows us to define a non-dependent function contract, and 
 The last two definitions merit some more detail.
 Along with (a) contract(s) for the elements of a container, a contract for the container in its entirety is provided as well in the form of $c_1$.
 A simple example why this is useful, is the guarantee that a list is sorted when it is returned by a sorting function.
-Such a property cannot be captured by any contract for a container's elements, as these elements only know about themselves, and not about other elements in the container.
+Such a property cannot be captured by any contract for a container's elements, as these elements only know about themselves and not about other elements in the container.
 Therefore, we require container-wide contracts, which are also called "outer contracts".
 Conversely, contracts for a container's elements are referred to as "inner contracts".
 
@@ -339,7 +346,7 @@ Let us look at an example.
 First, we define two fundamental contracts, namely \code{true} and \code{false}, which always succeed and always fail, respectively, regardless of its input:
 
 \begin{lstlisting}[mathescape]
-true, false :: Contract aT
+true, false :: Contract a
 true  = Prop ($\lambda$_ $\rightarrow$ True)
 false = Prop ($\lambda$_ $\rightarrow$ False)
 \end{lstlisting}
@@ -349,14 +356,14 @@ The very first contract is simply the \code{true} contract itself, which will ta
 But the contract could be made more specific:
 
 \begin{lstlisting}[mathescape]
-true $\rightarrowtail$ true :: Contract (aT $\rightarrowtail$ aT)
+true $\rightarrowtail$ true :: Contract ([a] $\rightarrowtail$ a)
 \end{lstlisting}
 
 In this case, the \code{true} contract is asserted on both the input and output of the \code{head} function, but no longer on the function in its entirety.
 We can make it even more specific:
 
 \begin{lstlisting}[mathescape]
-(true $\functor$ true) $\rightarrowtail$ true :: Contract ([aT] $\rightarrowtail$ aT)
+(true $\functor$ true) $\rightarrowtail$ true :: Contract ([a] $\rightarrowtail$ a)
 \end{lstlisting}
 
 Using the functor contract $\functor$, the \code{true} contract is asserted on the input list in its entirety, as well as each of its elements, along with the output of the function.
@@ -366,7 +373,7 @@ But we can also use contract variables to express relations between the input an
 A further refinement of the contract for \code{head} exemplifies this:
 
 \begin{lstlisting}[mathescape]
-(c$_{out}$ $\functor$ c$_{in}$) $\rightarrowtail$ c$_{in}$ :: Contract ([aT] $\rightarrowtail$ aT)
+(c$_{out}$ $\functor$ c$_{in}$) $\rightarrowtail$ c$_{in}$ :: Contract ([a] $\rightarrowtail$ a)
 \end{lstlisting}
 
 It makes sense that the element that is extracted from the list still obeys the contract $c_{in}$.
@@ -388,6 +395,30 @@ Generally, we cannot perform such a mapping over containers, so they are assigne
 During a process called inferencing, it may turn out that these variables are equal, but this information is usually not deducible from the function's type.
 
 Section \ref{background-inferencing} explains the concept of inferencing and its use in refining contracts even further.
+
+At the moment, we have learned how contracts are composed and how they can be attached to functions that are lifted using the \code{fun} function.
+We have also briefly encountered the \code{app} function, which lifts function application to contracts.
+Apart from applying something to a contracted function, this function provides crucial information for use in feedback:
+
+\begin{lstlisting}[mathescape]
+app :: (a $\rightarrowtail$ b) $\rightarrow$ Int $\rightarrow$ a $\rightarrow$ b
+app f loc x = apply f (makeloc (App loc)) x
+\end{lstlisting}
+
+In order to be able to precisely blame the expression that caused a violation, \code{app} expects an integer to be used as a location label in the feedback.
+
+Here is an example of a contract violation:
+
+\begin{lstlisting}[mathescape]
+> app increase 1 (-5)
+> *** Exception: contract failed: the expression labelled `1' is to blame.
+\end{lstlisting}
+
+Because $(-5)$ is not a natural number, it is the reason for the contract violation, and is blamed accordingly using the location label.
+In this thesis, we enrich this feedback by including position information and displaying the value responsible for the contract violation.
+
+For brevity, we do not expand upon the inner workings of the blaming system.
+Details can be found in Hinze et al's paper \cite{Hinze06typedcontracts}.
 
 \section{Contract inferencing}
 \label{background-inferencing}
@@ -421,7 +452,7 @@ Lastly, the third goal implies that asserting any inferred contract is equal to 
 
 \subsection{Language used}
 
-The contract inferencing algorithm works on $\lambda_c$, a let-polymorphic lambda calculus:
+The contract inferencing algorithm works on $\lambda_c$, a let-polymorphic lambda calculus (figure \ref{stutterheim-lambda-language}).
 
 \begin{figure}[htps]
 \begin{lstlisting}[mathescape]
@@ -448,7 +479,7 @@ $const$      ::=   n				-- Integers
         |   c				-- Characters
         |   s				-- Strings
 \end{lstlisting}
-\caption{The $\lambda_c$ language.}
+\caption{\label{stutterheim-lambda-language}The $\lambda_c$ language.}
 \end{figure}
 
 \subsection{Contract grammar}
@@ -486,6 +517,8 @@ We have already seen some examples of user-defined contracts as well as the defi
 But in this grammar, these contracts also have an index $\alpha$ that is used to differentiate between different instances of the same type of contract.
 This index serves the same purpose as fresh type variables in Algorithm \W.
 "Generating a fresh contract" is a commonly used phrase that refers to a fresh indexed \code{true} contract.
+
+\subsection{Contract relations and refinement}
 
 Before the algorithm itself is described, Stutterheim defines relations between contracts by "regarding contracts as sets of Haskell values" and using set-theoretic operations on these sets.
 He uses these relations to formally define the notion of \textit{contract refinement}, where a contract that constrains a set of values is replaced by another contract that constrains a subset of those values.
@@ -559,7 +592,24 @@ These elements can be found in subsection 3.4 of Stutterheim's thesis \cite{Stut
 %
 %In fact, it is possible to generate a most specific generic contract from the type of the expression.
 
-\section{Related work}
+\section{Ask-Elle programming tutor}
+The motivation behind the thesis of Stutterheim was to fill up a void in the feedback of a system called Ask-Elle, a web-based programming tutor that provides feedback on a student's progress in Haskell programming exercises.
+The Ask-Elle programming tutor is a highly advanced tutoring system that makes use of solution strategies to determine how far a student has progressed in an exercise, and provides feedback accordingly.
+The tutor also has to understand when an exercise has been solved succesfully, even if the solution does not correspond with any solution strategy known to Ask-Elle.
+To be able to provide useful feedback in this situation, QuickCheck \todo{ref, please} properties are defined for the exercise.
+These properties are then used to test the student's solution by randomly generating inputs to the proposed solution until an input causes a violation of the properties (called a \textit{counter-example}) or until a set testing limit is reached.
+In the case of a failed test, Ask-Elle provides the student with the counter-example as feedback.
+
+We have seen how contracts can be used to pinpoint specific locations in a section of code in the event of a contract violation.
+We have also witnessed how contracts can be automatically inferred from a section of code using Stutterheim's Algorithm \CW.
+These inferred contracts can be used to generate a fully contracted version of the original section of code.
+
+Stutterheim aimed to combine the QuickCheck properties with the contract inferencing algorithm to generate contracted code that, in the event of a contract violation due to a counter-example generated by QuickCheck, would pinpoint exactly where the issue lies in a student's code.
+This functionality was to be integrated into the Ask-Elle programming tutor, but remained future work.
+
+Because this thesis builds upon Stutterheim's work, the syntax used by Ask-Elle is the language that we construct a contract inferencing algorithm for.
+
+\section{Related work concerning contracts}
 The concept of contracts dates back to the Eiffel programming language \cite{Meyer:1988wp} in 1988, which included it as a language feature.
 Many other languages support contracts, or have libraries available to achieve the same functionality.
 
@@ -641,7 +691,7 @@ We improve upon Stutterheim's system in the following ways:
 	\item We provide a system to generate code for the 'typed-contracts' library.
 \end{itemize}
 
-Furthermore, we modify the 'typed-contracts' library to allow for a richer form of feedback.
+Furthermore, we modify the \textit{typed-contracts} library to allow for a richer form of feedback.
 
 
 
@@ -1016,13 +1066,16 @@ Each node has a number that will be used when referring to it in the description
 \todo{Add these numbers to the image.}
 
 \section{Syntax}
-We have slightly modified the syntax used by the rest of the Ask-Elle system:
+The Ask-Elle programming tutor uses its own version of the Helium syntax, casting aside some things such as type signatures and other syntax constructs that are irrelevant to Ask-Elle.
+Helium itself is a subset of the Haskell 98 specification, its main missing component being user-definable type classes.
+
+We have slightly modified the syntax used by the Ask-Elle system:
 \begin{itemize}
 	\item Fields to store range information were added. Range information consists of the line and column number of the node and its source (standard input, file, unknown) if this information is available.
 	\item In Ask-Elle, constructors that use a list of patterns or expressions use the \code{Pats} and \code{Exprs} type synonyms, respectively. For example, expressions that describe a tuple or a list both use \code{Exprs}. However, from the viewpoint of contract inferencing, these expressions could not be more different! The solution is simple: tuples and lists in patterns and expressions use the type synonyms \code{ListPatsR}, \code{TuplePatsR}, \code{ListExprR} and \code{TupleExprR}. All other constructors remain unchanged.
 \end{itemize}
 
-This modified syntax can be downcast to the regular Ask-Elle syntax, and partially upcast to the Helium syntax, as during conversion from the Helium AST to the Ask-Elle syntax, some nodes are thrown away or only partially mapped.
+This modified syntax can be downcast to the regular Ask-Elle syntax, and partially upcast to the Helium syntax.
 
 \begin{lstlisting}[caption=Our modified Ask-Elle syntax.]
 -- | A Haskell source module
@@ -1116,7 +1169,7 @@ data ExprR
       to       :: MaybeExprR
       range    :: RangeR
    | ListR
-      exprs    :: ListExprR -- We use a new type here because for lists, the inferred contracts must hold on all elements.
+      exprs    :: ListExprR
       range    :: RangeR
    | NegR
       expr     :: ExprR
@@ -1215,7 +1268,7 @@ data PatR
       name     :: NameR
       right    :: PatR
       range    :: RangeR
-   | PListR  -- We use a new type here because for lists, the inferred contracts must hold on all elements.
+   | PListR  
       pats     :: ListPatsR
       range    :: RangeR
    | PLitR
@@ -1278,37 +1331,37 @@ Anonymous functions cannot be contracted, as a name is required to properly  per
 Our solution is simple: bind all lambda functions to a generated name and place them in the where-clause of the original definition.
 A simple example:
 
-\begin{lstlisting}
-f = \x -> x
+\begin{lstlisting}[mathescape]
+f = $\lambda$x $\rightarrow$ x
 \end{lstlisting}
 
 is transformed into
 
-\begin{lstlisting}[caption=Result of lambda capture transformation.]
+\begin{lstlisting}[mathescape,caption=Result of lambda capture transformation.]
 f = __lam0                   
  where                    
-  __lam0 = \x -> x
+  __lam0 = $\lambda$x $\rightarrow$ x
 \end{lstlisting}
 
 Because of referential transparency, the behaviour of the program is not altered.
 
 \subsection{Rewrite point-free functions}
-The library of our choice, \code{typed-contracts}, does not support asserting partially applied functions.
+The library of our choice, \textit{typed-contracts}, does not support asserting partially applied functions.
 Because of this, all function arguments are made available on the left-hand side and applied to the right-hand side of a definition.
 To continue with our previous example,
 
-\begin{lstlisting}
+\begin{lstlisting}[mathescape]
 f = __lam0                   
  where                    
-  __lam0 = \x -> x
+  __lam0 = $\lambda$x $\rightarrow$ x
 \end{lstlisting}
 
 is now transformed into
 
-\begin{lstlisting}[caption=Result of $\eta$-abstraction transformation.]
+\begin{lstlisting}[mathescape, caption=Result of $\eta$-abstraction transformation.]
 f __a0 = (__lam0) __a0                
  where                    
-  __lam0 __a0 = (\x -> x) __a0
+  __lam0 __a0 = ($\lambda$x $\rightarrow$ x) __a0
 \end{lstlisting}
 
 This is essentially $\eta$-abstraction.
@@ -1862,15 +1915,88 @@ To infer a contract, a number of elements are required:
 
 \section{Providing richer feedback}
 \label{providingricherfeedback}
+
+\todo{Rewrite.}
+
 \todo{Might have to split some of this stuff up and move it to Approach and initial research}
 
 \subsection{Modifications to typed-contracts}
 \label{modificationstotypedcontracts}
-In order to provide adequate feedback to the user, we modified the typed-contracts library by Jeuring et al to produce more specific feedback in a language that the user can understand.
+In order to provide adequate feedback to the user, we have modified the typed-contracts library by Hinze et al. \cite{Hinze06typedcontracts} to produce more specific feedback in a language that the user can understand.
 The original library code provides error messages that refer to contract violations and (higher-order) blame of expressions, concepts that are foreign to the average user and thus do not provide any useful feedback.
 
-Three modifications were made to the original library code.
-Firstly, the Contract GADT was modified to include the PropInfo constructor, which takes an additional argument: a function that, given the position of which argument or result that the property is being applied to, returns an appropriate error message.
+Here is an example of the feedback provided by the original library:
+
+\begin{lstlisting}[mathescape]
+inc :: Int $\rightarrowtail$ Int
+inc  = assert "inc" (nat $\rightarrowtail$ nat) (fun ($\lambda$n $\rightarrow$ n + 1))
+
+> app inc 1 (-5)
+> *** Exception: contract failed: the expression labelled `1' is to blame.
+\end{lstlisting}
+
+\subsubsection{Position information}
+
+To improve this rudimentary feedback, we require position information that records the position of an argument (or result) in a type.
+We record this information in a tuple:
+
+\begin{lstlisting}
+type PosInfo = (Int,Int)
+\end{lstlisting}
+
+For example, the position (0,1) indicates the first argument of a function that has one argument.
+The position (1,1) indicates the result of such a function.
+
+Using this information, it is possible to produce highly specific feedback messages:
+
+\begin{lstlisting}
+posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " supplied argument of this function "
+                        | pos == arity = "The result of this function "
+                        | (pos,arity) == (-1,-1) = "An unknown position "
+
+showPos p | p == 1 = "first"
+          | p == 2 = "second"
+          | p == 3 = "third"
+          | p == 4 = "fourth"
+          | p == 5 = "fifth"
+          | p == 6 = "sixth"
+          | otherwise = show p
+\end{lstlisting}
+
+\subsubsection{Using the position information}
+
+The \code{Contract} GADT is modified to include the \code{PropInfo} constructor, which takes an additional argument: a function that, given position information of which argument or result that the property is asserting, returns an appropriate error message:
+
+\begin{lstlisting}[mathescape]
+PropInfo   ::  (aT $\rightarrow$ Bool) $\rightarrow$ (PosInfo $\rightarrow$ String) $\rightarrow$ Contract aT
+Prop       ::  (aT $\rightarrow$ Bool) $\rightarrow$ Contract aT
+\end{lstlisting}
+
+Here is a usage example of \code{PropInfo}:
+
+\begin{lstlisting}[mathescape]
+isBiggerThan_prop = PropInfo ($\lambda$x $\rightarrow$ fromEnum x > 5 ) ($\lambda$p $\rightarrow$ mkErrorMsg p "the number must be larger than five.")
+\end{lstlisting}
+
+If this property were to be asserted on the first argument of a function and was violated, it would generate the following error message:
+
+\begin{quote}
+\textit{"The first supplied argument of this function does not fulfill the following property: the number must be larger than five."}
+\end{quote}
+
+To improve this rudimentary feedback, two modifications are done to the original library code:
+
+\begin{enumerate}
+	\item The \code{Contract} GADT is modified to include the \code{PropInfo} constructor, which takes an additional argument: a function that, given the position of which argument or result that the property is asserting, returns an appropriate error message.
+	\item The functions \code{assert''} and \code{assertPos} are added, which populate and manage the position information required by the additional argument of \code{PropInfo}.
+\end{enumerate}
+
+Position information consists of a tuple and records the position in a type.
+For example, the position (0,1) indicates the first argument of a function that has one argument.
+The position (1,1) indicates the result of such a function.
+
+Firstly, the \code{Contract} GADT is modified to include the \code{PropInfo} constructor, which takes an additional argument: a function that, given the position of which argument or result that the property is being applied to, returns an appropriate error message.
+
 
 \begin{lstlisting}
 type PosInfo = (Int,Int)
@@ -1878,20 +2004,19 @@ PropInfo   ::  (aT -> Bool) -> (PosInfo -> String) -> Contract aT
 Prop       ::  (aT -> Bool) -> Contract aT
 \end{lstlisting}
 
-For example, the position (0,1) indicates the first argument of a function that has one argument.
-The position (1,1) indicates the result of such a function.
+
 Given this information, it is possible to generate a detailed error message.
-Here is an example of an error message generated by the property that an integer must lie in the domain of the natural numbers, and which is applied at the first argument of a function: 
+Here is an example of an error message generated by the property that an integer must be larger than five, and which is asserted on the first argument of a function: 
 
-"The first supplied argument of this function does not fullfil the following property: the number must always be a natural number."
+\begin{quote}
+"The first supplied argument of this function does not fulfill the following property: the number must be larger than five."
+\end{quote}
 
-This form of feedback is richer than the default form and can be invoked in the message generation function if desired.
-For example:
-
+Here is the code that generates it:
 \begin{lstlisting}
 isBiggerThan_prop = PropInfo (\x -> fromEnum x > 5 ) (\p -> mkErrorMsg p "the number must be larger than five.")
 
-mkErrorMsg p text = posInfoText p ++ "does not fullfil the following property: " ++ text
+mkErrorMsg p text = posInfoText p ++ "does not fulfill the following property: " ++ text
 
 posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " supplied argument of this function "
                         | pos == arity = "The result of this function "
@@ -2157,7 +2282,7 @@ This is because \code{f} is a contracted function.
 \subsection{Generation of final contracts}
 \label{generation-of-final-contracts}
 
-
+\todo{Put conversion from mono to poly contracts here.}
 
 \chapter{Discussion and future work}
 \label{futurework}
