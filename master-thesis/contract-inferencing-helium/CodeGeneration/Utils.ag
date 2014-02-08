@@ -29,9 +29,9 @@ isLocalSubst (SComp l r) = isLocalSubst l -- Only check the first one
 
 splitSubsts :: Subst -> (Subst, Subst)
 splitSubsts SId = (SId,SId)
-splitSubsts s@(SSubst v c) | isMonomorphic c && not (isMonomorphic v) = (SId,s) -- poly -> mono = local subst
+splitSubsts s@(SSubst v c) | isMonomorphic c && not (isMonomorphic v) = (s,SId) -- CHANGED: local substs are now global. previously: poly -> mono = local subst
 splitSubsts s@(SSubst v c) | isMonomorphic v && not (isMonomorphic c) = (SId,SId) -- TODO: CHECK THIS: mono -> poly = drop ???
-                           | all isMonomorphic [v,c] = (SId,s) -- mono -> mono = local subst 
+                           | all isMonomorphic [v,c] = (s,SId) -- CHANGED: local substs are now global. previously: mono -> mono = local subst 
                            | otherwise = (s,SId)
 splitSubsts (SComp l r) = 
  let (lg,ll) = splitSubsts l
@@ -39,7 +39,7 @@ splitSubsts (SComp l r) =
  in (lg `o` rg,ll `o` rl) 
 
 isMonomorphic :: Contract -> Bool
-isMonomorphic (CVar v _) = not $ isTrueContract v
+isMonomorphic (CVar v _) = not $ isGlobalContract v
 isMonomorphic (CProp _) = True
 isMonomorphic _ = False
 
@@ -84,7 +84,7 @@ getGeneralizedContracts (CArr c1 c2) = concatMap getGeneralizedContracts [c1,c2]
 getGeneralizedContracts (CProp p) = []
 getGeneralizedContracts (CFunctor o i) = concatMap getGeneralizedContracts [o,i]
 getGeneralizedContracts (CBifunctor o il ir) = concatMap getGeneralizedContracts [o,il,ir]
-getGeneralizedContracts (CVar v m) = map (\x -> CVar x m) $ filter isTrueContract [v]
+getGeneralizedContracts (CVar v m) = map (\x -> CVar x m) $ filter isGlobalContract [v]
 getGeneralizedContracts (CQuant cv cs) = cv : getGeneralizedContracts cs
 getGeneralizedContracts (CTuple li) = concatMap getGeneralizedContracts li
 
@@ -268,7 +268,8 @@ convertTopTypeToContract offset ty =
         (n'',rightInner,q2) = convert n' t2
     in (n'', CBifunctor outer leftInner rightInner,n:q1++q2)
    convert (n:ns) (P.TCon x) | x `elem` ["Int","Char","Float","Bool","String"] = 
-    (ns, CVar (makeMonotype n) Nothing,[n])
+    (ns, CVar (makeType n) Nothing,[n]) -- CHANGED THIS BACK TO GLOBAL VARIABLE
+--    (ns, CVar (makeMonotype n) Nothing,[n])
    -- 4-tuple
    convert n (P.TApp (P.TApp (P.TApp (P.TApp (P.TCon x) t1) t2) t3) t4) | P.isTupleConstructor x =
     let (n1, ctrt1,q1) = convert n t1
@@ -382,13 +383,22 @@ indexMsg :: (Show a) => [a] -> Int -> a
 indexMsg xs pos | length xs > pos - 1 = xs !! pos
                 | otherwise = error $ "Exception when trying to find an element at position " ++ show pos ++ " in list " ++ show xs
 
+checkContract :: Char -> String -> Bool
+checkContract c (x:xs) = if x == c
+                             then case (reads xs) :: [(Integer,String)] of
+                                   [(_,"")] -> True
+                                   _        -> False
+                             else False
+checkContract _ []     = False
+
+isGlobalContract :: String -> Bool
+isGlobalContract = checkContract 'v'
+
+isLocalContract :: String -> Bool
+isLocalContract = checkContract 'm'
+
 isTrueContract :: String -> Bool
-isTrueContract (x:xs) = if x == 'v'
-                           then case (reads xs) :: [(Integer,String)] of
-                                 [(_,"")] -> True
-                                 _        -> False
-                           else False
-isTrueContract []      = False
+isTrueContract s = isGlobalContract s || isLocalContract s 
 
 replaceTrueContract :: String -> String
 replaceTrueContract x = if isTrueContract x
@@ -397,6 +407,16 @@ replaceTrueContract x = if isTrueContract x
 
 insertApps :: String -> ExprR -> [(ExprR,ExprR)] -> ExprR
 insertApps appType = foldr (\(pos,var) xs -> mkParens $ mkApp [mkVar appType,xs,pos,var])
+
+-- Converts allowed symbols in function names to actual text, makes it a lot easier to contract.
+-- Used symbols (from Helium.Parser.Lexer)
+-- symbols = "!#$%&*+./<=>?@^|-~:\\"
+parseSymbolsToText :: Char -> String
+parseSymbolsToText c = maybe [c] id (DL.lookup c symbolTable)
+  where symbolTable = [('!',"exmark"),('#',"hash"),('$',"dollar"),('%',"perc"),('&',"amp"),('*',"asterisk"),('+',"plus"),('.',"dot"),('/',"slash"),('\\',"bslash"),('<',"lt"),('=',"eq"),('>',"gt"),('?',"question"),('@',"at"),('^',"caret"),('|',"pipe"),('-',"minus"),('~',"tilde"),(':',"colon")]
+
+convertSymbolIdentifier :: String -> String
+convertSymbolIdentifier = concatMap parseSymbolsToText
 
 makeModuleR :: DeclsR -> ModuleR
 makeModuleR []    = ModuleR NoNameR (BHoleR 0    noRangeR) noRangeR 

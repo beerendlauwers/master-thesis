@@ -81,10 +81,6 @@ sem ExprR
            .subst   =   @loc.subst
       
       loc  .infer   =   subst @loc.subst @alts.infer
-
-      -- Unify expression with head of list of alternatives,
-      -- which, in turn, was unified with the tail of list of alts
-      --loc  .unify   =   splitSubsts $ unifyC @expr.infer @alts.infer
            .subst   =   @alts.subst `o` @expr.subst
            
   | EnumR
@@ -149,29 +145,20 @@ sem ExprR
            .subst   =   @loc.ths
       fun  .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
       args .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
-      -- TODO: Local substs will probably refer to old variables, may need to update those.
+      -- Local substs will refer to old variables, those are updated.
 
       loc  .localsubsts = snd @loc.th3'
            .infer'  =   subst @loc.th3 @loc.alpha
-           .ths     =   let  ths = fst @loc.th3' `o` @loc.th2 `o` @loc.th1
-                        in   ths --case @lhs.cann of
-                             --  (Just ann)  -> unifyC ann @loc.infer' `o` ths
-                             --  _           -> ths
+           .ths     =   fst @loc.th3' `o` @loc.th2 `o` @loc.th1
            .th3'    =   splitSubsts @loc.th3
            .c1      =   @fun.infer
            .th1     =   @fun.subst
-           -- .e2env   =   subst @loc.th1 @lhs.env
            .c2      =   @args.infer
            .th2     =   @args.subst
            .c1st    =   subst @loc.th2 @loc.c1
            .carr    =   @loc.c2 >-> @loc.alpha
            .th3     =   unifyC @loc.c1st @loc.carr
-           .alpha   =   dropc 1 $ stripQuantifiers $ @loc.c1 -- TODO: Check if this is a good idea!
-
-      -- args .env     =   subst @loc.th1 @loc.e2env
-
-      --fun  .cann    =   Nothing
-      --args .cann    =   Nothing
+           .alpha   =   dropc 1 $ stripQuantifiers $ @loc.c1
 
   | LetR
       lhs  .infer   =   @expr.infer
@@ -204,15 +191,8 @@ sem ListExprR
            .th2     =   @tl.subst
            .th3     =   unifyC @tl.infer (subst @loc.th2 @loc.cfunc)
            .ths     =   @loc.th3 `o` @loc.th2 `o` @loc.th1
---           .const   =   @hd.isConst && @tl.isConst
---           .var1    =   if @loc.const
---                          then  mkVarConst @loc.num @loc.copy
---                          else  mkVar @loc.num
            .var1    =   mkCtrt (@loc.num + @lhs.availableContractVars)
            .hdc     =   @hd.infer
---           .hdc     =   if @loc.const
---                          then  mkPlainC @hd.infer
---                          else  @hd.infer
       loc  .num     ::  uniqueref varcnt
 
   | Nil

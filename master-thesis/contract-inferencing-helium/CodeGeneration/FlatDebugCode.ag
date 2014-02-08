@@ -30,6 +30,7 @@ sem DeclR
                                                            "\n loc.typetreetype: " ++ show @loc.typeTreeType ++ 
 						 	   "\n loc.clhs: " ++ show @loc.clhs ++
 							   "\n loc.crhs: " ++ show @loc.crhs ++
+							   "\n loc.unify: " ++ show @loc.unify ++
 							   "\n loc.unify': " ++ show @loc.unify' ++
 							   @pat.simpledebug ++ @rhs.simpledebug
 

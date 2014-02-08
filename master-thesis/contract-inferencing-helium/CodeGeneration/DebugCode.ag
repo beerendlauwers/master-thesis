@@ -287,6 +287,13 @@ sem ExprR
   | ConR
      lhs   .debug                       = leftLineNoSpace $ vcat BOX.left
                                                 [  horizontalLinesWith "*" $ text "ConR"
+                                                ,  text "contract:"              BOX.<+> pprint @loc.contractAsExprR
+                                                ,  text "is base function:"      BOX.<+> text (show @lhs.isBaseFunction)
+                                                ,  text "is applied to local function:"           BOX.<+> text (show @lhs.isAppliedToLocalFunction)
+                                                ,  text "is a local identifier:"      BOX.<+> text (show @loc.isLocalParameter)
+                                                ,  text "is a function identifier:"          BOX.<+> text (show @loc.isFunction)
+                                                ,  text "update function type:"           BOX.<+> text (show @loc.updateFunctionType)
+                                                ,  text "update argument type:"           BOX.<+> text (show @loc.updateVariableType)
                                                 ,  nest 2 @name.debug
                                                 ]
 
@@ -364,7 +371,9 @@ sem ExprR
                                                 ,  text "is applied to local function:"           BOX.<+> text (show @lhs.isAppliedToLocalFunction)
                                                 ,  text "is a local identifier:"      BOX.<+> text (show @loc.isLocalParameter)
                                                 ,  text "is a function identifier:"          BOX.<+> text (show @loc.isFunction)
-                                                ,  text "update type:"           BOX.<+> text (show @loc.updateType)
+                                                ,  text "update function type:"           BOX.<+> text (show @loc.updateFunctionType)
+                                                ,  text "update argument type:"           BOX.<+> text (show @loc.updateVariableType)
+                                                ,  text "is fully applied:"               BOX.<+> text (show @lhs.isFullyApplied)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
