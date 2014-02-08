@@ -10,8 +10,7 @@ sem DeclR
                          then DM.union @lhs.topLevelEnvOverride @lhs.env
                          else @lhs.env
   | DPatBindR
-      lhs   .subst  =   @loc.subst' -- TODO: Do we want to update those patterns here, or is that not needed?
---            .infer  =   @loc.infer'
+      lhs   .subst  =   @loc.subst'
       loc   .results =  if length @pat.localPatterns == 1 
                          -- If we have a very simple pattern, we can easily get the contract from the env.
                          then envLU @lhs.freshContractVariable (mkIdent (head @pat.localPatterns)) @lhs.env

@@ -139,8 +139,6 @@ attr FunBindsR
 
 
 
--- TODO: Put the contracts on their appropriate places in place of the VarRs.
-
 attr ExprR
    -- Is this VarR a locally-known identifier (from patterns, or where-clause, or let)
    -- or a top-level function identifier?
@@ -149,7 +147,9 @@ attr ExprR
 
 attr ExprR ExprsR MaybeExprR ListExprR TupleExprR RangeR PositionR LiteralR AltR AltsR NameR MaybeNameR PatR PatsR ListPatsR TuplePatsR DeclR DeclsR RhsR FunBindR FunBindsR GuardedExprR GuardedExprsR BodyR ModuleR
    -- A transformation that transforms all function applications from f to __app_f or __contracted_f (whichever applies).
+   -- Arguments are transformed to include position information where necessary and allowed.
    syn functionAppSelf                                            :: self
+   syn argumentAppSelf                                            :: self
 
 sem DeclR
    | DFunBindsR
@@ -157,18 +157,75 @@ sem DeclR
       loc  .allFunctions                = @funbinds.functionAppSelf ++ @loc.generatedFunctions
       loc  .generatedFunctions          = concatMap DJ.catMaybes [@funbinds.finalFunction, @funbinds.contractedFunction, @funbinds.appFunction]
 
+-- TODO: updateType should really be split into two passes:
+-- First pass updates function identifiers: f g x (z x) -> __app_f __contracted_g x (__app_z x)
+-- Second pass updates arguments: 
+-- __app_f __contracted_g x (__app_z x) -> __app_f (pos,__contracted_g) (pos,x) (pos,(__app_z (pos,x)))
+
+{-
+|-> FUNCTION AREA
+-
+f g x (z x)
+  ---------
+  |-> ARGUMENT AREA
+-}
+
 sem ExprR
-   | VarR ConR
+   | AppR
+      lhs  .functionAppSelf             = AppR @fun.functionAppSelf @args.argumentAppSelf @range.copy
+
+sem ExprR
+   | *
       loc  .localType                   = maybeErr (show @loc.typeTreeCode) @loc.typeTreeType
       loc  .arity                       = S.arityOfTpScheme @loc.localType
       loc  .isFunction                  = @loc.arity > 0 
 
+                                          -- These are always arguments.
+      loc  .updateVariableType          = if @lhs.isAppliedToLocalFunction
+                                           then 4 -- id, no need for extra information
+                                           else 2 -- id + position information
+
+      lhs  .argumentAppSelf             = case @loc.updateVariableType of
+                                                2 -> @loc.updateAsIdExtraInfo
+                                                4 -> @loc.updateAsId
+
+      loc  .posInfo                     = extractPositionData @range.copy
+      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
+      loc  .updateAsIdExtraInfo         = mkTuple [ @loc.posInfoAsLiterals, @loc.updatedVar ]
+      loc  .updateAsId                  = @loc.updatedVar
+
+   | * - VarR ConR
+      loc  .updatedVar                  = @loc.functionAppSelf
+
+sem ExprR
+   | VarR ConR
+      loc  .updateFunctionType          = if @lhs.isBaseFunction && @loc.isFunction
+                                           -- Base function
+                                           then if @loc.isLocalParameter
+                                                 then 4 -- id, it's already been contracted
+                                                 else 3 -- prefix __app, always prefix app to base function
+                                           -- In argument area
+                                           else if @loc.isFunction
+                                                 then if @lhs.isAppliedToLocalFunction
+                                                       -- Argument is applied to a local function
+                                                       then 4 -- id, it's already been contracted
+                                                      -- Argument is applied to a non-local function
+                                                       else if @lhs.isFullyApplied
+                                                             -- Argument is fully applied
+                                                             then 3 -- prefix __app, it is fully applied
+                                                             -- Argument is not fully applied
+                                                             else 1 -- prefix __contract, because it is not yet contracted
+                                                 else 4 -- Ignore during this pass, non-function arguments come later.
+
+{-
       -- 1 = prefixContract, 2 = id (but gets more information added), 3 = prefixApp, 4 = id, 5 = 1 + 2
       loc  .updateType                  = if @lhs.isBaseFunction
                                            -- Base function
                                            then if @loc.isLocalParameter
                                                  then 4 -- id, it's already been contracted
-                                                 else 3 -- prefix __app, always prefix app to base function
+                                                 else if @loc.isFunction 
+                                                       then 3 -- prefix __app, always prefix app to base function
+                                                       else 4 -- id, not actually a function, just all by its own.
                                            -- An argument
                                            else if @lhs.isAppliedToLocalFunction
                                                  -- Argument is applied to a local function
@@ -179,54 +236,127 @@ sem ExprR
                                                              then 4 -- id, it's already been contracted
                                                              -- Argument is a non-local function
                                                              else 1 -- prefix __contract, because it is not yet contracted
-                                                       -- Argument itself it not a function
+                                                       -- Argument itself is not a function
                                                        else 4 -- id, it does not have to be contracted
                                                  -- Argument is applied to a non-local function
                                                  else if @loc.isFunction
                                                        -- Argument itself is a function
                                                        then if @loc.isLocalParameter
                                                              -- Argument is a locally-known function
-                                                             then 2 -- add information to give to the non-local function
+                                                             then if @lhs.shouldNotProvidePositionInfo
+                                                                   then 4 -- do not provide position info
+                                                                   else 2 -- add information to give to the non-local function
                                                              -- Argument is a non-local function
                                                              else 5 -- prefix __contract and add information
                                                        -- Argument itself it not a function
-                                                       else 6 -- id + position, it's for an app'ed version
+                                                       else if @lhs.shouldNotProvidePositionInfo
+                                                             then 4 -- do not provide position info
+                                                             else 2 -- id + position, it's for an app'ed version
+-}
 
 
-      -- TODO: INSERT ACTUAL CONTRACT IN HERE, CURRENTLY It'S JUST THE GENERALIZED VERSION
-      -- OR PASS AROUND SUBSTITUTIONS 
-      loc  .inferencedContract          = subst @lhs.globalSubsts @loc.varContract
       loc  .contractAsExprR             = makeContract_Syn_Contract $ wrap_Contract ( sem_Contract @loc.inferencedContract ) Inh_Contract   
 
-      loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id),(5,prefixcontractedFunction),(6,id)]
-      loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
-
+      loc  .updateFunction              = DJ.fromJust $ DL.lookup @loc.updateFunctionType [(1,prefixcontractedFunction),(2,id),(3,prefixAppFunction),(4,id),(5,prefixcontractedFunction)]
+ 
       loc  .updateAsAppOrContracted     = mkAppParens [ @loc.updatedVar, @loc.contractAsExprR, @loc.posInfoAsLiterals ]
-
-      loc  .posInfo                     = extractPositionData @range.copy
-      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
-      loc  .updateAsIdExtraInfo         = mkTuple [ @loc.posInfoAsLiterals, @loc.updatedVar ]
       loc  .updateAsCtrtExtraInfo       = mkTuple [ @loc.posInfoAsLiterals, mkApp [@loc.updatedVar, @loc.contractAsExprR] ]
-
-      loc  .updateAsId                  = @loc.updatedVar
       loc  .updateAsIdWithPos           = mkTuple [ @loc.posInfoAsLiterals, @loc.updatedVar ]
 
-      lhs  .functionAppSelf             = case @loc.updateType of
+      lhs  .functionAppSelf             = case @loc.updateFunctionType of
                                                 1 -> @loc.updateAsAppOrContracted
                                                 2 -> @loc.updateAsIdExtraInfo
                                                 3 -> @loc.updateAsAppOrContracted
                                                 4 -> @loc.updateAsId
                                                 5 -> @loc.updateAsCtrtExtraInfo
-                                                6 -> @loc.updateAsIdWithPos
 
 sem ExprR
    | VarR 
       loc  .varContract                 = snd $ envLU @lhs.freshContractVariable @name.copy @lhs.env
+      loc  .inferencedContract          = finalContract SId @lhs.globalSubsts @loc.varContract
+      loc  .updatedVar                  = VarR (@loc.updateFunction @name.copy) @range.copy
 
    | ConR
       loc  .varContract                 = snd @loc.conversionResults
       loc  .conversionResults           = convertTopTypeToContract @lhs.freshContractVariable @loc.localType
-      lhs .freshContractVariable        = fst @loc.conversionResults
+      lhs  .freshContractVariable       = fst @loc.conversionResults
+      loc  .inferencedContract          = subst @lhs.globalSubsts @loc.varContract --TODO: finish this up?
+      loc  .updatedVar                  = ConR (@loc.updateFunction @name.copy) @range.copy
+
+{-
+-- Literals, list and tuple constructors, enums can't be contracted,
+-- but may need to provide position information, I.E: [x] should be (posinfo,[x]) and not [(posinfo, x)].
+sem ExprR
+  | LitR ListR TupleR EnumR
+      loc  .updateType                  = if @lhs.shouldNotProvidePositionInfo
+                                           then 4 -- do not provide position info
+                                           else if @lhs.isAppliedToLocalFunction
+                                                 then 4 -- do not provide position info
+                                                 else 2 -- add information to give to the non-local function
+      lhs  .functionAppSelf             = case @loc.updateType of
+                                                2 -> @loc.updateAsIdExtraInfo
+                                                4 -> @loc.functionAppSelf
+      loc  .posInfo                     = extractPositionData @range.copy
+      loc  .posInfoAsLiterals           = posDataAsLiterals @loc.posInfo
+      loc  .updateAsIdExtraInfo         = mkTuple [ @loc.posInfoAsLiterals, @loc.functionAppSelf ]
+
+  | LitR
+      loc  .functionAppSelf             = @loc.copy
+
+  | ListR
+      loc  .functionAppSelf             = ListR @exprs.functionAppSelf @range.copy
+
+  | TupleR
+      loc  .functionAppSelf             = TupleR @exprs.functionAppSelf @range.copy
+
+  | EnumR
+      loc  .functionAppSelf             = EnumR @from.functionAppSelf @then.functionAppSelf @to.functionAppSelf @range.copy
+
+-- We need to tell the elements of the constructor that they shouldn't provide position information themselves,
+-- lest we get something like [x] -> (posinfo,[(posinfo,x)]).
+attr ExprR ExprsR ListExprR TupleExprR MaybeExprR GuardedExprsR
+   inh shouldNotProvidePositionInfo                             :: {Bool}
+
+-- Direct elements of these should not provide position info.
+sem ExprR
+   | ListR TupleR
+      exprs.shouldNotProvidePositionInfo = True
+   | EnumR
+      from .shouldNotProvidePositionInfo = True
+      then .shouldNotProvidePositionInfo = True
+      to   .shouldNotProvidePositionInfo = True
+
+   | ParenR -- Parentheses should not automatically negate this restriction.
+      expr .shouldNotProvidePositionInfo = @lhs.shouldNotProvidePositionInfo
+
+-- Everything else should provide position info.
+sem ExprR
+   | FeedbackR MustUseR CaseR LambdaR LetR NegR
+      expr .shouldNotProvidePositionInfo = False
+   | IfR
+      cond .shouldNotProvidePositionInfo = False
+      then .shouldNotProvidePositionInfo = False
+      else .shouldNotProvidePositionInfo = False
+   | InfixAppR
+      left .shouldNotProvidePositionInfo = False
+      op   .shouldNotProvidePositionInfo = False
+      right.shouldNotProvidePositionInfo = False
+   | AppR
+      fun  .shouldNotProvidePositionInfo = False
+      args .shouldNotProvidePositionInfo = False
+sem MaybeExprR
+   | JustExprR
+      expr .shouldNotProvidePositionInfo = False
+sem RhsR
+   | RhsR
+      expr .shouldNotProvidePositionInfo = False
+   | GRhsR
+      gexprs.shouldNotProvidePositionInfo = False
+sem GuardedExprR
+   | GExprR
+      expr .shouldNotProvidePositionInfo = False
+      guard.shouldNotProvidePositionInfo = False
+-}
 
 
 
@@ -247,29 +377,37 @@ sem ExprR
 
 attr ExprR ExprsR ListExprR TupleExprR GuardedExprsR MaybeConst
    inh isBaseFunction                                           :: {Bool} -- Is the most deeply nested function being applied
+   inh isFullyApplied                                           :: {Bool} -- Set in AppR. Is the function fully applied?
 
 sem MaybeExprR
    | JustExprR
       expr.isAppliedToLocalFunction     = False
       expr.isBaseFunction               = True
+      expr.isFullyApplied               = False
 sem RhsR
    | RhsR
       expr.isAppliedToLocalFunction     = False
       expr.isBaseFunction               = True
+      expr.isFullyApplied               = False
    | GRhsR
       gexprs.isAppliedToLocalFunction   = False
       gexprs.isBaseFunction             = True
+      gexprs.isFullyApplied             = False
 sem GuardedExprR
    | GExprR
       expr.isAppliedToLocalFunction     = False
       expr.isBaseFunction               = True
+      expr.isFullyApplied               = False
       guard.isAppliedToLocalFunction    = False
       guard.isBaseFunction              = True
+      guard.isFullyApplied              = False
 
 sem ExprR
    | AppR
       -- Determine the base function. example: f is the base function in (((f (g x)) y) z)
       fun  .isBaseFunction              = @lhs.isBaseFunction
+      fun  .isFullyApplied              = @lhs.isFullyApplied || calculateTypeArity @loc.astType == 0 -- If it's fully applied, it should just be __app
+      args .isFullyApplied              = False
       args .isBaseFunction              = False
 
       -- Are the arguments being applied to a local identifier?
@@ -285,8 +423,7 @@ sem Contract
   |  CProp       lhs.makeContract = mkVar @p
   |  CFunctor    lhs.makeContract = mkParens $ mkApp [ @o.makeContract, mkVar "<@>", @i.makeContract ]
   |  CBifunctor  lhs.makeContract = mkParens $ mkApp [ @o.makeContract, mkVar "<@@>", mkTuple [ @il.makeContract, @ir.makeContract ] ]
-  |  CVar        lhs.makeContract = mkVar @v -- TODO: Default contract etc.
---  |  CVar        lhs.makeContract = mkVar (replaceTrueContract @v) -- TODO: Default contract etc.
+  |  CVar        lhs.makeContract = mkVar (replaceTrueContract @v)
   |  CQuant      lhs.makeContract = @cs.makeContract
   |  CTuple      lhs.makeContract = error $ "The following CTuple got into contract inferencing: " ++ show @li
 
@@ -462,23 +599,23 @@ makeFuns xs b = foldr f b xs
 
 
 prefixFunctionWithContract :: NameR -> NameR
-prefixFunctionWithContract (IdentR name r)    = (IdentR ("__ctrt_"++name) r)
-prefixFunctionWithContract (OperatorR name r) = (OperatorR ("---"++name++"---") r)
+prefixFunctionWithContract (IdentR name r)    = IdentR ("__ctrt_"++name) r
+prefixFunctionWithContract (OperatorR name r) = IdentR ("__ctrt_"++ convertSymbolIdentifier name ) r
 prefixFunctionWithContract _ = error "prefixFunctionWithContract: Haven't defined anything yet for SpecialR."
 
 prefixcontractedFunction :: NameR -> NameR
-prefixcontractedFunction (IdentR name r)    = (IdentR ("__contracted_"++name) r)
-prefixcontractedFunction (OperatorR name r) = (OperatorR ("+++"++name++"+++") r)
+prefixcontractedFunction (IdentR name r)    = IdentR ("__contracted_"++name) r
+prefixcontractedFunction (OperatorR name r) = IdentR ("__contracted_"++ convertSymbolIdentifier name ) r
 prefixcontractedFunction x = x --SpecialR is used for the empty list, tuple constructors and unit. Nothing you can usefully contract.
 
 prefixAppFunction :: NameR -> NameR
-prefixAppFunction (IdentR name r)    = (IdentR ("__app_"++name) r)
-prefixAppFunction (OperatorR name r) = (OperatorR ("___"++name++"___") r)
+prefixAppFunction (IdentR name r)    = IdentR ("__app_"++name) r
+prefixAppFunction (OperatorR name r) = IdentR ("__app_"++ convertSymbolIdentifier name ) r
 prefixAppFunction x = x --SpecialR is used for the empty list, tuple constructors and unit. Nothing you can usefully contract.
 
 prefixFinalFunction :: NameR -> NameR
-prefixFinalFunction (IdentR name r)    = (IdentR ("__final_"++name) r)
-prefixFinalFunction (OperatorR name r) = (OperatorR ("___"++name++"___") r)
-prefixFinalFunction _ = error "prefixAppFunction: Haven't defined anything yet for SpecialR."
+prefixFinalFunction (IdentR name r)    = IdentR ("__final_"++name) r
+prefixFinalFunction (OperatorR name r) = IdentR ("__final_"++ convertSymbolIdentifier name ) r
+prefixFinalFunction _ = error "prefixFinalFunction: Haven't defined anything yet for SpecialR."
 }
 

@@ -259,7 +259,13 @@ ctrue = CProp "true"
 cord  = CProp "ord"
 cnum  = CProp "num"
 cchar = CProp "char"
+cpropinteger = CProp "prop_integer"
+cpropresult = CProp "prop_result"
+v1000 = CVar "v1000" Nothing
+v1001 = CVar "v1001" Nothing
 
+-- raw contract: (v70 <@> v65) >-> (m74 >-> (v70 <@> v65)
+repli_contract = ((v999 <@> v998) >-> (cpropinteger >-> (cpropresult <@> (v1000 <@> v1001))))
 
 -- Test: "f x = [x]\nz = (f 5, f '2')" [] (DM.fromList [("z", v100 <@@> ((ctrue <@> ctrue),ctrue <@> ctrue))])
 {-
