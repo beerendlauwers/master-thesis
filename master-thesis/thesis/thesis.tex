@@ -688,7 +688,7 @@ We improve upon Stutterheim's system in the following ways:
 	\item With the same information, we generate a set of initial contracts that simplify contract inferencing even further. \todo{Does it also allow us to ignore mutually recursive functions??? Does stutterheim's system allow mutrecs?}
 	\item Algorithm \CW ~is extended to support the aforementioned Helium dialect, producing Algorithm \CHW.
 	\item Substitutions are divided into two sets: global and local. This avoids the problem of contract violations by inferred contracts inherent in the original system.
-	\item We provide a system to generate code for the 'typed-contracts' library.
+	\item We provide a system to generate code for the \textit{typed-contracts} library and identify several library-agnostic techniques to enrich feedback.
 \end{itemize}
 
 Furthermore, we modify the \textit{typed-contracts} library to allow for a richer form of feedback.
@@ -2291,13 +2291,260 @@ generates the following for the \textit{contracted function definition} placehol
 Note how \code{a} is captured and applied to \code{f} using \code{appParam}.
 This is because \code{f} is a contracted function.
 
-\subsection{Generation of final contracts}
+\section{Generation of final contracts}
 \label{generation-of-final-contracts}
+
+\subsection{Translation of intermediate contract language to \textit{typed-contracts} library}
+
+\todo{Describe translation.}
+
+\subsection{Definition of initial contracts}
+
+By deriving an initial contract from an identifier's type as described in subsection \ref{subsection:contractgeneration}, we obtain a contract with the following properties:
+
+\begin{itemize}
+	\item Asserting the contract is equal to the identity function.
+	\item It is a \textit{generalized} version of the \textit{most specific} contract for that identifier. We will discuss this property in further detail.
+\end{itemize}
+
+Stutterheim posits a conjecture that any inferred contract in algorithm \CW ~is also the \textit{most specific}, which means that the contract inferred for an expression $e$ is a subset of any other contract that is valid for $e$.
+
+A \textit{generalized} version of such a contract is one where every contract variable present in the contract maps to a $true$ contract and where the relations in an identifier or expression's type are also present in its contract.
+
+For example, here are the the generalized most specific contracts for the functions \code{id} and \code{map}:
+
+\begin{lstlisting}[mathescape]
+ctrt_id = c$_0$ $\rightarrowtail$ c$_0$
+ctrt_map = (c$_1$ $\rightarrowtail$ c$_2$) $\rightarrowtail$ (c$_3$ $\functor$ c$_1$) $\rightarrowtail$ (c$_4$ $\functor$ c$_2$)
+\end{lstlisting}
+
+Conversely, these are \textbf{not} the generalized most specific contracts for those functions, as they do not capture the relations present in the types of the functions:
+
+\begin{lstlisting}[mathescape]
+ctrt_id = c$_0$ $\rightarrowtail$ c$_1$
+ctrt_map = (c$_1$ $\rightarrowtail$ c$_2$) $\rightarrowtail$ (c$_3$ $\functor$ c$_4$) $\rightarrowtail$ (c$_5$ $\functor$ c$_6$)
+\end{lstlisting}
+
+\subsubsection{Uses for initial contracts}
+
+There are a few uses for generalized most specific contracts, or \textit{initial} contracts:
+
+\begin{itemize}
+	\item They simplify contract inferencing by already incorporating some of the relations that would otherwise be discovered during inferencing.
+	\item They allow for polymorphic versions of the $\finaltemplate$, $\apptemplate$ and $\ctrttemplate$ templates. Again, this use merits more detail.
+\end{itemize}
+
+\subsection{The monomorphic Algorithm \CW}
+
+Algorithm \CW ~contains a severe limitation: every generated substitution is placed in a global set.
+This set is then used to generate the final contract of an expression $e$ during code generation by applying the substitutions to the inferred contract of $e$.
+The limitation presents itself when we apply a function $f$ to two different arguments with different contracts:
+
+\begin{lstlisting}[caption=An example code snippet that may generate incorrect code when using substitutions from Algorithm \CW.]
+f x = [x]
+z = (f 'a', f 5)
+\end{lstlisting}
+
+If we leave the contract environment $\Gamma$ empty, both \code{'a'} and \code{5} receive a $true$ contract, say, $true_1$ and $true_2$.
+During inferencing, these contracts are unified and generate a substitution indicating they refer to the same contract.
+In the end, the contract of \code{z} is as follows:
+\begin{lstlisting}[mathescape]
+true$_0$ $\bifunctor$ (true$_3$ $\functor$ true$_1$, true$_4$ $\functor$ true$_2$)
+\end{lstlisting}
+Because $true$ contracts are translated into the \code{true} \textit{typed-contracts} contract, no runtime or compilation error occurs.
+
+But if we seed $\Gamma$ with an initial contract, the story is entirely different!
+The contract of \code{z} is now set to the following:
+
+\begin{lstlisting}[mathescape,label=env:contractz,caption=Contract environment $\Gamma$ is now seeded with a contract for \code{z}.]
+$\Gamma$(z) = true$_0$ $\bifunctor$ (true$_1$ $\functor$ isChar, true$_2$ $\functor$ isNum)
+\end{lstlisting}
+
+For the rest of the identifiers and literals, the following contracts are constructed by Algorithm \CW:
+
+\begin{lstlisting}[mathescape]
+$\Gamma$(x) = true$_4$
+$\Gamma$(f) = (true$_4$ $\rightarrowtail$ (true$_3$ $\functor$ true$_4$)) 
+$\Gamma$('a') = true$_5$
+$\Gamma$(5) = true$_6$
+\end{lstlisting}
+
+The relevant unifications of \code{f 'a'}, \code{f 5} and \code{z} are as follows:
+
+\begin{lstlisting}[mathescape]
+-- Unification of first argument of f with 'a'
+unify (true$_4$) (true$_5$)
+
+-- Unification of first argument of f with 5
+unify (true$_4$) (true$_6$)
+\end{lstlisting}
+
+We obtain the following substitutions:
+
+\begin{itemize}
+	\item \code{true$_4$ $\mapsto$ true$_5$}
+	\item \code{true$_4$ $\mapsto$ true$_6$}
+\end{itemize}
+
+We can apply these substitutions in left-to-right or right-to-left order to the contract of the right-hand side of z. $true_7$ is a fresh contract:
+
+\begin{itemize}
+	\item left-to-right: \code{(true$_7$ $\bifunctor$ (true$_3$ $\functor$ true$_5$, true$_3$ $\functor$ true$_5$))}
+	\item right-to-left: \code{(true$_7$ $\bifunctor$ (true$_3$ $\functor$ true$_6$, true$_3$ $\functor$ true$_6$))}
+\end{itemize}
+
+What happens when we unify either of these with the contract for \code{z}?
+
+\begin{lstlisting}[mathescape]
+unify (true$_0$ $\bifunctor$ (true$_1$ $\functor$ isChar, true$_2$ $\functor$ isNum))
+      (true$_7$ $\bifunctor$ (true$_3$ $\functor$ true$_5$, true$_3$ $\functor$ true$_6$))
+\end{lstlisting}
+
+Relevant substitutions:
+
+\begin{itemize}
+	\item \code{true$_5$ $\mapsto$ isChar}
+	\item \code{true$_5$ $\mapsto$ isNum}
+\end{itemize}
+      
+\begin{lstlisting}[mathescape]
+unify (true$_0$ $\bifunctor$ (true$_1$ $\functor$ isChar, true$_2$ $\functor$ isNum))
+      (true$_7$ $\bifunctor$ (true$_3$ $\functor$ true$_6$, true$_3$ $\functor$ true$_6$))
+\end{lstlisting}
+
+Relevant substitutions:
+
+\begin{itemize}
+	\item \code{true$_6$ $\mapsto$ isChar}
+	\item \code{true$_6$ $\mapsto$ isNum}
+\end{itemize}
+
+Here, the limitation becomes apparent: regardless of how we apply these substitutions, one of the contracts of expressions \code{f 'a'} and \code{f 5} will always be incorrect!
+If we apply the substitutions left-to-right, the expression \code{f 5} is given the contract \code{true$_1$ $\functor$ isChar}. Doing it right-to-left provides \code{f 'a'} with the contract \code{true$_1$ $\functor$ isNum}.
+
+In both instances, either a compile-time or a run-time error occurs.
+This breaks Stutterheim's proposition that \textit{"(an) inferred contract will never fail assertion for that expression"}. \todo{Source diiis}
+
+In this manner, Algorithm CW ~is monomorphic: the inferred contract of a function may constrain the acceptable values of an argument to a static subset of what the argument should actually accept.
+
+\subsubsection{Proposed solution: global and local substitution sets}
+
+Instead of a single, global set of substitutions that is applied to every contract during translation, we keep track of a single global set and several local sets.
+Contract variables are also given a flavour of global or local.
+
+Whenever unification between two contracts takes place, the resulting substitutions are split up in a global and local group:
+\begin{itemize}
+\item The global group holds all substitutions that go from global contract variables to global other contract variables.
+\item The local group holds all substitutions that go from global contract variables to local contract variables, as well as those that go from local contract variables to other local contract variables.
+\end{itemize}
+
+The global group is added to the global substitution set.
+The local group is added to the local substitution set, which already contains the parent's local substitution set.
+In other words, the global group travels up the AST towards the top, and the local group travels downwards into the child nodes of the node where unification took place.
+
+\subsubsection{Applying global and local substitution sets}
+
+The algorithm for calculating the final contract from these sets is comprised of four steps.
+First, look up the initial contract $c_{initial}$ in the contract environment $\Gamma$.
+Second, apply the global substitution set to $c_{initial}$ until a fixed point is reached or until $n+1$ applications have taken place, where $n$ is the number of substitutions in the global set. 
+This yields $c_{global}$.
+For those interested, a more detailed algorithm description can be found in \todo{link to future work}.
+The reason why the substitutions must be applied up to $n+1$ times is because, in our language, the ordering of function declarations is random, but the order in which the generated substitutions must be applied is not.
+Stutterheim's language uses nested let-expressions to introduce multiple function declarations, which means the order of the generated substitutions is always correct, so it did not have to perform this search.
+
+As the third step, the local substitution set 
+
+\todo{turn set into list, that's more correct and an important distinction.}
+
+
+
+Algorithm:
+
+Given a contract variable $v_{orig}$ and a list of substitutions $s$, set $v_i$ to $v_{orig}$.
+While you have not reached the end of $s$, search for a substitution that goes from $v_i$ to $v_j$.
+If you encounter such a substitution, set $v_i$ to $v_j$.
+When the end of $s$ has been reached, check if $v_{orig} = v_i$.
+If yes, return $v_{orig}$ as the result.
+Otherwise, recurse with $v_j$ and $s$.
+
+%A more abstract solution is this: generate a deterministic finite state machine from $s$ and $v_{orig}$:
+%\begin{description}
+%	\item{$\sum$} = The unique set of contract variables in $s$.
+%	\item{$S$} = The unique set of contract variables in $s$.
+%	\item{$s_0$} = $v_{orig}$.
+%	\item{$\delta$} = The substitution set $s$.
+%	\item{$F$} = All contract variables in $s$ that occur on the right-hand side of a substitution.
+%\end{description}
+%
+%Now, step through the list of substitutions $s$, interpreting $v_a$ $\mapsto$ $v_b$ as follows: if $v_a$ equals the current state we are in, accept $v_b$ as a symbol and transition to state $v_b$.
+%When the list is empty, 
+
+
+
+\begin{enumerate}
+	\item 
+	\item 
+	\item Calculate the final local substitutions, yielding 
+\end{enumerate}
+
+When contract inferencing is complete, the global substitutions are applied first and local substitutions second.
+However, these local substitutions will refer to old global contract variables, so the global group of substitutions must first be applied to the local substitutions before finally applying the local substitutions to the updated contract to gain the final contract.
+
+At first, it appears logical to apply these substitutions during code generation, and not during runtime, but this is not optimal.
+Let us look at an example to see why.
+
+\begin{lstlisting}[caption=Expanded version of the previous code snippet.]
+f x = g x
+g x = f [x]
+z = (f 'a', f 5)
+\end{lstlisting}
+
+The example has been expanded to include function \code{g}, which is called by \code{f}.
+The contract environment remains the same as before.
+The inferred contract for both \code{f} and \code{g} is once again '(v1 >-> v1)'. \todo{This contract is incorrect, update.}
+The contracted code for \code{z} is now correct:
+\todo{This contract is incorrect, update.}
+
+\begin{lstlisting}[caption=Contracted version of \code{z} now typechecks.]
+z = (__app_f (true <@> isChar) 'a', __app_f (true <@> isNum) 5)
+\end{lstlisting}
+
+Let's look at the rest of the generated code:
+
+\begin{lstlisting}[caption=Rest of the output of code generation.]
+__app_f ctrt x = appParam (__contracted_f ctrt) x
+__contracted_f ctrt = assertPos "f" ctrt funs
+    where
+        funs = (fun (\x -> __final_f x))
+__final_f x = __app_g (v1 >-> (v2 <@> v1)) x
+
+__app_g ctrt x = appParam (__contracted_g ctrt) x
+__contracted_g ctrt = assertPos "g" ctrt funs
+    where
+        funs = fun (\x -> __final_g x)
+__final_g x = [x]
+\end{lstlisting}
+
+Calling the contracted version of \code{f} will call the contracted version of \code{g}, but with a universally quantified contract!
+In other words, the local substitutions which made the contract that was passed to \code{\_\_app\_f} more specific, are not utilized by \code{\_\_app\_g}.
+The solution appears trivial: pass the local substitutions as another argument to the \code{\_\_app} and \code{\_\_contracted} functions and apply them at runtime.
+
+
 
 \todo{Put conversion from mono to poly contracts here.}
 
 \chapter{Discussion and future work}
 \label{futurework}
+
+\section{Integration with the Ask-Elle programming tutor}
+
+\todo{Talk about how contract inferencing is not of use when there is no recursion or function application.}
+
+\todo{Talk about how the QuickCheck properties should be enriched to allow for more useful feedback.}
+
+\section{Run-time translation of intermediate contract language}
+
+\todo{Talk about a few interested avenues for getting this to work.}
 
 \section{Using paramorphisms to tackle dependent contracts}
 
