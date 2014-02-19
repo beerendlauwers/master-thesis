@@ -1086,7 +1086,7 @@ Because we use Algorithm \CW ~as a starting point, our algorithm, too, is based 
 The resulting algorithm is called Algorithm \CHW.
 
 \subsection{Formal description of the contract language}
-Figure \ref{fig:contract-grammar} describes our contract language, which is a subset of that of Stutterheim's contract language.
+Figure \ref{fig:contract-grammar} describes our intermediate contract language, which is a subset of that of Stutterheim's contract language.
 
 While Stutterheim preferred to have specific terminals for data types and literals, we feel this over-encumbers the contract language.
 Instead, we replace this multitude of terminals with a single $literal_i$ terminal.
@@ -1107,19 +1107,35 @@ Instead, we replace this multitude of terminals with a single $literal_i$ termin
 \caption{\label{fig:contract-grammar}Simplified grammar for the contract language.}
 \end{figure}
 
-Stutterheim describes several definitions, properties and relations between contracts in his thesis.
-These remain valid in our system.
+Furthermore, contract schemes for universal quantification of contract indices are removed from the grammar.
+Instead, every generated contract is implicitly universally quantified.
+Instantiation can be said to be deferred to substitution application due to the way we divide and apply substitutions as described in section \ref{generation-of-final-contracts}.
 
-\todo{Most of this was done by Jurrien, although we can leave out some parts.}
+Stutterheim describes several definitions, properties and relations between contracts in his thesis. 
+The following of those can be brought over to our system without change:
 
+Definitions:
+\begin{itemize}
+	\item Definition 1. Equivalency of contracts.
+	\item Definition 2. Semantics of contracts.
+\end{itemize}
 
+Propositions:
+\begin{itemize}
+	\item Proposition 1. Contract relations with $true$ and $false$.
+	\item Proposition 2. Assertion fails for subset.
+	\item Proposition 3. Assertion succeeds for superset.
+	\item Proposition 4. Superset relation for function contract semantics.
+\end{itemize}
+
+Propositions 5 (\textit{Soundness of inference}) and 6 (\textit{Asserting inferred contract is identity}) must be redone due to the new syntax.
 
 \subsection{The contract inference system}
 In this section, we introduce a system that allows us to infer a contract from an expression.
 This system is based upon Stutterheim's work, and this section will roughly follow the same structure as the corresponding section in his thesis.
 
 In our system, we use a contract environment $\Gamma$ which maps contract variables to contracts.
-\todo{Should we just say that we use the same env system as Jurrien?}
+
 A contract environment is defined as such:
 
 \begin{figure}[htbp]
@@ -1141,7 +1157,7 @@ In place of these functions, we define the support function \code{ts}, which tak
 
 \subsubsection{Contracting rules}
 
-We will begin the contracting rules with those for patterns, as many of the rules are similar to those for declarations, right-hand sides, (guarded) expressions and alternatives.
+We first introduce the contracting rules for patterns, as many of the rules are similar to those for declarations, right-hand sides, (guarded) expressions and alternatives.
 
 \begin{figure}[htbp]
 \begin{center}
@@ -1156,8 +1172,8 @@ We will begin the contracting rules with those for patterns, as many of the rule
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PCon}}
-  \AxiomC{$\Gamma \vdash$ $e_1 :: c_2 \rightarrowtail c$}
-  \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
+  \AxiomC{$\Gamma \vdash$ $e_1 :: c_1 \rightarrowtail c$}
+  \AxiomC{$\Gamma \vdash$ $e_2 :: c_1$}
   \BinaryInfC{$\Gamma \vdash$ $e_1$ $e_2 :: c$}
   \DisplayProof
   \vskip 0.5em
@@ -1215,6 +1231,8 @@ We will begin the contracting rules with those for patterns, as many of the rule
 \caption{\label{fig:pattern-inference-rules}Contracting rules for patterns.}
 \end{figure}
 
+\paragraph{Patterns.}
+
 Contracts for patterns are collected purely from the type source using the \code{ts} support function, which is used in the \code{C-PVar} and \code{C-PAs} contracting rules.
 Let us go over the rules in figure \ref{fig:pattern-inference-rules}, except for \code{PCon}, which is the same as in Damas and Milner's work.
 
@@ -1258,6 +1276,8 @@ We will follow this convention for all constructors that describe lists.
 \caption{\label{fig:declaration-inference-rules}Contracting rules for declarations.}
 \end{figure}
 
+\paragraph{Declarations.}
+
 Figure \ref{fig:declaration-inference-rules} shows the contracting rules for declarations. The rules \code{C-DHole} and \code{C-DEmpty} are trivial, but the remaining two warrant a little more explanation:
 
 \begin{description}
@@ -1279,6 +1299,8 @@ Figure \ref{fig:declaration-inference-rules} shows the contracting rules for dec
 \end{center}
 \caption{\label{fig:funbinds-inference-rules}Contracting rules for function bindings.}
 \end{figure}
+
+\paragraph{Function bindings.}
 
 The contracting rules for function bindings in figure \ref{fig:funbinds-inference-rules} are straightforward: \code{C-FBHole} works as all other holes, and \code{C-FunBind} looks up the identifier in the contract environment and assigns that contract to the entire function binding.
 
@@ -1306,6 +1328,8 @@ The contracting rules for function bindings in figure \ref{fig:funbinds-inferenc
 \end{center}
 \caption{\label{fig:guardedexpr-inference-rules}Contracting rules for guarded expressions.}
 \end{figure}
+
+\paragraph{Right-hand sides.}
 
 Right-hand side contracting rules (see figure \ref{fig:rhs-inference-rules}) are equally simple: the contract of $e$ is looked up in the contract environment and is used for the entire right-hand side.
 The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-rules}).
@@ -1410,6 +1434,8 @@ The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-
 \caption{\label{fig:expr-inference-rules}Contracting rules for expressions.}
 \end{figure}
 
+\paragraph{Expressions.}
+
 Figure \ref{fig:expr-inference-rules} details the contracting rules for expressions, which have large overlaps with those for patterns.
 Note how there is no rule \code{C-InfixApp}.
 This is because infix function applications are converted to regular function applications before contract inference occurs.
@@ -1422,7 +1448,7 @@ The rest of the contracting rules are discussed hereafter.
 	\item{\code{C-Case} :} This rule describes contracting of a case statement for an arbitrary number of cases. The contract of the expression being evaluated, $m$, must be the same as the contracts of the patterns $p_i$, namely $c_1$. The contract of the entire case statement is $c_2$, which is the contract that is given to each alternative.
 	\item{\code{C-If} :} Syntactic sugar for a boolean case statement. Like its generalized version, the contract of the entire statement is the same of each alternative, in this case $c$. 
 	\item{\code{C-Lam} :} This contracting rule is the same as in Damas \& Milner's work.
-	\item{\code{C-Let} :} A non-generalized let. This is not necessary because every contract variable is polymorphic in the global contract environment. 
+	\item{\code{C-Let} :} A non-generalized let. This is not necessary because every contract variable is implicitly universally quantified in the global contract environment. 
 	\item{\code{C-Enum} :} A list generator. $y$ and $z$ are fully optional, but if they are present, they must have the same contract as that of $x$, namely $c$. A fresh outer contract is generated to complete the final contract.
 \end{description}
 
@@ -1446,6 +1472,8 @@ The rest of the contracting rules are discussed hereafter.
 \caption{\label{fig:alternatives-inference-rules}Contracting rules for alternatives.}
 \end{figure}
 
+\paragraph{Alternatives.}
+
 The contracting rules for alternatives in figure \ref{fig:alternatives-inference-rules} are quite simple. \code{C-AHole} and \code{C-AltEmpty} are trivial, and \code{C-Alt} takes the contract of the right-hand side as the contract of the entire alternative.
 
 \todo{May want to add contracting rules for interesting lists like those for alts.}
@@ -1454,7 +1482,7 @@ The contracting rules for alternatives in figure \ref{fig:alternatives-inference
 
 \subsubsection{Substitutions and unification}
 
-We use the same substitutions grammar as that of Stutterheim.
+We use the same substitution grammar as that of Stutterheim.
 Our unification algorithm, too, is identical to that of Stutterheim, which itself is based upon Robinson's unification algorithm.
 We refer you to subsection 3.4.2 of Stutterheim's thesis for a description of the unification algorithm and the substitutions it generates.
 When you are done reading, we will note a caveat in his description of the algorithm.
@@ -1478,8 +1506,9 @@ unifyC c1 c2 = unifyErr "No such unification case when" c1 c2
 \caption{\label{figure:unifyCWFails}A part of the \code{unifyC} function of Algorithm \CW.}
 \end{figure}
 
-This is because the $int$ and $nat$ contracts are in fact defined as user-defined concrete contracts in the system's code.
-The default contracts that Stutterheim refers to in figure 3.2 of his thesis do not exist in the Haskell data type, which only supports the inhabitants of our simplified grammar as shown in figure \ref{fig:contract-grammar}.
+This is because the $int$ and $nat$ contracts are in fact defined as user-defined concrete contracts.
+The default contracts that Stutterheim refers to in figure 3.2 of his thesis do not exist in the actual Contract data type in the source code. 
+It only supports the inhabitants of our simplified grammar as shown in figure \ref{fig:contract-grammar}.
 Relations between contracts that allow for refinement are thus non-existent.
 While these relations can be mapped out manually, a better idea would be to look towards true refinement types as described in section \ref{section:relatedworkcontracts}.
 
@@ -1494,254 +1523,255 @@ While these relations can be mapped out manually, a better idea would be to look
 %\caption{\label{fig:subst-grammar} The substitution grammar as defined by Stutterheim.}
 %\end{figure}
 
+The manner in which generated substitutions are applied differs greatly from Stutterheim's approach.
+We explain how and why in section \ref{generation-of-final-contracts}.
+
 \subsubsection{Algorithm \CHW}
-Now that we have reviewed the contracting rules and the unification algorithm, let us define the contract inference algorithm \CHW.
+
+Now that we have reviewed the contracting rules and the unification algorithm, let us define the contract inference Algorithm \CHW.
 This algorithm takes a \code{Module} and infers contracts for each declaration, pattern, right-hand side, (guarded) expression and alternative that resides in the module.
 
-Our starting point was Stuterheim's algorithm $\mathcal{CW}$, which has been extensively modified.
+Our starting point was Stutterheim's Algorithm $\mathcal{CW}$, which has been extensively modified.
+
+\todo{Overview of what was modified?}
 
 To infer a contract, a number of elements are required:
 \begin{enumerate}
 	\item The contract environment $\Gamma$, which has been populated beforehand with initial contracts from the type source as described in subsection \ref{subsection:contractgeneration}.
-	\item The type source $\Xi$, which contains the raw types of the contractable non-terminals. When needed, these raw types will be converted to a unique initial contract. An example of this would be the list constructor, which for obvious reasons must have a unique initial contract every time it is encountered.
+	\item The type source $\Xi$, which contains the types of the contractable nodes of the syntax. When needed, these types are converted to an initial contract with fresh indices. An example of this would be the list constructor, which for obvious reasons must have a unique initial contract every time it is encountered.
 \end{enumerate}
+
+We follow the same order as the contracting rules here: patterns are introduced first, then declarations, function bindings, right-hand sides, expressions and alternatives.
+
+\paragraph{Patterns.}
+
+The code for patterns is shown in figure \ref{fig:pattern-algorithm-chw}.
+We omit the infix constructor, as it is the same as in Stutterheim's system for expressions. 
+Again, \code{PList} is replaced by the \code{PCons} and \code{PNil} constructors, which is how the constructor works behind the scenes.
+
+\begin{figure}[htbp]
+\begin{lstlisting}[mathescape]
+chw :: Environment $\rightarrow$ TypeSource $\rightarrow$ Pattern $\rightarrow$ (Substitution,Contract)
+
+chw $\Gamma$ $\Xi$ PHole = 
+ let $i$ be fresh
+ in ($Id$, $true_i$)
+ 
+chw $\Gamma$ $\Xi$ PWildcard = 
+ let $i$ be fresh
+ in ($Id$, $true_i$)
+ 
+chw $\Gamma$ $\Xi$ (PCon n p) = ($Id$, $\Xi$(PCon n p))
+
+chw $\Gamma$ $\Xi$ PNil = 
+ let $i$ and $j$ be fresh
+ in ($Id$, $true_i$ $\functor$ $true_j$)
+ 
+chw $\Gamma$ $\Xi$ (PCons x xs) = 
+ let ($\theta_1$,c) = chw $\Gamma$ $\Xi$ x
+     ($\theta_2$, $true_i$ $\functor$ c) = chw $\Gamma$ $\Xi$ xs
+ in  ($\theta_2 \circ \theta_1$, $true_i$ $\functor$ c)
+ 
+chw $\Gamma$ $\Xi$ (PLit l) = ($Id$, $literal_{fresh(i)}$)
+
+chw $\Gamma$ $\Xi$ (Paren p) = chw $\Gamma$ $\Xi$ p
+
+chw $\Gamma$ $\Xi$ (Tuple (p:ps)) = 
+ let $i$ be fresh
+     ($\theta_1$, c$_1$) = chw $\Gamma$ $\Xi$ p
+     ($\theta_2$, c$_2$) = chw $\Gamma$ $\Xi$ ps
+ in  ($\theta_2 \circ \theta_1$, $true_i$ $\bifunctor$ (c$_1$, c$_2$))
+ 
+chw $\Gamma$ $\Xi$ (Tuple [p]) = chw $\Gamma$ $\Xi$ p
+
+chw $\Gamma$ $\Xi$ (PVar x) = ($Id$, $\Xi$(PVar x))
+
+chw $\Gamma$ $\Xi$ (PAs p ps) = ($Id$, $\Xi$(p))
+\end{lstlisting}
+\caption{\label{fig:pattern-algorithm-chw}Algorithm \CHW ~for patterns.}
+\end{figure}
+
+\paragraph{Declarations.}
+
+For declarations (figure \ref{fig:declaration-algorithm-chw}), we omit \code{DHole} and \code{DEmpty}, as they both function the same as \code{PHole}.
+
+\todo{Add DeclsR, also do this for the others if it makes sense.}
+
+\begin{figure}[htbp]
+\begin{lstlisting}[mathescape]
+chw :: Environment $\rightarrow$ TypeSource $\rightarrow$ Declaration $\rightarrow$ (Substitution,Contract)
+
+chw $\Gamma$ $\Xi$ (DFunBinds (d:ds)) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ d
+     ($\theta_2$,c$_2$) = chw ($\theta_1$ $\Gamma$) $\Xi$ ds
+ in  ($\theta_1 \circ \theta_2$, c$_1$)
+ 
+chw $\Gamma$ $\Xi$ (DFunBinds []) = chw $\Gamma$ $\Xi$ DEmpty
+
+chw $\Gamma$ $\Xi$ (DPatBind p rhs) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ p
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ rhs
+     $\theta_3$ = $\mathcal{U}$(c$_1$,c$_2$)
+ in  ($\theta_3 \circ \theta_2 \circ \theta_1$, $\theta_3 \circ \theta_2$ c$_1$)
+     
+\end{lstlisting}
+\caption{\label{fig:declaration-algorithm-chw}Algorithm \CHW ~for declarations.}
+\end{figure}
+
+\paragraph{Function bindings.}
+
+Figure \ref{fig:funbinds-algorithm-chw} shows Algorithm \CHW ~for function bindings.
+We omit \code{FBHole} as we did before.
+\code{FunBind} may look a bit odd.
+This is what it does: first, the contract of the function identifier, $c_1$, is trimmed by the length of $pats$ starting from the left of the contract, removing these arguments from the contract and producing $c'_1$, the contract for the result of the function.
+Then, $c'_1$ is unified with $c_2$, which is the contract for the right-hand side of the function binding.
+
+\begin{figure}[htbp]
+\begin{lstlisting}[mathescape]
+chw :: Environment $\rightarrow$ TypeSource $\rightarrow$ FuncBinding $\rightarrow$ (Substitution,Contract)
+
+chw $\Gamma$ $\Xi$ (FunBind nm pats rhs) = 
+ let c$_1$ = $\Gamma$(nm)
+     lp = length pats
+     c$'_1$ = dropc lp c$_1$
+     ($\theta_1$,c$_2$) = chw $\Gamma$ $\Xi$ rhs
+     $\theta_2$ = $\mathcal{U}$(c$'_1$,c$_2$)
+ in  ($\theta_2 \circ \theta_1$, $\theta_2$ c$_1$)
+\end{lstlisting}
+\caption{\label{fig:funbinds-algorithm-chw}Algorithm \CHW ~for function bindings.}
+\end{figure}
+
+\paragraph{Right-hand sides.}
+
+The code for right-hand sides (figue \ref{fig:rhs-algorithm-chw}) is quite simple.
+In both cases, the contract of expression $e$ is used for the entire right-hand side.
+In the case of guarded expressions, the substitution of each guarded expression is collected.
+
+\begin{figure}[htbp]
+\begin{lstlisting}[mathescape]
+chw :: Environment $\rightarrow$ TypeSource $\rightarrow$ RHS $\rightarrow$ (Substitution,Contract)
+
+chw $\Gamma$ $\Xi$ (Rhs e w) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ e
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ w
+ in  ($\theta_2 \circ \theta_1$, c$_1$)
+
+chw $\Gamma$ $\Xi$ (GRhs (e:es) w) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ e
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ es
+     ($\theta_3$,c$_3$) = chw $\Gamma$ $\Xi$ w
+ in  ($\theta_3 \circ \theta_2 \circ \theta_1$, c$_1$)
+ 
+chw $\Gamma$ $\Xi$ (GRhs [] w) = 
+ let $i$ be fresh
+ in  ($Id$, $true_i$)
+\end{lstlisting}
+\caption{\label{fig:rhs-algorithm-chw}Algorithm \CHW ~for right-hand sides.}
+\end{figure}
+
+\paragraph{Expressions.}
+
+We omit the code for \code{Hole}, \code{Feedback}, \code{MustUse}, \code{Neg} and \code{Paren} in figure \ref{fig:expression-algorithm-chw}, as these are trivial: in the first case, a fresh $true$ contract is generated and in the other cases, the expression $e$ that is wrapped by the node is used to attain the substitutions and contract.
+Furthermore, we omit \code{InfixApp} because it is converted to regular function application, which is covered by \code{App}.
+
+\todo{Write about app, is special.}
+\todo{Explain the differences between env and type source, also have to explain how env is bootstrapped with data from ts.}
+
+\begin{figure}[htbp]
+\begin{lstlisting}[mathescape]
+chw :: Environment $\rightarrow$ TypeSource $\rightarrow$ Expression $\rightarrow$ (Substitution,Contract)
+
+chw $\Gamma$ $\Xi$ (Case e alts) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ e
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ alts
+ in  ($\theta_2 \circ \theta_1$, $\theta_2 \circ \theta_1$ c$_2$)
+ 
+chw $\Gamma$ $\Xi$ (Con name) = ($Id$, $\Xi$(name))
+
+chw $\Gamma$ $\Xi$ (Lit l) = ($Id$, $\Xi$(l))
+
+chw $\Gamma$ $\Xi$ (If i t e) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ i
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ t
+     ($\theta_3$,c$_3$) = chw $\Gamma$ $\Xi$ e
+     $\theta_4$ = $\mathcal{U}$(c$_2$,c$_3$)
+ in  ($\theta_4 \circ \theta_3 \circ \theta_2 \circ \theta_1$, $\theta_4 \circ \theta_3 \circ \theta_2 \circ \theta_1$ c$_2$)
+ 
+chw $\Gamma$ $\Xi$ (Lambda p e) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ p
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ e
+ in  ($\theta_2 \circ \theta_1$, $\theta_2$ (c$_1$ $\rightarrowtail$ c$_2$))
+ 
+chw $\Gamma$ $\Xi$ (Let decls e) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ decls
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ e
+ in  ($\theta_2 \circ \theta_1$, c$_2$)
+ 
+chw $\Gamma$ $\Xi$ (App f x) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ f
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ x
+     $\alpha$ = dropc 1 c$_1$
+     $\theta_3$ = $\mathcal{U}$($\theta_2$ c$_1$,c$_2$ $\rightarrowtail$ $\alpha$)
+ in  ($\theta_3 \circ \theta_2 \circ \theta_1$, $\theta_3$ $\alpha$)
+
+chw $\Gamma$ $\Xi$ (Enum f t o) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ f
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ t
+     ($\theta_3$,c$_3$) = chw $\Gamma$ $\Xi$ o
+     $\theta_4$ = $\mathcal{U}$(c$_1$,c$_2$)
+     $\theta_5$ = $\mathcal{U}$($\theta_4$ c$_2$,c$_3$)
+ in  ($\theta_5 \circ \theta_4 \circ \theta_3 \circ \theta_2 \circ \theta_1$, $\theta_5 \circ \theta_4 \circ \theta_3 \circ \theta_2 \circ \theta_1$ c$_1$)
+ 
+chw $\Gamma$ $\Xi$ (Cons x xs) =
+ let $i$ be fresh
+     ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ x
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ xs
+     $\theta_3$ = $\mathcal{U}$(c$_2$,$\theta_2$ ($true_i$ $\functor$ c$_1$))
+ in  ($\theta_3 \circ \theta_2 \circ \theta_1$, $\theta_3$ ($true_i$ $\functor$ c$_1$))
+     
+chw $\Gamma$ $\Xi$ Nil = 
+ let $i$ and $j$ be fresh
+ in  ($Id$, $true_i$ $\functor$ $true_j$)
+ 
+chw $\Gamma$ $\Xi$ (Tuple (t:ts)) = 
+ let $i$ be fresh
+     ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ t
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ ts
+ in  ($\theta_2 \circ \theta_1$, $true_i$ $\bifunctor$ (c$_1$,c$_2$))
+ 
+chw $\Gamma$ $\Xi$ (Tuple [t]) = chw $\Gamma$ $\Xi$ t
+\end{lstlisting}
+\caption{\label{fig:expression-algorithm-chw}Algorithm \CHW ~for expressions.}
+\end{figure}
+
+\paragraph{Alternatives.}
+
+For alternatives, we omit \code{AHole} and \code{AltEmpty} in figure \ref{fig:alternative-algorithm-chw} because they are trivial.
+
+\begin{figure}[htbp]
+\begin{lstlisting}[mathescape]
+chw :: Environment $\rightarrow$ TypeSource $\rightarrow$ Alternative $\rightarrow$ (Substitution,Contract)
+
+chw $\Gamma$ $\Xi$ (Alt p rhs) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ p
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ rhs
+ in  ($\theta_2 \circ \theta_1$, $\theta_2$ c$_2$)
+ 
+chw $\Gamma$ $\Xi$ (ACons x xs) = 
+ let ($\theta_1$,c$_1$) = chw $\Gamma$ $\Xi$ x
+     ($\theta_2$,c$_2$) = chw $\Gamma$ $\Xi$ xs
+     $\theta_3$ = $\mathcal{U}$(c$_1$,c$_2$)
+ in  ($\theta_3 \circ \theta_2 \circ \theta_1$, $\theta_3 \circ \theta_2$ c$_1$)
+ 
+chw $\Gamma$ $\Xi$ ANil = 
+ let $i$ be fresh
+ in  ($Id$, $true_i$)
+\end{lstlisting}
+\caption{\label{fig:alternative-algorithm-chw}Algorithm \CHW ~for alternatives.}
+\end{figure}
 
 \todo{Work in progress.}
 
-\section{Providing richer feedback}
-
-\todo{intro needed?}
-
-\subsection{Modifications to \textit{typed-contracts} library}
-\label{modificationstotypedcontracts}
-In order to provide adequate feedback to the user, we modify the \textit{typed-contracts} library by Hinze et al. \cite{Hinze06typedcontracts} to produce more specific feedback in a language that the user can understand.
-The original library code provides error messages that refer to contract violations and (higher-order) blame of expressions, concepts that are foreign to the average user and thus do not provide any useful feedback.
-
-Here is an example of the feedback provided by the original library:
-
-\begin{lstlisting}[mathescape]
-inc :: Int $\rightarrowtail$ Int
-inc  = assert "inc" (nat $\rightarrowtail$ nat) (fun ($\lambda$n $\rightarrow$ n + 1))
-
-> app inc 1 (-5)
-> *** Exception: contract failed: the expression labelled `1' is to blame.
-\end{lstlisting}
-
-\subsubsection{Type position information}
-
-To improve this rudimentary feedback, we require position information that records the position of an argument (or result) in a type.
-We record this information in a tuple:
-
-\begin{lstlisting}
-type PosInfo = (Int,Int)
-\end{lstlisting}
-
-For example, the position $(0,1)$ indicates the first argument of a function that has one argument.
-The position $(1,1)$ indicates the result of such a function.
-
-Using this information, it is possible to produce highly specific feedback messages:
-
-\begin{lstlisting}[caption=Code that generates text indicating the location of the problem.]
-posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " supplied argument of this function "
-                        | pos == arity = "The result of this function "
-                        | (pos,arity) == (-1,-1) = "An unknown position "
-
-showPos p | p == 1 = "first"
-          | p == 2 = "second"
-          | p == 3 = "third"
-          | p == 4 = "fourth"
-          | p == 5 = "fifth"
-          | p == 6 = "sixth"
-          | otherwise = show p
-\end{lstlisting}
-
-\subsubsection{Using the type position information}
-
-The \code{Contract} GADT is modified to include the \code{PropInfo} constructor, which takes an additional argument: a function that, given type position information of which argument or result that the property is asserting, returns an appropriate error message:
-
-\begin{lstlisting}[mathescape]
-PropInfo   ::  (aT $\rightarrow$ Bool) $\rightarrow$ (PosInfo $\rightarrow$ String) $\rightarrow$ Contract aT
-Prop       ::  (aT $\rightarrow$ Bool) $\rightarrow$ Contract aT
-\end{lstlisting}
-
-Here is a usage example of \code{PropInfo}:
-
-\begin{lstlisting}[mathescape]
-isBiggerThan_prop = PropInfo ($\lambda$x $\rightarrow$ fromEnum x > 5 ) ($\lambda$p $\rightarrow$ mkErrorMsg p "the number must be larger than five.")
-\end{lstlisting}
-
-If this property were to be asserted on the first argument of a function and was violated, it would generate the following error message:
-
-\begin{quote}
-\textit{"The first supplied argument of this function does not fulfill the following property: the number must be larger than five."}
-\end{quote}
-
-We add the functions \code{assertPos} and \code{assert''} to the \textit{typed-contracts} library to record this type position information.
-For brevity, we omit the definitions of \code{makeLoc} and \code{Def}.
-These can be found in the \textit{typed-contracts} library source code.
-
-\begin{lstlisting}[mathescape]
-assertPos :: String $\rightarrow$ String $\rightarrow$ Contract a $\rightarrow$ a $\rightarrow$ a
-assertPos s ext c = assert$"$ c (0, ctrtarity c) (makeloc (Def (s ++ ext)))
- where
-  ctrtarity :: Contract a $\rightarrow$ Int
-  ctrtarity (Function c1 c2) = 1 + ctrtarity (c2 undefined)
-  ctrtarity _                = 0
-\end{lstlisting}
-
-\subsubsection{External feedback}
-
-\code{assertPos}'s purpose is twofold: to initialize the type position information, and to accept an additional feedback string \code{ext}.
-
-Because the \code{app} function is responsible for providing a location label in the form of an integer, it makes sense to define a version of \code{app} that accepts an additional feedback string instead of an integer: \code{appParam}.
-
-\begin{lstlisting}[mathescape]
-app :: (a $\rightarrowtail$ b) $\rightarrow$ Int $\rightarrow$ a $\rightarrow$ b
-app f loc x = apply f (makeloc (App loc)) x
-
-appParam :: (a $\rightarrowtail$ b) $\rightarrow$ String $\rightarrow$ a $\rightarrow$ b
-appParam f s x = apply f (makeloc (Def s)) x
-\end{lstlisting}
-
-The use for these extra feedback strings is discussed in the next subsection.
-
-\subsection{External library-agnostic feedback}
-\label{codegeneration}
-
-Along with improvements to the \textit{typed-contracts} library, we have identified several techniques for generating library-agnostic feedback through abstract syntax tree analysis and -modification.
-
-\subsubsection{Dynamic representation of values using \code{Show} class}
-The most robust way of displaying a value is through use of the \code{Show} typeclass.
-The natural caveat one thinks of is the lack of a \code{Show} instance for objects such as functions.
-Circular or infinite data structures are also troublesome.
-
-So, when generating code that relies on \code{Show} instances, one must ensure that there are no datatypes without a \code{Show} instance, and that circular or infinite data structures are not present.
-
-In our particular situation, we assume that every argument has a \code{Show} instance. Because QuickCheck should not generate infinite structures (quite the contrary!), this appears to be a reasonable assumption.
-
-\code{Show} instances for functions would still be required, but those can be provided:
-
-\begin{lstlisting}[mathescape]
-instance Show (a $\rightarrowtail$ b) where
-	showsPrec a = showString "<function>"
-\end{lstlisting}
-
-\subsubsection{Static string representation of functions}
-In the event of a contract violation inside a higher-order function, it is possible that the offending value is a function.
-But providing a meaningful \code{Show} instance for the function type is impossible.
-How can this limitation be amended?
-One possibility is to generate a static string representation of each argument and use that in the feedback.
-For instance, the following example:
-
-\begin{lstlisting}[mathescape]
-f g x = g x
-z = f id 1
-\end{lstlisting}
-
-would become
-
-\begin{lstlisting}[mathescape]
-f g x = g (x,"x")
-z = f (id,"id") (1,"1")
-\end{lstlisting}
-
-However, a string representation loses all notion of the original structure.
-In the case of functions, this is not a problem, but structures such as lists suffer.
-Let us assume we apply the \code{map} function to an appropriate function and the list \code{[1,2,3]}.
-Code is generated that replaces the original argument with the tuple \code{([1,2,3],"[1,2,3]")}.
-The \code{map} function then applies its function argument to the first item in the list.
-This list item causes a contract violation, but the only visual information available is a string representation of the entire list.
-Clearly, this catch-all approach does not work.
-
-By defining a new typeclass \code{ShowFunc}, we can circumvent this issue while still making use of the statically generated string representations:
-
-\begin{lstlisting}[mathescape]
-class ShowFunc a where
- showFunc :: String $\rightarrow$ a $\rightarrow$ String
- 
-instance (Show a) $\Rightarrow$ ShowFunc a where
- showFunc _ a = show a
- 
-instance ShowFunc (a $\rightarrow$ b) where
- showFunc rep _ = rep
-\end{lstlisting}
-
-Unfortunately, user-defined typeclasses are currently unsupported by Helium, so this technique is not applicable to us.
-
-\subsubsection{Identifying a function as higher-order}
-
-By inspecting the type of a function, it is possible to inform the user if the contract violation was caused by a higher-order function or a first-order function.
-
-\subsubsection{Dynamic generation of line and column numbers of an expression}
-
-If the abstract syntax tree provides them, extracting line and column numbers and putting them in the modified AST as a string is trivial and a highly valuable way of improving feedback.
-
-\subsection{Example of detailed feedback for \textit{typed-contracts} library}
-
-While we are unable to say what function caused the contract violation in a higher-order function due to the lack of user-defined typeclasses, we can indicate which arguments of both the higher-order function and the function argument failed.
-We use this information to generate highly detailed feedback, as can be seen with this snippet of generated code:
-
-\begin{lstlisting}
-g f x = f x
-\end{lstlisting}
-
-becomes
-
-\begin{lstlisting}[mathescape]
-(fun ($\lambda$f $\rightarrow$ (fun ($\lambda$x $\rightarrow$ g ($\lambda$a $\rightarrow$ (appParam f (concat "the application of the higher-order function 'g' ",(generatePositionData posinfo),". g has a function as its first argument."," The first argument of that function",", namely ",show a]) a)) x))))
-\end{lstlisting}
-
-Note how the argument \code{x} is applied to \code{f} with a very detailed feedback message that incorporates the following elements:
-
-\begin{itemize}
-	\item Whether the function is higher-order or not.
-	\item Run-time generation of line and column number information.
-	\item Identification of the position of \code{f} in the type of \code{g}. This is a duplication of the type position information functionality added to the \textit{typed-contracts} library.
-	\item Identification of the position of \code{x} in the type of \code{f}.
-	\item Run-time representation of the offending value using the \code{Show} typeclass.
-\end{itemize}
-
-In the case of a contract violation, the feedback could look like this:
-
-\begin{quote}
-\textit{
-A part of your code, or a supplied argument to a function, does not fulfill a required property. This occurred at the application of the higher-order function 'g' at line number 1, column number 1. g has a function as its first argument. The first argument of that function, namely -5, does not fulfill the following property: the number must be a natural number.
-}
-\end{quote}
-
-From this feedback, the user can deduce the following:
-\begin{itemize}
-\item Which application of a higher-order function caused the contract violation.
-\item Which argument of the higher-order function is the function that caused the contract violation.
-\item Which argument of that function caused the violation.
-\item Possibly, the offending value.
-\end{itemize}
-
-\subsection{Reusing QuickCheck properties}
-
-The Ask-Elle programming tutor supports QuickCheck properties that are executed to verify the correctness of code that cannot be reduced to a known strategy.
-A very interesting idea is to derive contracts from such properties automatically and use them to construct contracts that can be used to contract the result of the function.
-However, remember that we are limited to non-dependent contracts, so we only have access to a single argument or the result of the function in a contract.
-Most QuickCheck properties, however, refer to one or more arguments of the function.
-
-A simple QuickCheck property of the palindrome function illustrates the problem well:
-
-\begin{lstlisting}[mathescape]
-prop_Main = $\lambda$xs $\rightarrow$ whenFail (putStrLn "This function does not correctly check for palindromes.") ( (palindrome xs) == (reverse xs == xs) )  
-\end{lstlisting}
-
-The input \code{xs} must be captured with a dependent contract before it can be referred to.
-This means that we are unable to derive a contract useful for contract inference.
-
-The only QuickCheck properties that are of use to derive a contract from, are properties that only refer to the result of the function.
-For these kinds of properties, we can construct a contract of the following form:
-
-\begin{lstlisting}[mathescape]
-PropInfo ($\lambda$result $\rightarrow$ ...)
-\end{lstlisting}
-
-As you can see, we are severely limited in the the range of properties that we can use.
-For this reason, we do not develop a contract deriving mechanism for QuickCheck properties and leave it as future work.
 \section{Code Generation}
 \label{codegeneration}
 
@@ -2089,8 +2119,247 @@ Section \ref{futurework:runtimetranslation} provides an overview of the attempts
 
 The current code generation system generates monomorphic code that may fail when a contracted function is applied to different contracts.
 
+\section{Providing richer feedback}
+
+\todo{intro needed?}
+
+\subsection{Modifications to \textit{typed-contracts} library}
+\label{modificationstotypedcontracts}
+In order to provide adequate feedback to the user, we modify the \textit{typed-contracts} library by Hinze et al. \cite{Hinze06typedcontracts} to produce more specific feedback in a language that the user can understand.
+The original library code provides error messages that refer to contract violations and (higher-order) blame of expressions, concepts that are foreign to the average user and thus do not provide any useful feedback.
+
+Here is an example of the feedback provided by the original library:
+
+\begin{lstlisting}[mathescape]
+inc :: Int $\rightarrowtail$ Int
+inc  = assert "inc" (nat $\rightarrowtail$ nat) (fun ($\lambda$n $\rightarrow$ n + 1))
+
+> app inc 1 (-5)
+> *** Exception: contract failed: the expression labelled `1' is to blame.
+\end{lstlisting}
+
+\subsubsection{Type position information}
+
+To improve this rudimentary feedback, we require position information that records the position of an argument (or result) in a type.
+We record this information in a tuple:
+
+\begin{lstlisting}
+type PosInfo = (Int,Int)
+\end{lstlisting}
+
+For example, the position $(0,1)$ indicates the first argument of a function that has one argument.
+The position $(1,1)$ indicates the result of such a function.
+
+Using this information, it is possible to produce highly specific feedback messages:
+
+\begin{lstlisting}[caption=Code that generates text indicating the location of the problem.]
+posInfoText (pos,arity) | pos < arity  = "The " ++ showPos (pos+1) ++ " supplied argument of this function "
+                        | pos == arity = "The result of this function "
+                        | (pos,arity) == (-1,-1) = "An unknown position "
+
+showPos p | p == 1 = "first"
+          | p == 2 = "second"
+          | p == 3 = "third"
+          | p == 4 = "fourth"
+          | p == 5 = "fifth"
+          | p == 6 = "sixth"
+          | otherwise = show p
+\end{lstlisting}
+
+\subsubsection{Using the type position information}
+
+The \code{Contract} GADT is modified to include the \code{PropInfo} constructor, which takes an additional argument: a function that, given type position information of which argument or result that the property is asserting, returns an appropriate error message:
+
+\begin{lstlisting}[mathescape]
+PropInfo   ::  (aT $\rightarrow$ Bool) $\rightarrow$ (PosInfo $\rightarrow$ String) $\rightarrow$ Contract aT
+Prop       ::  (aT $\rightarrow$ Bool) $\rightarrow$ Contract aT
+\end{lstlisting}
+
+Here is a usage example of \code{PropInfo}:
+
+\begin{lstlisting}[mathescape]
+isBiggerThan_prop = PropInfo ($\lambda$x $\rightarrow$ fromEnum x > 5 ) ($\lambda$p $\rightarrow$ mkErrorMsg p "the number must be larger than five.")
+\end{lstlisting}
+
+If this property were to be asserted on the first argument of a function and was violated, it would generate the following error message:
+
+\begin{quote}
+\textit{"The first supplied argument of this function does not fulfill the following property: the number must be larger than five."}
+\end{quote}
+
+We add the functions \code{assertPos} and \code{assert''} to the \textit{typed-contracts} library to record this type position information.
+For brevity, we omit the definitions of \code{makeLoc} and \code{Def}.
+These can be found in the \textit{typed-contracts} library source code.
+
+\begin{lstlisting}[mathescape]
+assertPos :: String $\rightarrow$ String $\rightarrow$ Contract a $\rightarrow$ a $\rightarrow$ a
+assertPos s ext c = assert$"$ c (0, ctrtarity c) (makeloc (Def (s ++ ext)))
+ where
+  ctrtarity :: Contract a $\rightarrow$ Int
+  ctrtarity (Function c1 c2) = 1 + ctrtarity (c2 undefined)
+  ctrtarity _                = 0
+\end{lstlisting}
+
+\subsubsection{External feedback}
+
+\code{assertPos}'s purpose is twofold: to initialize the type position information, and to accept an additional feedback string \code{ext}.
+
+Because the \code{app} function is responsible for providing a location label in the form of an integer, it makes sense to define a version of \code{app} that accepts an additional feedback string instead of an integer: \code{appParam}.
+
+\begin{lstlisting}[mathescape]
+app :: (a $\rightarrowtail$ b) $\rightarrow$ Int $\rightarrow$ a $\rightarrow$ b
+app f loc x = apply f (makeloc (App loc)) x
+
+appParam :: (a $\rightarrowtail$ b) $\rightarrow$ String $\rightarrow$ a $\rightarrow$ b
+appParam f s x = apply f (makeloc (Def s)) x
+\end{lstlisting}
+
+The use for these extra feedback strings is discussed in the next subsection.
+
+\subsection{External library-agnostic feedback}
+\label{codegeneration}
+
+Along with improvements to the \textit{typed-contracts} library, we have identified several techniques for generating library-agnostic feedback through abstract syntax tree analysis and -modification.
+
+\subsubsection{Dynamic representation of values using \code{Show} class}
+The most robust way of displaying a value is through use of the \code{Show} typeclass.
+The natural caveat one thinks of is the lack of a \code{Show} instance for objects such as functions.
+Circular or infinite data structures are also troublesome.
+
+So, when generating code that relies on \code{Show} instances, one must ensure that there are no datatypes without a \code{Show} instance, and that circular or infinite data structures are not present.
+
+In our particular situation, we assume that every argument has a \code{Show} instance. Because QuickCheck should not generate infinite structures (quite the contrary!), this appears to be a reasonable assumption.
+
+\code{Show} instances for functions would still be required, but those can be provided:
+
+\begin{lstlisting}[mathescape]
+instance Show (a $\rightarrowtail$ b) where
+	showsPrec a = showString "<function>"
+\end{lstlisting}
+
+\subsubsection{Static string representation of functions}
+In the event of a contract violation inside a higher-order function, it is possible that the offending value is a function.
+But providing a meaningful \code{Show} instance for the function type is impossible.
+How can this limitation be amended?
+One possibility is to generate a static string representation of each argument and use that in the feedback.
+For instance, the following example:
+
+\begin{lstlisting}[mathescape]
+f g x = g x
+z = f id 1
+\end{lstlisting}
+
+would become
+
+\begin{lstlisting}[mathescape]
+f g x = g (x,"x")
+z = f (id,"id") (1,"1")
+\end{lstlisting}
+
+However, a string representation loses all notion of the original structure.
+In the case of functions, this is not a problem, but structures such as lists suffer.
+Let us assume we apply the \code{map} function to an appropriate function and the list \code{[1,2,3]}.
+Code is generated that replaces the original argument with the tuple \code{([1,2,3],"[1,2,3]")}.
+The \code{map} function then applies its function argument to the first item in the list.
+This list item causes a contract violation, but the only visual information available is a string representation of the entire list.
+Clearly, this catch-all approach does not work.
+
+By defining a new typeclass \code{ShowFunc}, we can circumvent this issue while still making use of the statically generated string representations:
+
+\begin{lstlisting}[mathescape]
+class ShowFunc a where
+ showFunc :: String $\rightarrow$ a $\rightarrow$ String
+ 
+instance (Show a) $\Rightarrow$ ShowFunc a where
+ showFunc _ a = show a
+ 
+instance ShowFunc (a $\rightarrow$ b) where
+ showFunc rep _ = rep
+\end{lstlisting}
+
+Unfortunately, user-defined typeclasses are currently unsupported by Helium, so this technique is not applicable to us.
+
+\subsubsection{Identifying a function as higher-order}
+
+By inspecting the type of a function, it is possible to inform the user if the contract violation was caused by a higher-order function or a first-order function.
+
+\subsubsection{Dynamic generation of line and column numbers of an expression}
+
+If the abstract syntax tree provides them, extracting line and column numbers and putting them in the modified AST as a string is trivial and a highly valuable way of improving feedback.
+
+\subsection{Example of detailed feedback for \textit{typed-contracts} library}
+
+While we are unable to say what function caused the contract violation in a higher-order function due to the lack of user-defined typeclasses, we can indicate which arguments of both the higher-order function and the function argument failed.
+We use this information to generate highly detailed feedback, as can be seen with this snippet of generated code:
+
+\begin{lstlisting}
+g f x = f x
+\end{lstlisting}
+
+becomes
+
+\begin{lstlisting}[mathescape]
+(fun ($\lambda$f $\rightarrow$ (fun ($\lambda$x $\rightarrow$ g ($\lambda$a $\rightarrow$ (appParam f (concat "the application of the higher-order function 'g' ",(generatePositionData posinfo),". g has a function as its first argument."," The first argument of that function",", namely ",show a]) a)) x))))
+\end{lstlisting}
+
+Note how the argument \code{x} is applied to \code{f} with a very detailed feedback message that incorporates the following elements:
+
+\begin{itemize}
+	\item Whether the function is higher-order or not.
+	\item Run-time generation of line and column number information.
+	\item Identification of the position of \code{f} in the type of \code{g}. This is a duplication of the type position information functionality added to the \textit{typed-contracts} library.
+	\item Identification of the position of \code{x} in the type of \code{f}.
+	\item Run-time representation of the offending value using the \code{Show} typeclass.
+\end{itemize}
+
+In the case of a contract violation, the feedback could look like this:
+
+\begin{quote}
+\textit{
+A part of your code, or a supplied argument to a function, does not fulfill a required property. This occurred at the application of the higher-order function 'g' at line number 1, column number 1. g has a function as its first argument. The first argument of that function, namely -5, does not fulfill the following property: the number must be a natural number.
+}
+\end{quote}
+
+From this feedback, the user can deduce the following:
+\begin{itemize}
+\item Which application of a higher-order function caused the contract violation.
+\item Which argument of the higher-order function is the function that caused the contract violation.
+\item Which argument of that function caused the violation.
+\item Possibly, the offending value.
+\end{itemize}
+
+\subsection{Reusing QuickCheck properties}
+
+The Ask-Elle programming tutor supports QuickCheck properties that are executed to verify the correctness of code that cannot be reduced to a known strategy.
+A very interesting idea is to derive contracts from such properties automatically and use them to construct contracts that can be used to contract the result of the function.
+However, remember that we are limited to non-dependent contracts, so we only have access to a single argument or the result of the function in a contract.
+Most QuickCheck properties, however, refer to one or more arguments of the function.
+
+A simple QuickCheck property of the palindrome function illustrates the problem well:
+
+\begin{lstlisting}[mathescape]
+prop_Main = $\lambda$xs $\rightarrow$ whenFail (putStrLn "This function does not correctly check for palindromes.") ( (palindrome xs) == (reverse xs == xs) )  
+\end{lstlisting}
+
+The input \code{xs} must be captured with a dependent contract before it can be referred to.
+This means that we are unable to derive a contract useful for contract inference.
+
+The only QuickCheck properties that are of use to derive a contract from, are properties that only refer to the result of the function.
+For these kinds of properties, we can construct a contract of the following form:
+
+\begin{lstlisting}[mathescape]
+PropInfo ($\lambda$result $\rightarrow$ ...)
+\end{lstlisting}
+
+As you can see, we are severely limited in the the range of properties that we can use.
+For this reason, we do not develop a contract deriving mechanism for QuickCheck properties and leave it as future work.
+
 \chapter{Discussion and future work}
 \label{futurework}
+
+\section{Support for partially applied function arguments to higher-order functions}
+
+\todo{I think these currently don't work.}
 
 \section{Adding support for user-defined datatypes to the initial contract generation algorithm}
 \label{datatype-support-initial-contracts-algorithm}
