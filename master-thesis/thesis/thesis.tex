@@ -1669,19 +1669,15 @@ While these relations can be mapped out manually, a better idea would be to look
 %\caption{\label{fig:subst-grammar} The substitution grammar as defined by Stutterheim.}
 %\end{figure}
 
-The manner in which generated substitutions are applied differs greatly from Stutterheim's approach.
+The manner in which we apply generated substitutions differs greatly from Stutterheim's approach.
 We explain how and why in section \ref{generation-of-final-contracts}.
 
 \subsubsection{Algorithm \CHW}
 
-Now that we have reviewed the contracting rules and the unification algorithm, let us define the contract inference Algorithm \CHW.
-This algorithm takes a \code{Module} and infers contracts for each declaration, pattern, right-hand side, (guarded) expression and alternative that resides in the module.
+Now that we have reviewed the contracting rules and the unification algorithm, let us define the contract inference Algorithm \CHW, which is based upon Stutterheim's Algorithm $\mathcal{CW}$.
+Our algorithm takes a \code{Module} and infers contracts for each declaration, pattern, right-hand side, (guarded) expression and alternative that resides in the module.
 
-Our starting point was Stutterheim's Algorithm $\mathcal{CW}$, which has been extensively modified.
-
-\todo{Overview of what was modified?}
-
-To infer a contract, a number of elements are required:
+To infer a contract, we require:
 \begin{enumerate}
 	\item The contract environment $\Gamma$.
 	\item The type source $\Xi$.
@@ -1836,7 +1832,11 @@ chw $\Gamma$ $\Xi$ (GRhs [] w) =
 We omit the code for \code{Hole}, \code{Feedback}, \code{MustUse}, \code{Neg} and \code{Paren} in figure \ref{fig:expression-algorithm-chw}, as these are trivial: in the first case, a fresh $true$ contract is generated and in the other cases, the expression $e$ that is wrapped by the node is used to attain the substitutions and contract.
 Furthermore, we omit \code{InfixApp} because it is converted to regular function application, which is covered by \code{App}.
 
-\todo{Write about app, is special.}
+The code for \code{App} differs from the original algorithm.
+Instead of generating a fresh $true$ contract to unify with the contract of $f$, we drop a single argument from the $c_1$ contract to obtain $\alpha$, the contract for the result of $f$.
+This is done to reduce the amount of generated substitutions.
+$\alpha$ is then used for unification in the usual manner.
+
 
 \begin{figure}[htbp]
 \begin{lstlisting}[mathescape]
@@ -1931,8 +1931,6 @@ chw $\Gamma$ $\Xi$ ANil =
 \caption{\label{fig:alternative-algorithm-chw}Algorithm \CHW ~for alternatives.}
 \end{figure}
 
-\todo{Work in progress.}
-
 \section{Code Generation}
 \label{codegeneration}
 
@@ -1952,8 +1950,6 @@ We will inspect each template in detail and explain its purpose.
 The $\finaltemplate$ template is simple: it is a transformed copy of the original code.
 Every function application found within the original code is replaced by its contracted equivalent, the $\apptemplate$ template.
 This transformation makes this template the entry point for all other generated functions.
-
-
 
 As an example, here is the filled-in $\finaltemplate$ template for the \code{foldr} function:
 
@@ -2103,6 +2099,7 @@ Now that it is clear how translation works, we explain the limitation in Algorit
 
 
 \subsection{The monomorphic Algorithm \CW}
+\label{subsection:monomorphic-algo-cw}
 
 Algorithm \CW ~contains a severe limitation: every generated substitution is placed in a global set.
 This set is then used to generate the final contract of an expression $e$ during code generation by applying the substitutions to the inferred contract of $e$.
@@ -2282,7 +2279,7 @@ The current code generation system generates monomorphic code that may fail when
 
 \section{Providing richer feedback}
 
-\todo{intro needed?}
+We investigate how feedback towards the user can be improved in this section.
 
 \subsection{Modifications to \textit{typed-contracts} library}
 \label{modificationstotypedcontracts}
@@ -2459,7 +2456,7 @@ g f x = f x
 
 becomes
 
-\begin{lstlisting}[mathescape]
+\begin{lstlisting}[caption=Detailed feedback is generated when applying the function argument in a higher-order function.,label=listing:detailedfeedback,mathescape]
 (fun ($\lambda$f $\rightarrow$ (fun ($\lambda$x $\rightarrow$ g ($\lambda$a $\rightarrow$ (appParam f (concat "the application of the higher-order function 'g' ",(generatePositionData posinfo),". g has a function as its first argument."," The first argument of that function",", namely ",show a]) a)) x))))
 \end{lstlisting}
 
@@ -2518,19 +2515,6 @@ For this reason, we do not develop a contract deriving mechanism for QuickCheck 
 \chapter{Discussion and future work}
 \label{futurework}
 
-\section{Support for partially applied function arguments to higher-order functions}
-
-\todo{I think these currently don't work.}
-
-\section{Adding support for user-defined datatypes to the initial contract generation algorithm}
-\label{datatype-support-initial-contracts-algorithm}
-
-\todo{Expand upon what the data type env is, where it comes from, etc.}
-
-However, a data type environment is available and could be queried for the data type's general form and its name, allowing us to construct a pattern match.
-Alternatively, one could generate a typeclass instance for each defined data type using Template Haskell or some other form of preprocessing.
-Manually adding new data types to the conversion function is another option.
-
 \section{Integration with the Ask-Elle programming tutor}
 
 \todo{Talk about how contract inference is not of use when there is no recursion or function application.}
@@ -2539,118 +2523,170 @@ Manually adding new data types to the conversion function is another option.
 
 \todo{Talk about how you'll need to run the code generation system on the Prelude and any other modules you'll use.}
 
+\section{Adding support for user-defined datatypes to the initial contract generation algorithm}
+\label{datatype-support-initial-contracts-algorithm}
+
+As we have seen in subsection \ref{subsection:contractgeneration}, contracts can be derived from types that are useful in contract inference.
+However, only a few types are currently supported by the conversion function.
+Custom data constructors must be manually added.
+A typeclass does not solve the need for manually adding conversions for new data constructors. 
+Being able to look up data types instead of manually adding them is a more interesting idea.
+It is possible to query the Helium compiler for a list of all available type constructors, functions, value constructors and operators in a program.
+The Ask-Elle programming tutor also has a static list available in the file \code{Domain\textbackslash FP\textbackslash HeliumImportEnvs.hs}.
+Both sources could be used to look up unknown type constructors, fetch their type, and construct a fitting contract.
+
 \section{Run-time translation of intermediate contract language}
 \label{futurework:runtimetranslation}
-\todo{Talk about a few interested avenues for getting this to work.}
 
+Subsection \ref{subsection:monomorphic-algo-cw} proposes splitting up generated substitutions into a global list and placing the other local substitutions into a local list unique to the node where unification took place.
+This change makes it possible to correct a limitation present in Stutterheim's original contract inference algorithm.
+However, application of the substitutions and translation of the final contracts must then be done at run-time.
 
-Several ideas were tested to complete the conversion, the first of which was to use a typeclass:
+Several ideas were tested to perform this translation:
+\begin{itemize}
+	\item Add a phantom type to the data type representing the intermediate contract language.
+	\item Use a typeclass.
+	\item Use a typeclass + type synonyms.
+	\item Use a typeclass + newtypes.
+	\item Code duplication.
+\end{itemize}
 
-\begin{lstlisting}[caption=Attempt at using a typeclass to recover the extra type information.]
-class ConvertContract aT where
- convert :: Contract -> (Contract aT)
+\subsection{Add a phantom type to the data type representing the intermediate contract language}
+The data type that represents the intermediate contract language is a data type automatically generated by the Utrecht University Attribute Grammar Compiler (UUAGC). 
+Adding a phantom type to it would make conversion trivial.
+Unfortunately, an option for adding phantom types to a UUAGC-defined data type could not be found.
+Even if phantom types were supported, the generation code would have had to have been rewritten to use a nested tuple for the environment contract instead of a regular list, or use another form of heterogeneous lists.
 
-instance ConvertContract aT where
+\subsection{Use a typeclass}
+
+\begin{lstlisting}[caption=Attempt at using a typeclass to recover the extra type information.,mathescape]
+class ConvertContract a where
+ convert :: Contract $\rightarrow$ (Contract a)
+
+instance ConvertContract a where
  convert (CVar s _) = true
  convert (CProp s) = searchEnvTuple s envTuple
 
-instance ConvertContract (aT :-> bT) where
- convert (CArr c1 c2) = (>->) (convert c1) (convert c2)
+instance ConvertContract (a $\rightarrowtail$ b) where
+ convert (CArr c1 c2) = ($\rightarrowtail$) (convert c1) (convert c2)
 
-instance Bifunctor f => ConvertContract (f aT bT) where
- convert (CBifunctor o il ir) = (convert o) <@@> (convert il,convert ir)
+instance Bifunctor f $\Rightarrow$ ConvertContract (f a b) where
+ convert (CBifunctor o il ir) = (convert o) $\bifunctor$ (convert il,convert ir)
 
-instance Functor f => ConvertContract (f aT) where
- convert (CFunctor o i) = (convert o) <@> (convert i)
+instance Functor f $\Rightarrow$ ConvertContract (f a) where
+ convert (CFunctor o i) = (convert o) $\functor$ (convert i)
  
 testEnvTuple
-  :: (Functor f, Ord dT, Ord bT, RealFrac eT) =>
-     ((String, Contract (f cT :-> [dT])),
-      ((String, Contract aT),
-       ((String, Contract [bT]),
+  :: (Functor f, Ord d, Ord b, RealFrac e) $\Rightarrow$
+     ((String, Contract (f c $\rightarrowtail$ [d])),
+      ((String, Contract a),
+       ((String, Contract [b]),
         ((String, Contract Char),
-         ((String, Contract eT), ([a], Contract fT))))))
+         ((String, Contract e), ([a], Contract f))))))
 testEnvTuple = ( ("isort",sortCtrt), ( ("ctrue",true), ( ("ord",ord), ( ("isChar_prop",isChar_prop), ( ("isInt_prop", isInt_prop), ([], true) ) ) ) ) )
 \end{lstlisting}
 
-Because of the different phantom types, a nested tuple was needed to house the property environment. \todo{Why didn't this work, again? I think the typechecker didn't want to play nice and kept trying to unify these types or something.}
+Because of the different phantom types, a nested tuple was needed to house the property environment, but it did not play nice with the type checker.
+Additionally, this solution suffers from the need for a type annotation so the compiler knows which instance to select.
+Statically generating such an annotation would have been perfectly feasible, although it would have suffered from the same issue as the one we were trying to solve by doing the translation at run-time.
 
-A type annotation would be required for this solution, so the compiler knows which instance to select.
-Statically generating such an annotation would have been perfectly feasible, although it would have suffered from the same issue as the one we were trying to solve: 
-the annotation for the contracted version of 'g' would have been a generic one.
-
-Another idea would be to add the phantom type to the AST datatype, making conversion trivial.
-Unfortunately, an option for adding phantom types in a UUAGC-defined datatype could not be found.
-Even if phantom types were supported, the generation code would have had to have been rewritten to use a nested tuple for the environment contract instead of a regular list.
-
+\subsection{Use a typeclass + type synonyms}
 What about using type synonyms and the aforementioned typeclass?
 
 \begin{lstlisting}[caption=Attempt at using type synonyms to choose the correct instances.]
-instance ConvertContract aT where
+instance ConvertContract a where
   convert (CVar s _) = true
-type IsIntProp aT = aT
-instance RealFrac (IsIntProp aT) => ConvertContract (IsIntProp aT) where
+type IsIntProp a = a
+instance RealFrac (IsIntProp a) $\Rightarrow$ ConvertContract (IsIntProp a) where
   convert (CProp p) | p == "isInt_prop" = isInt_prop
 \end{lstlisting}
 
 Unfortunately, when deciding an instance, any constraints are ignored, and because type synonyms are transparent to the compiler, these instances fully overlap.
-Simon Peyton-Jones and Oleg Kiselyov (http://www.haskell.org/haskellwiki/GHC/AdvancedOverlap) do describe a way to use overlapping instances and functional dependencies to achieve this, but it requires a lot of extra work for every property.
+Simon Peyton-Jones and Oleg Kiselyov do describe a way to use overlapping instances and functional dependencies to achieve this \cite{spj:online}, but it requires a lot of extra work for every property.
+Automatic generation of these instances may be an interesting avenue.
 
-After type synonyms, newtypes were tried:
+\subsection{Use a typeclass + newtypes}
 
-\begin{lstlisting}[caption=Attempt at using newtypes to choose the correct instances.]
-newtype IsIntProp aT = IsIntProp aT
-instance RealFrac (IsIntProp aT) => ConvertContract (IsIntProp aT) where
+\begin{lstlisting}[caption=Attempt at using newtypes to choose the correct instances.,mathescape]
+newtype IsIntProp a = IsIntProp a
+instance RealFrac (IsIntProp a) $\Rightarrow$ ConvertContract (IsIntProp a) where
   convert (CProp p) | p == "isInt_prop" = isInt_prop
 \end{lstlisting}
 
-This seemed to work, but it required wrapping and unwrapping of values, which was incompatible with the generated code.
+This seems to work, but it requires wrapping and unwrapping of values, which is incompatible with the generated code.
 Recall the contracted version of \code{f}:
 
-\begin{lstlisting}
+\begin{lstlisting}[mathescape]
 __app_f ctrt x = appParam (__contracted_f ctrt) x
 __contracted_f ctrt = assertPos "f" ctrt funs
     where
-        funs = (fun (\x -> __final_f x))
-__final_f x = __app_g (v1 >-> (v2 <@> v1)) x
+        funs = (fun ($\lambda$x $\rightarrow$ __final_f x))
+__final_f x = __app_g (c1 $\rightarrowtail$ (c2 $\functor$ c1)) x
 \end{lstlisting}
 
 The value \code{x} would have to be unwrapped before it could be passed to \code{\_\_final\_f}, and these unwrapping functions would all have a different name.
-A typeclass could be used to provide a singular function to wrap and unwrap newtypes, but user-defined typeclasses are currently unsupported by the Helium compiler.
-Apart from that, this seemed to be a promising solution.
+A typeclass could be used to provide a singular function to wrap and unwrap newtypes.
+Placing the generated code together with this typeclass in a single module and running it with GHC makes this the most interesting avenue to investigate.
+
+\subsection{Code duplication}
 
 A final "solution" that would not require the use of typeclasses, would have been to generate a monomorphic set of contracted functions for every single function application.
 Naturally, this set would need to contain every single function that is called when evaluating that particular function application; a possibly daunting amount.
 Importing other modules makes this solution even less feasible, as functions from those modules would also need to be included in the set.
 Because of the multitude of issues, this solution was disregarded early in the process.
 
-Rolling back to the polymorphic version is, of course, still possible, and is left as future work (see section ~\ref{futurework}).
-
 \section{More efficient algorithm for finding final contracts}
 \label{futurework:efficientsubstalgo}
 
+The algorithm to find a final contract uses a brute-force search, going through a substitution list up $(n+1)$ times, where $n$ is the number of substitutions in the list. 
+This algorithm may become a bottleneck when it has to trudge through a very large global substitution list.
+The optional addition of local substitution lists is not as troublesome, because they contain only substitutions that are relevant to that node.
 
+The current algorithm goes as follows:
 
-Algorithm:
+Given a contract variable $c_{orig}$ and a list of substitutions $s$, set $c_i$ to $c_{orig}$.
+While you have not reached the end of $s$, search for a substitution that goes from $c_i$ to $c_j$.
+If you encounter such a substitution, set $c_i$ to $c_j$.
+When the end of $s$ has been reached, check if $c_{orig} = c_i$.
+If yes, return $c_{orig}$ as the result.
+Otherwise, recurse with $c_j$ and $s$.
 
-Given a contract variable $v_{orig}$ and a list of substitutions $s$, set $v_i$ to $v_{orig}$.
-While you have not reached the end of $s$, search for a substitution that goes from $v_i$ to $v_j$.
-If you encounter such a substitution, set $v_i$ to $v_j$.
-When the end of $s$ has been reached, check if $v_{orig} = v_i$.
-If yes, return $v_{orig}$ as the result.
-Otherwise, recurse with $v_j$ and $s$.
+Proving that this algorithm always terminates is easy.
+When applying a list of substitutions to a contract $c$, there are two possible results: either the result is once again $c$, or it is $c'$.
+In the first case, we are done.
+In the second, we must recurse.
 
+The question is, is it possible to construct a substitution loop in which we always recurse and never terminate?
+The answer is no.
+
+The proof is as follows:
+assume a substitution set $s$ that only contains the substitution \code{c $\mapsto$ c$'$}.
+When applying $s$ to $c$, we obtain $c'$.
+Recursing, $c'$ is applied to $s$ again.
+This time, $c'$ remains unchanged, so we are done.
+Let us extend $s$ with substitution \code{c$'$ $\mapsto$ c}.
+We apply $s$ to $c$, obtaining $c$ itself, because the substitutions cancel each other out.
+So, we are done.
+If we apply $s$ to $c'$, we obtain $c$.
+Recursing, we end up in the previous case, so we are done as well.
+Applying a substitution list $s$ that does not contain any substitutions that involve $c$ will naturally result in $c$ again, making all cases accounted for.
+
+\section{Adding support for partially applied function arguments to higher-order functions in \textit{typed-contracts} code generation}
+
+At the moment, function arguments to higher-order functions are assumed not to be applied at all.
+These arguments are replaced by their $\ctrttemplate$ template.
+Of course, it is possible to pass partially applied functions to a higher-order function.
+To support such arguments, the generation code has to be modified to check if the function argument has been partially applied and, if so, replace it with its $\apptemplate$ template and wrap the applied values accordingly with \code{appParam}.
+Just as extensive feedback is generated when applying the function argument to a value in the $\ctrttemplate$ template for a higher-order function (see listing \ref{listing:detailedfeedback}), so must similar feedback be generated for these "static" arguments.
 
 \section{Using paramorphisms to tackle dependent contracts}
-
-\review
 
 Johan Jeuring provided a wonderful idea to be able to run contract inference on some catamorphisms with dependent contracts by converting them to a paramorphism, which is a catamorphism that provides its function argument with the original input as well:
 
 \begin{figure}[htps]
-\begin{lstlisting}
-para  :: (a -> [a] -> b -> b) -> b -> [a] -> b
-foldr :: (a ->        b -> b) -> b -> [a] -> b
+\begin{lstlisting}[mathescape]
+para  :: (a $\rightarrow$ [a] $\rightarrow$ b $\rightarrow$ b) $\rightarrow$ b $\rightarrow$ [a] $\rightarrow$ b
+foldr :: (a $\rightarrow$         b $\rightarrow$ b) $\rightarrow$ b $\rightarrow$ [a] $\rightarrow$ b
 
 para  c n (x : xs) = c x xs (para c n xs)
 foldr c n (x : xs) = c x    (foldr c n xs)
@@ -2662,14 +2698,14 @@ foldr c n []       = n
 
 This functionality is of great use for dependent contracts that need access to the original argument, as can be seen in the following example code (courtesy of Johan Jeuring):
 
-\begin{lstlisting}
--- GList      ::  Contract aT -> ([aT] -> Bool) -> Contract [aT]
-sortc =  GList int (const True) >-> \xs -> GList int (\r -> nonDesc r && isPerm xs r)
+\begin{lstlisting}[mathescape]
+-- GList      ::  Contract a $\rightarrow$ ([a] $\rightarrow$ Bool) $\rightarrow$ Contract [a]
+sortc =  GList int (const True) $\rightarrowtail$ $\lambda$xs $\rightarrow$ GList int ($\lambda$r $\rightarrow$ nonDesc r && isPerm xs r)
 isPerm xs ys = null (xs \\ ys)
 
-sort_perm'         :: Ord a => [a] -> [a]
-sort_perm'         =  foldr insert_notPerm []
-insert_notPerm ::  Ord a => a -> [a] -> [a]
+sort_perm' :: Ord a $\Rightarrow$ [a] $\rightarrow$ [a]
+sort_perm' =  foldr insert_notPerm []
+insert_notPerm ::  Ord a $\Rightarrow$ a $\rightarrow$ [a] -> [a]
 insert_notPerm x []                    =  [x]
 insert_notPerm x (y:ys)  |  x <= y     =  x:y:ys
                          |  otherwise  =  insert_notPerm x ys
@@ -2683,45 +2719,45 @@ In the above example the input, \code{xs}, is needed in the \code{sortc} contrac
 This is where the paramorphism comes in, as it provides that \code{xs} value.
 The contract for the \code{para} function is, then:
 
-\begin{lstlisting}
+\begin{lstlisting}[mathescape]
 parac
-  :: Contract aT
-     -> ([aT] -> Bool)
-     -> ([aT] -> Contract bT)
-     -> Contract ((aT -> [aT] -> bT -> bT) -> bT -> [aT] -> bT)
-parac aT p bT =   (aT >-> \x -> GList aT p >-> \xs -> bT xs >- bT (x:xs))
-              >-  bT []
-              >-  GList aT p
-              >-> \xs -> bT xs
+  :: Contract a
+     $\rightarrow$ ([a] $\rightarrow$ Bool)
+     $\rightarrow$ ([a] $\rightarrow$ Contract b)
+     $\rightarrow$ Contract ((a $\rightarrow$ [a] $\rightarrow$ b $\rightarrow$ b) $\rightarrow$ b $\rightarrow$ [a] $\rightarrow$ b)
+parac a p b =   (a $\rightarrowtail$ $\lambda$x $\rightarrow$ GList a p $\rightarrowtail$ $\lambda$xs $\rightarrow$ b xs >- b (x:xs))
+              >-  b []
+              >-  GList a p
+              $\rightarrowtail$ \xs -> b xs
               
-psort  =  para (\x xs ys -> insert_correct x ys) []
+psort  =  para ($\lambda$x xs ys $\rightarrow$ insert_correct x ys) []
 \end{lstlisting}
 
 Unifying \code{sortc} and \code{parac} gives us:
 
-\begin{lstlisting}
-GList aT  p             >->  \xs -> bT xs
-GList int (const True)  >->  \xs -> GList int (\r -> nonDesc r && isPerm xs r)
+\begin{lstlisting}[mathescape]
+GList a   p             $\rightarrowtail$  $\lambda$xs $\rightarrow$ b xs
+GList int (const True)  $\rightarrowtail$  $\lambda$xs $\rightarrow$ GList int ($\lambda$r $\rightarrow$ nonDesc r && isPerm xs r)
 
-aT  :=  int
+a   :=  int
 p   :=  const True
-bT  :=  \xs -> GList int (\r -> nonDesc r && isPerm xs r)
+b   :=  $\lambda$xs $\rightarrow$ GList int ($\lambda$r $\rightarrow$ nonDesc r && isPerm xs r)
 \end{lstlisting}
 
 Applying these substitutions, we see that \code{bT []} will get the contract:  
 
-\begin{lstlisting}
-GList int (\r -> nonDesc r && isPerm [] r)
+\begin{lstlisting}[mathescape]
+GList int ($\lambda$r $\rightarrow$ nonDesc r && isPerm [] r)
 \end{lstlisting}
 
 And the contract for \code{insert} becomes:
 
-\begin{lstlisting}
+\begin{lstlisting}[mathescape]
 insertc'  =    int 
-          >->  \x  -> GList int (const True) 
-          >->  \xs -> GList int (\r -> nonDesc r && isPerm xs r)
-          >-   GList int (\r -> nonDesc r && isPerm (x:xs) r)
-cinsert_notPerm_violated = assert insertc' (\x xs ys -> insert_notPerm x ys) 3 [2,4] [2,4]
+          $\rightarrowtail$  $\lambda$x  $\rightarrow$ GList int (const True) 
+          $\rightarrowtail$  $\lambda$xs $\rightarrow$ GList int ($\lambda$r $\rightarrow$ nonDesc r && isPerm xs r)
+          >-   GList int ($\lambda$r $\rightarrow$ nonDesc r && isPerm (x:xs) r)
+cinsert_notPerm_violated = assert insertc' ($\lambda$x xs ys $\rightarrow$ insert_notPerm x ys) 3 [2,4] [2,4]
 \end{lstlisting}
 
 Note that by using a paramorphism instead of a catamorphism, \code{insert} is supplied with an argument it does not require, so it is wrapped in a lambda function and the superfluous argument is ignored.
@@ -2729,15 +2765,15 @@ Note that by using a paramorphism instead of a catamorphism, \code{insert} is su
 How do we relate this contracted paramorphism to the original user's \code{foldr} call?
 By defining \code{foldr} as a paramorphism, which is quite simple:
 
-\begin{lstlisting}
-pfoldr f e = para (\x xs r -> f x r) e
+\begin{lstlisting}[mathescape]
+pfoldr f e = para ($\lambda$x xs r $\rightarrow$ f x r) e
 sort_perm''        =  pfoldr insert_notPerm []
 sort_permViolated' =  assert sortc' sort_perm'' [3,2,4]
 \end{lstlisting}
 
 In short, this implies it is possible to convert some functions that use catamorphisms with dependent contracts, into paramorphisms with non-dependent contracts.
 
-Some feedback problems do pop up: how do we meaningfully inform the user of a violated contract in  \code{(\textbackslash x xs r -> f x r)} ? 
+Some feedback problems do pop up: how do we meaningfully inform the user of a violated contract in  \code{($\lambda$x xs r $\rightarrow$ f x r)} ? 
 And what if the \code{para} contract is violated, how do we report that?
 It is possible to modify the feedback messages in contract generation to "cloak" the use of a paramorphism, but this has not yet been investigated further.
 
