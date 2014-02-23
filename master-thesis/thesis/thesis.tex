@@ -79,9 +79,9 @@ Additionally, a code generation system  for the \textit{typed-contracts} Haskell
 \chapter{Introduction}
 
 The Ask-Elle programming tutor is a web-based programming tutor created by Alex Gerdes \cite{Gerdes:2012:phd} that provides feedback on a student's progress in programming exercises in a language similar to Haskell, named Helium.
-To facilitate this, the tutor is given several solutions to an exercise when defining an exercise.
-It then uses strategies to reduce a student's input to one of these solutions, even idenitifying how many steps they are removed from the solution.
-The tutor can then provide hints and other forms of feedback to help along the student.
+To facilitate this, the system is given several solutions to an exercise when defining an exercise.
+It then uses strategies to reduce a student's input to one of these solutions, even identifying how many steps they are removed from the solution.
+Ask-Elle can then provide hints and other forms of feedback to help along the student.
 Because it is possible that a student may come up with a solution that is not known by Ask-Elle, QuickCheck \cite{Claessen:2000p592} properties can be defined for an exercise that define the correctness of the solution.
 For instance, one of the properties of a sorting function is that the sorted list must be a permutation of the original list: no elements may be removed or added during sorting.
 
@@ -1622,8 +1622,6 @@ The rest of the contracting rules are discussed hereafter.
 The contracting rules for alternatives in figure \ref{fig:alternatives-inference-rules} are quite simple. \code{C-AHole} and \code{C-AltEmpty} are trivial, and \code{C-Alt} takes the contract of the right-hand side as the contract of the entire alternative.
 \code{ACons} and \code{ANil} are how the \code{Alts} node functions behind the scenes: all alternatives must have the same contract.
 
-\todo{May want to add contracting rules for interesting lists like those for alts.}
-
 \todo{A few simple examples of applying the rules?}
 
 \subsubsection{Substitutions and unification}
@@ -1954,8 +1952,8 @@ This transformation makes this template the entry point for all other generated 
 As an example, here is the filled-in $\finaltemplate$ template for the \code{foldr} function:
 
 \begin{lstlisting}[mathescape]
-__final_foldr f b (x:xs) = f x (__app_foldr $ctrt$ $pos$ ($p1$,f) ($p2$,b) ($p3$,xs))
-__final_foldr f b [] = b
+__final_foldr __ctrtf f b (x:xs) = f x (__app_foldr $ctrt$ $pos$ ($p1$,__ctrtf) ($p2$,b) ($p3$,xs))
+__final_foldr __ctrtf f b [] = b
 \end{lstlisting}
 
 %\todo{Why could we not also give the position info of x to f? I think this has to do with the type-level representation then expecting functions that expect tuples. Perhaps modifying the 'final' template to take that into account is an idea, although it's possible the position info is useless there.}
@@ -1970,11 +1968,13 @@ The placeholders in the above example represent the following extra information:
 	\item $p1...n$: Line and column position information is generated for each argument applied to the original function application, again used for specific feedback.
 \end{itemize}
 
+\subsubsection{Patterns representing functions are already contracted}
+
 It may puzzle you why the application of \code{f} is not transformed in the same manner.
-This is because it is a $pattern$ available in the left-hand side of the function definition.
+This is because it is a \textit{pattern} available in the left-hand side of the function definition.
 It is a call to a locally-available function that has already been contracted.
 
-To clarify, let us look at the next example.
+To clarify, let us look at this example.
 The following expression:
 
 \begin{lstlisting}
@@ -1991,8 +1991,16 @@ Because \code{insert} is a function that does not yet have any arguments applied
 
 %\todo{What about partially-applied functions? I think we have to wrap these with lambdas and put in "unknown" positions and then use the app versions, but that would probably not go well with the contract types.}
 
-As you can see, the contracted version of \code{insert} is passed to the contracted version of \code{foldr}.
-Hence, the $pattern$ \code{f} in \code{\underline{\hspace{1.5em}}final\_foldr} in our previous example does not have to be transformed.
+As you can see, the $\ctrttemplate$ template of \code{insert} is passed to the $\apptemplate$ template of \code{foldr}.
+There, the contracted version of \code{insert} is annotated with detailed information and wrapped so that it can be applied with regular function application instead of using the \code{appParam} function from the \textit{typed-contracts} library.
+Hence, the $pattern$ \code{f} in \code{\underline{\hspace{1.5em}}final\_foldr} in our previous example does not have to be transformed again.
+
+\subsubsection{Type difference between contracted and regular functions}
+
+In \code{\underline{\hspace{1.5em}}final\_foldr}, {\code{f} has a regular function type (\code{a $\rightarrow$ b $\rightarrow$ b}), but \code{\underline{\hspace{1.5em}}app\_foldr} expects a contracted version of \code{f} with the type \code{a $\rightarrowtail$ b $\rightarrowtail$ b}.
+So, the $\finaltemplate$ template includes a new pattern for each function argument present in the original function definition.
+In the case of \code{foldr}, this is only \code{f}.
+The original pattern is prefixed with \code{\underline{\hspace{1.5em}}ctrt} and added to the function definition.
 
 \subsection{\apptemplate}
 
@@ -2057,8 +2065,10 @@ fun ($\lambda$x $\rightarrow$ __final_id x)
 
 For each argument, an extra layer of the \code{fun} function is applied to capture them and make them available to the original function.
 
+\subsubsection{Functions as arguments to higher-order functions}
+
 A function argument is slightly more involved, as it must be applied to its arguments using \code{appParam}.
-For example,
+For example, the code snippet
 
 \begin{lstlisting}
 g f x = f x
@@ -2067,11 +2077,25 @@ g f x = f x
 generates the following for the \textit{contracted function definition} placeholder:
 
 \begin{lstlisting}[mathescape]
-(fun ($\lambda$f $\rightarrow$ (fun ($\lambda$x $\rightarrow$ __final_g ($\lambda$a $\rightarrow$ (appParam f $info$ a)) x))))
+(fun ($\lambda$f $\rightarrow$ (fun ($\lambda$x $\rightarrow$ __final_g f ($\lambda$a $\rightarrow$ (appParam f $info$ a)) x))))
 \end{lstlisting}
 
 Note how \code{a} is captured and applied to \code{f} using \code{appParam}.
 This is because \code{f} is a contracted function that was passed to the higher-order function.
+
+\subsubsection{Two versions of function arguments}
+
+Because \code{a} is captured using a lambda function, the type of the expression \code{($\lambda$a $\rightarrow$ (appParam f $info$ a))} is \code{a $\rightarrow$ a}, and can be used as a "regular" function in \code{\underline{\hspace{1.5em}}final\_g}.
+
+\code{f}, whose type is \code{a $\rightarrowtail$ a}, is also provided to \code{\underline{\hspace{1.5em}}final\_g} unwrapped, in the case that a higher-order function takes \code{f} as an argument.
+A good example of this is that of \code{foldr}:
+
+\begin{lstlisting}[mathescape]
+__final_foldr __ctrtf f b (x:xs) = f x (__app_foldr $ctrt$ $pos$ ($p1$,__ctrtf) ($p2$,b) ($p3$,xs))
+__final_foldr __ctrtf f b [] = b
+\end{lstlisting}
+
+
 
 \section{Generation of final contracts}
 \label{generation-of-final-contracts}
@@ -2095,7 +2119,7 @@ At the moment, $literal_i$ contracts are translated into \code{true} contracts. 
 Finally, user-defined concrete contracts only exist as a string in the intermediate contract language.
 Translation is done simply by printing that string when generating the code, as the string is the identifier of a contract defined outside of the generated code.
 
-Now that it is clear how translation works, we explain the limitation in Algorithm \CW  ~and how doing this translation at runtime proves troublesome.
+Now that it is clear how translation works, we explain the limitation in Algorithm \CW  ~and how doing the translation we have just discussed at runtime proves troublesome.
 
 
 \subsection{The monomorphic Algorithm \CW}
@@ -2487,6 +2511,7 @@ From this feedback, the user can deduce the following:
 \end{itemize}
 
 \subsection{Reusing QuickCheck properties}
+\label{subsection:reusing-qc-props}
 
 The Ask-Elle programming tutor supports QuickCheck properties that are executed to verify the correctness of code that cannot be reduced to a known strategy.
 A very interesting idea is to derive contracts from such properties automatically and use them to construct contracts that can be used to contract the result of the function.
@@ -2512,14 +2537,174 @@ PropInfo ($\lambda$result $\rightarrow$ ...)
 As you can see, we are severely limited in the the range of properties that we can use.
 For this reason, we do not develop a contract deriving mechanism for QuickCheck properties and leave it as future work.
 
-\chapter{Discussion and future work}
+\chapter{Results and future work}
 \label{futurework}
 
+\section{Results}
+
+Originally, our work was to be integrated into the Ask-Elle programming tutor, but time constraints have prevented this.
+Nonetheless, it is possible to emulate the effect our new source of feedback by taking student input (comprised of source code) and system output (comprised of QuickCheck counterexamples) stored by the Ask-Elle system and using the input and output to generate our own feedback (if any):
+
+\begin{enumerate}
+	\item First, we create a contract derived from the QuickCheck properties that were used to generate the counterexample and place the counterexample in the contract as described by Stutterheim's thesis in subsection 3.5.1, \textit{"Eliminating dependent contracts"}.
+	\item This contract is given to the contract environment $\Gamma$ and used during contract inference, generating substitutions that may place the counterexample-laden contract at function applications.
+	\item Then, we run the student's input through the code generation system to generate contracted code.
+	\item We apply the contracted version of the code to the counterexample.
+	\item A contract violation occurs at a specific function application, providing detailed feedback.
+\end{enumerate}
+
+Automation of the first step is discussed in subsection \ref{subsection:reusing-qc-prop}. The rest of the steps are not as troublesome to automate.
+
+\subsection{Strengths and weaknesses}
+
+We have performed several tests to determine the efficacy of our feedback compared to the original Ask-Elle feedback in identifying the source of a programming error.
+
+\subsubsection{Lack of function applications}
+
+Because contract violations only occur during assertion, code without any function applications does not benefit from our detailed feedback.
+For example, the following input will not generate more detailed feedback compared to the original Ask-Elle feedback:
+
+\begin{lstlisting}[caption=Student input 1]
+myreverse [] = []
+myreverse [x,y] = [x,y]
+myreverse xs = ?
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Ask-Elle's response to input 1]
+You have not sorted correctly.
+Counterexample arguments: [1,0]
+\end{lstlisting}
+
+In order to provide our own feedback, we go through the steps outlined above.
+Here is the original QuickCheck property:
+
+\begin{lstlisting}[mathescape]
+prop_Main = $\lambda$xs $\rightarrow$ prop_Elems xs .&&. prop_Model xs
+
+prop_Elems = $\lambda$xs $\rightarrow$ whenFail (putMsg "Input and output list do not contain the same elements") (and $\$$ map ((flip elem) xs) (myreverse xs))
+
+prop_Model = $\lambda$xs $\rightarrow$ whenFail (putMsg "You have not sorted correctly") (myreverse xs == reverse xs)
+\end{lstlisting}
+
+And our manually derived contract equivalent:
+
+\begin{lstlisting}[mathescape]
+prop_Elems = PropInfo ($\lambda$xs $\rightarrow$ (and $\$$ map ((flip elem) xs) ([1,0]) )) 
+ ($\lambda$ $\rightarrow$ mkErrorMsg p "Input and output list do not contain the same elements.")
+              
+prop_Model = PropInfo ($\lambda$xs $\rightarrow$ ([1,0] == reverse xs)) 
+ ($\lambda$ $\rightarrow$ mkErrorMsg p "You have not sorted correctly.")
+
+prop_Main = prop_Elems & prop_Model
+
+myreverse_ctrt  = (true $\functor$ true) $\rightarrowtail$ prop_Main
+\end{lstlisting}
+
+Then, we run the contract inference algorithm and generate contracted code:
+
+\begin{lstlisting}[mathescape]
+__final_myreverse [] = []
+__final_myreverse [x,y] = [x,y]
+__final_myreverse xs = ?
+
+__contracted_myreverse ctrt posinfo =
+    assertPos "At the application of the function 'myreverse'" (generatePositionData posinfo) ctrt funs
+    where funs = (fun ($\lambda$__x01 $\rightarrow$ __final_myreverse __x01))
+        
+__app_myreverse ctrt posinfo (posa,a) =
+    (appParam (__contracted_myreverse ctrt posinfo) (show a ++ generatePositionData posa) a)
+\end{lstlisting}
+
+Here, the problem becomes apparent: because there are no function applications in the original code, no contracting has been done whatsoever! 
+Of course, we can manually apply the contract with bogus information:
+
+\begin{lstlisting}[mathescape]
+__app_myreverse myrevers_ctrt (Just (0,0)) ((Just (1,1)),[1,0])
+\end{lstlisting}
+
+Naturally, the feedback is not very useful:
+
+\begin{quote}
+\textit{A part of your code, or a supplied argument to a function, does not fulfill a required property. This occurred at the application of the function 'myreverse' at line number 0, column number 0. The result of this function does not fulfill the following property: You have not sorted correctly.}
+\end{quote}
+
+\subsubsection{Limitations of QuickCheck properties}
+
+In general, the QuickCheck properties used to describe the correct behaviour of the exercises in Ask-Elle are troublesome to correctly translate to a contract and often provide scarce information in their feedback, if any is present at all.
+
+The QuickCheck property for the \code{repli} exercise, for example, provides no textual feedback whatsoever:
+
+\begin{lstlisting}[mathescape]
+prop_Main = $\lambda$xs n $\rightarrow$ n > 0 ==> concatMap (replicate n) xs == repli xs n
+\end{lstlisting}
+
+Furthermore, translation of this property to a contract is troublesome because of the need for a dependent contract to capture \code{n}, which Stutterheim illustrated to be unusable for this form of contract inference.
+
+\subsubsection{Defining custom contracts}
+
+In order to get the most out of the feedback potential that contract inference provides, contracts should be tailored to each exercise.
+Of course, the validation code must be shared with QuickCheck.
+
+Let us assume the student has just finished an insertion sort exercise, but a programming error has crept in:
+
+\begin{lstlisting}[mathescape,numbers=left]
+insert z zs = case zs of
+                [] $\rightarrow$ [z]
+                (z':zs') $\rightarrow$ in case z <= z' of
+                                True $\rightarrow$ z' : z : zs'
+                                False $\rightarrow$ z' : insert z zs'
+foldr f b xs = case xs of
+                [] $\rightarrow$ b
+                (y:ys) $\rightarrow$ f y (foldr f b ys)
+                
+isort us = foldr insert [] us
+\end{lstlisting}
+
+The following QuickCheck property is checked, and fails:
+
+\begin{lstlisting}[mathescape]
+prop_Main = $\lambda$xs $\rightarrow$ whenFail (putStrLn "The list elements must be in ascending order.") (isOrdered xs)
+\end{lstlisting}
+
+QuickCheck reports a counterexample of \code{[0,1]}.
+
+The tailored contract that is given to the contract inference algorithm is as follows:
+
+\begin{lstlisting}[mathescape]
+isort_ctrt = (true $\functor$ true) $\rightarrowtail$ (ord $\functor$ true)
+ where ord = PropInfo ($\lambda$x $\rightarrow$ isOrdered x) ($\lambda$p $\rightarrow$ mkErrorMsg p "the list elements must be in ascending order.") 
+\end{lstlisting}
+
+Code is generated, and we apply \code{\underline{\hspace{1.5em}}final\_isort} to \code{[0,1]}, generating the following feedback:
+
+\begin{quote}
+\textit{A part of your code, or a supplied argument to a function, does not fulfill a required property. This occurred at the application of the function 'insert' at line number 10, column number 19. The result of this function does not fulfill the following property: the list elements must be in ascending order.}
+\end{quote}
+
+Now we know that the issue lies with the \code{insert} function and not with our definition of \code{isort} or \code{foldr}.
+In this case, the extra information does not cut down the search space by a lot, but it is easy to imagine how this could be of great help in larger programs.
+
+If we rectify the bug in the definition of \code{insert} (it should be \code{z : z' : zs'}) and introduce another by changing \code{z <= z'} to \code{z' <= z} and apply the counterexample again, we receive more detailed feedback:
+
+\begin{quote}
+\textit{A part of your code, or a supplied argument to a function, does not fullfil a required property. This occurred at the application of the function ':' at line number 5, column number 45. The result of this function does not fulfill the following property: the list elements must be in ascending order.}
+\end{quote}
+
+Now, we are brought closer to the bug, indicating something apparently wrong with the snippet \code{z' : zs}: one of the elements is causing the list to no longer be ordered.
+Unfortunately, we cannot get closer to the problem, as the contract inferred for the function application \code{(<=) z' z} is the identity contract \code{(true $\rightarrowtail$ (true $\rightarrowtail$ true))}.
+Nonetheless, the detail of this feedback is much greater than that of Ask-Elle's combination of a counterexample and a description of the violated property, displaying the violation as close to the source as it is allowed by the definition of the contract defined for the exercise.
+
+
 \section{Integration with the Ask-Elle programming tutor}
+
+Full integration of our work with the Ask-Elle programming tutor is not yet complete.
+Although 
 
 \todo{Talk about how contract inference is not of use when there is no recursion or function application.}
 
 \todo{Talk about how the QuickCheck properties should be enriched to allow for more useful feedback.}
+
+
 
 \todo{Talk about how you'll need to run the code generation system on the Prelude and any other modules you'll use.}
 
@@ -2705,7 +2890,7 @@ isPerm xs ys = null (xs \\ ys)
 
 sort_perm' :: Ord a $\Rightarrow$ [a] $\rightarrow$ [a]
 sort_perm' =  foldr insert_notPerm []
-insert_notPerm ::  Ord a $\Rightarrow$ a $\rightarrow$ [a] -> [a]
+insert_notPerm ::  Ord a $\Rightarrow$ a $\rightarrow$ [a] $\rightarrow$ [a]
 insert_notPerm x []                    =  [x]
 insert_notPerm x (y:ys)  |  x <= y     =  x:y:ys
                          |  otherwise  =  insert_notPerm x ys
@@ -2728,7 +2913,7 @@ parac
 parac a p b =   (a $\rightarrowtail$ $\lambda$x $\rightarrow$ GList a p $\rightarrowtail$ $\lambda$xs $\rightarrow$ b xs >- b (x:xs))
               >-  b []
               >-  GList a p
-              $\rightarrowtail$ \xs -> b xs
+              $\rightarrowtail$ $\lambda$xs -> b xs
               
 psort  =  para ($\lambda$x xs ys $\rightarrow$ insert_correct x ys) []
 \end{lstlisting}
