@@ -186,6 +186,11 @@ calculateTypeArity = S.arityOfTpScheme
 calculateTypeParameterArity :: S.TpScheme -> [Int]
 calculateTypeParameterArity = ((map P.arityOfTp) . fst . P.functionSpine . QL.unqualify . QN.unquantify)
 
+calculateContractArity :: Contract -> Int
+calculateContractArity (CArr c1 c2) = 1 + calculateContractArity c2
+calculateContractArity (CQuant _ cs) = calculateContractArity cs
+calculateContractArity _ = 0
+
 emptyListToZero :: [Int] -> [Int]
 emptyListToZero [] = [0]
 emptyListToZero xs = xs
