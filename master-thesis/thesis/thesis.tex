@@ -19,6 +19,8 @@
 \usepackage{xcolor}
 \usepackage{pdfpages}
 
+\usepackage{multicol}
+
 \usepackage{attrib}
 \usepackage{framed}
 
@@ -614,7 +616,9 @@ We have slightly modified the syntax used by the Ask-Elle system:
 
 This modified syntax can be downcast to the regular Ask-Elle syntax, and partially upcast to the Helium syntax.
 
+\begin{multicols}{2}
 \begin{lstlisting}[caption=Our modified Ask-Elle syntax.]
+
 -- | A Haskell source module
 data ModuleR
    | ModuleR
@@ -844,16 +848,17 @@ data RhsR
 
 data RangeR
     | RangeR
-        rangestart                    :: PositionR
-        rangestop                     :: PositionR
+        rangestart :: PositionR
+        rangestop  :: PositionR
 
 data PositionR
     | PositionR
-        filename                 :: String
-        line                     :: Int
-        column                   :: Int
+        filename  :: String
+        line      :: Int
+        column    :: Int
     | UnknownR
 \end{lstlisting}
+\end{multicols}
 
 \section{Overview}
 \label{section:overview}
@@ -938,6 +943,8 @@ is transformed into
 \begin{lstlisting}[caption=Result of lambda argument expansion transformation.,mathescape]
 f = $\lambda$g $\rightarrow$ ($\lambda$x $\rightarrow$ ($\lambda$y $\rightarrow$ ($\lambda$z $\rightarrow$ g x y z)))
 \end{lstlisting}
+
+Because this is done after the lambda function capture transformation, this transformation solely occurs in where-clauses, where the original lambda functions are bound to an identifier.
 
 \section{Source of types and initial contracts}
 \label{sourceoftypes}
@@ -1168,7 +1175,7 @@ Before moving on to the contracting rules and Algorithm \CHW, we first explain i
 
 \subsubsection{Relation between $\Xi$ and $\Gamma$}
 
-For those experienced with type inference, a type environment $\Gamma$ is updated during the inference process.
+In type inference, a type environment $\Gamma$ is updated during the inference process.
 For instance, encountering a $let$-binding will add the bound identifier $x$ to $\Gamma$ so it can be used in the rest of the $let$-binding.
 A similar process occurs for a lambda function's pattern(s).
 Fresh type variables are used when introducing these identifiers into $\Gamma$.
@@ -1229,7 +1236,7 @@ The same occurs for a pattern alias in \code{S-PAs}.
 
 \paragraph{Declarations.}
 
-The seeding rules for declarations (figure \ref{fig:declaration-seeding-rules} add function identifier contracts to the environment(s) for the function binding(s).
+The seeding rules for declarations (figure \ref{fig:declaration-seeding-rules}) add function identifier contracts to the environment(s) for the function binding(s).
 \code{S-DFunBinds} illustrates how the contracts derived from a declaration group must all be the same: \code{f (x:xs) = [x]} should have the same initial contract as \code{f [] = []}, for example.
 For pattern bindings, the pattern's contract is requested from the type source and inserted into $\Gamma$.
 
@@ -1248,10 +1255,6 @@ For pattern bindings, the pattern's contract is requested from the type source a
 \end{center}
 \caption{\label{fig:declaration-seeding-rules}Seeding rules for declarations.}
 \end{figure}
-
-\todo{What about unions of environments? For example, environment of expression in RHS equals parent environment plus environment of where-clause.}
-
-%In place of these functions, we define the support function \code{ts}, which takes an identifier $i$ and as many fresh $true$ contracts as necessary to perform a conversion from the type of $i$ to an initial contract $c$ as described in subsection \ref{subsection:contractgeneration}.
 
 \subsubsection{$\Gamma$ versus $\Xi$}
 
@@ -1347,7 +1350,6 @@ We first introduce the contracting rules for patterns, as many of the rules are 
 \paragraph{Patterns.}
 
 Let us go over the rules in figure \ref{fig:pattern-inference-rules}.
-
 Please note that while our syntax contains a \code{PListR} data constructor, we use the two contracting rules \code{C-PCons} and \code{C-PNil} to describe its contracting behaviour. 
 This is how the \code{PListR} constructor works behind the scenes.
 We will follow this convention for all constructors that describe lists.
@@ -1507,7 +1509,7 @@ The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-
   \vskip 0.5em
   \RightLabel{\textsc{C-Lambda}\quad}
   \AxiomC{$\Gamma[x \mapsto c_1] \vdash$ $e :: c_2$}
-  \UnaryInfC{$\Gamma \vdash$ $\ x \rightarrow e :: c_1 \rightarrowtail c_2$}
+  \UnaryInfC{$\Gamma \vdash$ $\lambda x \rightarrow e :: c_1 \rightarrowtail c_2$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-Let}\quad}
@@ -1583,8 +1585,8 @@ The rest of the contracting rules are discussed hereafter.
 \begin{description}
 	\item{\code{C-Case} :} This rule describes contracting of a case statement for an arbitrary number of cases. The contract of the expression being evaluated, $m$, must be the same as the contracts of the patterns $p_i$, namely $c_1$. The contract of the entire case statement is $c_2$, which is the contract that is given to each alternative.
 	\item{\code{C-If} :} Syntactic sugar for a boolean case statement. Like its generalized version, the contract of the entire statement is the same of each alternative, in this case $c$. 
-	\item{\code{C-Lam} :} This contracting rule is the same as in Damas \& Milner's work.
-	\item{\code{C-Let} :} A non-generalized let. This is not necessary because every contract variable is implicitly universally quantified in the global contract environment. 
+	\item{\code{C-Lambda} :} This contracting rule is the same as in Stutterheim's work.
+	\item{\code{C-Let} :} A non-generalized let. Generalization is not necessary because every contract variable is implicitly universally quantified in the global contract environment. 
 	\item{\code{C-Enum} :} A list generator. $y$ and $z$ are fully optional, but if they are present, they must have the same contract as that of $x$, namely $c$. A fresh outer contract is generated to complete the final contract.
 \end{description}
 
@@ -2272,7 +2274,7 @@ To see why, let us look at the code generated by this example:
 
 \begin{lstlisting}[caption=Expanded version of listing \ref{code:incorrectgeneratedcode}.]
 f x = g x
-g x = f [x]
+g x = [x]
 z = (f 'a', f 5)
 \end{lstlisting}
 
@@ -2294,7 +2296,7 @@ The solution appears trivial: pass the local substitutions as another argument t
 Unfortunately, it is not so simple.
 Doing substitutions at runtime instead of statically means a runtime translation is necessary between the intermediate contract language and the \textit{typed-contracts} contract datatype, because the substitutions only work on the intermediate contract language.
 The targeted library expects a contract in its own datatype, of course.
-The intermediate contract language is modeled as a simple UUAGC-generated datatype without a phantom type, and \textit{typed-contracts}'s datatype is a GADT with a phantom type used for a type-level representation of the contract.
+The intermediate contract language is modeled as a simple data type automatically generated by the Utrecht University Attribute Grammar Compiler (UUAGC) without a phantom type, and \textit{typed-contracts}'s datatype is a GADT with a phantom type used for a type-level representation of the contract.
 Conversion between the two means we need to be able to tell what this phantom type should be. This is especially a problem when we need to convert between user-defined concrete contracts (\code{Prop} and \code{PropInfo}), because each of these contracts may have a different phantom type and assorted type class constraints, and the only information available in the AST datatype equivalent is a \code{String}.
 
 Several attempts were made to provide a runtime translation function, but none were initially successful.
@@ -2403,11 +2405,11 @@ The use for these extra feedback strings is discussed in the next subsection.
 \subsection{External library-agnostic feedback}
 \label{codegeneration}
 
-Along with improvements to the \textit{typed-contracts} library, we have identified several techniques for generating library-agnostic feedback through abstract syntax tree analysis and -modification.
+Along with improvements to the \textit{typed-contracts} library, we have identified several techniques for generating library-agnostic feedback through abstract syntax tree analysis and modification.
 
 \subsubsection{Dynamic representation of values using \code{Show} class}
 The most robust way of displaying a value is through use of the \code{Show} typeclass.
-The natural caveat one thinks of is the lack of a \code{Show} instance for objects such as functions.
+The natural caveat one thinks of is the lack of a \code{Show} instance for terms such as functions.
 Circular or infinite data structures are also troublesome.
 
 So, when generating code that relies on \code{Show} instances, one must ensure that there are no datatypes without a \code{Show} instance, and that circular or infinite data structures are not present.
@@ -2696,6 +2698,7 @@ Now, we are brought closer to the bug, indicating something apparently wrong wit
 Unfortunately, we cannot get closer to the problem, as the contract inferred for the function application \code{(<=) z' z} is the identity contract \code{(true $\rightarrowtail$ (true $\rightarrowtail$ true))}.
 Nonetheless, the detail of this feedback is much greater than that of Ask-Elle's combination of a counterexample and a description of the violated property, displaying the violation as close to the source as it is allowed by the definition of the contract defined for the exercise.
 
+%Enriching our contract with more properties widens the catching net: adding the requirement that the resulting list be a permutation of the input list allows us to detect bugs that produce sorted (but smaller) lists.
 
 \section{Integration with the Ask-Elle programming tutor}
 
@@ -2731,11 +2734,11 @@ However, application of the substitutions and translation of the final contracts
 
 Several ideas were tested to perform this translation:
 \begin{itemize}
-	\item Add a phantom type to the data type representing the intermediate contract language.
-	\item Use a typeclass.
-	\item Use a typeclass + type synonyms.
-	\item Use a typeclass + newtypes.
-	\item Code duplication.
+	\item \textbf{Add a phantom type to the data type representing the intermediate contract language.} The UUAGC system currently does not support this.
+	\item \textbf{Use a typeclass.} This approach generates a similar problem to the one that we are trying to solve.
+	\item \textbf{Use a typeclass + type synonyms.} Requires a lot of extra instances to properly work. Perhaps interesting when fully automated.
+	\item \textbf{Use a typeclass + newtypes.} The most promising avenue of research.
+	\item \textbf{Code duplication.} The nuclear approach.
 \end{itemize}
 
 \subsection{Add a phantom type to the data type representing the intermediate contract language}
@@ -2773,14 +2776,14 @@ testEnvTuple
 testEnvTuple = ( ("isort",sortCtrt), ( ("ctrue",true), ( ("ord",ord), ( ("isChar_prop",isChar_prop), ( ("isInt_prop", isInt_prop), ([], true) ) ) ) ) )
 \end{lstlisting}
 
-Because of the different phantom types, a nested tuple was needed to house the property environment, but it did not play nice with the type checker.
+Because of the different phantom types, a nested tuple was needed to house the property environment, but it did not play nice with the type checker. \todo{Yeah, you need clear this up.}
 Additionally, this solution suffers from the need for a type annotation so the compiler knows which instance to select.
 Statically generating such an annotation would have been perfectly feasible, although it would have suffered from the same issue as the one we were trying to solve by doing the translation at run-time.
 
 \subsection{Use a typeclass + type synonyms}
 What about using type synonyms and the aforementioned typeclass?
 
-\begin{lstlisting}[caption=Attempt at using type synonyms to choose the correct instances.]
+\begin{lstlisting}[caption=Attempt at using type synonyms to choose the correct instances.,mathescape]
 instance ConvertContract a where
   convert (CVar s _) = true
 type IsIntProp a = a
@@ -2868,7 +2871,7 @@ Just as extensive feedback is generated when applying the function argument to a
 
 \section{Using paramorphisms to tackle dependent contracts}
 
-Johan Jeuring provided a wonderful idea to be able to run contract inference on some catamorphisms with dependent contracts by converting them to a paramorphism, which is a catamorphism that provides its function argument with the original input as well:
+Johan Jeuring provided an excellent idea to be able to run contract inference on some catamorphisms with dependent contracts by converting them to a paramorphism, which is a catamorphism that provides its function argument with the original input as well:
 
 \begin{figure}[htps]
 \begin{lstlisting}[mathescape]
