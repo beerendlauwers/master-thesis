@@ -254,6 +254,10 @@ test_isort_env_flat = flatDebug "insert z zs = case zs of\n                [] ->
  where
   isortenv = DM.fromList [("isort", sortC)]
 
+test_isort_env_bad = showGeneratedCode "insert z zs = case zs of\n                [] -> [z]\n                (z':zs') -> let rel = z <= z'\n                            in case rel of\n                                True -> z' : z : zs'\n                                False -> z' : insert z zs'\nefoldr f b xs = case xs of\n                  [] -> b\n                  (y:ys) -> f y (efoldr f b ys)\nisort us = efoldr insert [] us" [] isortenv
+ where
+  isortenv = DM.fromList [("isort", sortC)]
+
 sortC = (ctrue <@> ctrue) >-> (cord <@> ctrue)
 ctrue = CProp "true"
 cord  = CProp "ord"
@@ -263,6 +267,16 @@ cpropinteger = CProp "prop_integer"
 cpropresult = CProp "prop_result"
 v1000 = CVar "v1000" Nothing
 v1001 = CVar "v1001" Nothing
+cpropmain = CProp "prop_Main"
+
+-- Myreverse
+test_myreverse = doTest "myreverse [] = []\nmyreverse [x,y] = [x,y]\nmyreverse xs = ?"
+
+
+-- raw contract: (v19 <@> v18) >-> (v31 <@> v18)
+myreverse_contract = (v19 <@> v998) >-> (cpropmain <@> v998)
+
+
 
 -- raw contract: (v70 <@> v65) >-> (m74 >-> (v70 <@> v65)
 repli_contract = ((v999 <@> v998) >-> (cpropinteger >-> (cpropresult <@> (v1000 <@> v1001))))
