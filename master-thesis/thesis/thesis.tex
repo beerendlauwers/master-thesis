@@ -64,7 +64,7 @@
 	Beerend Lauwers\\
 	Utrecht University, The Netherlands}
 \date{\today}
-\title{Contract Inference for the Helium Functional Programming Language}
+\title{Contract Inference for the Ask-Elle Programming Tutor}
 \begin{document}
 
 \maketitle
@@ -77,7 +77,7 @@ The Master Thesis of Jurri\"en Stutterheim \cite{Stutterheim:2013:thesis} focuse
 This thesis builds upon his work, extending the contract inference algorithm to work with the language used by Ask-Elle: Helium.
 This language is a subset of the Haskell functional programming language.
 Additionally, a code generation system  for the \textit{typed-contracts} Haskell library is developed that annotates an arbitrary section of Helium code with contracts inferred by the extended contract inference algorithm.
-We provide some examples of the improved feedback of our system compared to the less-detailed feedback Ask-Elle would have given.
+We provide some examples of the improved feedback of our system compared to the less-detailed feedback of Ask-Elle given the same inputs.
 \end{abstract}
 
 \tableofcontents
@@ -1220,8 +1220,6 @@ We begin with the seeding rules for patterns, followed by those for declarations
 
 \paragraph{Patterns.}
 
-\todo{For C-PAs, check if contract of p = contract of ps. Should it?}
-
 In figure \ref{fig:pattern-seeding-rules}, the seeding rule \code{S-PVar} we see how the contract for a pattern variable is requested from the type source $\Xi$ and added to the environment $\Gamma$.
 The same occurs for a pattern alias in \code{S-PAs}.
 
@@ -1632,7 +1630,7 @@ The rest of the contracting rules are discussed hereafter.
 The contracting rules for alternatives in figure \ref{fig:alternatives-inference-rules} are quite simple. \code{C-AHole} and \code{C-AltEmpty} are trivial, and \code{C-Alt} takes the contract of the right-hand side as the contract of the entire alternative.
 \code{ACons} and \code{ANil} are how the \code{Alts} node functions behind the scenes: all alternatives must have the same contract.
 
-\todo{A few simple examples of applying the rules?}
+%\todo{A few simple examples of applying the rules?}
 
 \subsubsection{Substitutions and unification}
 
@@ -2791,7 +2789,7 @@ testEnvTuple
 testEnvTuple = ( ("isort",sortCtrt), ( ("ctrue",true), ( ("ord",ord), ( ("isChar_prop",isChar_prop), ( ("isInt_prop", isInt_prop), ([], true) ) ) ) ) )
 \end{lstlisting}
 
-Because of the different phantom types, a nested tuple was needed to house the property environment, but it did not play nice with the type checker. \todo{Yeah, you need clear this up.}
+Because of the different phantom types, a nested tuple was needed to house the property environment, but the tuple lookup function refused to typecheck, as the typechecker tried to unify the different contracts.
 Additionally, this solution suffers from the need for a type annotation so the compiler knows which instance to select.
 Statically generating such an annotation would have been perfectly feasible, although it would have suffered from the same issue as the one we were trying to solve by doing the translation at run-time.
 
