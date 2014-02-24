@@ -71,7 +71,7 @@ sem FunBindR
       -- RHS --
       loc  .posInfo                     = generatePositionText (any (>0) @loc.parameterArity) @loc.functionIdent
       loc  .assertApp                   = mkApp [mkVar "assertPos"
-                                                ,(mkLit.mkStrLit) ("At " ++ @loc.posInfo)
+                                                ,(mkLit.mkStrLit) @loc.posInfo
                                                 ,mkAppParens [mkVar "generatePositionData", mkVar "posinfo"]
                                                 ,mkVar "ctrt"
                                                 ,mkVar "funs"]
