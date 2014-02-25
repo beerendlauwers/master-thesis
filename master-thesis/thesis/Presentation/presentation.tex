@@ -182,7 +182,7 @@ Prop :: (a $\rightarrow$ Bool) $\rightarrow$ Contract a
 
 \begin{itemize}
 	\item Lift a function to a contract
-	\item Defines a constraint or property on a value
+	\item Defines a constraint or property on a type
 \end{itemize}
 
 \end{frame}
@@ -702,7 +702,7 @@ Why?
 \frametitle{Algorithm \CHW}
 
 \begin{itemize}
-	\item Also based on Algorithm \W
+	\item Based on Algorithm \CW (so also on Algorithm \W)
 	\item Works on Ask-Elle syntax
 	\item Intermediate contract grammar is trimmed: $literal_i$
 	\item Contract variables are implicitly universally quantified
@@ -738,7 +738,7 @@ ctrt_map = (c$_1$ $\rightarrowtriangle$ c$_2$) $\rightarrowtriangle$ (c$_3$ $\fu
 \frametitle{$\Xi$ does the heavy lifting}
 
 \begin{itemize}
-	\item Seed $\Gamma$ with patterns and function identifiers
+	\item Seed $\Gamma$ with contracts for patterns and function identifiers
 	\item When new identifiers come into scope, these are added as well, shadowing previous ones
 	\item Described in seeding rules
 \end{itemize}
@@ -825,7 +825,7 @@ __app_X ctrt posinfo $(argument$ $patterns)$ = $(applied$ $arguments)$
 Placeholders:
 \begin{itemize}
 	\item $(argument$ $patterns)$: for each pattern \texttt{p} of function \texttt{X}, make a tuple \texttt{(posp,p)}
-	\item $(applied$ $arguments)$ Wrap arguments with \texttt{appParam} and pass them to \texttt{\underline{\hspace{1.5em}}contracted\_X} template
+	\item $(applied$ $arguments)$: wrap arguments with \texttt{appParam} and pass them to \texttt{\underline{\hspace{1.5em}}contracted\_X} template
 \end{itemize}
 
 \end{frame}
@@ -839,7 +839,7 @@ Generated code for function definition \texttt{f x = g x}:
 type LC = Maybe (Int,Int)
 __app_f :: Contract (a $\rightarrowtriangle$ [a]) $\rightarrow$ LC $\rightarrow$ (LC,a) $\rightarrow$ [a]
 __app_f ctrt posinfo (posx,x) =
- appParam (__contracted_g ctrt posinfo) (show x ++ generatePositionData posx) x
+ appParam (__contracted_f ctrt posinfo) (show x ++ generatePositionData posx) x
 \end{lstlisting}
 
 \texttt{app} takes an integer as a position label to use in feedback, \texttt{appParam} takes a string:
@@ -985,7 +985,7 @@ unify (true$_4$) (true$_6$)
 
 Resulting substitutions: \texttt{true$_4$ $\mapsto$ true$_5$}, \texttt{true$_4$ $\mapsto$ true$_6$}
 
-Apply substitutions to RHS of \texttt{z}, which has contract \texttt{(true$_7$ $\bifunctor$ true$_3$ $\functor$ true$_4$, true$_3$ $\functor$ true$_4$)}:
+Apply substitutions to RHS of \texttt{z}, which has contract \texttt{(true$_7$ $\bifunctor$ (true$_3$ $\functor$ true$_4$, true$_3$ $\functor$ true$_4$))}:
 
 \begin{itemize}
 	\item left-to-right: \texttt{(true$_7$ $\bifunctor$ (true$_3$ $\functor$ true\emph{$_5$}, true$_3$ $\functor$ true\emph{$_5$}))}
@@ -1048,6 +1048,7 @@ Applying these substitutions always results in an incorrect contract:
 \begin{lstlisting}
 f x = g x
 g x = [x]
+z = (f 'a', f 5)
 \end{lstlisting}
 
 \begin{lstlisting}[mathescape]
@@ -1306,7 +1307,7 @@ isort us = foldr insert [] us
 
 \begin{itemize}
 	\item Something is wrong with \texttt{z' : zs'}: one of the elements is causing the list to no longer be ordered
-	\item We cannot get closer to the problem: the contract of \texttt{(<=) z' z} is \texttt{(true $\rightarrowtriangle$ (true $\rightarrowtriangle$ true))}
+	\item We cannot get closer to the problem: the contract of \texttt{(<=)} is \texttt{(true $\rightarrowtriangle$ (true $\rightarrowtriangle$ true))}
 	\item Still, far more detailed feedback than Ask-Elle
 \end{itemize}
 
