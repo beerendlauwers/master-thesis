@@ -1988,7 +1988,7 @@ We will inspect each template in detail and explain its purpose.
 
 \subsection{\finaltemplate}
 
-The $\finaltemplate$ template is simple: it is a transformed copy of the original code.
+The $\finaltemplate$ template is simple: it is a transformed copy of the original function definition.
 Every function application found within the original code is replaced by its contracted equivalent, the $\apptemplate$ template.
 This transformation makes this template the entry point for all other generated functions.
 
@@ -2006,7 +2006,7 @@ From the original code, extra information is generated that is passed to the $\a
 The placeholders in the above example represent the following extra information:
 
 \begin{itemize}
-	\item $ctrt$: The contract that will be used to assert the original function application. Details of the generation of the contract are found in the next section (\ref{generation-of-final-contracts}).
+	\item $ctrt$: The contract that will be used to assert the original function. Details of the generation of the contract are found in the next section (\ref{generation-of-final-contracts}).
 	\item $pos$: A tuple of the line and column position of the function application. It is is used to generate specific feedback at runtime in case of a contract violation.
 	\item $p1...n$: Line and column position information is generated for each argument applied to the original function application, again used for specific feedback.
 \end{itemize}
@@ -2047,7 +2047,7 @@ The original pattern is prefixed with \code{\underline{\hspace{1.5em}}ctrt} and 
 
 \subsection{\apptemplate}
 
-This template captures information for use in feedback, wraps it appropriately using \code{appParam}, and passes it to the $\ctrttemplate$ template of the function definition.
+This template is given information for use in feedback, wraps it appropriately using \code{appParam}, and passes it to the $\ctrttemplate$ template of the function definition.
 
 Let us examine the template:
 
@@ -2232,7 +2232,7 @@ What happens when we unify either of these with the contract for \code{z}?
 
 \begin{lstlisting}[mathescape]
 unify (true$_0$ $\bifunctor$ (true$_1$ $\functor$ isChar, true$_2$ $\functor$ isNum))
-      (true$_7$ $\bifunctor$ (true$_3$ $\functor$ true$_5$, true$_3$ $\functor$ true$_6$))
+      (true$_7$ $\bifunctor$ (true$_3$ $\functor$ true$_5$, true$_3$ $\functor$ true$_5$))
 \end{lstlisting}
 
 Relevant substitutions:
@@ -2265,11 +2265,11 @@ In this manner, Algorithm CW ~is monomorphic: the inferred contract of a functio
 \subsubsection{Proposed solution: global and local substitution lists}
 
 Instead of a single, global set of substitutions that is applied to every contract during translation, we keep track of a single global list of substitutions and several local lists.
-Contract variables are also given a flavour of global or local.
+Contract variables are also given a flavour of global or local: $true_i$ contracts are global, concrete contracts are local.
 
 Whenever unification between two contracts takes place, the resulting substitutions are split up in a global and local group:
 \begin{itemize}
-\item The global group holds all substitutions that go from global contract variables to global other contract variables.
+\item The global group holds all substitutions that go from global contract variables to other global contract variables.
 \item The local group holds all substitutions that go from global contract variables to local contract variables, as well as those that go from local contract variables to other local contract variables.
 \end{itemize}
 
@@ -2321,7 +2321,9 @@ The example has been expanded to include function \code{g}, which is called by \
 Our code generation system for the \textit{typed-contracts} library produces the following \finaltemplate ~code for \code{z}, \code{g} and \code{f} (we omit the line and column position information):
 
 \begin{lstlisting}[caption=Output of code generation for the \textit{typed-contracts} library.,mathescape]
-__final_f x = __app_g (v1 $\rightarrowtail$ (v2 $\functor$ v1)) x
+__final_f x = __app_g (c1 $\rightarrowtail$ (c2 $\functor$ c1)) x
+ where c1 = true
+       c2 = true
 __final_g x = [x]
 __final_z = (__app_f (isChar $\rightarrowtail$ (true $\functor$ isChar)) 'a', __app_f (isNum $\rightarrowtail$ (true $\functor$ isNum)) 5)
 \end{lstlisting}
@@ -2734,10 +2736,10 @@ In this case, the extra information does not cut down the search space by a lot,
 If we rectify the bug in the definition of \code{insert} (it should be \code{z : z' : zs'}) and introduce another by changing \code{z <= z'} to \code{z' <= z} and apply the counterexample again, we receive more detailed feedback:
 
 \begin{quote}
-\textit{A part of your code, or a supplied argument to a function, does not fulfill a required property. This occurred at the application of the function ':' at line number 5, column number 45. The result of this function does not fulfill the following property: the list elements must be in ascending order.}
+\textit{A part of your code, or a supplied argument to a function, does not fulfill a required property. This occurred at the application of the function ':' at line number 4, column number 45. The result of this function does not fulfill the following property: the list elements must be in ascending order.}
 \end{quote}
 
-Now, we are brought closer to the bug, indicating something apparently wrong with the snippet \code{z' : zs}: one of the elements is causing the list to no longer be ordered.
+Now, we are brought closer to the bug, indicating something apparently wrong with the snippet \code{z' : zs'}: one of the elements is causing the list to no longer be ordered.
 Unfortunately, we cannot get closer to the problem, as the contract inferred for the function application \code{(<=) z' z} is the identity contract \code{(true $\rightarrowtail$ (true $\rightarrowtail$ true))}.
 Nonetheless, the detail of this feedback is much greater than that of Ask-Elle's combination of a counterexample and a description of the violated property, our system displaying the violation as close to the source as it is allowed by the definition of the contract defined for the exercise.
 
@@ -2773,7 +2775,7 @@ It is possible to query the Helium compiler for a list of all available type con
 The Ask-Elle programming tutor also has a static list available in the file \code{Domain\textbackslash FP\textbackslash HeliumImportEnvs.hs}.
 Both sources could be used to look up unknown type constructors, fetch their type, and construct a fitting contract.
 
-\section{Run-time translation of intermediate contract language}
+\section{Runtime translation of intermediate contract language}
 \label{futurework:runtimetranslation}
 
 Subsection \ref{subsection:monomorphic-algo-cw} proposes splitting up generated substitutions into a global list and placing the other local substitutions into a local list unique to the node where unification took place.
