@@ -167,9 +167,14 @@ In our case, the parties are the function being called (the $callee$) and the fu
 As a simple example, one could specify a contract that a function will only accept a natural number: a prerequisite.
 Likewise, it is possible to state that a function must also always return a natural number: a guarantee.
 By combining prerequisites and guarantees for arguments and results, respectively, it is possible to construct very specific contracts that are quite useful for tracking down bugs.
-Just like in real life, these contracts can be violated, which will halt the program with an exception detailing which contract was violated at what position in the code.
+Just like in real life, these contracts can be violated.
 
-When this happens, blame must be assigned.
+Checking for violations can be done during compile time or at runtime.
+If done at compile time, the compiler will produce an error message.
+If contract checking is done during runtime, the program will halt with an exception.
+In both cases, the message details which contract was violated at what position in the code.
+
+When a contract violation happens, blame must be assigned.
 A prerequisite violation is to be blamed on the $caller$: it was this function that should have provided a valid argument.
 Likewise, a guarantee violation is to be blamed on the $callee$: there is a fault in the function being called that causes it to return an invalid result.
 
@@ -178,7 +183,7 @@ In other words, adding contracts to one's code adds an element of automated test
 This thesis builds upon the thesis of Stutterheim \cite{Stutterheim:2013:thesis}, who developed an algorithm for contract inference on a simple recursive let lambda language with support for holes.
 While Stutterheim's contract grammar is library-agnostic, he chose to generate code for the \textit{typed-contracts} library by Hinze et al. \cite{Hinze06typedcontracts}. 
 Also of interest is the library by Chitil \cite{Chitil:2012ua}, which is based on the work of Hinze et al.
-This newer library claims to preserve a program's lazy semantics, which the \code{typed-contracts} library does not.
+This newer library preserves a program's lazy semantics, which the \code{typed-contracts} library does not.
 
 \subsection{The \textit{typed-contracts} library}
 Let us examine the library for which code will be generated.
@@ -235,13 +240,18 @@ Conversely, the \code{app} function lifts function application to contracts:
 app :: (a $\rightarrowtail$ b) $\rightarrow$ Int $\rightarrow$ a $\rightarrow$ b
 \end{lstlisting}
 
-By applying these functions accordingly, the contracted version of a function can replace its regular version without issue.
-In this way, the contract mechanism acts as a partial identity function, because it either raises an exception during contract violation, or it returns the asserted value unmodified.
+The integer provided to \code{app} is used to tag the function application and is referred to during feedback.
+
+By applying these functions, the contracted version of a function can replace its regular version without issue.
+In this way, the contract mechanism acts as a partial identity function, because it either raises an exception when a contract is violated, or it returns the asserted value unmodified.
 This behaviour is clearly reflected in the type of \code{assert}:
 
 \begin{lstlisting}[mathescape]
 assert :: String $\rightarrow$ Contract a $\rightarrow$ (a $\rightarrow$ a)
 \end{lstlisting}
+
+From this type, we also see why functions must be lifted to the contract level before they can be asserted.
+For example, if \code{a} maps to \code{Int $\rightarrowtail$ Int}, as it does for the \code{increase} example, the \code{assert} function expects a contract of type \code{Contract (Int $\rightarrowtail$ Int)}, and a contracted function of type \code{Int $\rightarrowtail$ Int}.
 
 To clearly illustrate how \code{assert} works, we leave out the first \code{String} argument, which is used in feedback. We also omit some code pertaining to location information, also used for feedback purposes.
 
@@ -261,7 +271,7 @@ assert (Bifunctor c$_1$ c$_2$) as   = bimap (assert c$_1$) (assert c$_2$s) as
 assert (And c$_1$ c$_2$)        a   = (assert c$_2$ . assert c$_1$) a
 \end{lstlisting}
 
-Let's go over each pattern match to understand what happens:
+Let's go over each case to understand what happens:
 
 \begin{description}
 	\item{\code{Prop} :} When asserting a property, we apply the predicate to the supplied value. If the predicate holds, this function acts as the identity function. If it does not hold, however, an exception is raised. In the unabridged code, the exception message also includes the position of the violation in the source code.
@@ -341,6 +351,22 @@ The contract variables $c_1$ and $c_2$ correspond to type variables $a$ and $b$,
 Generally, we cannot perform such a mapping over containers, so they are assigned different contract variables: $c_3$ and $c_4$.
 During a process called inference, it may turn out that these variables are equal, but this information is usually not deducible from the function's type.
 
+To understand why, let us look at the following example:
+
+\begin{lstlisting}[mathescape]
+listPlus, listId :: [Int] $\rightarrow$ [Int]
+listPlus = map (+1)
+listId = map id
+
+atMostTen :: Contract Int
+atMostTen = Prop ($\lambda$n $\rightarrow$ n <= 10)
+
+mapContract = (true $\rightarrowtail$ true) $\rightarrowtail$ (c$_3$ $\functor$ true) $\rightarrowtail$ (c$_4$ $\functor$ true)
+\end{lstlisting}
+
+When asserting \code{listId [1..10]} with the contract \code{mapContract}, we can safely replace both $c_3$ (which must be valid for the input) and $c_4$ (which must be valid for the output) with \code{atMostTen} without causing a contract violation.
+If we do the same for \code{listPlus [1..10]}, however, we \textit{will} cause a contract violation, as the resulting list will contain an integer larger than 10.
+
 Section \ref{background-inference} explains the concept of inference and its use in refining contracts even further.
 
 At the moment, we have learned how contracts are composed and how they can be attached to functions that are lifted using the \code{fun} function.
@@ -393,7 +419,7 @@ by the types
 \caption{\label{fig:goals-stutterheim-contract-inference}Stutterheim's goals for contract inference.}
 \end{figure}
 
-The first goal describes the notion of a \textit{fully contracted} expression: every function application is provided with a contract that can be used to assert it.
+The first goal states that, given a well-typed program, the algorithm must infer a contract for every function and its components.
 The second goal is sensible: any values constrained by the contract of an expression should be a subset of the inhabitants of the type of that expression.
 Lastly, the third goal implies that asserting any inferred contract is equal to the identity function.
 In other words, inferred contracts should never cause a contract violation.
@@ -468,7 +494,9 @@ This index serves the same purpose as fresh type variables in Algorithm \W.
 
 The syntax of the contracted function arrow ($\rightarrowtail$), functor ($\functor$) and bifunctor ($\bifunctor$) is the same as that of its inspiration, the \textit{typed-contracts} library syntax.
 
-Furthermore, terminals for literals and several container data types are available as default contracts for the corresponding types.
+Stutterheim illustrates in his thesis that dependent function contracts are troublesome to use in contract inference, so these are omitted from the grammar.
+
+Terminals for literals and several container data types are available as default contracts for the corresponding types.
 
 Contract schemes are used to universally quantify over $true$ contracts.
 
@@ -554,6 +582,8 @@ The article also touches upon Xu's work on static contract systems, which the au
 Eager contract monitoring is preferred by the authors as all contracts defined in it are faithful: they will always evaluate to their actual value, which implies that, if a program terminates, all of the contracts within it will have evaluated to true.
 
 Other researchers have explored enriching the type system to replace the functionality offered by contracts, producing what is commonly called "refinement types".
+A refinement type contains a predicate that is assumed to hold for the elements of the refined type, constraining the inhabitants of the type in the same way as a contract does.
+
 Rondon et al. \cite{rondon2008liquid} have developed a set of data types called Logically Qualified Data Types, often shortened to Liquid Types.
 Using liquid types, they are able to embed a decidable subset of dependent typing functionality in a Hindley-Milner typing system.
 With only the HM types and a predefined set of logical qualifiers, their algorithm is able to infer liquid types, which are dependent types that consist of conjunctions of the aforementioned logical qualifiers.
@@ -582,10 +612,13 @@ The proof of safety of the imperative program translates to the solutions of the
 Thus, these can be used to annotate the original higher-order program, obtaining the refinement types.
 
 Cousot et al. \cite{cousotabstract} have implemented automatic contract inference for method extraction, a common refactoring technique.
+They provide implementations for C\# and Visual Basic .NET.
 The inferred contract satisfies four requirements: (i) it is valid for the extracted method; (ii) the contract takes into account language and programmer assertions; (iii) the contract of the refactored code is as precise as the non-refactored code, and (iv) the contract is as general as possible.
 The authors use an iterative approximation algorithm to attain contracts that fulfill these requirements, and prove that an exact solution is uncomputable.
 
 The articles of Dimoulas \& Felleisen \cite{Dimoulas:2011:CSH:2039346.2039348} and Greenberg et al. \cite{Greenberg:2010:CMM:1707801.1706341} provide an excellent overview of recent developments pertaining to contracts, as well as as detailed comparisons between the different libraries and frameworks. \cite{Dimoulas:2011:CSH:2039346.2039348} also goes into greater detail of the semantics of contract satisfaction.
+Findler and Wadler \cite{Wadler:2009:WPC:1532974.1532976} provide a unified view of several type enrichments, yielding a system they call evolutionary types.
+This system can be used to 'evolve' dynamically typed programs into statically typed ones and do the same for statically typed programs, 'evolving' them into programs with refinement types.
 
 Another form of type enrichment that enforces constraints is dimensional typing.
 In short, a (usually numerical) value is given a dimension (time, length, mass, etc.).
