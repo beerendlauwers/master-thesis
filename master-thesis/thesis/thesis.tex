@@ -18,6 +18,8 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{pdfpages}
+\usepackage[toc,page]{appendix}
+\usepackage{float}
 
 \setlength{\parskip}{\baselineskip}%
 \setlength{\parindent}{0pt}%
@@ -402,7 +404,7 @@ For functional programs, the Hindley-Milner type inference system described by D
 The thesis of Stutterheim \cite{Stutterheim:2013:thesis} builds upon this system, producing an algorithm for deducing \textit{contracts} from expressions written in a simple let-polymorphic lambda calculus.
 
 \subsection{Goals of contract inference}
-Stutterheim set out three goals for his contract inference system, shown in figure \ref{fig:goals-stutterheim-contract-inference}.
+Stutterheim set out three goals for his contract inference system, shown in Figure \ref{fig:goals-stutterheim-contract-inference}.
 
 \begin{figure}[htps]
 \begin{framed}
@@ -426,7 +428,7 @@ In other words, inferred contracts should never cause a contract violation.
 
 \subsection{Language used}
 
-The contract inference algorithm works on $\lambda_c$, a let-polymorphic lambda calculus shown in figure \ref{stutterheim-lambda-language}.
+The contract inference algorithm works on $\lambda_c$, a let-polymorphic lambda calculus shown in Figure \ref{stutterheim-lambda-language}.
 
 \begin{figure}[htps]
 \begin{lstlisting}[mathescape]
@@ -458,7 +460,7 @@ $const$      ::=   n				-- Integers
 
 \subsection{Contract grammar}
 
-Contracts are generated in an intermediate language-agnostic grammar (figure \ref{fig:stutterheim-intermediate-contract-grammar}), which can be translated to library-specific contracts.
+Contracts are generated in an intermediate language-agnostic grammar (Figure \ref{fig:stutterheim-intermediate-contract-grammar}), which can be translated to library-specific contracts.
 
 \begin{figure}[htps]
 \begin{center}
@@ -686,259 +688,36 @@ We have slightly modified the syntax used by the Ask-Elle system:
 	\item In Ask-Elle, constructors that use a list of patterns or expressions use the \code{Pats} and \code{Exprs} type synonyms, respectively. For example, expressions that describe a tuple or a list both use \code{Exprs}. However, from the viewpoint of contract inference, these expressions could not be more different! The solution is simple: tuples and lists in patterns and expressions use the type synonyms \code{ListPatsR}, \code{TuplePatsR}, \code{ListExprR} and \code{TupleExprR}. All other constructors remain unchanged.
 \end{itemize}
 
-This modified syntax can be downcast to the regular Ask-Elle syntax, and partially upcast to the Helium syntax.
+This modified syntax can be found under Appendix A. 
+
+The syntax can be downcast to the regular Ask-Elle syntax, and partially upcast to the Helium syntax.
 
 In the rest of this thesis, we omit the \code{R} from the syntax for aesthetic reasons.
-
-\begin{multicols}{2}
-\begin{lstlisting}[caption=Our modified Ask-Elle syntax.]
-
--- | A Haskell source module
-data ModuleR
-   | ModuleR
-      name     :: MaybeNameR
-      body     :: BodyR
-      range    :: RangeR
-
-data BodyR
-   | BHoleR
-      id       :: HoleIDR
-      range    :: RangeR
-   | BodyR
-      decls    :: DeclsR
-      range    :: RangeR
-
--- | Declarations
-data DeclR
-   | DHoleR
-      id       :: HoleIDR
-      range    :: RangeR
-   | DEmptyR
-      range    :: RangeR
-   | DFunBindsR
-      funbinds :: FunBindsR
-      range    :: RangeR
-   | DPatBindR
-      pat      :: PatR
-      rhs      :: RhsR
-      range    :: RangeR
-
-type DeclsR = [DeclR]
-
--- | Expressions
-data ExprR
-   | HoleR
-      id       :: HoleIDR
-      range    :: RangeR
-   | FeedbackR
-      feedback :: String
-      expr     :: ExprR
-      range    :: RangeR
-   | MustUseR
-      expr     :: ExprR
-      range    :: RangeR
-   | CaseR
-      expr     :: ExprR
-      alts     :: AltsR
-      range    :: RangeR
-   | ConR
-      name     :: NameR
-      range    :: RangeR
-   | IfR
-      cond     :: ExprR
-      then     :: ExprR
-      else     :: ExprR
-      range    :: RangeR
-   | InfixAppR
-      left     :: MaybeExprR
-      op       :: ExprR
-      right    :: MaybeExprR
-      range    :: RangeR
-   | LambdaR
-      pats     :: PatsR
-      expr     :: ExprR
-      range    :: RangeR
-   | LetR
-      decls    :: DeclsR
-      expr     :: ExprR
-      range    :: RangeR
-   | LitR
-      lit      :: LiteralR
-      range    :: RangeR
-   | AppR
-      fun      :: ExprR
-      args     :: ExprsR
-      range    :: RangeR
-   | ParenR
-      expr     :: ExprR
-      range    :: RangeR
-   | TupleR
-      exprs    :: TupleExprR
-      range    :: RangeR
-   | VarR
-      name     :: NameR
-      range    :: RangeR
-   | EnumR
-      from     :: ExprR
-      then     :: MaybeExprR
-      to       :: MaybeExprR
-      range    :: RangeR
-   | ListR
-      exprs    :: ListExprR
-      range    :: RangeR
-   | NegR
-      expr     :: ExprR
-      range    :: RangeR
-
-type ExprsR = [ExprR]
-type ListExprR = [ExprR]
-type TupleExprR = [ExprR]
-
-data MaybeExprR
-   | NoExprR
-   | JustExprR
-      expr     :: ExprR
-
--- | Alternatives
-data AltR
-   | AHoleR
-      id       :: HoleIDR
-      range    :: RangeR
-   | AltR
-      feedback :: {Maybe String}
-      pat      :: PatR
-      rhs      :: RhsR
-      range    :: RangeR
-   | AltEmptyR
-      range    :: RangeR
-
-type AltsR = [AltR]
-
--- | Function bindings
-data FunBindR
-   | FBHoleR
-      id       :: HoleIDR
-      range    :: RangeR
-   | FunBindR
-      feedback :: {Maybe String}
-      name     :: NameR
-      pats     :: PatsR
-      rhs      :: RhsR
-      range    :: RangeR
-
-type FunBindsR = [FunBindR]
-
--- | Guarded expressions
-data GuardedExprR
-   | GExprR
-      guard    :: ExprR
-      expr     :: ExprR
-      range    :: RangeR
-
-type GuardedExprsR = [GuardedExprR]
-
--- | Literal values
-data LiteralR
-   | LCharR
-      val      :: Char
-      range    :: RangeR
-   | LFloatR
-      val      :: Float
-      range    :: RangeR
-   | LIntR
-      val      :: Int
-      range    :: RangeR
-   | LStringR
-      val      :: String
-      range    :: RangeR
-
--- | Names
-data NameR
-   | IdentR
-      name     :: String
-      range    :: RangeR
-   | OperatorR
-      name     :: String
-      range    :: RangeR
-   | SpecialR
-      name     :: String
-      range    :: RangeR
-
-data MaybeNameR
-   | NoNameR
-   | JustNameR
-      name     :: NameR
-
--- | Patterns
-data PatR
-   | PHoleR
-      id       :: HoleIDR
-      range    :: RangeR
-   | PConR
-      name     :: NameR
-      pats     :: PatsR
-      range    :: RangeR
-   | PInfixConR
-      left     :: PatR
-      name     :: NameR
-      right    :: PatR
-      range    :: RangeR
-   | PListR  
-      pats     :: ListPatsR
-      range    :: RangeR
-   | PLitR
-      lit      :: LiteralR
-      range    :: RangeR
-   | PParenR
-      pat      :: PatR
-      range    :: RangeR
-   | PTupleR
-      pats     :: TuplePatsR
-      range    :: RangeR
-   | PVarR
-      name     :: NameR
-      range    :: RangeR
-   | PAsR
-      name     :: NameR
-      pat      :: PatR
-      range    :: RangeR
-   | PWildcardR
-      range    :: RangeR
-
-type PatsR = [PatR]
-type ListPatsR = [PatR]
-type TuplePatsR = [PatR]
-
--- | Right hand side
-data RhsR
-   | RhsR
-      expr     :: ExprR
-      where    :: DeclsR
-      range    :: RangeR
-   | GRhsR
-      gexprs   :: GuardedExprsR
-      where    :: DeclsR
-      range    :: RangeR
-
-data RangeR
-    | RangeR
-        rangestart :: PositionR
-        rangestop  :: PositionR
-
-data PositionR
-    | PositionR
-        filename  :: String
-        line      :: Int
-        column    :: Int
-    | UnknownR
-\end{lstlisting}
-\end{multicols}
 
 \section{Overview}
 \label{section:overview}
 
-\includepdf[pages={1}]{systemoverview.pdf}
-\includepdf[pages={2}]{systemoverview.pdf}
+The system first passes the input through six AST transformations, which help simplify contract inference and code generation:
+
+\begin{figure}[H]
+\centering
+\includegraphics[trim=1cm 7cm 1cm 1cm, clip=true,scale=0.4,page=1]{systemoverview.pdf}
+\caption{An overview of the applied AST transformations.}
+\end{figure}
+
+Afterwards, the AST is passed to two subsystems: the \textbf{type source} and the \textbf{code and final contract generator}.
+
+The \textbf{type source} extracts types from the AST, passing them to the \textbf{initial contract generator}, which generates a set of contracts from the types.
+These contracts are then passed to the \textbf{contract inferencer}, which infers a set of contracts and a set of substitutions.
+These are passed to the \textbf{code and final contract generator}.
+
+The \textbf{code and final contract generator} inspects the AST and generates a new version of the AST that incorporates contract assertions, producing a contract-annotated (or 'contracted') version of the original AST.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[trim=1cm 7cm 1cm 1cm, clip=true,scale=0.4,page=2]{systemoverview.pdf}
+\caption{An overview of the steps required to output contract-annotated code.}
+\end{figure}
 
 \section{AST transformations}
 Before passing the AST to the rest of the system, we apply several transformations to it to facilitate contract inference and code generation.
@@ -962,7 +741,7 @@ f = __lam0
 
 Because of referential transparency, the behaviour of the program is not altered.
 
-\subsection{Rewrite point-free functions}
+\subsection{Rewrite partially applied functions}
 The library of our choice, \textit{typed-contracts}, does not support asserting partially applied functions.
 Because of this, all function arguments are made available on the left-hand side and applied to the right-hand side of a definition.
 To continue with our previous example,
@@ -975,17 +754,17 @@ f = __lam0
 
 is now transformed into
 
-\begin{lstlisting}[mathescape, caption=Result of $\eta$-abstraction transformation.]
+\begin{lstlisting}[mathescape, caption=Result of $\eta$-expansion transformation.]
 f __a0 = (__lam0) __a0                
  where                    
   __lam0 __a0 = ($\lambda$x $\rightarrow$ x) __a0
 \end{lstlisting}
 
-This is essentially $\eta$-abstraction.
+This is essentially $\eta$-expansion.
 The information required for this transformation is provided by the type source,  which is described in section \ref{sourceoftypes}.
 
 \subsection{Rewrite infix function applications}
-To cut down on duplicate code for both contract inference and code generation, we convert infix function applications to regular function applications.
+To reduce duplicate code for both contract inference and code generation, we convert infix function applications to regular function applications.
 In other words, we remove a layer of syntactic sugar.
 
 \subsection{Expand function applications}
@@ -1002,7 +781,9 @@ is transformed into
 f g x y z = ((g x) y) z
 \end{lstlisting}
 
-This allows us to use Stutterheim's original contract inference code for function applications.
+Our syntax is parsed by the Helium compiler, which stores function applications with multiple arguments in a single node (\code{App g [x,y,z]}) instead of nested function application nodes (\code{App (App (App g [x]) [y]) [z]}.
+This decision to use a single node would require us to change Stutterheim's original contract inference code.
+By placing parentheses, we force the parser to produce nested function application nodes, allowing us to retain Stutterheim's code for function applications.
 
 \subsection{Expand lambda arguments}
 The reasons for this transformation are similar as the previous one: keeping contract inference simple and being able to reuse Stutterheim's contract inference code.
@@ -1022,7 +803,8 @@ Because this is done after the lambda function capture transformation, this tran
 
 \section{Source of types and initial contracts}
 \label{sourceoftypes}
-After these transformations, the AST is passed to the type source and to the code generator.
+After these transformations, the AST is used to generate a type source for the AST.
+The AST is also passed to the code generator.
 in this section, we explain the concept and role of a type source in the contract inference algorithm and code generation system.
 
 \subsection{Type source}
@@ -1038,7 +820,7 @@ Abstractly, a type source $\Xi$ (pronounced "Xi") is a data structure that may h
 A node can query the type source to obtain its type if it is available using the following notation: $\Xi( x )$.
 
 Our particular type source consists of a doubly linked tree that resembles the corresponding AST.
-This "type tree" is generated by a modified version of the Helium type inference code and is deconstructed to provide the following AST nodes with type information:
+This "type tree" is generated by applying a modified version of the Helium type inference code to the AST, which traverses the AST and produces type information for the following AST nodes:
 
 %This "type tree" is generated in the \code{ModuleR} node of the AST, and is then passed down to the body of the module.
 %
@@ -1079,9 +861,9 @@ By deriving an initial contract from an identifier's type, we obtain a contract 
 \end{itemize}
 
 Let us discuss the latter property in further detail:
-Stutterheim posits a conjecture that any inferred contract in algorithm \CW ~is also the \textit{most specific}, which means that the contract inferred for an expression $e$ is a subset of any other contract that is valid for $e$.
+Stutterheim posits a conjecture that any inferred contract in algorithm \CW ~is also the \textit{most specific}, which means that the contract inferred for an expression $e$ is a subset of any other contract that is valid (that is, it does not cause a violation when asserted) for $e$.
 
-A \textit{generalized} version of such a contract is one where every contract variable present in the contract maps to a $true$ contract and where the relations in an identifier or expression's type are also present in its contract.
+A \textit{generalized} version of such a contract is one where the relations between type variables present in an identifier or expression's type are also present in the contract variables of its contract.
 
 For example, here are generalized most specific contracts for the functions \code{id} and \code{map}:
 
@@ -1143,6 +925,7 @@ By piggybacking upon already-inferred types, we gain both this increased polymor
 %After providing types, a contract environment is constructed that holds the contracts for all identifiers (which consists of function identifiers and pattern identifiers) currently in scope at a certain node of the AST.
 
 An initial contract is generated by passing the type representation (a data type from the \textit{top} library) to the \code{convertTopTypeToContract} function, which strips down the type to its primitive type and converts it.
+In the inference rules, this conversion is called with the notation $\Xi_{ctrt}(x) = c$, $x$ being the AST node that is querying for its type $t$ and $c$ being the result of \code{convertTopTypeToContract} applied to $t$.
 
 The following list shows which pattern match relates to which action:
 \begin{description}
@@ -1282,26 +1065,27 @@ The seeding rules that precisely describe this behaviour are very similar to the
 We use the following notation for the type source:
 
 \begin{itemize}
-	\item $\Xi(x) = c$ means that the type source query for node $x$ returns contract $c$ as a result.
+	\item $\Xi_{ctrt}(x) = c$ means that the type source is queried for the type of node $x$. This type is converted to an initial contract, the result being returned as $c$.
 \end{itemize}
 
 We begin with the seeding rules for patterns, followed by those for declarations.
 
 \paragraph{Patterns.}
 
-In figure \ref{fig:pattern-seeding-rules}, the seeding rule \code{S-PVar} we see how the contract for a pattern variable is requested from the type source $\Xi$ and added to the environment $\Gamma$.
+In Figure \ref{fig:pattern-seeding-rules}, the seeding rule \code{S-PVar} we see how the contract for a pattern variable is requested from the type source $\Xi$ and added to the environment $\Gamma$.
 The same occurs for a pattern alias in \code{S-PAs}.
 
 \begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{S-PVar}\quad}
-  \AxiomC{$\Xi(p) = c$}
+  \AxiomC{$\Xi_{ctrt}(p) = c$}
   \UnaryInfC{$\Gamma[p \mapsto c]$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{S-PAs}\quad}
-  \AxiomC{$\Xi(p) = c$}
-  \UnaryInfC{$\Gamma[p \mapsto c]$}
+  \AxiomC{$\Xi_{ctrt}(p) = c$}
+  \AxiomC{$\Xi_{ctrt}(ps) = c$}
+  \BinaryInfC{$\Gamma[p \mapsto c]$}
   \DisplayProof
 \end{center}
 \caption{\label{fig:pattern-seeding-rules}Seeding rules for patterns.}
@@ -1309,20 +1093,23 @@ The same occurs for a pattern alias in \code{S-PAs}.
 
 \paragraph{Declarations.}
 
-The seeding rules for declarations (figure \ref{fig:declaration-seeding-rules}) add function identifier contracts to the environment(s) for the function binding(s).
+The seeding rules for declarations (Figure \ref{fig:declaration-seeding-rules}) add function identifier contracts to the environment(s) for the function binding(s).
 \code{S-DFunBinds} illustrates how the contracts derived from a declaration group must all be the same: \code{f (x:xs) = [x]} should have the same initial contract as \code{f [] = []}, for example.
+Relaxing this requirement would require some pattern matching analysis to ensure the correct contract is used during contract inference and code generation.
+At the moment, the initial contract of the first declaration in the group is used as the contract for the entire group.
+
 For pattern bindings, the pattern's contract is requested from the type source and inserted into $\Gamma$.
 
 \begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{S-DFunBinds}}
   \AxiomC{$\forall{i}\in[0\ldots{n}]$ $d_i =$ $f$ $p_i$ $=$ $rhs_i$}
-  \AxiomC{$\Xi(d_i) = c$}
+  \AxiomC{$\Xi_{ctrt}(d_i) = c$}
   \BinaryInfC{$\Gamma[f \mapsto c]$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{S-DPatBind}\quad}
-  \AxiomC{$\Xi(p) = c$}
+  \AxiomC{$\Xi_{ctrt}(p) = c$}
   \UnaryInfC{$\Gamma[p \mapsto c]$}
   \DisplayProof
 \end{center}
@@ -1331,7 +1118,7 @@ For pattern bindings, the pattern's contract is requested from the type source a
 
 \subsubsection{$\Gamma$ versus $\Xi$}
 
-Even though contract environment $\Gamma$ has been seeded, it is sometimes required to directly query the type source $\Xi$.
+Even though contract environment $\Gamma$ has been seeded, it is sometimes required to directly query the type source $\Xi$ using $\Xi_{ctrt}$.
 
 For the seeding rules, we slightly simplified the notation for querying a type source. 
 In reality, the type source is also given as many fresh contracts as is required to convert the type into a contract.
@@ -1361,7 +1148,7 @@ We first introduce the contracting rules for patterns, as many of the rules are 
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-PCon}}
-  \AxiomC{$\Xi(p_1) :: c_1 \rightarrowtail c$}
+  \AxiomC{$\Xi_{ctrt}(p_1) :: c_1 \rightarrowtail c$}
   \AxiomC{$\Gamma \vdash$ $p_2 :: c_1$}
   \BinaryInfC{$\Gamma \vdash$ $p_1$ $p_2 :: c$}
   \DisplayProof
@@ -1390,7 +1177,7 @@ We first introduce the contracting rules for patterns, as many of the rules are 
   \RightLabel{\textsc{C-PTuple}\quad}
   \AxiomC{$\forall{i}\in{[0\ldots{n}]} \Gamma \vdash$ $e_i :: c_i$}
   \AxiomC{$fresh(j)$}
-  \BinaryInfC{$\Gamma \vdash$ $(e_0, .., e_i) :: true_j \bifunctor (c_1, .., c_i)$}
+  \BinaryInfC{$\Gamma \vdash$ $(e_0, .., e_i) :: true_j \bifunctor (c_0, .., c_i)$}
   \DisplayProof
   \vskip 0.5em
 %  \RightLabel{\textsc{C-PTupleNil}\quad}
@@ -1405,15 +1192,10 @@ We first introduce the contracting rules for patterns, as many of the rules are 
   \BinaryInfC{$\Gamma \vdash$ $l :: literal_i$}
   \DisplayProof
   \vskip 0.5em
-  \RightLabel{\textsc{C-PParen}\quad}
-  \AxiomC{$\Gamma \vdash$ $p :: c$}
-  \UnaryInfC{$\Gamma \vdash$ $(p) :: c$}
-  \DisplayProof
-  \vskip 0.5em
   \RightLabel{\textsc{C-PInfixCon}}
   \AxiomC{$\Gamma \vdash$ $e_1 :: c_1$}
   \AxiomC{$\Gamma \vdash$ $e_2 :: c_2$}
-  \AxiomC{$\Xi(\oplus) = c_1 \rightarrowtail c_2 \rightarrowtail c_3$}
+  \AxiomC{$\Xi_{ctrt}(\oplus) = c_1 \rightarrowtail c_2 \rightarrowtail c_3$}
   \TrinaryInfC{$\Gamma \vdash e_1 \oplus e_2 :: c_3$}
   \DisplayProof
 \end{center}
@@ -1422,7 +1204,8 @@ We first introduce the contracting rules for patterns, as many of the rules are 
 
 \paragraph{Patterns.}
 
-Let us go over the rules in figure \ref{fig:pattern-inference-rules}.
+Let us go over the rules in Figure \ref{fig:pattern-inference-rules}.
+We omit \code{C-PParen} because of its simplicity.
 Please note that while our syntax contains a \code{PListR} data constructor, we use the two contracting rules \code{C-PCons} and \code{C-PNil} to describe its contracting behaviour. 
 This is how the \code{PListR} constructor works behind the scenes.
 We will follow this convention for all constructors that describe lists.
@@ -1435,7 +1218,6 @@ We will follow this convention for all constructors that describe lists.
 	\item{\code{C-PCons} :} In this case, we know about the contracts of the tail and head of the list. The inner contract of the list tail must be the same as the contract of the head of the list. The resulting contract is the same as the list tail.
 	\item{\code{C-PTuple} :} For a tuple; we know about each contract of the tuple's members. We generate a nested bifunctor contract for tuples larger than 2, nesting in $c_2$ until we have accommodated every member of the tuple. For each bifunctor contract, we require a fresh contract for the outer contract, which means we require $n-1$ fresh contracts, $n$ being the size of the tuple.
 	\item{\code{C-PLit} :} A pattern literal is given a fresh $literal$ contract.
-	\item{\code{C-PParen} :} Parentheses simply copy the contract of the enclosed pattern.
 	\item{\code{C-PInfixCon} :} An infix operator in Helium supports two arguments, so the contracting rule is a slight variation \code{C-PCon}.
 \end{description}
 
@@ -1496,7 +1278,7 @@ Figure \ref{fig:declaration-inference-rules} shows the contracting rules for dec
 
 \paragraph{Function bindings.}
 
-The contracting rules for function bindings in figure \ref{fig:funbinds-inference-rules} are straightforward: \code{C-FBHole} works as all other holes, and \code{C-FunBind} looks up the identifier in the contract environment and assigns that contract to the entire function binding.
+The contracting rules for function bindings in Figure \ref{fig:funbinds-inference-rules} are straightforward: \code{C-FBHole} works as all other holes, and \code{C-FunBind} looks up the identifier in the contract environment and assigns that contract to the entire function binding.
 \code{C-FCons} illustrates that every element in a list of function bindings must have the same contract.
 The rule \code{C-FNil} does not exist, as it would be represented by a \code{DEmpty} declaration node.
 
@@ -1509,16 +1291,16 @@ The rule \code{C-FNil} does not exist, as it would be represented by a \code{DEm
   \vskip 0.5em
   \RightLabel{\textsc{C-GRhs}}
   \AxiomC{$\Gamma \vdash$ $e :: c$}
-  \UnaryInfC{$\Gamma \vdash$ $|$ $g = e$ \textbf{where} $d :: c$}
+  \UnaryInfC{$\Gamma \vdash$ \textbf{|} $g = e$ \textbf{where} $d :: c$}
   \DisplayProof
 \end{center}
 \caption{\label{fig:rhs-inference-rules}Contracting rules for right-hand sides.}
 \end{figure}
 
-\paragraph{Guarded expressions.}
+\paragraph{Right-hand sides.}
 
-Figure \ref{fig:guardedexpr-inference-rules} illustrates the contracting rules for guarded expressions.
-The guard itself is ignored, and the contract for the expression that is guarded is used for the entire guarded expressions.
+Right-hand side contracting rules (see Figure \ref{fig:rhs-inference-rules}) are equally simple: the contract of $e$ is looked up in the contract environment and is used for the entire right-hand side.
+The same is done for guarded expressions (Figure \ref{fig:guardedexpr-inference-rules}).
 
 \begin{figure}[htbp]
 \begin{center}
@@ -1540,26 +1322,16 @@ The guard itself is ignored, and the contract for the expression that is guarded
 \caption{\label{fig:guardedexpr-inference-rules}Contracting rules for guarded expressions.}
 \end{figure}
 
-\paragraph{Right-hand sides.}
+\paragraph{Guarded expressions.}
 
-Right-hand side contracting rules (see figure \ref{fig:rhs-inference-rules}) are equally simple: the contract of $e$ is looked up in the contract environment and is used for the entire right-hand side.
-The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-rules}).
+Figure \ref{fig:guardedexpr-inference-rules} illustrates the contracting rules for guarded expressions.
+The guard itself is ignored, and the contract for the expression that is guarded is used for the entire guarded expressions.
 
 \begin{figure}[htbp]
 \begin{center}
   \RightLabel{\textsc{C-Hole}\quad}
   \AxiomC{$fresh(i)$}
   \UnaryInfC{$\Gamma \vdash$ $? :: true_i$}
-  \DisplayProof
-  \vskip 0.5em
-  \RightLabel{\textsc{C-Feedback}\quad}
-  \AxiomC{$\Gamma \vdash$ $e :: c$}
-  \UnaryInfC{$\Gamma \vdash$ $e :: c$}
-  \DisplayProof
-  \vskip 0.5em
-  \RightLabel{\textsc{C-MustUse}\quad}
-  \AxiomC{$\Gamma \vdash$ $e :: c$}
-  \UnaryInfC{$\Gamma \vdash$ $e :: c$}
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-Case}}
@@ -1570,7 +1342,7 @@ The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-
   \DisplayProof
   \vskip 0.5em
   \RightLabel{\textsc{C-Con}\quad}
-  \AxiomC{$\Xi(x) = c$}
+  \AxiomC{$\Xi_{ctrt}(x) = c$}
   \UnaryInfC{$\Gamma \vdash$ $x :: c$}
   \DisplayProof
   \vskip 0.5em
@@ -1602,11 +1374,6 @@ The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-
   \BinaryInfC{$\Gamma \vdash$ $e_1$ $e_2 :: c$}
   \DisplayProof
   \vskip 0.5em
-  \RightLabel{\textsc{C-Paren}\quad}
-  \AxiomC{$\Gamma \vdash$ $p :: c$}
-  \UnaryInfC{$\Gamma \vdash$ $(p) :: c$}
-  \DisplayProof
-  \vskip 0.5em
   \RightLabel{\textsc{C-Tuple}\quad}
   \AxiomC{$\forall{i}\in{[0\ldots{n}]} \Gamma \vdash$ $e_i :: c_i$}
   \AxiomC{$fresh(j)$}
@@ -1634,11 +1401,6 @@ The same is done for guarded expressions (figure \ref{fig:guardedexpr-inference-
   \RightLabel{\textsc{C-Nil}\quad}
   \AxiomC{$fresh(i, j)$}
   \UnaryInfC{$\Gamma \vdash$ $[] :: true_i \functor true_j$}
-  \DisplayProof
-  \vskip 0.5em
-  \RightLabel{\textsc{C-Neg}\quad}
-  \AxiomC{$\Gamma \vdash$ $e :: c$}
-  \UnaryInfC{$\Gamma \vdash$ $-e :: c$}
   \DisplayProof
   \vskip 0.5em
 \end{center}
@@ -1696,7 +1458,7 @@ The rest of the contracting rules are discussed hereafter.
 
 \paragraph{Alternatives.}
 
-The contracting rules for alternatives in figure \ref{fig:alternatives-inference-rules} are quite simple. \code{C-AHole} and \code{C-AltEmpty} are trivial, and \code{C-Alt} takes the contract of the right-hand side as the contract of the entire alternative.
+The contracting rules for alternatives in Figure \ref{fig:alternatives-inference-rules} are quite simple. \code{C-AHole} and \code{C-AltEmpty} are trivial, and \code{C-Alt} takes the contract of the right-hand side as the contract of the entire alternative.
 \code{ACons} and \code{ANil} are how the \code{Alts} node functions behind the scenes: all alternatives must have the same contract.
 
 %\todo{A few simple examples of applying the rules?}
@@ -1713,7 +1475,7 @@ In fact, the example posed by Stutterheim:
 
 $\mathcal{U}$ $(int,nat)$
 
-results in an error message, as evidenced by the relevant pattern matches of the \code{unifyC} function as shown in figure \ref{figure:unifyCWFails}.
+results in an error message, as evidenced by the relevant pattern matches of the \code{unifyC} function as shown in Figure \ref{figure:unifyCWFails}.
 
 \begin{figure}[htbp]
 \begin{lstlisting}[mathescape]
@@ -1728,8 +1490,8 @@ unifyC c1 c2 = unifyErr "No such unification case when" c1 c2
 \end{figure}
 
 This is because the $int$ and $nat$ contracts are in fact defined as user-defined concrete contracts.
-The default contracts that Stutterheim refers to in figure 3.2 of his thesis do not exist in the actual Contract data type in the source code. 
-It only supports the inhabitants of our simplified grammar as shown in figure \ref{fig:contract-grammar}.
+The default contracts that Stutterheim refers to in Figure 3.2 of his thesis do not exist in the actual Contract data type in the source code. 
+It only supports the inhabitants of our simplified grammar as shown in Figure \ref{fig:contract-grammar}.
 Relations between contracts that allow for refinement are thus non-existent.
 While these relations can be mapped out manually, a better idea would be to look towards true refinement types as described in section \ref{section:relatedworkcontracts}.
 
@@ -1763,7 +1525,7 @@ We follow the same order as the contracting rules here: patterns are introduced 
 
 \paragraph{Patterns.}
 
-The code for patterns is shown in figure \ref{fig:pattern-algorithm-chw}.
+The code for patterns is shown in Figure \ref{fig:pattern-algorithm-chw}.
 We omit the infix constructor, as it is the same as in Stutterheim's system for expressions. 
 Again, \code{PList} is replaced by the \code{PCons} and \code{PNil} constructors, which is how the constructor works behind the scenes.
 
@@ -1813,7 +1575,7 @@ chw $\Gamma$ $\Xi$ (PAs p ps) = ($Id$, $\Gamma$(p))
 
 \paragraph{Declarations.}
 
-For declarations (figure \ref{fig:declaration-algorithm-chw}), we omit \code{DHole} and \code{DEmpty}, as they both function the same as \code{PHole}.
+For declarations (Figure \ref{fig:declaration-algorithm-chw}), we omit \code{DHole} and \code{DEmpty}, as they both function the same as \code{PHole}.
 \code{DCons} is of particular interest, as it shows how substitutions are passed between groups of function bindings.
 
 \begin{figure}[htbp]
@@ -1904,7 +1666,7 @@ chw $\Gamma$ $\Xi$ (GRhs [] w) =
 
 \paragraph{Expressions.}
 
-We omit the code for \code{Hole}, \code{Feedback}, \code{MustUse}, \code{Neg} and \code{Paren} in figure \ref{fig:expression-algorithm-chw}, as these are trivial: in the first case, a fresh $true$ contract is generated and in the other cases, the expression $e$ that is wrapped by the node is used to attain the substitutions and contract.
+We omit the code for \code{Hole}, \code{Feedback}, \code{MustUse}, \code{Neg} and \code{Paren} in Figure \ref{fig:expression-algorithm-chw}, as these are trivial: in the first case, a fresh $true$ contract is generated and in the other cases, the expression $e$ that is wrapped by the node is used to attain the substitutions and contract.
 Furthermore, we omit \code{InfixApp} because it is converted to regular function application, which is covered by \code{App}.
 
 The code for \code{App} differs from the original algorithm.
@@ -1982,7 +1744,7 @@ chw $\Gamma$ $\Xi$ (Tuple [t]) = chw $\Gamma$ $\Xi$ t
 
 \paragraph{Alternatives.}
 
-For alternatives, we omit \code{AHole} and \code{AltEmpty} in figure \ref{fig:alternative-algorithm-chw} because they are trivial.
+For alternatives, we omit \code{AHole} and \code{AltEmpty} in Figure \ref{fig:alternative-algorithm-chw} because they are trivial.
 
 \begin{figure}[htbp]
 \begin{lstlisting}[mathescape]
@@ -3080,6 +2842,255 @@ If possible, our feedback includes the value that caused the contract violation,
 Decoupling our framework from Ask-Elle and making it available for the Helium language is also a possibility.
 Replacing the Ask-Elle syntax with that of Helium would require some refactoring, but no significant changes to the framework would have to be made.
 The result would be an automatic contract annotation framework for Helium, something that most certainly deserves further inquiry and research.
+
+\begin{appendices}
+\chapter{Modified Ask-Elle syntax}
+
+\begin{multicols}{2}
+\begin{lstlisting}[caption=Our modified Ask-Elle syntax.]
+
+-- | A Haskell source module
+data ModuleR
+   | ModuleR
+      name     :: MaybeNameR
+      body     :: BodyR
+      range    :: RangeR
+
+data BodyR
+   | BHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | BodyR
+      decls    :: DeclsR
+      range    :: RangeR
+
+-- | Declarations
+data DeclR
+   | DHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | DEmptyR
+      range    :: RangeR
+   | DFunBindsR
+      funbinds :: FunBindsR
+      range    :: RangeR
+   | DPatBindR
+      pat      :: PatR
+      rhs      :: RhsR
+      range    :: RangeR
+
+type DeclsR = [DeclR]
+
+-- | Expressions
+data ExprR
+   | HoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | FeedbackR
+      feedback :: String
+      expr     :: ExprR
+      range    :: RangeR
+   | MustUseR
+      expr     :: ExprR
+      range    :: RangeR
+   | CaseR
+      expr     :: ExprR
+      alts     :: AltsR
+      range    :: RangeR
+   | ConR
+      name     :: NameR
+      range    :: RangeR
+   | IfR
+      cond     :: ExprR
+      then     :: ExprR
+      else     :: ExprR
+      range    :: RangeR
+   | InfixAppR
+      left     :: MaybeExprR
+      op       :: ExprR
+      right    :: MaybeExprR
+      range    :: RangeR
+   | LambdaR
+      pats     :: PatsR
+      expr     :: ExprR
+      range    :: RangeR
+   | LetR
+      decls    :: DeclsR
+      expr     :: ExprR
+      range    :: RangeR
+   | LitR
+      lit      :: LiteralR
+      range    :: RangeR
+   | AppR
+      fun      :: ExprR
+      args     :: ExprsR
+      range    :: RangeR
+   | ParenR
+      expr     :: ExprR
+      range    :: RangeR
+   | TupleR
+      exprs    :: TupleExprR
+      range    :: RangeR
+   | VarR
+      name     :: NameR
+      range    :: RangeR
+   | EnumR
+      from     :: ExprR
+      then     :: MaybeExprR
+      to       :: MaybeExprR
+      range    :: RangeR
+   | ListR
+      exprs    :: ListExprR
+      range    :: RangeR
+   | NegR
+      expr     :: ExprR
+      range    :: RangeR
+
+type ExprsR = [ExprR]
+type ListExprR = [ExprR]
+type TupleExprR = [ExprR]
+
+data MaybeExprR
+   | NoExprR
+   | JustExprR
+      expr     :: ExprR
+
+-- | Alternatives
+data AltR
+   | AHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | AltR
+      feedback :: {Maybe String}
+      pat      :: PatR
+      rhs      :: RhsR
+      range    :: RangeR
+   | AltEmptyR
+      range    :: RangeR
+
+type AltsR = [AltR]
+
+-- | Function bindings
+data FunBindR
+   | FBHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | FunBindR
+      feedback :: {Maybe String}
+      name     :: NameR
+      pats     :: PatsR
+      rhs      :: RhsR
+      range    :: RangeR
+
+type FunBindsR = [FunBindR]
+
+-- | Guarded expressions
+data GuardedExprR
+   | GExprR
+      guard    :: ExprR
+      expr     :: ExprR
+      range    :: RangeR
+
+type GuardedExprsR = [GuardedExprR]
+
+-- | Literal values
+data LiteralR
+   | LCharR
+      val      :: Char
+      range    :: RangeR
+   | LFloatR
+      val      :: Float
+      range    :: RangeR
+   | LIntR
+      val      :: Int
+      range    :: RangeR
+   | LStringR
+      val      :: String
+      range    :: RangeR
+
+-- | Names
+data NameR
+   | IdentR
+      name     :: String
+      range    :: RangeR
+   | OperatorR
+      name     :: String
+      range    :: RangeR
+   | SpecialR
+      name     :: String
+      range    :: RangeR
+
+data MaybeNameR
+   | NoNameR
+   | JustNameR
+      name     :: NameR
+
+-- | Patterns
+data PatR
+   | PHoleR
+      id       :: HoleIDR
+      range    :: RangeR
+   | PConR
+      name     :: NameR
+      pats     :: PatsR
+      range    :: RangeR
+   | PInfixConR
+      left     :: PatR
+      name     :: NameR
+      right    :: PatR
+      range    :: RangeR
+   | PListR  
+      pats     :: ListPatsR
+      range    :: RangeR
+   | PLitR
+      lit      :: LiteralR
+      range    :: RangeR
+   | PParenR
+      pat      :: PatR
+      range    :: RangeR
+   | PTupleR
+      pats     :: TuplePatsR
+      range    :: RangeR
+   | PVarR
+      name     :: NameR
+      range    :: RangeR
+   | PAsR
+      name     :: NameR
+      pat      :: PatR
+      range    :: RangeR
+   | PWildcardR
+      range    :: RangeR
+
+type PatsR = [PatR]
+type ListPatsR = [PatR]
+type TuplePatsR = [PatR]
+
+-- | Right hand side
+data RhsR
+   | RhsR
+      expr     :: ExprR
+      where    :: DeclsR
+      range    :: RangeR
+   | GRhsR
+      gexprs   :: GuardedExprsR
+      where    :: DeclsR
+      range    :: RangeR
+
+data RangeR
+    | RangeR
+        rangestart :: PositionR
+        rangestop  :: PositionR
+
+data PositionR
+    | PositionR
+        filename  :: String
+        line      :: Int
+        column    :: Int
+    | UnknownR
+\end{lstlisting}
+\end{multicols}
+
+\end{appendices}
 
 \bibliographystyle{plain}
 \bibliography{bibliography}
