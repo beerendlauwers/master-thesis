@@ -662,7 +662,7 @@ We improve upon Stutterheim's system in the following ways:
 	\item Using type information, we perform abstract syntax tree (AST) transformations to simplify the contract inference algorithm.
 	\item With the same information, we generate \textit{initial contracts} that simplify contract inference even further, especially in the case of mutually recursive functions.
 	\item Algorithm \CW ~is extended to support the aforementioned Helium dialect, producing Algorithm \CHW.
-	\item Substitutions are divided into two lists: global and local. This avoids the problem of contract violations by inferred contracts inherent to the original system.
+	\item Substitutions are divided into two lists: bottom-up and top-down. This avoids the problem of contract violations by inferred contracts inherent to the original system.
 	\item We provide a system to generate code for the \textit{typed-contracts} library and identify several library-agnostic techniques to enrich feedback.
 \end{itemize}
 
@@ -1465,7 +1465,7 @@ The contracting rules for alternatives in Figure \ref{fig:alternatives-inference
 
 \subsubsection{Substitutions and unification}
 
-We use the same substitution grammar as that of Stutterheim.
+We use the same data type for substitutions as Stutterheim.
 Our unification algorithm, too, is identical to that of Stutterheim, which itself is based upon Robinson's unification algorithm.
 We refer you to subsection 3.4.2 of Stutterheim's thesis for a description of the unification algorithm and the substitutions it generates.
 When you are done reading, we will note a caveat in his description of the algorithm.
@@ -1528,6 +1528,8 @@ We follow the same order as the contracting rules here: patterns are introduced 
 The code for patterns is shown in Figure \ref{fig:pattern-algorithm-chw}.
 We omit the infix constructor, as it is the same as in Stutterheim's system for expressions. 
 Again, \code{PList} is replaced by the \code{PCons} and \code{PNil} constructors, which is how the constructor works behind the scenes.
+Note how patterns do not generate any substitutions, as no unifications are required: all contracts come from the type source $\Xi$, which uses the type of a pattern to generate an initial contract.
+These types come from the type inference algorithm, where they have already been unified.
 
 \begin{figure}[htbp]
 \begin{lstlisting}[mathescape]
@@ -1809,7 +1811,7 @@ The placeholders in the above example represent the following extra information:
 
 \subsubsection{Patterns representing functions are already contracted}
 
-It may puzzle you why the application of \code{f} is not transformed in the same manner.
+It may puzzle you why the application of \code{f} at the beginning of the right-hand side is not transformed in the same manner.
 This is because it is a \textit{pattern} available in the left-hand side of the function definition.
 It is a call to a locally-available function that has already been contracted.
 
@@ -1848,16 +1850,16 @@ This template is given information for use in feedback, wraps it appropriately u
 Let us examine the template:
 
 \begin{lstlisting}[mathescape]
-__app_X ctrt posinfo $argument$ $patterns$ = $applied$ $arguments$
+__app_X ctrt posinfo $patterns$ = $righthandside$
 \end{lstlisting}
 
 %The patterns ctrt and posinfo appear here again: both are passed to the \_\_contracted version of the function. Note again that this generated function is polymorphic with respect to its contract.
 
-The placeholders \textit{argument patterns} and \textit{applied arguments} are relatively simple:
+The placeholders \textit{patterns} and \textit{righthandside} are relatively simple:
 
 \begin{itemize}
-	\item \textit{argument patterns} generates a tuple for each argument, containing the position information of the argument and the argument itself.
-	\item \textit{applied arguments} uses this extra information to provide richer feedback at runtime and applies the arguments to the $\ctrttemplate$ template of the function.
+	\item \textit{patterns} generates a tuple for each argument, containing the position information of the argument and the argument itself.
+	\item \textit{righthandside} uses this extra information to provide richer feedback at runtime and applies the arguments to the $\ctrttemplate$ template of the function.
 \end{itemize}
 
 Let us take the following example:
@@ -1926,7 +1928,7 @@ This is because \code{f} is a contracted function that was passed to the higher-
 
 Because \code{a} is captured using a lambda function, the type of the expression \code{($\lambda$a $\rightarrow$ (appParam f $info$ a))} is \code{a $\rightarrow$ a}, and can be used as a "regular" function in \code{\underline{\hspace{1.5em}}final\_g}.
 
-\code{f}, whose type is \code{a $\rightarrowtail$ a}, is also provided to \code{\underline{\hspace{1.5em}}final\_g} unwrapped, in the case that a higher-order function takes \code{f} as an argument.
+\code{f}, whose type is \code{a $\rightarrowtail$ a}, is also provided to \code{\underline{\hspace{1.5em}}final\_g} unwrapped, in the case that a higher-order function in the right-hand side of \code{\underline{\hspace{1.5em}}final\_g} takes \code{f} as an argument.
 A good example of this is that of \code{foldr}:
 
 \begin{lstlisting}[mathescape]
@@ -2058,36 +2060,36 @@ This breaks Stutterheim's proposition that \textit{"(an) inferred contract will 
 
 In this manner, Algorithm CW ~is monomorphic: the inferred contract of a function may constrain the acceptable values of an argument to a static subset of what the argument should actually be able to accept.
 
-\subsubsection{Proposed solution: global and local substitution lists}
+\subsubsection{Proposed solution: bottom-up and top-down substitution lists}
 
-Instead of a single, global set of substitutions that is applied to every contract during translation, we keep track of a single global list of substitutions and several local lists.
-Contract variables are also given a flavour of global or local: $true_i$ contracts are global, concrete contracts are local.
+Instead of a single, global set of substitutions that is applied to every contract during translation, we keep track of a single bottom-up list of substitutions and several top-down lists.
+Contract variables are also given a flavour of top-down or bottom-up: $true_i$ contracts are bottom-up, concrete contracts are top-down.
 
-Whenever unification between two contracts takes place, the resulting substitutions are split up in a global and local group:
+Whenever unification between two contracts takes place, the resulting substitutions are split up in a bottom-up and top-down group:
 \begin{itemize}
-\item The global group holds all substitutions that go from global contract variables to other global contract variables.
-\item The local group holds all substitutions that go from global contract variables to local contract variables, as well as those that go from local contract variables to other local contract variables.
+\item The bottom-up group holds all substitutions that go from bottom-up contract variables to other bottom-up contract variables.
+\item The top-down group holds all substitutions that go from bottom-up contract variables to top-down contract variables, as well as those that go from top-down contract variables to other top-down contract variables.
 \end{itemize}
 
-The global group is added to the global substitution list.
-The local group is added to the local substitution list, which already contains the parent's local substitution list.
-In other words, the global group travels up the AST towards the top, and the local group travels downwards into the child nodes of the node where unification took place.
+The bottom-up group is added to the bottom-up substitution list.
+The top-down group is added to the top-down substitution list, which already contains the parent's top-down substitution list.
+In other words, the bottom-up group travels up the AST towards the top, and the top-down group travels downwards into the child nodes of the node where unification took place.
 
-\subsubsection{Applying global and local substitution lists}
+\subsubsection{Applying bottom-up and top-down substitution lists}
 
 The algorithm for calculating the final contract from these lists is comprised of four steps.
 First, look up the initial contract $c_{initial}$ in the contract environment $\Gamma$.
 
-Second, apply the global substitution list $s_{global}$ to $c_{initial}$ until a fixed point is reached or until $n+1$ applications have taken place, where $n$ is the number of substitutions in the global list. 
-This yields $c_{global}$.
+Second, apply the bottom-up substitution list $s_{bottom-up}$ to $c_{initial}$ until a fixed point is reached or until $n+1$ applications have taken place, where $n$ is the number of substitutions in the bottom-up list. 
+This yields $c_{bottom-up}$.
 For those interested, a more detailed description of this application can be found in section \ref{futurework:efficientsubstalgo}.
 The reason why the substitutions must be applied up to $n+1$ times is because, in our language, the ordering of function declarations is random, but the order in which the generated substitutions must be applied is not.
 Stutterheim's language uses nested let-expressions to introduce multiple function declarations, which means the order of the generated substitutions is always correct, so it did not have to perform this search.
 
-As the third step, the local substitution list $s_{local}$ is updated to reflect the changes in $c_{initial}$ that have been introduced by $s_{global}$.
-This is done by applying $s_{global}$ to $s_{local}$ up to $n+1$ times until a fixed point is reached, producing $s_{updated}$.
+As the third step, the top-down substitution list $s_{top-down}$ is updated to reflect the changes in $c_{initial}$ that have been introduced by $s_{bottom-up}$.
+This is done by applying $s_{bottom-up}$ to $s_{top-down}$ up to $n+1$ times until a fixed point is reached, producing $s_{updated}$.
 
-Finally, $s_{updated}$ is applied to $c_{global}$ in the same manner until a fixed point is reached, resulting in $c_{final}$.
+Finally, $s_{updated}$ is applied to $c_{bottom-up}$ in the same manner until a fixed point is reached, resulting in $c_{final}$.
 
 
 %It is this contract that is translated into a \textit{typed-contracts} contract and placed in the generated code.
@@ -2125,8 +2127,8 @@ __final_z = (__app_f (isChar $\rightarrowtail$ (true $\functor$ isChar)) 'a', __
 \end{lstlisting}
 
 Calling the contracted version of \code{f} will call the contracted version of \code{g}, but with an initial contract!
-In other words, the local substitutions that made the contract passed to \code{\_\_app\_f} more specific, are not utilized by \code{\_\_app\_g}.
-The solution appears trivial: pass the local substitutions as another argument to the \apptemplate ~and \ctrttemplate ~templates and apply them to the initial contract at runtime.
+In other words, the top-down substitutions that made the contract passed to \code{\_\_app\_f} more specific, are not utilized by \code{\_\_app\_g}.
+The solution appears trivial: pass the top-down substitutions as another argument to the \apptemplate ~and \ctrttemplate ~templates and apply them to the initial contract at runtime.
 
 \subsubsection{Applying substitutions at runtime}
 
@@ -2136,7 +2138,7 @@ The targeted library expects a contract in its own datatype, of course.
 The intermediate contract language is modeled as a simple data type automatically generated by the Utrecht University Attribute Grammar Compiler (UUAGC) without a phantom type, and \textit{typed-contracts}'s datatype is a GADT with a phantom type used for a type-level representation of the contract.
 Conversion between the two means we need to be able to tell what this phantom type should be. This is especially a problem when we need to convert between user-defined concrete contracts (\code{Prop} and \code{PropInfo}), because each of these contracts may have a different phantom type and assorted type class constraints, and the only information available in the AST datatype equivalent is a \code{String}.
 
-Several attempts were made to provide a runtime translation function, but none were initially successful.
+Several attempts were made to provide a runtime translation function, but none were successful.
 Due to time constraints, we defer this translation method as future work.
 Section \ref{futurework:runtimetranslation} provides an overview of the attempts and promising methods.
 
@@ -2574,7 +2576,7 @@ Both sources could be used to look up unknown type constructors, fetch their typ
 \section{Runtime translation of intermediate contract language}
 \label{futurework:runtimetranslation}
 
-Subsection \ref{subsection:monomorphic-algo-cw} proposes splitting up generated substitutions into a global list and placing the other local substitutions into a local list unique to the node where unification took place.
+Subsection \ref{subsection:monomorphic-algo-cw} proposes splitting up generated substitutions into a bottom-up list and placing the other top-down substitutions into a top-down list unique to the node where unification took place.
 This change makes it possible to correct a limitation present in Stutterheim's original contract inference algorithm.
 However, application of the substitutions and translation of the final contracts must then be done at run-time.
 
@@ -2675,8 +2677,8 @@ Because of the multitude of issues, this solution was disregarded early in the p
 \label{futurework:efficientsubstalgo}
 
 The algorithm to find a final contract uses a brute-force search, going through a substitution list up $(n+1)$ times, where $n$ is the number of substitutions in the list. 
-This algorithm may become a bottleneck when it has to trudge through a very large global substitution list.
-The optional addition of local substitution lists is not as troublesome, because they contain only substitutions that are relevant to that node.
+This algorithm may become a bottleneck when it has to trudge through a very large bottom-up substitution list.
+The optional addition of top-down substitution lists is not as troublesome, because they contain only substitutions that are relevant to that node.
 
 The current algorithm goes as follows:
 
