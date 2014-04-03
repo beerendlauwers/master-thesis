@@ -97,33 +97,33 @@ showGeneratedCode code env =
 
 
 showDebugExample1 :: IO ()
-showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" [] (DM.fromList [])
+showDebugExample1 = showDebug "f x = g x\n  where g x = [x]\ng f x = f x" (DM.fromList [])
 
 showDebugExample2 :: IO ()
-showDebugExample2 = showDebug "f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys" [] (DM.fromList [])
+showDebugExample2 = showDebug "f x = x\ng x = f [x]\nisort xs = foldr insert [] xs\n  where insert x [] = []\n        insert x (y:ys) = case x > y of\n                            True -> y : f x ys\n                            False -> x : g (y:ys)\n        f x ys = insert x ys\n        g ys = ys" (DM.fromList [])
 
 showDebugExample3 :: IO ()
-showDebugExample3 = showDebug "f x = n x\n  where n x = g x\ng x = x" [] (DM.fromList [])
+showDebugExample3 = showDebug "f x = n x\n  where n x = g x\ng x = x" (DM.fromList [])
 
 showDebugExample4 :: IO ()
-showDebugExample4 = showDebug "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" [] (DM.fromList [])
+showDebugExample4 = showDebug "f x = x\ng x =\n    let\n        (z,zs) =\n            (f x,f [x]) in\n        zs" (DM.fromList [])
 
 -- Shadowing test
 showDebugExample5 :: IO ()
-showDebugExample5 = showDebug "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" [] (DM.fromList [])
+showDebugExample5 = showDebug "f x = (\\ y -> z x y)\n  where z x y = x y\nz x y = x y" (DM.fromList [])
 
 -- AltR test
 showDebugExample6 :: IO ()
-showDebugExample6 = showDebug "g x = [x]\nf x = case (g x) of\n           (x:xs) -> let n = xs\n                     in n\n           []     -> error \"Test\"" [] (DM.fromList [])
+showDebugExample6 = showDebug "g x = [x]\nf x = case (g x) of\n           (x:xs) -> let n = xs\n                     in n\n           []     -> error \"Test\"" (DM.fromList [])
 
 -- PAsR test
 -- PTupleR test
 showDebugExample7 :: IO ()
-showDebugExample7 = showDebug "f n@(x,y,z) = (g z,n)\n  where g = x y" [] (DM.fromList [])
+showDebugExample7 = showDebug "f n@(x,y,z) = (g z,n)\n  where g = x y" (DM.fromList [])
 
 -- Lambda test
 showDebugExample8 :: IO ()
-showDebugExample8 = showDebug "f x = (\\y -> let n = y\n             in n)" [] (DM.fromList [])
+showDebugExample8 = showDebug "f x = (\\y -> let n = y\n             in n)" (DM.fromList [])
 
 
 -- Some debug contracts
@@ -374,8 +374,6 @@ sem ExprR
                                                 ,  text "update function type:"           BOX.<+> text (show @loc.updateFunctionType)
                                                 ,  text "update argument type:"           BOX.<+> text (show @loc.updateVariableType)
                                                 ,  text "is fully applied:"               BOX.<+> text (show @lhs.isFullyApplied)
-                                                ,  text "orig ident:"            BOX.<+> pprint @name.copy
-                                                ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "local idents:"          BOX.<+> pprint @lhs.localIdentifiers
                                                 ]
 
@@ -448,8 +446,6 @@ sem FunBindR
                                                 ,  text "__contracted code:" BOX.<+> pprint @loc.contractedFunction
                                                 ,  text "__app code:"        BOX.<+> pprint @loc.appFunction
                                                 ,  text "__final code:"      BOX.<+> pprint @loc.finalFunction
-                                                ,  text "orig ident:"            BOX.<+> pprint @name.copy
-                                                ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
                                                 ,  text "local idents known to RHS:"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @name.debug
                                                 ,  nest 2 @pats.debug

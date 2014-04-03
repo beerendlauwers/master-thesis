@@ -1,6 +1,3 @@
---debug:
--- ~/thesis/FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.ContractInferencing.SyntaxTransformations" Domain/FP/ContractInferencing/SyntaxTransformations.ag
-
 include "Domain/FP/SyntaxWithRangesTerm.ag"
 
 {
