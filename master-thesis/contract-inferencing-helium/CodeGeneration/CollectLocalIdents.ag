@@ -1,6 +1,3 @@
--- TO TEST THIS AG ONLY:
--- FPTutor/trunk/src$ ~/.cabal/bin/uuagc -dcfswH --module="Domain.FP.CodeGeneration.CollectLocalIdents" Domain/FP/CodeGeneration/CollectLocalIdents.ag
-
 -- Patterns are only local if they're not defined top-level.
 attr DeclR DeclsR
    inh isTopLevel                                       :: {Bool}
@@ -29,28 +26,8 @@ attr ModuleR BodyR DeclR DeclsR ExprR ExprsR PatR PatsR AltR AltsR FunBindR FunB
   -- Version of the code where the top-level point of entry identifier has been replaced
   syn uncontractedCode                                  :: self
 
-  -- COPYPASTE FOR DEBUG - Identifiers that shadow the top-level identifiers.
+  -- Identifiers that shadow the top-level identifiers.
   inh localIdentifiers                                  :: {LocalIdentifiers}
-
-  -- COPYPASTE FOR DEBUG - The 'main' function, the top-level point of entry. We'll start contract generation here.
-  inh entryFunction                                     :: {EntryFunction}
-
--- Replace the name of the original point of entry.
--- Example: isort becomes __original_isort, so we can then write isort = __original_isort CONTRACT
-sem ExprR
-  | VarR
-      lhs  .uncontractedCode    = @loc.uncontractedCode
-      loc  .uncontractedCode    = VarR @loc.updatedName @range.uncontractedCode
-      loc  .updatedName         = updateName prefixPointOfEntry @name.copy @lhs.entryFunction @lhs.localIdentifiers
-
-
-sem FunBindR
-  | FunBindR
-      lhs  .uncontractedCode    = @loc.uncontractedCode
-      loc  .uncontractedCode    = FunBindR @feedback @loc.updatedName @pats.uncontractedCode @rhs.uncontractedCode @range.uncontractedCode
-      loc  .updatedName         = updateName prefixPointOfEntry @name.copy @lhs.entryFunction @lhs.localIdentifiers
-
-
 
 -- Pass local patterns downwards.
 sem DeclR
