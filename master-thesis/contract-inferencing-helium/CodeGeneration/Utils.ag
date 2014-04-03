@@ -348,7 +348,6 @@ expandHigherOrderParams funcText funcName (listpos,arity,pat) =
      posText = (mkLit.mkStrLit) $ ". " ++ funcName ++ " has a function as its " ++ showPos listpos ++ " argument."
      endText = (mkLit.mkStrLit) ", namely "
      startText i =  (mkLit.mkStrLit) $ " The " ++ showPos i ++ " argument of that function"
-     --lookupStr i = mkApp [mkVar "show", v]
  in if arity > 0
      then lam
      else v

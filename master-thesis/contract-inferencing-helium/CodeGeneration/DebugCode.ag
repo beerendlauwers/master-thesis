@@ -20,33 +20,33 @@ debugTypeVarsTypeTree tree =
      thdVal = thd $ attribute tree
  in DoublyLinkedTree Nothing (localVal,sndVal, thdVal) childrenVals
 
-contractDebug :: String -> String -> CEnv -> IO ()
-contractDebug code pointOfEntry env = 
- let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+contractDebug :: String -> CEnv -> IO ()
+contractDebug code env = 
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code env
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry [] env
+     inhModule = Inh_ModuleR [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
        putStrLn $ render $ pprint transformedCode
        putStrLn (contractdebug_Syn_ModuleR wrapModule)
        writeFile "contractDebugOutput" (contractdebug_Syn_ModuleR wrapModule)
 
-flatDebug :: String -> String -> CEnv -> IO ()
-flatDebug code pointOfEntry env = 
- let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+flatDebug :: String -> CEnv -> IO ()
+flatDebug code env = 
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code env
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry [] env
+     inhModule = Inh_ModuleR [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
        putStrLn $ render $ pprint transformedCode
        putStrLn (simpledebug_Syn_ModuleR wrapModule)
        writeFile "flatDebugOutput" (simpledebug_Syn_ModuleR wrapModule)
 
-debugRemoveFreeLambdas :: String -> String -> CEnv -> IO ()
-debugRemoveFreeLambdas code pointOfEntry env = 
- let transformedCode = removeFreeLambdas code pointOfEntry env
+debugRemoveFreeLambdas :: String -> CEnv -> IO ()
+debugRemoveFreeLambdas code env = 
+ let transformedCode = removeFreeLambdas code env
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry [] env
+     inhModule = Inh_ModuleR [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
        putStrLn $ render $ pprint transformedCode
@@ -54,43 +54,43 @@ debugRemoveFreeLambdas code pointOfEntry env =
 
 
 
-convertPatBindToFunBind :: String -> String -> CEnv -> ModuleR
-convertPatBindToFunBind code pointOfEntry env = 
- let noFreeLambdas = removeFreeLambdas code pointOfEntry env
+convertPatBindToFunBind :: String -> CEnv -> ModuleR
+convertPatBindToFunBind code env = 
+ let noFreeLambdas = removeFreeLambdas code env
      semModule = sem_ModuleR noFreeLambdas
-     inhModule = Inh_ModuleR pointOfEntry [] env
+     inhModule = Inh_ModuleR [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in patBindToFunBind_Syn_ModuleR wrapModule
 
-removeFreeLambdas :: String -> String -> CEnv -> ModuleR
-removeFreeLambdas code pointOfEntry env = 
+removeFreeLambdas :: String -> CEnv -> ModuleR
+removeFreeLambdas code env = 
  let astCode = compileWithRanges code
      semModule = sem_ModuleR astCode
-     inhModule = Inh_ModuleR pointOfEntry [] env
+     inhModule = Inh_ModuleR [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in removeFreeLambdas_Syn_ModuleR wrapModule
 
--- Expects the code as a string and the point of entry.
-showDebug :: String -> String -> CEnv -> IO ()
-showDebug code pointOfEntry env = 
- let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+-- Expects the code as a string and an external environment.
+showDebug :: String -> CEnv -> IO ()
+showDebug code env = 
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code env
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry [] env
+     inhModule = Inh_ModuleR [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
-       putStrLn $ render $ pprint (removeFreeLambdas code pointOfEntry env)
+       putStrLn $ render $ pprint (removeFreeLambdas code env)
        putStrLn $ render $ pprint transformedCode
        printBox (debug_Syn_ModuleR wrapModule)
        writeFile "debugOutput" (render $ debug_Syn_ModuleR wrapModule)
 
-showGeneratedCode :: String -> String -> CEnv -> IO ()
-showGeneratedCode code pointOfEntry env = 
- let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code pointOfEntry env
+showGeneratedCode :: String -> CEnv -> IO ()
+showGeneratedCode code env = 
+ let transformedCode = transformLambdas $ transformApps $ transformInfixApps $ convertPatBindToFunBind code env
      semModule = sem_ModuleR transformedCode
-     inhModule = Inh_ModuleR pointOfEntry [] env
+     inhModule = Inh_ModuleR [] env
      wrapModule = wrap_ModuleR semModule inhModule
  in do putStrLn "Code that will be used:"
-       putStrLn $ render $ pprint (removeFreeLambdas code pointOfEntry env)
+       putStrLn $ render $ pprint (removeFreeLambdas code env)
        putStrLn "\nGenerated code:"
        putStrLn (show $ functionAppSelf_Syn_ModuleR wrapModule)
        writeFile "debugOutput" (show $ functionAppSelf_Syn_ModuleR wrapModule)
@@ -376,7 +376,6 @@ sem ExprR
                                                 ,  text "is fully applied:"               BOX.<+> text (show @lhs.isFullyApplied)
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
-                                                ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
                                                 ,  text "local idents:"          BOX.<+> pprint @lhs.localIdentifiers
                                                 ]
 
@@ -451,7 +450,6 @@ sem FunBindR
                                                 ,  text "__final code:"      BOX.<+> pprint @loc.finalFunction
                                                 ,  text "orig ident:"            BOX.<+> pprint @name.copy
                                                 ,  text "updated ident:"         BOX.<+> pprint @loc.updatedName
-                                                ,  text "point of entry:"        BOX.<+> text @lhs.entryFunction
                                                 ,  text "local idents known to RHS:"          BOX.<+> pprint @loc.localIdentifiers
                                                 ,  nest 2 @name.debug
                                                 ,  nest 2 @pats.debug
