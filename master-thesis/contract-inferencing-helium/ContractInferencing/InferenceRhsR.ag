@@ -5,7 +5,7 @@ attr RhsR
 sem RhsR
   | RhsR
       lhs  .infer   =   @expr.infer
-           .subst   =   @expr.subst -- TODO: check if correct
+           .subst   =   @expr.subst
   | GRhsR
       lhs  .infer   =   @gexprs.infer
-           .subst   =   @gexprs.subst -- TODO: check if correct
+           .subst   =   @gexprs.subst

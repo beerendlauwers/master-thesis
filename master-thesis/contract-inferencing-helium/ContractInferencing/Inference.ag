@@ -25,109 +25,6 @@ attr ListPatsR
   syn orderedPats :: [Contract] -- We can use this for creating a function contract
   syn envFromPats use {`urenv`}    {DM.empty}   :: CEnv
 
-{-
-
-Checklist:
-                         EXPR
--- | A Haskell source module
-DATA ModuleR
-   | ModuleR
-
-DATA BodyR
-   | BHoleR
-   | BodyR
-
--- | Declarations
-DATA DeclR              
-   | DHoleR
-   | DEmptyR
-   | DFunBindsR
-   | DPatBindR
-
--- | Expressions         
-DATA ExprR             
-   | HoleR               DONE
-   | FeedbackR
-   | MustUseR
-   | CaseR
-   | ConR
-   | IfR
-   | InfixAppR
-   | LambdaR             DONE
-   | LetR                
-   | LitR                
-   | AppR                DONE
-   | ParenR              
-   | TupleR
-   | VarR                DONE
-   | EnumR               
-   | ListR               
-   | NegR
-
-DATA MaybeExprR
-   | NoExprR             
-   | JustExprR           
-
--- | Alternatives
-DATA AltR
-   | AHoleR              DONE
-   | AltR
-   | AltEmptyR           DONE
-
--- | Function bindings
-DATA FunBindR
-   | FBHoleR             DONE
-   | FunBindR            DONE
-
--- | Guarded expressions 
-DATA GuardedExprR
-   | GExprR
-
--- | Literal values
-DATA LiteralR
-   | LCharR
-   | LFloatR
-   | LIntR
-   | LStringR
-
--- | Names
-DATA NameR
-   | IdentR
-   | OperatorR
-   | SpecialR
-
-DATA MaybeNameR
-   | NoNameR
-   | JustNameR
-
--- | Patterns
-DATA PatR
-   | PHoleR              DONE
-   | PConR               DONE
-   | PInfixConR          DONE
-   | PListR              DONE
-   | PLitR               DONE
-   | PParenR             DONE
-   | PTupleR
-   | PVarR               DONE
-   | PAsR                DONE
-   | PWildcardR          DONE
-
--- | Right hand side
-DATA RhsR
-   | RhsR
-   | GRhsR
-
-DATA RangeR
-    | RangeR
-
-DATA PositionR
-    | PositionR
-    | UnknownR
-      
-
--}
-
 attr BodyR -- Body of entire module
   syn  subst                                         :: Subst
 
@@ -255,11 +152,6 @@ sem DeclR
 
       -- Infer LHS and RHS, unify.
       loc  .unifysubsts    = unifyC @pat.infer @rhs.infer
-      
-      -- Now, we have to apply the substitutions to the envFromPats environment
-      -- to get the final contracted patterns variables.
-      -- TODO: Just pass this to the top?
-      -- loc  .finalEnv       = subst (@loc.unifysubsts `o` @rhs.subst `o` @pat.subst) @loc.rhsEnv
 
 -- Semantics for inferring a contract from an expression
 sem ExprR
@@ -349,14 +241,9 @@ sem ExprR
       lhs  .infer   =   @loc.c2
            .subst   =   @loc.ths
 
-      -- TODO: This doesn't take into account patterns such as (x:xs) AT ALL!
       loc  .v       =   case (head @decls.copy) of
                           [DPatBindR (PVarR (IdentR x r) _) _ _] -> IdentR x r
                           x                                      -> error $ "Let definition has something else besides pattern binding! : " ++ show x
-
-      -- v isn't in the AST, we only seem to need it for the string though
-      -- v    .env     =   @loc.ve1env
-      -- v    .cann    =   Nothing
 
       decls.env     =   @loc.ve1env
       decls.cann    =   DM.lookup @loc.lbvar @lhs.env

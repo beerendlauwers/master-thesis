@@ -30,26 +30,6 @@ sem ModuleR
 -- types from the type tree. These types are already the most specific for a
 -- certain function application.
 
-{-
-   | HoleR              DONE
-   | FeedbackR		    DONE
-   | MustUseR		    DONE
-   | CaseR	            DONE
-   | ConR		        DONE
-   | IfR		        DONE
-   | InfixAppR		    cONVERTED TO APPR
-   | LambdaR            DONE
-   | LetR               DONE
-   | LitR               DONE 
-   | AppR               DONE
-   | ParenR             DONE
-   | TupleR		        DONE
-   | VarR               DONE
-   | EnumR              DONE
-   | ListR              DONE 
-   | NegR		        DONE
--}
-
 attr ExprR
   syn  arity                                         :: {Int}
 
@@ -116,15 +96,15 @@ sem ExprR
       else .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
 
   | VarR
-      lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars --TODO: Currently, this is looking it up in env. This might cause polymorphic contract vars in containers to be unified that we don't want unified!
+      lhs  .infer   =   stripQuantifiers $ @loc.varContract -- Contract derived from type tree type, all fresh polymorphic contract vars
            .subst   =   SId
       loc  .localsubsts = SId
 
-  | ConR -- TODO: This will give odd results when using constructors many times, I think.
+  | ConR
       lhs  .infer   =   stripQuantifiers $ @loc.varContract
            .subst   =   SId
 
-  | LitR -- TODO: check if this is returning correct (= monomorphic) contracts
+  | LitR
       lhs  .infer   =   stripQuantifiers $ snd @loc.results
            .subst   =   SId
       lit  .freshContractVariable = fst @loc.results
