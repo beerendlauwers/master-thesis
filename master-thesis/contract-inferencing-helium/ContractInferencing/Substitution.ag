@@ -7,9 +7,6 @@ class FCV a where
 instance FCV Contract where
   fcv = getFreeContractVars
 
---instance FCV CEnv where
---  fcv = DM.foldr DS.union DS.empty . fmap fcv
-
 class Substitutable a where
   subst :: Subst -> a -> a
   subst' :: Subst -> a -> a
@@ -34,7 +31,7 @@ instance Substitutable Contract where
   subst SId             c           = c
   subst (SComp s1 s2)   c           = subst s1 (subst s2 c)
   subst (SSubst v c')   c | v == c  = c'
-  subst s qc@(CQuant qv cs) = subst s (stripQuantifiers qc) -- TODO: get rid of these quantifiers!
+  subst s qc@(CQuant qv cs) = subst s (stripQuantifiers qc)
   subst s@(SSubst v _) (CQuant qv cs)
     | v == qv                       = CQuant qv cs
     | otherwise                     = CQuant qv (subst s cs)
@@ -58,7 +55,7 @@ unifyC :: Contract -> Contract -> Subst
 unifyC c1              c2 | c1 == c2   = SId
 unifyC v@CVar{}        c               = unifyCVars v c
 unifyC c               v@CVar{}        = unifyCVars v c
-unifyC qc1@(CQuant qv1 cs1) qc2@(CQuant qv2 cs2) = unifyC (stripQuantifiers qc1) (stripQuantifiers qc2) -- Skip over forall'd variables, those are irrelevent in unification
+unifyC qc1@(CQuant qv1 cs1) qc2@(CQuant qv2 cs2) = unifyC (stripQuantifiers qc1) (stripQuantifiers qc2) -- Skip over forall'd variables, those are irrelevant in unification
 unifyC (CArr cl1 cr1)  (CArr cl2 cr2)  =
   let  th1  = unifyC cl1 cl2
        th2  = unifyC (subst th1 cr1) (subst th1 cr2)

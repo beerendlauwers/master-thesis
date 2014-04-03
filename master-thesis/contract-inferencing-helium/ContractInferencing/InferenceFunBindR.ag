@@ -19,7 +19,7 @@ sem FunBindR
 
 sem FunBindsR
   | Cons 
-      lhs   .subst  =   @hd.subst `o` @tl.subst -- TODO: Collect substitution information of all definitions?
+      lhs   .subst  =   @hd.subst `o` @tl.subst
   | Nil
       lhs   .subst  =   SId
 

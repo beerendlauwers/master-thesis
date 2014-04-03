@@ -22,8 +22,6 @@ sem DeclR
             .localsubsts = snd @loc.unify'
             .subst' =   fst @loc.unify' `o` @rhs.subst
       rhs   .localsubsts = @loc.localsubsts `o` @lhs.localsubsts
---            .infer' =   subst @loc.subst' @loc.clhs
---       pat  .freshContractVariable = fst @loc.results -- TODO: try and get this working uncommented
 
 sem DeclsR
   | Cons
