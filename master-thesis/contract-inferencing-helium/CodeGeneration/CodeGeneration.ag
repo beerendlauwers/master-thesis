@@ -18,7 +18,7 @@ include "Domain/FP/ContractInferencing/Substitution.ag"
 -- Include debug statement generating code
 include "Domain/FP/CodeGeneration/DebugCode.ag"
 
--- DEBUG: Inferencing code
+-- Include contract inferencing code
 include "Domain/FP/ContractInferencing/InferenceExprR.ag"
 include "Domain/FP/ContractInferencing/InferenceFunBindR.ag"
 include "Domain/FP/ContractInferencing/InferenceRhsR.ag"
@@ -28,8 +28,6 @@ include "Domain/FP/ContractInferencing/InferenceAltR.ag"
 include "Domain/FP/ContractInferencing/InferenceBodyR.ag"
 
 include "Domain/FP/ContractInferencing/Tests.ag"
-
-
 
 -- Include syntax transformations
 include "Domain/FP/ContractInferencing/SyntaxTransformations.ag"

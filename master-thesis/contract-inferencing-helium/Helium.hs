@@ -15,8 +15,6 @@
 module Domain.FP.Helium 
    ( -- * Compile functions
      compile, unsafeCompile, compile', compile_, compilePrelude
-   , compileWithExtraEnv, extractTypes, extractImportEnv, compile__, compile___
-   , compile'', compile'''
      -- * Helium syntax data types
    , module Syntax.UHA_Syntax, module Syntax.UHA_Range
      -- * Pretty printing
@@ -121,52 +119,6 @@ unsafeCompile = either (error "Helium compilation error!") id . compile
 compile :: String -> Either String Module
 compile = fmap (\(_,_,_,_,m) -> m) . compile' False
 
-compileWithExtraEnv :: String -> ImportEnvironment -> 
-                       Either String
-                       ( DictionaryEnvironment
-                       , ImportEnvironment
-                       , TypeEnvironment
-                       , [Warning]
-                       , Module
-                       )
-compileWithExtraEnv = compile'' False
-
-extractTypes :: Either String
-             ( DictionaryEnvironment
-             , ImportEnvironment
-             , TypeEnvironment
-             , [Warning]
-             , Module
-             ) -> TypeEnvironment
-extractTypes (Right a) = (\(_,_,t,_,_) -> t) a
-extractTypes (Left  a) = error a
-
-extractImportEnv :: Either String
-                    ( DictionaryEnvironment
-                    , ImportEnvironment
-                    , TypeEnvironment
-                    , [Warning]
-                    , Module
-                    ) -> ImportEnvironment
-extractImportEnv (Right a) = (\(_,i,_,_,_) -> i) a
-extractImportEnv (Left  a) = error a
-
-
-compile'' :: Bool -> String
-         -> ImportEnvironment
-         -> Either String
-             ( DictionaryEnvironment
-             , ImportEnvironment
-             , TypeEnvironment
-             , [Warning]
-             , Module
-             )
-compile'' isPrelude txt extraEnv = unsafePerformIO $ do
-   ea <- run $ compile__ isPrelude txt [Overloading, UseTutor] extraEnv []
-   case ea of
-      Left ms -> return $ Left $ unlines ms
-      Right a -> return $ Right a 
-
 compilePrelude :: String -> Either String Module
 compilePrelude = fmap (\(_,_,_,_,m) -> m) . compile' True
 
@@ -212,18 +164,7 @@ compile_ :: Bool -> String -> [Option] -> t
                     , [Warning]
                     , Module
                     )
-compile_ isPrelude contents options doneModules = compile__ isPrelude contents options emptyEnvironment doneModules
-
-
--- | Like compile_ but with an extra ImportEnvironment parameter.
-compile__ :: Bool -> String -> [Option] -> ImportEnvironment -> t
-         -> Compile ( DictionaryEnvironment
-                    , ImportEnvironment
-                    , TypeEnvironment
-                    , [Warning]
-                    , Module
-                    )
-compile__ isPrelude contents options extraEnv doneModules =
+compile_ isPrelude contents options doneModules =
     do
         let fullName = "Prelude"
         
@@ -245,10 +186,7 @@ compile__ isPrelude contents options extraEnv doneModules =
         let when :: Bool -> (a -> a) -> a -> a
             when p f a = if p then f a else a
             ns = toplevelNames parsedModule
-            -- Need local definitions to shadow top-level definitions:
-            nonShadowedExtraEnvDefs = filterImportEnvs ns [extraEnv]
-            importEnvs = nonShadowedExtraEnvDefs ++ when isPrelude (filterImportEnvs ns) H.importEnvs
-
+            importEnvs = when isPrelude (filterImportEnvs ns) H.importEnvs
         
         -- Phase 4: Resolving operators
         resolvedModule <- 
@@ -258,12 +196,10 @@ compile__ isPrelude contents options extraEnv doneModules =
         -- Phase 5: Static checking
         (localEnv, typeSignatures, staticWarnings) <-
             doPhaseWithExit $
-               phaseStaticChecks fullName resolvedModule importEnvs options 
-
-        let localEnv' = localEnv
+               phaseStaticChecks fullName resolvedModule importEnvs options        
         
         -- Phase 6: Kind inferencing (skipped)
-        let combinedEnv = foldr combineImportEnvironments localEnv' importEnvs
+        let combinedEnv = foldr combineImportEnvironments localEnv importEnvs
         -- Phase 7: Type Inference Directives (skipped)
         let beforeTypeInferEnv = combinedEnv
         
@@ -273,79 +209,9 @@ compile__ isPrelude contents options extraEnv doneModules =
                             else NoOverloadingTypeCheck : options
         (dictionaryEnv, afterTypeInferEnv, toplevelTypes, typeWarnings) <- 
             doPhaseWithExit $ 
-               phaseTypeInferencer "." fullName resolvedModule localEnv' beforeTypeInferEnv newOptions
+               phaseTypeInferencer "." fullName resolvedModule localEnv beforeTypeInferEnv newOptions
         
         return  (dictionaryEnv, afterTypeInferEnv, toplevelTypes, typeWarnings, resolvedModule)
-
-compile''' :: Bool -> String
-         -> ImportEnvironment
-         -> Either String
-             ( String
-             )
-compile''' isPrelude txt extraEnv = unsafePerformIO $ do
-   ea <- run $ compile___ isPrelude txt [Overloading, UseTutor] extraEnv []
-   case ea of
-      Left ms -> return $ Left $ unlines ms
-      Right a -> return $ Right a 
-
--- | Like compile_ but with an extra ImportEnvironment parameter.
-compile___ :: Bool -> String -> [Option] -> ImportEnvironment -> t
-         -> Compile ( String
-                    )
-compile___ isPrelude contents options extraEnv doneModules =
-    do
-        let fullName = "Prelude"
-        
-        -- Phase 1: Lexing
-        (lexerWarnings, tokens) <- 
-            doPhaseWithExit $
-               phaseLexer fullName contents options
-        
-        -- Phase 2: Parsing
-        parsedModule <- 
-            doPhaseWithExit $
-               phaseParser fullName tokens options
-        
-        -- Phase 3: Importing
-        -- We have a static import environment
-        -- (indirectionDecls, importEnvs) <-
-        --      liftIO $ phaseImport fullName parsedModule lvmPath options
-        
-        let when :: Bool -> (a -> a) -> a -> a
-            when p f a = if p then f a else a
-            ns = toplevelNames parsedModule
-            importEnvs = when isPrelude (filterImportEnvs ns) (extraEnv:H.importEnvs)
-
-        return( show ((filterImportEnvs ns) [extraEnv]) ++ "\n\n\n" ++ show ns )
-        
-{-
-        -- Phase 4: Resolving operators
-        resolvedModule <- 
-            doPhaseWithExit $
-               phaseResolveOperators parsedModule importEnvs options
-        
-        -- Phase 5: Static checking
-        (localEnv, typeSignatures, staticWarnings) <-
-            doPhaseWithExit $
-               phaseStaticChecks fullName resolvedModule importEnvs options 
-
-        let localEnv' = localEnv
-        
-        -- Phase 6: Kind inferencing (skipped)
-        let combinedEnv = foldr combineImportEnvironments localEnv' importEnvs
-        -- Phase 7: Type Inference Directives (skipped)
-        let beforeTypeInferEnv = combinedEnv
-        
-        -- Phase 8: Type inferencing
-        let newOptions = if null [() | Shadow _ _ <- staticWarnings]
-                            then options
-                            else NoOverloadingTypeCheck : options
-        (dictionaryEnv, afterTypeInferEnv, toplevelTypes, typeWarnings) <- 
-            doPhaseWithExit $ 
-               phaseTypeInferencer "." fullName resolvedModule localEnv' beforeTypeInferEnv newOptions
-        
-        return  (dictionaryEnv, afterTypeInferEnv, toplevelTypes, typeWarnings, resolvedModule)
--}
 
 -- | Adjusted code from CompileUtils
 doPhaseWithExit :: HasMessage err => Phase err a -> Compile a
