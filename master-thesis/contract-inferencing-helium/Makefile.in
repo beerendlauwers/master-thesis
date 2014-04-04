@@ -143,6 +143,10 @@ debug: ag # revision
 	$(MKDIR) -p $(OUTDIR)
 	$(GHCI) $(HELIUMFLAGS) -i$(IDEASDIR) -i$(SRCDIR) -odir $(OUTDIR) -hidir $(OUTDIR) $(GHCWARN) $(SRCDIR)/Domain/FP/Debug.hs
 
+contract: ag # revision
+	$(MKDIR) -p $(OUTDIR)
+	$(GHCI) $(HELIUMFLAGS) -i$(IDEASDIR) -i$(SRCDIR) -odir $(OUTDIR) -hidir $(OUTDIR) $(GHCWARN) $(SRCDIR)/Domain/FP/CodeGeneration/CodeGeneration.hs
+
 revision: $(SRCDIR)/Revision.hs
 
 $(SRCDIR)/Revision.hs: $(filter-out $(SRCDIR)/Revision.hs, $(HS-SOURCES))
@@ -193,8 +197,15 @@ $(SRCDIR)/Domain/FP/SyntaxWithRanges.hs : \
 		$(SRCDIR)/Domain/FP/SyntaxWithRanges.ag
 
 	# AG Syntax
-	$(AG) -d $(SRCDIR)/Domain/FP/SyntaxWithRanges.ag
+	$(AG) -Hd $(SRCDIR)/Domain/FP/SyntaxWithRanges.ag
 	$(DERIVE) --append $(SRCDIR)/Domain/FP/SyntaxWithRanges.hs
+
+
+$(SRCDIR)/Domain/FP/CodeGeneration/CodeGeneration.hs : \
+		$(SRCDIR)/Domain/FP/CodeGeneration/CodeGeneration.ag
+
+	# Code Generation + Contract Inference
+	$(AG) -dcfswH $(SRCDIR)/Domain/FP/CodeGeneration/CodeGeneration.ag
 
 
 

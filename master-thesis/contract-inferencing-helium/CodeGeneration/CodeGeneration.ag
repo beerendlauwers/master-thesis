@@ -32,7 +32,7 @@ include "Domain/FP/ContractInferencing/Tests.ag"
 -- Include syntax transformations
 include "Domain/FP/ContractInferencing/SyntaxTransformations.ag"
 
-imports
+module {Domain.FP.CodeGeneration.CodeGeneration}{}
 {
 import qualified Domain.FP.Helium as H
 import qualified ModuleSystem.ImportEnvironment as IE
