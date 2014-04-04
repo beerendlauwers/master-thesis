@@ -1,0 +1,40 @@
+First, install Ask-Elle and FPTutor
+
+PACKAGES REQUIRED:
+==================
+Top
+pretty
+boxes
+typed-contracts (modified versions)
+bifunctors
+(I think that's all of them?)
+
+FILES
+=====
+
+Replace following files in directory src/Domain/FP:
+Helium.hs (more prettyprinting functions)
+Views.hs (casting functions syntax with ranges to Helium and back)
+Makefile.in (adds contract target)
+
+Add following files to directory src/Domain/FP:
+CodeGeneration directory
+ContractInferencing directory
+SyntaxWithRanges.ag
+SyntaxWithRangesTerm.ag
+
+RECONFIGURE
+===========
+
+Reconfigure, because the makefile changed.
+
+COMPILING
+=========
+
+Automated:
+make contract
+
+Manual compile: 
+uuagc -Hd Domain/FP/SyntaxWithRanges.ag
+derive --append Domain/FP/SyntaxWithRanges.ag 
+uuagc -dcfswH --module="Domain.FP.CodeGeneration.CodeGeneration" Domain/FP/CodeGeneration/CodeGeneration.ag

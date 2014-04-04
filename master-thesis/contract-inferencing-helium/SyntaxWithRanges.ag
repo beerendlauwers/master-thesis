@@ -5,7 +5,7 @@ optpragmas
 {-# LANGUAGE DeriveDataTypeable #-}
 }
 
-imports
+module {Domain.FP.SyntaxWithRanges}{}
 {
 import Data.Data
 }
