@@ -519,7 +519,7 @@ The algorithm itself is very much alike Algorithm \W:
 
 Stutterheim proves that the algorithm is sound with respect to the contracting rules in his thesis.
 For brevity, we do not replicate the proofs, contracting rules, unification rules nor code for Algorithm \CW ~here.
-These elements can be found in subsection 3.4 of Stutterheim's thesis \cite{Stutterheim:2013:thesis}.
+These elements can be found in section 3.4 of Stutterheim's thesis \cite{Stutterheim:2013:thesis}.
 
 %Can we refine the contract even more without risking raising an exception?
 %It appears we cannot: we have reached a fixed point for a contract that will never raise an exception, regardless of the values it is provided.
@@ -688,7 +688,8 @@ We have slightly modified the syntax used by the Ask-Elle system:
 	\item In Ask-Elle, constructors that use a list of patterns or expressions use the \code{Pats} and \code{Exprs} type synonyms, respectively. For example, expressions that describe a tuple or a list both use \code{Exprs}. However, from the viewpoint of contract inference, these expressions could not be more different! The solution is simple: tuples and lists in patterns and expressions use the type synonyms \code{ListPatsR}, \code{TuplePatsR}, \code{ListExprR} and \code{TupleExprR}. All other constructors remain unchanged.
 \end{itemize}
 
-This modified syntax can be found under Appendix A. 
+The structure of this modified syntax can be found under Appendix A.
+For an overview of the visual representation of the syntax, please refer to the Helium documentation, as code is first lexed and parsed into Helium syntax before being downcast to the Ask-Elle syntax.
 
 The syntax can be downcast to the regular Ask-Elle syntax, and partially upcast to the Helium syntax.
 
@@ -713,7 +714,7 @@ These are passed to the \textbf{code and final contract generator}.
 
 The \textbf{code and final contract generator} inspects the AST and generates a new version of the AST that incorporates contract assertions, producing a contract-annotated (or 'contracted') version of the original AST.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[trim=1cm 7cm 1cm 1cm, clip=true,scale=0.4,page=2]{systemoverview.pdf}
 \caption{An overview of the steps required to output contract-annotated code.}
@@ -2227,7 +2228,7 @@ assertPos s ext c = assert$"$ c (0, ctrtarity c) (makeloc (Def (s ++ ext)))
 
 \subsubsection{External feedback}
 
-\code{assertPos}'s purpose is twofold: to initialize the type position information, and to accept an additional feedback string \code{ext}.
+\code{assertPos}'s purpose is twofold: to initialize the type position information, and to accept an additional string \code{ext}, which is used during feedback.
 
 Because the \code{app} function is responsible for providing a location label in the form of an integer, it makes sense to define a version of \code{app} that accepts an additional feedback string instead of an integer: \code{appParam}.
 
@@ -2302,7 +2303,7 @@ instance ShowFunc (a $\rightarrow$ b) where
  showFunc rep _ = rep
 \end{lstlisting}
 
-Unfortunately, user-defined typeclasses are currently unsupported by Helium, so this technique is not applicable to us.
+We leave integrating this technique as future work.
 
 \subsubsection{Identifying a function as higher-order}
 
