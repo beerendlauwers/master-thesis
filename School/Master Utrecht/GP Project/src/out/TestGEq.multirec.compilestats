@@ -1,0 +1,160 @@
+
+multirec\CompanyReps.hs:63:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:64:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:65:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:66:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:68:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:69:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:71:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:73:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:75:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:76:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:76:12:
+    Ambiguous occurrence `D'
+    It could refer to either `MR.D',
+                             imported from Generics.MultiRec at multirec\CompanyReps.hs:11:1-35
+                          or `CompanyDatatypes.D',
+                             imported from CompanyDatatypes at multirec\CompanyReps.hs:13:1-23
+                               (defined at CompanyDatatypes.hs:9:17)
+
+multirec\CompanyReps.hs:77:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:77:78:
+    Ambiguous occurrence `D'
+    It could refer to either `MR.D',
+                             imported from Generics.MultiRec at multirec\CompanyReps.hs:11:1-35
+                          or `CompanyDatatypes.D',
+                             imported from CompanyDatatypes at multirec\CompanyReps.hs:13:1-23
+                               (defined at CompanyDatatypes.hs:9:17)
+
+multirec\CompanyReps.hs:78:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:80:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:81:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:83:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:85:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:87:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:88:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:90:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:92:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:94:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:95:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:96:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:97:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:99:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:100:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:101:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:102:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:104:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:105:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:106:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:107:5:
+    `index' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:109:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I' (imported from Generics.MultiRec),
+      `I0' (imported from Generics.MultiRec)
+
+multirec\CompanyReps.hs:110:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:112:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\CompanyReps.hs:114:5:
+    `index' is not a (visible) method of class `Ix'

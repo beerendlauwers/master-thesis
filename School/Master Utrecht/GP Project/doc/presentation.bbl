@@ -1,0 +1,27 @@
+\begin{thebibliography}{3}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Magalhães et~al.(2010)Magalhães, Dijkstra, Jeuring, and
+  Löh]{generic-deriving:2010:lib}
+José~Pedro Magalhães, Atze Dijkstra, Johan Jeuring, and Andres Löh.
+\newblock A generic deriving mechanism for {H}askell.
+\newblock ACM SIGPLAN Haskell Symposium 2010, 2010.
+
+\bibitem[Rodriguez(2009)]{Rodriguez:2009:phd}
+Alexey Rodriguez.
+\newblock \emph{Towards Getting Generic Programming Ready for Prime Time}.
+\newblock PhD thesis, Utrecht University, May 2009.
+\newblock ISBN 978-90-393-5053-9.
+
+\bibitem[Rodriguez et~al.(2008)Rodriguez, Jeuring, Jansson, Gerdes, Kiselyov,
+  and Oliveira]{Rodriguez:2008:art}
+Alexey Rodriguez, Johan Jeuring, Patrik Jansson, Alex Gerdes, Oleg Kiselyov,
+  and Bruno C. d.~S. Oliveira.
+\newblock Comparing libraries for generic programming in {H}askell.
+\newblock ACM SIGPLAN Haskell Symposium 2008, 2008.
+
+\end{thebibliography}

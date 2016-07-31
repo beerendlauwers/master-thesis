@@ -1,0 +1,25 @@
+\frametitle{Generic Deriving - Example}
+Create another class that acts as a mediator between the actual type and the generic function
+\begin{lstlisting}
+class GEq a where
+  geq :: a -> a -> Bool
+  default geq :: (Generic a, GEq' (Rep a)) => a -> a -> Bool
+  geq x y = geq' (from x) (from y)
+\end{lstlisting}
+
+Ad-hoc cases:
+\begin{lstlisting}
+instance GEq Char
+  where geq = (==)
+instance GEq Int
+  where geq = (==)
+instance GEq Float
+  where geq = (==)
+\end{lstlisting}
+
+Default cases:
+\begin{lstlisting}
+instance (GEq a) => GEq (Maybe a)
+instance (GEq a) => GEq [a]
+\end{lstlisting}
+

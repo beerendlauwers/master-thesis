@@ -1,0 +1,1 @@
+* GADT's cannot be derived (http://www.haskell.org/haskellwiki/Generics)

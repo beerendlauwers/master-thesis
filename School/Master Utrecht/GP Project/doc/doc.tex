@@ -1,0 +1,643 @@
+\documentclass[twocolumn,11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[numbers]{natbib}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{ amssymb }
+\usepackage{courier}
+\lstset{language=Haskell}
+\lstset{breaklines=true}
+\lstset{basicstyle=\scriptsize\sffamily}
+\usepackage{url}
+\usepackage{hyperref}
+
+\title{Comparing \textbf{Generic Deriving} and \textbf{Multiplate} to other Generic Programming Libraries in Haskell}
+
+\author{
+	Beerend Lauwers \and Augusto Martins \and Frank Wijmans\\
+	\{B.Lauwers, A.PassalaquaMartins, F.S.Wijmans\}@students.uu.nl\\
+	\and
+	Utrecht University, The Netherlands}
+\date{\today}
+
+\newcommand{\sref}[1]{Section~\ref{#1}}
+\newcommand{\annotate}[3]{
+	\begin{scriptsize}
+	\textcolor{#1}{\textbf{#2}~\textit{#3}}
+	\end{scriptsize}\newline}
+\newcommand{\todo}[1]{\annotate{red} {TODO:} {#1}}
+\newcommand{\review}{\annotate{blue} {REVIEW:} {Please read the following, and make improvements. \newline}}
+
+\newcommand{\multiplate}{\textcolor{black}{Multiplate}}
+\newcommand{\genericderiving}{\textcolor{black}{Generic Deriving}}
+\newcommand{\multirec}{\textcolor{black}{MultiRec}}
+\newcommand{\sufficient}{\tiny{$ \square $}}
+
+\newcommand{\citept}[1]{(\citet{#1})}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Research on datatype-generic programming in Haskell has been ongoing for over ten years, and new generic programming libraries continue to appear.
+We used an updated version of the benchmark suite by \citeauthor{Rodriguez:2008:art} to review and compare two new libraries: \multiplate\ and \genericderiving.
+Furthermore, we extended the comparison with a review of \multirec\ provided by the PhD thesis of  \citeauthor{Rodriguez:2009:phd}.
+\multiplate\ is a combination of the Uniplate and Compos libraries, which allows features of both to be used alongside each other.
+\genericderiving\ uses compiler support to automatically derive instances for its representation type and minimize boilerplate code.
+We compared these two libraries against \multirec, Scrap Your Boilerplate, Extensible Modular Generics for the Masses and Uniplate.
+\multiplate\ requires little boilerplate code compared to other libraries, and defining functions is quite elegant.
+Unfortunately, its feature set is very limited. 
+This is not the case with \genericderiving, which passes the majority of the tests.
+However, its universe size is limited by the fact that it only abstracts over a single type parameter.
+Further development of the \genericderiving\ library appears to be promising, and \multiplate\ may be of interest for fast traversal of AST-like structures.
+
+\end{abstract}
+
+\section{Introduction}
+Since the beginning of this millennium, there has been a flood of proposals for generic programming libraries in Haskell.
+As the number of libraries grew, so has the need for an answer to the following question: 
+\textit{What is the best library for a given problem?}
+
+Several articles have been published to address this question, and it continues to be relevant today. 
+In this article, we are comparing \multiplate\ and \genericderiving\ on top of the comparison done by \citet{Rodriguez:2008:tr}.
+We will follow their style and add these libraries to the comparison to further complete the overview. 
+\citet{Rodriguez:2008:tr} already compared the following libraries:
+
+\begin{itemize}
+\item Lightweight Implementation of Generics and Dynamics \citept{ligd:2002:lib} 
+\item Polytypic programming in Haskell \citept{polylib:2004:lib}
+\item Scrap your boilerplate \citept{syb:2003:lib}
+\item Scrap your boilerplate, extensible variant using typeclasses \citept{syb3:2005:lib}
+\item Scrap your boilerplate, spine view variant \citept{spine:2006:lib}
+\item Extensible and Modular Generics for the Masses \citept{emgm:2006:lib}
+\item RepLib: a library for derivable type classes \citept{replib:2006:lib}
+\item Smash your boilerplate \citept{smash:2006:lib}
+\item Uniplate \citept{uniplate:2007:lib}
+\end{itemize}
+
+We are comparing libraries that have similar workings to the new libraries. The reader is invited to read the article by our predecessors to see the comparison on the other libraries \cite{Rodriguez:2008:art}. We will compare the following libraries:
+
+\begin{itemize}
+\item \multiplate\ \citept{multiplate:2011:lib}
+\item \genericderiving\ \citept{generic-deriving:2010:lib}
+\item \multirec\ \citept{multirec:2009:lib}
+\item Scrap your boilerplate (SYB) \citept{syb:2003:lib}
+\item Extensible and Modular Generics for the Masses (EMGM) \citept{emgm:2006:lib}
+\item Uniplate \citept{uniplate:2007:lib}
+\end{itemize}
+
+SYB was chosen because it is included with GHC, and boasts a large feature set. EMGM is similar to \genericderiving\ in terms of its feature set and some internal mechanisms, and Uniplate is essentially isomorphic to \multiplate, so it is an excellent candidate for comparison.
+
+MultiRec was previously reviewed in the PhD thesis of \citet{Rodriguez:2009:phd}, of which the fourth chapter builds upon the comparison of \citet{Rodriguez:2008:art}. We shall use this chapter for our evaluation of MultiRec.
+
+We will extend the existing comparison by adding the \multiplate\ and \genericderiving\ libraries.
+Furthermore, we will update the existing benchmark suite so that it will compile and run our reviewed libraries using GHC 7.2. We leave out MultiRec's benchmark code, as it has been recently reviewed by \citet{Rodriguez:2009:phd}. The code can be found in \href{https://subversion.cs.uu.nl/repos/project.dgp-haskell.libraries/multirec/branches/Erik/examples/gpbench/}{https://subversion.cs.uu.nl/repos/project.dgp-haskell.libraries/multirec/branches/Erik/\newline examples/gpbench/}.
+
+This paper places emphasis on \multiplate\ and \genericderiving. The other libraries will not be discussed in-depth, as these discussions can be found in the previous comparison articles.
+
+The structuring of this article is as follows.
+In \sref{concepts}, we will shortly explain the concept of Generic Programming (GP) libraries, and introduce \multiplate\ and \genericderiving. 
+After that, in \sref{benchmark}, we shall explain the details about the benchmark as created by \citet{Rodriguez:2008:art}. 
+\sref{criteria} explains the criteria which we will use to evaluate the libraries in \sref{evaluation}. \sref{conclusion} concludes and suggests future work.
+
+
+\section{Concepts and terminology of Generic programming}\label{concepts}
+The goal of generic programming is to create functions that can be applied to more than one datatype.
+This is done by defining a function, for example equality, once, and then be able to use it on a larger family of datatypes.
+
+A function, defined for a family of types, is called a \textit{type-indexed function} (TIF). These can be used to create a generic function.
+The types in a family index the TIF, while a family of types are called a \textit{universe}.
+When adding new types to a universe of datatypes for which generic equality is defined, the programmer should be able to extend the universe without rewriting the generic equality function.
+So, to be able to extend a universe with new datatypes, these datatypes should be able to be described using the existing types. This is called a \textit{type representation}.
+Defining the representation of a datatype consists of two things.
+First, we have the structure of the datatype, called a \textit{structure representation}, defined from (if we use the sum-of-products view) units, sums, products, etc.
+Secondly, we have two dual functions that are often called a \textit{projection pair}. 
+These functions are usually called \textit{from} and \textit{to}, either creating a representation \textit{from} a datatype, or converting a representation \textit{to} a datatype.
+The choice of a generic view (that is, the way the structure representation is represented) often influences the expressiveness of a library.
+Some libraries use GADTs for assigning representations to datatypes. 
+Others use the sum-of-products view, where representations can consist of units, constants, sums, products and other types, such as composition and recursion representations.
+
+There are many ways to define generic functions. For example, one way is creating a class and defining instances for each of the structure representation types.
+
+
+To test a given library on the relevant aspects of generic programming, we need to specify what the usual features of such a library should be.
+The article by \citet{Rodriguez:2008:art} proposes a list of recommended features of a generic programming library. We give a short summary and advise the reader to read the aforementioned article for a more detailed overview.
+
+Before we proceed to \sref{benchmark}, we will elaborate on the generic views of \genericderiving\ and \multiplate\ in \sref{genericderivingview} and \ref{multiplateview}. For a description of the other libraries, the reader is invited to read section 4 of the PhD thesis by \citet{Rodriguez:2009:phd} .
+
+\subsection{\genericderiving}\label{genericderivingview}
+The \genericderiving\ library uses a new feature in GHC 7.2 to automatically derive instances for the $ Generic $ class, after which the datatype can be used in generic functions supported by \genericderiving. 
+It supports many datatypes, with only nested higher-kinded datatypes, datatypes with a context, existentially-quantified datatypes and GADTs being unsupported.
+
+To define a generic function, one creates a class and defines instances for each of the representation types of the universe.
+
+\begin{lstlisting}[mathescape=true]
+class GEq' f where
+  geq' :: f a $ \rightarrow $ f a $ \rightarrow $ Bool
+instance GEq' U1 where
+  geq' _ _ = True
+instance (GEq c) $ \Rightarrow $ GEq' (K1 i c) where
+  geq' (K1 a) (K1 b) = geq a b
+  
+  --Etc
+\end{lstlisting}
+Another class is then created that houses a default method which takes a value of a type and transforms it into a representation and passes it to the generic function:
+
+\begin{lstlisting}[mathescape=true]
+class GEq a where 
+  geq :: a $ \rightarrow $ a $ \rightarrow $ Bool
+  default geq :: (Generic a, GEq' (Rep a)) $ \Rightarrow $ a $ \rightarrow $ a $ \rightarrow $ Bool
+  geq x y = geq' (from x) (from y)
+\end{lstlisting}
+
+To define ad-hoc cases for a generic function, one simply overrides the default method:
+
+\begin{lstlisting}[mathescape=true]
+-- Not overridden
+instance (GEq a) $ \Rightarrow $ GEq (Maybe a)
+instance (GEq a) $ \Rightarrow $ GEq [a]
+
+-- Overridden
+instance GEq Char   
+  where geq = (==)
+instance GEq Int    
+  where geq = (==)
+instance GEq Float  
+  where geq = (==)
+\end{lstlisting}
+
+\subsection{\multiplate}\label{multiplateview}
+The \multiplate\ library is a combination of the Uniplate and the Compos libraries. 
+\citet{multiplate:2011:lib} shows that the core datatypes of Uniplate and Compos are isomorphic, allowing features of both Uniplate and Compos to be used and even combined. 
+The only compiler extension the library requires is rank-3 polymorphism.
+The library natively supports multi-type traversals for mutually recursive datatypes. 
+Uniplate requires multi-parameter type classes for this functionality. 
+Using \multiplate\ is also more intuitive compared to Uniplate when dealing with mutually recursive datatypes.
+
+To implement a generic function, one first defines a $ Plate $ record type for the mutually recursive datatype:
+
+\begin{lstlisting}
+-- Simple mutually recursive language
+ data Expr = Con Int
+           | Add Expr Expr
+           | EVar Var
+           | Let Decl Expr
+           deriving (Eq, Show)
+ 
+ data Decl = Var := Expr
+           | Seq Decl Decl
+           deriving (Eq, Show)
+ 
+ type Var = String
+\end{lstlisting}
+\begin{lstlisting}[mathescape=true]
+-- Plate record type
+ data Plate f = Plate
+            { expr :: Expr $ \rightarrow $ f Expr
+            , decl :: Decl $ \rightarrow $ f Decl
+            }
+\end{lstlisting}
+
+Then, an instance of $ Multiplate $ is defined:
+
+\begin{lstlisting}
+ instance Multiplate Plate where
+ multiplate child = Plate buildExpr buildDecl
+   where
+    buildExpr (Add e1 e2) = Add <$> expr child e1 <*> expr child e2
+    buildExpr (Let d e) = Let <$> decl child d <*> expr child e
+    buildExpr e = pure e
+    buildDecl (v := e) = (:=) <$> pure v <*> expr child e
+    buildDecl (Seq d1 d2) = Seq <$> decl child d1 <*> decl child d2
+ mkPlate build = Plate (build expr) (build decl)
+\end{lstlisting}
+
+After this, users can use the traversal functions of \multiplate\ to quickly write generic functions.
+
+\begin{lstlisting}[mathescape=true]
+-- Collect all variable names
+ varPlate :: Plate (Constant [Var])
+ varPlate = purePlate { expr = exprVars }
+  where
+   exprVars (EVar v) = Constant [v]
+   exprVars x = pure x
+   
+ collectVars :: Expr $ \rightarrow $ [Var]
+ collectVars = foldFor expr $ \$ $ preorderFold $ \$ $ varPlate
+\end{lstlisting}
+
+\section{Benchmark suite}\label{benchmark}
+
+We used the same benchmark suite as \citet{Rodriguez:2008:art}, bringing it up to date to work with our reviewed libraries in GHC 7.2. We will summarize the test cases of the benchmark suite. For details, please refer to the earlier comparison article.
+First, we will talk about the scenarios they proposed. Following that, we will elaborate on what is needed to test these scenarios.
+
+\subsection{Scenarios}
+As \citet{Rodriguez:2008:art} stated in their article, the tested libraries should support common generic programming scenarios. 
+The following scenarios were tested in the benchmark:
+
+\begin{itemize}
+\item Generic equality
+\item Generic Show
+\item Querying / Traversals
+\item Transformation functions
+\item Consumer functions
+\item Producer functions
+\end{itemize}
+From these scenarios, we further specified requirements for the details of the benchmark. 
+Firstly, we required several classes of datatypes to work with. 
+Secondly, we needed functions that work on these datatypes.
+From these two elements, we drew our conclusions and compared the libraries.
+
+\subsection{Datatypes}
+
+The datatypes used in the benchmark are realistic and have been well-chosen to complement the scenarios to be tested.
+
+Datatypes may contain the following properties:
+
+\begin{itemize}
+\item Parametrised types
+\item Simple and nested recursion
+\item Higher-kinded datatypes
+\end{itemize}
+
+Along with these classes of datatypes, there were other classes and datatype information that were not tested:
+
+\begin{itemize}
+\item Higher-rank constructors
+\item Existential types
+\item GADT's
+\item Parsing related information (record label names, constructor fixity and precedence)
+\end{itemize}
+The first three are hardly supported in any library, while the latter can be incorporated with constructor names.
+
+\subsubsection{Defined datatypes}
+The following datatypes were implemented to allow testing.
+Listed first is the datatype description, second is the name as implemented in the benchmark.
+\begin{itemize}
+\item Company mutually recursive datatype, \textit{Company}
+\item Binary trees, \textit{BinTree}
+\item Trees with weight, \textit{WTree}
+\item Generalised rose trees, \textit{GRose}
+\item Nested perfect trees, \textit{Perfect}
+\item Nested generalised rose trees, \textit{NGRose}
+\end{itemize}
+
+\subsection{Functions}
+To test the scenarios, we needed a set of functions that exhibit the required properties according to a scenario. The following functions were implemented to test all scenarios. Please note that constraints and type representation arguments have been left out for simplicity's sake.
+\begin{itemize}
+\item \textbf{Equality}\newline $ geq :: a \rightarrow a \rightarrow Bool $
+\item \textbf{Show}\newline $ gshow :: a \rightarrow String $
+\item \textbf{Querying / Traversals}\newline $ selectSalary :: a \rightarrow [Salary] $ \newline
+$ gmapQ :: (\forall a. a \rightarrow r) \rightarrow b \rightarrow [r] $
+\item \textbf{Transformation Functions}\newline $ updateSalary :: Float \rightarrow a \rightarrow a $ \newline $ rmWeights :: a \rightarrow a $ \newline $ gmap :: (a \rightarrow b) \rightarrow f a \rightarrow f b $
+\item \textbf{Consumer Functions}\newline $ crushRight :: (a \rightarrow b \rightarrow b) \rightarrow f a \rightarrow b \rightarrow b $ 
+\item \textbf{Producer Functions}\newline $ fulltree ::  Int \rightarrow [a] $ 
+\end{itemize}
+
+\section{Criteria}\label{criteria}
+
+In this section, we give an overview of the criteria that a generic programming library is subjected to. We have grouped the criteria in the same manner as \citet{Rodriguez:2008:art} for easy comparison:
+
+\subsection{Types}
+When looking at types, we make a distinction between the universe and subuniverses. 
+\begin{description}
+\item[Universe] A generic function is a function that can be applied to a certain family of types. 
+The more types a function can be used on, the larger the universe size of that function.
+It is inevitable that universes differ between libraries.
+\item[Subuniverses]
+A library supports subuniverses if it is possible to restrict a generic function to some group of datatypes.
+Types outside the group should throw a compile-time error when used on the function.
+\end{description}
+
+\subsection{Expressiveness}
+
+This group discusses the library's capabilities of defining several types of generic functions, as well as its flexibility in doing so.
+
+\begin{description}
+\item[First-class generic functions] 
+Can generic functions take a generic function as an argument?
+\item[Abstraction over type constructors] 
+Is it possible to apply a generic function to an arbitrary container type? In other words, can generic map and generic fold be defined?
+\item[Separate compilation] 
+Does the library have to be recompiled for universe extension?
+\item[Ad-hoc definitions] 
+Can we define specific behaviour for particular datatypes or constructors?
+\item[Extensibility] 
+Can the programmer non-generically extend the universe of a generic function in a different module?
+\item[Multiple arguments] Can a generic function have more than one generic argument?
+\item[Constructor names] Can the library provide constructor metadata?
+\item[Consumers, transformers and producers] 
+Is the approach capable of defining generic functions that are of signature $ (a \rightarrow T) $, $ (a \rightarrow a) $, $ (a \rightarrow b) $ and $ (T \rightarrow a) $?
+\end{description}
+
+\subsection{Usability}
+
+When trying to find out what generic programming library one wants to use, usability will be a very important criterion. Consequently, we have included several criteria that gauge the overall usability of a library. We have left out the performance criterion, as we believe an in-depth comparison would be out of the scope of this article, while a shallow comparison does not accurately portray the strengths and weaknesses of each library, performance-wise.
+\begin{description}
+\item[Portability] 
+How many compiler extensions does a library require, and how common are they?
+\item[Overhead of use] 
+How much time must a user invest before he is able to make use of the library's features? This criterion is subdivided into the following subcriteria:
+\begin{itemize}
+\item \textit{Automatic generation of representations}: Can type representations be generated automatically?
+\item \textit{Number of structure representations}: Having many structure representations may influence the amount of work a user must do to create a generic function.
+\item \textit{Work to instantiate a generic function}: How much code must be written in order to use a generic function?
+\item \textit{Work to define a generic function}: How much code must be written to define a new generic function?
+\end{itemize}
+\item[Practical aspects] 
+How well is the library and its documentation maintained?
+\item[Ease of learning and use] 
+How difficult is it to understand the library's functionalities and mechanisms?
+\end{description}
+
+\subsection{Design Choices}
+
+Depending on how a library is designed, some functionalities or features may require extra work to implement, or even be impossible to express in the library.
+Hence, analysing a library's internal workings also yields valuable information.
+\begin{description}
+\item[Implementation mechanisms] 
+How are types represented in the library, and what limitations does that impose?
+\item[Views] 
+What views does the library support? 
+As an example, the sum-of-products view is an often-supported view in generic programming libraries.
+\end{description}
+
+\section{Evaluation Summary}\label{evaluation}
+We have ordered the benchmark results in the same manner as \citet{Rodriguez:2008:art} to facilitate further comparison. 
+Annex table 1 shows an overview of the comparison results.
+Furthermore, we explain in detail the evaluation of the different libraries and compare them in the rest of this section.
+
+\begin{table*}[ht]
+
+\begin{tabular}{l | c c c c c c}
+& \begin{tiny}
+SYB
+\end{tiny} & \begin{tiny}
+EMGM
+\end{tiny} & \begin{tiny}
+Uniplate
+\end{tiny} & \begin{tiny}
+Multiplate
+\end{tiny} & \begin{tiny}
+Multirec
+\end{tiny} & \begin{tiny}
+Generic Deriving
+\end{tiny} \\
+\hline
+Universe Size & & & & & & \\
+\begin{small}
+Regular datatypes
+\end{small} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $\bullet$ & $ \bullet $ \\
+\begin{small}
+Higher-kinded datatypes
+\end{small} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+\begin{small}
+Nested datatypes
+\end{small} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+\begin{small}
+Nested \& higher-kinded
+\end{small} & $ \circ $ & \sufficient & $ \circ $ & $ \circ $ & $ \circ $ & $ \circ $ \\
+\begin{small}
+Mutually recursive
+\end{small} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Subuniverses & $ \circ $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+\hline
+First-class generic functions & $ \bullet $ & \sufficient & $ \circ $ & $ \circ $ & $ \circ $ & $ \circ $ \\
+Abstraction over type constructors & $ \circ $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+Separate compilation & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Ad-hoc definitions for datatypes & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & \sufficient & $ \bullet $ \\
+Ad-hoc definitions for constructors & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Extensibility & $ \circ $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+Multiple arguments & \sufficient & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+Constructor names & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+Consumers & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Transformers & $ \bullet $ & $ \bullet $ & $ \bullet $ & \sufficient & $ \bullet $ & $ \bullet $ \\
+Producers & \sufficient & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+\hline
+Portability & $ \circ $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \bullet $ \\
+Overhead of library use & & & & & &  \\
+\begin{small}
+Automatic generation of representations
+\end{small} & $ \bullet $ & $ \circ $ & $ \bullet $ & $ \circ $ & \sufficient & \sufficient \\
+\begin{small}
+Number of structure representations
+\end{small} & $ 2 $ & $ 4 $ & $ 1 $ & $ 1 $ & $ 1 $ & $ 2 $ \\
+\begin{small}
+Work to instantiate a generic function
+\end{small} & $ \bullet $ & \sufficient & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+\begin{small}
+Work to define a generic function
+\end{small} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Practical aspects & $ \bullet $ & $ \circ $ & $ \bullet $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+Ease of learning and use & $ \circ $ & \sufficient & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \bullet $ \\
+\hline
+& \begin{tiny}
+SYB
+\end{tiny} & \begin{tiny}
+EMGM
+\end{tiny} & \begin{tiny}
+Uniplate
+\end{tiny} & \begin{tiny}
+Multiplate
+\end{tiny} & \begin{tiny}
+Multirec
+\end{tiny} & \begin{tiny}
+Generic Deriving
+\end{tiny} \\
+\end{tabular}
+\small
+$ \bullet $ - Library supports this criterion. \\
+\tiny{$\square$}\small\ - Library partially supports this criterion or requires extra programming effort. \\
+$ \circ $ - Library does not support this criterion.
+\caption{Evaluation of generic programming libraries}
+\end{table*}
+
+
+
+\subsection{Universe Size}
+It was unclear as to how higher-kinded datatypes and nested datatypes could be defined in \multiplate, even though Uniplate supports nested datatypes, and higher-kinded types with extra programming effort.
+For that reason, \multiplate\ scores sufficient.
+
+\genericderiving's universe is about the same size as SYB's and Uniplate's: it is able to represent nearly all tested datatypes.
+Only nested higher-kinded datatypes cannot be represented, as the library's representation only abstracts over a parameter of kind $ \star $ (\citet{generic-deriving:2010:lib}).
+This also means that datatypes with multiple parameters require extra work to be implemented, and the available generic functions will be less useful for these datatypes.
+\genericderiving\ also scores sufficient.
+
+MultiRec cannot represent higher-kinded datatypes as well as nested datatypes, but supports all other datatypes properly.
+It scores sufficient as well.
+
+\subsection{Subuniverses}
+Uniplate, \multiplate\ and MultiRec do not support subuniverses as proposed in the benchmark of the comparison paper.
+
+Like EMGM, the \genericderiving\ library supports subuniverses through generic functions that are only applicable to types that instantiate the class of the generic function.
+So, it gets the same score as EMGM.
+
+\subsection{First-class generic functions}
+In \multiplate, like in Uniplate, it is not clear how $ gmapQ $ could be implemented and for the moment it is marked as unsupported in the results.
+
+MultiRec also does not support first-class generic functions.
+
+The authors of \genericderiving\ noted that $ gfoldl $ cannot be expressed in their library yet, which made defining $ gmapQ $ unclear.
+They have declared that they will continue to investigate in order to support $ gfoldl $ and other generic functions.
+Therefore, first-class generic functions are not marked as supported.
+
+\subsection{Abstraction over type constructors}
+\multiplate\ only represents types of kind $ \star $.
+Hence, it does not support $ gmap $ or $ crushRight $ and has a bad score.
+
+\genericderiving\ includes the definition of $ gmap $, and defining  $ crushRight $ was mainly trivial, with only composition being harder to define.
+In the end, composition was left out, as it narrowed down the possible functions that could work with $ crushRight $.
+The library scores well.
+
+MultiRec does not support this criterion.
+
+\subsection{Separate Compilation}
+Just like Uniplate, \multiplate\ supports generic universe extension.
+\multiplate\ does so by defining a $ Plate $ for the datatype, which can then be used in the generic traversal functions.
+
+In \genericderiving, it is possible to extend the universe using the $ Generic $ and $ Generic1 $ classes.
+
+MultiRec uses the same mechanism.
+
+\subsection{Ad-hoc definitions for datatypes}
+\multiplate\ easily supports ad-hoc cases for certain datatypes through the function $ purePlate $, which is used to build a $ Plate $ that does nothing.
+This $ Plate $ can then be updated on a per-record basis:
+
+\begin{lstlisting}[mathescape=true]
+purePlate :: (Multiplate p, Applicative f) $ \Rightarrow $ p f
+purePlate = mkPlate (\_ $ \rightarrow $ pure)
+
+updatedPlate = purePlate 
+ { expr = (\ x $ \rightarrow $ Constant [x]) }
+\end{lstlisting}
+The library scores well.
+
+As in EMGM, \genericderiving\ defines ad-hoc cases in instance declarations which allow for extensible generic functions.
+
+MultiRec does case-analysis on the type representation to achieve ad-hoc behaviour, but for polymorphic types, multiple redundant datatypes are required.
+Thus, it only scores sufficient.
+
+\subsection{Ad-hoc definitions for constructors}
+In all six compared libraries, it is possible to implement $ rmWeights $, which is the test case for the ad-hoc definition for constructors.
+
+\subsection{Extensibility}
+\multiplate, like Uniplate, does not support exensible generic functions, nor does MultiRec.
+
+The \genericderiving\ library supplies an ad-hoc case of the $ gshow $ generic function for lists, and thus is marked as extensible.
+
+\subsection{Multiple Arguments}
+It was unclear how to write a generic equality function for \multiplate.
+Thus, it scores bad.
+
+\genericderiving\ and \multirec\ support the generic equality function.
+
+\subsection{Constructor Names}
+All libraries except for \multiplate\ and Uniplate support constructor metadata in their representations.
+
+\subsection{Consumers, transformers, and producers.}
+The \multiplate\ library does not contain any means for writing producer functions.
+It is, however, possible to write transformer and consumer functions in it.
+
+The \genericderiving\ and \multirec\ libraries support functions in all three categories.
+
+\subsection{Portability}
+\multiplate\ only requires rank-3 polymorphism, but the author has declared that it might be possible to bring it down to rank-2 polymorphism (\citet{multiplate:2011:lib}).
+We have marked it as portable.
+
+Uniplate is able to be defined in Haskell 98, but requires multi-parameter type classes to implement multi-type traversals.
+
+\genericderiving\ only requires multi-parameter type classes, but automatic deriving of the $ Generic $ type is supported by the GHC compiler as of 7.2.
+Using \genericderiving\ in other compilers (or compiler versions) may be possible, but will result in extra work.
+% Compare this with EMGM's requirement for multi-parameter type classes, and SYB's use of compiler support for its $ Data $ and $ Typeable $ instances.
+MultiRec makes extensive use of GADTs and also uses type families to map datatypes to their corresponding representations.
+Overall, Uniplate, EMGM and \genericderiving\ are the most portable.
+
+\textbf{Overhead of library use}
+\begin{itemize}
+\item \textit{Automatic generation of representations:} While \multiplate\ currently does not contain any means of automatic generation, it should be trivial to generate the $ Plate $ record type for a datatype using Template Haskell.
+But for the moment, it scores bad.
+
+For \genericderiving, the $ Generic $ type can be automatically derived by the GHC compiler as of version 7.2, and the $ Generic1 $ type could also be generated through Template Haskell, but this is not yet included.
+It scores sufficient.
+
+MultiRec is equipped with automatic generation of representations, but generation fails for polymorphic types, so it scores sufficient.
+
+\item \textit{Number of structure representations:} The \multiplate\ library only requires a single representation, namely the $ Plate $ representation.
+MultiRec also only requires a single representation.
+
+\genericderiving\ has two representations: $ Generic $ and $ Generic1 $. $ Generic $ is currently automatically derived.
+
+\item \textit{Work to instantiate a generic function:} The only boilerplate code that must be written in \multiplate\ is the $ Plate $ record type for a datatype and an instance of that datatype for the $ Multiplate $ class.
+\genericderiving\ uses an implicit representation, and, like EMGM, requires an instance declaration per function per datatype.
+Due to default class methods, this is hardly extra overhead, so the library scores well on this criterion.
+MultiRec also scores well, as it allows direct use of a generic function on a type.
+
+\item \textit{Work to define a generic function:} The \multiplate\ library scores well on this criterion, as only a $ Plate $ record with functions has to be defined.
+
+In \genericderiving, the amount of work required to write a generic function is nearly equivalent to EMGM's, and MultiRec also requires a low amount of ``encoding work'' to be done, so these libraries do well in this criterion.
+\end{itemize}
+
+\subsection{Practical aspects}
+All libraries are available online via Hackage.
+The \multiplate\ library is in a very early state and appears to be no longer actively maintained, as the last update is dated nearly a year ago.
+It has a bad score on this aspect.
+
+On the other hand, \genericderiving\ is still activelly developed and maintained, and has several pre-defined generic functions available.
+It receives a good score for this criterion.
+
+The MultiRec library also scores well here, as it is well maintained and documentation is available online.
+
+\subsection{Implementation mechanisms}
+\multiplate\ uses a novel way of encoding as datatype, namely via a $ Plate $ record type.\
+It also uses this record type to define update functions on the datatype, as well as collection functions.
+
+Like EMGM, \genericderiving\ uses type classes to define its functionalities.
+
+MultiRec uses type families to map types to structure representations.
+These representations are then associated to individual datatypes by means of multi-parameter type classes.
+
+\subsection{View}
+In the same spirit as Uniplate, the core of the \multiplate\ library is the $ multiplate $ function, which, given a $ Plate $ of functions over some applicative functor f, creates a new $ Plate $ that applies those functions to the children of each datatype in the plate.
+
+% TODO: Perhaps explain this better?
+\genericderiving\ uses the often-employed sum-of-products view, and because it abstracts over a single type parameter, it can handle composition in a more effective manner.
+
+MultiRec extends PolyP's fixed point view to represent systems of mutually recursive datatypes.
+
+\subsection{Ease of learning and use}
+Because \multiplate\ is currently a very small library, there are not many functions available.
+However, the basic concept of converting a datatype into a $ Plate $ record type is relatively painless, especially so for mutually recursive datatypes.
+
+Although \genericderiving\ uses type classes, it keeps complexity down through automated deriving and default class signatures.
+
+Like SYB, MultiRec suffers from a large number of implementation mechanisms, which may confuse new users as to how they all work together.
+
+\section{Conclusions and future work}\label{conclusion}
+Both \multiplate\ and \genericderiving\ are very recent libraries, both of them originating at around the end of 2010.
+Because \multiplate\ was a side project of its creator, it is not actively maintained at the moment.
+It could serve instead as an interesting starting point for a library specialized in mutually recursive datatypes, with ease of use and a minimal amount of boilerplate code as its main strengths.
+\genericderiving\ is being maintained by its creator, and already boasts an impressive feature set.
+Unfortunately, it is limited to a single abstract type parameter, which limits its universe size.
+The author has mentioned that he will continue to enhance the library to support even more generic functions and datatypes while keeping complexity at a minimum.
+
+MultiRec's feature set is larger than that of \multiplate's, but it is also more complex.
+Additionally, MultiRec may be significantly slower than \multiplate\ if we extrapolate Uniplate's performance to \multiplate.
+Test results of all three libraries performing on a large AST will most certainly prove interesting.
+
+We noticed that neither previous articles (\citet{Rodriguez:2008:art} and \citet{Rodriguez:2009:phd}) did an in-depth performance comparison of all libraries.
+As the feature sets of generic programming libraries continue to grow, performance may become an important discerning criterion.
+We leave such a comparison as future work.
+
+Growth of the libraries' feature sets also implies a need for greater granularity of comparison criteria. 
+Hence, for future benchmarking, it may be worthwhile to expand the criteria, as it is certain that generic programming research opportunities are long from exhausted.
+
+\section{Acknowledgements}
+We would like to thank Sean Leather for his guidance in the quickly-evolving world of generic programming and helping us decide which libraries to review.
+We also thank José Pedro Magalhães for his help and suggestions in implementing the benchmark code for the \genericderiving\ library, and Sjoerd Visscher's \multiplate\ code was a great help for implementing the benchmark code for that library.
+
+\bibliographystyle{unsrtnat}
+\bibliography{doc}
+
+\end{document}

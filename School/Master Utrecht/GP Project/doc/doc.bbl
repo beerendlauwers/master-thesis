@@ -1,0 +1,97 @@
+\begin{thebibliography}{15}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Rodriguez et~al.(2008{\natexlab{a}})Rodriguez, Jeuring, Jansson,
+  Gerdes, Kiselyov, and Oliveira]{Rodriguez:2008:art}
+Alexey Rodriguez, Johan Jeuring, Patrik Jansson, Alex Gerdes, Oleg Kiselyov,
+  and Bruno C. d.~S. Oliveira.
+\newblock Comparing libraries for generic programming in {H}askell.
+\newblock ACM SIGPLAN Haskell Symposium 2008, 2008{\natexlab{a}}.
+
+\bibitem[Rodriguez(2009)]{Rodriguez:2009:phd}
+Alexey Rodriguez.
+\newblock \emph{Towards Getting Generic Programming Ready for Prime Time}.
+\newblock PhD thesis, Utrecht University, May 2009.
+\newblock ISBN 978-90-393-5053-9.
+
+\bibitem[Rodriguez et~al.(2008{\natexlab{b}})Rodriguez, Jeuring, Jansson,
+  Gerdes, Kiselyov, and Oliveira]{Rodriguez:2008:tr}
+Alexey Rodriguez, Johan Jeuring, Patrik Jansson, Alex Gerdes, Oleg Kiselyov,
+  and Bruno C. d.~S. Oliveira.
+\newblock Comparing libraries for generic programming in {H}askell.
+\newblock Technical Report UU-CS-2008-010, Utrecht University,
+  2008{\natexlab{b}}.
+
+\bibitem[Cheney and Hinze(2002)]{ligd:2002:lib}
+James Cheney and Ralf Hinze.
+\newblock Lightweight {I}mplementation of {G}enerics and {D}ynamics ({LIGD}).
+\newblock Haskell'02, ACM, 2002.
+\newblock DOI: 10.1145/581690.581698.
+
+\bibitem[Norell and Jansson(2004)]{polylib:2004:lib}
+Ulf Norell and Patrik Jansson.
+\newblock Polytypic programming in {H}askell ({P}oly{L}ib).
+\newblock \emph{IFL'03}, volume 3145 of LNCS, pages 168-184, 2004.
+
+\bibitem[Lämmel and Peyton~Jones(2003)]{syb:2003:lib}
+Ralf Lämmel and Simon Peyton~Jones.
+\newblock Scrap your boilerplate: a practical approach to generic programming.
+\newblock ACM SIGPLAN TLDI'03, 2003.
+
+\bibitem[Lämmel and Peyton~Jones(2005)]{syb3:2005:lib}
+Ralf Lämmel and Simon Peyton~Jones.
+\newblock Scrap your boilerplate with class: extensible generic functions.
+\newblock ACM SIGPLAN ICFP'05, pages 204-215, 2005.
+
+\bibitem[Hinze and Löh(2006)]{spine:2006:lib}
+Ralf Hinze and Andres Löh.
+\newblock "{S}crap your boilerplate" revolutions.
+\newblock \emph{MPC'06}, volume 4014 of LNCS, pages 180-208, 2006.
+
+\bibitem[Oliveira et~al.(2006)Oliveira, Hinze, and Löh]{emgm:2006:lib}
+Bruno C. d.~S. Oliveira, Ralf Hinze, and Andres Löh.
+\newblock Extensible and {M}odular {G}enerics for the {M}asses.
+\newblock \emph{Trends in Functional Programming}, pages 168--184, 2006.
+
+\bibitem[Weirich(2006)]{replib:2006:lib}
+Stephanie Weirich.
+\newblock Rep{L}ib: a library for derivable type classes.
+\newblock Haskell'06, ACM, 2006.
+\newblock DOI: 10.1145/1159842.1159844.
+
+\bibitem[Kiselyov(2006)]{smash:2006:lib}
+Oleg Kiselyov.
+\newblock Smash your boilerplate without class and typeable.
+\newblock http://article.gmane.org/gmane.comp.lan \newline
+  g.haskell.general/14086, 2006.
+
+\bibitem[Mitchell and Runciman(2007)]{uniplate:2007:lib}
+Neil Mitchell and Colin Runciman.
+\newblock Uniform boilerplate and list processing.
+\newblock Haskell'07, ACM, 2007.
+
+\bibitem[O'Connor(2011)]{multiplate:2011:lib}
+Russell O'Connor.
+\newblock Functor is to {L}ens as {A}pplicative is to {B}iplate: {I}ntroducing
+  {M}ultiplate.
+\newblock ACM SIGPLAN WGP'11, 2011.
+
+\bibitem[Magalhães et~al.(2010)Magalhães, Dijkstra, Jeuring, and
+  Löh]{generic-deriving:2010:lib}
+José~Pedro Magalhães, Atze Dijkstra, Johan Jeuring, and Andres Löh.
+\newblock A generic deriving mechanism for {H}askell.
+\newblock ACM SIGPLAN Haskell Symposium 2010, 2010.
+
+\bibitem[Rodriguez et~al.(2008{\natexlab{c}})Rodriguez, Holdermans, Löh, and
+  Jeuring]{multirec:2009:lib}
+Alexey Rodriguez, Stefan Holdermans, Andres Löh, and Johan Jeuring.
+\newblock Generic programming with fixed points for mutually recursive
+  datatypes.
+\newblock Technical Report UU-CS-2008-019, Utrecht University,
+  2008{\natexlab{c}}.
+
+\end{thebibliography}

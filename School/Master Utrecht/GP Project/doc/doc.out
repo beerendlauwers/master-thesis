@@ -1,0 +1,33 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Concepts and terminology of Generic programming}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Generic Deriving}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Multiplate}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{Benchmark suite}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Scenarios}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Datatypes}{section.3}% 7
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Defined datatypes}{subsection.3.2}% 8
+\BOOKMARK [2][-]{subsection.3.3}{Functions}{section.3}% 9
+\BOOKMARK [1][-]{section.4}{Criteria}{}% 10
+\BOOKMARK [2][-]{subsection.4.1}{Types}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.2}{Expressiveness}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.3}{Usability}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.4}{Design Choices}{section.4}% 14
+\BOOKMARK [1][-]{section.5}{Evaluation Summary}{}% 15
+\BOOKMARK [2][-]{subsection.5.1}{Universe Size}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.2}{Subuniverses}{section.5}% 17
+\BOOKMARK [2][-]{subsection.5.3}{First-class generic functions}{section.5}% 18
+\BOOKMARK [2][-]{subsection.5.4}{Abstraction over type constructors}{section.5}% 19
+\BOOKMARK [2][-]{subsection.5.5}{Separate Compilation}{section.5}% 20
+\BOOKMARK [2][-]{subsection.5.6}{Ad-hoc definitions for datatypes}{section.5}% 21
+\BOOKMARK [2][-]{subsection.5.7}{Ad-hoc definitions for constructors}{section.5}% 22
+\BOOKMARK [2][-]{subsection.5.8}{Extensibility}{section.5}% 23
+\BOOKMARK [2][-]{subsection.5.9}{Multiple Arguments}{section.5}% 24
+\BOOKMARK [2][-]{subsection.5.10}{Constructor Names}{section.5}% 25
+\BOOKMARK [2][-]{subsection.5.11}{Consumers, transformers, and producers.}{section.5}% 26
+\BOOKMARK [2][-]{subsection.5.12}{Portability}{section.5}% 27
+\BOOKMARK [2][-]{subsection.5.13}{Practical aspects}{section.5}% 28
+\BOOKMARK [2][-]{subsection.5.14}{Implementation mechanisms}{section.5}% 29
+\BOOKMARK [2][-]{subsection.5.15}{View}{section.5}% 30
+\BOOKMARK [2][-]{subsection.5.16}{Ease of learning and use}{section.5}% 31
+\BOOKMARK [1][-]{section.6}{Conclusions and future work}{}% 32
+\BOOKMARK [1][-]{section.7}{Acknowledgements}{}% 33

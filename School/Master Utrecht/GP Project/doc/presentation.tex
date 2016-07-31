@@ -1,0 +1,525 @@
+\documentclass[10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{natbib}
+\usetheme{Antibes}
+\lstset{language=Haskell}
+\lstset{breaklines=true}
+\lstset{basicstyle=\scriptsize}
+
+\newcommand{\newblock}{}
+\newcommand{\sufficient}{\tiny{$ \square $}}
+
+\author{
+	Beerend Lauwers\\
+	\and 
+	Augusto Martin\\	
+	\and
+	Frank Wijmans\newline\\
+	\hbox{\{B.Lauwers, A.PassalaquaMartins, F.S.Wijmans\}@students.uu.nl}
+	\and
+	\newline Utrecht University, The Netherlands}
+\date{\today}
+
+\title{Comparing \textbf{Generic-Deriving} and \textbf{Multiplate} to other Generic Programming Libraries in Haskell}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Introduction}
+\subsection*{Motivation}
+\begin{frame}
+Our main motivation for this project was:
+
+How well do \textbf{Generic-Deriving} and \textbf{Multiplate} compare to other Generic Programming Libraries?
+\end{frame}
+
+\subsection*{Previously compared libraries}
+
+\begin{frame}{Libraries}
+The GP Bench discussed on \citet{Rodriguez:2008:art} already presents comparison of the following libraries:
+\begin{small}
+\begin{itemize}
+\item \textbf{Lightweight Impl. of Generics and Dynamics} (LIGD)
+\item \textbf{Polytypic programming in Haskell} (PolyLib)
+\item \textbf{Scrap your boilerplate} (SYB)
+\item \textbf{SYB, spine view variant} (Spine)
+\item \textbf{SYB, extensible variant using typeclasses} (SYB3)
+\item \textbf{Extensible and Modular Generics for the Masses} (EMGM)
+\item \textbf{RepLib}
+\item \textbf{Smash your boilerplate} (Smash)
+\item \textbf{Uniplate}
+\end{itemize}
+\end{small}
+Also, there is similar comparison information available about MultiRec in the PhD thesis of \citet{Rodriguez:2009:phd}.
+\end{frame}
+
+\begin{frame}{Project implementation}
+To answer the question, we added Multiplate and Generic--Deriving to the GP Bench code used by \citet{Rodriguez:2008:art}.
+
+We also updated the benchmark code and a subset of the libraries to work with \textbf{GHC 7.2.1}.
+
+Namely, we updated the following libraries:
+\begin{itemize}
+\item \textbf{Scrap your boilerplate} (SYB)
+\begin{itemize}
+\item Included with GHC
+\end{itemize}
+\item \textbf{Extensible and Modular Generics for the Masses} (EMGM)
+\begin{itemize}
+\item Similar to generic-deriving
+\end{itemize}
+\item \textbf{Uniplate}
+\begin{itemize}
+\item Similar to Multiplate
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Multiplate}
+\begin{frame}{Multiplate}
+
+\begin{itemize}
+	\item Combination of Uniplate and Compos
+	\item Native support for multi-type traversals for mutually recursive datatypes
+	\item Only requires rank-3 polymorphism extension
+\end{itemize}
+
+\end{frame}
+
+\subsubsection*{Example}
+\begin{frame}[fragile]{Multiplate - Example}
+
+\begin{lstlisting}
+-- Simple mutually recursive language
+ data Expr = Con Int
+           | Add Expr Expr
+           | EVar Var
+           | Let Decl Expr
+           deriving (Eq, Show)
+ 
+ data Decl = Var := Expr
+           | Seq Decl Decl
+           deriving (Eq, Show)
+ 
+ type Var = String
+\end{lstlisting}
+
+Define a $ Plate $ record type:
+\begin{lstlisting}
+-- Plate record type
+ data Plate f = Plate
+            { expr :: Expr -> f Expr
+            , decl :: Decl -> f Decl
+            }
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Multiplate - Example}
+Define an instance of $ Multiplate $ :
+\begin{lstlisting}
+ instance Multiplate Plate where
+ multiplate child = Plate buildExpr buildDecl
+   where
+    buildExpr (Add e1 e2) = Add <$> expr child e1 <*> expr child e2
+    buildExpr (Let d e) = Let <$> decl child d <*> expr child e
+    buildExpr e = pure e
+    buildDecl (v := e) = (:=) <$> pure v <*> expr child e
+    buildDecl (Seq d1 d2) = Seq <$> decl child d1 <*> decl child d2
+ mkPlate build = Plate (build expr) (build decl)
+\end{lstlisting}
+
+Boilerplate's done! Example traversal function:
+
+\begin{lstlisting}
+-- Collect all variable names
+ varPlate :: Plate (Constant [Var])
+ varPlate = purePlate { expr = exprVars }
+  where
+   exprVars (EVar v) = Constant [v]
+   exprVars x = pure x
+   
+ collectVars :: Expr -> [Var]
+ collectVars = foldFor expr $ preorderFold $ varPlate
+\end{lstlisting}
+
+\end{frame}
+
+\subsection{Generic--Deriving}
+\begin{frame}{Generic--Deriving}
+
+\begin{itemize}
+	\item Uses $ DeriveGeneric $ and $ DefaultSignatures $ introduced in GHC 7.2
+	\item Very little boilerplate code required
+	\item Drawback: only abstracts over single type parameter
+\end{itemize}
+
+\end{frame}
+
+\subsubsection*{Example}
+\begin{frame}[fragile]{Generic Deriving - Example}
+Create a class that acts upon the structure representation:
+\begin{lstlisting}
+class GEq' f where
+  geq' :: f a -> f a -> Bool
+
+instance GEq' U1 where
+  geq' _ _ = True
+
+instance (GEq c) => GEq' (K1 i c) where
+  geq' (K1 a) (K1 b) = geq a b
+
+instance (GEq' a) => GEq' (M1 i c a) where
+  geq' (M1 a) (M1 b) = geq' a b
+
+instance (GEq' a, GEq' b) => GEq' (a :+: b) where
+  geq' (L1 a) (L1 b) = geq' a b
+  geq' (R1 a) (R1 b) = geq' a b
+  geq' _      _      = False
+
+instance (GEq' a, GEq' b) => GEq' (a :*: b) where
+  geq' (a1 :*: b1) (a2 :*: b2) = geq' a1 a2 && geq' b1 b2
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Generic Deriving - Example}
+Create another class that acts as a mediator between the actual type and the generic function
+\begin{lstlisting}
+class GEq a where 
+  geq :: a -> a -> Bool
+  default geq :: (Generic a, GEq' (Rep a)) => a -> a -> Bool
+  geq x y = geq' (from x) (from y)
+\end{lstlisting}
+
+Ad-hoc cases:
+\begin{lstlisting}
+instance GEq Char   
+  where geq = (==)
+instance GEq Int    
+  where geq = (==)
+instance GEq Float  
+  where geq = (==)
+\end{lstlisting}
+
+Default cases:
+\begin{lstlisting}
+instance (GEq a) => GEq (Maybe a)
+instance (GEq a) => GEq [a]
+\end{lstlisting}
+
+\end{frame}
+
+\section{Evaluation criteria}
+\begin{frame}{Evaluation criteria}
+
+We evaluated the following criteria:
+\begin{description}
+\item[Types]
+\begin{itemize}
+\item Universe
+\begin{itemize}
+\item \textit{Which datatype classes are supported?}
+\end{itemize}
+\item Subuniverses
+\begin{itemize}
+\item \textit{Can generic functions be limited to certain datatypes?}
+\end{itemize}
+\end{itemize}
+\end{description}
+
+\begin{description}
+\item[Expressiveness]
+\begin{itemize}
+\item First-class functions
+\begin{itemize}
+\item \textit{Can a generic function be passed to another generic function?}
+\end{itemize}
+\item Abstraction over type constructors 
+\begin{itemize}
+\item \textit{Is it possible to define generic map and generic fold functions?}
+\end{itemize}
+\item Separate compilation
+\begin{itemize}
+\item \textit{Do you have to recompile the library to extend the universe?}
+\end{itemize}
+\end{itemize}
+\end{description}
+
+\end{frame}
+\begin{frame}{Evaluation criteria (Cont.)}
+	
+	We evaluated the following criteria:
+\begin{description}
+\item[Expressiveness]
+\begin{itemize}
+\item Ad-hoc definitions for constructors/datatypes	
+\begin{itemize}
+\item \textit{Is datatype-specific (non-generic) behaviour possible in a generic function?}
+\end{itemize}
+\item Extensibility
+\begin{itemize}
+\item \textit{Can you (non-generically, so ad-hoc required) extend a generic function in a different module?}
+\end{itemize}
+\item Multiple arguments
+\begin{itemize}
+\item \textit{Can a generic function have multiple generic arguments?}
+\end{itemize}
+\item Constructor names
+\begin{itemize}
+\item \textit{Can you add metadata to a type representation?}
+\end{itemize}
+\item Consumers, transformers and producers
+\begin{itemize}
+\item \textit{Can you define functions of types $ (a \rightarrow T) $, $ ( a \rightarrow a ) $, $ ( a \rightarrow b ) $ and , $ ( T \rightarrow a ) $?}
+\end{itemize}
+\end{itemize}
+\end{description}
+\end{frame}
+\begin{frame}{Evaluation criteria (Cont.)}
+	
+	We evaluated the following criteria:
+\begin{description}
+\item[Usability]
+\begin{itemize}
+\item Portability
+\begin{itemize}
+\item \textit{How many compiler extensions does the library require and how common are they?}
+\end{itemize}
+\item Overhead of library use
+\begin{itemize}
+\item \textit{How much code do you have to write to get a type representation / generic function / generic function instance?}
+\end{itemize}
+\item Practical aspects
+\begin{itemize}
+\item \textit{How well is the library and its documentation maintained?}
+\end{itemize}
+\item Ease of learning/use.
+\begin{itemize}
+\item \textit{How difficult is it to understand the library's functionalities and mechanisms?}
+\end{itemize}
+\end{itemize}
+\end{description}
+
+\begin{description}
+\item[Design Choices]
+\begin{itemize}
+\item Implementation mechanisms
+\begin{itemize}
+\item \textit{How are types represented at runtime?}
+\end{itemize}
+\item Views
+\begin{itemize}
+\item \textit{Which views does the library support (e.g. sum-of-products)?}
+\end{itemize}
+\end{itemize}
+\end{description}
+
+\end{frame}
+
+\section{Comparison results}
+
+\begin{frame}{Multiplate results}
+
+(Only criteria with noteworthy results are discussed.)
+\begin{description}
+\item[Types]
+\begin{itemize}
+\item \textbf{Universe}: Defining nested datatypes was unclear
+\end{itemize}
+\end{description}
+
+\begin{description}
+\item[Expressiveness]
+\begin{itemize}
+\item \textbf{Separate compilation}: Supported through defining a $ Plate $ record type
+\item \textbf{Ad-hoc definitions for constructors and datatypes}: Support via $ purePlate $ 
+\item \textbf{Consumers, transformers and producers}: Does not support producer functions
+\end{itemize}
+\end{description}
+
+\begin{description}
+\item[Usability]
+\begin{itemize}
+\item \textbf{Portability}: Only rank-3 polymorphism required (could be brought down to rank-2 polymorphism)
+\item \textbf{Overhead of library use}
+\begin{itemize}
+\item \textbf{Automatic generation of representations}: Unsupported, but possible through TH
+\item \textbf{Work to instantiate a generic function}: Little compared to other libraries
+\end{itemize}
+\item \textbf{Practical aspects}: No longer actively maintained
+\end{itemize}
+\end{description}
+
+\end{frame}
+
+\begin{frame}{Generic-Deriving results}
+
+(Only criteria with noteworthy results are discussed.)
+\begin{description}
+\item[Types]
+\begin{itemize}
+\item \textbf{Universe}: Abstracts over a single type parameter
+\end{itemize}
+\end{description}
+
+\begin{description}
+\item[Expressiveness]
+\begin{itemize}
+\item \textbf{First-class functions}: Currently unsupported, research ongoing
+\item \textbf{Abstraction over type constructors}: $ crushRight $ instance for composition limited functionality, nested trees didn't terminate
+\end{itemize}
+\end{description}
+
+\begin{description}
+\item[Usability]
+\begin{itemize}
+\item \textbf{Portability}: Only multi-parameter type classes
+\item \textbf{Overhead of library use}
+\begin{itemize}
+\item \textbf{Automatic generation of representations}: $ Generic $ is derived by compiler, $ Generic1 $ possible through TH
+\item \textbf{Work to instantiate a generic function}: Default class methods minimized overhead
+\end{itemize}
+\end{itemize}
+\end{description}
+
+\end{frame}
+
+\begin{frame}{Comparison table}
+
+
+\begin{table}[ht]
+	\tiny
+		
+\begin{tabular}{l | c c c c c c}
+& \begin{tiny}
+SYB
+\end{tiny} & \begin{tiny}
+EMGM
+\end{tiny} & \begin{tiny}
+Uniplate
+\end{tiny} & \begin{tiny}
+Multiplate
+\end{tiny} & \begin{tiny}
+Multirec
+\end{tiny} & \begin{tiny}
+Generic Deriving
+\end{tiny} \\
+\hline
+Universe Size & & & & & & \\
+\begin{tiny}
+Regular datatypes
+\end{tiny} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $\bullet$ & $ \bullet $ \\
+\begin{tiny}
+Higher-kinded datatypes
+\end{tiny} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+\begin{tiny}
+Nested datatypes
+\end{tiny} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+\begin{tiny}
+Nested \& higher-kinded
+\end{tiny} & $ \circ $ & \sufficient & $ \circ $ & $ \circ $ & $ \circ $ & $ \circ $ \\
+\begin{tiny}
+Mutually recursive
+\end{tiny} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Subuniverses & $ \circ $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+\hline
+First-class generic functions & $ \bullet $ & \sufficient & $ \circ $ & $ \circ $ & $ \circ $ & $ \circ $ \\
+Abstraction over type constructors & $ \circ $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+Separate compilation & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Ad-hoc definitions for datatypes & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & \sufficient & $ \bullet $ \\
+Ad-hoc definitions for constructors & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Extensibility & $ \circ $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \circ $ & $ \bullet $ \\
+Multiple arguments & \sufficient & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+Constructor names & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+Consumers & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Transformers & $ \bullet $ & $ \bullet $ & $ \bullet $ & \sufficient & $ \bullet $ & $ \bullet $ \\
+Producers & \sufficient & $ \bullet $ & $ \circ $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+\hline
+Portability & $ \circ $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \bullet $ \\
+Overhead of library use & & & & & &  \\
+\begin{tiny}
+Automatic generation of representations
+\end{tiny} & $ \bullet $ & $ \circ $ & $ \bullet $ & $ \circ $ & \sufficient & \sufficient \\
+\begin{tiny}
+Number of structure representations
+\end{tiny} & $ 2 $ & $ 4 $ & $ 1 $ & $ 1 $ & $ 1 $ & $ 2 $ \\
+\begin{tiny}
+Work to instantiate a generic function
+\end{tiny} & $ \bullet $ & \sufficient & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+\begin{tiny}
+Work to define a generic function
+\end{tiny} & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ & $ \bullet $ \\
+Practical aspects & $ \bullet $ & $ \circ $ & $ \bullet $ & $ \circ $ & $ \bullet $ & $ \bullet $ \\
+Ease of learning and use & $ \circ $ & \sufficient & $ \bullet $ & $ \bullet $ & $ \circ $ & $ \bullet $ \\
+\hline
+& \begin{tiny}
+SYB
+\end{tiny} & \begin{tiny}
+EMGM
+\end{tiny} & \begin{tiny}
+Uniplate
+\end{tiny} & \begin{tiny}
+Multiplate
+\end{tiny} & \begin{tiny}
+Multirec
+\end{tiny} & \begin{tiny}
+Generic Deriving
+\end{tiny} \\
+\end{tabular}
+	\caption{Evaluation of generic programming libraries}
+\end{table}
+
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}{Conclusions}
+To conclude what we have done:
+\begin{itemize}
+	\item Updated a existing benchmark to compile under \textbf{GHC 7.2.1}
+	\item Added code for Generic Deriving and Multiplate to the benchmark
+	\item Compared the results for EMGM, SYB, Uniplate, Multiplate, Generic Deriving and MultiRec
+\end{itemize}
+
+Our conclusions:
+\begin{itemize}
+	\item Multiplate could serve as a starting point for specialized library
+	\begin{itemize}
+	\item Minimal boilerplate code
+	\item Relatively easy to use
+	\item Possibly much faster compared to MultiRec
+	\end{itemize}
+	\item Generic--Deriving looks promising
+	\begin{itemize}
+	\item Automatic deriving limits boilerplate code and complexity
+	\item Supports many datatypes
+	\item Author mentioned further enhancements (\citet{generic-deriving:2010:lib})
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Future work}
+\begin{frame}{Future work}
+	\begin{description}
+		\item[Performance testing] Define criteria for performance testing and test and compare all libraries accordingly
+		\item[Cabal package] Create a cabal package from the benchmark code to make it easier for others to (re)use it
+	\end{description}
+\end{frame}
+
+\begin{frame}{References}
+\bibliographystyle{plainnat}
+\bibliography{doc}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,16 @@
+
+multirec\TreeReps.hs:19:10:
+    Not in scope: type constructor or class `Ix'
+    Perhaps you meant one of these:
+      `IO' (imported from Prelude),
+      `I0' (imported from Generics.MultiRec),
+      `I' (imported from Generics.MultiRec)
+
+multirec\TreeReps.hs:20:5:
+    `from_' is not a (visible) method of class `Ix'
+
+multirec\TreeReps.hs:23:5:
+    `to_' is not a (visible) method of class `Ix'
+
+multirec\TreeReps.hs:26:5:
+    `index' is not a (visible) method of class `Ix'

@@ -1,0 +1,5 @@
+
+multirec\GMapQ.hs:12:21:
+    Illegal symbol '.' in type
+    Perhaps you intended -XRankNTypes or similar flag
+    to enable explicit-forall syntax: forall <tvs>. <type>

@@ -1,0 +1,38 @@
+
+on the commandline:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+BinTreeDatatype.hs:1:16:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+CompanyDatatypes.hs:1:16:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+CompanyDatatypes.hs:1:16:
+    Warning: -fgenerics is deprecated: use -XGenerics or pragma {-# LANGUAGE Generics #-} instead
+
+GRoseDatatype.hs:1:16:
+    Warning: -fallow-undecidable-instances is deprecated: use -XUndecidableInstances or pragma {-# LANGUAGE UndecidableInstances #-} instead
+
+NGRoseDatatype.hs:1:16:
+    Warning: -fallow-undecidable-instances is deprecated: use -XUndecidableInstances or pragma {-# LANGUAGE UndecidableInstances #-} instead
+
+TreeDatatype.hs:1:16:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+TreeDatatype.hs:1:16:
+    Warning: -fgenerics is deprecated: use -XGenerics or pragma {-# LANGUAGE Generics #-} instead
+
+LIGD\LIGD.lhs:1:18:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+LIGD\CompanyReps.hs:1:16:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+LIGD\GRoseReps.hs:1:16:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+LIGD\NGRoseReps.hs:1:16:
+    Warning: -fglasgow-exts is deprecated: Use individual extensions instead
+
+TreeDatatype.hs:46:13: Parse error in pattern: n + 1

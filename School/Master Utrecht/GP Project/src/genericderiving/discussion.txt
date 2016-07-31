@@ -1,0 +1,79 @@
+Generic Deriving
+
+The generic-deriving library uses a new feature in GHC 7.2 to automatically derive instances for the Generic class, after which the data type can be used in generic functions supported by generic-deriving. It supports many data types, with only nested higher-kinded data types, data types with a context, exisentially-quantified data types and GADTs being unsupported [http://www.haskell.org/haskellwiki/Generics].
+
+To define a generic function, one creates a class and defines instances for each of the representation types of the universe. 
+
+[Example of a simple generic function here]
+
+Another class is then created that houses a default method which takes a value of a type and transforms it into a representation and passing it to the generic function:
+
+[Example of a simple generic function here]
+
+To define ad-hoc cases for a generic function, one simply overrides the default method:
+
+[Example of a simple overridden instance here]
+
+Evaluation
+
+Universe Size
+Generic-deriving is able to represent nearly all tested data types. Only nested higher-kinded datatypes cannot be represented, as the representation used only abstracts over a parameter of kind * [http://www.dreixel.net/research/pdf/gdmh.pdf]. It scores good.
+
+Subuniverses
+The generic-deriving library supports subuniverses through generic functions that are only applicable to types that derive the class of the generic function, so it scores well.
+
+First-class generic functions
+The library authors noted that gfoldl cannot be expressed in their library yet, which made defining GMapQ unclear. They will continue to investigate in order to support gfoldl and other generic functions, but for the moment the library scores bad.
+
+Abstraction over type constructors
+Generic-deriving includes the definition of gmap, and defining crushRight was trivial. The library scores good. [NOTE: I think WTree was not possible to define so this might limit the usefulness of these functions. See technical report for PolyLib example]
+
+Separate Compilation
+In generic-deriving, it is possible to extend the universe using the Generic and Generic1 classes. It scores good.
+
+Ad-hoc definitions for datatypes
+Like the EMGM library, generic-deriving defines ad-hoc cases in instance declarations, which allow for extensible generic functions. It scores good on the criterion.
+
+Ad-hoc definitions for constructors
+Generic-deriving is able to implement rmWeights, and thus scores well.
+
+Extensibility
+The generic-deriving library supplies an ad-hoc case of the gshow generic function for lists, and thus scores good.
+
+Multiple Arguments
+Generic-deriving supports the generic equality function, so it scores good.
+
+Constructor Names
+Generic-deriving supports constructor metadata in its repesentation, so it scores good on this criterion.
+
+Consumers, transformers, and producers.
+[Note: didn't get fulltree to work yet, should ask dreixel]
+The generic-deriving library is able to define functions in all three categories, and thus scores good.
+
+
+Performance.
+[Note: wait for other libraries]
+
+Portability
+Generic-deriving requires only multi-parameter type classes, as deriving of the Generic type is now supported by the GHC compiler.
+
+Overhead of library use
+*Automatic generation of representations: The Generic type is automatically derived by the GHC compiler, and the Generic1 type could also be generated through Template Haskell, but this is not yet included. It scores sufficient.
+
+*Number of structure representations: Generic-deriving has two representations, Generic and Generic1. Generic is currently automatically derived.
+
+*Work to instantiate a generic function: Generic-deriving uses an implicit representation, and, like EMGM, requires an instance declaration per function per datatype. Due to default class methods, this is hardly extra overhead, so the library scores well on this criterion.
+
+*Work to define a generic function: The amount of work required to write a generic function is nearly equivalent to EMGM's, so generic-deriving scores good.
+
+Practical aspects
+Generic-deriving is available on hackage [http://hackage.haskell.org/package/generic-deriving], and has several pre-defined generic functions available. It scores good.
+
+Implementation mechanisms
+Generic-deriving uses type classes to define its functionality.
+
+View
+Generic-deriving uses the sum-of-products view, and because it abstracts over a single type parameter, it can handle composition in a more effective manner.
+
+Ease of learning and use
+Although generic-deriving uses type classes, it keeps complexity down through automated deriving and by only abstracting over a single type parameter.
