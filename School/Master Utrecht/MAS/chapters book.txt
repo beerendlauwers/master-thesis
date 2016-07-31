@@ -1,0 +1,6 @@
+Chapter 3 : From begin to 3.3.4. + section 3.4 to 3.4.4
+Chapter 5 : From begin to 5.1.4 + sections 5.2 to 5.2.3
+Chapter 8 : From begin to end
+Chapter 9 : From begin to end
+Chapter 10: From begin to section 10.3
+Chapter 11: From begin to end
