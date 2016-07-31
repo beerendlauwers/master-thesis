@@ -1,0 +1,13 @@
+- Ik heb zowel Feedback als FPTutor uitgecheckt en dan FPTutor in Feedback geplakt. Daarna make gedaan, het lijkt wel te willen werken maar ik krijg een 500 internal server error als de CGI-file wordt geroepen.
+
+- In Experimental/Koen.hs is er een AST te vinden, die moet ik eens bekijken!
+
+- In Experimental/Koen.hs is er wat testcode voor Quickcheck counterexamples te vinden. Ik kan het wel niet runnen want dan moet ik de fptutor package kunnen installeren (ofzoiets), maar Common.Navigator is nergens te vinden...
+
+- In FP/Property.hs kan je met propertyCheck een stukje code checken voor een property. Dit wordt gebruikt in Koen.hs.
+
+- In FP/Compile.hs heb je de Helium compiler calls.
+
+- Fp/Debug.hs wordt nergens gerefereerd, als ik die module kan laden dan kan ik aan zowat alle experimentele dingen geraken. 
+
+- In helium/src/Syntax/UHA_Syntax.hs is de AST van Helium (duidelijker: de UGA_Syntax.ag file). Hoeveel hiervan is ondersteund door Ask-Elle (alles?) moet ik nog uitzoeken.

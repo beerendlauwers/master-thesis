@@ -1,0 +1,28 @@
+
+src\Revision.hs:5:1:
+    The type signature for `revision' lacks an accompanying binding
+
+src\Revision.hs:6:1:
+    The type signature for `lastChanged' lacks an accompanying binding
+Makefile:99: recipe for target `bin/fptutor.cgi' failed
+make: *** [bin/fptutor.cgi] Error 1
+
+
+The makefile (http://ideas.cs.uu.nl/trac/browser/Feedback/trunk/Makefile) tries to call SVN to insert the correct revision number and date changed. If the call fails, nothing is added. You can add it manually for debugging purposes.
+
+----------------------
+
+Always run Cygwin as admin
+
+----------------------
+
+make, sqlite3 and rsync have to be installed 
+
+----------------------
+
+Beerend@Beerend-PC /var/www
+$ rsync -r ProgTutor /cygdrive/c/wamp/www/
+
+Also: Take Ownership
+
+----------------------
