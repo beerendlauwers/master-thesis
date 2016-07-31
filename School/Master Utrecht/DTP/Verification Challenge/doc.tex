@@ -1,0 +1,360 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fontenc}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{listings}
+\lstset{breaklines=true}
+\lstset{language=haskell}
+\lstset{basicstyle=\footnotesize}
+\lstset{frame=single}
+
+\newcommand{\comment}[1]{}
+
+\title{Report: Verification Project: Braun Trees}
+\author{Beerend Lauwers \and Tim Kuipers}
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Braun Trees are balanced binary trees whose left subtree is either the same size as its right subtree, or exactly one element larger.
+Chris Okasaki's paper \cite{DBLP:journals/jfp/Okasaki97} gives several algorithms on Braun trees implemented in Haskell.
+We attempted to convert the paper's Haskell code to Coq, capture the balance condition and prove some interesting theorems about the algorithms.
+The rest of this document is structured as follows:
+Section \ref{poa} describes how we approached the project.
+The original paper is divided into several parts, and section \ref{algorithms} explains each part in greater detail and what kinds of problems we encountered.
+Finally, in section \ref{conclusions} we reflect on how we tackled the project and what we learnt from the challenges we faced.
+
+\section{Plan Of Attack}\label{poa}
+We started early with verification, attempting to convert the Haskell code into Coq and creating a fitting data structure along with some auxiliary functions.
+We reasoned that we could get most of the code working on Coq without having to concern ourselves with the balance condition; we could tackle that problem later on.
+Most algorithms worked on the generic tree datatype we defined as well, so our gambit of leaving out the balance condition paid off.
+However, some functions were already requiring some more advanced Coq features that, at the time, were above our skill level.
+Several naive algorithms were also rejected by the Coq typechecker, so we omitted them at the time.
+
+At the end of the seminar course, we revisited our code and discovered that several functions required an extra proof of termination, or were very hard to prove because of our reliance on the advanced features of Coq such as \texttt{Function}.
+
+We set out to create a datatype that captured the balance condition, which in turn could help us prove theorems and perhaps allow us to write some algorithm definitions in a different way.
+After a few days of trying out several ideas, we decided to not attempt to directly prove the algorithm definitions themselves, but their results: if the resulting tree was a Braun tree, we would have good reason to believe that our definition was correct.
+A \texttt{Prop} was created that described the balance condition of Braun trees, and we proved for several definitions that they indeed generate a Braun tree.
+
+The next section goes into greater detail of how we approached each algorithm, and what problems we encountered.
+
+\section{Algorithms}\label{algorithms}
+
+\subsection{Datatype}
+We used the following datatype as our binary tree:
+
+\begin{lstlisting}[mathescape=true]
+Inductive tree (X:Type) : Type :=
+  | leaf : tree X
+  | node : X $\rightarrow$ tree X $\rightarrow$ tree X $\rightarrow$ tree X.
+
+Notation "<<x,s,t>>" := (node x s t).
+Notation "<<x>>" := (node x leaf leaf).
+Notation "<<>>" := (leaf).
+\end{lstlisting}
+
+\subsection{Auxiliary functions}
+
+\begin{itemize}
+
+\item Many of the algorithms reason about Braun trees using the term $(2*x+1)$, using the value $x$ further on in the algorithm.
+Hence, we created an auxiliary function \texttt{div2\_and\_rest1} that calculated this $x$:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint div2_and_rest1 n := 
+  match n with
+  | O $\Rightarrow$ (0,false)
+  | S(O) $\Rightarrow$ (0,true)
+  | S(S(m)) $\Rightarrow$ 
+    match div2_and_rest1 m with
+    | (q,w) $\Rightarrow$ (S(q),w)
+    end
+  end.
+\end{lstlisting}
+
+\item We copied the definition of \texttt{treecons} from the paper:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint treecons {X} (x:X) (tr:tree X) :=
+  match tr with
+  | <<>> $\Rightarrow$ <<x>>
+  | <<y,s,t>> $\Rightarrow$  <<x,treecons y t, s>>
+  end.
+
+Notation "x <:> t" := (treecons x t) (at level 60, right associativity).
+\end{lstlisting}
+
+We prove that \texttt{treecons} preserves the balance condition of Braun trees, but the proof is quite long, so we omit it here.
+
+\item When we began proving theorems, we defined this \texttt{Prop} as a description of what constitutes a Braun tree:
+
+\begin{lstlisting}[mathescape=true]
+Inductive Balance {X:Type} : (tree X) $\rightarrow$ (nat) $\rightarrow$ Prop :=
+  | eBal : Balance <<>> 0
+  | eqBal : forall (x:X) (l r : tree X) (n:nat),
+            Balance l n $\rightarrow$ Balance r n $\rightarrow$ Balance <<x,l,r>> (S(n+n))
+  | gtBal : forall (x:X) (l r : tree X) (n:nat),
+            Balance l (S n) $\rightarrow$ Balance r n $\rightarrow$ Balance <<x,l,r>> (S(S(n+n)))
+
+Definition isBalanced {X:Type} (t:tree X) : Prop :=
+  exists n, Balance t n.
+\end{lstlisting}
+
+\end{itemize}
+
+\subsection{Tree size}
+The naive tree size function is trivial:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint naivesize {X:Type} (t:tree X) : nat :=
+  match t with
+  | <<>> $\Rightarrow$ 0
+  | <<x,l,r>> $\Rightarrow$ S( naivesize l + naivesize r )
+  end.
+\end{lstlisting}
+
+The optimized version is slightly more involved, as it requires an auxiliary function \texttt{diff}:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint size {X} (t:tree X) : nat :=
+  match t with
+  | <<>> $\Rightarrow$ 0
+  | <<_,t1,t2>> $\Rightarrow$ 
+    let m := size t2 
+    in 1 + 2*m + diff t1 m
+  end.
+
+Fixpoint diff {X} (t:tree X) (n:nat) : nat :=
+  match t,n with
+  (* base cases *)
+  | <<>>, 0 $\Rightarrow$ 0
+  | <<_>> ,0 $\Rightarrow$ 1
+  (* induction case(s) *)
+  | <<_,t1,t2>> , S(q) $\Rightarrow$ 
+    match div2_and_rest1 q with
+    | (k,false) $\Rightarrow$ diff t1 k (* case q=2k+0, so Sq=2k+1 *)
+    | (k,true) $\Rightarrow$ diff t2 k (* case q=2k+1, so Sq=2k+2 *)
+    end
+  | _ , _ $\Rightarrow$ 666 (* other alternatives shouldn occur *)
+  end.
+\end{lstlisting}
+
+The \texttt{diff} function has a bit of a hack: the pattern match \texttt{<<\_,t1,t2>>,O} can never occur because \texttt{diff} is only called inside \texttt{size}, which always provides it with a non-zero value.
+\texttt{<<>>,S n'} can never occur because of the balance condition.
+
+Unfortunately, we did not get around to proving that \texttt{size t = naivesize t}: one problem is that, because \texttt{size} relies on the shape of Braun trees to more efficiently determine the size, one would have to prove that for all trees, the left subnode must be equal or greater in size than the right subnode, after which that information could be used to complete the proof.
+
+\subsection{Tree copy}
+
+The naive version of \texttt{copy} did not typecheck due to unclear structural recursion:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint copy {X:Type} (x:X) (m:nat) :=
+  match m with
+  | O $\Rightarrow$ <<>>
+  | S(q) $\Rightarrow$
+    match div2_and_rest1 q with
+    (* case q=2k+0, so Sq=2k+1 : *)
+    | (k,false) $\Rightarrow$ let t := copy x k in <<x,t,t>>
+    (* case q=2k+1, so Sq=2k+2 : *) 
+    | (k,true) $\Rightarrow$ <<x,copy x (k+1), copy x k>>
+    end
+  end.
+\end{lstlisting}
+
+This is because Coq cannot infer that $k$ is in fact structurally smaller than $m$.
+
+We made it typecheck by adding a dummy value $decrease$:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint naivecopy (decrease:nat) {X:Type} (x:X) (m:nat) :=
+  match (m,decrease) with
+  | (O, _) $\Rightarrow$ <<>>
+  | (S q, O) $\Rightarrow$ <<>>
+  | (S q, S dec) $\Rightarrow$
+    match div2_and_rest1 q with
+    (* case q=2k+0, so Sq=2k+1 : *)
+    | (k,false) $\Rightarrow$ let t := naivecopy dec x k in <<x,t,t>>
+    (* case q=2k+1, so Sq=2k+2 : *) 
+    | (k,true) $\Rightarrow$ <<x,naivecopy dec x (k+1), naivecopy dec x k>>
+    end
+  end.
+\end{lstlisting}
+
+The optimized version does not typecheck either, and was also given a dummy value:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint copy2 (decrease:nat) (X:Type) (x:X) (n:nat): tree X * tree X :=
+  match (n, decrease) with 
+  | (0, _) $\Rightarrow$ (<<x>>,<<>>)
+  | (S q, 0) $\Rightarrow$ (<<>>,<<>>) (* shouldn't happen, since copy2 is only called by copy *)
+  | (S q, S dec) $\Rightarrow$
+    (*match div2_and_rest1 q with
+    | (k,b) $\Rightarrow$ *)
+    match copy2 dec X x (div2 q) with
+    | (s,t) $\Rightarrow$
+        match odd q with
+        | false $\Rightarrow$ (<<x,s,t>> , <<x,t,t>>) (* case q=2k+0, so Sq=2k+1 : *)
+        | true $\Rightarrow$ (<<x,s,t>> , <<x,s,t>>) (* case q=2k+1, so Sq=2k+2 : *) 
+        end
+    end
+  end.
+
+Definition copy {X} x n := snd (copy2 n X x n).
+\end{lstlisting}
+
+The fact that we don't do structural recursion on the actual parameter \texttt{n}, but on the dummy value instead, makes it hard to prove 
+that the function returns balanced trees. Such a proof would use induction, but applying induction on the \texttt{copy2} function
+as it is now, will produce induction hypotheses which work on the destructed, structurally smaller \texttt{n}, which is the predecessor
+of \texttt{n}, instead of splitting it in half. A solution could consist of introducing a new datatype that doesn't work in the linear way
+which is specific to natural numbers.
+
+\subsection{Converting a list to a tree}
+
+The indexing function was simple, but because Coq requires functions to be total, we needed to provide a default to be given if an empty tree was passed:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint indexWithDefault {X} (default:X) (t : tree X) (n : nat) : X :=
+  match t with
+  | <<x,s,t>> $\Rightarrow$ 
+     match n with
+     | O $\Rightarrow$ x
+     | S(q) $\Rightarrow$ match div2_and_rest1 q with
+               | (i,false) $\Rightarrow$ indexWithDefault default s i
+               | (i,true)  $\Rightarrow$ indexWithDefault default t i
+               end
+    end
+  | _ $\Rightarrow$ default
+  end.
+
+Notation "s x ! i" := (indexWithDefault x s i) (at level 60).
+\end{lstlisting}
+
+The first naive implementation of \texttt{makeArray} is near-identical to its Haskell equivalent:
+
+\begin{lstlisting}[mathescape=true]
+Definition makeArray {X:Type} (xs:list X) : tree X :=
+  fold_right treecons (<<>> : tree X) xs.
+\end{lstlisting}
+
+We proved that \texttt{makeArray} generates Braun trees:
+
+\begin{lstlisting}[mathescape=true]
+Theorem makeArray_bal : forall {X} (l : list X),
+  isBalanced (makeArray l).
+Proof.
+  intros.
+  unfold isBalanced. 
+  apply ex_intro with (witness := (length l)).
+  induction l; simpl; intros.
+  (**) apply eBal.
+  (**)
+    apply (treecons_bal_size a).
+    apply IHl.
+  Qed.  
+\end{lstlisting}
+
+The second implementation, \texttt{makeArray2}, did not typecheck in this straightforward conversion:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint makeArray2 {X:Type} (xs : list X) : tree X :=
+  match xs with
+  | nil $\Rightarrow$ <<>>
+  | h :: t $\Rightarrow$ let (o,e) := unravel t in <<h, makeArray2 o, makeArray2 e>>
+  end.
+\end{lstlisting}
+
+Because we were interested in seeing if \texttt{makeArray} and \texttt{makeArray2} produced the same values, we wrote down this definition of \texttt{makeArray2}, leaving the obligations unfulfilled:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint unravel {X:Type} (t : list X) : (list X * list X) :=
+  match t with
+  | nil $\Rightarrow$ (nil, nil)
+  | h :: t $\Rightarrow$ 
+    match unravel t with
+    | (o,e) $\Rightarrow$ (h :: e, o)
+    end
+  end.
+
+Program Fixpoint makeArray2 {X:Type} (xs : list X) {measure (length xs)} : tree X :=
+  match xs with
+  | nil $\Rightarrow$ <<>>
+  | h :: t $\Rightarrow$ let (o,e) := unravel t in <<h, makeArray2 o, makeArray2 e>>
+  end.
+Admit Obligations.
+\end{lstlisting}
+
+This made proving \texttt{makeArray xs = makeArray2 xs} very hard, so we refrained from doing so.
+If we succeeded in proving this theorem, however, we would have been able to prove that \texttt{makeArray2} generated Braun trees as well.
+Several examples suggest that the outputs for \texttt{makeArray} and \texttt{makeArray2} are the same.
+
+The fully optimized version utilizes several auxiliary functions, of which the most important one is the \texttt{rows} function:
+
+\begin{lstlisting}[mathescape=true]
+Fixpoint rows' (decrease:nat) (A : Type) (k : nat) (xs : list A)
+  : list (nat * list A) :=
+  match (k, decrease) with
+  | (0, _) $\Rightarrow$ nil (* k should always be more than 0 *)
+  | (_, 0) $\Rightarrow$ nil (* decreasing parameter should begin big enough, through wrapper *)
+  | (_, S dec) $\Rightarrow$ 
+    match xs with
+    | nil $\Rightarrow$ nil
+    | t $\Rightarrow$ 
+      (k, firstn k t) :: rows' dec A (2 * k) (skipn k t)
+    end
+  end.
+
+Definition rows (A : Type) (k : nat) (xs : list A) := 
+  rows' (length xs) A k xs.
+\end{lstlisting}
+
+The original \texttt{rows} function caused us a lot of grief: the original definition would not terminate given $k=0$, and it was rejected by the Coq typechecker.
+We then used Coq's \texttt{Function} construct and painstakingly proved that the definition was, in fact, correct.
+However, this made using it in proofs impossible, because even fully applying \texttt{rows} did not result in a value.
+We then used the "dummy value" trick to get the above \texttt{Fixpoint}-only version.
+
+There is also the \texttt{build} function, which combines a row from the \texttt{rows} function with the list of its subtrees:
+
+\begin{lstlisting}[mathescape=true]
+Definition build {X} (p : nat * list X) (ts : list (tree X)) :=
+ match p with
+  (k,xs) $\Rightarrow$  let (ts1,ts2) := splitAt k (ts ++ repeatleaf (length xs))
+            in zipWith3 node xs ts1 ts2
+  end. 
+\end{lstlisting}
+
+Finally, the \texttt{makeArray3\_1} function is defined in the same way as in Haskell:
+
+\begin{lstlisting}[mathescape=true]
+Definition makeArray3 {X} (xs:list X) := 
+  hd <<>>
+  ( fold_right build (<<>>::nil)
+  ( rows X 1 xs ) ).
+Definition makeArray3_1 {X} := compose (hd <<>>) (compose (fold_right build (<<>>::nil)) (rows X 1)).
+\end{lstlisting}
+
+Note that we also made a version called  \texttt{makeArray3} that fully parametrizes the \texttt{rows} function to make it easier to use in proofs.
+
+Unfortunately, we were unable to complete our proof that \texttt{makeArray xs = makeArray3 xs} holds. Again this is caused by a parameter which is 
+a natural number, but which gets divided in the recursive call, instead of taking its predecessor. We can see the problem in the \texttt{rows} function;
+there we use functions like \texttt{firstn} and \texttt{skipn}\footnote{Otherwise, the functionality of both can be achieved at once with \texttt{splitAt}.}, 
+which don't follow the recursive structure of the natural numbers.
+
+\section{Conclusions}\label{conclusions}
+Looking back at our efforts, we feel that jumping into the verification project so soon may have made proving theorems and lemmas about the functions much harder, as our simple tree datatype does not record any information that we may have been able to use.
+Someone more experienced with Coq could create such a datatype and rewrite the functions to use the new definition. We explored this direction, but it did not help us advance our proof progress.
+We also noted that Coq is quite unforgiving in its demand for structural recursion, not figuring out that \texttt{div2\_and\_rest1} made its argument $x$ smaller than $S(x)$. Similar problems arose for other auxiliary functions as well (such as \texttt{unravel}).
+All in all, this has been an interesting project, but our proficiency with Coq is far from the level of expertise required to give a fully satisfactory implementation of Braun Trees. This hampered our ability to pour our ideas for solutions into actual code. But the numerous code files filled with attempts show that it did not hamper our enthusiasm to still try.
+
+\bibliographystyle{ieeetr}
+\bibliography{doc}
+
+\end{document}
