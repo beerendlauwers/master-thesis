@@ -1,0 +1,41 @@
+alphabet Es
+
+set of well-formed formulae Fs
+
+set of axioms As C Fs
+
+rules of inference Rs
+
+f0, f1, ..., fn |--------- g
+                   ri
+
+'Given the formulae f0, f1, ..., fn, formula g can be deduced with rule ri'
+
+
+set of theorems Ts
+
+Contains all formulae that can be deduced from the empty set:
+
+|----- f
+   s
+
+Also called simply a deduction. Consists of a string of formulae that contains only axioms and derived formulae that have been deduced like in page 40 (c).
+
+A system S is ..... if ....
+
+coherent	    it has well-formed formulae that are not theorems.
+
+consistent /	    it includes a symbol for negation and there are no well-formed formulae where f and 
+non-contradictory   (not f) are both theorems. If this is not the case, it is INCONSISTENT or 
+		    SELF-CONTRADICTORY.
+
+categorical	    it includes a symbol for negation and for every well-formed formulae either f or
+                    (not f) is a member of Ts.
+
+saturated	    for all formulae f, adding f to the axioms of S makes it inconsistent.
+
+axioms of a system are INDEPENDENT if the removal of any axiom results in a formal system having fewer theorems than S.
+
+the DECISION PROBLEM for S is the problem of finding whether or not Ts is recursive, that is, finding whether or not the predicate P(t): t is a theorem of S is decidable. If Ts is recursive, the system is said to be DECIDABLE.
+
+finitely axiomatizable if As is finite or if there is a system with the same alphabet, well-formed formulae, inference rules and theorems with a finite set of axioms.

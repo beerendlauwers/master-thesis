@@ -1,0 +1,770 @@
+
+Algoritmiek College 1
+Divide en Conquer, Assertioneel Ontwerp
+
+Inhoud:
+1. Inleiding, definitie "Algoritme"  (08 min)
+2. Opdelen in deelproblemen          (10 min)
+3. Opdelen in 1: Binair zoeken       (08 min)
+4. Orde statistiek: Min en Max       (16 min)
+5. Verwacht lineaire selectie        (10+15m)
+6. Worst Case lineair                (20 min)
+7. Conclusies                        (05 min)
+
+
+1. Inleiding
+------------
+
+Voorkennis: Wiskundige Technieken, DataStructuren, Logica.
+Docent: Gerard Tel.
+Boek: Cormen etal, Introduction to Algorithms, ed 3 (of 2).
+Vakpagina: http://www.cs.uu.nl/docs/vakken/al/.
+Kijk NIET op Osiris want Osiris is schadelijk voor je.
+
+Opzet: Twee programmeeropgaven (alleen), DynPr en Grafen;
+       Hoorcollege met twee deeltoetsen;
+       Geen extra materiaal (slides oid); maak aantekeningen!
+       Werkcollege: loopt 1 sessie achter, erg belangrijk!
+
+Wat is een algoritme?  BOEK Ch 1 gaat hierover.
+Boek p5: Computationele procedure met input en output.
+In feite: gedetailleerde beschrijving van HOE een probleem
+wordt opgelost.
+Relatie tussen invoer en uitvoer is de SPECIFICATIE, in
+feite een logische formule van het soort dat je bij Logica
+hebt bestudeerd.
+Correct algoritme: Termineert op elke (legale) invoer,
+en uitvoer voldoet aan de specificatie.
+
+Speciaal geval: DataStructuur of Object.  Daar is interactie
+tussen invoer en uitvoer, in feite dus een on-line algoritme.
+
+Studie van algoritmen is een TECHNOLOGIE, net als het ontwerp
+van betere hardware of een goede user interface.
+
+Doel van het vak: beter inzicht in het gebruik van de 
+gereedschappen van deze technologie.
+Vandaag: 
+  (1) Asserties als hulpmiddel bij algoritmeontwerp,
+  (2) Divide en Conquer, het opdelen van een probleem
+      instantie in kleinere.  
+En speciale aandacht voor gevallen
+waarin je het probleem reduceert tot SLECHTS EEN deel.
+
+
+2. Integer vermenigvuldiging
+----------------------------
+
+Berekeningen met getallen van n cijfers.  A is a_{n-1}..a_0.
+Optellen geeft een n+1 bits resultaat, werk van rechts
+naar links, kost O(n) tijd:
+     1234   n cijfers
+     9753   n cijfers
+     ----
+    10987   n 1/2 cijfers.
+
+Bij vermenigvuldigen moet je elk van de cijfers van A met elk
+van die van B combineren (Basisschoolmethode):
+     1234
+     9753
+     ----
+     3702
+    6170
+   8638
+ 11106
+ --------
+ 12035202
+
+De HOEVEELHEID werk is O(n^2).  Als je het in een programma
+implementeert kun je het met O(n) geheugen doen als je de
+verschillende regels van de tussenresultaten meteen optelt.
+
+Kan het beter?  Met een rekenmachientje natuurlijk!  Maar
+helaas is het aantal symbooltjes dat zo'n ding in 1x kan 
+behappen ook niet onbegrensd.
+Je kunt het ontwerp van een snel algoritme bijna zien als 
+het slim manipuleren van een wiskundige vergelijking.
+
+Maar daar kunnen maar 14 cijfers op, en als je nou A en B
+van 12 cijfers hebt, wordt het te groot.
+Misschien ken je deze truuk:  
+Schrijf A = A1 A0  en  B = B1 B0, subgroepen van n/2 cijfers.
+en bereken
+         A0.B0    n bits
+     A1.B0        n
+     A0.B1        n
+  A1.B1           n
+  -------------
+      Optellen    2n
+
+Zeg even M = 10^{n/2}.
+Motivatie: A = (A1 . M + A0)
+        en B = (B1 . M + B0)
+       dus A.B = (A1.B1. M^2 + A1.B0 . M
+                             + A0.B1 . M + A0.B0)
+De machten 10^n/2 staan niet expliciet in mijn berekening
+maar komen tot uiting in de posities waar ik de getallen
+opschrijf.  (Vermenigvuldigen met M is n/2 posities naar
+links schuiven.)
+
+Recursief algoritme: splits op elk nivo in deelproblemen.
+Tot nu toe: weinig meer dan een andere organisatie van 
+dezelfde berekening.  
+Ik kan ook de hoeveelheid werk anders berekenen.
+   V(n)  =  { 1 verm.         als n klein genoeg
+            { 4.V(n/2) + O(n) anders
+
+De recursiestap geeft een VAST aantal deelproblemen  (4)
+                  van een VASTE fractie van de omvang (/2)
+en daarvoor kun je de Master Theorem gebruiken.
+Hier is de recursieDIEPTE 2lg(n),
+het aantal basisinstanties 4^2lg(n)
+het werk aan de kleinste instanties dus 4^2lg(n) = n^2,
+dit domineert het werk in de topknoop en daarmee de hele
+klus:
+Recursief vermenigvuldigen kan in O(n^2) tijd.
+
+Het recursief opschrijven kan je de ogen openen voor mogelijke
+verbeteringen: probeer de deelinstanties te verkleinen of hun 
+aantal te verminderen!
+De middelste kolom van onze bewerking heeft twee producten,
+namelijk A1.B0 en A0.B1, die worden opgeteld.  Maar ik kan
+die som ook ingewikkelder berekenen, DRIE vermenigvuldigingen:
+   A1.B0 + A0.B1 =  (A1+A0).(B1+B0) - A1.B1 - A0.B0
+Heb ik hier wat aan?  JA want A1.B1 en A0.B0 heb ik toch al
+nodig!!  
+   P0 = A0.B0
+   P2 = A1.B1
+    J = A1+A0
+    K = B1+B0
+    L =  J.K
+   P1 = L - P0 - P2
+   Tel op P2 , P1 , P0   (positioneel)
+Ik moet nu vaker optellen en aftrekken, maar slechts drie keer
+vermenigvuldigen.
+  V(n) = 3.V(n/2) + O(n)
+geeft met de Master Theorem V(n) = O(n^lg3) = n^1,58.
+
+Andere toepassing van dit idee: Strassen Matrix Product.
+
+
+3. Binair Zoeken
+----------------
+
+Edsger Wybe Dijkstra, 1931-2002, de eerste beroepsprogrammeur
+en invloedrijk informaticus.  Promootte het gebruik van
+asserties , logica dus, bij het ONTWERP van algoritmen.
+Dus niet alleen achteraf bij het correctbewijzen.  Asserties
+beschrijven eigenschappen van je data voor, na en tijdens de
+uitvoering.  Uiteindelijk kijk je niet naar je programma
+als instructiereeks, maar als predicate transformer.
+
+Dat idee gaan we nu uitwerken voor binair zoeken.  Dat is:
+in een gesorteerde rij een getal zoeken door steeds in het
+midden te gaan kijken, en dan naar links of naar rechts verder
+te gaan zoeken.
+Als je je tijdens deze voordracht over binair zoeken verveelt:
+
+1. Het Burqa-probleem, gegeven n kabouters op rij waarvan nr 1
+een jongetje is en nr n een meisje; de rest heeft burqa op.
+Vind een J en een M naast elkaar.
+2. Wat gebeurt er tijdens binair zoeken als je array helemaal
+niet gesorteerd is?
+3. Hoe lang duurt binair zoeken als je niet steeds kijkt naar
+het middelste, maar naar een random element?
+
+Gegeven gestorteerde A[1..n] (dwz i<j ==> A[i] <= A[j]) en x.
+Vraag: komt x voor in A, zoja op welke positie.
+Binair zoeken sluit per stap de helft van de rij uit, en gaat
+verder op de andere helft. 
+
+Je zoekt naar...  Wat eigenlijk precies?  Het is niet zo
+makkelijk het zo te zeggen dat het ook de situatie afdekt dat
+x niet of meerdere keren voorkomt, of helemaal achteraan oid.
+
+Doel: kleinste j waarvoor A[j] >= x, ofwel, een
+    j: A[j] >= x en A[j-1] < x.
+Bestaat die altijd?  Voeg in gedachten A[0] = -infty
+en A[n+1] = +infty toe, en laat het zoekgebied lopen van i
+tot en met j:
+
+        0   1   i     j    n  n+1
+	  +---+--------------+
+	- |   | <    >=      | +
+	  +---+--------------+
+
+   BinSearch(i,j):
+     if (j == i+1) { return j }
+        { h = (i+j)/2
+	  if A[h] < x { return BinSearch (h,j) }
+	       else   { return BinSearch (i,h) }
+        }
+
+Aanroep: BinSearch(0, n+1)
+
+Je kunt het zien als een soort recursie, waarbij je maar 1
+deelprobleem hebt en geen verwerking NA het deelprobleem:
+TAIL-recursie.  Als je maar op 1 deelprobleem verder gaat 
+kun je dat vaak ook iteratief opschrijven.  Goede gewoonte
+hierbij is, dat je met een LOOP-INVARIANT opschrijft wat je
+per ronde denkt te bereiken.  
+
+Mijn invariant is dan P: A[i] < x en A[j] >= x
+     i = 0 ; j=n+1 ;
+     while j-1 > i
+        do h = (i+j)/2
+	   if A[h] < x then i=h else j=h
+     if A[j]=x then retun j else return NO
+
+Nu zie je in feite dit patroon:
+     init
+     // INV: P
+     while (c) 
+        { body }
+     // P & ~c
+De conclusie dat P & ~c geldt na afloop VOLGT UIT deze
+twee Hoare triplets:
+     { init } (P)   en (P) { body } (P)
+
+Sommige oplossingen doen een test op A[h]==x in elke slag.
+Niet doen!  Als je 15 plaatsen hebt, is het aantal rondes
+om x te vinden op deze manier:
+  4 3 4 2 4 3 4 1 4 3 4 2 4 3 4
+Met andere woorden, in de helft van de gevallen vind je x
+op 't laatste nivo, en in 't andere kwart op het een na 
+laatste!
+Ingewikkelder tests in de lus bouwen, in de hoop snel op
+x te stuiten, is dus niet aan te bevelen.
+   
+Terminatie: Gebruik als VARIANT-functie het verschil j-i.
+Dit wordt ongeveer per ronde gehalveerd
+dus bereikt 1 in ongeveer lgn ronden.
+Correctheid: de invariant geldt na afloop, dus A[j] is
+het eerste getal >= x.
+
+Wat kun je over de uitkomst zeggen als A niet gesorteerd is?
+Burqa-probleem: INV is K[i] is J en K[j] is M.
+
+
+4. Orde Statistiek
+------------------
+
+We behandelen nu het probleem, om uit een (ongesorteerde) rij
+van n waarden de k-e in grootte te kiezen, voor een
+gegeven waarde k; dit probleem staat bekend als k-selectie.
+We nemen aan dat de waarden in een array staan; de INVOER 
+bestaat dan uit een array A van lengte n, en een getal k.
+De uitvoer is een getal x uit de array met de eigenschap dat 
+er k-1 waarden kleinergelijk x in de array zijn en n-k waarden 
+grotergelijk.
+
+Je kunt het probleem oplossen door de hele array te sorteren 
+en dan A[k] op te leveren; dit kost O(nlgn) werk en we zullen 
+ook alleen maar geinteresseerd zijn in oplossingen die minder 
+werk doen.
+
+Algoritmen die we vandaag gaan bekijken:
+
+   Naam                   |  Vergelijkingen  Opmerkingen
+   -----------------------+-----------------------------
+   Sorteren + return A[k] |  O(nlgn)
+                          |
+   Minimum                |  n-1             Alleen k=1
+   Maximum                |  n-1             Alleen k=n
+   MinMax                 |  1.5n -2         k=1 EN k=n
+                          | 
+   QuickSelect            |  VERWACHT 8n     
+   Mediaan-der-medianen   |  26n
+
+De situatie k=1 of k=n (minimum of maximum) komt veel voor.
+We zullen eerst precies bepalen hoeveel vergelijkingen er 
+nodig zijn om van n waarden het minimum te bepalen.
+Voor het praatgemak gaan we verder uit van de situatie dat 
+alle waarden verschillend zijn.
+
+Bewering 1.  Het is mogelijk het minimum te bepalen met n-1
+        vergelijkingen.
+Bewijs: Gebruik deze pseudocode:
+    w = 1
+    for (i=2 ; i <=n ; i++)
+        if (A[i] < A[w])  w = i
+    return A[w]
+
+Jullie zullen me wel geloven dat dit werkt; merk even op dat 
+na afloop elke waarde behalve de uitvoer een keer bij een 
+vergelijking `verloren' heeft, dwz, is vergeleken met EEN 
+kleiner getal (niet noodzakelijk de uiteindelijke kleinste!).
+
+Bewering 2. Het is NIET mogelijk het minumum te bepalen met
+        minder dan n-1 vergelijkingen.
+
+We gaan bewijzen, dat de observatie hierboven essentieel is: 
+bij afloop van het algoritme MOET elk element dat de uitvoer 
+is, een keer verloren hebben.  Meestal zie je bij een 
+ondergrensbewijs of een onmogelijkheidsbewijs, dat je heel 
+precies moet zijn over het soort algoritmen waarover je het hebt! 
+
+Maar... hoe bewijs je zoiets?  Het is een uitspraak over ALLE 
+MOGELIJKE algoritmen en daarom is die altijd gebaseerd op een 
+algoritmisch MODEL. We nemen aan, dat het VERGELIJKEN van twee 
+waarden uit de verzameling de ENIGE operatie is die op de data 
+wordt gedaan; je gaat dus niet optellen of zoiets om de 
+kleinste te bepalen.  
+
+Definitie: Een VERGELIJKINGS-GEBASEERDE METHODE is een
+    algoritme dat onderling vergelijken als enige operatie
+    op de data gebruikt.
+
+De aanname, of eigenlijk, definitie, impliceert dat het 
+algoritme hetzelfde "doet" op twee invoeren waarvan de 
+onderlinge verhoudingen gelijk zijn, dus bv
+      5    8    7    13
+  en  50   80   67   90.
+Omdat elke vergelijking tussen een A[i] en een A[j] die je 
+kunt maken, dezelfde uitkomst geeft.
+
+
+STEL dat er een vergelijkings-gebaseerde methode bestaat
+     die altijd het minimum x vindt, 
+     maar dat er een element van de verzameling kan zijn
+     (zeg y = A[j]) dat tijdens de uitvoer niet eenmaal heeft 
+     verloren, dwz, niet eenmaal is vergeleken met een kleinere 
+     waarde.
+DAN is er een invoer waarop dat algoritme 
+    een foute uitkomst geeft!
+
+Bewijs: Vervang in de oorspronkelijke invoer A[j] door een 
+getal z dat kleiner is dan x.  Alle getallen waarmee het 
+algoritme y vergeleek waren groter dan y, en eveneens zijn ze 
+dus groter dan z.  Dus hebben alle vergelijkingen die door 
+het algoritme worden uitgevoerd dezelfde uikomst als bij de 
+oorspronkelijke invoer; het algoritme `merkt' de verandering 
+in de invoer dus niet.  Ook op de gewijzigde invoer zal het
+algoritme dus x als uitvoer geven, en dus is het incorrect.
+
+Omdat elke waarde behalve x een keer moet verliezen, moeten 
+er dus n-1 vergelijkingen gedaan zijn voor het antwoord x 
+wordt gegeven.
+
+Voor het vinden van het maximum geldt hetzelfde.
+Bewering 3: Je kunt het maximum vinden met n-1 vergelijkingen,
+	maar niet met minder.
+
+Tenslotte kijken we naar het geval dat je ZOWEL maximum als 
+minimum wilt vinden.  Dit komt bijvoorbeeld voor als je (bv
+in een computergame met een wolk van n bommen) n punten op 
+een scherm wilt afbeelden.  Je zoekt dan de grootste en 
+kleinste x-coordinaat om de horizontale afbeelding van data 
+naar scherm te berekenen.
+
+Door eerst het maximum en dan het minimum (onafhankelijk) te 
+zoeken, vind je beide met 2n-2 vergelijkingen.  Is dit 
+optimaal?  Nee.  Het kan met 1.5n-2 vergelijkingen (bij EVEN n).
+Behandel de invoer per PAAR, waarbij je steeds van twee waarden 
+met 1 vergelijking bepaalt, welke er meedoet aan de min-
+verkiezing en welke aan de max-verkiezing:
+
+      if A[1] > A[2] then max = 1 ; min = 2
+                     else max = 2 ; min = 1
+      i <-- 3 ;
+      while i < n
+         do if A[i] < A[i+1]
+               then if A[i] < A[min] then min = i
+                    if A[i+1] > A[max] then max = i+1
+               else if A[i] > A[max] then max = i
+                    if A[i+1] < A[min] then min = i+1
+            i <-- i+2
+
+(Voor oneven n moet je nog apart naar het laatste ding kijken:
+      // Nu nog even voor oneven lengte naar de laatste kijken
+      if i=n then if A[i] < min then min = i
+                  if A[i] > max then max = i                )
+
+
+5. k-Selectie met Partition
+---------------------------
+
+Als je een x in A pakt, is het O(n) werk om daarvan de rang te
+bepalen.  Selectie is de omgekeerde vraag: je weet de gewenste
+rang al maar zoekt daarbij de x.
+
+We zagen reeds, dat je selectie in principe kunt oplossen door 
+de array te sorteren en naar A[k] te kijken.  Je doet dan 
+overbodig werk, maar nu ga ik laten zien dat het heel erg 
+efficient kan zijn om de array gedeeltelijk te sorteren.  
+De GEDEELTELIJKE sortering houdt in, dat we alleen willen dat 
+op plaats A[k] het element verschijnt dat daar hoort (bij 
+volledige sortering), maar voor de rest interesseert het ons 
+niet bar veel.  We zoeken een sorteeralgoritme dat "deels"
+kan worden uitgerekend en dan een te kiezen positie (nl k) 
+van het eindresultaat goed heeft.
+
+Stel je voor dat je begint te sorteren met QuickSort, maar 
+dat je eigenlijk alleen bent geinteresseerd in de waarde die 
+op positie A[k] komt te staan.
+QuickSort: kies een PIVOT in de array en maak drie blokken 
+van waarden <, =, > de pivot (verschillende varianten).
+
+De Split versie die we gebruiken krijgt als parameters mee:
+ -  p, q     begin- eindindex van stuk van array, p <= q
+ -  piv      een index p <= piv <= q van een element P dat
+             als pivot wordt gebruikt
+en levert op
+ -  r, p <= r <= q, zdd P op plaats r is gekomen;
+       alle elementen in A[p..r-1] zijn < P
+       alle elementen in A[r+1..q] zijn >= P.
+Je kunt het doen door alle elementen behalve de pivot eenmaal 
+te vergelijken, dus l-1 vgl voor een segment van lengte l.
+Zie Datastructuren of werkcollege.
+Na een Partition ronde ziet de array er zo uit (tov de pivot):
+
+         < << <<< < P >= >= >=>
+         1          r         n
+
+Bij QuickSort zou je op het linker EN rechterblok in recursie 
+gaan, maar omdat wij al een zo precies beeld hebben van wat 
+we willen weten is dat niet nodig.
+De pivot (terechtgekomen op plaats r) staat al op de goede 
+plek. De elementen in het rechter en het linkerblok nog niet, 
+maar ze zitten al wel in het goede blok.
+Dus: als k gelijk aan r, staat op A[k] het element dat we
+zoeken, en als k in het linker- of rechterblok zit, hoeven 
+wij het `Gedeeltelijk Sorteren' slechts op dat blok voort 
+te zetten.
+
+QuickSelect (p,q,k):
+     { Er geldt p <= k <= r, we gaan ervoor zorgen dat
+       op A[k] het element verschijnt dat er bij volledige
+       sortering van A[p..q] ZOU verschijnen }
+     if p < q
+     then piv <-- Random(p,q)
+          r <-- Split (p,q, piv)
+          if k < r then QuickSelect (p,r-1,k)
+                   else if k > r then QuickSelect (r+1,q,k)
+
+Vergelijking met Binair Zoeken: na elke stap weet je of je 
+links of rechts verder moet, alleen je hebt geen controle 
+over waar het middenpunt ligt.
+Eerste aanroep is door QuickSelect(1,n,k) en het k-e element 
+staat na afloop in A[k].  Dit algoritme heet in het boek 
+overigens RandomizedSelect.
+
+Omdat er alleen sprake is van 1 recursieve aanroep, en wel
+aan het eind, is er dus tail-recursie en kun je hiervan
+gemakkelijk een iteratief programma maken.  Met behulp van
+invarianten kun je dat ook wel directer verkrijgen.
+
+Definitie: Com(i,j) betekent: Segment A[i..j] is COMPLEET
+  oftewel: A[i..j] bevat elementen met rangen i t/m j.
+
+De beginsituatie is dat A alle elementen bevat: Com(1,n).
+De eindsituatie is dat A[k] het k-de elt bevat: Com(k,k).
+De werking van Split is, dat elementen kleiner dan de pivot
+vooraan worden gezet; en in feite worden "geteld" doordat
+het einde van het <-blok wordt opgeleverd.
+Als je begint met Com(p,q) en de opgeleverde pivot-positie
+is r, dan staan precies alle dingen kleiner dan de pivot
+in A[p..r-1].  En: A[r] bevat een element van rang r!  Je
+kunt deze heilzame werking van Split op deze manier in
+Hoare-triples vatten:
+   // Com(p,q)
+   r = Split(p,q,piv)
+   // Com(p,r-1) & Com(r,r) & Com(r+1,q)
+Split verdeelt een compleet segment in drie complete sub-
+segmenten en daarna kun je p en q verzetten naar de grenzen
+van het segment dat k bevat:
+
+QuickSelect(A,k):
+  p=1 ; q=n ;
+  // Inv: Com(p,q) & p <= k <= q
+  while (q > p)
+    { piv = Rand(p,q) ;
+      r = Split ( p,q, piv) ;
+      // Ha fijn, nu  Com(p,r-1) & Com(r,r) & Com(r+1,q)
+      if (k>r) { p = r+1 }
+         else if (k<r) { q = r-1 }
+         else // dan k==r
+              { p = q = r }
+    }
+  // Inv plus q <= p
+  // Dit impliceert Com (k,k)
+  return A[k]
+
+Looptijd: afhankelijk van random trekkingen, dus VERWACHTE 
+waarde.  Bij deterministische pivotkeuze (Pivot=A[q]) 
+afhankelijk van invoer dus GEMIDDELDE waarde.
+Vraag: kan hij ook oneindig lang draaien?
+Antwoord: er is altijd een middenblokje van grootte 1,
+  dus elk van de andere twee blokjes heeft grootte ten
+  hoogste vorige grootte min 1.  Nee dus.
+
+Net als voor QuickSort kunnen we de verwachte complexiteit 
+op verschillende manieren berekenen.  De berekening in het 
+boek is weer eens nodeloos ingewikkeld, dus als je later 
+ooit nog eens wilt weten hoeveel vergelijkingen deze 
+methode (verwacht) kost, pak dan pen en papier.
+Bewering: Het verwachte aantal vergelijkingen is O(n).
+Wat ik ga bewijzen is: <= 8.n.
+
+Kijk in gedachten naar de achtereenvolgende blok-grootten
+waar de uiteindelijke oplossing in zit:
+	n=g0, g1, g2, .... gs=1.
+(Vgl met Binary Search met de random tussenstap!)
+We noemen de i-e split GROOT als gi=1 of gi <= 3/4.g{i-1}, 
+en KLEIN anders.
+
+Stap 1: Er zijn hoogstens log_{4/3} n grote stappen voor x.
+Bewijs: Na zoveel grote stappen is gi beslist van n tot 1 
+  gedaald. []
+
+Stap 2: Voor elke stap is de kans >= 1/2 dat deze groot is.
+Bewijs: Als in de i-e stap als pivot een element wordt 
+gekozen dat niet tot het kleinste, noch tot het grootste 
+kwart behoort, zijn BEIDE delen hoogstens 3/4 van de de 
+groep. []
+
+Stap 3: Het verwachte aantal KLEINE stappen tussen twee 
+grote stappen van x is hoogstens 1.
+Bewijs:  Na een grote stap begint een soort Bernouilli 
+experiment met slaagkans groter dan een half.
+
+Conclusie: Het verwachte aantal stappen is minder dan
+	2. log_{4/3} n    ( ~ 4.8 lg n).
+
+Nu ga ik laten zien, dat de totale kosten van uitvoering 
+O(n) bedragen.  Omdat stap i, g_{i-1}-1 vergelijkingen kost, 
+zijn we geinteresseerd in de som van al deze getallen 
+(behalve de laatste 1).
+Groepeer de stappen (dus eigenlijk: de Partition-slagen van 
+het algoritme) zo, dat elk groepje eindigt met een grote stap:
+
+    Groep 0: allereerste stap, stap, stap, grote stap.
+    Groep 1: grote stap.
+    Groep 2: stap, grote stap.
+    Groep 3: enzovoorts.
+          m: de laatste.
+En bepaalde split-slag zit dus in groep j als er daarvoor al
+j grote stappen zijn geweest.
+
+Bewering 1: De kosten van een partition-stap in groep j zijn
+        (ZEKER!) hoogstens n.(3/4)^j.
+Immers, voor zo'n slag zijn er al j grote slagen geweest en 
+de omvang van het blok is hoogstens n.(3/4)^j.
+
+Bewering 2: de VERWACHTE kosten van groep j 
+        zijn begrensd door 2.n.(3/4)^j.
+Dit volgt uit de kosten van de slag en de verwachte lengte 
+van de groep.
+
+Bewering 3. De totale kosten bedragen VERWACHT hoogstens 8n.
+Bewijs: door te sommeren over alle groepen.
+     kosten = SOM i=1 TOT s : g_{i-1}
+            = SOM j=0 TOT m :   kosten groep j
+            < SOM j=0 TOT inf :   2n.(3/4)^j
+            = 8n.
+
+In feite is deze berekening nog iets aan de pessimistiche 
+kant:
+  1. Het (geringe) effect van slechte stappen is geheel 
+     verwaarloosd.
+  2. We doen of elke goede stap precies een 3/4 reductie
+     in grootte maakt, terwijl sommige misschien stukken
+     beter zijn.
+In de praktijk liggen de kosten dus nog iets lager.
+
+Het andere bewijs staat in het boek; het vereist wat meer 
+rekenwerk en als je de ideeen uit het boek volgt maar het 
+allemaal nog iets preciezer doet vind je een verwacht aantal 
+van slechts 4n vergelijkingen.  
+
+Ik zal het afleiden van de recursie hier eens doen,
+waarbij meteen QuickSort weer aan bod is geweest.  
+Voor de tijd T(n) van Quicksort vonden we
+
+             { T(0)   + T(n-1)    met kans 1/n
+             { T(1)   + T(n-2)    met kans 1/n
+             { ...
+  T(n) = n + { T(i-1) + T(n-i)    met kans 1/n
+             { ...
+             { T(n-1) + T(0)      met kans 1/n
+
+En daaruit krijg je
+  T(n) = n + 2/n . SOM i=0 TOT i=n-1 VAN T(i).
+
+Nu is het met QuickSelect zo, dat je maar aan een kant in 
+recursie gaat, en welke kant hangt af van k!  Nu zitten we 
+wel te middelen mbt de kansexperimenten IN het algoritme, 
+maar mbt de invoerparameter k nemen we de worst case, 
+namelijk:  dat k ongeveer n/2 is en dan is de recursie 
+steeds de grotere van de twee.
+    STREEP IN ELKE REGEL DE KLEINERE WEG MET ANDERE KLEUR.
+
+en dan vind je natuurlijk
+  T(n) = n + 2/n . SOM i=n/2 TOT i=n-1 VAN T(i).
+Een recurrentie die vrijwel niet met onze wiskundige
+technieken is op te lossen.
+
+In de praktijk is deze gerandomiseerde QuickSelect het 
+aangewezen, absoluut enig beste algoritme voor selectie.
+WIE DOET EEN GOOI NAAR DE WORST CASE TIJD?
+
+
+6. k-Selectie in Lineaire Tijd
+------------------------------
+
+Gebruik voor k-selectie ALTIJD QuickSelect, want dat is de 
+beste!  Maar ik ga je nog wel iets ingewikkelders laten 
+zien, wat je niet moet gebruiken, en ik ga ook zeggen waarom 
+jullie dat wel moeten weten.
+Nu heb je altijd scherpslijpers die met een goede VERWACHTE 
+tijd niet tevreden zijn en die willen dan een goede WORST
+CASE tijd hebben.  Het is niet zo makkelijk is om `snel
+een pivot te vinden die een gebalanceerde split geeft'.  Maar 
+nu hebben we een Select procedure, en je kunt dus bedenken 
+dat je een mooie pivot kunt gaan zoeken met select, dus 
+bijvoorbeeld zo:
+
+SuperSelect (p,q,k):  // breng rang k op plaats k
+   if (p < q)
+     { // Kies mbv Select een super-pivot !
+       SuperSelect (p,q, (p+q)/2)
+       // De mediaan van het blok geeft een PERFECTE split
+       r <-- Split (p,q, (p+q)/2)
+       if (k < r)  SuperSelect (p,r-1,k)
+           else if (k > r) SuperSelect (r+1,q,k)
+     }
+
+Dit idee werkt echter in het geheel niet.  In de tweede regel 
+hebben we namelijk een recursieve aanroep op de gehele array!  
+Er ontstaat een oneindig diepe recursie.
+Toch blijkt dit idee aan te passen te zijn zo, dat we een 
+aanroep doen op een kleinere array (1/5 van de omvang) en 
+kunnen garanderen dat de gevonden pivot een redelijk goede 
+split geeft, en dat is dan het Mediaan-der-Medianen algoritme.
+
+Dit is de strategie om de pivot te kiezen.
+  1. Verdeel de keys in groepen van 5.
+  2. Bepaal de middelste van elke vijf (door sortering bv)
+     in 8 vergelijkingen; 
+     plaats de n/5 medianen in hulparray B[1..n/5].
+  3. Bepaal met een recursieve aanroep van het algoritme
+     de mediaan van B; dit wordt de pivot.
+
+We noemen deze pivot wel een PSEUDO-MEDIAAN omdat hij "in 
+de buurt van" het midden zit, en wel op een BEWIJSBARE 
+afstand hoogstens.  Na het kiezen van de pivot gaat het 
+Mediaan-der-Medianen algoritme verder als QuickSelect.
+Kijk even wat er gebeurt als n een vijfvoud is.
+
+Lemma 1: Hoogstens 0.7n + 2 waarden zijn groter dan piv.
+Bewijs: Van 1/2.n/5 groepjes is de mediaan grotergelijk 
+  piv en het zou kunnen dat alle n/2 elementen van die 
+  groepen groter zijn dan piv.  Echter, er zijn floor(n/5/2) 
+  groeps-medianen die NIET groter zijn dan piv en die hebben 
+  elk nog twee collega's `onder' zich in hun groep die het 
+  ook niet zijn.  Dus tenminste 3.floor(n/5/2) elementen 
+  zijn NIET groter dan piv.  Nu 3.floor(n/5/2) > 0.3n-2 
+  dus hoogstens 0.7n + 2 elementen zijn WEL groter dan piv.
+
+Als n geen vijfvoud is komt er ergens een kleiner groepje 
+dat ons enkele `kleine' elementen kan kosten en dan geldt:
+      Hoogstens 0.7n+4 waarden zijn groter dan de pivot.
+Evenzo geldt:
+      Hoogstens 0.7n+4 waarden zijn kleiner dan de pivot.
+
+Daarmee is ons doel binnen handbereik:  de eigenschap van 
+de pivot garandeert dat elke stap goed is, zelfs zo goed 
+dat de recursie plaatsvindt op een stuk van omvang 0.7n 
+(ongeveer) in plaats van 3/4n.
+We hebben wel wat extra kosten voor het vinden van de pivot, 
+namelijk een deelprobleem van grootte n/5.  Dit gaat inderdaad 
+werken omdat de twee deelproblemen, 0.7n en 0.2n, samen kleiner 
+zijn dan n.  Bij de berekening verwaarloos ik even de `+4' 
+term in de recursieve aanroep.
+
+We bekijken het aantal vergelijkingen in de Worst-Case, 
+W(n), bij selectie uit n elementen.
+     1. Het verdelen in groepen:              0  vgl
+     2. Het vinden der groepsmedianen:    8/5 n  vgl    
+     3. Het vinden van de pivot:         W(n/5)  vgl
+     4. Partitioneren:                        n  vgl
+     5. Recursie:                       W(0.7n)  vgl
+
+Samen dus W(n) <= W(7/10 n) + W(1/5 n) + O(n).
+
+De Master Theorem laat ons hier volkomen in de steek omdat 
+de twee deelproblemen ongelijk in grootte zijn.
+Nu kan ik bewijzen dat de oplossing hiervan, W(n) = O(n) is.  
+Dit gaat met inductie.  BELANGRIJK: als je met inductie een 
+ordegrens gaat bewijzen, moet je de impliciete constante 
+gaan benoemen.
+(Waarom?  Anders kun je dingen gaan doen met absorptie, als 
+in O(n) + O(n) = O(n), waarbij de nieuwe impliciete constante 
+een andere is dan je oude, en je inductiestap ongeldig is!)
+
+Begin met je gegeven van een expliciete constante te voorzien:
+Er is een getal A zdd  W(n) <= W(7/10n) + W(1/5n) + A.n
+en formuleer nu je bewering over W met een expliciete c:
+Stelling:  W(n) <= c.n.
+In het bewijs kom je "vanzelf" op het spoor van c:
+Bewijs:  Neem W(n') <= c.n' aan voor alle n' < n.  Dan geldt
+           W(n)
+   <=  { Gebruik het gegeven over W }
+           W(7/10n) + W(1/5n) + A.n
+   <=  { Gebruik de IH }
+           c.7/10n  + c.1/5n  + A.n
+    =  { Haal n buiten haakjes }
+           ( c.7/10 + c.1/5 + A ) . n
+Tussen haakjes staat .9c+A en wat ik wil is bewijzen dat dit 
+<= cN is; en wat ik nu gewoon doe is kijken, welke eis ik op 
+c moet leggen opdat dit gewoon geldt
+    <=  { MITS .9c+A <= c, oftwel: c >= 10.A }
+            c.N       []
+
+Dit is voldoende als bewijs dat het lineair is; ik kan ook 
+de c nu vervangen door 26 vanaf het begin.  Je krijgt een 
+bewijs wat er iets gewoner uitziet maar de lezer laat zitten
+met de vraag hoe je ooit aan die 26 bent gekomen.
+
+Stelling: W(n) <= 26n.
+InductieHypothese: Voor alle n' < n geldt W(n') < 26n',
+ dan is    W(n) <= W(7/10 n) + W(1/5 n) + 13/5 n
+                 < 26.7/10 n  + 26.1/5 n + 13/5 n
+                 = (26.7/10 + 26/5 + 13/5) n
+                 = 26n
+Wil je de +4 term meenemen in de berekening dan moet je hem 
+iets ingewikkelder maken, zie het boek.  De uitkomst 
+verschilt niet wezenlijk van wat ik hier heb afgeleid.
+
+
+7. Conclusies uit dit college
+-----------------------------
+
+ - Algoritme is een expliciete beschrijving van een berekening,
+   leidend tot een UITKOMST die afhangt van de INVOER op de
+   wijze omschreven in de probleem SPECIFICATIE.
+ - Divide en Conquer: strategie waarbij je gebruik maakt van
+   het oplossen van kleinere instanties van hetzelfde probleem
+   als black box.
+ - Complexiteit kun je berekenen en dit is belangrijk.
+ - Bij "gebalanceerde" recursie heb je de Master Theorem.
+   (dwz, constant aantal subproblemen, grootte fractie van n)
+     T(n) = a.T(n/b) + f(n)
+   geeft recursiediepte log_b (n) omdat naar beneden de
+           instanties steeds b keer kleiner worden.
+         aantal bladen a^{log_b (n)} omdat er op elk
+	   nieuw nivo steeds a keer zoveel bladen komen
+         bladgewicht evenredig met a^{log_b (n)} omdat
+	   de bladen allemaal begrensd gewicht hebben.
+   
+ - Je kunt TAIL RECURSIE omschrijven naar een loop.
+ - Bij een loop in je programma zet je een invariant om aan te
+   geven wat je in elke slag van de lus gaat bereiken.
+ - Bij een inductiebewijs voor een Orde-grootte moet je de
+   constante expliciet maken.
+ - Het voorbeeld van het mediaan-der-medianen-algoritme laat
+   zien dat slim algoritmen-ontwerp in feite samengaat met het
+   slim manipuleren van wiskundige expressies.
+ - Ontwerp van efficiente algoritmen is:
+   het slim masseren van recurrente betrekkingen.
+   VB: Mediaan-der-Medianen, Integer-vermenigvuldiging.

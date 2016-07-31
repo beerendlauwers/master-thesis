@@ -1,0 +1,3 @@
+Opgave 78
+
+let calign n s = replicate ( (n `div` 2) - (length s `div` 2) - (n - length s) `mod` 2) ) ' ' ++ s ++ replicate ( (n `div` 2) - (length s `div` 2) ) ' '

@@ -1,0 +1,260 @@
+<html>
+
+<head>
+<title>Welcome to the Post's Correspondence Problem!</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFE8" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#3399CC">
+  <tr>
+    <td bgcolor="449AD4" height=100><img src="title.gif"> 
+    </td>
+  </tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="3" bgcolor="#f0f0ff" height="20">&nbsp; </td>
+    <td colspan="1" rowspan="3" bgcolor="#3333FF" height="1" width="1" align="left" valign="top"><img src="pixel.gif" WIDTH="1" HEIGHT="1"></td>
+    <td colspan="2" bgcolor="#ccccff" height="20">&nbsp; </td>
+  </tr>
+  
+  <tr align="left" valign="top">
+
+    <td bgcolor="#f0f0ff" width="13">&nbsp; </td>
+    <td bgcolor="#f0f0ff" width="583">
+
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 14pt" color="#0000FF">
+    <b>PCP News</b></font>
+    <ul>
+    <li><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 11pt"  color="#000000"><a href="./PCPSolver/PCPSolver.0.0.3.tar.gz">PCPSolver</a> version 0.0.3 is released with source code. <a href="./PCPSolver/README">README</a><font size=-1 color=#52423> (Nov 16, 2003) </font>
+	<li><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 11pt"  color="#000000">PCPSolver version 0.0.2 is released with source code.  <font size=-1 color=#52423> (April 25, 2003) </font>
+	<li>I published a paper named <a href="./paper/CG2002.pdf"><i>Tackling Post's Correspondence Problem</i></a>
+        in the Third International Conference on Computer and Games in 2002.
+		<font size=-1 color=#52423> (July 26, 2002) </font>
+	<li>My Master's <a href="./thesis">thesis</a> about solving PCP is now available. 
+       <font size=-1 color=#52423> (March 7, 2002) </font>
+	</ul>
+	</p>
+
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 14pt" color="#0000FF">
+    <b>What's Post's Correspondence Problem (PCP)?</b></font>
+    <br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt"  color="#000000">
+<p>
+<b>Definition: </b>
+<span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;color:black'><span
+style="mso-spacerun: yes">  </span>Given an alphabet </span><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:Symbol;
+mso-ascii-font-family:"Times New Roman";mso-hansi-font-family:"Times New Roman";
+color:black;mso-char-type:symbol;mso-symbol-font-family:Symbol'><span
+style='mso-char-type:symbol;mso-symbol-font-family:Symbol'>S</span></span><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;color:black'>, one instance
+of </span><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>Post's
+correspondence problem<span style='color:black'> of size <i>s</i> is a finite
+set of pairs of strings (<i style='mso-bidi-font-style:normal'>g<sub>i</sub></i>
+, <i style='mso-bidi-font-style:normal'>h<sub>i</sub></i>) ( <i
+style='mso-bidi-font-style:normal'>i </i>= 1...s
+s>=1) over the alphabet </span><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;font-family:Symbol;
+mso-ascii-font-family:"Times New Roman";mso-hansi-font-family:"Times New Roman";
+color:black;mso-char-type:symbol;mso-symbol-font-family:Symbol'><span
+style='mso-char-type:symbol;mso-symbol-font-family:Symbol'>S</span></span><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;color:black'>.<span
+style="mso-spacerun: yes">  </span>A solution of length <i>n</i> >= 1 to this instance is a sequence
+<i style='mso-bidi-font-style:normal'>i<sub>1</sub> i<sub>2</sub></i> ... <i
+style='mso-bidi-font-style:normal'>i<sub>n</sub></i> of selections such that
+the strings <i style='mso-bidi-font-style:normal'>g<sub>i1</sub>g<sub>i2</sub>
+... g<sub>in</sub></i> and <i style='mso-bidi-font-style:normal'>h<sub>i1</sub>h<sub>i2</sub>
+... h<sub>in</sub></i> formed by concatenation are identical. <o:p></o:p></span></p>
+<p class=MsoNormal style='text-indent:18.0pt'><i style='mso-bidi-font-style:
+normal'><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;color:black'>Width</span></i><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;color:black'> of a PCP
+instance is the length of the longest string in <i style='mso-bidi-font-style:
+normal'>g<sub>i</sub></i> and <i style='mso-bidi-font-style:normal'>h<sub>i</sub></i>
+(<i style='mso-bidi-font-style:normal'>i</i> = 1, 2, ... , <i style='mso-bidi-font-style:
+normal'>s</i>). <i style='mso-bidi-font-style:normal'>Pair i</i> is the short
+name for pair (<i style='mso-bidi-font-style:normal'>g<sub>i</sub></i> , <i
+style='mso-bidi-font-style:normal'>h<sub>i</sub></i>), where <i
+style='mso-bidi-font-style:normal'>g<sub>i</sub></i> and <i style='mso-bidi-font-style:
+normal'>h<sub>i</sub></i> are the top string and bottom string of the pair
+respectively. Mostly, people are interested in <i style='mso-bidi-font-style:
+normal'>optimal</i> <i style='mso-bidi-font-style:normal'>solution</i>, which
+has the shortest length over all possible solutions to an instance. The
+corresponding length is called <i style='mso-bidi-font-style:normal'>optimal
+length</i>. We use the word <i>hard</i> or <i>difficult</i> to describe
+instances whose optimal lengths are very large. For simplicity, we restrict the
+alphabet </span><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt;
+font-family:Symbol;mso-ascii-font-family:"Times New Roman";mso-hansi-font-family:
+"Times New Roman";color:black;mso-char-type:symbol;mso-symbol-font-family:Symbol'><span
+style='mso-char-type:symbol;mso-symbol-font-family:Symbol'>S</span></span><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt;color:black'> to {0, 1}, and
+it is easy to transform other alphabets to their equivalent binary
+format.</p>
+<p class=MsoNormal style='text-indent:18.0pt'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;color:black'>To describe subclasses of
+Post’s Correspondence Problem, we use PCP[<i style='mso-bidi-font-style:normal'>s</i>]
+to represent the set of all PCP instances of size <i style='mso-bidi-font-style:
+normal'>s</i>, and PCP[<i style='mso-bidi-font-style:normal'>s</i>, <i
+style='mso-bidi-font-style:normal'>w</i>] the set of all PCP instances of size <i
+style='mso-bidi-font-style:normal'>s</i> and width <i style='mso-bidi-font-style:
+normal'>w</i>.</span></p>
+<p class=MsoNormal style='text-indent:18.0pt'><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;color:black'>For convenience, we use a matrix of 2 rows and <i
+style='mso-bidi-font-style:normal'>s</i> columns to represent instances of PCP[<i
+style='mso-bidi-font-style:normal'>s</i>], where string <i style='mso-bidi-font-style:
+normal'>g<sub>i</sub></i> is located at (<i style='mso-bidi-font-style:normal'>i</i><span
+style='mso-bidi-font-style:italic'> </span>, 1) and <i style='mso-bidi-font-style:
+normal'>h<sub>i</sub></i> at (<i style='mso-bidi-font-style:normal'>i </i>,<i
+style='mso-bidi-font-style:normal'> </i><span style='mso-bidi-font-style:italic'>2</span>).
+The following is the matrix representation of the instance {{100, 1}, {0, 100}, {1, 00}} in PCP[3,3].
+<o:p></o:p></span></p>
+<center><img src="PCP1.gif"></center>
+
+<br>
+Let's consider the result of selections of pair 1, 3, 1, 1, 3, 2, 2 accordingly. They can be
+shown in the following table with each selection assigned a different color:<br><br>
+<center>
+<table>
+<tr>
+<td width=30><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FF0000>(1)<br>100<br>1</font></td>
+<td width=30><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FFC000>(3)<br>1<br>00</font></td>
+<td width=30><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#00FF00>(1)<br>100<br>1</font></td>
+<td width=30><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#4098C0>(1)<br>100<br>1</font></td>
+<td width=30><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#0070FF>(3)<br>1<br>00</font></td>
+<td width=30><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#7000C0>(2)<br>0<br>100</font></td>
+<td width=30><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FF00FF>(2)<br>0<br>100</font></td>
+</tr>
+</table>
+</center>
+<p>
+After the elimination of blanks and concatenation of strings in the top and bottom separately, it turns to:<br><br>
+<center>
+<font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FF0000>100</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FFC000>1</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#00FF00>100</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#4098C0>100</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#0070FF>1</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#7000C0>0</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FF00FF>0</font>
+<br>
+<font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FF0000>1</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FFC000>00</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#00FF00>1</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#4098C0>1</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#0070FF>00</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#7000C0>100</font><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt" color=#FF00FF>100</font>
+</center>
+<p>
+Now, the string in the top is identical to the one in the bottom; therefore, these selections form a solution
+to PCP (1). When all combinations of up to 7 selections of pairs are tested, this solution is thus proven to be the 
+unique optimal solution to this instance.
+
+<br><br>
+
+<font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 14pt" color="#0000FF">
+<b>PCP's theoretical place</b></font>
+<br>
+Post's correspondence problem was first raised by Post in 1946 as undecidable problem [1]. It is frequently used in the 
+literature as a basis to prove the undecidabily of other problems. The problem of size 2 has been proved decidable [2]. 
+Some researchers in Finland found a simpler proof [3]. The problem of size 7 has been proved undecidable [4]. 
+Now the decidablility of problems with size between 3 and 6 is still pending.
+<br><br>
+<font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color="#000000">
+[1] Post, E., L., A variant of a recursively unsolvable problem,<i>Bull. of the Am. Math. Soc.</i>, 52, 1946.
+<br>
+[2] Ehrenfeucht, A., Karhumaki, J. and Rozenberg, G., The (generalized) post correspondece problem with lists consisting 
+of two words is decidable, <i>Theoret. Comput. Sci.</i>,21, 2,1982.
+<br>
+[3] Vesa Halava, Tero Harju and Mika Hirvensalo, Binary (Generalized) Post Correspondence Problem, 
+<i>TUCS Technical Report No. 357</i>, August 2000. [<a href="http://www.tucs.fi/publications/techreports/TR357.ps.gz">PS file</a>]
+<br>
+[4] Y. Matiyasevich and G.Senizergues, Decision problems for semi-Thue systems with a few rules, <i>Proceedings, 11th Anual
+IEEE Symposium on Logic in Computer Science</i>, 1996. [<a href="http://dept-info.labri.u-bordeaux.fr/~ges/termination.ps">PS file</a>]
+<br><br>
+</font>
+<div align=center>
+<!--
+<a href="http://mars.GuestPage.com/home/view.rc?LoginName=comp_zl">View My Guestbook</a>
+<a href="http://mars.GuestPage.com/logo/?id=pcp"><img src="http://www.GuestMan.com/page/logo.gif" width=88 height=31
+        border=0 alt="Free Guestbook by Guestpage.com"></a>
+<a href="http://mars.GuestPage.com/home/sign.rc?LoginName=comp_zl">Sign My Guestbook</a>
+-->
+<!-- START GUESTPAGE HTML CODE --->
+<!--<a href="http://mars.GuestFile.com/home/view.rc?LoginName=comp_zl">View My Guestbook</a>
+<a href="http://mars.GuestFile.com/logo/?id=comp_zl">
+<img src="http://www.guestman.com/page/images/glogo.gif" border=0 alt="Free Guestbook by Guestpage"></a>
+<a href="http://mars.GuestFile.com/home/sign.rc?LoginName=comp_zl">Sign My Guestbook</a><br>
+-->
+<!-- END GUESTPAGE HTML CODE --->
+</div>    
+    <hr color=blue>
+    <div align=right>
+    <font style="font-size: 10pt" face="Verdana, Arial, Helvetica, sans-serif" color=blue>
+<div align=right><i>You are the No.<a href="http://www.cs.ualberta.ca/~zhao/PCP/counter/counter.log"><IMG 
+ALIGN="top"  
+SRC="http://www.cs.ualberta.ca/cgi-bin/counter.cgi?/compsci/erskine7/cshome/zhao/web_docs/PCP/counter" 
+border=0 alt="counter"></a>
+visitor to this webpage since May 5, 2001<br>
+    Last modified on April 25, 2003 by <a href="mailto:zhao at cs.ualberta.ca"><i>Ling Zhao</i></a></div>
+    </font></p>
+    </td>
+    <td width="25" bgcolor="#f0f0ff">&nbsp; </td>
+    <td bgcolor="#ccccff" width="18">&nbsp; </td>
+    <td bgcolor="#ccccff" width="192">
+    
+    <p><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt">
+    <a href="intro.htm">Introduction</font></a><br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color=#ff00cc>
+    What's PCP?<br>
+    PCP's theoretical place
+    </font>
+    
+    <p><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt">
+    <a href="solve.htm">Solving hard PCP instances</font></a><br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color=#ff00cc>
+    Masks<br>
+    Bidirectional probing<br>
+    Heuristic pruning<br>
+    Cache scheme<br>
+    Depth-first iterative deepening<br>
+    Tail recursion removal    
+    </font> 
+    
+    <p><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt">
+    <a href="identify.htm">Instances having no solutions</font></a><br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color=#ff00cc>
+    Filters<br>
+    Masks<br>
+    Exclusion method<br>
+    Pattern method
+    </font>
+
+    <p><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt">
+    <a href="list.htm">Hard instances list</font></a><br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color=#ff00cc>
+    The known hard instances<br>
+    Data of the solutions
+    </font> 
+
+    <p><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt">
+    <a href="doc.htm">Documents</font></a><br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color=#ff00cc>
+    Presentation slides<br>
+    PCP Instances<br>
+    Links
+    </font>    
+
+    <p><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt">
+    <a href="nextstep.htm">Next step</font></a><br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color=#ff00cc>
+    Instances unsolved<br>
+    Pattern method implementation<br>
+    Where are the applications?<br>
+    Some conjectures     
+    </font>     
+    
+    <p><font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 12pt">
+    <a href="contact.htm">Contact</font></a><br>
+    <font face="Verdana, Arial, Helvetica, sans-serif" style="font-size: 10pt" color=#ff00cc>
+    Who am I?<br>
+    Why am I so interested?<br>
+    How to contact?    
+    </font>
+   
+    </td>
+</table>
+</body>
+</html>

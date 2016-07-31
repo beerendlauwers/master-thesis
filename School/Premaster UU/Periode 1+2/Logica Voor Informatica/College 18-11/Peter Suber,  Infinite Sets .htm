@@ -1,0 +1,659 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 3.0//EN" "html.dtd">
+<!-- saved from url=(0049)http://www.earlham.edu/~peters/writing/infapp.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Peter Suber, "Infinite Sets"</title>
+</head>
+<body bgcolor="#FFFFFF" text="black" link="#0000D0" vlink="teal" alink="#FF0000">
+
+<font face="Trebuchet MS, Arial, Helvetica, Sans serif">
+<blockquote>
+
+<p>Published in the <em>St. John's Review</em>, XLIV, 2 (1998) 35-59.  <a href="http://www.earlham.edu/~peters/copyrite.htm">Copyright</a> © 1998, <a href="http://www.earlham.edu/~peters/hometoc.htm">Peter Suber</a>.
+
+</p><p>This crash course is designed to stand alone.  But it also functions as the appendix to my essay, <a href="http://www.earlham.edu/~peters/writing/infinity.htm">Infinite Reflections</a>.
+
+
+</p><p></p><center><strong><font size="+2">A Crash Course in the Mathematics<br>Of Infinite Sets</font></strong></center>
+<center><font size="-1">
+<a href="http://www.earlham.edu/~peters/hometoc.htm">Peter Suber</a>, 
+<a href="http://www.earlham.edu/~phil/index.htm">Philosophy Department</a>, 
+<a href="http://www.earlham.edu/">Earlham College</a>
+</font></center>
+
+<p>    Don't be surprised if this is easier than you thought.  Set theory requires no algebra or calculus.  It is much more primitive than those branches of mathematics, and rests on very simple notions.  Moreover, the proofs will be unusually short and uncomplicated.  
+
+</p><p>    What will be difficult?  Most of the results we will prove depend critically on those that came before; but I cite the needed prior theorems by number to make this kind of back-tracking easier.  The notation may be new, and for many people unfamiliar notation raises the hair on the back of the neck.  But most of the notation may be ignored.  I include it mainly so that if you read further on this subject, you will be equipped.  I honestly don't think the compressed exposition needed for a crash course increases the difficulty —in part because I've been more long-winded than most mathematicians, and in part because some compression and conciseness helps keep all the relevant ideas in the head at the same time, which aids comprehension.  Some of the proofs, short and simple as they are, will make you dizzy.  But that's part of the amazing phenomenon to be savored, not a difficulty to lament.
+
+</p><p>    To begin:
+
+</p><dl>
+
+<p><strong>Almost a definition</strong>.  Intuitively, a <em>set</em> is a collection of elements.</p><ul type="disc">
+<li>The intuitive notion of a set leads to paradoxes, and there is considerable mathematical and philosophical disagreement about how best to refine the intuitive notion.  Fortunately, none of the disagreements or refinements matters for our purposes here.  I only bring up this complexity so that you'll accept the intuitive notion in place of a refined definition for the purposes of this crash course.
+</li><li>Notation.  When we want to list the members of a set, we use curly brackets.  So if set S contains elements A, B, and C, then we say S = {A, B, C}.
+</li><li>The <em>null set</em> is the empty set or the set with no members.  Notation:  Ø.  Hence, Ø = {}. </li></ul>
+
+<p><strong>Abbreviation</strong>.  For <em>if and only if</em> I will sometimes write simply <em>iff</em>.
+
+</p><p><strong>Definition</strong>.  Set A is a <em>subset</em> of set B iff all the members of A are also members of B.</p><ul type="disc">
+<li>Notation.  A <img src="./Peter Suber,  Infinite Sets _files/subset.gif"> B.  
+</li><li>It follows from this definition that every set is a subset of itself.
+</li></ul>
+
+<p><strong>Definition</strong>.  Set A is a <em>proper subset</em> of set B iff all the members of A are also members of B, but not all the members of B are members of A.</p><ul type="disc">
+<li>Notation.  A <img src="./Peter Suber,  Infinite Sets _files/propsub.gif"> B.
+</li><li>It follows from this definition that no set is a proper subset of itself.
+</li></ul>
+
+<p><strong>Definition</strong>.  The <em>cardinality</em> of a set is the number of members it contains.</p><ul type="disc">
+<li>Notation.  The cardinality of set S is |S|.  For example, if S = {A, B, C}, then |S|=3.
+</li><li>Hence while S is a set, |S| is a number.  When S is an infinite set, |S| will be an infinite number.
+</li><li>Technically, |S| is a cardinal number, as opposed to an ordinal number.  This doesn't matter for what follows, but it might help you remember the term <em>cardinality</em>.  A cardinal number answers the question <em>how many?</em>  An ordinal number answers the question <em>which one?</em>  Natural numbers are used both ways in different contexts.  For example, 3 is used as a cardinal number when we say there are "three blind mice" or "three bags full", but it is used as an ordinal number when we say "the third pig built with brick" or "curtain number three".  Sets have cardinality, that is, size or magnitude:  they have some definite number of members.  But they do not have ordinality:  their members are not in any particular order; for example, {A, B, C} = {B, A, C}.  In this brief exposition, I introduce the mathematics of infinite cardinal numbers and ignore the infinite ordinals.
+</li></ul>
+
+<p><strong>Definition</strong>.  Two sets can be put into <em>one-to-one correspondence</em> iff their members can be paired off such that each member of the first set has exactly one counterpart in the second set, and each member of the second set has exactly one counterpart in the first set.</p><ul type="disc">
+<li>Notation.  If sets A and B can be put into one-to-one correspondence, then we say A <img src="./Peter Suber,  Infinite Sets _files/11corr.gif"> B.
+</li></ul>
+
+<p>Putting two infinite sets into one-to-one correspondence is an infinite task, and we don't pretend that we can do it (that is, finish it) in finite time.  To show that an infinite set, like the even numbers, can be put into one-to-one correspondence with another, like the odd numbers, we need only produce a rule-governed sequence for each set which runs through the members without omission or repetition, for example, 2, 4, 6... and 1, 3, 5....  If we can do so, then we know that the <em>n</em>th term of one sequence will have a counterpart in the <em>n</em>th term of the other, and <em>vice versa</em>, guaranteeing one-to-one correspondence all the way out.
+
+</p><p>   We will soon see that there are infinite sets larger than the set of natural numbers (<a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm3">Theorem 3</a> below), and for them no such sequences can be constructed.  However, for cardinalities of that magnitude, most of our proofs will show the absence or failure, rather than the presence, of one-to-one correspondence.
+
+</p><p><strong>Definition</strong>.  Two sets have the <em>same cardinality</em> iff they can be put into one-to-one correspondence; or, A <img src="./Peter Suber,  Infinite Sets _files/11corr.gif"> B iff |A| = |B|.</p><ul type="disc">
+<li>This definition applies to infinite as well as to finite sets.
+</li><li>It follows from the last three definitions that set A has a <em>larger cardinality</em> than set B iff both (1) a proper subset of A and the whole of B can be put into one-to-one correspondence, and (2) the whole of A cannot be put into one-to-one correspondence with any proper subset of B.
+</li></ul>
+
+<p><strong>Definition</strong>.  The <em>power set</em> of a set S is the set of all the subsets of S.  </p><ul type="disc">
+<li>Notation.  The power set of S is *S.
+</li><li>For example, if S = {A, B, C}, then *S = {{A,B,C}, {A,B}, {A,C}, {B,C}, {A}, {B}, {C}, Ø}.
+</li><li>The power set of a given set always contains the given set itself and the null set.
+</li><li>Note that while the members of S may be any sort of things (bugles, baseball teams, Byronic poems), the members of *S are other sets.
+</li><li>|*S| is the cardinality of the power set of S.  As you can see from the example above, when S has 3 members, then *S has 2<sup>3</sup> or 8 members.  In general, when S is finite, then |*S| = 2<sup> | S |</sup>. 
+</li><li>We will assume <em>the power set axiom</em>, i.e. that all sets have power sets.
+</li></ul>
+
+<p><strong>Reminder</strong>.  The <em>natural numbers</em> are the whole positive numbers (sometimes called the "counting numbers"), including zero:  0, 1, 2, 3 ....  </p><ul type="disc">
+<li>This is really a definition, but by calling it a "reminder" I'm hoping to get on your good side.
+</li><li>Notation.  The set of natural numbers is designated by <strong><font size="+1">N</font></strong>.
+</li><li>Notation.  The number of natural numbers is designated by <font face="Symbol">À</font><sub>0</sub>.  "<font face="Symbol">À</font>" is the first letter of the Hebrew alphabet, pronounced <em>Aleph</em>.  "<font face="Symbol">À</font><sub>0</sub>" is pronounced <em>Aleph-null</em> or <em>Aleph-nought</em>.  We will justify the zero subscript when we prove that no infinite set has a smaller cardinality than the set of natural numbers (<a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm6">Theorem 6</a>).
+</li><li>Hence <font face="Symbol">À</font><sub>0</sub> = |<strong><font size="+1">N</font></strong>|, by definition.
+</li><li>Now you know how many natural numbers there are:  <font face="Symbol">À</font><sub>0</sub>.  But this is not profound.  So far we've only invented a name (numeral) for the number of natural numbers.
+</li></ul>
+
+<p><strong>Definition</strong>.  A set is <em>countable</em> iff its cardinality is either finite or equal to <font face="Symbol">À</font><sub>0</sub>.  A set is <em>denumerable</em> iff its cardinality is exactly <font face="Symbol">À</font><sub>0</sub>.  A set is <em>uncountable</em> iff its cardinality is greater than <font face="Symbol">À</font><sub>0</sub>.</p><ul type="disc">
+<li>The null set is countable.  The finite set, {A, B, C}, is countable.  The infinite set, <strong><font size="+1">N</font></strong>, is countable and denumerable.  Sets with a larger cardinality than <strong><font size="+1">N</font></strong> are uncountable.
+</li></ul>
+
+<p><strong>Definition</strong>.  A <em>transfinite number</em> or <em>transfinite cardinal</em> is the cardinality of some infinite set. </p><ul type="disc">
+<li>If we use the term "infinite" in a restricted and precise way, then "transfinite" is just a synonym for it.  We could avoid fancy new terms to prevent confusion.  However, "infinite" has many imprecise and non-technical uses —for example, the <em>infinite</em> setting on a camera's range-finder— so it often helps to use a technical term to avoid ambiguity.
+</li></ul>
+
+<p><strong>Reminder</strong>.  The <em>integers</em> are the natural numbers plus their negative counterparts, ...-3, -2, -1, 0, 1, 2, 3....</p><ul type="disc">
+<li>Notation.  The set of integers is designated by <strong><font size="+1">Z</font></strong>.
+</li></ul>
+
+<p><strong>Reminder</strong>.  The <em>rational numbers</em> are the integers plus the rational fractions (those that can be expressed as the ratio of two integers).</p><ul type="disc">
+<li>Notation.  The set of rational numbers is designated by <strong><font size="+1">Q</font></strong>.
+</li><li>For example, 0.75 is a rational fraction because we can express it as the ratio of two integers, namely, 3/4.  Therefore it is a rational number.
+</li><li>The <em>irrational numbers</em> are the fractions that are not rational numbers, both positive and negative.  For example, we can prove that pi (3.14159...) cannot be expressed as the ratio of two integers.  Therefore it is an irrational number.</li></ul>
+
+
+<p><strong>Reminder</strong>.  The <em>real numbers</em> are the rational numbers plus the irrational numbers.</p><ul type="disc">
+<li>Notation.  The set of real numbers is designated by <strong><font size="+1">R</font></strong>.
+</li></ul>
+
+<p>   We started with the natural numbers (<strong><font size="+1">N</font></strong>), then added infinitely many negative whole numbers to get the integers (<strong><font size="+1">Z</font></strong>), then added infinitely many rational fractions to get the rationals (<strong><font size="+1">Q</font></strong>), and then added infinitely many irrational fractions to get the reals (<strong><font size="+1">R</font></strong>).  It's tempting to conclude that with each infinite addition we increased cardinality, or in short:
+
+</p><p></p><center>|<strong><font size="+1">N</font></strong>| &lt; |<strong><font size="+1">Z</font></strong>| &lt; |<strong><font size="+1">Q</font></strong>| &lt; |<strong><font size="+1">R</font></strong>|</center>
+
+<p>But is this true?  Here we encounter one of the first points at which the mathematics of the infinite violates our intuitions.  If each addition <em>did</em> increase cardinality, that would violate our sense that "infinity is infinity" —or that all infinite sets are equal in cardinality.  But if any of these additions did <em>not</em> increase cardinality, that would violate our sense that the cardinality of a set grows when we add members.  Before we learn the truth, and see how it violates our intuitions, it's wise to remember that its negation would also have violated our intuitions.  At the very beginning, therefore, we should not demand conformity with our intuitions so much as clear definitions and rigorous proofs.
+
+</p><p><strong>Foreshadowing</strong>.  <em>Both</em> the intuitions mentioned in the preceding paragraph are false.  (1) Not all infinities are equal in cardinality, and (2) some additions, even infinite additions, do not increase cardinality.  The string of inequalities, |<strong><font size="+1">N</font></strong>| &lt; |<strong><font size="+1">Z</font></strong>| &lt; |<strong><font size="+1">Q</font></strong>| &lt; |<strong><font size="+1">R</font></strong>|, is also false.
+
+<a name="thm1"></a>
+</p><p><strong>Theorem 1.</strong>  The set of integers has the same cardinality as the set of natural numbers, or |<strong><font size="+1">N</font></strong>| = |<strong><font size="+1">Z</font></strong>|.</p><ul type="disc">
+<li><em>Proof</em>.  If we try to list the integers, we note that they trail off with three dots in two directions:  ...3, 2, 1, 0, 1, 2, 3....  Left in that form they would be hard to put into one-to-one correspondence with the natural numbers.  But if we alternate one positive and one negative integer, then they form a single infinite sequence, 0, 1, -1, 2, -2, 3, -3..., and we can easily put them into one-to-one correspondence with the natural numbers, 0, 1, 2, 3, 4, 5, 6, 7....
+</li></ul>
+
+<p>   This method of alternating the members of two infinite sequences in order to make a single sequence is called <em>interlacing</em>.  Cantor used it often and so will we.
+
+<a name="thm2"></a>
+</p><p><strong>Theorem 2.</strong>  The set of rational numbers has the same cardinality as the set of natural numbers, or |<strong><font size="+1">N</font></strong>| = |<strong><font size="+1">Q</font></strong>|.</p><ul type="disc">
+<li>It's much harder to find a method for putting the rational numbers into
+one-to-one correspondence with the natural numbers than it was for the integers.  The reason is that the rational numbers are <em>dense</em>, that is, between any two of them there is a third.  For example, between 123/987 and 124/987 there is 123.5/987, which resolves into 247/1974.  This means, in fact, that between any two there are <em>infinitely many</em> others.  It also means that for any given rational number, there is no such thing as the <em>next greater</em>, or the <em>next lesser</em>, rational number.  But Cantor found a very clever method for laying out the rational numbers so that they can be put into one-to-one correspondence with the naturals.  
+</li><li><em>Proof</em>.  The following table shows Cantor's method for putting the rationals and naturals into one-to-one correspondence:
+</li></ul>
+
+
+<p></p><center><table border="0" cellpadding="5" cellspacing="2">
+<tbody><tr bgcolor="eeeeee">
+	<td bgcolor="white"></td>
+	<td bgcolor="white"></td>
+	<td colspan="4">Numerators</td>
+</tr>
+<tr align="center" bgcolor="eeeeee">
+	<td bgcolor="white"></td>
+	<td bgcolor="white"></td>
+	<td bgcolor="silver" width="30">1</td>
+	<td bgcolor="silver" width="30">2</td>
+	<td bgcolor="silver" width="30">3</td>
+	<td bgcolor="silver" width="30">4...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td rowspan="4" valign="top">Denominators</td>
+	<td bgcolor="silver" width="30" align="center">1</td>
+	<td align="center">1/1</td>
+	<td align="center">2/1</td>
+	<td align="center">3/1</td>
+	<td align="center">4/1...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td bgcolor="silver" align="center">2</td>
+	<td align="center">1/2</td>
+	<td align="center">2/2</td>
+	<td align="center">3/2</td>
+	<td align="center">4/2...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td bgcolor="silver" align="center">3</td>
+	<td align="center">1/3</td>
+	<td align="center">2/3</td>
+	<td align="center">3/3</td>
+	<td align="center">4/3...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td bgcolor="silver" align="center">4...</td>
+	<td align="center">1/4</td>
+	<td align="center">2/4</td>
+	<td align="center">3/4</td>
+	<td align="center">4/4...</td>
+</tr>
+</tbody></table></center>
+
+
+<p></p><ul type="disc">The two shaded axes list all the possible natural number numerators, and all the possible natural number denominators.  The interior part of the table uses the axes to compose all the rational fractions, which are all the rational numbers.  Now we read off the rationals in this order:  starting with the 1/1 in the upper left corner, we move right to 2/1, then diagonally down and to the left, then down, then diagonally up and to the right, and so on, eventually passing through every cell in the grid.  The first 10 numbers in our journey are:  1/1, 2/1, 1/2, 1/3, 2/2, 3/1, 4/1, 3/2, 2/3, 1/4....  But as the following table shows, this sequence can be put into one-to-one correspondence with the natural numbers:
+</ul>
+
+<p></p><center><table cellspacing="2" cellpadding="5" border="0">
+<tbody><tr align="center" bgcolor="eeeeee">
+    <td bgcolor="white"><strong>Rationals</strong></td>
+    <td> 1/1 </td>
+    <td> 2/1 </td>
+    <td> 1/2 </td>
+    <td> 1/3 </td>
+    <td> 2/2 </td>
+    <td> 3/1 </td>
+    <td> 4/1 </td>
+    <td> 3/2 </td>
+    <td> 2/3 </td>
+    <td> 1/4...</td>
+</tr>
+<tr align="center" bgcolor="eeeeee">
+    <td bgcolor="white"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+    <td><img src="./Peter Suber,  Infinite Sets _files/2hdvert.gif"></td>
+</tr>
+<tr align="center" bgcolor="eeeeee">
+    <td bgcolor="white"><strong>Naturals</strong></td>
+    <td>0</td>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+    <td>4</td>
+    <td>5</td>
+    <td>6</td>
+    <td>7</td>
+    <td>8</td>
+    <td>9...</td>
+</tr>
+</tbody></table></center>
+
+
+<p>   This method of enumerating the rationals includes each rational number more than once.  For example, it will include 1/1, 2/2, 3/3..., each of which is equal to 1.  In fact, every rational number will be represented infinitely many times.  Technically, this violates the conditions of strict one-to-one correspondence.  But in fact we can leave the duplicates in the enumeration without harming the proof, for we are then proving that the rationals <em>plus</em> the duplicates is <em>still</em> no greater in cardinality than the naturals.  This means that the rationals are <em>at most</em> as numerous as the naturals.  We already know that the rationals are <em>at least</em> numerous as the naturals (because the naturals are a proper subset of the rationals).  Therefore, the rationals are <em>exactly</em> as numerous as the naturals.
+
+</p><p>(Can you see why if some set A is <em>at least</em> as numerous as another set B, and <em>at most</em> as numerous as B, then it must be <em>exactly</em> as numerous as B?)
+
+</p><p>In Theorems <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm1">1</a> and <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm2">2</a> we saw that two kinds of infinite addition to an infinite set did not increase the cardinality of the original set.  But we cannot generalize too quickly and say that such additions will never increase the cardinality of the original set.  Our next theorem shows that some sets can indeed be larger than the natural numbers, and in <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm16">Theorem 16</a> we will see that the additions to the naturals required to generate the real numbers do indeed create an uncountable set.
+
+<a name="thm3"></a>
+</p><p><strong>Theorem 3.</strong>  The power set of the set of natural
+numbers has a greater cardinality than the set of natural numbers, i.e. it is uncountable; or |*<strong><font size="+1">N</font></strong>| &gt; |<strong><font size="+1">N</font></strong>|.</p><ul type="disc">
+<li><em>Proof</em>.  We give a negative proof, and assume that the natural numbers <em>can</em> be put into one-to-one correspondence with the sets of natural numbers.  Let this hypothetical pairing off be represented by the leftmost columns of the following table.
+
+<p></p><center><table border="0" cellpadding="5" cellspacing="2">
+<tbody><tr bgcolor="eeeeee">
+	<td colspan="3" rowspan="2">The nat. nos. in 1-1<br>correspondence<br>with the sets thereof<br>(hypothetically)</td>
+	<td colspan="4">Are these nos. members of the set listed at left?</td>
+</tr>
+<tr align="center" bgcolor="eeeeee">
+	<td bgcolor="silver" width="40">0</td>
+	<td bgcolor="silver" width="40">1</td>
+	<td bgcolor="silver" width="40">2</td>
+	<td bgcolor="silver" width="40">3...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td>0</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"></td>
+	<td>evens</td>
+	<td bgcolor="yellow">yes</td>
+	<td>no</td>
+	<td>yes</td>
+	<td>no...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td>1</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"></td>
+	<td>odds</td>
+	<td>no</td>
+	<td bgcolor="yellow"><font color="ff0066"><strong>yes</strong></font></td>
+	<td>no</td>
+	<td>yes...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td>2</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"></td>
+	<td>squares</td>
+	<td>yes</td>
+	<td>yes</td>
+	<td bgcolor="yellow">no</td>
+	<td>no...</td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td>...</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"></td>
+	<td>...</td>
+	<td>...</td>
+	<td>...</td>
+	<td>...</td>
+	<td bgcolor="yellow">...</td>
+</tr>
+</tbody></table></center>
+
+
+<p>In the shaded row of the table we again enumerate the natural numbers. 
+The "yeses" and "noes" in the body of the table below them tell us whether the natural
+numbers in the shaded row above them are members of the sets to the left of them.  For
+example, take the "yes" written in red.  It is in the column of natural number 1, and in the row of the set of odd numbers; it says "yes" because 1 is indeed a member of the set of odd numbers.  In this way, we represent every set of natural numbers (down the left column) as an infinite string of "yeses" and "noes".  Conversely, we can read any string of "yeses" and "noes" as code for a particular set of natural numbers.  
+
+</p><p>From the "yes" in the upper left corner of the block of "yeses" and  "noes", move diagonally downward and to the right, following the yellow cells.  Toggle each "yes" we encounter to a "no" and <em>vice versa.</em>  The resulting infinite string of "yeses" and "noes" is demonstrably different from <em>every</em> row of the infinite table, for it differs from the first row in the first term, from the second row in the second term, and so on.  When we read it as set of natural numbers, the set it represents is for the same reason demonstrably different from every set yet listed on the table.  But this contradicts our assumption that we had exhaustively listed and  paired off all the sets of natural numbers.  Therefore our assumption is false, and the natural numbers <em>cannot</em> be put into one-to-one correspondence with the sets of natural numbers.
+
+</p><p>We're almost done.  If the naturals and the sets of naturals cannot be
+put into one-to-one correspondence, then one has a larger cardinality than the other.  The power set of the naturals must have the greater cardinality, for one of its proper subsets, {{0}, {1}, {2}, {3}...}, can be put into one-to-one correspondence with the naturals, 0, 1, 2, 3....  Therefore there are more sets of natural numbers than natural numbers.
+</p></li></ul>
+
+<p>This technique of moving down the diagonal of a table, changing every row in
+some way, and thereby constructing a new item that differs from every row in some definite respect, is called <em>diagonalization</em>.  It is one of Cantor's most ingenious methods for gaining leverage on infinite sets.  We'll use diagonalization often.
+
+</p><p>To establish <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm3">Theorem 3</a>, we used a <em>negative proof</em>.  In a negative proof we assume the negation of the desired conclusion and show that that assumption leads to a contradiction; then we conclude that assumptions is false, which is the same thing as to conclude that the desired conclusion is true.  It is a special case of the rule of inference, called <em>modus tollens</em>, by which we infer that any statement that implies a falsehood is false.  Since it is so hard to grapple with infinite sets directly, negative proofs are common in this branch of mathematics.  However, the most important skeptics of Cantor's results, called <em>intuitionists</em>, refuse to use negative proofs in dealing with infinite sets
+—although they are willing to use negative proofs in other areas of mathematics. 
+The issue between Cantor and the intuitionists is whether this refusal is arbitrary, or whether we should distrust negative proofs in those domains where there is no possibility of verifying our results through intuition.
+
+<a name="thm4"></a>
+</p><p><strong>Theorem 4.</strong>  The cardinality of the power set of an
+arbitrary set has a greater cardinality than the original arbitrary set, or |*A| &gt; |A|.</p><ul type="disc">
+<li>This is called simply <em>Cantor's Theorem.</em>  It generalizes the previous theorem, in which we proved that the power set of a particular set, <strong><font size="+1">N</font></strong>, had a greater cardinality than the original.  The present theorem is trivial for finite sets, but is fundamental for infinite sets.
+</li><li><em>Proof</em>.  Let A be an arbitrary set of any cardinality, finite or infinite.  Again we supply a negative proof, and assume that the members of A <em>can</em> be put into one-to-one correspondence with the subsets of A.  Take any one of the supposed ways of pairing off the members of A with the subsets of A.  Let us say that if a member of A is paired with a subset of A of which it happens to be a member, then it is <em>happy</em>; otherwise it is <em>sad</em>.  Let S be the set of sad members of A.  Clearly S is one of the subsets of A.  Therefore S is paired off with one of the members of A, say, <em>x</em>.  Is <em>x</em> happy or sad?  If <em>x</em> is happy, then <em>x</em> is a member of the set to which it is paired, which is S, but that would make it sad.  If <em>x</em> is sad, then <em>x</em> is <em>not</em> a member of the set to which it is paired, which is S, but that would make it happy.  So if <em>x</em> is happy, then it is sad, and if it is sad, then it is happy.  Our assumption implies a contradiction and is therefore false.  So the members of A <em>cannot</em> be put into one-to-one correspondence with the subsets of A.  
+</li></ul>
+
+<p>But if A and *A cannot be put into one-to-one correspondence, then they cannot have the same cardinality.  If so, then the larger one must be *A, for A can be put into one-to-one correspondence with a proper subset *A.  For example, if the members of A are A1, A2, A3..., then they can be put into one-to-one correspondence with this subset of *A:  {{A1}, {A2}, {A3}...}.
+
+</p><p>   Many profound consequences follow directly from Cantor's theorem.  But we
+make the most important of them explicit in the next theorem.
+
+
+<a name="thm5"></a>
+</p><p><strong>Theorem 5.</strong>  If S is a set of any infinite cardinality, then
+its power set has a greater infinite cardinality, or |*S| &gt; |S|.</p><ul type="disc">
+<li>This follows directly from Cantor's Theorem (<a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm4">Theorem 4</a>).  Cantor's theorem applies equally to finite and infinite sets; this corollary focuses on the important consequence for infinite sets. 
+</li><li>If we follow the notation for finite sets, and say that a set of cardinality <em>a</em> has a power set of cardinality 2<sup>a</sup>, then this theorem asserts that 2<sup>a</sup> &gt; <em>a</em>, for each transfinite cardinal <em>a</em>.
+</li><li>This theorem asserts that for any infinite cardinality, there is a larger infinite cardinality, namely, the cardinality of its power set.  Hence, <em>there is an infinite series of infinite cardinal numbers.</em>  We will meet some of the infinite cardinals larger than <strong><font size="+1">N</font></strong> shortly.
+</li><li>This theorem also implies that, for every set, there is a greater set.  It follows that there is no set of all sets, or no set of everything.  
+</li></ul>
+
+<p>It follows from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm5">Theorem 5</a> that "infinity" is not synonymous with "totality", a clarification which alone dispells many of the ancient conundrums and paradoxes surrounding the infinite.
+
+</p><p>    Speaking of the infinite series of infinite numbers which Cantor proved to exist, David Hilbert said (in 1910) that, "No one shall drive us from the paradise which Cantor created for us," and (in 1926), "This appears to me to be the most admirable flower of the mathematical intellect and one of the highest achievements of purely rational human activity."
+
+</p><p>    Now that we have proved there is an infinite series of infinite cardinals, it is well to prove that <font face="Symbol">À</font><sub>0</sub> truly
+designates the smallest of them.
+
+<a name="thm6"></a>
+</p><p><strong>Theorem 6.</strong>  No infinite set has a smaller cardinality
+than a denumerable set (or, none is smaller than the set of natural numbers).</p><ul type="disc">
+<li><em>Proof</em>.  Let S be a set of any infinite cardinality.  Clearly we may take away one of its members, call it S<sub>1</sub>, without emptying S.  We may take another, S<sub>2</sub>, and another, S<sub>3</sub>, and so on, each time without emptying S.  In this way we may carve out a denumerable proper subset from S, namely, {S<sub>1</sub>, S<sub>2</sub>, S<sub>3</sub>...}.  But S had any infinite cardinality.  Hence all infinite sets have at least one denumerable proper subset.  Hence the cardinality of a denumerable set is not greater than any transfinite cardinality; or, it is the smallest transfinite cardinality.
+</li></ul>
+
+<p>  We know from the proof of <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm6">Theorem 6</a> that every infinite set has an infinite proper subset which consists of the original set minus denumerably many members.  This fact has a beautiful implication.  If the "largeness" of an infinite set is measured by its cardinality, then the smallest infinite set is a denumerable set or one with a cardinality of <font face="Symbol">À</font><sub>0</sub>.  But if the largeness of an infinite set is measured by the largeness of its proper subsets, then there is no smallest infinite set:  they nest downward <em>ad infinitum</em> without ever losing infinite cardinality.
+
+</p><p>    <font face="Symbol">À</font><sub>0</sub> designates the cardinality of the natural numbers by definition, which is demonstrably the smallest infinite cardinality (<a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm6">Theorem 6</a>).  This justifies the zero subscript.  <font face="Symbol">À</font><sub>1</sub> is by definition the next greater infinite cardinality after <font face="Symbol">À</font><sub>0</sub>, just as <font face="Symbol">À</font><sub>2</sub> is by definition the next greater cardinal after <font face="Symbol">À</font><sub>1</sub>, and so
+on.  As we will see in the <a href="http://www.earlham.edu/~peters/writing/infapp.htm#ch">section on the <em>continuum hypothesis</em></a> below, even though there is an infinite series of infinite cardinals (<a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm5">Theorem 5</a>), it is impossible to say, in standard set theory, which one of them is <font face="Symbol">À</font><sub>1</sub>, which one is <font face="Symbol">À</font><sub>2</sub>, and so on.
+
+
+<a name="thm7"></a>
+</p><p><strong>Theorem 7.</strong>  A denumerable set plus a new member is still
+denumerable, or <font face="Symbol">À</font><sub>0</sub> + 1 = <font face="Symbol">À</font><sub>0</sub>.</p><ul type="disc">
+<li><em>Proof</em>.  If we add element A to the set of natural
+numbers, giving us {A, 0, 1, 2, 3...}, then the resulting set can still be put into one-to-one correspondence with the natural numbers.  A would be paired with 0, 0 with 1, 1 with 2, and so on.
+</li><li>As a corollary it follows that we may add a second member, and a third, and so on.   <font face="Symbol">À</font><sub>0</sub> + 2 = <font face="Symbol">À</font><sub>0</sub>,  <font face="Symbol">À</font><sub>0</sub> + 3 = <font face="Symbol">À</font><sub>0</sub>,  <font face="Symbol">À</font><sub>0</sub> + <em>n</em> = <font face="Symbol">À</font><sub>0</sub> for every positive integer <em>n</em>.  
+</li><li>In fact we may add denumerably many new members, A, B, C... to the original denumerable set without increasing its cardinality.  The enlarged set, {A, B, C..., 0, 1, 2...}, can be put into one-to-one correspondence with the natural numbers if we interlace its members thus:  A, 0, B, 1, C, 2....  (See <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm1">Theorem 1</a>.)  Therefore, <font face="Symbol">À</font><sub>0</sub> + <font face="Symbol">À</font><sub>0</sub> = <font face="Symbol">À</font><sub>0</sub>.
+</li></ul>
+
+
+<a name="thm8"></a>
+<p><strong>Theorem 8.</strong>  A denumerable set may have denumerably many
+members removed (in certain ways) without reducing the cardinality of the original set.</p><ul type="disc">
+<li><em>Proof</em>.  We need only regard the given denumerable set as two denumerable sets interlaced, then 'unlace' them, then discard one of them.  If {A<sub>1</sub>, A<sub>2</sub>, A<sub>3</sub>...} is the original denumerable set, then we can separate out the set of even-numbered members, {A<sub>2</sub>, A<sub>4</sub>, A<sub>6</sub>...}, from the set of odd-numbered members, {A<sub>1</sub>, A<sub>3</sub>, A<sub>5</sub>...}, each of which is denumerable.  If we discard one of the resulting sets, the other one has the same cardinality as the original.
+</li><li>Note that this theorem only applies to the removal of <em>certain</em> denumerable subsets from a given denumerable set.  For if the denumerably many members we subtracted happened to comprise the entire membership of the original denumerable set, then clearly the result would not be a denumerable set.  So we cannot conclude in general that <font face="Symbol">À</font><sub>0</sub> - <font face="Symbol">À</font><sub>0</sub> = <font face="Symbol">À</font><sub>0</sub>.
+</li></ul>
+
+
+<a name="thm9"></a>
+<p><strong>Theorem 9.</strong>  If we remove denumerably many members from an uncountably large set, the result will have the same cardinality as the original.</p><ul type="disc">
+<li><em>Proof</em>.  Let U be any uncountably large set.  We know from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm6">Theorem 6</a> that U has at least one denumerable proper subset, say D.  And we know from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm8">Theorem 8</a> that we can remove denumerably many members from D, in certain ways, without reducing the cardinality of D.  If we do so, then we thereby remove denumerably many members from U without reducing the cardinality of U.
+</li></ul>
+
+<a name="thm10"></a>
+<p><strong>Theorem 10.</strong>  Every infinite set can be be put into
+one-to-one correspondence with at least one of its proper subsets.</p><ul type="disc">
+<li><em>Proof</em>.  Let S be a set of any infinite cardinality.  If S is countable, then <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm8">Theorem 8</a> tells us that we may produce a proper subset of S without reducing S's cardinality.  But if S and that proper subset have the same cardinality, then they can be put into one-to-one correspondence.  If S is uncountable, then we have the same result using <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm9">Theorem 9</a> instead of <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm8">Theorem 8</a>.
+</li><li>Together with the trivial truth that no finite set can be put into one-to-one correspondence with any of its proper subsets, this theorem establishes the important result that <em>all and only</em> infinite sets possess the property that they can be put into one-to-one correspondence with at least one of their proper subsets.  It follows that this property is a <em>necessary and sufficient</em> condition for being
+an infinite set.  It may therefore be taken as the defining condition of infinite magnitude, and its absence as the defining condition of finitude.
+</li></ul>
+
+<p><strong>Definition</strong>.  Let us say that a <em>text</em> is a
+finitely long string of symbols, whose symbols are chosen from a finite set (or alphabet).</p><ul type="disc">  
+<li>For our purposes here we needn't even say that the string conforms to the rules of some grammar.  When interpreted, the text may be a name, a sentence, a paragraph, a chapter, a book, or a library.
+</li></ul>
+
+
+<a name="thm11"></a>
+<p><strong>Theorem 11.</strong>  There are only countably many texts.</p><ul type="disc">
+<li><em>Proof</em>.  By definition there are only finitely many symbols in the "alphabet" from which we may compose texts.  List them exhaustively in any order.  To the first symbol, assign the numeral "10".  To the second, assign the numeral "100".  To the third, assign "1000" and so on.  In general, to the <em>n</em>th symbol in the alphabet we assign the numeral in which "1" is followed by <em>n</em> zeroes.  Now in each text, replace the symbols with their corresponding numerals.  Concatenate the numerals so that, for example, "10 100 1000 10"  becomes "10100100010".  We now have a method for converting every distinct text into a distinct natural number.  But
+there are only <font face="Symbol">À</font><sub>0</sub> natural numbers.  Therefore there are at most <font face="Symbol">À</font><sub>0</sub> texts.
+</li></ul>
+
+<p>    This theorem has deep consequences.  We will soon prove (<a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm16">Theorem 16</a>) that there are uncountably many real numbers.  But by the present theorem, there are only countably many names for anything.  Hence, only a countable subset of the real numbers can be named.  Or conversely (by <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm9">Theorem 9</a>), <em>uncountably</em> many real numbers <em>cannot</em> be named.
+
+</p><p>    This theorem also means that there are at most countably many theorems in any
+axiom system (in which theorems are finitely long).  But we know from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm3">Theorem 3</a> that there are uncountably many sets of natural numbers.  If there is at least one truth of number theory for each set of natural numbers (e.g. that some number <em>n</em> belongs to that set), then there will be uncountably many truths of number theory.  Therefore, there are uncountably many more truths of number theory than there are texts.  It follows that every axiom system intended to capture number theory is doomed to incompleteness.
+
+
+<a name="thm12"></a>
+</p><p><strong>Theorem 12.</strong>  The number of points on a finite line
+segment is the same as the number of points on an infinite ray.</p><ul type="disc">
+
+<p></p><center>
+<table cellpadding="10" cellspacing="0" width="80%" border="0" bgcolor="eeeeee">
+<tbody><tr>
+<td>Until I can draw a GIF for this theorem, imagine a large letter "Z".  Label the point at the upper left, C, that at the upper right, D, that at the lower left A.  Imagine that the bottom bar continues infinitely to the right, and that point B is somewhere along it to the right of A.
+</td>
+</tr>
+</tbody></table>
+</center>
+
+  
+<p></p><li><em>Proof</em>.  Let segment CD be parallel to ray AB.  From point C we can draw a line through any point of AD, except D itself, and the line we draw will intersect AB somewhere; in this way we can pair any point on AD with exactly one point on AB.  Conversely, from point C we can draw a line through any point of the ray AB, and the line we draw will intersect AD somewhere; in this way, we can pair any point on AB with exactly one point on AD.  But this means the points on AD, minus D itself, and those on AB can be put into one-to-one correspondence.  Hence they contain the same number of points.
+</li></ul>
+
+<p>We have yet to say how many points are on AD (minus D itself) or the infinite ray AB, but we know it will be some infinite cardinality.  Now since any infinite cardinal plus one equals the original infinite cardinal (<a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm7">Theorem 7</a>), we may add   back the point D, which we omitted above, without changing the cardinality of the set of points on the segment.
+
+
+
+<a name="thm13"></a>
+</p><p><strong>Theorem 13.</strong>  The number of points on a finite line
+segment is the same as the number of points on an infinite line.</p><ul type="disc">
+<li>The proof is a simple variation on the proof for <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm12">Theorem 12</a>.  Imagine the mirror image of the figure used in <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm12">Theorem 12</a> (a "backward Z"), with a new point, D', to the left of C, and a new point, B', to the left of A.  We would then prove that two line segments (AD and AD') together contain the same number of points as the infinite line.  But the two line segments together make one longer, though still finite segment.  Therefore, the number of points in a finite segment equals the number of points on an infinite line.
+</li></ul>
+
+<p><strong>Definition</strong>.  The number of real numbers is the same as
+the number of points on an infinite line; or in the jargon, the <em>numerical
+continuum</em> has the same cardinality as the<em> linear continuum</em>.    </p><ul type="disc">
+<li>Notation.  Let <strong>c</strong>  (lower-case "c" for "continuum") designate the cardinality of the continuum —or equivalently, the cardinality of the set of real numbers.  Hence <strong>c</strong> = |<strong><font size="+1">R</font></strong>| by definition.
+</li></ul>
+
+
+<a name="thm14"></a>
+<p><strong>Theorem 14.</strong> 
+<strong>c</strong> + <strong>c</strong> = <strong>c</strong>.</p><ul type="disc">
+<li><em>Proof</em>.  One finite line segment of arbitrary length has <strong>c</strong> points (Theorems <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm12">12</a> and <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm13">13</a>).  A second of arbitrary length has <strong>c</strong> points.  Together they make a longer, though still finite line segment, hence one which has <strong>c</strong> points.
+</li><li>Therefore we have as corollaries, 2<strong>c</strong> = <strong>c</strong>, 
+3<strong>c</strong> = <strong>c</strong>,  and <em>n</em><strong>c</strong> = <strong>c</strong> for every positive integer <em>n</em>.
+</li></ul>
+
+
+<a name="thm15"></a>
+<p><strong>Theorem 15.</strong>  <font face="Symbol">À</font><sub>0</sub> ·
+<strong>c</strong> = <strong>c</strong>.</p><ul type="disc">
+<li><em>Proof</em>.  Think of an infinite line as marked off into unit segments, like a ruler.  Clearly the segments could be put into one-to-one correspondence with the natural numbers.  Hence there are denumerably many, or <font face="Symbol">À</font><sub>0</sub>, such segments.  But from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm13">Theorem 13</a> we know that each segment has <strong>c</strong> points.  But the whole line also has <strong>c</strong> points (by definition of
+<strong>c</strong>).  Hence the whole line has as many points, <strong>c</strong>,  as the number of segments, <font face="Symbol">À</font><sub>0</sub>, times the number of points per segment, <strong>c</strong>.
+</li></ul>
+
+
+
+<a name="thm16"></a>
+<p><strong>Theorem 16.</strong>  The set of real numbers is uncountable,
+or |<strong><font size="+1">R</font></strong>| &gt; <font face="Symbol">À</font><sub>0</sub>.</p><ul type="disc">
+<li>Equivalently, this theorem asserts that <strong>c</strong> &gt; <font face="Symbol">À</font><sub>0</sub>.
+</li><li><em>Proof</em>.  Again we use a negative proof.  Assume that the real numbers <em>can</em> be put into one-to-one correspondence with the natural numbers.  Take the set of real numbers between 0 and 1.  Express terminating decimal fractions as non-terminating decimal fractions; for example, 0.5 becomes 0.4999....  Now under our assumption pair off the natural numbers with the reals between 0 and 1, thus:
+
+<p></p><center><table cellspacing="0" cellpadding="0" border="0">
+<tbody><tr bgcolor="eeeeee">
+	<td>&nbsp;&nbsp;0&nbsp;&nbsp;</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"> </td>
+	<td>&nbsp;&nbsp;0.</td>
+	<td bgcolor="yellow">d</td>
+	<td>d</td>
+	<td>d</td>
+	<td>d</td>
+	<td>...</td>
+</tr>
+<tr bgcolor="white">
+	<td colspan="8" height="2"></td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td>&nbsp;&nbsp;1&nbsp;&nbsp;</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"> </td>
+	<td>&nbsp;&nbsp;0.</td>
+	<td>d</td>
+	<td bgcolor="yellow">d</td>
+	<td>d</td>
+	<td>d</td>
+	<td>...</td>
+</tr>
+<tr bgcolor="white">
+	<td colspan="8" height="2"></td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td>&nbsp;&nbsp;2&nbsp;&nbsp;</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"> </td>
+	<td>&nbsp;&nbsp;0.</td>
+	<td>d</td>
+	<td>d</td>
+	<td bgcolor="yellow">d</td>
+	<td>d</td>
+	<td>...</td>
+</tr>
+<tr bgcolor="white">
+	<td colspan="8" height="2"></td>
+</tr>
+<tr bgcolor="eeeeee">
+	<td>&nbsp;&nbsp;...&nbsp;&nbsp;</td>
+	<td><img src="./Peter Suber,  Infinite Sets _files/2headarr.gif"> </td>
+	<td>&nbsp;&nbsp;...</td>
+	<td><br></td>
+	<td><br></td>
+	<td><br></td>
+	<td bgcolor="yellow"><br></td>
+	<td><br></td>
+</tr>
+</tbody></table>
+</center>
+
+<p>where d is some digit.
+
+</p><p>Now starting with the upper left d, move diagonally down and to the
+right, following the yellow highlights.  Change each d we encounter to some other digit, for example, incrementing it by one, and changing 9 to 0.  In this way we construct a new decimal fraction that is demonstrably nowhere on our list, for it differs from the first one in the first decimal place, from the second in the second place, and so on.  But this contradicts our assumption that we have exhaustively listed all the real numbers between 0 and 1.  Therefore the assumption is false and the reals <em>cannot</em> be put into one-to-one correspondence with the naturals.  But the reals are at least as numerous as the naturals and cannot have the smaller cardinality.  Therefore, the cardinality of the set of real numbers is greater than the cardinality of the set of natural numbers.
+</p></li></ul>
+
+<p>Now we have only to prove that the number of reals between 0 and 1 is the same as the number of all the reals.  But this follows directly from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm13">Theorem 13</a>.
+
+
+
+<a name="thm17"></a>
+</p><p><strong>Theorem 17.</strong>  The power set of the set of natural
+numbers has the same cardinality as the set of real numbers, or |*<strong><font size="+1">N</font></strong>| = |<strong><font size="+1">R</font></strong>| = 
+<strong>c</strong>.</p><ul type="disc">
+<li><em>Proof</em>.  We know from the proof of <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm3">Theorem 3</a> above that every set of natural numbers can be represented as a denumerable string of "yeses" and
+"noes".  These denumerable strings, in turn, can be put into one-to-one correspondence with the denumerable strings of "1's" and "0's".  These strings, in turn, can be put into one-to-one correspondence with the real numbers between 0 and 1 if we put a decimal point at the left end each denumerable string of 1's and 0's, and regard the result as a fraction in base two.  (We can purge this set of numeral strings of repetitions without reducing the cardinality of the set; if you don't believe me, see the postscript below.)  Finally, these real numbers between 0 and 1 can be put into one-to-one correspondence with all the reals, as we saw in <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm13">Theorem 13</a>.
+</li><li>Postscript.  To convert a string of 1's and 0's into a binary fraction, just tack a decimal point (or a zero and then a decimal point) onto the left end.  For example, 111000... becomes 0.111000..., which equals 1/2 + 1/4 + 1/8 + 0/16 + 0/32....  Some of these fractions will equal others, for example, 0.1000... = 0.0111....  (For
+clarity, remember that in base 10, 0.5000... = 0.4999..., as we saw in <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm16">Theorem 16</a>.)  There are at most countably many such repetitions.  We know this because if we take all the fractions that consist of "000..." at some point in their expansions, and cut off the trailing zeroes, we will produce distinct, finite strings of 1's and 0's.  But there are at most countably many such finite strings, according to <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm11">Theorem 11</a>.  Now we know from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm16">Theorem 16</a> that there are uncountably many real numbers between 0 and 1.  Hence to delete the countably many repetitions would leave us with the same uncountable cardinality we started with, according to <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm9">Theorem 9</a>. 
+</li><li>Remembering that |<strong><font size="+1">N</font></strong>| = <font face="Symbol">À</font><sub>0</sub> (by definition), we may use the notation introduced in <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm5">Theorem 5</a> to restate this theorem thus:  <strong>c</strong> = 2<sup><font face="Symbol">À</font><sub>0</sub></sup> (2 to the power of
+<font face="Symbol">À</font><sub>0</sub>, in case your browser choked on this expression).
+</li></ul>
+
+
+<a name="thm18"></a>
+<p><strong>Theorem 18.</strong>  The set of points in a square has the same
+cardinality as the set of points on one of its edges (namely, <strong>c</strong>).</p><ul type="disc">
+<li><em>Proof</em>.  We know from Theorems <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm12">12</a> and <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm13">13</a> that the number of points in a finite line segment is <strong>c</strong>.  Now we need only show that the number of points inside a square is also <strong>c</strong>.  First, think of left and bottom edges of the square as collinear with the x and y axes of a Cartesian coordinate system.  Every distinct point inside the square, therefore, has a distinct pair of real numbers to identify it; one is its position on the x axis, the other its position on the y axis.  Now interlace these two numbers as we did in Theorems <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm1">1</a> and <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm7">7</a>.  For example, if the x axis position is 0.125000... and the y axis position is 0.333..., then interlace these two decimal fractions digit by digit to make 0.1323530303030....  We now have a single real number, rather than a pair of real numbers, to correspond to each point inside the square.  Each of these new, interlaced numbers is a real number between 0 and 1.  We know from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm16">Theorem 16</a> that there are at most <strong>c</strong> of these.  But since they correspond to the points inside a square we also know that there are at least <strong>c</strong> of them.  Therefore, there are exactly <strong>c</strong> of them.
+</li><li>Intensively for the three years from 1871 to 1874 Cantor labored to prove this theorem false.  Then he surprised himself by proving it true.  "I see it, but I don't believe it," he wrote to Dedekind.
+</li></ul>
+
+
+<a name="thm19"></a>
+<p><strong>Theorem 19.</strong>  <strong>c</strong> ·
+<strong>c</strong> = <strong>c</strong>.</p><ul type="disc">
+<li>This theorem follows directly from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm18">Theorem 18</a>.
+</li><li>As corollaries of this theorem, we have <strong>c</strong> · <strong>c</strong> · <strong>c</strong> = <strong>c</strong>, and <strong>c</strong> · <strong>c</strong> · <strong>c</strong> · ... · <strong>c</strong> =
+<strong>c</strong>, or in short, <strong>c</strong>n = <strong>c</strong> when <em>n</em> is any positive integer.
+</li></ul>
+
+
+<a name="thm20"></a>
+<p><strong>Theorem 20.</strong>  The set of all points in a cube has the
+same cardinality as the set of all points in one of its edges, namely,
+<strong>c</strong>.</p><ul type="disc">
+<li>The proof is a simple variation of that for <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm18">Theorem 18</a>.  In fact, it is equivalent to one of the corollaries of <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm19">Theorem 19</a>.  Each point inside the cube will have three coordinates, not two.  Hence we interlace three decimal fractions, not two.  The rest of the proof is the same as for <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm18">Theorem 18</a>.
+</li></ul>
+
+
+<a name="thm21"></a>
+<p><strong>Theorem 21.</strong>  The set of all points in an infinite plane
+has the same cardinality as the set of all points in a finite line segment, namely,
+<strong>c</strong>.</p><ul type="disc">
+<li><em>Proof</em>.  Think of the plane as marked off into an infinite number of square cells, like graph paper.  First we show that there will be denumerably many, or <font face="Symbol">À</font><sub>0</sub>, such square cells.  Pick one cell arbitrarily, and number it 0.  Go to the cell above it and number that cell 1.  Go one cell to the right and number it 2.  Continue in this way to circle the "0" cell.  The result will be a spiral that would eventually cover the plane.  Yet each cell contains a natural number.  Hence the cells and the natural numbers can be put into one-to-one correspondence.  Second we note that each cell contains <strong>c</strong>
+points, under <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm18">Theorem 18</a>.  Therefore, the number of points in the infinite plane is the number of cells, <font face="Symbol">À</font><sub>0</sub>, times
+the number of points in a cell, <strong>c</strong> (by <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm18">Theorem 18</a>), which we know is equal to <strong>c</strong> (by <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm15">Theorem 15</a>).
+</li></ul>
+
+
+<a name="thm22"></a>
+<p><strong>Theorem 22.</strong>  <font face="Symbol">À</font><sub>0</sub> · <font face="Symbol">À</font><sub>0</sub> = <font face="Symbol">À</font><sub>0</sub>.</p><ul type="disc">
+<li>The proof of this theorem was already encapsulated in the proof of <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm21">Theorem 21</a> when we showed that there were denumerably many, or <font face="Symbol">À</font><sub>0</sub>, cells in the infinite graph paper of the Euclidean plane.  But another way to ascertain the number of such cells is to take the product of the 'length' of the plane (in cells) and the 'width' of the plane (in cells).  But the plane is <font face="Symbol">À</font><sub>0</sub> cells 'high',
+and <font face="Symbol">À</font><sub>0</sub> cells 'wide'.  Hence the number of cells is <font face="Symbol">À</font><sub>0</sub> · <font face="Symbol">À</font><sub>0</sub>.  However, we already know the number of cells (from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm21">Theorem 21</a>) to equal <font face="Symbol">À</font><sub>0</sub>.
+</li></ul>
+
+
+<a name="thm23"></a>
+<p><strong>Theorem 23.</strong>  The set of all points in infinite,
+3-dimensional, Euclidean space has the same cardinality as the set of all points in a finite line segment, namely, <strong>c</strong>.</p><ul type="disc">
+<li>The proof is a variation on that of <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm21">Theorem 21</a>.  We divide the space into cubes, rather than the plane into squares.  Our spiraling path which puts the natural numbers into one-to-one correspondence with the cubes will be more complex, but perhaps you can visualize it.  The rest of the proof is the same, except that we use <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm20">Theorem 20</a> rather than <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm18">Theorem 18</a>.
+</li></ul>
+
+
+<a name="thm24"></a>
+<p><strong>Theorem 24.</strong>  The set of all points in <font face="Symbol">À</font><sub>0</sub>-dimensional space has the same cardinality as the set of all points in a finite line segment, namely,
+<strong>c</strong>).</p><ul type="disc">
+<li><em>Proof</em>.  If the set of all points in 3-dimensional space is <strong>c</strong><sup>3</sup>, then the set of all points in <font face="Symbol">À</font><sub>0</sub>-dimensional space is
+<strong>c</strong><sup><font face="Symbol">À</font><sub>0</sub></sup>.  But under <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm17">Theorem 17</a>, the latter number equals (2<sup><font face="Symbol">À</font><sub>0</sub></sup>)<sup><font face="Symbol">À</font><sub>0</sub></sup>, which in turn equals 2<sup>(<font face="Symbol">À</font><sub>0</sub> · <font face="Symbol">À</font><sub>0</sub>)</sup>, which (by <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm22">Theorem 22</a>) equals 2<sup><font face="Symbol">À</font><sub>0</sub></sup>, which (by <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm17">Theorem 17</a>) equals <strong>c</strong>.
+</li></ul>
+
+<a name="ch"></a>
+<p><strong>Definition</strong>.  The <em>continuum hypothesis</em> (CH) asserts that there is no cardinal number <em>a</em> such that <font face="Symbol">À</font><sub>0</sub> &lt; 
+<em>a</em> &lt; <strong>c</strong>.</p><ul type="disc">
+<li>Since by <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm17">Theorem 17</a>, <strong>c</strong> = |*<strong><font size="+1">N</font></strong>| = |<strong><font size="+1">R</font></strong>|, we
+could use any of the latter two expressions in place of <strong>c</strong> in
+stating CH.
+</li><li>From CH it follows that the next largest transfinite cardinal after <font face="Symbol">À</font><sub>0</sub> is
+<strong>c</strong>.  Hence it also follows that <strong>c</strong>
+= <font face="Symbol">À</font><sub>1</sub>.  Since we already know (from <a href="http://www.earlham.edu/~peters/writing/infapp.htm#thm17">Theorem 17</a>) that 2<sup><font face="Symbol">À</font><sub>0</sub></sup> =
+<strong>c</strong>, CH allows us to say that 2<sup><font face="Symbol">À</font><sub>0</sub></sup> = <font face="Symbol">À</font><sub>1</sub>.  
+</li><li>The commonly heard assertion that <strong>c</strong> = <font face="Symbol">À</font><sub>1</sub> assumes CH.  The widespread acceptance of the assertion by mathematicians therefore attests to the general acceptance of CH in the profession.  (Without CH we have essentially no idea which Aleph corresponds to <strong>c</strong>, and we would know the cardinality of the naturals, integers, and rationals, but not the cardinality of the reals.)
+</li><li>Cantor formulated CH, and spent the last years of his career unsuccessfully trying to prove it.  His failure obsessed him and caused recurring bouts of serious depression.  To prove or disprove CH was the first problem on David Hilbert's famous 1900 list of important unsolved problems in mathematics. 
+</li><li>Similarly, attempts to prove or disprove CH, or to prove it undecidable, consumed most of Kurt Gödel's 36 years at the Institute for Advanced Study.  But he did produce an important partial proof.  In 1938, Gödel showed that CH cannot be disproved from the  axioms of Zermelo-Fraenkel (ZF) set theory, the closest thing
+we have to "standard" set theory.  This meant that the negation of CH (notation:  ~CH)
+could not be derived from the ZF axioms.  And this in turn entailed that CH could be
+assumed and used in standard set theory without introducing any inconsistencies that were not already there.  Gödel in effect proved that CH was as harmless as the less exotic propositions that already comprised set theory.  That is the main reason why most
+mathematicians accept CH today.  
+</li><li>In 1963 Paul Cohen showed that CH cannot be proved from the ZF axioms.  Together, Gödel and Cohen's results show that CH is <em>independent</em> of the ZF axioms:  neither it nor its negation can be derived from them.  Among other things, this means that CH is <em>undecidable</em> in ZF.  After Euclid's parallel postulate, CH was the first major conjecture to be proved undecidable by standard mathematics.  Its independence also means that ~CH is just as consistent with standard set theory as CH itself.  This has allowed set theorists to develop set theories with and without it, just as geometers can develop geometries with or without Euclid's parallel postulate.  Set theory with ~CH rather than CH is usually called <em>Non-Cantorian</em> set theory.
+</li></ul>
+
+
+<p><strong>Definition</strong>.  The <em>generalized continuum
+hypothesis</em> (GCH) asserts that 2<sup><font face="Symbol">À</font><sub>a</sub></sup> = <font face="Symbol">À</font><sub>a+1</sub> for every positive integer
+<em>a</em>.</p><ul type="disc">
+<li>When <em>a</em>=0, GCH yields the ordinary CH.
+</li><li>GCH implies that, starting with <font face="Symbol">À</font><sub>0</sub>, we can march through the transfinite cardinals with the power set operation, and will not skip any.  It follows that for every infinite set S, if |S| = <font face="Symbol">À</font><sub>n</sub>, then |*S| = <font face="Symbol">À</font><sub>n+1</sub>, or that the only transfinite cardinals are |<strong><font size="+1">N</font></strong>|, |*<strong><font size="+1">N</font></strong>|, |**<strong><font size="+1">N</font></strong>|, |***<strong><font size="+1">N</font></strong>|, ....
+</li></ul>
+
+<p><strong>Bibliographic note</strong>.  Most of the theorems and proofs in
+this crash course were discovered by Georg Cantor (1845-1918) and published in a series of monographs starting in 1870.  He published two summary statements of his results in 1895 and 1897, which have been translated into English by Philip E. B. Jourdain as
+<em>Contributions to the Founding of the Theory of Transfinite Numbers</em>, Dover Publications, 1955.  My exposition of Cantor's results is indebted to three more recent
+authors:  Stephen Cole Kleene, <em>Introduction to Metamathematics</em>,
+North-Holland Pub. Co., 1952; Abraham Fraenkel, <em>Abstract Set Theory</em>,
+North-Holland Pub. Co., 1953; and Geoffrey Hunter, <em>Metalogic</em>, University of
+California Press, 1971.
+
+<!-- 
+<P><STRONG>List of symbols and abbreviations</STRONG> with the page
+numbers of their first occurrence.
+   {...}, set brackets, 1
+   &#216, the null set, 1
+   iff, "if and only if", 1
+   <IMG SRC="http://www.earlham.edu/~peters/writing/subset.gif">, subset, 1
+   <IMG SRC="http://www.earlham.edu/~peters/writing/propsub.gif">, proper subset,
+2
+   |S|, cardinality of set S, 2
+   A B, one-to-one correspondence, 2
+   *S, power set of set S, 3
+    , the set of natural numbers, 3
+   <font face="Symbol">&#192;</font>0, Aleph-null, the
+number of natural numbers, 3
+   Z, the set of integers, 4
+   Q, the set of rational numbers, 4
+    , the set of real numbers, 4
+   <STRONG>c</STRONG>, the cardinality of the continuum, 12
+   x^y, xy or x to the power of y, 14
+   CH, the continuum hypothesis, 16
+   GCH, the generalized continuum hypothesis, 17
+ -->
+
+</p></dl>
+
+</blockquote>
+
+<p></p><hr size="1" width="100%" noshade="">
+
+<p>Some of the logic symbols in this file are GIFs; see my <a href="http://www.earlham.edu/~peters/writing/logicsym.htm">Notes on Logic Notation on the Web</a>. Some are HTML characters using the Symbol Font; see <a href="http://www.hclrss.demon.co.uk/demos/symbol.html">Alan Wood's guide to its symbols</a>.
+
+</p><p>Thanks to Emil William Kirkegaard for correcting a minor error in the exposition (February 2010).
+
+</p></font><p><font face="Trebuchet MS, Arial, Helvetica, Sans serif"><a href="http://www.eff.org/blueribbon.html"><img align="left" alt="[Blue
+Ribbon]" src="./Peter Suber,  Infinite Sets _files/blueribb.gif"></a>
+<a href="http://www.earlham.edu/~peters/hometoc.htm">Peter Suber</a>, 
+<a href="http://www.earlham.edu/~phil/index.htm">Department of Philosophy</a>, 
+<a href="http://www.earlham.edu/">Earlham College</a>, Richmond, Indiana, 47374, U.S.A.<br>
+<a href="mailto:peters@earlham.edu"><em>peters@earlham.edu</em></a>. <font size="-1"><a href="http://www.earlham.edu/~peters/copyrite.htm">Copyright</a> © 1998, Peter Suber.</font>
+
+</font> <!-- closing Sans Serif font tag -->
+
+
+</p></body><style type="text/css">#AdContainer,#RadAd_Skyscraper,#ad-frame,#bbccom_leaderboard,#center_banner,#footer_adcode,#hbBHeaderSpon,#hiddenHeaderSpon,#navbar_adcode,#rightAds,#rightcolumn_adcode,#top-advertising,#topMPU,#tracker_advertorial,.ad-now,.dfpad,.prWrap,[id^="ad_block"],[id^="adbrite"],[id^="dclkAds"],[id^="ew"][id$="_bannerDiv"],[id^="konaLayer"],[src*="sixsigmatraffic.com"],a.kLink span[id^="preLoadWrap"].preLoadWrap,a[href^="http://ad."][href*=".doubleclick.net/"],a[href^="http://adserver.adpredictive.com"],div#FFN_Banner_Holder,div#FFN_imBox_Container,div#adxLeaderboard,div#p360-format-box,div#rm_container,div#tooltipbox[class^="itxt"],div.wnDVUtilityBlock,div[class^="dms_ad_IDS"],div[id^="adKontekst_"],div[id^="google_ads_div"],div[id^="kona_"][id$="_wrapper"],div[id^="sponsorads"],div[id^="y5_direct"],embed[flashvars*="AdID"],iframe.chitikaAdBlock,iframe[id^="dapIfM"],iframe[id^="etarget"][id$="banner"],iframe[name^="AdBrite"],iframe[name^="google_ads_"],iframe[src*="clicksor.com"],img[src*="clicksor.com"],img[src^="http://cdn.adnxs.com"],ispan#ab_pointer,object#flashad,object#ve_threesixty_swf[name="ve_threesixty_swf"],div#dir_ads_site,div#rhs div#rhs_block table#mbEnd,div#tads table[align="center"][width="100%"],table[cellpadding="0"][width="100%"][style] > * > * > * > div#tpa1,#A9AdsMiddleBoxTop,#A9AdsOutOfStockWidgetTop,#A9AdsServicesWidgetTop,#ADSLOT_1,#ADSLOT_2,#ADSLOT_3,#ADSLOT_4,#AD_CONTROL_22,#ADsmallWrapper,#Ad1,#Ad160x600,#Ad2,#Ad300x250,#Ad3Left,#Ad3Right,#Ad3TextAd,#AdBanner_F1,#AdBar,#AdBar1,#AdContainerTop,#AdContentModule_F,#AdDetails_GoogleLinksBottom,#AdDetails_InsureWith,#AdFrame4,#AdHeader,#AdMiddle,#AdMobileLink,#AdRectangle,#AdSenseDiv,#AdServer,#AdShowcase_F1,#AdSky23,#AdSkyscraper,#AdSponsor_SF,#AdSubsectionShowcase_F1,#AdTargetControl1_iframe,#AdText,#AdTop,#Ad_Block,#Ad_Center1,#Ad_Right1,#Ad_Top,#Adbanner,#Adrectangle,#Ads,#AdsContent,#AdsRight,#AdsWrap,#Ads_BA_CAD,#Ads_BA_CAD2,#Ads_BA_CAD_box,#Ads_BA_SKY,#Ads_CAD,#Ads_Special,#AdvertMPU23b,#AdvertPanel,#AdvertiseFrame,#Advertisement,#Advertisements,#Advertorial,#Advertorials,#BannerAdvert,#BigBoxAd,#BodyAd,#ButtonAd,#CompanyDetailsNarrowGoogleAdsPresentationControl,#CompanyDetailsWideGoogleAdsPresentationControl,#ContentAd,#ContentAd1,#ContentAd2,#ContentAdPlaceHolder1,#ContentAdPlaceHolder2,#ContentAdXXL,#ContentPolepositionAds_Result,#DivAdEggHeadCafeTopBanner,#FooterAd,#FooterAdContainer,#GoogleAd1,#GoogleAd2,#GoogleAd3,#GoogleAdsPresentationControl,#GoogleAdsense,#Google_Adsense_Main,#HEADERAD,#HOME_TOP_RIGHT_BOXAD,#HeaderAdsBlock,#HeaderAdsBlockFront,#HeaderBannerAdSpacer,#HeaderTextAd,#HeroAd,#HomeAd1,#HouseAd,#ID_Ad_Sky,#Journal_Ad_125,#Journal_Ad_300,#KH-contentAd,#LeftAd,#LeftAdF1,#LeftAdF2,#LftAd,#LoungeAdsDiv,#LowerContentAd,#MainSponsoredLinks,#Nightly_adContainer,#PREFOOTER_LEFT_BOXAD,#PREFOOTER_RIGHT_BOXAD,#PageLeaderAd,#RelevantAds,#RgtAd1,#RightAd,#RightNavTopAdSpot,#RightSponsoredAd,#SectionAd300-250,#SectionSponsorAd,#SidebarAdContainer,#SkyAd,#SpecialAds,#SponsoredAd,#SponsoredLinks,#TOP_ADROW,#TOP_RIGHT_BOXAD,#Tadspacehead,#TopAd,#TopAdContainer,#TopAdDiv,#TopAdPos,#VM-MPU-adspace,#VM-footer-adspace,#VM-header-adspace,#VM-header-adwrap,#XEadLeaderboard,#XEadSkyscraper,#_ads,#about_adsbottom,#ad-120x600-sidebar,#ad-120x60Div,#ad-160x600,#ad-160x600-sidebar,#ad-250,#ad-250x300,#ad-300,#ad-300x250,#ad-300x250-sidebar,#ad-300x250Div,#ad-728,#ad-728x90-leaderboard-top,#ad-article,#ad-banner,#ad-banner-1,#ad-block-125,#ad-bottom,#ad-bottom-wrapper,#ad-boxes,#ad-bs,#ad-buttons,#ad-colB-1,#ad-column,#ad-container,#ad-content,#ad-contentad,#ad-footer,#ad-footprint-160x600,#ad-front-footer,#ad-front-sponsoredlinks,#ad-halfpage,#ad-header,#ad-inner,#ad-label,#ad-leaderboard,#ad-leaderboard-bottom,#ad-leaderboard-container,#ad-leaderboard-spot,#ad-leaderboard-top,#ad-left,#ad-list-row,#ad-lrec,#ad-medium-rectangle,#ad-medrec,#ad-middlethree,#ad-middletwo,#ad-module,#ad-mpu,#ad-mpu1-spot,#ad-mpu2,#ad-mpu2-spot,#ad-north,#ad-one,#ad-placard,#ad-placeholder,#ad-rectangle,#ad-right,#ad-righttop,#ad-row,#ad-side-text,#ad-sky,#ad-skyscraper,#ad-slug-wrapper,#ad-small-banner,#ad-space,#ad-splash,#ad-spot,#ad-target,#ad-target-Leaderbord,#ad-teaser,#ad-text,#ad-top,#ad-top-banner,#ad-top-text-low,#ad-top-wrap,#ad-tower,#ad-trailerboard-spot,#ad-typ1,#ad-west,#ad-wrap,#ad-wrap-right,#ad-wrapper,#ad-wrapper1,#ad-yahoo-simple,#ad1,#ad1006,#ad125BL,#ad125BR,#ad125TL,#ad125TR,#ad125x125,#ad160x600,#ad160x600right,#ad1Sp,#ad2,#ad2Sp,#ad3,#ad300,#ad300-250,#ad300X250,#ad300_x_250,#ad300x150,#ad300x250,#ad300x250Module,#ad300x60,#ad300x600,#ad300x600_callout,#ad336,#ad336x280,#ad375x85,#ad4,#ad468,#ad468x60,#ad468x60_top,#ad526x250,#ad600,#ad7,#ad728,#ad728Mid,#ad728Top,#ad728Wrapper,#ad728x90,#adBadges,#adBanner,#adBanner120x600,#adBanner160x600,#adBanner336x280,#adBannerTable,#adBannerTop,#adBar,#adBlock125,#adBlocks,#adBox,#adBox350,#adBox390,#adCirc300X200,#adCirc_620_100,#adComponentWrapper,#adContainer,#adContainer_1,#adContainer_2,#adContainer_3,#adDiv,#adFiller,#adFps,#adFtofrs,#adGallery,#adGroup1,#adHeader,#adIsland,#adL,#adLB,#adLabel,#adLayer,#adLeader,#adLeaderTop,#adLeaderboard,#adMPU,#adMediumRectangle,#adMiddle0Frontpage,#adMiniPremiere,#adP,#adPlaceHolderRight,#adPlacer,#adRight,#adSenseModule,#adSenseWrapper,#adServer_marginal,#adSidebar,#adSidebarSq,#adSky,#adSkyscraper,#adSlider,#adSpace,#adSpace3,#adSpace300_ifrMain,#adSpace4,#adSpace5,#adSpace6,#adSpace7,#adSpace_footer,#adSpace_right,#adSpace_top,#adSpacer,#adSpecial,#adSpot-Leader,#adSpot-banner,#adSpot-island,#adSpot-mrec1,#adSpot-sponsoredlinks,#adSpot-textbox1,#adSpot-widestrip,#adSpotAdvertorial,#adSpotIsland,#adSpotSponsoredLinks,#adSquare,#adStaticA,#adStrip,#adSuperAd,#adSuperPremiere,#adSuperbanner,#adTableCell,#adTag1,#adTag2,#adText,#adText_container,#adTile,#adTop,#adTopboxright,#adTower,#adUnit,#adWrapper,#adZoneTop,#ad_160x160,#ad_160x600,#ad_190x90,#ad_300,#ad_300_250,#ad_300_250_1,#ad_300x250,#ad_300x250_content_column,#ad_300x90,#ad_468_60,#ad_5,#ad_728_foot,#ad_728x90,#ad_728x90_container,#ad_940,#ad_984,#ad_A,#ad_B,#ad_Banner,#ad_C,#ad_C2,#ad_D,#ad_E,#ad_F,#ad_G,#ad_H,#ad_I,#ad_J,#ad_K,#ad_L,#ad_M,#ad_N,#ad_O,#ad_P,#ad_YieldManager-300x250,#ad_anchor,#ad_area,#ad_banner,#ad_banner_top,#ad_bar,#ad_bellow_post,#ad_block_1,#ad_block_2,#ad_bottom,#ad_box_colspan,#ad_branding,#ad_bs_area,#ad_center_monster,#ad_cont,#ad_container,#ad_container_marginal,#ad_container_side,#ad_container_top,#ad_content_top,#ad_content_wrap,#ad_feature,#ad_firstpost,#ad_footer,#ad_front_three,#ad_fullbanner,#ad_global_below_navbar,#ad_global_header,#ad_haha_1,#ad_haha_4,#ad_halfpage,#ad_head,#ad_header,#ad_horizontal,#ad_horseshoe_left,#ad_horseshoe_right,#ad_horseshoe_spacer,#ad_horseshoe_top,#ad_hotpots,#ad_in_arti,#ad_island,#ad_label,#ad_large_rectangular,#ad_lastpost,#ad_layer2,#ad_leader,#ad_leaderBoard,#ad_leaderboard,#ad_leaderboard728x90,#ad_leaderboard_top,#ad_left,#ad_lrec,#ad_lwr_square,#ad_main,#ad_medium_rectangle,#ad_medium_rectangular,#ad_mediumrectangle,#ad_menu_header,#ad_middle,#ad_most_pop_234x60_req_wrapper,#ad_mpu,#ad_mpu300x250,#ad_mpuav,#ad_mrcontent,#ad_overlay,#ad_play_300,#ad_rect,#ad_rect_body,#ad_rect_bottom,#ad_rectangle,#ad_rectangle_medium,#ad_related_links_div,#ad_related_links_div_program,#ad_replace_div_0,#ad_replace_div_1,#ad_report_leaderboard,#ad_report_rectangle,#ad_right,#ad_right_main,#ad_ros_tower,#ad_rr_1,#ad_sec,#ad_sec_div,#ad_sgd,#ad_sidebar,#ad_sidebar1,#ad_sidebar2,#ad_sidebar3,#ad_skyscraper,#ad_skyscraper160x600,#ad_skyscraper_text,#ad_slot_leaderboard,#ad_slot_livesky,#ad_slot_sky_top,#ad_space,#ad_square,#ad_ss,#ad_table,#ad_term_bottom_place,#ad_thread_first_post_content,#ad_top,#ad_top_holder,#ad_tp_banner_1,#ad_tp_banner_2,#ad_unit,#ad_vertical,#ad_widget,#ad_window,#ad_wrapper,#adbanner,#adbig,#adbnr,#adboard,#adbody,#adbottom,#adbox,#adbox1,#adbox2,#adclear,#adcode,#adcode1,#adcode2,#adcode3,#adcode4,#adcolumnwrapper,#adcontainer,#adcontainerRight,#adcontainsm,#adcontent,#adcontrolPushSite,#add_ciao2,#addbottomleft,#addiv-bottom,#addiv-top,#adfooter_728x90,#adframe:not(frameset),#adhead,#adhead_g,#adheader,#adhome,#adiframe1_iframe,#adiframe2_iframe,#adiframe3_iframe,#adimg,#adition_content_ad,#adlabel,#adlabelFooter,#adlayerad,#adleaderboard,#adleft,#adlinks,#adlinkws,#adlrec,#admid,#admiddle3center,#admiddle3left,#adposition,#adposition-C,#adposition-FPMM,#adposition2,#adposition3,#adposition4,#adrectangle,#adrectanglea,#adrectangleb,#adrig,#adright,#adright2,#adrighthome,#ads,#ads-468,#ads-area,#ads-block,#ads-bot,#ads-bottom,#ads-col,#ads-dell,#ads-horizontal,#ads-indextext,#ads-leaderboard1,#ads-lrec,#ads-menu,#ads-middle,#ads-prices,#ads-rhs,#ads-right,#ads-top,#ads-vers7,#ads-wrapper,#ads160left,#ads2,#ads300,#ads300Bottom,#ads300Top,#ads336x280,#ads7,#ads728bottom,#ads728top,#ads790,#adsDisplay,#adsID,#ads_160,#ads_300,#ads_728,#ads_banner,#ads_belowforumlist,#ads_belownav,#ads_bottom_inner,#ads_bottom_outer,#ads_box,#ads_button,#ads_catDiv,#ads_footer,#ads_html1,#ads_html2,#ads_notice,#ads_right,#ads_right_sidebar,#ads_sidebar_roadblock,#ads_space,#ads_top,#ads_watch_top_square,#ads_zone27,#adsbottom,#adsbox,#adscolumn,#adsd_contentad_r1,#adsd_contentad_r2,#adsd_contentad_r3,#adsense,#adsense-2,#adsense-tag,#adsense-text,#adsenseOne,#adsenseWrap,#adsense_inline,#adsense_leaderboard,#adsense_overlay,#adsense_placeholder_2,#adsenseheader,#adsensetopplay,#adsensewidget-3,#adserv,#adsimage,#adsky,#adskyscraper,#adslot,#adsonar,#adspace,#adspace-300x250,#adspace300x250,#adspaceBox,#adspaceBox300,#adspace_header,#adspot-1,#adspot-149x170,#adspot-1x4,#adspot-2,#adspot-295x60,#adspot-2a,#adspot-2b,#adspot-300x250-pos-1,#adspot-300x250-pos-2,#adspot-468x60-pos-2,#adspot-a,#adspot300x250,#adsright,#adst,#adstop,#adt,#adtab,#adtag_right_side,#adtech_googleslot_03c,#adtech_takeover,#adtop,#adtophp,#adtxt,#adv-masthead,#adv_google_300,#adv_google_728,#adv_top_banner_wrapper,#adver1,#adver2,#adver3,#adver4,#adver5,#adver6,#adver7,#advert,#advert-1,#advert-120,#advert-boomer,#advert-display,#advert-header,#advert-leaderboard,#advert-links-bottom,#advert-skyscraper,#advert-top,#advert1,#advertBanner,#advertRight,#advert_250x250,#advert_box,#advert_leaderboard,#advert_lrec_format,#advert_mid,#advert_mpu,#advert_right_skyscraper,#advertbox,#advertbox2,#advertbox3,#advertbox4,#adverthome,#advertise,#advertise-now,#advertise1,#advertiseHere,#advertisement,#advertisement160x600,#advertisement728x90,#advertisementLigatus,#advertisementPrio2,#advertiser-container,#advertiserLinks,#advertising,#advertising-banner,#advertising-caption,#advertising-container,#advertising-control,#advertising-skyscraper,#advertisingModule160x600,#advertisingModule728x90,#advertisment,#advertismentElementInUniversalbox,#advertorial,#adverts,#adverts-top-container,#adverts-top-left,#adverts-top-middle,#adverts-top-right,#advertsingle,#advt,#adwhitepaperwidget,#adwin_rec,#adwith,#adwords-4-container,#adwrapper,#adxBigAd,#adxMiddle5,#adxSponLink,#adxSponLinkA,#adxtop,#adzbanner,#adzerk,#adzerk1,#adzoneBANNER,#affinityBannerAd,#agi-ad300x250,#agi-ad300x250overlay,#agi-sponsored,#alert_ads,#anchorAd,#annoying_ad,#ap_adframe,#apiBackgroundAd,#apiTopAdWrap,#apmNADiv,#araHealthSponsorAd,#article-ad-container,#article-box-ad,#articleAdReplacement,#articleLeftAdColumn,#articleSideAd,#article_ad,#article_box_ad,#asinglead,#atlasAdDivGame,#awds-nt1-ad,#banner-300x250,#banner-ad,#banner-ad-container,#banner-ads,#banner250x250,#banner468x60,#banner728x90,#bannerAd,#bannerAdTop,#bannerAd_ctr,#banner_ad,#banner_ad_footer,#banner_admicro,#banner_ads,#banner_content_ad,#banner_topad,#bannerad,#bannerad2,#bbccom_mpu,#bbccom_storyprintsponsorship,#bbo_ad1,#bg-footer-ads,#bg-footer-ads2,#bg_YieldManager-300x250,#bigAd,#bigBoxAd,#bigad300outer,#bigadbox,#bigadspot,#billboard_ad,#block-ad_cube-1,#block-openads-1,#block-openads-3,#block-openads-4,#block-openads-5,#block-thewrap_ads_250x300-0,#block_advert,#blog-ad,#blog_ad_content,#blog_ad_opa,#blox-big-ad,#blox-big-ad-bottom,#blox-big-ad-top,#blox-halfpage-ad,#blox-tile-ad,#blox-tower-ad,#book-ad,#botad,#bott_ad2,#bott_ad2_300,#bottom-ad,#bottom-ad-container,#bottom-ads,#bottomAd,#bottomAdCCBucket,#bottomAdContainer,#bottomAdSense,#bottomAdSenseDiv,#bottomAds,#bottomRightAd,#bottomRightAdSpace,#bottom_ad,#bottom_ad_area,#bottom_ads,#bottom_banner_ad,#bottom_overture,#bottom_sponsor_ads,#bottom_sponsored_links,#bottom_text_ad,#bottomad,#bottomads,#bottomadsense,#bottomadwrapper,#bottomleaderboardad,#box-content-ad,#box-googleadsense-1,#box-googleadsense-r,#box1ad,#boxAd300,#boxAdContainer,#box_ad,#box_advertisment,#box_mod_googleadsense,#boxad1,#boxad2,#boxad3,#boxad4,#boxad5,#bpAd,#bps-header-ad-container,#btr_horiz_ad,#burn_header_ad,#button-ads-horizontal,#button-ads-vertical,#buttonAdWrapper1,#buttonAdWrapper2,#buttonAds,#buttonAdsContainer,#button_ad_container,#button_ad_wrap,#buttonad,#buy-sell-ads,#c4ad-Middle1,#caAdLarger,#catad,#category-ad,#cellAd,#channel_ad,#channel_ads,#ciHomeRHSAdslot,#circ_ad,#cnnRR336ad,#cnnTopAd,#col3_advertising,#colRightAd,#collapseobj_adsection,#column4-google-ads,#commercial_ads,#common_right_ad_wrapper,#common_right_lower_ad_wrapper,#common_right_lower_adspace,#common_right_lower_player_ad_wrapper,#common_right_lower_player_adspace,#common_right_player_ad_wrapper,#common_right_player_adspace,#common_right_right_adspace,#common_top_adspace,#companion-ad,#companionAdDiv,#containerLocalAds,#containerLocalAdsInner,#containerMrecAd,#containerSqAd,#content-ad-header,#content-header-ad,#contentAd,#contentTopAds2,#content_ad,#content_ad_square,#content_ad_top,#content_ads_content,#content_box_300body_sponsoredoffers,#content_box_adright300_google,#content_mpu,#contentad,#contentad_imtext,#contentad_right,#contentads,#contentinlineAd,#contextad,#contextual-ads,#contextual-ads-block,#contextualad,#coverads,#ctl00_Adspace_Top_Height,#ctl00_BottomAd,#ctl00_ContentRightColumn_RightColumn_Ad1_BanManAd,#ctl00_ContentRightColumn_RightColumn_PremiumAd1_ucBanMan_BanManAd,#ctl00_LHTowerAd,#ctl00_LeftHandAd,#ctl00_MasterHolder_IBanner_adHolder,#ctl00_TopAd,#ctl00_TowerAd,#ctl00_VBanner_adHolder,#ctl00_abot_bb,#ctl00_adFooter,#ctl00_atop_bt,#ctl00_cphMain_hlAd1,#ctl00_cphMain_hlAd2,#ctl00_cphMain_hlAd3,#ctl00_ctl00_MainPlaceHolder_itvAdSkyscraper,#ctl00_ctl00_ctl00_Main_Main_PlaceHolderGoogleTopBanner_MPTopBannerAd,#ctl00_ctl00_ctl00_Main_Main_SideBar_MPSideAd,#ctl00_dlTilesAds,#ctl00_m_skinTracker_m_adLBL,#ctl00_phCrackerMain_ucAffiliateAdvertDisplayMiddle_pnlAffiliateAdvert,#ctl00_phCrackerMain_ucAffiliateAdvertDisplayRight_pnlAffiliateAdvert,#ctrlsponsored,#cubeAd,#cube_ads,#cube_ads_inner,#cubead,#cubead-2,#dItemBox_ads,#dart_160x600,#dc-display-right-ad-1 { visibility:hidden !important; display:none !important; } #dcol-sponsored,#defer-adright,#detail_page_vid_topads,#divAd,#divAdBox,#divMenuAds,#divWNAdHeader,#divWrapper_Ad,#div_ad_leaderboard,#div_video_ads,#dlads,#dni-header-ad,#dnn_ad_banner,#download_ads,#ds-mpu,#editorsmpu,#evotopTen_advert,#ex-ligatus,#exads,#featuread,#featured-advertisements,#featuredAdContainer2,#featuredAds,#feed_links_ad_container,#first-300-ad,#first-adlayer,#first_ad_unit,#firstad,#fl_hdrAd,#flexiad,#footer-ad,#footer-advert,#footer-adverts,#footer-sponsored,#footerAd,#footerAdDiv,#footerAds,#footerAdvertisement,#footerAdverts,#footer_ad,#footer_ad_01,#footer_ad_block,#footer_ad_container,#footer_ad_modules,#footer_ads,#footer_adspace,#footer_text_ad,#footerad,#footerads,#footeradsbox,#fr_ad_center,#frame_admain,#frnAdSky,#frnBannerAd,#frnContentAd,#from_our_sponsors,#front_advert,#front_mpu,#ft-ad,#ft-ad-1,#ft-ad-container,#ft_mpu,#fusionad,#fw-advertisement,#g_ad,#g_adsense,#ga_300x250,#gad,#galleries-tower-ad,#gallery-ad-m0,#gallery_ads,#game-info-ad,#gasense,#global_header_ad_area,#gmi-ResourcePageAd,#gmi-ResourcePageLowerAd,#goads,#google-ad,#google-ad-art,#google-ad-table-right,#google-ad-tower,#google-ads,#google-ads-bottom,#google-ads-header,#google-ads-left-side,#google-adsense-mpusize,#googleAd,#googleAds,#googleAdsSml,#googleAdsense,#googleAdsenseBanner,#googleAdsenseBannerBlog,#googleAdwordsModule,#googleAfcContainer,#googleSearchAds,#googleShoppingAdsRight,#googleShoppingAdsTop,#googleSubAds,#google_ad,#google_ad_container,#google_ad_inline,#google_ad_test,#google_ads,#google_ads_frame1,#google_ads_frame1_anchor,#google_ads_frame2,#google_ads_frame2_anchor,#google_ads_frame3,#google_ads_frame3_anchor,#google_ads_test,#google_ads_top,#google_adsense_home_468x60_1,#googlead,#googleadbox,#googleads,#googleadsense,#googlesponsor,#grid_ad,#gsyadrectangleload,#gsyadrightload,#gsyadtop,#gsyadtopload,#gtopadvts,#half-page-ad,#halfPageAd,#halfe-page-ad-box,#hdtv_ad_ss,#head-ad,#headAd,#head_advert,#headad,#header-ad,#header-ad-rectangle-container,#header-ads,#header-adspace,#header-advert,#header-advertisement,#header-advertising,#headerAd,#headerAdBackground,#headerAdContainer,#headerAdWrap,#headerAds,#headerAdsWrapper,#headerTopAd,#header_ad,#header_ad_728_90,#header_ad_container,#header_adcode,#header_ads,#header_advertisement_top,#header_leaderboard_ad_container,#header_publicidad,#headerad,#headeradbox,#headerads,#headeradsbox,#headeradwrap,#headline_ad,#headlinesAdBlock,#hiddenadAC,#hideads,#hl-sponsored-results,#homeTopRightAd,#home_ad,#home_bottom_ad,#home_contentad,#home_mpu,#home_spensoredlinks,#homepage-ad,#homepageAdsTop,#homepageFooterAd,#homepage_right_ad,#homepage_right_ad_container,#homepage_top_ads,#hometop_234x60ad,#hor_ad,#horizontal-banner-ad,#horizontal_ad,#horizontal_ad_top,#horizontalads,#houseAd,#hp-header-ad,#hp-right-ad,#hp-store-ad,#hpV2_300x250Ad,#hpV2_googAds,#icePage_SearchLinks_AdRightDiv,#icePage_SearchLinks_DownloadToolbarAdRightDiv,#icePage_SearchResults_ads0_SponsoredLink,#icePage_SearchResults_ads1_SponsoredLink,#icePage_SearchResults_ads2_SponsoredLink,#icePage_SearchResults_ads3_SponsoredLink,#icePage_SearchResults_ads4_SponsoredLink,#in_serp_ad,#inadspace,#indexad,#inlinead,#inlinegoogleads,#inlist-ad-block,#inner-advert-row,#insider_ad_wrapper,#instoryad,#int-ad,#interstitial_ad_wrapper,#islandAd,#j_ad,#ji_medShowAdBox,#jmp-ad-buttons,#joead,#joead2,#ka_adRightSkyscraperWide,#landing-adserver,#largead,#lateAd,#layerTLDADSERV,#lb-sponsor-left,#lb-sponsor-right,#leader-board-ad,#leader-sponsor,#leaderAd,#leaderAdContainer,#leader_board_ad,#leaderad,#leaderad_section,#leaderboard-ad,#leaderboard-bottom-ad,#leaderboard_ad,#left-ad-skin,#left-lower-adverts,#left-lower-adverts-container,#leftAdContainer,#leftAd_rdr,#leftAdvert,#leftSectionAd300-100,#left_ad,#left_adspace,#leftad,#leftads,#leftcolAd,#lg-banner-ad,#ligatus,#linkAds,#linkads,#live-ad,#longAdSpace,#lowerAdvertisementImg,#lowerads,#lowerthirdad,#lowertop-adverts,#lowertop-adverts-container,#lpAdPanel,#lrecad,#lsadvert-left_menu_1,#lsadvert-left_menu_2,#lsadvert-top,#mBannerAd,#main-ad,#main-ad160x600,#main-ad160x600-img,#main-ad728x90,#main-bottom-ad,#mainAd,#mainAdUnit,#mainAdvert,#main_ad,#main_rec_ad,#main_top_ad_container,#marketing-promo,#mastAdvert,#mastad,#mastercardAd,#masthead_ad,#masthead_topad,#medRecAd,#media_ad,#mediumAdvertisement,#medrectad,#menuAds,#mi_story_assets_ad,#mid-ad300x250,#mid-table-ad,#midRightTextAds,#mid_ad_div,#mid_ad_title,#mid_mpu,#midadd,#midadspace,#middle-ad,#middlead,#middleads,#midrect_ad,#midstrip_ad,#mini-ad,#module-google_ads,#module_ad,#module_box_ad,#module_sky_scraper,#monsterAd,#moogleAd,#most_popular_ad,#motionAd,#mpu,#mpu-advert,#mpuAd,#mpuDiv,#mpuSlot,#mpuWrapper,#mpuWrapperAd,#mpu_banner,#mpu_holder,#mpu_text_ad,#mpuad,#mrecAdContainer,#ms_ad,#msad,#multiLinkAdContainer,#myads_HeaderButton,#n_sponsor_ads,#namecom_ad_hosting_main,#narrow_ad_unit,#natadad300x250,#national_microlink_ads,#nationalad,#navi_banner_ad_780,#nba300Ad,#nbaMidAds,#nbaVid300Ad,#new_topad,#newads,#ng_rtcol_ad,#noresults_ad_container,#noresultsads,#northad,#oanda_ads,#onespot-ads,#online_ad,#p-googleadsense,#page-header-ad,#page-top-ad,#pageAds,#pageAdsDiv,#page_content_top_ad,#pagelet_adbox,#pagelet_netego_ads,#pagelet_search_ads2,#panelAd,#pb_report_ad,#pcworldAdBottom,#pcworldAdTop,#pinball_ad,#player-below-advert,#player_ad,#player_ads,#pod-ad-video-page,#populate_ad_bottom,#populate_ad_left,#portlet-advertisement-left,#portlet-advertisement-right,#post-promo-ad,#post5_adbox,#post_ad,#premium_ad,#priceGrabberAd,#print_ads,#printads,#product-adsense,#promo-ad,#promoAds,#ps-vertical-ads,#pub468x60,#publicidad,#pushdown_ad,#qm-ad-big-box,#qm-ad-sky,#qm-dvdad,#r1SoftAd,#rail_ad1,#rail_ad2,#realEstateAds,#rectAd,#rect_ad,#rectangle-ad,#rectangle_ad,#refine-300-ad,#region-node-advert,#region-top-ad,#rh-ad-container,#rh_tower_ad,#rhs_ads,#rhsadvert,#right-ad,#right-ad-skin,#right-ad-title,#right-ads-3,#right-box-ad,#right-featured-ad,#right-mpu-1-ad-container,#right-uppder-adverts,#right-uppder-adverts-container,#rightAd,#rightAd300x250,#rightAdColumn,#rightAd_rdr,#rightColAd,#rightColumnMpuAd,#rightColumnSkyAd,#right_ad,#right_ad_wrapper,#right_ads,#right_advertisement,#right_advertising,#right_column_ads,#rightad,#rightadContainer,#rightadvertbar-doubleclickads,#rightbar-ad,#rightside-ads,#rightside_ad,#righttop-adverts,#righttop-adverts-container,#rm_ad_text,#ros_ad,#rotatingads,#row2AdContainer,#rt-ad,#rt-ad-top,#rt-ad468,#rtMod_ad,#rtmod_ad,#sAdsBox,#sb-ad-sq,#sb_advert,#sb_sponsors,#search-google-ads,#search-sponsored-links,#search-sponsored-links-top,#searchAdSenseBox,#searchAdSenseBoxAd,#searchAdSkyscraperBox,#search_ads,#search_result_ad,#second-adlayer,#secondBoxAdContainer,#secondrowads,#section-container-ddc_ads,#section-sponsors,#section_advertorial_feature,#servfail-ads,#sew-ad1,#shoppingads,#show-ad,#showAd,#showad,#side-ad,#side-ad-container,#sideAd,#sideAdSub,#sideBarAd,#side_ad,#side_ad_wrapper,#side_ads_by_google,#side_sky_ad,#sidead,#sideads,#sidebar-125x125-ads,#sidebar-125x125-ads-below-index,#sidebar-ad,#sidebar-ad-boxes,#sidebar-ad-space,#sidebar-ad-wrap,#sidebar-ad3,#sidebar-ads,#sidebar2ads,#sidebar_ad,#sidebar_ad_widget,#sidebar_ads,#sidebar_ads_180,#sidebar_sponsoredresult_body,#sidebarad,#sideline-ad,#single-mpu,#singlead,#site-leaderboard-ads,#site_top_ad,#sitead,#sky-ad,#skyAd,#skyAdContainer,#skyScrapperAd,#skyWrapperAds,#sky_ad,#sky_advert,#skyads,#skyscraper-ad,#skyscraperAd,#skyscraperAdContainer,#skyscraper_ad,#skyscraper_advert,#skyscraperad,#sliderAdHolder,#slideshow_ad_300x250,#sm-banner-ad,#small_ad,#smallerAd,#specials_ads,#speeds_ads,#speeds_ads_fstitem,#speedtest_mrec_ad,#sphereAd,#splinks,#sponLinkDiv_1,#sponlink,#sponlinks,#sponsAds,#sponsLinks,#spons_left,#sponseredlinks,#sponsor-search,#sponsorAd1,#sponsorAd2,#sponsorAdDiv,#sponsorLinks,#sponsorTextLink,#sponsor_banderole,#sponsor_box,#sponsor_deals,#sponsor_panSponsor,#sponsor_recommendations,#sponsorbar,#sponsorbox,#sponsored,#sponsored-ads,#sponsored-features,#sponsored-links,#sponsored-resources,#sponsored1,#sponsoredBox1,#sponsoredBox2,#sponsoredLinks,#sponsoredList,#sponsoredResults,#sponsoredSiteMainline,#sponsoredSiteSidebar,#sponsored_ads_v4,#sponsored_content,#sponsored_game_row_listing,#sponsored_links,#sponsored_v12,#sponsoredlinks,#sponsoredlinks_cntr,#sponsoredresults_top,#sponsoredwellcontainerbottom,#sponsoredwellcontainertop,#sponsoring_bar,#sponsorlink,#sponsors,#sponsors_top_container,#sponsorshipBadge,#spotlightAds,#spotlightad,#sqAd,#square-sponsors,#squareAd,#squareAdSpace,#squareAds,#square_ad,#start_middle_container_advertisment,#sticky-ad,#stickyBottomAd,#story-ad-a,#story-ad-b,#story-leaderboard-ad,#story-sponsoredlinks,#storyAd,#storyAdWrap,#storyad2,#subpage-ad-right,#subpage-ad-top,#swads,#synch-ad,#systemad_background,#tabAdvertising,#takeoverad,#tblAd,#tbl_googlead,#tcwAd,#template_ad_leaderboard,#tertiary_advertising,#text-ad,#text-ads,#textAd,#textAds,#text_ad,#text_ads,#text_advert,#textad,#textad3,#the-last-ad-standing,#thefooterad,#themis-ads,#tile-ad,#tmglBannerAd,#top-ad,#top-ad-container,#top-ad-menu,#top-ads,#top-ads-tabs,#top-advertisement,#top-banner-ad,#top-search-ad-wrapper,#topAd,#topAd728x90,#topAdBanner,#topAdContainer,#topAdSenseDiv,#topAdcontainer,#topAds,#topAdsContainer,#topAdvert,#topBannerAd,#topNavLeaderboardAdHolder,#topRightBlockAdSense,#top_ad,#top_ad_area,#top_ad_game,#top_ad_wrapper,#top_ads,#top_advertise,#top_advertising,#top_right_ad,#top_wide_ad,#topad,#topad_left,#topad_right,#topadblock,#topaddwide,#topads,#topadsense,#topadspace,#topadzone,#topbanner_ad,#topbar-ad,#topcustomad,#topleaderboardad,#toprightAdvert,#toprightad,#topsponsored,#toptextad,#towerad,#ttp_ad_slot1,#ttp_ad_slot2,#twogamesAd,#txt_link_ads,#undergameAd,#upperAdvertisementImg,#upperMpu,#upperad,#urban_contentad_1,#urban_contentad_2,#urban_contentad_article,#v_ad,#vert_ad,#vert_ad_placeholder,#vertical_ad,#vertical_ads,#videoAd,#video_cnv_ad,#video_overlay_ad,#videoadlogo,#viewportAds,#walltopad,#weblink_ads_container,#welcomeAdsContainer,#welcome_ad_mrec,#welcome_advertisement,#wf_ContentAd,#wf_FrontSingleAd,#wf_SingleAd,#wf_bottomContentAd,#wgtAd,#whatsnews_top_ad,#whitepaper-ad,#whoisRightAdContainer,#wide_ad_unit_top,#widget_advertisement,#wrapAdRight,#wrapAdTop,#y-ad-units,#y708-ad-expedia,#y708-ad-lrec,#y708-ad-partners,#y708-ad-ysm,#y708-advertorial-marketplace,#yahoo-ads,#yahoo-sponsors,#yahooSponsored,#yahoo_ads,#yahoo_ads_2010,#yahooad-tbl,#yan-sponsored,#yatadsky,#ybf-ads,#yfi_fp_ad_mort,#yfi_fp_ad_nns,#yfi_pf_ad_mort,#ygrp-sponsored-links,#ymap_adbanner,#yn-gmy-ad-lrec,#yreSponsoredLinks,#ysm_ad_iframe,#zoneAdserverMrec,#zoneAdserverSuper,.ADBAR,.ADPod,.AD_ALBUM_ITEMLIST,.AD_MOVIE_ITEM,.AD_MOVIE_ITEMLIST,.AD_MOVIE_ITEMROW,.Ad-MPU,.Ad1,.Ad120x600,.Ad160x600,.Ad160x600left,.Ad160x600right,.Ad2,.Ad247x90,.Ad300x250,.Ad300x250L,.Ad728x90,.AdBorder,.AdBox,.AdBox7,.AdContainerBox308,.AdHeader,.AdHere,.AdInfo,.AdMedium,.AdPlaceHolder,.AdRingtone,.AdSense,.AdSpace,.AdTextSmallFont,.AdTitle,.AdUnit,.AdUnit300,.Ad_C,.Ad_D_Wrapper,.Ad_E_Wrapper,.Ad_Right,.Ads,.AdsBoxBottom,.AdsBoxSection,.AdsBoxTop,.AdsLinks1,.AdsLinks2,.Advert,.AdvertMidPage,.AdvertiseWithUs,.AdvertisementTextTag,.ArticleAd,.ArticleInlineAd,.BannerAd,.BigBoxAd,.BlockAd,.BottomAdContainer,.BottomAffiliate,.BoxAd,.CG_adkit_leaderboard,.CG_details_ad_dropzone,.CWReviewsProdInfoAd,.ComAread,.CommentAd,.ContentAd,.ContentAds,.DAWRadvertisement,.DeptAd,.DisplayAd,.FT_Ad,.FlatAds,.GOOGLE_AD,.GoogleAd,.GoogleAdSenseBottomModule,.GoogleAdSenseRightModule,.HPNewAdsBannerDiv,.HPRoundedAd,.HomeContentAd,.IABAdSpace,.IndexRightAd,.LazyLoadAd,.LeftAd,.LeftButtonAdSlot,.LeftTowerAd,.M2Advertisement,.MD_adZone,.MOS-ad-hack,.MPU,.MPUHolder,.MPUTitleWrapperClass,.MREC_ads,.MiddleAd,.MiddleAdContainer,.OpenXad,.PU_DoubleClickAdsContent,.Post5ad,.Post9ad,.RBboxAd,.RectangleAd,.RelatedAds,.RightAd1,.RightGoogleAFC,.RightRailTop300x250Ad,.RightSponsoredAdTitle,.RightTowerAd,.SideAdCol,.SidebarAd,.SitesGoogleAdsModule,.SkyAdContainer,.SponsorCFrame,.SponsoredAdTitle,.SponsoredContent,.SponsoredLinks,.SponsoredLinksGrayBox,.SponsorshipText,.SquareAd,.StandardAdLeft,.StandardAdRight,.TextAd,.TheEagleGoogleAdSense300x250,.TopAd,.TopAdContainer,.TopAdL,.TopAdR,.TopBannerAd,.UIWashFrame_SidebarAds,.UnderAd,.VerticalAd,.VideoAd,.WidgetAdvertiser,.a160x600,.a728x90,.ad-120x600,.ad-160,.ad-160x600,.ad-250,.ad-300,.ad-300-block,.ad-300-blog,.ad-300x100,.ad-300x250,.ad-300x250-right0,.ad-350,.ad-355x75,.ad-600,.ad-635x40,.ad-728,.ad-728x90,.ad-728x90-1,.ad-728x90_forum,.ad-above-header,.ad-adlink-bottom,.ad-adlink-side,.ad-background,.ad-banner,.ad-bigsize,.ad-block,.ad-blog2biz,.ad-bottom,.ad-box,.ad-break,.ad-btn,.ad-btn-heading,.ad-button,.ad-cell,.ad-container,.ad-container-300x250,.ad-container-728x90,.ad-disclaimer,.ad-display,.ad-div,.ad-enabled,.ad-feedback,.ad-filler,.ad-footer,.ad-footer-leaderboard,.ad-google,.ad-graphic-large,.ad-gray,.ad-hdr,.ad-head,.ad-holder,.ad-homeleaderboard,.ad-img,.ad-island,.ad-label,.ad-leaderboard,.ad-links,.ad-lrec,.ad-medium,.ad-medium-two,.ad-mpu,.ad-note,.ad-notice,.ad-other,.ad-permalink,.ad-placeholder,.ad-postText,.ad-poster,.ad-priority,.ad-rect,.ad-rectangle,.ad-rectangle-text,.ad-related,.ad-rh,.ad-ri,.ad-right,.ad-right-header,.ad-right-txt,.ad-row,.ad-section,.ad-sidebar,.ad-sidebar-outer,.ad-sidebar300,.ad-sky,.ad-slot,.ad-slot-234-60,.ad-slot-300-250,.ad-slot-728-90,.ad-space,.ad-space-mpu-box,.ad-spot,.ad-squares,.ad-statement,.ad-tabs,.ad-text,.ad-text-links,.ad-tile,.ad-title,.ad-top,.ad-top-left,.ad-unit,.ad-unit-300,.ad-unit-300-wrapper,.ad-unit-anchor,.ad-vert,.ad-vtu,.ad-wrap,.ad-wrapper,.ad-zone-s-q-l,.ad.super,.ad0,.ad1,.ad10,.ad120,.ad120x600,.ad125,.ad160,.ad160x600,.ad18,.ad19,.ad2,.ad21,.ad250,.ad250c,.ad3,.ad300,.ad300250,.ad300_250,.ad300x100,.ad300x250,.ad300x250-hp-features,.ad300x250Top,.ad300x250_container,.ad300x250box,.ad300x50-right,.ad300x600,.ad310,.ad336x280,.ad343x290,.ad4,.ad400right,.ad450,.ad468,.ad468_60,.ad468x60,.ad6,.ad620x70,.ad626X35,.ad7,.ad728,.ad728_90,.ad728x90,.ad728x90_container,.ad8,.ad90x780,.adAgate,.adArea674x60,.adBanner,.adBanner300x250,.adBanner728x90 { visibility:hidden !important; display:none !important; } .adBannerTyp1,.adBannerTypSortableList,.adBannerTypW300,.adBar,.adBgBottom,.adBgMId,.adBgTop,.adBlock,.adBottomboxright,.adBox,.adBoxBody,.adBoxBorder,.adBoxContainer,.adBoxContent,.adBoxInBignews,.adBoxSidebar,.adBoxSingle,.adCMRight,.adColumn,.adCont,.adContTop,.adContainer,.adContour,.adCreative,.adDiv,.adElement,.adFender3,.adFrame,.adFtr,.adFullWidthMiddle,.adGoogle,.adHeader,.adHeadline,.adHolder,.adHome300x250,.adHorisontal,.adInNews,.adLabel,.adLeader,.adLeaderForum,.adLeaderboard,.adLeft,.adLoaded,.adLocal,.adMastheadLeft,.adMastheadRight,.adMegaBoard,.adMkt2Colw,.adModule,.adMpu,.adNewsChannel,.adNoOutline,.adNotice,.adNoticeOut,.adObj,.adPageBorderL,.adPageBorderR,.adPanel,.adRect,.adRight,.adSelfServiceAdvertiseLink,.adServer,.adSkyscraperHolder,.adSlot,.adSpBelow,.adSpace,.adSpacer,.adSponsor,.adSpot,.adSpot-searchAd,.adSpot-textBox,.adSpot-twin,.adSpotIsland,.adSquare,.adSummary,.adSuperboard,.adSupertower,.adTD,.adTab,.adTag,.adText,.adTileWrap,.adTiler,.adTitle,.adTopboxright,.adTout,.adTxt,.adUnitHorz,.adUnitVert,.adUnitVert_noImage,.adWebBoard,.adWidget,.adWithTab,.adWrap,.adWrapper,.ad_0,.ad_1,.ad_120x90,.ad_125,.ad_130x90,.ad_160,.ad_160x600,.ad_2,.ad_200,.ad_200x200,.ad_250x250,.ad_250x250_w,.ad_3,.ad_300,.ad_300_250,.ad_300x250,.ad_300x250_box_right,.ad_336,.ad_336x280,.ad_350x100,.ad_350x250,.ad_400x200,.ad_468,.ad_468x60,.ad_600,.ad_728,.ad_728x90,.ad_Left,.ad_Right,.ad_amazon,.ad_banner,.ad_banner_border,.ad_bg,.ad_bigbox,.ad_biz,.ad_block_338,.ad_body,.ad_border,.ad_botbanner,.ad_bottom_leaderboard,.ad_box,.ad_box2,.ad_box_ad,.ad_box_div,.ad_callout,.ad_caption,.ad_column,.ad_column_hl,.ad_contain,.ad_container,.ad_content,.ad_content_wide,.ad_contents,.ad_descriptor,.ad_disclaimer,.ad_eyebrow,.ad_footer,.ad_framed,.ad_front_promo,.ad_head,.ad_header,.ad_hpm,.ad_info_block,.ad_inline,.ad_island,.ad_label,.ad_launchpad,.ad_leader,.ad_leaderboard,.ad_left,.ad_links,.ad_linkunit,.ad_loc,.ad_lrec,.ad_main,.ad_medrec,.ad_medrect,.ad_middle,.ad_mpu,.ad_mr,.ad_mrec,.ad_mrec_title_article,.ad_mrect,.ad_news,.ad_notice,.ad_one,.ad_p360,.ad_partner,.ad_partners,.ad_plus,.ad_post,.ad_power,.ad_rectangle,.ad_right,.ad_right_col,.ad_row,.ad_sidebar,.ad_skyscraper,.ad_slug,.ad_slug_table,.ad_space,.ad_space_300_250,.ad_sponsor,.ad_sponsoredsection,.ad_spot_b,.ad_spot_c,.ad_square_r,.ad_square_top,.ad_text,.ad_text_w,.ad_title,.ad_top,.ad_top_leaderboard,.ad_topright,.ad_tower,.ad_unit,.ad_unit_rail,.ad_url,.ad_warning,.ad_wid300,.ad_wide,.ad_wrap,.ad_wrapper,.ad_wrapper_fixed,.ad_wrapper_top,.ad_zone,.adarea,.adarea-long,.adbanner,.adbannerbox,.adbannerright,.adbar,.adboard,.adborder,.adbot,.adbottom,.adbottomright,.adbox,.adbox-outer,.adbox-wrapper,.adbox_300x600,.adbox_366x280,.adbox_468X60,.adbox_bottom,.adboxclass,.adbuttons,.adcode,.adcol1,.adcol2,.adcolumn,.adcolumn_wrapper,.adcont,.adcopy,.addiv,.adfieldbg,.adfoot,.adfootbox,.adframe,.adhead,.adheader,.adheader100,.adhere,.adhered,.adhi,.adhint,.adholder,.adhoriz,.adi,.adiframe,.adinfo,.adinside,.adintro,.adjlink,.adkit,.adkit-advert,.adkit-lb-footer,.adlabel-horz,.adlabel-vert,.adleft1,.adline,.adlink,.adlinks,.adlist,.adlnklst,.admarker,.admedrec,.admessage,.admodule,.admpu,.admpu-small,.adnation-banner,.adnotice,.adops,.adp-AdPrefix,.adpadding,.adpane,.adpic,.adprice,.adright,.adroot,.adrotate_widget,.adrow,.adrow-post,.adrule,.ads,.ads-125,.ads-728x90-wrap,.ads-banner,.ads-below-content,.ads-categories-bsa,.ads-favicon,.ads-links-general,.ads-mpu,.ads-outer,.ads-profile,.ads-right,.ads-section,.ads-sidebar,.ads-sky,.ads-stripe,.ads-text,.ads-widget,.ads-widget-partner-gallery,.ads2,.ads3,.ads300,.ads468,.ads728,.ads:not(body),.adsArea,.adsBelowHeadingNormal,.adsBlock,.adsBox,.adsCont,.adsDiv,.adsFull,.adsImages,.adsMPU,.adsRight,.adsTextHouse,.adsTop,.adsTower2,.adsTowerWrap,.adsWithUs,.ads_125_square,.ads_180,.ads_300,.ads_300x250,.ads_337x280,.ads_728x90,.ads_big,.ads_big-half,.ads_box,.ads_brace,.ads_catDiv,.ads_container,.ads_disc_anchor,.ads_disc_leader,.ads_disc_lwr_square,.ads_disc_skyscraper,.ads_disc_square,.ads_div,.ads_header,.ads_leaderboard,.ads_mpu,.ads_outer,.ads_rectangle,.ads_right,.ads_sc_bl_i,.ads_sc_tl_i,.ads_show_if,.ads_side,.ads_sidebar,.ads_singlepost,.ads_spacer,.ads_takeover,.ads_title,.ads_tr,.ads_widesky,.ads_wrapperads_top,.adsblockvert,.adsborder,.adsbottom,.adsbox,.adsboxitem,.adsbyyahoo,.adsc,.adscaleAdvert,.adsclick,.adscontainer,.adscreen,.adsection_a2,.adsection_c2,.adsense,.adsense-ad,.adsense-category,.adsense-category-bottom,.adsense-heading,.adsense-post,.adsense-right,.adsense-title,.adsense3,.adsenseAds,.adsenseBlock,.adsenseContainer,.adsenseGreenBox,.adsense_bdc_v2,.adsensebig,.adsenseblock,.adsenseblock_bottom,.adsenseblock_top,.adsenselr,.adsensem_widget,.adsensesq,.adsenvelope,.adset,.adsforums,.adsghori,.adsgvert,.adside,.adsidebox,.adsider,.adsingle,.adsleft,.adslogan,.adsmalltext,.adsmessage,.adspace,.adspace-MR,.adspace180,.adspace_bottom,.adspace_buysell,.adspace_rotate,.adspace_skyscraper,.adspacer,.adspot,.adspot728x90,.adstextpad,.adstitle,.adstop,.adstrip,.adtable,.adtag,.adtech,.adtext,.adtext_gray,.adtext_horizontal,.adtext_onwhite,.adtext_vertical,.adtile,.adtips,.adtips1,.adtop,.adtravel,.adtxt,.adunit,.adv-mpu,.adver,.adverTag,.adver_cont_below,.advert,.advert-article-bottom,.advert-bannerad,.advert-box,.advert-head,.advert-horizontal,.advert-iab-300-250,.advert-iab-468-60,.advert-mpu,.advert-skyscraper,.advert-text,.advert300,.advert4,.advert5,.advert8,.advertColumn,.advertCont,.advertContainer,.advertHeadline,.advertRight,.advertText,.advertTitleSky,.advert_468x60,.advert_box,.advert_cont,.advert_djad,.advert_label,.advert_leaderboard,.advert_list,.advert_note,.advert_top,.advertheader-red,.advertise,.advertise-here,.advertise-homestrip,.advertise-horz,.advertise-leaderboard,.advertise-top,.advertise-vert,.advertiseContainer,.advertiseText,.advertise_ads,.advertise_here,.advertise_link,.advertise_link_sidebar,.advertisement,.advertisement-728x90,.advertisement-block,.advertisement-sidebar,.advertisement-sponsor,.advertisement-text,.advertisement-top,.advertisement468,.advertisementBox,.advertisementColumnGroup,.advertisementContainer,.advertisementHeader,.advertisementLabel,.advertisementPanel,.advertisement_btm,.advertisement_caption,.advertisement_g,.advertisement_header,.advertisement_horizontal,.advertisement_top,.advertiser,.advertiser-links,.advertisespace_div,.advertising,.advertising-banner,.advertising-header,.advertising-local-links,.advertising2,.advertisingTable,.advertising_block,.advertising_images,.advertisment,.advertisment_two,.advertize,.advertorial,.advertorial-2,.advertorial-promo-box,.adverts,.advt,.advt-banner-3,.advt-block,.advt300,.advt720,.adwordListings,.adwordsHeader,.adwrap,.adwrapper,.adwrapper-lrec,.adwrapper948,.adzone-footer,.adzone-sidebar,.affiliate,.affiliate-link,.affiliate-sidebar,.affiliateAdvertText,.affinityAdHeader,.after_ad,.agi-adsaleslinks,.alb-content-ad,.alt_ad,.anchorAd,.another_text_ad,.answer_ad_content,.aolSponsoredLinks,.aopsadvert,.apiAdMarkerAbove,.apiAds,.archive-ads,.art_ads,.article-ads,.articleAd,.articleAds,.articleAdsL,.articleEmbeddedAdBox,.article_ad,.article_adbox,.article_mpu_box,.articleads,.aseadn,.aux-ad-widget-2,.b-astro-sponsored-links_horizontal,.b-astro-sponsored-links_vertical,.banner-ad,.banner-ads,.banner-adverts,.banner300x100,.banner300x250,.banner468,.bannerAd,.bannerAdWrapper300x250,.bannerAdWrapper730x86,.bannerRightAd,.banner_300x250,.banner_728x90,.banner_ad,.banner_ad_footer,.banner_ad_leaderboard,.bannerad,.barkerAd,.base-ad-mpu,.base_ad,.bg-ad-link,.bgnavad,.big-ads,.bigAd,.big_ad,.big_ads,.bigad,.bigad2,.bigbox_ad,.bigboxad,.billboard_ad,.blk_advert,.block-ad,.block-ad300,.block-admanager,.block-ads-bottom,.block-ads-top,.block-adsense,.block-openadstream,.block-openx,.block-thirdage-ads,.block_ad,.block_ad_sb_text,.block_ad_sponsored_links,.block_ad_sponsored_links-wrapper,.blocked-ads,.blog-ad-leader-inner,.blog-ads-container,.blogAd,.blogAdvertisement,.blogBigAd,.blog_ad,.blogads,.blox3featuredAd,.body_ad,.body_sponsoredresults_bottom,.body_sponsoredresults_middle,.body_sponsoredresults_top,.bookseller-header-advt,.bottomAd,.bottomAds,.bottom_ad,.bottom_ad_block,.bottom_sponsor,.bottomad,.bottomadvert,.bottomrightrailAd,.bottomvidad,.box-ad,.box-ads,.box-adsense,.boxAd,.box_ad,.box_ads,.box_advertising,.box_advertisment_62_border,.box_content_ad,.box_content_ads,.boxad,.boxyads,.bps-ad-wrapper,.bps-advertisement,.bps-advertisement-inline-ads,.br-ad,.bsa_ads,.btm_ad,.btn-ad,.bullet-sponsored-links,.bullet-sponsored-links-gray,.burstContentAdIndex,.buttonAd,.buttonAds,.buttonadbox,.bx_ad,.bx_ad_right,.cA-adStrap,.cColumn-TextAdsBox,.care2_adspace,.catalog_ads,.category-ad,.category__big_game_container_body_games_advertising,.cb-ad-container,.cb_ads,.cb_footer_sponsor,.cb_navigation_ad,.cbstv_ad_label,.cbzadvert,.cbzadvert_block,.cdAdTitle,.cdmainlineSearchAdParent,.cdsidebarSearchAdParent,.centerAd,.center_ad,.centerad,.centered-ad,.cinemabotad,.clearerad,.cm_ads,.cms-Advert,.cnbc_badge_banner_ad_area,.cnbc_banner_ad_area,.cnn160AdFooter,.cnnAd,.cnnMosaic160Container,.cnnSearchSponsorBox,.cnnStoreAd,.cnnStoryElementBoxAd,.cnnWCAdBox,.cnnWireAdLtgBox,.cnn_728adbin,.cnn_adcntr300x100,.cnn_adcntr728x90,.cnn_adspc336cntr,.cnn_adtitle,.column2-ad,.com-ad-server,.comment-advertisement,.common_advertisement_title,.communityAd,.conTSponsored,.conductor_ad,.confirm_ad_left,.confirm_ad_right,.confirm_leader_ad,.consoleAd,.container-adwords,.containerSqAd,.container_serendipity_plugin_google_adsense,.content-ad,.contentAd,.contentAdFoot,.contentAdsWrapper,.content_ad,.content_ad_728,.content_adsq,.contentad,.contentad300x250,.contentad_right_col,.contentadcontainer,.contentadleft,.contenttextad,.contest_ad,.cp_ad,.cpmstarHeadline,.cpmstarText,.create_ad,.cs-mpu,.cscTextAd,.cse_ads,.cspAd,.ct_ad,.cube-ad,.cubeAd,.cube_ads,.currency_ad,.custom_ads,.darla_ad,.dartAdImage,.dart_ad,.dart_tag,.dartadvert,.dartiframe,.dc-ad,.dcAdvertHeader,.deckAd,.deckads,.detail-ads,.detailMpu,.detail_ad,.detail_top_advert,.divAd,.divad1,.divad2,.divad3,.divads,.divider_ad,.dmco_advert_iabrighttitle,.download_ad,.downloadad,.dynamic-ads,.dynamic_ad,.e-ad,.ec-ads,.ec-ads-remove-if-empty,.em-ad,.embed-ad,.entry-body-ad,.entry_sidebar_ads,.entryad,.ez-clientAd,.f_Ads,.featuredAds,.featuredadvertising,.firstpost_advert_container,.flagads,.flash-advertisement,.flash_ad,.flash_advert,.flashad,.flexiad,.flipbook_v2_sponsor_ad,.floatad,.floated_right_ad,.floatingAds,.fm-badge-ad,.footad,.footer-ad,.footerAd,.footerAdModule,.footerAdslot,.footerTextAd,.footer_ad,.footer_ads,.footer_block_ad,.footer_bottomad,.footer_line_ad,.footer_text_ad,.footerad,.forumtopad,.frn_adbox,.frn_cont_adbox,.ft-ad,.ftdAdBar,.ftdContentAd,.full_ad_box,.fullbannerad,.g3rtn-ad-site,.gAdRows,.gAdSky,.gAdvertising,.g_ggl_ad,.ga-ads,.ga-textads-bottom,.ga-textads-top,.gaTeaserAdsBox,.gads,.gads_cb,.gads_container,.gam_ad_slot,.gameAd,.gamesPage_ad_content,.gglAds,.global_banner_ad,.googad,.googads,.google-ad,.google-ad-container,.google-ads,.google-ads-boxout,.google-ads-slim,.google-right-ad,.google-sponsored-ads,.google-sponsored-link,.google468_60,.googleAd,.googleAd-content,.googleAd-list,.googleAdBox,.googleAdSense,.googleAdSenseModule,.googleAd_body,.googleAds,.googleAds_article_page_above_comments,.googleAdsense,.googleContentAds,.googleProfileAd,.googleSearchAd_content,.googleSearchAd_sidebar,.google_ad,.google_add_container,.google_ads,.google_ads_bom_title,.google_ads_content,.googlead,.googleaddiv,.googleaddiv2,.googleads,.googleads_300x250,.googleads_title,.googley_ads,.gpAdBox,.gpAds,.gradientAd,.grey-ad-line,.group_ad,.gsAd,.gsfAd,.gt_ad,.gt_ad_300x250,.gt_ad_728x90,.gt_adlabel,.gutter-ad-left,.gutter-ad-right,.h-ad-728x90-bottom,.h_Ads,.h_ad,.half-ad,.half_ad_box,.hcf-cms-ad,.hd_advert,.hdr-ads,.header-ad,.header-advert,.headerAd,.headerAds,.headerAdvert,.header_ad,.header_ad_center,.header_ad_div,.header_advertisment,.headerad,.hi5-ad,.highlightsAd,.hm_advertisment,.home-ad-links,.homeAd,.homeAd1,.homeAd2,.homeAdBoxA,.homeAdBoxBetweenBlocks,.homeAdBoxInBignews,.homeAdSection,.homeMediumAdGroup,.home_ad_bottom,.home_advertisement,.home_mrec_ad,.homead,.homepage-ad,.homepage300ad,.homepageFlexAdOuter,.homepageMPU,.homepage_middle_right_ad,.hor_ad,.horiz_adspace,.horizontalAd,.horizontal_ad,.horizontal_ads,.horizontaltextadbox,.horizsponsoredlinks,.hortad,.houseAd1,.houseAdsStyle,.housead,.hp2-adtag,.hp_ad_cont,.hp_ad_text,.hp_t_ad,.hp_w_ad,.ic-ads,.ico-adv,.idMultiAd,.image-advertisement,.imageads,.imgad,.in-page-ad,.in-story-text-ad,.indie-sidead,.indy_googleads,.inline-ad,.inline-mpu,.inline-mpu-left,.inlineSideAd,.inline_ad,.inline_ad_title,.inlinead,.inlineadsense,.inlineadtitle,.inlist-ad,.inlistAd,.inner-advt-banner-3,.innerAds,.innerad,.inpostad,.insert_advertisement,.insertad,.insideStoryAd,.inteliusAd_image,.interest-based-ad,.is24-adplace,.islandAd,.islandAdvert,.islandad,.jimdoAdDisclaimer,.jp-advertisment-promotional,.js-advert,.kw_advert,.kw_advert_pair,.l_ad_sub,.l_banner.ads_show_if,.labelads,.largeRectangleAd,.lastRowAd,.lcontentbox_ad,.leaderAdTop,.leaderAdvert,.leader_ad,.leaderboardAd,.leaderboardad,.leaderboardadtop { visibility:hidden !important; display:none !important; } .left-ad,.leftAd,.leftAdColumn,.leftAds,.left_ad_box,.left_adlink,.left_ads,.leftad,.leftadtag,.leftbar_ad_160_600,.leftbarads,.leftnavad,.lgRecAd,.lg_ad,.ligatus,.linead,.link_adslider,.link_advertise,.live-search-list-ad-container,.ljad,.log_ads,.logoAds,.logoad,.longAd,.lowerAds,.m-ad-tvguide-box,.m4-adsbygoogle,.m_banner_ads,.macAd,.macad,.main-ad,.main-tabs-ad-block,.main_ad,.main_adbox,.main_intro_ad,.map_media_banner_ad,.marginadsthin,.marketing-ad,.masthead_topad,.mdl-ad,.media-advert,.mediaAd,.mediaAdContainer,.mediaResult_sponsoredSearch,.medium-rectangle-ad,.mediumRectangleAdvert,.medrect_ad,.menuItemBannerAd,.messageBoardAd,.mf-ad300-container,.micro_ad,.mid_ad,.midad,.middleAds,.middleads,.min_navi_ad,.miniad,.mobile-sponsoring,.mod-ad-lrec,.mod-ad-n,.mod-adopenx,.mod_admodule,.module-ad,.module-ad-small,.module-ads,.moduleAdvertContent,.module_ad,.module_box_ad,.modulegad,.moduletable-advert,.moduletable-googleads,.moduletablesquaread,.mpu,.mpu-ad,.mpu-advert,.mpu-footer,.mpu-fp,.mpu-title,.mpu-top-left,.mpu-top-left-banner,.mpu-top-right,.mpuAd,.mpuAdSlot,.mpuAdvert,.mpuArea,.mpuBox,.mpuContainer,.mpuHolder,.mpuTextAd,.mpu_ad,.mpu_advert,.mpu_gold,.mpu_holder,.mpu_platinum,.mpu_text_ad,.mpuad,.mpuholderportalpage,.mrec_advert,.ms-ads-link,.msfg-shopping-mpu,.mwaads,.nSponsoredLcContent,.nSponsoredLcTopic,.nadvt300,.narrow_ad_unit,.narrow_ads,.navAdsBanner,.navi_ad300,.naviad,.nba300Ad,.nbaT3Ad160,.nbaTVPodAd,.nbaTwo130Ads,.nbc_ad_carousel_wrp,.newTopAdContainer,.newad,.news_article_ad_google,.newsviewAdBoxInNews,.nf-adbox,.nn-mpu,.noAdForLead,.normalAds,.nrAds,.nsAdRow,.oas-ad,.oas-bottom-ads,.offer_sponsoredlinks,.oio-banner-zone,.oio-link-sidebar,.oio-zone-position,.on_single_ad_box,.onethirdadholder,.openads,.openadstext_after,.openx,.openx-ad,.osan-ads,.other_adv2,.outermainadtd1,.ovAdPromo,.ovAdSky,.ovAdartikel,.ov_spns,.pageGoogleAd,.pageGoogleAdFlat,.pageLeaderAd,.page_content_right_ad,.pagead,.pagenavindexcontentad,.paneladvert,.partnersTextLinks,.pencil_ad,.player_ad_box,.player_page_ad_box,.plista_inimg_box,.pnp_ad,.pod-ad-300,.podRelatedAdLinksWidget,.podSponsoredLink,.portalCenterContentAdBottom,.portalCenterContentAdMiddle,.portalCenterContentAdTop,.portalcontentad,.post-ad,.post_ad,.post_ads,.post_sponsor_unit,.postbit_adbit_register,.postbit_adcode,.postgroup-ads,.postgroup-ads-middle,.prebodyads,.premium_ad_container,.promoAd,.promoAds,.promo_ad,.publication-ad,.publicidad,.puff-advertorials,.qa_ad_left,.qm-ad-content,.qm-ad-content-news,.quigo-ad,.qzvAdDiv,.r_ad_box,.r_ads,.rad_container,.rect_ad_module,.rectad,.rectangleAd,.rectanglead,.redads_cont,.regular_728_ad,.regularad,.relatedAds,.related_post_google_ad,.remads,.resourceImagetAd,.result_ad,.results_sponsor,.results_sponsor_right,.reviewMidAdvertAlign,.rght300x250,.rhads,.rhs-ad,.rhs-ads-panel,.right-ad,.right-ad-holder,.right-ad2,.right-ads,.right-ads2,.right-sidebar-box-ad,.rightAd,.rightColAd,.rightRailAd,.right_ad,.right_ad_box,.right_ad_text,.right_ad_top,.right_ads,.right_ads_column,.right_col_ad,.right_hand_advert_column,.rightad,.rightad_1,.rightad_2,.rightadbox1,.rightads,.rightadunit,.rightcol_boxad,.rightcoladvert,.rightcoltowerad,.rnav_ad,.rngtAd,.roundingrayboxads,.rt_ad1_300x90,.rt_ad_300x250,.rt_ad_call,.savvyad_unit,.sb-ad-sq-bg,.sbAd,.sbAdUnitContainer,.sb_adsN,.sb_adsNv2,.sb_adsW,.sb_adsWv2,.scanAd,.scc_advert,.sci-ad-main,.sci-ad-sub,.search-ad,.search-results-ad,.search-sponsor,.search-sponsored,.searchAd,.searchSponsoredResultsBox,.searchSponsoredResultsList,.search_column_results_sponsored,.search_results_sponsored_top,.section-ad2,.section-sponsor,.section_mpu_wrapper,.section_mpu_wrapper_wrapper,.selfServeAds,.sepContentAd,.serp_sponsored,.servsponserLinks,.shoppingGoogleAdSense,.sidbaread,.side-ad,.side-ads,.sideAd,.sideBoxAd,.side_ad,.side_ad2,.side_ad_1,.side_ad_2,.side_ad_3,.sidead,.sideads,.sideadsbox,.sideadvert,.sidebar-ad,.sidebar-ads,.sidebar-text-ad,.sidebarAd,.sidebarAdUnit,.sidebarAdvert,.sidebar_ad,.sidebar_ad_300_250,.sidebar_ads,.sidebar_ads_336,.sidebar_adsense,.sidebar_box_ad,.sidebarad,.sidebarad_bottom,.sidebaradbox,.sidebarboxad,.sideheadnarrowad,.sideheadsponsorsad,.singleAd,.singleAdsContainer,.singlead,.sitesponsor,.skinAd,.skin_ad_638,.sky-ad,.skyAd,.skyAdd,.skyAdvert,.sky_ad,.sky_scraper_ad,.skyad,.skyscraper-ad,.skyscraper_ad,.skyscraper_bannerAdHome,.slideshow-ad,.slpBigSlimAdUnit,.slpSquareAdUnit,.sm_ad,.smallSkyAd1,.smallSkyAd2,.small_ad,.small_ads,.smallad-left,.smallads,.smallsponsorad,.smart_ads_bom_title,.specialAd175x90,.speedyads,.sphereAdContainer,.spl-ads,.spl_ad,.spl_ad2,.spl_ad_plus,.splitAd,.sponlinkbox,.spons-link,.spons_links,.sponslink,.sponsor-ad,.sponsor-bottom,.sponsor-link,.sponsor-links,.sponsor-right,.sponsor-services,.sponsor-top,.sponsorArea,.sponsorBox,.sponsorPost,.sponsorPostWrap,.sponsorStrip,.sponsorTop,.sponsor_ad_area,.sponsor_footer,.sponsor_horizontal,.sponsor_line,.sponsor_links,.sponsor_logo,.sponsor_top,.sponsor_units,.sponsoradtitle,.sponsorbox,.sponsored,.sponsored-ads,.sponsored-chunk,.sponsored-editorial,.sponsored-features,.sponsored-links,.sponsored-links-alt-b,.sponsored-links-holder,.sponsored-links-right,.sponsored-post,.sponsored-post_ad,.sponsored-results,.sponsored-right-border,.sponsored-text,.sponsoredInner,.sponsoredLabel,.sponsoredLinks,.sponsoredLinks2,.sponsoredLinksHeader,.sponsoredProduct,.sponsoredResults,.sponsoredSideInner,.sponsored_ads,.sponsored_box,.sponsored_box_search,.sponsored_by,.sponsored_links,.sponsored_links_title_container,.sponsored_links_title_container_top,.sponsored_links_top,.sponsored_results,.sponsored_well,.sponsoredibbox,.sponsoredlink,.sponsoredlinks,.sponsoredlinkscontainer,.sponsoredresults,.sponsoredtextlink_container,.sponsoredtextlink_container_ovt,.sponsorlink,.sponsorlink2,.sponsors,.sponsors-box,.sponsorshipbox,.spotlightAd,.squareAd,.square_ad,.squared_ad,.ss-ad-mpu,.start__newest__big_game_container_body_games_advertising,.staticAd,.stocks-ad-tag,.store-ads,.story_AD,.story_ad_div,.subad,.subcontent-ad,.super-ad,.supercommentad_left,.supercommentad_right,.supp-ads,.supportAdItem,.surveyad,.t10ad,.tab_ad,.tab_ad_area,.tablebordersponsor,.tadsanzeige,.tadsbanner,.tadselement,.tallad,.tblTopAds,.tbl_ad,.tbox_ad,.td-Adholder,.teaser-sponsor,.teaserAdContainer,.teaser_adtiles,.text-ad-links,.text-g-advertisement,.text-g-group-short-rec-ad,.text-g-net-grp-google-ads-article-page,.textAd,.textAdBox,.textAds,.text_ad,.text_ads,.textad,.textadContainer,.textad_headline,.textadbox,.textadheadline,.textadlink,.textads,.textadsfoot,.textadtext,.textlink-ads,.tf_page_ad_search,.thisIsAd,.thisIsAnAd,.ticket-ad,.tileAds,.tips_advertisement,.title-ad,.title_adbig,.tncms-region-ads,.toolad,.toolbar-ad,.top-ad,.top-ad-space,.top-ads,.top-menu-ads,.top-sponsors,.topAd,.topAdWrap,.topAds,.topAdvertisement,.topBannerAd,.topLeaderboardAd,.top_Ad,.top_ad,.top_ad_728,.top_ad_728_90,.top_ad_disclaimer,.top_ad_div,.top_ad_post,.top_ad_wrapper,.top_ads,.top_advert,.top_advertising_lb,.top_container_ad,.top_sponsor,.topad,.topad-bar,.topadbox,.topads,.topadspot,.topadvertisementsegment,.topcontentadvertisement,.topic_inad,.topstoriesad,.toptenAdBoxA,.towerAd,.towerAdLeft,.towerAds,.tower_ad,.tower_ad_disclaimer,.towerad,.ts-ad_unit_bigbox,.ts-banner_ad,.ttlAdsensel,.tto-sponsored-element,.tucadtext,.tvs-mpu,.twoColumnAd,.twoadcoll,.twoadcolr,.tx_smartadserver_pi1,.txt-ads,.txtAds,.txt_ads,.txtadvertise,.type_adscontainer,.type_miniad,.type_promoads,.ukAds,.undertimyads,.universalboxADVBOX01,.universalboxADVBOX03,.universalboxADVBOX04a,.usenext,.vertad,.vertical-adsense,.videoAd,.videoBoxAd,.video_ad,.view-promo-mpu-right,.view_rig_ad,.virgin-mpu,.wa_adsbottom,.wantads,.wide-ad,.wide-skyscraper-ad,.wideAdTable,.wide_ad,.wide_ad_unit_top,.wide_ads,.wide_google_ads,.widget-ad,.widget-ad300x250,.widget-entry-ads-160,.widgetYahooAds,.widget_ad,.widget_ad_rotator,.widget_island_ad,.widget_sdac_bottom_ad_widget,.widget_sdac_footer_ads_widget,.widget_sdac_skyscraper_ad_widget,.wikia-ad,.wikia_ad_placeholder,.withAds,.wnMultiAd,.wp125ad,.wp125ad_2,.wpn_ad_content,.wrap-ads,.wsSponsoredLinksRight,.wsTopSposoredLinks,.x03-adunit,.x04-adunit,.xads-blk2,.xads-ojedn,.y-ads,.y-ads-wide,.y7-advertisement,.yahoo-sponsored,.yahoo-sponsored-links,.yahooAds,.yahoo_ads,.yan-sponsored,.ygrp-ad,.yrail_ad_wrap,.yrail_ads,.ysmsponsor,.ysponsor,.yw-ad,[id^="MarketGid"],a[href^="http://ad-emea.doubleclick.net/"],a[href^="http://ad.doubleclick.net/"],a[href^="http://adserving.liveuniversenetwork.com/"],a[href^="http://galleries.pinballpublishernetwork.com/"],a[href^="http://galleries.securewebsiteaccess.com/"],a[href^="http://install.securewebsiteaccess.com/"],a[href^="http://latestdownloads.net/download.php?"],a[href^="http://secure.signup-page.com/"],a[href^="http://secure.signup-way.com/"],a[href^="http://www.FriendlyDuck.com/AF_"],a[href^="http://www.adbrite.com/mb/commerce/purchase_form.php?"],a[href^="http://www.friendlyduck.com/AF_"],a[href^="http://www.google.com/aclk?"],a[href^="http://www.liutilities.com/aff"],a[href^="http://www.liutilities.com/products/campaigns/adv/"],a[href^="http://www.my-dirty-hobby.com/?sub="],a[href^="http://www.ringtonematcher.com/"],div#mclip_container:first-child:last-child,div#tads.c,table.ra[align="left"][width="30%"],table.ra[align="right"][width="30%"] { visibility:hidden !important; display:none !important; }</style></html>
