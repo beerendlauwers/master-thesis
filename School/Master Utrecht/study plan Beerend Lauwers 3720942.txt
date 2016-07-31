@@ -1,0 +1,107 @@
+--------------------------------------------------------------------
+PERSONAL DATA
+--------------------------------------------------------------------
+
+Master programme: Computing Science
+Name            : Beerend Lauwers
+Std.Nr          : 3720942
+Login           : B.lauwers
+Email           : Beerdude26@gmail.com
+Year            : 2011
+Mentor          : /
+Phone number    : 0032497793955 or 0617161200
+
+--------------------------------------------------------------------
+BACHELOR BACKGROUND
+--------------------------------------------------------------------
+
+I have a Professional Bachelor in Information Management and Systems,
+which can be seen as the equivalent of an HBO in Informatica.
+
+In 2010 I finished a 6-month premaster for Computing Science, passing
+the following courses:
+- Algoritmiek
+- Functioneel Programmeren
+- Logica voor Informatica
+- Talen & Compilers
+
+I am interested in expert systems / decision support systems / intelligent agents,
+which is why I selected Intelligent Agents, Computer Vision and Games And Agents
+as three of my electives.
+
+The other two, Multimedia Retrieval and Advanced Data Mining, also seemed interesting,
+hands-on and have quite practical real-life uses.
+
+ -------------------------------
+  --- REQUEST FOR FEEDBACK: ---
+ -------------------------------
+
+As my mathematical background is not as extensive as I would like it to be,
+I have attempted to select electives that are less heavy on (theoretical) 
+mathematics and complex algorithms, as well as choosing more practical electives.
+If you spot any electives in my study plan that I may have judged wrongly,
+I would appreciate it greatly if you could inform me of this.
+
+--------------------------------------------------------------------
+PLAN
+-------------------------------------------------------------------
+
+Study-line: Software Technology
+
+Put your study plan below. The study takes two years; each year
+is divided in 4 periods. List which courses you plan to take in each
+block, in those two years.
+
+For each course, mark its 'category'. We have these categories:
+
+        M = Mandatory course, according to your chosen study line
+        E = Elective course
+        D = Deficiency course
+        S = Seminar
+        X = Experimentation Project
+        CSC = Computing Science Colloquium
+        Th = Thesis project
+
+----------
+Year yyyy  (plan for your first year)
+----------
+Block-1: Generic Programming, M
+         Intelligent Agents, E
+
+Block-2: Advanced Functional Programming, M
+         Computer Vision, E
+
+Block-3: Program Verification, M
+         Compiler Construction, M
+
+Block-4: Automatic Program Analysis, M
+         Games And Agents, E
+
+
+----------
+Year yyyy  (plan for your second year)
+----------
+
+Block-1: Multimedia Retrieval, E
+         Advanced Data Mining, E        
+
+Block-2: Master Thesis, Th
+
+Block-3: Master Thesis, Th
+
+Block-4: Master Thesis, Th
+
+
+
+--------------------------------------------------------------------
+Colloquium and Projects
+-------------------------------------------------------------------
+
+You don't have to fill this in immediately, but later, when you
+already know what you will do for each.
+
+Experimentation project: ..., supervised by ...  (note: EP is not mandatory)
+
+Colloquium topic       : ..., supervised by ... 
+
+Thesis project         : ..., supervised by ... 
