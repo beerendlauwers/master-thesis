@@ -1,0 +1,20 @@
+--network from 0 up to i is:
+
+networkUpTo i = networkUpTo' 0 i
+networkUpTo' x n = {0, x+1 mod n, x+2 mod n}  
+                   U
+                   if n>x 
+                    then (networkUpTo' x+1 n)
+                    else {}
+
+--Only constraints are followers and followers of followers.
+--Given a function:  x follows y
+
+either x follows y, 
+or     exists z s/t x follows z and z follows y
+
+-- note, x has connection with y. to find some ones follower you need to do a little more work.
+
+sendMessage message to from data = 
+
+

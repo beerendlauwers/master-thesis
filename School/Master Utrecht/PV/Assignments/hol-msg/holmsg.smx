@@ -1,0 +1,124 @@
+set_trace "Unicode" 0 ;
+
+load "pred_setLib";
+open pred_setLib;
+
+val safe_def = 
+  Define `safe (network:(num#num) set) (dataInp:(num#num#num) set) = 
+   !y orig cons. (y, orig, cons) IN dataInp ==> 
+   ((cons=0) ==> (y=orig)) /\ 
+   ((cons=1) ==> ((y=orig) \/ ((y,orig) IN network))) /\ 
+   ((cons=2) ==> ((y=orig) \/ ((y,orig) IN network) \/ (?x. (y,x) IN network /\ (x,orig) IN network))) /\ 
+   ((cons=3) ==> (T)) `; 
+   
+val check_def =
+    Define `check network data algo sender receiver constraint =
+     safe network data ==> safe network (algo data network sender receiver constraint)`;
+     
+val doCheck_def = Define `doCheck algo sender receiver = 
+  !network data constraint. check network data algo sender receiver constraint`;
+
+
+
+--The following algorithm is an example of an UNSAFE algorithm: 
+--the receiver and sender's relationship does not matter for constraint 0!
+
+val algo_example_def =
+    Define `algo_example data network sender receiver constraint =
+     if (constraint = 0) 
+	  then ((receiver,sender,constraint) INSERT data)
+	  else data`;
+      
+(* 
+
+-- Unable to prove this subgoal for the above algorithm:
+      
+1 subgoal:
+> val it =
+
+y' = orig
+------------------------------------
+0. !y orig cons.
+(y,orig,cons) IN data ==>
+((cons = 0) ==> (y = orig)) /\
+((cons = 1) ==> (y = orig) \/ (y,orig) IN network) /\
+((cons = 2) ==>
+(y = orig) \/ (y,orig) IN network \/
+?x. (y,x) IN network /\ (x,orig) IN network)
+1. (y',orig,0) IN algo_example data network x y constraint
+: proof
+-
+
+e (PROVE_TAC []);
+OK..
+Meson search level: ...............................
+Exception raised at ??.failwith:
+solve_goal: Too deep
+! Uncaught exception:
+! HOL_ERR
+-
+      
+*)
+
+val algorithm_def = 
+    Define `algorithm data network sender receiver constraint = 
+	 if (constraint = 0)
+	  then (if(receiver = sender ) then ((receiver,sender,constraint) INSERT data) else (data))
+	  else (
+	 if (constraint = 1)
+	  then (if((receiver,sender) IN network ) \/ (receiver=sender) then ((receiver,sender,constraint) INSERT data) else (data))
+	  else (
+	 if (constraint = 2)
+	  then (if((?x. ((receiver,x) IN network) /\ ((x, sender) IN network)) \/ ((receiver,sender) IN network) \/ (receiver=sender)) then  ((receiver, sender, constraint) INSERT data) else (data))
+	  else (
+	 if (constraint = 3)
+	  then ((receiver,sender,constraint) INSERT data)
+	  else data)))`;
+      
+val safetyAlg = prove (
+  --`doCheck algorithm x y`-- ,
+  (REWRITE_TAC [safe_def, check_def, doCheck_def, algorithm_def])
+  THEN (NTAC 5 (RW_TAC (std_ss++PRED_SET_ss) []))
+  THEN (NTAC 5 (RW_TAC (std_ss++PRED_SET_ss) []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (NTAC 5 (RW_TAC (std_ss++PRED_SET_ss) []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+);
+
+(*
+
+-- This proof is relatively rough, but there were many, *many* subgoals to be proven through first-order logic.
+-- Output
+
+val safetyAlg = prove (
+  --`doCheck algorithm x y`-- ,
+  (REWRITE_TAC [safe_def, check_def, doCheck_def, algorithm_def])
+  THEN (NTAC 5 (RW_TAC (std_ss++PRED_SET_ss) []))
+  THEN (NTAC 5 (RW_TAC (std_ss++PRED_SET_ss) []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (NTAC 5 (RW_TAC (std_ss++PRED_SET_ss) []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+  THEN (REPEAT (PROVE_TAC []))
+);
+Meson search level: ....
+Meson search level: ....
+Meson search level: ....
+Meson search level: ...
+Meson search level: ....
+Meson search level: ....
+Meson search level: ....
+Meson search level: ....
+> val safetyAlg = |- doCheck algorithm x y : thm
+
+*)

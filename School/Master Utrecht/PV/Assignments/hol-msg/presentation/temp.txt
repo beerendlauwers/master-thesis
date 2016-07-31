@@ -1,0 +1,41 @@
+	
+	\begin{frame}{Algorithms}
+		$
+		val algFol_def = Define `algFol d n c t f =
+		if (c = 0)
+		then (if (t=f)
+		then ((t,f,c) INSERT d)
+		else d )
+		else (
+		if (c = 1) 
+		then (if (isFollower f t)
+		then ((t,f,c) INSERT d)
+		else (d)
+		)
+		else
+		if (c = 2) 
+		then (if (isFollower f t)
+		then ((t,f,c) INSERT d)
+		else (
+		if (?y. (isFollower y t /\ isFollower f y)) 
+		then ((t,f,c) INSERT d)
+		else d
+		))
+		else (if (c = 3)
+		then (if (isInNetwork t)
+		then ((t,f,c) INSERT d)
+		else(d))
+		else(d)))`;
+		
+		
+		val alg_def = Define `alg c f = (!t. (isInNetwork t) ==> (forward algFol c t f))`;
+		$
+	\end{frame}
+
+
+		val safetyAlgFol = prove (
+		--`forward algFol 1 2 2`-- ,
+		(REWRITE_TAC [safe_def, network_def, data_def, follower_def, forward_def, algFol_def, isInNetwork_def])
+		THEN (RW_TAC (std_ss++PRED_SET_ss) [])
+		);
+		

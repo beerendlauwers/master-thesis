@@ -1,0 +1,177 @@
+\documentclass[10pt,a4paper]{beamer}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\lstset{breaklines=true}
+\author{Beerend Lauwers and Frank Wijmans}
+\title{Program Verification - Message system}
+\begin{document}
+
+\frame{\maketitle}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Intuition}
+
+\begin{frame}{Intuition}
+Actions required:
+\begin{itemize}
+\item How to represent network and data?
+\item Define function $ safe $
+\item Define function that checks message safety
+\item Define some example algorithms
+\end{itemize}
+\end{frame}
+
+\section{Implementation}
+
+\subsection{Representing network and data}
+\begin{frame}[fragile]{Representing network and data}
+Statically defined sets!
+
+Network:
+\begin{lstlisting}
+val network_def = 
+  Define `network = 
+   {(1,2);(1,4);(1,3);(4,1);(2,1);(4,2)}`;
+\end{lstlisting}
+(1,2) = 1 follows 2
+
+Data:
+\begin{lstlisting}
+val data_def = 
+  Define `data = {}`;
+\end{lstlisting}
+Pretty trivial to prove this is safe :)
+
+\begin{itemize}
+\item For privacy constraints, we just use numbers as well.
+\end{itemize}
+\end{frame}
+
+\subsection{Defining function safe}
+
+\begin{frame}[fragile]{Define function safe}
+Check if a given set of messages is safe:
+
+\begin{lstlisting}
+val safe_def = 
+  Define `safe (f:(num->num->bool)) (dataInp:(num#num#num) set) = 
+   !y orig cons. (y, orig, cons) IN dataInp ==> 
+   ((cons=0) ==> (y=orig)) /\ 
+   ((cons=1) ==> ((y=orig) \/ (f y orig))) /\ 
+   ((cons=2) ==> ((y=orig) \/ (f y orig) \/ (?x. f y x /\ f x orig))) /\ 
+   ((cons=3) ==> (T)) `; 
+\end{lstlisting}
+\begin{itemize}
+\item f = follower function (?!)
+\item dataInp = our set of messages (need to manipulate it!)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Follower function}
+Define a $ follower $ function:
+
+\begin{lstlisting}
+val follower_def = 
+  Define `follower (x:num) (y:num) = 
+   (x,y) IN network`;
+\end{lstlisting}
+follower x y = x follows y (this is how we use it in the presentation)
+\end{frame}
+
+\subsection{Function to check message safety}
+
+\begin{frame}[fragile]{Function to check message safety}
+
+\begin{lstlisting}
+val checkAlgo_def = 
+  Define `checkAlgo algo constraint receiver sender = 
+   safe follower data ==> safe follower (algo data network constraint receiver sender)`;
+\end{lstlisting}
+
+Intuition: If $ data $ was safe before, it will be safe after the algorithm has run.
+
+\end{frame}
+
+\subsection{Example algorithms}
+
+\begin{frame}[fragile]{Example 1}
+
+Quantify over all possible receivers:
+\begin{lstlisting}
+val alg_def = Define `alg c sender = 
+ (!receiver. (isInNetwork receiver) ==> (checkAlgo algFol c receiver sender))`;
+\end{lstlisting}
+
+\begin{lstlisting}
+val algFol_def = Define ` algFol data network constraint receiver sender =
+if (constraint = 0) then 
+   if (receiver = sender) then
+      (receiver,sender,constraint) INSERT data
+else if (constraint = 1) then
+   if (receiver follows sender) then
+      (receiver,sender,constraint) INSERT data
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]{Example 1 Continued}
+\begin{lstlisting}
+else if (constraint = 2) then
+   if (receiver follows sender) then
+      (receiver,sender,constraint) INSERT data
+   else if (?x,y. x follows y  /\ y follows sender) then
+           (receiver,sender,constraint) INSERT data
+		else data
+else if (constraint = 3)
+   if (isInNetwork receiver) then
+      (receiver,sender,constraint) INSERT data
+else data`;
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Example 2}
+
+Explicitly construct a new message set:
+\begin{lstlisting}
+val alg_big_def = Define `alg_big datainput networkinput constraint receiver sender = 
+if (constraint = 0) then 
+  (receiver,sender,constraint) INSERT datainput 
+else if (constraint = 1) then 
+  { (x,sender,constraint) | x = sender \/ x follows sender } UNION datainput
+else if (constraint = 2) then 
+  { (x,sender,constraint) | x = sender \/ (x follows y /\ y follows sender) \/ x follows sender } UNION datainput
+else if (constraint = 3) then
+  { (x,sender,constraint) | isInNetwork x } UNION datainput
+else datainput`;
+\end{lstlisting}
+
+\end{frame}
+
+\subsection{Checking the algorithms}
+
+\begin{frame}[fragile]{Checking the algorithms}
+
+\begin{lstlisting}
+val safetyAlg = prove (
+  --`forward alg 1 1`-- ,
+  (REWRITE_TAC [safe_def, network_def, data_def, follower_def, forward_def, alg_def, isInNetwork_def])
+  THEN (RW_TAC (std_ss++PRED_SET_ss) [])
+);
+\end{lstlisting}
+\begin{lstlisting}
+  val safetyAlg = prove (
+  --`forward alg 1 1`-- ,
+  (REWRITE_TAC [safe_def, network_def, data_def, follower_def, forward_def, alg_big_def, isInNetwork_def])
+  THEN (RW_TAC (std_ss++PRED_SET_ss) [])
+
+
+\end{lstlisting}
+
+\end{frame}
+	
+\end{document}

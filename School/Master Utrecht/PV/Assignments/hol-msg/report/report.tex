@@ -1,0 +1,87 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\author{Beerend Lauwers and Frank Wijmans}
+\title{Report Project 1: Social Networks privacy verification}
+\begin{document}
+	
+	\maketitle
+	
+	\section{Introduction}
+	
+	
+	\section{Types}
+	
+	Users are identified by numbers; $ User : num $.
+	Users follow other uses as described in a network.
+	Users can send messages to others according to some privacy constraint.
+	
+	Equally as for users, constraints are identified by numbers in the following order:
+	\begin{enumerate}
+		\item 0 Me - The message is for the sender only.
+		\item 1 Fo - The message is for the followers of the sender and the sender.
+		\item 2 Fo2 - The message is for followers of followers, followers and the sender.
+		\item 3 All - The message is for everybody.
+	\end{enumerate}
+		
+	For the network, we use a set of tuples of $ num $. 
+	The definition of the type is $ Network : ((num\#num) set) $.
+	The num values in the tuple correspond to $ User $ identifiers. 
+	The first is the follower and the second the followee. 
+	The network consists of one way relations.
+
+
+	A message consists of a triple, with the first two values being a sender and receiver in the form of $ User $  identifiers, together with a privacy constraint as stated above (0-3).
+	Our message data consists of a set of these triples: $ Data : ((num\#num\#num) set) $.
+	To check safety or correctness, the assumption is that all sent messages are in $ Data $, and nothing more.
+
+	
+	\section{Algorithm}
+	
+	A correctly functioning algorithm must do two things: check the privacy constraint of a message, and construct messages that comply to these privacy constraints and add them to the existing message data.
+
+	The privacy constraints are as follows:
+	\begin{itemize}
+		\item Given $ constraint == 0 $, the receiver and sender should be equal.
+		\item In the case of $ constraint == 1 $, the receiver and sender should be equal or the receiver follows the sender.
+		\item If $ constraint == 2 $, then the same for constraint 1 holds, or the receiver is a follower of some follower of the sender.
+		\item And in the last case, everyone is allowed to receive the message.
+	\end{itemize}
+
+	An incorrectly functioning algorithm will not respect these constraints, and should not pass safety checking.
+	
+	\section{Definition of safe}
+	
+	Safety is defined by inspecting the message data, namely that the receiver and sender have a certain relationship as described by the privacy constraint, which is also available in the message:
+
+	\begin{lstlisting}[mathescape=true]
+val safe_def = 
+Define `safe (network:(num#num) set) (dataInp:(num#num#num) set) = 
+$\forall$ y orig cons. (y, sender, cons) IN dataInp $ \Longrightarrow $ 
+((cons=0) $ \Longrightarrow $ (y=sender)) $ \wedge $ 
+((cons=1) $ \Longrightarrow $ ((y=sender) $ \vee $ ((y,sender) IN network))) $ \wedge $ 
+((cons=2) $ \Longrightarrow $ ((y=sender) $ \vee $ ((y,sender) IN network) 
+  $ \vee $ ($\exists$ y x. (y,x) IN network $ \wedge $ (x,sender) IN network))) $ \wedge $ 
+((cons=3) $ \Longrightarrow $ (T)) `; 
+	\end{lstlisting}
+
+	Checking if an algorithm respects the privacy constraints is then straightforward:
+	If the existing message data is safe, the new message data created by the algorithm, combined with the existing message data, must also be safe:
+
+\begin{lstlisting}[mathescape=true]
+checkSafety algo sender receiver constraint =
+$ \forall $ network data. 
+   safe network data $ \Longrightarrow $ safe network (algo data sender receiver constraint)
+\end{lstlisting}
+
+	We can then quantify over the constraint, sender and receiver to verify that our algorithm is safe in all cases:
+
+	\begin{lstlisting}[mathescape=true]
+$ \forall $ sender receiver constraint. 
+   checkSafety algorithmDef sender receiver constraint
+	\end{lstlisting}
+	
+\end{document}

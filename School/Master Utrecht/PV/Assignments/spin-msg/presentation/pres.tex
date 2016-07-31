@@ -1,0 +1,213 @@
+\documentclass[10pt]{beamer}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+
+\lstset{breaklines=true}
+
+\author{Beerend Lauwers \and Frank Wijmans}
+\title{Networking model checking in Spin}
+\begin{document}
+	\maketitle
+	
+	\section{Overview} 
+	
+	\begin{frame}{Table of contents}
+		\begin{itemize}
+			\item Datatypes
+			\item Algorithm
+			\begin{itemize}
+				\item Receive messages
+				\item Sending messages
+				\item Initializing
+			\end{itemize}
+			\item Verification
+			\begin{itemize}
+				\item Asserts
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Datatypes}
+		We modelled the data as follows:
+		\begin{itemize}
+			\item Number of users: 4
+			\item Number of channels: 1 to be filled with F\_message
+			\item F\_message - a typedef containing a sender and constraint.
+		\end{itemize}
+		
+	\end{frame}
+	
+	\begin{frame}[fragile]{Datatypes}
+		\begin{lstlisting}
+#define MAXUSERS 4
+#define MAXMESSAGES 1
+
+F_message recMsg;
+
+typedef F_message
+{
+  byte sender;
+  bit constraint;
+}
+
+chan recipients[MAXUSERS] = [MAXMESSAGES] of { F_message };
+
+		\end{lstlisting}
+	\end{frame}
+	
+	\section{Algorithm}
+	
+	\begin{frame}{Introduction}
+	\begin{itemize}
+		\item \texttt{receiveMsg( byte $receiver$ );} This process type takes messages from a given channel (recipients[receiver])
+		\item \texttt{sendMsg( byte $sender$, bit $constraint$ );} Creates messages, and sends them only to the followers (or followers' followers) according to the constraint.
+		\item \texttt{init();} Start to receive and send messages. Only 3 for every user. $Number of processes = 3 * MAXUSER$
+	\end{itemize}
+	\end{frame}
+	\begin{frame}[fragile]{Receive messages}
+		\begin{lstlisting}
+proctype receiveMsg( byte receiver )
+{
+	F_message recMsg;
+	do
+	:: recipients[ receiver ] ? recMsg;
+	byte fol1,fol2;
+	fol1 = (recMsg.sender+1)%MAXUSERS;
+	fol2 = (recMsg.sender+2)%MAXUSERS;
+	assert ((fol1 == receiver) || (fol2 == receiver)
+	|| ((fol1+2)%MAXUSERS == receiver) || ((fol1+2)%MAXUSERS == receiver)
+	|| ((fol2+2)%MAXUSERS == receiver) || ((fol2+2)%MAXUSERS == receiver)
+	);
+	od;
+}
+		\end{lstlisting}
+	\end{frame}	
+	
+	\begin{frame}[fragile]{Sending messages}
+		\begin{lstlisting}
+proctype sendMsg ( byte sender; byte constraint )
+{
+	F_message newMsg;
+	byte fol1, fol2, fol11, fol12, fol21, fol22;
+	
+	\*
+	 * Locally save followers id's
+	 *\
+		
+	d_step{
+		newMsg.sender = sender;
+		newMsg.constraint = constraint;	
+		
+		fol1 = ((sender+1)%MAXUSERS);
+		fol2 = ((sender+2)%MAXUSERS);
+		fol11 = ((fol1+1)%MAXUSERS);
+		fol12 = ((fol1+2)%MAXUSERS);
+		fol21 = ((fol2+1)%MAXUSERS);
+		fol22 = ((fol2+2)%MAXUSERS);	
+
+			\end{lstlisting}
+	\end{frame}	
+	
+	\begin{frame}[fragile]{Sending messages (2)}
+		\begin{lstlisting}
+	}
+	do
+	::  if
+	:: (sender > 0) -> atomic{ /*Send to Fo*/
+		if 
+		:: fol1 != sender -> recipients[fol1] ! newMsg
+		:: else skip
+		fi;
+		if
+		:: fol2 != sender -> recipients[fol2] ! newMsg	
+		:: else skip
+		fi;
+	}
+  if
+
+		\end{lstlisting}
+	\end{frame}
+	
+	\begin{frame}[fragile]{Sending messages (3)}
+		\begin{lstlisting}
+:: (constraint == 1) -> atomic{ /*Send to Fo2*/
+	  	if
+	  	:: sender != fol11 -> recipients[fol11] ! newMsg
+	  	:: else skip
+	  	fi;
+	  	if
+	  	:: sender != fol12 -> recipients[fol12] ! newMsg
+	  	:: else skip
+	  	fi;
+	if
+	:: sender != fol21 -> recipients[fol21] ! newMsg
+	:: else skip
+	fi;
+\end{lstlisting}
+\end{frame}	
+
+\begin{frame}[fragile]{Sending messages (4)}
+\begin{lstlisting}
+
+	if
+	:: sender != fol22 -> recipients[fol22] ! newMsg
+	:: else skip
+	fi
+}
+:: else skip
+fi
+:: else skip
+fi
+od;
+}
+\end{lstlisting}
+\end{frame}
+
+	\begin{frame}[fragile]{Initializing}
+		\begin{lstlisting}
+init
+{
+	/*
+	* Start all receivers and senders, for every channel (maxusers) 
+	*/
+	
+	byte i = 0;
+	
+	atomic{
+		do
+		:: (i < MAXUSERS) -> run receiveMsg(i); run sendMsg (i,0); run sendMsg (i,1); i++;
+		:: else -> break;
+		od;
+	}
+}
+		\end{lstlisting}
+	\end{frame}
+	
+	\subsection{Verification}
+	
+	\begin{frame}{Asserts}
+		\begin{itemize}
+			\item Privacy constraint is never broken
+			\item No deadlocks
+			\item Message eventually reaches the receiver 
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Work in progress}
+		\begin{itemize}
+			\item How to check whether all messages eventually reach the right user.
+			\begin{itemize}
+				\item Implicitly done, it would deadlock otherwise, but is this enough?
+				\item Checking on the right follower relation in every message.
+			\end{itemize}
+			\item How to express assertions in LTL.
+			\begin{itemize}
+				\item Using never claim
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+
+\end{document}

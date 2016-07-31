@@ -1,0 +1,25 @@
+\frametitle{Privacy safety property}
+\par
+
+
+safe \newline
+        \begin{lstlisting}[mathescape=true]
+(f: (num $ \rightarrow $ num $ \rightarrow $ num))
+(dataInp:(num\#num\#num) set)$ =
+$ \forall $y  orig  cons.  (y, orig, cons) IN dataInp $ \Rightarrow $
+((cons=0)  $ \Rightarrow $ (y=orig)) $ \wedge
+((cons=1)  $ \Rightarrow $ ((y=orig) $ \vee $ (f y orig))) $ \wedge $
+((cons=2)  $ \Rightarrow $ ((y=orig) $ \vee $ (f y orig) $ \vee $ ($ \exists $x. f y x $ \vee $ f x orig))) $ \wedge $
+((cons=3)  $ \Rightarrow $ ($\top$))
+        \end{lstlisting}
+
+
+val safetyAlgFol = prove (
+--`forward algFol 1 2 2`-- ,
+
+(REWRITE\_TAC [safe\_def, network\_def, data\_def, follower\_def,
+
+forward\_def, algFol\_def, isInNetwork\_def])
+THEN (RW\_TAC (std\_ss++PRED\_SET\_ss) [])
+);
+

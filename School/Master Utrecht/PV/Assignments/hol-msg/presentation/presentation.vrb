@@ -1,0 +1,16 @@
+\frametitle {Checking the algorithms}\par \begin{lstlisting}
+val safetyAlg = prove (
+  --`forward alg 1 1`-- ,
+  (REWRITE_TAC [safe_def, network_def, data_def, follower_def, forward_def, alg_def, isInNetwork_def])
+  THEN (RW_TAC (std_ss++PRED_SET_ss) [])
+);
+\end{lstlisting}
+\begin{lstlisting}
+  val safetyAlg = prove (
+  --`forward alg 1 1`-- ,
+  (REWRITE_TAC [safe_def, network_def, data_def, follower_def, forward_def, alg_big_def, isInNetwork_def])
+  THEN (RW_TAC (std_ss++PRED_SET_ss) [])
+
+
+\end{lstlisting}
+

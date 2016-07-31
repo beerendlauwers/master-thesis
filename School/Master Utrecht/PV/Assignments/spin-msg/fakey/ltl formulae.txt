@@ -1,0 +1,40 @@
+ltl fo { (
+ (
+ ([] (( (vi > 1) && 
+        (userDevice[vi]@S0) && 
+		(userDevice[vi]:_3_outConstraint > 1 ) 
+ -> 
+ ( <> ( (userDevice[((vi+1)%MAXUSERS)]@R0) && 
+        (userDevice[((vi+1)%MAXUSERS)]:_3_inContent == userDevice[vi]:_3_outContent) )))))
+ )&&(
+ ([] (( (vi > 1) && (userDevice[vi]@S1) && 
+        (userDevice[vi]:_3_outConstraint > 1 ) 
+ -> 
+ ( <> ( (userDevice[((vi+2)%MAXUSERS)]@R0) && 
+        (userDevice[((vi+2)%MAXUSERS)]:_3_inContent == userDevice[vi]:_3_outContent) )))))
+ )
+)
+}
+ltl fo2 { ((
+ ([] (((vi > 0) && 
+       userDevice[vi]@S0 &&
+	   (userDevice[vi]:_3_outConstraint == 2 ) &&
+	   (((vi+1)%MAXUSERS) > 0) 
+	  ) ->
+	  (<> ((userDevice[(((vi+1)%MAXUSERS)+1%MAXUSERS)]@R0 &&
+	        userDevice[(((vi+1)%MAXUSERS)+1%MAXUSERS)]:_3_inContent == userDevice[vi]:_3_outContent) && 
+	       (userDevice[(((vi+1)%MAXUSERS)+2%MAXUSERS)]@R0 &&
+	        userDevice[(((vi+1)%MAXUSERS)+2%MAXUSERS)]:_3_inContent == userDevice[vi]:_3_outContent))
+	 )))
+ &&
+ ([] (((vi > 0) && 
+       userDevice[vi]@S0 &&
+	   (userDevice[vi]:_3_outConstraint == 2 ) &&
+	   (((vi+2)%MAXUSERS) > 0) 
+	  ) ->
+	  (<>((userDevice[(((vi+2)%MAXUSERS)+1%MAXUSERS)]@R0 &&
+	       userDevice[(((vi+2)%MAXUSERS)+1%MAXUSERS)]:_3_inContent == userDevice[vi]:_3_outContent) && 
+	      (userDevice[(((vi+2)%MAXUSERS)+2%MAXUSERS)]@R0 &&
+	       userDevice[(((vi+2)%MAXUSERS)+2%MAXUSERS)]:_3_inContent == userDevice[vi]:_3_outContent))
+	 )))
+))}
