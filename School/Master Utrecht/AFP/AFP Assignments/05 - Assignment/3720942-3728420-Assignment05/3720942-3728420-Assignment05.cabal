@@ -1,0 +1,19 @@
+Name:                s3720942-s3728420-Assignment05
+Version:             0.1
+Synopsis:            Chat system. Fifth assignment for the Advanced Functional Programming courses 2011/2012.
+License:             BSD3
+License-file:        LICENSE
+Author:              Beerend Lauwers, Augusto Passalaqua
+Maintainer:          A.PassalaquaMartins@students.uu.nl
+Category:            Network
+Build-type:          Simple
+Cabal-version:       >=1.2
+
+extra-source-files:
+  LICENSE
+
+Library
+  build-depends:
+    base		>= 4   && < 5,
+    network		>= 2.3 && < 3,
+    stm			>= 2.2 && < 3

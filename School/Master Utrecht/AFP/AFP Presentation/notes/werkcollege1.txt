@@ -1,0 +1,23 @@
+Augusto and Frank had a talk with Doaitse about project.
+
+Information about the project
+-----------------------------
+This project was done last year by HBO students.
+They looked at it on a practical view.
+They implemented a websystem in Happstack, Yesod and Snap.
+We get access to their source/paper.
+
+If we were to compare these we should look at technical/theoretical aspects.
+Like typesystem usage and error handeling.
+
+iTask in Clean
+--------------
+Developed in Nijmegen.
+iTask is a dynamic flow system using a sense of state.
+Clean allows to store partial computations.
+Haskell Ghci7.2 allows to save things in the cloud.
+It might be possible to work iTask in to Haskell.
+
+Using a state architecture instread of a stateless architecture has pros/cons.
+Is it possible to compare statefull vs stateless architectures?
+Lets look into this and see if we can compare the solutions for the web framework problems instead of comparing 'stateless webframeworks'.

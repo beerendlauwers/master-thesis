@@ -1,0 +1,36 @@
+imports
+{
+import CCO.SourcePos
+}
+
+-------------------------------------------------------------------------------
+-- Syntax
+-------------------------------------------------------------------------------
+
+{
+type TyVarName = String    -- ^ Type of type variables. 
+type VarType = String          -- ^ Type of variables.
+type TyScheme = Ty
+}
+
+-- Our Lambda Language
+
+data Tm
+  | Tm  pos :: {SourcePos}  t :: Tm_
+
+data Tm_
+  | Var  x :: {VarType}
+  | Lam  x :: {VarType}  t1 :: Tm
+  | App  t1 :: Tm  t2 :: Tm
+  | Let  x :: {VarType}  t1 :: Tm  t2 :: Tm
+
+  
+-- Our Typing Scheme (may need to stratify into more datatypes later on)
+
+deriving Ty : Eq
+deriving Ty : Show 
+
+data Ty
+  | TypeVar a   :: {TyVarName}
+  | Arrow   ty1 :: Ty           ty2 :: Ty
+  | Forall  a   :: {TyVarName}  ty1 :: Ty

@@ -1,0 +1,36 @@
+﻿name:                  fun
+version:               0.0.5
+synopsis:              Utilities for a simple, implicitly typed functional
+                       language.
+description:           Project distribution for Mini Project D of the course on
+                       Compiler Constructionn (INFOMCCO) at Utrecht University.
+category:              Compilers/Interpreters
+author:                Stefan Holdermans (original), Augusto Passalaqua, João Alpuim
+stability:             provisional
+tested-with:           GHC == 7.2.1, GHC == 7.2.2
+build-type:            Custom
+cabal-version:         >= 1.4
+extra-source-files:    AUTHORS, src/CCO/HM/AG.ag,
+                       src/CCO/HM/AG/Base.ag, src/CCO/SystemF/AG.ag,
+                       src/CCO/SystemF/AG/Base.ag,
+                       src/CCO/SystemF/AG/Printing.ag
+
+executable parse-hm
+  main-is:             ParseHM.hs
+  build-depends:       base, cco >= 0.0.4
+  other-modules:       CCO.HM, CCO.HM.AG, CCO.HM.Base, CCO.HM.Lexer,
+                       CCO.HM.Parser
+  hs-source-dirs:      src
+
+executable hm2systemf
+  main-is:             HM2SystemF.hs
+  build-depends:       base, cco >= 0.0.4, containers >= 0.4.1.0
+  other-modules:       CCO.HM2SystemF, CCO.HM2SystemF.AG, CCO.HM, CCO.HM.AG,
+                       CCO.HM.Base, CCO.SystemF, CCO.SystemF.AG, CCO.SystemF.Base
+  hs-source-dirs:      src
+
+executable pp-systemf
+  main-is:             PpSystemF.hs
+  build-depends:       base, cco >= 0.0.4
+  other-modules:       CCO.SystemF, CCO.SystemF.AG, CCO.SystemF.Base
+  hs-source-dirs:      src

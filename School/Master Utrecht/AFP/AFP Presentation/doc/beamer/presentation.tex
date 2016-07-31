@@ -1,0 +1,644 @@
+\documentclass[10pt,usenames,dvipsnames]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{natbib}
+\usepackage{color}
+\usetheme{Antibes}
+\lstset{language=Haskell}
+\lstset{breaklines=true}
+\lstset{basicstyle=\scriptsize}
+
+\newcommand{\newblock}{}
+\newcommand{\sufficient}{\tiny{$ \square $}}
+
+\author{
+	Beerend Lauwers\\
+	\and 
+	Augusto Martins\\	
+	\and
+	Frank Wijmans\newline\\
+	\hbox{\{B.Lauwers, A.PassalaquaMartins, F.S.Wijmans\}@students.uu.nl}
+	\and
+	\newline Utrecht University, The Netherlands}
+\date{\today}
+
+\title{Comparing Haskell Web Frameworks}
+
+\begin{document}
+
+	\frame{\titlepage}
+
+	\begin{frame}{Outline}
+		\tableofcontents
+	\end{frame}
+	
+	\section{Introduction}
+	
+	\subsection*{Motivation}
+	
+	\begin{frame}{Motivation}
+		Web applications are everywhere.
+		Advantages for using the web approach for your application:
+		\begin{itemize}
+			\item No installing
+			\item Thin client
+			\item Updates without required user actions
+			\item Easy integration
+			\item Platform free; needs web browser
+		\end{itemize}
+	\end{frame}
+	
+	\subsection*{Problem}
+	
+	\begin{frame}{Problem}
+		Inherent problems of the web paradigm.
+		\begin{itemize}
+			\item HTTP Protocol
+			\begin{itemize}
+			\item Stateless nature
+			\end{itemize}
+			\item User input
+			\begin{itemize}
+			\item Untyped
+			\item Security problems
+			\end{itemize}
+			\item Error handling
+			\item Servers are single point of failure
+			\begin{itemize}
+			\item Denial-of-service
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	\subsection*{Clean: iData}
+	
+	\begin{frame}{Clean: iData}
+		\begin{itemize}
+			\item Clean, developed in Nijmegen.
+			\item It allows saving partial computations, where it is different from Haskell.
+			\item iData (for \textit{i}nteractive Data) elements
+			\begin{itemize}
+				\item Conversion HTML forms.
+				\item These elements can be saved on server, in html form or in session.
+			\end{itemize}
+			\item Generic programming
+			\begin{itemize}
+				\item Mapping types to forms and user input to types.
+			\end{itemize} 
+		\end{itemize}
+	\end{frame}
+	
+	\subsection*{Haskell solution}
+	
+	\begin{frame}{Haskell solution}
+		Haskell brings some unique language features to the table, compared to imperative languages.
+		\begin{itemize}	
+			\item \textbf{Type safe} user input and database connections, eliminating security issues from the user.
+			\item Usually, websites depend on other languages: JavaScript, HTML/XML, CSS and SQL.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Web frameworks}
+		Many frameworks cover (some subset of) the features needed for web applications.
+		
+		\begin{enumerate}
+			\item \textbf{Happstack}
+			\item \textbf{Snap}
+			\item \textbf{Yesod}
+			\item Haskell on a Horse
+			\item miku
+			\item Lemmachine
+			\item mohws
+			\item Salvia (Sebastiaan Visser, Utrecht University)
+			\item Scotty 
+		\end{enumerate}
+		
+		Lets see how the top three differ, and how they score on the different features.
+	\end{frame}
+	
+	%
+	% This is where Beerend takes over.
+	%
+	
+	\section{Features}
+	
+	\begin{frame}{Feature analysis}
+		A web framework ought to provide several functionalities.
+		Let's walk through them from our common point of view, that of a functional programmer.
+	\end{frame}
+	
+	\subsection*{Path routing}
+	\begin{frame}{Path routing}
+		URL's can be static or dynamic. (= query string element)
+		
+		Ideally, when the user requests a path the server returns:
+		\begin{itemize}
+			\item The user-requested page
+			\item An error page (i.e. no credentials or incorrect user action)
+		\end{itemize} 
+		
+		$ \rightarrow $ Use Haskell's type safety to route a request and generate its appropriate response
+	\end{frame}
+	
+	\begin{frame}
+		\begin{itemize}
+		\item \textbf{Happstack}: Concept of $ guards $
+		\begin{itemize}
+			\item $ dir $ and $ dirs $ ($ ServerMonad / MonadPlus $)
+			\item Extract part of URL ($ FromReqUri $ class)
+			\item Request method ($ MatchMethod $ class)
+			\item Arbitrary function ($ guardRq $)
+			\item Not fully type--safe
+		\end{itemize}
+		\item\textbf{Snap}: Sum of its parts
+		\begin{itemize}
+			\item Each Snaplet generates routes
+			\item Routes can point to sub--Snaplets / directories
+			\item Snap core unifies all routes
+			\item Validity of routes must be confirmed by programmer
+		\end{itemize}
+		\item \textbf{Yesod}: built--in type--safe routing
+		\begin{itemize}
+			\item Split URL at forward slashes
+			\item Attempt to match with sitemap
+			\item Look up proper $ Handler $ function
+			\item ``short--circuiting'' behaviour: escape a computation ($ MEither $)
+		\end{itemize}
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}[fragile]{Path routing: Yesod example}
+		Sitemap:
+		\begin{lstlisting}[mathescape=true]
+		/user/$ \textcolor{Red}{\# String} $	$ \textcolor{Green}{UserR} $		GET POST
+		/faq	        $ \textcolor{Green}{FaqR} $
+		\end{lstlisting}
+		Sitemap datatype:
+		\begin{lstlisting}[mathescape=true]
+		data Route = $ \textcolor{Green}{UserR} $ $ \textcolor{Red}{String} $ | $ \textcolor{Green}{FaqR} $
+		\end{lstlisting}
+		Handlers:
+		\begin{lstlisting}[mathescape=true]
+		handle$ \textcolor{Green}{FaqR} $ :: Handler RepHtml
+		get$ \textcolor{Green}{UserR} $, post$ \textcolor{Green}{UserR} $ :: $ \textcolor{Red}{Text} $ $ \rightarrow $ Handler RepHtml
+		\end{lstlisting}
+
+	\end{frame}
+
+	\begin{frame}
+		\begin{itemize}
+		\item \textbf{web--routes}: external library
+		\begin{itemize}
+			\item Map URL types to Strings and back
+			\item Highly flexible
+			\item Define datatype (e.g. $ SiteMap $) representing all valid routes
+			\item $ RouteT $ monad transformer wraps around web server monad
+			\item Guards against incorrect URL's: $ RouteT $ $ SiteMap $
+			\item route :: SiteMap $ \rightarrow $ RouteT SiteMap (ServerPartT IO) Response
+		\end{itemize}
+		\item \textbf{web--routes--boomerang}: extends \textbf{web--routes}
+		\begin{itemize}
+			\item Single grammar for parsing and printing
+			\item Greater control over URL appearance while retaining maintainability
+		\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	\subsection*{Serving static files}
+	
+	\begin{frame}{Serving static files}
+		\begin{itemize}
+		\item \textbf{Happstack}: Highly granular control
+		\begin{itemize}
+			\item Manipulate $ Response $ types ($ FilterMonad $)
+			\item Escape current computation and return different $ Response $ ($ WebMonad $)
+			\item $ serveDirectory $ and $ serveFile $ + guards from previous section
+			\item Roll your own functions with $ Happstack.Server.FileServe.BuildingBlocks $
+		\end{itemize}
+		\item\textbf{Snap}: Utility module
+		\begin{itemize}
+			\item $ Snap.Util.FileServe $
+			\item Automatic / Customized generation of directory indices
+			\item Dynamic MIME--type handlers (e.g. pretty--printing source code)
+		\end{itemize}
+		\item \textbf{Yesod}: Minimal functionality, leaves static file serving to server implementation
+		\end{itemize}
+	\end{frame}	
+	
+	\subsection*{HTML generation}
+	
+	\begin{frame}{HTML generation}
+		\begin{itemize}
+		\item \textbf{Happstack}: \textbf{BlazeHtml}
+		\item\textbf{Snap}: \textbf{Heist} (originally in--house)
+		\item \textbf{Yesod}: \textbf{Hamlet} (originally in--house)
+		\end{itemize}
+
+		\begin{itemize}
+		\item \textbf{BlazeHtml}: Fast, combinator--based, compiled
+		\item\textbf{Heist}: XML templating engine, runtime
+		\item \textbf{Hamlet}: Quasi--quotation, type--safe, compiled
+		\item \textbf{HSP}: Embedded XML, compiled
+		\item \textbf{HStringTemplate}: Based on Java's StringTemplate library, compiled / runtime
+		\end{itemize}
+
+		\begin{itemize}
+		\item \textbf{happstack--plugins}: Automatic type--checking, recompilation and reloading of modules on a running server
+		\end{itemize}
+	\end{frame}
+	
+	\subsection*{JavaScript and CSS Generation}
+	
+	\begin{frame}{JavaScript and CSS Generation}
+		\begin{itemize}
+		\item \textbf{Happstack}: \textbf{JMacro} (JavaScript)
+		\item\textbf{Snap}: None
+		\item \textbf{Yesod}: $ Cassius $ (CSS), $ Lucius $ (CSS) and $ Julius $ (JavaScript) quasi-quoters
+		\begin{itemize}
+			\item $ Cassius $: Insertion of variables and URL's, whitespace mark--up
+			\item $ Lucius $: Insertion of variables and URL's, standard CSS mark--up, CSS nesting
+			\item $ Julius $: Insertion of variables, URL's, and templates
+		\end{itemize}
+		\end{itemize}
+
+		\begin{itemize}
+		\item \textbf{JMacro}: external library
+		\begin{itemize}
+			\item Haskell values and --techniques
+			\begin{itemize}
+				\item Lambda expressions: fun addTwo x $ \rightarrow \backslash $y $ \rightarrow $ x + y;  
+				\item Haskell--style function application: var multThenAdd = add 2 (mult 2 3);
+			\end{itemize}
+			\item Automatic variable scoping: prevent overlap with variables of the same name
+			\item Antiquotation: use Haskell code directly within JavaScript code
+		\end{itemize}
+		\end{itemize}
+	\end{frame}	
+	
+	\subsection*{Parsing request data and form generation}
+	
+	\begin{frame}{Parsing request data and form generation}
+		\begin{itemize}
+		\item \textbf{Happstack}
+		\begin{itemize}
+			\item  \textbf{Parsing request data}: Built--in
+			\begin{itemize}
+				\item Extract from query string, GET and POST, cookies ($ HasRqData $ monad)
+				\item $ look $, $ lookCookie $, $ lookRead $
+				\item Custom parsing and error messages with $ checkRq $
+				\item Optional parameters: $ optional $ function from $ Control.Applicative $
+			\end{itemize}
+			\item  \textbf{Form generation}: \textbf{digestive--functors} library
+		\end{itemize}
+		\item\textbf{Snap}
+		\begin{itemize}
+			\item  \textbf{Parsing request data}: Built--in
+			\begin{itemize}
+				\item $ rqCookies $, $ rqQueryString $, $ rqParams $
+				\item Modify parameters: $ rqModifyParams  $, $ rqSetParam $
+			\end{itemize}
+			\item  \textbf{Form generation}: \textbf{digestive--functors} library
+		\end{itemize}
+		\item \textbf{Yesod}: Both parsing and form generation in \textbf{yesod--form}
+		\begin{itemize}
+				\item Type--safe form generation
+				\item Form parsing into Haskell datatypes
+				\item JavaScript validation code generation
+				\item Applicative way of combining forms similar to \textbf{digestive--functors}
+			\end{itemize}
+		\end{itemize}
+	\end{frame}	
+
+	\begin{frame}[fragile]
+		\begin{itemize}
+		\item \textbf{digestive--functors}: external library
+		\begin{itemize}
+			\item Inspired by \textbf{Formlets} library
+			\item Combine simple form elements into more complex forms
+			\item $ FormState $ newtype: $ State $ monad that provides unique identifiers to each $ <input> $ tag
+		\end{itemize}
+		\end{itemize}
+
+
+		\begin{lstlisting}
+		data Info = Person String String Int deriving (Show)
+		infoForm = User <$> inputText Nothing <*> inputText Nothing <*> inputTextRead "Could not parse value" (Just 25)
+		\end{lstlisting}
+
+		\begin{lstlisting}
+		data Group = Persons Info Info Info deriving (Show)
+		groupForm = Persons <$> infoForm <*> infoForm <*> infoForm
+		\end{lstlisting}
+
+	\end{frame}
+	
+	\subsection*{Sessions and state handling}
+	
+	\begin{frame}{Sessions and state handling}
+		\begin{itemize}
+		\item \textbf{Happstack}: \textbf{happstack--auth} and \textbf{happstack--extra}
+		\begin{itemize}
+			\item Both external libraries
+			\item Both simple session management
+			\item \textbf{happstack--extra}: Session ID saved in cookie, rest in--memory on server
+		\end{itemize}
+		\item\textbf{Snap}: \textbf{snap-auth} and \textbf{mysnapsession}
+		\begin{itemize}
+			\item  \textbf{snap-auth}
+			\begin{itemize}
+				\item Uses Yesod's \textbf{clientsession} as a base
+				\item Adds ability to save extra data in session cookie
+			\end{itemize}
+			\item  \textbf{mysnapsession}: external library
+			\begin{itemize}
+				\item Simple session management, supports in--memory sessions
+				\item Continuation--based programming model for multiple--request stateful interactions
+			\end{itemize}
+		\end{itemize}
+		\item \textbf{Yesod}: \textbf{clientsession} (originally in--house)
+		\begin{itemize}
+			\item Session data is stored in cookie
+			\item Message system
+			\item Integrates with \textbf{yesod--auth}'s ultimate destination design
+		\end{itemize}
+		\end{itemize}		
+	\end{frame}	
+	
+	\subsection*{Persistence}
+	
+	\begin{frame}{Persistence}
+		
+		\begin{itemize}
+		\item \textbf{Happstack}: \textbf{acid--state} (originally in--house)
+		\begin{itemize}
+			\item In--Memory ACID data store, non--relational
+			\item Can store arbitrary Haskell values
+			\item Write to file functions along with parameters
+			\item Restoring state = re--running logs
+			\item Uses \textbf{SafeCopy} for data migration and extension
+			\item Type--safe querying and updating
+		\end{itemize}
+		\item\textbf{Snap}: Snaplets for \textbf{HDBC}, \textbf{mongoDB} and \textbf{acid--state}
+		\item \textbf{Yesod}: \textbf{persistent} (originally in--house)
+		\begin{itemize}
+			\item Define datatype, derive database-explainable version using TH
+			\item Can store arbitrary Haskell values
+			\item Databases supported out of the box: MongoDB, PostgreSQL, SQLite
+			\item Support for data migration and extension, dry runs
+			\item Generated primary key datatype enforces type--safe relational queries
+			\item Type--safe insert, update, delete queries written in Haskell:
+			\item persons $ \leftarrow $ selectList [Age ==. 22] [Asc Age]
+			\item Uniqueness constraints, default values, nullability, foreign keys
+		\end{itemize}
+		\end{itemize}
+		
+	\end{frame}
+
+	\begin{frame}[fragile]{Persistence: acid--state example}
+		Create datatype:
+		\begin{lstlisting}
+		data CounterState = CounterState { count :: Integer } deriving (Eq, Ord, Read, Show, Data, Typeable)
+		$(deriveSafeCopy 0 'base ''CounterState)
+		\end{lstlisting}
+		Update function:
+		\begin{lstlisting}[mathescape=true]
+		incCountBy :: Integer $ \rightarrow $ Update CounterState Integer
+		incCountBy n =
+		 do c@CounterState{..}  $ \leftarrow $ get -- uses RecordWildCards extension
+		 let newCount = count + n
+		 put $ \$ $ c { count = newCount }
+		 return newCount
+		\end{lstlisting}
+		Query function:
+		\begin{lstlisting}
+		peekCount :: Query CounterState Integer
+		peekCount = count <$> ask
+		\end{lstlisting}
+		Ensure ACIDity:
+		\begin{lstlisting}
+		$(makeAcidic ''CounterState ['incCountBy, 'peekCount])
+		\end{lstlisting}
+	\end{frame}
+
+	\begin{frame}[fragile]
+		$ makeAcidic $ generates the following:
+		\begin{lstlisting}[mathescape=true]
+		data PeekCount  = PeekCount
+		data IncCountBy = IncCountBy Integer
+		instance IsAcidic CounterState where
+		 acidEvents = [ UpdateEvent (\(IncCountBy newState) $ \rightarrow $ incCountBy newState), QueryEvent (\PeekCount $ \rightarrow $ peekCount) ]
+		instance Method PeekCount where
+		 type MethodResult PeekCount = Integer
+		 type MethodState PeekCount = CounterState
+		instance QueryEvent PeekCount
+		instance Method IncCountBy where
+		 type MethodResult IncCountBy = ()
+		 type MethodState IncCountBy = CounterState
+		instance UpdateEvent IncCountBy
+		-- And more
+		\end{lstlisting}
+		Querying and updating:
+		\begin{lstlisting}[mathescape=true]
+		-- P.S.: type EventState ev = MethodState ev
+		--       type EventResult ev = MethodResult ev
+		update' :: (UpdateEvent event, MonadIO m) $ \Rightarrow $ AcidState (EventState event) $ \rightarrow $ event $ \rightarrow $ m (EventResult event)
+		query'  :: (QueryEvent event , MonadIO m) $ \Rightarrow $ AcidState (EventState event) $ \rightarrow $ event $ \rightarrow $ m (EventResult event)
+		\end{lstlisting}
+		Example update:
+		\begin{lstlisting}
+		c <- update' acid (IncCountBy 1)
+		\end{lstlisting}
+	\end{frame}	
+
+	\begin{frame}[fragile]{Persistence: persistent example}
+	\fboxsep=1pt
+	\fboxrule=1pt
+	Generate DB--explainable code:
+\begin{minipage}[t]{0.6\textwidth}
+		\begin{lstlisting}[mathescape=true]
+		mkPersist sqlSettings [persist|
+		$ \fcolorbox{Blue}{White}{\parbox{100\unitlength}{
+		Person \\[2pt]
+		  \fcolorbox{Red}{White} {name String} \\[2pt]
+		  \fcolorbox{Red}{White} {age Int} }} $ |]
+		\end{lstlisting}
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\textcolor{Blue}{PersistEntity}
+\fcolorbox{Blue}{White}{\textcolor{Red}{PersistField} \linebreak
+\fcolorbox{Red}{White}{\parbox{60\unitlength}{PersistValue}}
+}
+\end{minipage}
+	Example query:
+	\begin{lstlisting}[mathescape=true]
+	persons $ \leftarrow $ selectList [Age ==. 22] [Asc Age, LimitTo 10]
+	\end{lstlisting}
+	Type--safe foreign keys:
+	\begin{lstlisting}[mathescape=true]
+	Car
+	 year Int
+	 owner PersonId
+	\end{lstlisting}
+
+	\end{frame}	
+	
+	\subsection*{Authentication}
+	
+	\begin{frame}{Authentication}
+		\begin{itemize}
+		\item \textbf{Happstack}: \textbf{happstack-authenticate} (based upon \textbf{authenticate})
+			\begin{itemize}
+			\item \textbf{authenticate} features
+			\item Multiple authentication methods per account
+			\item Multiple personalities per user account
+			\item themeable \textbf{BlazeHtml}--based templates
+			\end{itemize}
+		\item\textbf{Snap}: \textbf{snap--auth}
+			\begin{itemize}
+			\item Basic user/password authentication functionality
+			\end{itemize}
+		\item \textbf{Yesod}: \textbf{yesod--auth} (based upon \textbf{authenticate}, originally in--house)
+			\begin{itemize}
+			\item \textbf{authenticate} features
+			\item E--mail, Google Mail (OpenID), HashDB
+			\end{itemize}
+		\end{itemize}
+		\begin{itemize}
+		\item \textbf{authenticate}: external library
+			\begin{itemize}
+			\item BrowserId, Facebook Connect, Kerberos, OAuth, OpenID and rpxnow
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+
+	\subsection*{Project management}
+
+	\begin{frame}{Project management}
+		\begin{itemize}
+		\item \textbf{Happstack}: No tools
+		\item\textbf{Snap}: Some commands
+		\begin{itemize}
+			\item Bare--bones skeleton
+			\item Simple, fully--working ``Hello World!'' example
+		\end{itemize}
+		\item \textbf{Yesod}: Scaffolding tool
+		\begin{itemize}
+			\item Asks user some questions
+			\item Generates cabal package with skeleton Yesod project
+		\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	%
+	% This is for Augusto.
+	%
+	
+	\section{Web frameworks}
+		
+	\subsection{Happstack}
+	
+	\begin{frame}{Happstack}
+			
+		Advantages:
+		\begin{itemize}
+			\item Flexible and complete server
+			\item Using alternative packages is possible
+			\item ``Crash course'' helps beginners
+			\item Framework with most features
+		\end{itemize}
+		\pause
+		Disadvantages:	
+		\begin{itemize}
+			\item Not the fastest server
+			\item Might be too extensive for simple applications
+			\item Lacks a project management tool
+		\end{itemize}
+	\end{frame}
+	
+	\subsection{Snap}
+	
+	\begin{frame}{Snap}
+			
+		Advantages:
+		\begin{itemize}
+			\item Snaplets, which are easy to use
+			\item Standalone libraries are easily integrated
+			\item Well documented
+			\item Good for smaller applications or applications with different module structure
+			\item Scaffolding tool for management
+		\end{itemize}
+		\pause
+		Disadvantages:	
+		\begin{itemize}
+			\item Advanced features require external libraries
+			\item Only a mid--level framework
+		\end{itemize}
+		
+	\end{frame}
+	
+	\subsection{Yesod}
+	
+	\begin{frame}{Yesod}
+		
+		Advantages:
+		\begin{itemize}
+			\item Type safety in maximum form
+			\item Easy to start (scaffolding, documentation in books and blogs)
+			\item Packages are consistent; all from same developer
+			\item Warp server, said to be the fastest
+			\item Using Haskell's advanced language features extensively
+		\end{itemize}
+		\pause
+		Disadvantages:	
+		\begin{itemize}
+			\item Alternative packages difficult to swap
+			\item Comprehensive feature set can be expensive for small applications
+			\item Abuse of language features
+		\end{itemize}
+		
+	\end{frame}
+		
+	\section{Conclusion and future work}
+	
+	\begin{frame}{Conclusion and future work}
+	All three frameworks contain different development philosophies: 
+
+	\begin{enumerate}
+		\item Happstack allows the programmer to choose among a very diverse set of tools while providing a good feature set out of the box.
+		\pause \item Snap provides a minimal system and does not impose any limitations, but also requires the programmer to resort to external libraries for most of the required functionality.
+		\pause \item Yesod provides most of the usual functionality and tries to do so consistently, but this also makes it more difficult to divert from the given programming style.
+	\end{enumerate}
+	\pause
+	In general, though, most of the functionality implemented is framework--independent.
+	\begin{itemize}
+		\item Benchmark individual libraries per functionality to isolate and compare the cost of language features
+	\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Conclusion and future work (cont.)}
+	\begin{itemize}
+		\item Many libraries available for HTML generation but few libraries for CSS and JavaScript generation
+			\begin{itemize}
+			\item Happstack provides only a $ JMacro $ library wrapper, and Snap does not provide any CSS or JavaScript generation Snaplets.
+			\end{itemize}
+	
+		\item Snap and Happstack could also support type--safe URL routing like Yesod's or $ web-routes $'
+	
+		\item Happstack could make good use of a project scaffolding and management tool (such as the ones found in both Yesod and Snap)
+
+		\item More Snaplets available through Hackage
+	
+		\item Better control over static file sharing in the $ warp $ web server
+	\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Questions}
+		\begin{center}
+			\large{Thank you!}\\
+			\huge{Questions?}
+		\end{center}
+	\end{frame}
+\end{document}

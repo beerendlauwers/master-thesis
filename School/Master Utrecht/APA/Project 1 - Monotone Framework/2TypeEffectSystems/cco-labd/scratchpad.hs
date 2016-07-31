@@ -1,0 +1,1 @@
+identifiers = [l:n | n <- []:(map show [1..]), l <- ['a'..'z']]

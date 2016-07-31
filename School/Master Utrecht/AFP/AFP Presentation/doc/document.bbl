@@ -1,0 +1,67 @@
+\begin{thebibliography}{8}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Collins and Beardsley(2011)]{snap}
+Gregory Collins and Doug Beardsley.
+\newblock The snap framework: A web toolkit for haskell.
+\newblock \emph{IEEE Internet Computing}, 15:\penalty0 84--87, January 2011.
+\newblock ISSN 1089-7801.
+\newblock \doi{http://dx.doi.org/10.1109/MIC.2011.21}.
+\newblock URL \url{http://dx.doi.org/10.1109/MIC.2011.21}.
+
+\bibitem[Snoyman(2011{\natexlab{a}})]{warp}
+Michael Snoyman.
+\newblock Warp: A haskell web server.
+\newblock \emph{IEEE Internet Computing}, 15:\penalty0 81--85, May
+  2011{\natexlab{a}}.
+\newblock ISSN 1089-7801.
+\newblock \doi{http://dx.doi.org/10.1109/MIC.2011.70}.
+\newblock URL \url{http://dx.doi.org/10.1109/MIC.2011.70}.
+
+\bibitem[Robertson and Vigna(2009)]{SEW}
+William Robertson and Giovanni Vigna.
+\newblock Static enforcement of web application integrity through strong
+  typing.
+\newblock In \emph{Proceedings of the 18th conference on USENIX security
+  symposium}, SSYM'09, pages 283--298, Berkeley, CA, USA, 2009. USENIX
+  Association.
+\newblock URL \url{http://dl.acm.org/citation.cfm?id=1855768.1855786}.
+
+\bibitem[Plasmeijer and Achten(2006)]{Plasmeijer06idatafor}
+Rinus Plasmeijer and Peter Achten.
+\newblock idata for the world wide web - programming interconnected web forms.
+\newblock In \emph{In Proceedings Eighth International Symposium on Functional
+  and Logic Programming (FLOPS 2006), volume 3945 of LNCS}, pages 24--26.
+  Springer Verlag, 2006.
+
+\bibitem[Plasmeijer et~al.(2008)Plasmeijer, Achten, and Koopman]{itaskIntro}
+Rinus Plasmeijer, Peter Achten, and Pieter Koopman.
+\newblock An introduction to itask: Defining interactive work flows for the
+  web.
+\newblock 2008.
+\newblock URL
+  \url{http://www.st.cs.ru.nl/papers/2008/plar08-iTasks_CEFP2007_Revised.pdf}.
+
+\bibitem[Snoyman(2011{\natexlab{b}})]{AnnouncYesod08}
+Michael Snoyman.
+\newblock Announcing yesod 0.8.
+\newblock 2011{\natexlab{b}}.
+\newblock URL \url{http://www.yesodweb.com/blog/2011/04/announcing-yesod-0-8}.
+
+\bibitem[Team(2011)]{HappstackCrashcourse}
+Happstack Team.
+\newblock Happstack crashcourse.
+\newblock 2011.
+\newblock URL \url{http://happstack.com/docs/crashcourse/index.html/}.
+
+\bibitem[Snoyman(2011{\natexlab{c}})]{YesodBook}
+Michael Snoyman.
+\newblock Yesod web framework book.
+\newblock 2011{\natexlab{c}}.
+\newblock URL \url{http://www.yesodweb.com/book/}.
+
+\end{thebibliography}

@@ -1,0 +1,80 @@
+\documentclass[twocolumn,9pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[numbers]{natbib}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{ amssymb }
+\usepackage{courier}
+\usepackage{hyperref}
+\lstset{language=Haskell}
+\lstset{breaklines=true}
+\lstset{basicstyle=\scriptsize\sffamily}
+\usepackage{url}
+\usepackage{hyperref}
+
+\title{Comparing Haskell Web Frameworks}
+
+\author{
+	Beerend Lauwers \and Augusto Martins \and Frank Wijmans\\
+	\{B.Lauwers, A.PassalaquaMartins, F.S.Wijmans\}@students.uu.nl\\
+	\and
+	Utrecht University, The Netherlands}
+	\date{\today}
+
+
+\newcommand{\sref}[1]{Section~\ref{#1}}
+\newcommand{\annotate}[3]{
+	\begin{scriptsize}
+		\textcolor{#1}{\textbf{#2}~\textit{#3}}
+	\end{scriptsize}}
+\newcommand{\todo}[1]{\annotate{red} {TODO:} {#1}}
+\newcommand{\review}{\annotate{blue} {REVIEW:} {Please read the following, and make improvements.}}
+
+\newcommand{\citept}[1]{(\citet{#1})}
+
+\begin{document}
+	\maketitle
+	
+	\begin{abstract}
+		This report describes the biggest problem in programming for the web, statelessness, and how features that are available in Haskell and other Functional Programming Languages can help in avoiding or mitigating those problems.
+		We picked what we believed to be the three currently largest and most active Haskell projects for web development --- Happstack, Snap and Yesod --- and compared them qualitatively based on the features they implement or allow to be implemented.
+        Furthermore, we analyze several interesting third--party libraries for web development.
+		We also pay attention to the use of some of Haskell's advanced language features in helping make web programming easier and less error--prone.
+		Finally, we conclude by describing each project's strong points and ideal use cases, and provide areas of improvement for each web framework.
+	\end{abstract}
+	
+	\section{Introduction}\label{intro}
+	
+	\input{introduction.tex}
+	
+	\section{Problem}\label{problem}
+
+	\input{problem.tex}
+	
+	\section{Web Frameworks}\label{frameworks}
+	
+	\input{frameworksintro.tex}
+	
+		\subsection{Happstack}\label{happ}
+		\input{happstack.tex}
+	
+		\subsection{Snap}\label{snap}
+		\input{snap.tex}
+	
+		\subsection{Yesod}\label{yesod}
+		\input{yesod.tex}
+	
+	\section{Analysis}\label{comp}
+	
+		\input{comparison.tex}
+	
+	\section{Conclusion}\label{conclusion}
+	
+		\input{conclusion.tex}
+	
+    \section{Acknowledgements}
+    We would like to thank Doaitse Swierstra for his guidance during development of this report.
+	\bibliographystyle{unsrtnat}
+	\bibliography{document}
+\end{document}

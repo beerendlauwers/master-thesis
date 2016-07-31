@@ -1,0 +1,25 @@
+Active:
+
+1 Happstack
+2 Snap
+3 Yesod
+4 Haskell on a Horse
+5 loli
+6 Lemmachine
+7 mohws
+8 Salvia
+
+Inactive:
+
+1 Hajax
+2 Haskell web tool kit
+3 HSP
+4 HWSProxyGen
+5 hvac
+6 WASH
+7 Web functions
+8 Turbinado
+9 Bird
+
+
+ -- Trim down for comparison

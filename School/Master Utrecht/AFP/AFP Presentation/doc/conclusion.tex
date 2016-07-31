@@ -1,0 +1,37 @@
+Developing web pages and web--based applications requires the programmer to deal with the stateless nature of the HTTP protocol.
+Abstracting away from this lack of state by using web frameworks is the most common solution. 
+In this paper, we presented three of the most promising frameworks for developing web pages in Haskell: Happstack, Snap and Yesod.
+We conclude that all three contain different development philosophies: 
+
+\begin{enumerate}
+	\item Happstack allows the programmer to choose among a very diverse set of tools while providing a good feature set out of the box.
+	\item Snap provides a minimal system and does not impose any limitations, but also requires the programmer to resort to external libraries for most of the required functionality.
+    \item Lastly, Yesod provides most of the usual functionality and tries to do so consistently, but this also makes it more difficult to divert from the given programming style.
+\end{enumerate}
+
+In general, though, most of the functionality implemented in the frameworks is independent and can be ported to one another.
+
+Because of the interchangeable nature of most of the features, we paid special attention to the specific implementation details of the main libraries.
+Specifically, we noted that Haskell allows avoiding common web programming mistakes by implementing libraries that take advantage of the language's type--safety features.
+Language extensions and techniques, such as monad transformers, type families, Template Haskell and Quasi-quotation make the programmer's life easier by reducing the probability of security holes or incomplete implementations and help with code reuse.
+
+All the frameworks have quite active development communities, and provide some healthy competition and mutual aid by code and library sharing.
+However, some framework--specific issues could use attention.
+For instance, Happstack could make good use of a project scaffolding and management tool such as the ones found in both Yesod and Snap.
+More Snaplets available on Hackage would make Snap far more useful and interesting for start--up projects that may require new or different functionality over time.
+Snap's $ snap-auth $ package could benefit from using the $ authenticate $ library to allow for more authentication methods.
+At the moment, Yesod relies on the web server's implementation for static file serving. 
+More fine--grained control over this feature in its $ warp $ web server should be on its to--do list.
+
+While there are many libraries available for HTML generation, libraries for CSS and JavaScript generation are rare.
+Happstack provides only a $ JMacro $ library wrapper, and Snap does not provide any CSS or JavaScript generation Snaplets.
+Snap and Happstack could also profit from Yesod's and $ web-routes $' approach to type--safe URL routing.
+
+Because Snap profiles itself as a ``simple and fast'' web framework with a ``minimal HTTP API'', it seems to be an ideal candidate for a Haskell--based embedded HTTP server.
+
+Finally, Happstack's $ acid-state $ library, an in--memory ACID data store, provides an interesting alternative to traditional back--ends.
+Comparing this library's performance against more conventional SQL and NoSQL databases may prove to be very interesting.
+
+It is also worth noting that several benchmarks show the frameworks to be quite fast. \cite{snap,warp}
+However, some of the benchmarks seem to be contradictory and are often relatively shallow.
+An extensive performance comparison can provide a more definite answer to the question of which web framework excels in what areas.

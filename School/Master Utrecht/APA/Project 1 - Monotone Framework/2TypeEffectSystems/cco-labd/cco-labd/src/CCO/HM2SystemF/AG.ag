@@ -1,0 +1,214 @@
+-------------------------------------------------------------------------------
+-- |
+-- Module      :  CCO.HM2SystemF.AG
+--
+-- Attribute grammar for converting the simple, implicitly typed functional
+-- language defined on the CCO.HM module into the System F representation
+-- defined on the CCO.SystemF module.
+--
+-------------------------------------------------------------------------------
+
+module {CCO.HM2SystemF.AG} {}
+{
+import CCO.HM (Tm (Tm), Tm_ (Var, Lam, App, Let))
+import CCO.SystemF.AG (Ty(TyVar, Arr, Forall))
+import qualified CCO.SystemF.AG as SF
+import Data.List (union,(\\),nub,delete)
+import Data.Maybe (maybe,fromJust)
+}
+
+include "../HM/AG/Base.ag"
+
+-------------------------------------------------------------------------------
+-- Reserving identifiers for fresh variables
+-------------------------------------------------------------------------------
+
+{
+-- | Infinite list of identifiers for variable types.
+identifiers = [l:n | n <- []:(map show [1..]), l <- ['a'..'z']]
+
+-- | Counts the number of fresh variables that are necessary when instantiating
+-- Ty for the Var constructor.
+freshVar :: Env -> SF.TyVar -> Int
+freshVar e v = maybe 1 countUQ (lookup v e)
+  where
+    -- Counts the number of universally quantified variables.
+    countUQ :: Ty -> Int
+    countUQ (Forall _ t) = 1 + countUQ t
+    countUQ (TyVar _) 	 = 0
+    countUQ (Arr t1 t2)  = countUQ t1 + countUQ t2
+}
+
+attr Tm Tm_
+     syn idents :: {[String]}
+     inh idents :: {[String]}
+
+-- Reserving local identifiers for fresh variables types when necessary
+-- by threading through the terms on a depth first approach.
+sem Tm_ | Var loc.nident = freshVar @lhs.env @x
+    	      loc.ident  = take @loc.nident @lhs.idents
+    	      lhs.idents = drop @loc.nident @lhs.idents
+    	| Lam loc.ident  = @lhs.idents !! 0
+	      lhs.idents = @t1.idents
+	      t1 .idents = drop 1 @lhs.idents
+	| App loc.ident  = @lhs.idents !! 0
+	      lhs.idents = @t2.idents
+	      t1 .idents = drop 1 @lhs.idents
+	      t2 .idents = @t1.idents
+	| Let lhs.idents = @t2.idents
+	      t1 .idents = @lhs.idents
+	      t2 .idents = @t1.idents
+
+-------------------------------------------------------------------------------
+-- Building the environment
+-------------------------------------------------------------------------------
+
+{
+type Env = [(Var, Ty)]
+
+-- | Computes free variables for type environments.
+ftv :: Env -> [SF.Var]
+ftv env = let coDom = map snd env
+	  in (nub.concatMap ftvTy) coDom
+
+-- | Free type variables for a given type.
+ftvTy :: Ty -> [SF.Var]
+ftvTy (TyVar a) = [a]
+ftvTy (Arr t1 t2) = union (ftvTy t1) (ftvTy t2)
+ftvTy (Forall a t) = delete a (ftvTy t)
+
+-- | Generalizes over the type t on the environment e.
+gen :: Env -> Ty -> Ty
+gen e t = let fve = ftv e
+      	  in  gen' fve t
+  where
+    gen' vs sf@(Arr t1 t2) = let fv = ftvTy t1
+    	    	        	 nt = Arr t1 (gen' (vs++fv) t2)
+    	    	       	     in  foldr Forall nt (fv \\ vs)
+    gen' _  sf = sf
+}
+
+attr Tm Tm_
+     inh env :: {Env}
+
+sem Tm_ | Lam t1.env = (@x,SF.TyVar @loc.ident):(@lhs.env)
+    	| App t1.env = @lhs.env
+	      t2.env = map (\(x,y) -> (x,@t1.subst y)) @lhs.env
+	| Let t1.env    = @lhs.env
+	      loc.envT2 = map (\(x,y) -> (x,@t1.subst y)) @lhs.env
+	      loc.genT2 = gen @loc.envT2 @t1.ty
+	      t2.env    = (@x,@loc.genT2):(@loc.envT2)
+
+-------------------------------------------------------------------------------
+-- Generating types
+-------------------------------------------------------------------------------
+
+{
+type TySubst = Ty -> Ty
+
+-- | Variable instantiation.
+inst :: [SF.TyVar] -> Ty -> Ty
+inst (i:is) (Forall a t) = substitute a (TyVar i) (inst is t)
+inst _	    (Forall _ _) = error "Not enough reserved identifiers for inst."
+inst is     (Arr t1 t2)  = Arr t1 (inst is t2)	       	    
+inst []	    t		 = t
+
+-- | Simple variable type name substitution.
+-- Takes care of variable type masking by Forall constructs.
+substitute :: SF.TyVar -> Ty -> Ty -> Ty
+substitute o n (TyVar a)    | a == o = n
+substitute o n (Arr t1 t2)  	     = Arr (substitute o n t1) (substitute o n t2)
+substitute o n (Forall a t) | a /= o = Forall a (substitute o n t)
+substitute _ _ t	       	     = t
+
+-- | Unifies both types acording to the type substitution algorithm.
+unify :: Ty -> Ty -> TySubst
+unify t1          t2        | t1 == t2             = id
+unify (TyVar a)   ty 	    | notElem a (ftvTy ty) = substitute a ty
+unify ty	  (TyVar a) | notElem a (ftvTy ty) = substitute a ty
+unify (Arr t1 t2) (Arr t3 t4) = let s1 = unify t1 t3
+				    s2 = unify (s1 t2) (s1 t4)
+				in  s2 . s1
+unify ty1 ty2  = error ("Trying to unify " ++ show ty1 ++ " with " ++ show ty2)
+}
+
+attr Tm Tm_
+     syn ty :: {Ty}
+     inh fSubst :: {TySubst}
+     syn subst :: {TySubst}
+
+sem Tm_ | Var loc.ty    = maybe (TyVar $ head @loc.ident) (inst @loc.ident) (lookup @x @lhs.env)
+    	      lhs.subst = id
+    	| Lam loc.typar = @t1.subst (TyVar @loc.ident)
+	      lhs.ty    = Arr @loc.typar @t1.ty
+	      lhs.subst = @t1.subst
+	| App loc.fresh = TyVar @loc.ident
+	      loc.sub3  = unify (@t2.subst @t1.ty) (Arr @t2.ty @loc.fresh)
+	      lhs.ty	= @loc.sub3 @loc.fresh
+	      lhs.subst = @loc.sub3 . @t2.subst . @t1.subst
+	| Let lhs.ty    = @t2.ty
+	      lhs.subst = @t2.subst . @t1.subst
+
+{
+-- | Generates a list for type applications.
+-- The relevant case here is the Forall var, which means it has been generalized before.
+genAppTypes :: SF.Ty -> SF.Ty -> [[SF.Ty]]
+genAppTypes _  (TyVar a)     = repeat []
+genAppTypes _  (Arr t1 t2)   = repeat []
+genAppTypes ts (Forall a t)  = genAppTypes' ts []
+		where genAppTypes' (Forall a t) xs 	        = error ("Type should be inst. by now.")
+		      genAppTypes' tv@(TyVar a) xs | elem tv xs = [[]]
+						   | otherwise  = [[tv]]
+		      genAppTypes' (Arr t1 t2)  xs 	        = let x  = map TyVar (ftvTy t1)
+							 	      lx = union x xs
+						  	          in (x \\ xs):(genAppTypes' t2 lx)
+}
+
+attr Tm Tm_
+     syn appTypes :: {[[SF.Ty]]}
+
+sem Tm_ | Var lhs.appTypes = maybe (repeat []) (genAppTypes @loc.ty) (lookup @x @lhs.env)
+	| Lam lhs.appTypes = repeat []
+	| App lhs.appTypes = drop 1 @t1.appTypes
+	| Let lhs.appTypes = []
+
+-------------------------------------------------------------------------------
+-- Converting to System-F representation
+-------------------------------------------------------------------------------
+
+{
+-- | Abstracts the types of a lambda.
+-- We first gather all the types we have to apply a TyLam before building the
+-- final type.
+abstractType :: Ty -> [SF.Var] -> SF.Tm -> (SF.Tm, [SF.Var])
+abstractType v scope sf = let vs = (fromTy v) \\ scope
+	       	     	  in  (foldr SF.TyLam sf vs,scope++vs)
+  where
+    fromTy (TyVar a)    = [a]
+    fromTy (Arr t1 t2)  = nub (fromTy t1 ++ fromTy t2)
+    fromTy (Forall a t) = error "Universal quantification on a simple lambda!"
+    	   -- The last case should never occur.
+
+-- | Creates type applications for every needed type.
+applyType :: [SF.Ty] -> SF.Tm -> SF.Tm 
+applyType xs sf = foldl SF.TyApp sf (reverse xs)
+}
+
+attr Tm Tm_
+     inh lamApp :: {Int}
+     inh tyScope :: {[SF.Var]}
+     syn sfrep :: {SF.Tm}
+
+sem Tm_ | Var lhs.sfrep  = SF.Var @x
+    	| Lam loc.sfrep' = SF.Lam @x (@lhs.fSubst @loc.typar) @t1.sfrep
+	      loc.absrep = if 0 < @lhs.lamApp then (@loc.sfrep',@lhs.tyScope)
+	      		      	  	      else abstractType (@lhs.fSubst @loc.typar) @lhs.tyScope @loc.sfrep' 
+	      lhs.sfrep  = fst @loc.absrep
+	      t1.tyScope = snd @loc.absrep
+	      t1.lamApp  = @lhs.lamApp - 1
+    	| App lhs.sfrep  = SF.App (applyType (map @lhs.fSubst (head @t1.appTypes)) @t1.sfrep) @t2.sfrep
+	      t2.lamApp  = 0
+	      t1.lamApp  = @lhs.lamApp + 1
+	| Let lhs.sfrep  = SF.App (SF.Lam @x (@lhs.fSubst @loc.genT2) @t2.sfrep) @t1.sfrep
+	      t1.lamApp  = 0
+	      t2.lamApp  = 0

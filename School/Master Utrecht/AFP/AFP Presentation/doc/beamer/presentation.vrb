@@ -1,0 +1,30 @@
+\frametitle{Persistence: persistent example}
+\fboxsep=1pt
+\fboxrule=1pt
+Generate DB--explainable code:
+\begin{minipage}[t]{0.6\textwidth}
+\begin{lstlisting}[mathescape=true]
+mkPersist sqlSettings [persist|
+$ \fcolorbox{Blue}{White}{\parbox{100\unitlength}{
+Person \\[2pt]
+  \fcolorbox{Red}{White} {name String} \\[2pt]
+  \fcolorbox{Red}{White} {age Int} }} $ |]
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\textcolor{Blue}{PersistEntity}
+\fcolorbox{Blue}{White}{\textcolor{Red}{PersistField} \linebreak
+\fcolorbox{Red}{White}{\parbox{60\unitlength}{PersistValue}}
+}
+\end{minipage}
+Example query:
+\begin{lstlisting}[mathescape=true]
+persons $ \leftarrow $ selectList [Age ==. 22] [Asc Age, LimitTo 10]
+\end{lstlisting}
+Type--safe foreign keys:
+\begin{lstlisting}[mathescape=true]
+Car
+ year Int
+ owner PersonId
+\end{lstlisting}
+

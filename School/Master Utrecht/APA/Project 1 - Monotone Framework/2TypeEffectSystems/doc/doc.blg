@@ -1,0 +1,10 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: doc.aux
+The style file: ieeetr.bst
+Database file #1: doc.bib
+I was expecting a `,' or a `}'---line 6 of file doc.bib
+ :  
+ :  Year =         {1996},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--empty year in langanddim
+(There was 1 error message)

@@ -1,0 +1,118 @@
+module {DimensionTyping} {}
+{
+import Data.List (union,(\\),nub,delete)
+import Dim.Datatypes hiding (Constraint)
+import Data.Map as M
+import Data.List
+import Data.Maybe
+import CCO.SourcePos
+}
+
+include "Dim/DimData.ag"
+
+{
+
+-- Environment for mapping function names and variable names to dimensions.
+type DimEnv = M.Map String Dimension
+
+-- The basic constraint; it says two given Dimensions are equal 
+type Constraint = (Dimension, Dimension)
+-- Rich Constraint, annotated with its source position and the actual term.
+type AnnConstraint = (Constraint, SourcePos, Tm)
+-- This is a list of equalities between constraints
+type Constraints = [AnnConstraint] 
+}
+
+
+
+{
+fetchFirstConstraint :: Dimension -> Dimension
+fetchFirstConstraint (DimVar x) = DimVar x
+fetchFirstConstraint (DimArrow l r) = l -- Should always grow to the right, so l should be a DimVar.
+
+fetchSecondConstraint :: Dimension -> Dimension
+fetchSecondConstraint (DimVar x) = DimVar x
+fetchSecondConstraint (DimArrow l r) = r
+fetchSecondConstraint x = error $ "Expected a DimArrow, but got the following: " ++ show x ++ "\nProbable cause: incorrect application."
+}
+
+attr Tm Tm_
+   syn constraints :: { Constraints } -- We'll add newly discovered constraints to this
+
+attr Tm Tm_
+  inh dimenv :: { DimEnv }  
+  inh position :: { SourcePos }
+  
+sem Tm  | Tm t.position = @pos
+  
+attr Tm Tm_
+  syn constraint :: { Dimension }
+  
+sem Tm_ | Var loc.constraint = maybe (DimVar $ head @loc.freshidents) id (M.lookup @x @lhs.dimenv)
+              lhs.constraint = @loc.constraint -- If we can't find it in the constraint env, make a new one. Alternatively, may want to give an error if we can't find it
+              lhs.constraints = [] -- We don't have anything to add here, a simple var can't generate constraint equalities
+              
+        | App lhs.constraints = ((fetchFirstConstraint @loc.nonpolyt1constraint,@loc.nonpolyt2constraint), @lhs.position, @loc.t)	 : (@t1.constraints ++ @t2.constraints) -- ex. @t1 = a1 -> a2, @t2 = a3, thus a1 = a3
+              lhs.constraint = fetchSecondConstraint @loc.nonpolyt1constraint -- ex. @t1 = a1 -> a2, it got applied, so the constraint we push upwards is a2.
+              loc.t = Tm (@lhs.position) (App @t1.actualterm @t2.actualterm)
+              loc.nonpolyt1constraint = substitutePoly @t1.constraint [(show $fetchFirstConstraint @t1.constraint,@loc.freshfuncident)] -- Get rid of a possible polyvar.
+              loc.nonpolyt2constraint = substitutePoly @t2.constraint @loc.substitutions -- Substitute any DimPolys with actual fresh DimVars in t2
+              loc.substitutions = zip (getPoly @t2.constraint) (@loc.freshparamidents) -- a lookup list of (polyvars,freshvars)
+			  
+        | Lam t1.dimenv = M.insert @x (DimVar @loc.freshident) @lhs.dimenv -- The @x gets a fresh constraint variable assigned to it so we can look it up in the body of the function
+              lhs.constraints = @t1.constraints -- Any constraint equalities we discover from the function body, we should pass up!
+              lhs.constraint = DimArrow (DimVar @loc.freshident) @t1.constraint -- e.g. (\x.x) = @x gets a1, @t1 = a1, so our function's constraint is a1 -> a1
+              
+        | Let t2.dimenv = M.insert @x (@t1.constraint) @lhs.dimenv -- In let, we add (@x, @t1.constraint) and pass that down to t2
+              lhs.constraint = @t2.constraint
+              loc.constraintfromenv = getFromEnv @x @lhs.dimenv
+              loc.constraintequality = if isDimPoly @loc.constraintfromenv then [] else [((@loc.constraintfromenv, @t1.constraint), @lhs.position, @loc.t)] -- If we're poly, we can't settle down to a specific constraint
+              lhs.constraints = @loc.constraintequality ++ @t1.constraints ++ @t2.constraints -- Any constraint equalities we discover, we should pass up!
+			  loc.t = Tm (@lhs.position) (Let @x @t1.actualterm @t2.actualterm)
+             
+        
+attr Tm Tm_
+  syn actualterm :: { Tm }
+  
+sem Tm_ | Var lhs.actualterm = Tm (@lhs.position) (Var @x)
+        | App lhs.actualterm = Tm (@lhs.position) (App @t1.actualterm @t2.actualterm)
+        | Lam lhs.actualterm = Tm (@lhs.position) (Lam @x @t1.actualterm)
+        | Let lhs.actualterm = Tm (@lhs.position) (Let @x @t1.actualterm @t2.actualterm)
+            
+
+
+  
+{
+
+getFromEnv :: String -> DimEnv -> Dimension
+getFromEnv s d = let result = M.lookup s d
+                 in case result of
+                     Just x  -> x
+                     Nothing -> error $ "Could not find a dimension signature for the function \"" ++ s ++ "\"."
+
+isDimPoly :: Dimension -> Bool
+isDimPoly (DimPoly _) = True
+isDimPoly (DimArrow a b) = or [isDimPoly a,isDimPoly b]
+isDimPoly (DimInverse a) = isDimPoly a
+isDimPoly (DimMult a b) = or [isDimPoly a,isDimPoly b]
+isDimPoly _ = False
+
+
+
+substitutePoly :: Dimension -> [(String,String)] -> Dimension
+substitutePoly (DimPoly v) list = maybe (DimPoly v) DimVar (lookup v list)
+substitutePoly (DimArrow a b) l = DimArrow (substitutePoly a l) (substitutePoly b l)
+substitutePoly (DimInverse a) l = DimInverse (substitutePoly a l)
+substitutePoly (DimMult a b) l = DimMult (substitutePoly a l) (substitutePoly b l)
+substitutePoly x _ = x
+
+countPoly :: Dimension -> Int
+countPoly = length.getPoly
+
+getPoly :: Dimension -> [String]
+getPoly (DimArrow a b) = union (getPoly a) (getPoly b)
+getPoly (DimPoly v) = [v]
+getPoly (DimInverse a) = getPoly a
+getPoly (DimMult a b) = union (getPoly a) (getPoly b)
+getPoly x = []
+}

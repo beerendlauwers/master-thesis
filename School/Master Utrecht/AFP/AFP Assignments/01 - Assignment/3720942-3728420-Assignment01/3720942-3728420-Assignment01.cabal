@@ -1,0 +1,25 @@
+Name:                s3720942-s3728420-Assignment01
+Version:             0.1
+Synopsis:            First assignment for the Advanced Functional Programming courses 2011/2012.
+License:             BSD3
+License-file:        LICENSE
+Author:              Beerend Lauwers, Augusto Passalaqua	
+Maintainer:          A.PassalaquaMartins@students.uu.nl       
+Category:            Data
+Build-type:          Simple
+Cabal-version:       >=1.2
+
+extra-source-files:
+  LICENSE,
+  Perms/exercise1.txt,
+  Perms/exercise3.txt
+
+Library 
+  Exposed-modules:
+    Perms.Perms,
+    Perms.PermCheck
+
+  build-depends:
+    base		>= 4   && < 5,
+    random		>= 1   && < 2,
+    QuickCheck  >= 2.4 && < 2.5

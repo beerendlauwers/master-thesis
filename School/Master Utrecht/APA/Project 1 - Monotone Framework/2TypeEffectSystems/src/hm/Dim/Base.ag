@@ -1,0 +1,73 @@
+
+{-
+Dimensions datatypes/environment
+ -}
+ 
+data Dimension
+  | DimArrow a1 :: Dimension a2 :: Dimension
+  | DimBase b :: Base
+  | DimVar v :: {String}
+  | DimPoly v :: {String}
+  | DimInverse a :: Dimension
+  | DimMult a1 :: Dimension a2 :: Dimension
+
+deriving Dimension : Eq
+deriving Dimension : Ord
+  
+data Base 
+  | Mass s :: MassScale
+  | Length s :: LengthScale
+  | Time s :: TimeScale
+  | ElectricCharge s :: ElectricScale 
+  | AbsoluteTemperature s :: TemperatureScale
+  
+deriving Base : Eq
+deriving Base : Ord
+  
+data MassScale
+  | Gram
+  | Kilogram
+  | Tonne
+  | Ounce
+
+deriving MassScale : Eq
+deriving MassScale : Ord
+deriving MassScale : Show
+  
+data LengthScale 
+  | Milimeter
+  | Centimeter  
+  | Meter
+  | Kilometer
+  | Inch
+  | Foot
+  | Yard
+  | Mile
+  
+deriving LengthScale : Eq
+deriving LengthScale : Ord
+deriving LengthScale : Show
+  
+data TimeScale 
+  | TimeVar
+  
+deriving TimeScale : Eq
+deriving TimeScale : Ord
+deriving TimeScale : Show
+  
+data ElectricScale 
+  | ElectricVar
+  
+deriving ElectricScale : Eq
+deriving ElectricScale : Ord
+deriving ElectricScale : Show
+  
+data TemperatureScale 
+  | TemperatureVar
+ 
+  
+deriving TemperatureScale : Eq
+deriving TemperatureScale : Ord
+deriving TemperatureScale : Show
+
+  

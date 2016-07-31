@@ -1,0 +1,25 @@
+	Thu Dec 01 22:27 2011 Time and Allocation Profiling Report  (Final)
+
+	   ProfileRevPrime.exe +RTS -hy -p -K100M -RTS
+
+	total time  =      104.38 secs   (5219 ticks @ 20 ms)
+	total alloc = 35,009,149,848 bytes  (excludes profiling overheads)
+
+COST CENTRE                    MODULE               %time %alloc
+
+rev'                           Main                  99.9  100.0
+
+
+                                                                                               individual    inherited
+COST CENTRE              MODULE                                               no.    entries  %time %alloc   %time %alloc
+
+MAIN                     MAIN                                                   1           0   0.0    0.0   100.0  100.0
+ CAF:main1               Main                                                 226           1   0.0    0.0     0.1    0.0
+  main                   Main                                                 234           1   0.1    0.0     0.1    0.0
+ CAF:main2               Main                                                 225           1   0.0    0.0    99.9  100.0
+  main                   Main                                                 235           0   0.0    0.0    99.9  100.0
+   rev'                  Main                                                 236           1  99.9  100.0    99.9  100.0
+ CAF:main3               Main                                                 224           1   0.0    0.0     0.0    0.0
+  main                   Main                                                 237           0   0.0    0.0     0.0    0.0
+ CAF                     GHC.IO.Handle.FD                                     154           2   0.0    0.0     0.0    0.0
+ CAF                     GHC.IO.Encoding.CodePage                             126           1   0.0    0.0     0.0    0.0

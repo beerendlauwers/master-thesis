@@ -1,0 +1,43 @@
+module {Scope} {} {}
+
+{
+data RefFunction = RefFunction Vertex Vertex [Vertex] (Maybe String) deriving (Eq,Show)
+
+trace__ s a = trace (s ++ show a) a
+
+merge xs     []     = xs
+merge []     ys     = ys
+merge (x:xs) (y:ys) = (x ++ y) : merge xs ys
+
+emptyop _ _ = []
+}
+
+attr Literal PrimExpr PropNameAssignEPair PropNameAssignEPairGetterPutterEither PropNameAssignEPairGetterPutterEitherList GetterPutter PropName ArrayLit MemberExpr CallExpr NewExpr LeftExpr PostFix UExpr AExpr CondE AssignE AssignEList AssignEMaybe Expr ExprMaybe VarDecl VarDeclList IfStmt ItStmt TryStmt Catch CatchList Stmt StmtList Stmt' CaseClause CaseClauseList FuncDecl SourceElement SourceElementList JSProgram
+  syn frefs use {`emptyop`} {[]} :: {[RefFunction]}
+  syn vrefs use {`emptyop`} {[]} :: {[Vertex]}
+  syn sfunctions use {`merge`} {[]} :: {[[RefFunction]]}
+  inh ifunctions  :: {[RefFunction]}
+  inh functions   :: {[RefFunction]}
+  syn variables   :: {Map String Vertex}
+  inh variables   :: {Map String Vertex}
+  
+sem PrimExpr  
+  | Ident    loc.vrefs       = maybeToList $ M.lookup @i @lhs.variables 
+             loc.frefs       = if null @loc.vrefs
+                                 then [ f | f@(RefFunction _ _ _ n) <- @lhs.ifunctions, n == Just @i ]
+                                 else @lhs.ifunctions 
+                                  
+sem VarDecl
+  | VarDecl  lhs.variables   = M.insert @i @lhs.vertex @lhs.variables
+             
+sem IfStmt
+  | IfElse   lhs.variables   = @e.variables
+  | IfOnly   lhs.variables   = @e.variables
+  
+sem FuncDecl
+  | FuncDecl loc.variables   = M.fromList $ zip @ss [@lhs.vertex + 2.. @lhs.vertex + length @ss + 1]
+             lhs.variables   = @lhs.variables
+             se.variables    = M.unions [ @loc.variables, @lhs.variables ]
+             loc.sfunctions  = [RefFunction @lhs.vertex (@lhs.vertex + 1) (M.elems @loc.variables) @sm]
+             lhs.sfunctions  = @loc.sfunctions : @se.sfunctions
+             se.functions    = @loc.sfunctions ++ head @se.sfunctions

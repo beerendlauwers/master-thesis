@@ -1,0 +1,310 @@
+module {Flow} {} {}
+  
+{
+type Vertex = Int
+type Edge = (Vertex, Vertex)
+}
+
+attr Literal PrimExpr PropNameAssignEPair PropNameAssignEPairGetterPutterEither PropNameAssignEPairGetterPutterEitherList GetterPutter PropName ArrayLit MemberExpr CallExpr NewExpr LeftExpr PostFix UExpr AExpr CondE AssignE AssignEList AssignEMaybe Expr ExprMaybe VarDecl VarDeclList IfStmt ItStmt TryStmt Catch CatchList Stmt StmtList Stmt' CaseClause CaseClauseList FuncDecl SourceElement SourceElementList JSProgram
+  syn vertex :: Vertex
+  inh vertex :: Vertex
+  syn pi :: Vertex 
+  inh pi :: Vertex
+  syn edges use {`S.union`} {S.empty} :: {Set Edge}
+  syn interedges use {`S.union`} {S.empty} :: {Set (Edge, Edge)}
+  syn vertices use {`M.union`} {M.empty} :: {Map Vertex String}
+  syn first :: {Set Vertex}
+  inh follow :: {Set Vertex}
+  inh return :: Vertex
+  inh break :: {Set Vertex}
+  inh continue :: {Set Vertex}
+  
+attr AssignEList
+  syn pis :: {[Vertex]}
+  
+attr CaseClause CaseClauseList
+  syn cfirst :: {Set Vertex}
+  inh cfollow :: {Set Vertex}
+  syn dfirst :: {Set Vertex}
+  inh dfollow :: {Set Vertex}
+  
+sem Literal   
+  | LitInt    loc.show     = show @v
+  | LitString loc.show     = @v
+  | LitNull   loc.show     = "null"
+  | LitBool   loc.show     = show @v
+  | *         lhs.vertex   = @lhs.vertex + 1
+              lhs.pi       = @lhs.vertex
+              lhs.edges    = S.map (@lhs.vertex,) @lhs.follow
+              lhs.vertices = M.fromList [ (@lhs.vertex, @loc.show) ]
+              lhs.first    = S.singleton @lhs.vertex
+
+sem PrimExpr   
+--  | Literal  (copy rule)
+  | Ident      lhs.vertex   = @lhs.vertex + 1
+               lhs.pi       = @lhs.vertex
+               lhs.edges    = S.map (@lhs.vertex,) @lhs.follow
+               lhs.vertices = M.fromList [ (@lhs.vertex, @i) ]
+               lhs.first    = S.singleton @lhs.vertex
+--  | Brack    (copy rule)
+  | This       lhs.vertex   = @lhs.vertex + 1
+               lhs.pi       = @lhs.vertex
+               lhs.edges    = S.map (@lhs.vertex,) @lhs.follow
+               lhs.vertices = M.fromList [ (@lhs.vertex, "this") ]
+               lhs.first    = S.singleton @lhs.vertex
+  | Regex      lhs.vertex   = @lhs.vertex + 1
+               lhs.pi       = @lhs.vertex
+               lhs.edges    = S.map (@lhs.vertex,) @lhs.follow
+               lhs.vertices = M.fromList [ (@lhs.vertex, "regex") ]
+               lhs.first    = S.singleton @lhs.vertex
+--  | Array    (todo)
+--  | Object   (todo)
+  | PEFuncDecl f.vertex     = @lhs.vertex + 1
+               lhs.pi       = @lhs.vertex
+               lhs.edges    = S.unions [ @f.edges, S.map (@lhs.vertex,) @lhs.follow ]
+               lhs.vertices = M.unions [ @f.vertices, M.fromList [ (@lhs.vertex, "decl-func") ] ]
+               lhs.first    = S.singleton @lhs.vertex
+            
+sem MemberExpr    
+--  | MemPrimExpr (copy rule)
+--  | ArrayExpr   (todo)
+  | MemberNew    me.vertex    = @lhs.vertex + 1
+                 lhs.pi       = @lhs.vertex
+                 lhs.edges    = S.unions [ @me.edges, @ael.edges, S.map (@lhs.vertex,) @lhs.follow ]
+                 -- TODO: check if this needs interedges
+                 lhs.vertices = M.unions [ @me.vertices, @ael.vertices, M.fromList [ (@lhs.vertex, "new") ] ]
+                 lhs.first    = @me.first
+                 me.follow    = @ael.first
+                 ael.follow   = S.singleton @lhs.vertex
+--  | MemberCall  (todo)
+--  | MemberCall2 (todo)            
+               
+sem CallExpr     
+--  | CallPrim   (copy rule)
+  | CallMember   me.vertex    = @lhs.vertex + 2
+                 lhs.pi       = @lhs.vertex+1
+                 lhs.edges    = S.unions [ @me.edges, @ael.edges, S.map (@lhs.vertex+1,) @lhs.follow ]
+                 lhs.interedges = S.unions [ @me.interedges, @ael.interedges, S.fromList [ ((@lhs.vertex,begin), (end,@lhs.vertex+1)) | RefFunction begin end a _ <- @me.frefs, length a == length @ael.pis ] ]
+                 lhs.vertices = M.unions [ @me.vertices, @ael.vertices, M.fromList [ (@lhs.vertex, "call-begin"), (@lhs.vertex+1, "call-end") ] ]
+                 lhs.first    = @me.first
+                 me.follow    = @ael.first
+                 ael.follow   = S.fromList [ @lhs.vertex ]
+--  | CallCall   (todo)
+--  | CallSquare (todo)
+--  | CallDot    (todo)
+               
+                             
+sem NewExpr      
+--  | MemberExpr (copy rule)
+  | NewNewExpr   ne.vertex    = @lhs.vertex + 1
+                 lhs.pi       = @lhs.vertex
+                 lhs.edges    = S.unions [ @ne.edges, S.map (@lhs.vertex,) @lhs.follow ]
+                 lhs.vertices = M.unions [ @ne.vertices, M.fromList [(@lhs.vertex, "new")] ] 
+                 lhs.first    = @ne.first
+                 ne.follow    = S.singleton @lhs.vertex
+               
+sem LeftExpr   
+--  | NewExpr  (copy rule)
+--  | CallExpr (copy rule)
+               
+sem PostFix    
+--  | LeftExpr (copy rule)
+  | POp        le.vertex    = @lhs.vertex + 1
+               lhs.pi       = @lhs.vertex
+               lhs.edges    = S.unions [ @le.edges, S.map (@lhs.vertex,) @lhs.follow ]
+               lhs.vertices = M.unions [ @le.vertices, M.fromList [(@lhs.vertex, @i)] ]
+               lhs.first    = @le.first
+               le.follow    = S.singleton @lhs.vertex
+               
+sem UExpr         
+--  | PostFix    (copy rule)
+  | UOp          ue.vertex    = @lhs.vertex + 1
+                 lhs.pi       = @lhs.vertex
+                 lhs.edges    = S.unions [ @ue.edges, S.map (@lhs.vertex,) @lhs.follow ]
+                 lhs.vertices = M.unions [ @ue.vertices, M.fromList [(@lhs.vertex, @i)] ]
+                 lhs.first    = @ue.first
+                 ue.follow    = S.singleton @lhs.vertex
+               
+sem AExpr     
+--  | AEUExpr (copy rule)
+  | AOp       ae1.vertex   = @lhs.vertex + 1
+              lhs.pi       = @lhs.vertex
+              lhs.edges    = S.unions [ @ae1.edges, @ae2.edges, S.map (@lhs.vertex,) @lhs.follow ]
+              lhs.vertices = M.unions [ @ae1.vertices, @ae2.vertices, M.fromList [ (@lhs.vertex, @i) ] ]
+              lhs.first    = @ae1.first
+              ae1.follow   = case @i of
+                               "-" -> @ae2.first
+                               "+" -> @ae2.first
+                               "*" -> @ae2.first
+                               "/" -> @ae2.first
+                               "&&" -> @ae2.first `S.union` (S.singleton @lhs.vertex)
+                               "||" -> @ae2.first `S.union` (S.singleton @lhs.vertex)
+                               "==" -> @ae2.first
+                               "!=" -> @ae2.first
+                               "<" -> @ae2.first
+                               ">" -> @ae2.first
+                               "<=" -> @ae2.first
+                               ">=" -> @ae2.first
+                               "^" -> @ae2.first
+              ae2.follow   = S.singleton @lhs.vertex
+         
+sem AssignE  
+--  | CondE  (copy rule)
+  | Assign   le.vertex    = @lhs.vertex + 1
+             lhs.pi       = @lhs.vertex
+             lhs.edges    = S.unions [ @le.edges, @ae.edges, S.map (@lhs.vertex,) @lhs.follow ]
+             lhs.vertices = M.unions [ @le.vertices, @ae.vertices, M.fromList [ (@lhs.vertex, @i) ] ]
+             lhs.first    = @le.first
+             le.follow    = @ae.first
+             ae.follow    = S.singleton @lhs.vertex
+         
+sem AssignEList
+  | Nil  lhs.first = @lhs.follow
+         lhs.pis   = []
+  | Cons lhs.first = @hd.first
+         hd.follow = @tl.first
+         tl.follow = @lhs.follow
+         lhs.pis   = @hd.pi : @tl.pis
+         
+sem AssignEMaybe
+  | Nothing inst.x      :: Literal
+            inst.x      = LitNull
+            lhs.first   = @x.first
+            x.follow    = @lhs.follow
+  | Just    lhs.first   = @just.first
+            just.follow = @lhs.follow         
+
+sem VarDecl
+  | VarDecl aem.vertex   = @lhs.vertex + 1
+            lhs.pi       = @lhs.vertex
+            lhs.edges    = S.unions [ @aem.edges, S.map (@lhs.vertex,) @lhs.follow ]
+            lhs.vertices = M.unions [ @aem.vertices, M.fromList [ (@lhs.vertex, "decl:" ++ @i) ] ]
+            lhs.first    = @aem.first
+            aem.follow   = S.singleton @lhs.vertex
+         
+sem VarDeclList
+  | Nil  lhs.first = @lhs.follow
+  | Cons lhs.first = @hd.first
+         hd.follow = @tl.first
+         tl.follow = @lhs.follow         
+           
+sem IfStmt
+  | IfElse  e.vertex     = @lhs.vertex + 1
+            lhs.pi       = @lhs.vertex
+            lhs.edges    = S.unions [ @e.edges, @s1.edges, @s2.edges, S.map (@lhs.vertex,) @lhs.follow ]
+            lhs.vertices = M.unions [ @e.vertices, @s1.vertices, @s2.vertices, M.fromList [ (@lhs.vertex, "if") ] ]
+            lhs.first    = @e.first
+            e.follow     = @s1.first `S.union` @s2.first
+            s1.follow    = S.singleton @lhs.vertex
+            s2.follow    = S.singleton @lhs.vertex
+  | IfOnly  e.vertex     = @lhs.vertex + 1
+            lhs.pi       = @lhs.vertex
+            lhs.edges    = S.unions [ @e.edges, @s1.edges, S.map (@lhs.vertex,) @lhs.follow ]
+            lhs.vertices = M.unions [ @e.vertices, @s1.vertices, M.fromList [ (@lhs.vertex, "if") ] ]
+            lhs.first    = @e.first
+            e.follow     = @s1.first `S.union` (S.singleton @lhs.vertex)
+            s1.follow    = S.singleton @lhs.vertex
+           
+sem ItStmt         
+  | DoWhile   lhs.first  = @s.first
+              s.follow   = @e.first
+              e.follow   = @s.first `S.union` @lhs.follow
+              s.continue = @s.first
+  | While     lhs.first  = @e.first
+              e.follow   = @s.first `S.union` @lhs.follow
+              s.follow   = @e.first
+              s.continue = @e.first
+              s.break    = @lhs.follow
+--  | ForVar  (todo)
+--  | ForIn   (todo)    
+          
+sem StmtList          
+  | Nil   lhs.first    = @lhs.follow
+  | Cons  lhs.first    = @hd.first
+          hd.follow    = @tl.first
+          tl.follow    = @lhs.follow        
+          
+sem Stmt'
+--  | IfStmt       (copy rule)
+  | EmptyStmt      lhs.first    = @lhs.follow
+--  | ExprStmt     (copy rule)
+--  | ItStmt       (copy rule)
+--  | Block        (copy rule)
+--  | VarStmt      (copy rule)
+--  | TryStmt      (todo)
+  | ContStmt       lhs.first    = @lhs.continue
+  | BreakStmt      lhs.first    = @lhs.break
+  | ReturnStmt     em.vertex    = @lhs.vertex + 1
+                   lhs.pi       = @lhs.vertex
+                   lhs.edges    = S.unions [ @em.edges, S.singleton (@lhs.vertex,@lhs.return) ]
+                   lhs.vertices = M.unions [ @em.vertices, M.fromList [ (@lhs.vertex, "return") ] ]
+                   lhs.first    = @em.first
+                   em.follow    = S.singleton @lhs.vertex
+--  | WithStmt     (todo)
+--  | LabelledStmt (todo)
+  | Switch         lhs.first    = @e.first
+                   e.follow     = @cc.cfirst
+                   cc.cfollow   = @cc.dfirst
+                   cc.dfollow   = @lhs.follow
+                   cc.follow    = @lhs.follow
+                   cc.break     = @lhs.follow
+--  | ThrowExpr    (todo)      
+           
+sem CaseClause
+  | CaseClause    lhs.first  = @s.first
+                  lhs.cfirst = @e.first
+                  lhs.dfirst = @lhs.dfollow
+                  s.follow   = @lhs.follow
+                  e.follow   = @lhs.cfollow `S.union` @s.first
+  | DefaultClause lhs.first  = @s.first
+                  lhs.cfirst = @lhs.cfollow
+                  lhs.dfirst = @s.first
+                  s.follow   = @lhs.follow
+                      
+sem CaseClauseList
+  | Nil   lhs.first    = @lhs.follow
+          lhs.cfirst   = @lhs.cfollow
+          lhs.dfirst   = @lhs.dfollow
+  | Cons  lhs.first    = @hd.first 
+          hd.follow    = @tl.first
+          tl.follow    = @lhs.follow
+          lhs.cfirst    = @hd.cfirst 
+          hd.cfollow    = @tl.cfirst
+          tl.cfollow    = @lhs.cfollow        
+          lhs.dfirst    = @hd.dfirst 
+          hd.dfollow    = @tl.dfirst
+          tl.dfollow    = @lhs.dfollow                
+          
+sem FuncDecl
+  | FuncDecl se.vertex    = @lhs.vertex + 2 + length @ss -- begin : end : arguments
+             lhs.pi       = @lhs.vertex + 1
+             lhs.edges    = S.unions [ @se.edges, S.map (@lhs.vertex,) @se.first ]
+             lhs.vertices = M.unions [ @se.vertices, M.fromList [ (@lhs.vertex, "decl-begin"), (@lhs.vertex+1, "decl-end") ] ]
+             lhs.first    = S.singleton @lhs.vertex
+             se.follow    = S.fromList [ @lhs.vertex + 1 ]
+             se.return    = @lhs.vertex + 1
+             se.break     = S.empty
+             se.continue  = S.empty
+
+             
+sem SourceElementList
+  | Nil   lhs.first    = @lhs.follow
+  | Cons  lhs.first    = @hd.first
+          hd.follow    = @tl.first
+          tl.follow    = @lhs.follow
+          
+{
+graph :: Map Vertex String -> Set Edge -> Set (Edge, Edge) -> String
+graph vs es ies = printf "digraph program {\n%s%s%s}\n" (vertices vs) (edges es) (interedges ies) where
+  vertices :: Map Vertex String -> String
+  vertices = (M.fold (++) []) . (M.mapWithKey vertex) 
+  vertex v name = printf "v%d [label=\"%s\"];\n" v name  
+
+  edges :: Set Edge -> String
+  edges = (S.fold (++) []) . (S.map (edge "black"))
+  edge s (from, to) = printf "v%d -> v%d [color=%s];\n" from to s
+
+  interedges :: Set (Edge, Edge) -> String
+  interedges ies = (S.fold (++) [] $ S.map intraedge ies) ++ (S.fold (++) [] $ S.map (edge "green") $ S.map (\x->(fst $ fst x, snd $ snd x)) ies)
+  intraedge (e1,e2) = edge "red" e1 ++ edge "red" e2
+}          

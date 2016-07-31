@@ -1,0 +1,15 @@
+Interesting webpage: http://book.realworldhaskell.org/read/profiling-and-optimization.html
+
+Compile
+ghc -O2 --make A.hs -prof -auto-all -caf-all -fforce-recomp -rtsopts
+
+Create profile
+A.exe +RTS -hc -p -K100M
+
+-hc = simple profile
+-hy = profile by type
+-hd = profile by closure
+-K100M = set stack limit to 100M
+
+Run hp2ps
+hp2ps -e8in -c A.hp
