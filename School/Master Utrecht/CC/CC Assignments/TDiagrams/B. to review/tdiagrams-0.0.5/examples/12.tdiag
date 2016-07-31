@@ -1,0 +1,27 @@
+let stack = execute
+                interpreter VirtualBox for i686-windows in i686-linux
+            on
+                platform i686-linux
+            end
+in
+execute
+  execute
+    execute
+      compile
+        compile
+          program hello in Haskell
+        with
+          compiler ghc from Haskell to i686-windows in i686-windows
+        end  
+      with
+        compiler ghc' from i686-windows to i568-windows in i686-windows
+      end
+    on
+      platform i568-windows
+    end  
+  on 
+    use stack
+  end
+on 
+  use stack
+end

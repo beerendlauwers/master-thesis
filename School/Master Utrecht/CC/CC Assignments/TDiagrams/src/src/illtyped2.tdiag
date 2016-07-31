@@ -1,0 +1,13 @@
+execute
+    compile
+        compile
+            program hello in Java
+        with
+            compiler JHaskell from Java to UUAG in i686-windows
+        end
+    with
+        compiler uuagc from JavaScript to Haskell in i686-windows
+    end
+on
+    interpreter hugs for Haskell in i686-windows
+end

@@ -1,0 +1,13 @@
+execute
+  execute
+    compile
+      program hello in Haskell
+    with
+      compiler ghc from Haskell to i586 in i686
+    end
+  on
+    platform i586
+  end
+on
+  platform i686
+end

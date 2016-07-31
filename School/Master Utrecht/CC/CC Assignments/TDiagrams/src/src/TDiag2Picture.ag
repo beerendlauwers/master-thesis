@@ -1,0 +1,172 @@
+{
+import CCO.Component  (Component, component, printer, ioWrap)
+import CCO.Tree       (ATerm, Tree (toTree), parser)
+import Control.Arrow  ((>>>), arr)
+}
+
+include "CCO\\Picture\\AG\\Printing.ag"
+include "CCO\\Diag\\AG\\Base.ag"
+include "CCO\\Picture\\AG\\Base.ag"
+
+attr Diag Diag_ syn pic :: { Block }
+attr Diag Diag_ syn leftmost :: { Diag_ }
+attr Diag Diag_ syn lang :: { String }
+-- attr Diag Diag_ syn hout :: { Position }
+sem Diag_
+    | Program           lhs.pic = program2commands @p @l
+    | Platform          lhs.pic = platform2commands @m
+    | Interpreter       lhs.pic = interpreter2commands @i @l @m
+    | Compiler          lhs.pic = compiler2commands @c @l1 @l2 @m
+    | Execute           lhs.pic = connect V @d1.pic @d2.pic 
+    | Compile           lhs.pic = connectCompile @d1.pic @d2.pic @d2.lang @d1.leftmost (150,25) -- @d2.hout
+    | Program           lhs.leftmost = Program @p @l
+    | Platform          lhs.leftmost = Platform @m -- error?
+    | Interpreter       lhs.leftmost = Interpreter @i @l @m
+    | Compiler          lhs.leftmost = Compiler @c @l1 @l2 @m
+    | Execute           lhs.leftmost = @d1.leftmost
+    | Compile           lhs.leftmost = @d1.leftmost
+    | Compiler          lhs.lang     = @l2 
+    | Execute           lhs.lang     = @d1.lang
+    -- | Compiler          lhs.hout     = snd @out 
+    -- | Execute           lhs.hout     = @d1.hout
+
+{
+-- *Block Generation
+
+-- **Datatypes
+
+-- |Type synonym for coordinates.
+type Position = (Double,Double)
+
+-- |A Diagram Block. Contains coordinates for where to place input blocks and where to place output blocks, as well as a function 'rpic', which takes coordinates to update the block with its final coordinates.
+data Block = 
+ Block { ins :: (Position,Position)   -- ^Coordinates for attaching the input blocks.
+       , out :: (Position,Position)   -- ^Coordinates for attaching the output blocks.
+       , rpic :: (Position -> Commands) -- ^A list of 'Command's that is updated with a 'Position' to calculate the final 'Command' code.
+       , frame :: (Position, Position) -- ^Smallest frame containing all component of this 'Block'.
+       }
+
+-- **Basic Block generation
+
+-- |Throws an error to signify that this Position cannot be used.
+none :: String -> Position
+--none str = (50,50) 
+none str = error $ "no such in/out : " ++ str  
+
+-- |Generates a fresh 'Program' 'Block'.
+program2commands :: String -> String -> Block
+program2commands n l = Block (none "1",(7.5,7.5)) ((32.5,0),(57.5,7.5)) (\pos -> transposeCommands pos [
+   (Put (7.5,0) (Line (1,0) 50))
+  ,(Put (7.5,0) (Line (0,1) 15))
+  ,(Put (7.5,15) (Line (-1,2) 7.5))
+  ,(Put (57.5,15) (Line (1,2) 7.5))
+  ,(Put (57.5,0) (Line (0,1) 15))
+  ,(Put (0,30) (Line (1,0) 65))
+  ,(Put (7.5,15) (Makebox (50,15) n))
+  ,(Put (7.5,0) (Makebox (50,15) l))]
+ ) ((0,0),(57.5,30))
+
+-- |Generates a fresh 'Platform' 'Block'.
+platform2commands :: String -> Block
+platform2commands s = Block ((25,30),(-50,-50)) ((-50,-50),(-50,-50)) (\pos -> transposeCommands pos [
+   (Put (0,15) (Line (5, -3) 25))
+  ,(Put (25,0) (Line (5, 3) 25))
+  ,(Put (0,15) (Line (0, 1) 15))
+  ,(Put (0,30) (Line (1, 0) 50))
+  ,(Put (50,30) (Line (0, -1) 15))
+  ,(Put (0,15) (Makebox (50, 15) s))]
+ ) ((0,0),(50,30))
+
+-- |Generates a fresh 'Interpreter' 'Block'. 
+interpreter2commands :: String -> String -> String -> Block
+interpreter2commands n l p = Block ((25,30),(0,7.5)) ((25,0),(50,7.5)) (\pos -> transposeCommands pos [
+   (Put (0,0) (Framebox (50,30) "")),
+   (Put (0,20) (Makebox (50,10) l)),
+   (Put (0,10) (Makebox (50,10) n)),
+   (Put (0,0) (Makebox (50,10) p))]
+ ) ((0,0),(50,30))
+
+-- |Generates a fresh 'Compiler' 'Block'.
+compiler2commands :: String -> String -> String -> String -> Block
+compiler2commands n l1 l2 p = Block (none "6",(0, 25)) ((75,0),(150,25)) (\pos -> transposeCommands pos [
+   (Put (50,0) (Line (0,1) 20)),
+   (Put (50,20) (Line (-1,0) 50)),
+   (Put (0,20) (Line (0,1) 10)),
+   (Put (0,30) (Line (1,0) 150)),
+   (Put (150,30) (Line (0,-1) 10)),
+   (Put (150,20) (Line (-1,0) 50)),
+   (Put (100,20) (Line (0,-1) 20)),
+   (Put (100,0) (Line (-1,0) 50)),
+   (Put (0,20) (Makebox (50,10) l1)),
+   (Put (50,20) (Makebox (50,10) "$\\longrightarrow$")),
+   (Put (100,20) (Makebox (50,10) l2)),
+   (Put (50,10) (Makebox (50,10) n)),
+   (Put (50,0) (Makebox (50,10) p))]
+ ) ((0,0),(150,30))
+  
+-- |Given a 'Position' and a list of 'Command's, update the 'Position' in each 'Command' to get the final coordinates.
+transposeCommands :: Position -> Commands -> Commands
+transposeCommands _ [] = []
+transposeCommands pos@(oX,oY) ((Put (x,y) obj):xs) = (Put (x+oX, y+oY) obj):(transposeCommands pos xs)
+
+-- **Composite Block generation
+    
+-- |Generates the 'Block' on the right hand side of a 'Compiler'.
+basicDiag2cmndsNtranslateTo :: String -> Diag_ -> Block
+basicDiag2cmndsNtranslateTo lang diag = case diag of
+    Program p _         -> program2commands p lang
+    Interpreter i l m   -> interpreter2commands i l lang
+    Compiler c l1 _ m   -> compiler2commands c l1 lang m
+    
+-- |A datatype for determining whether a block has to be connected horizontally or vertically.
+data Out 
+    = V -- ^Vertical
+    | H -- ^Horizontal
+
+connectCompile d1pic d2pic d2lang d1leftmost d2Hout =
+    connect H (replaceOut d2Hout $ connect H d1pic d2pic) (basicDiag2cmndsNtranslateTo d2lang d1leftmost)    
+    where    
+        replaceOut out (Block ins (o1, o2) rpic frame) = (Block ins (o1, out) rpic frame) 
+-- |Used to connect the basic blocks from a 'Compile' composite block (horizontally) or an 'Execute' composite block (vertically).
+connect :: Out -> Block -> Block -> Block
+connect placement (Block ins (o1, o2) rpic (fmin, fmax)) (Block (i1', i2') (o1', o2') rpic' (fmin', fmax')) = 
+ --if i2' == (-50,-50) || o1' == (-50,-50) || o2' == (-50,-50) 
+  --then 
+    --Block ins (shift (0,0),o2) (\pos -> rpic pos++rpic' (shift pos )) newFrame
+  --else 
+    Block ins (newVOut,newHOut) (\pos -> rpic pos++rpic' (shift pos)) newFrame 
+    where
+        plus (x,y) (x',y') = (x+x',y+y')
+        minus (x,y) (x',y') = (x-x',y-y')
+        maxi (a,b) (c,d) = (max a c, max b d)
+        mini (a,b) (c,d) = (min a c, min b d)
+        newVOut = (shift o1')
+        newHOut = (shift o2')
+        shift i = case placement of
+            V -> o1 `minus` i1' `plus` i
+            H -> o2 `minus` i2' `plus` i
+        newFrame = (fmin `mini` newfmin', fmax `maxi` newfmax')
+        newfmax' = shift fmax'
+        newfmin' = shift fmin'
+           
+            
+-- ** Component Code
+            
+-- |Converts a 'Block' to a 'Picture', selecting the highest value of the 'out' record field of the 'Block' as the dimension of the 'Picture'.
+block2pic :: Block -> Picture
+block2pic (Block ins (o1, o2) pic (fmin,fmax)) = Picture newFrame ((Put (0,0) (Framebox newFrame "")) : (pic ((0,0) `minus` fmin)))
+    where
+        plus (x,y) (x',y') = (x+x',y+y')
+        minus (x,y) (x',y') = (x-x',y-y')
+        newFrame = (fmax `plus` (7.5,0) `minus` fmin)
+
+-- |Converts a 'Diag' to a 'Block' using the UUAG system.
+diag2block :: Diag -> Block
+diag2block = \file -> pic_Syn_Diag $ wrap_Diag (sem_Diag file) (Inh_Diag)
+
+-- |Parses an 'ATerm', converts it to a 'Diag', converts that to a 'Block', converts that to a 'Picture', and generates an 'ATerm' for it.
+main :: IO ()
+main = ioWrap (parser >>> (component toTree :: Component ATerm Diag) >>> arr diag2block >>> arr block2pic >>> arr fromTree >>> printer) 
+
+-- *UUAGC-generated code
+}

@@ -1,0 +1,20 @@
+function main ()
+{
+  print plus2times( 5, 1 );
+}
+
+function plus2times ( x, y )
+{
+if ( y < 1 )
+{
+ return x;
+}
+else
+{
+ y = y - 1;
+ x = x + 2;
+ return (plus2times( x, y ));
+}
+
+    
+}

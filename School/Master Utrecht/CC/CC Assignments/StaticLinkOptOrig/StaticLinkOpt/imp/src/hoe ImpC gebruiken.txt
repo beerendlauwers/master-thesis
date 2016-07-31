@@ -1,0 +1,9 @@
+cd naar de directory waar ImpC.hs in staat
+
+dan, volgende commando:
+
+type CODEFILE | runghc.exe ImpC.hs > OUTPUTFILE
+
+bv.
+
+type ..\test\gcd | runghc ImpC.hs > gcd.ssm

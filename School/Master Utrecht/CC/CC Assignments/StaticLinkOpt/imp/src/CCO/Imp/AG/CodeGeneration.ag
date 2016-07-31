@@ -1,0 +1,418 @@
+module {CCO.Imp.AG} {} {}
+
+imports
+{
+import CCO.Ssm hiding (Add, Sub, Mul, Div, Eq, Lt, Gt)
+import Prelude hiding (div)
+import Data.List (intersperse,nub,elemIndex,(\\),sortBy,sort)
+import Data.Maybe (fromJust)
+}
+
+include "Base.ag"
+
+-------------------------------------------------------------------------------
+-- Labels
+-------------------------------------------------------------------------------
+
+-- Handing out fresh program-point labels where necessary.
+
+attr Decl Decls Stmt Stmts Exp Exps
+  inh labels :: {[Label]}
+  syn labels :: {[Label]}
+
+sem Prog | TopLevelDecls  ds .labels = [0 ..]
+
+sem Decl | FunDecl        loc.beginLabel = @lhs.labels !! 0
+                          loc.endLabel   = @lhs.labels !! 1
+                          b  .labels     = drop 2 @lhs.labels
+
+sem Stmt | If             loc.elseLabel  = @lhs.labels !! 0
+                          loc.fiLabel    = @lhs.labels !! 1
+                          e  .labels     = drop 2 @lhs.labels
+
+-------------------------------------------------------------------------------
+-- Offsets
+-------------------------------------------------------------------------------
+
+-- Calculating the mark-pointer relative offsets at which variables are to be
+-- allocated.
+
+attr Decl Decls Stmt Stmts
+  inh offset :: {Int}
+  syn offset :: {Int}
+
+sem Prog | TopLevelDecls    ds .offset = 1
+sem Decl | VarDecl          lhs.offset = @lhs.offset + 1
+         | FunDecl          b  .offset = 1
+sem Stmt | Block            lhs.offset = @lhs.offset
+
+-------------------------------------------------------------------------------
+-- CachedVars
+-------------------------------------------------------------------------------
+
+{
+type CachedVar = (Ident,Int)
+}
+
+attr Stmt Stmts Exp Exps
+  inh cachedvars :: {[CachedVar]}
+  
+{
+-- |For each variable, generate a tuple of the variable name and its depth relative to the function definition.
+generateCachedvars :: [Ident] -> Syms -> [CachedVar]
+generateCachedvars vars s = map (\x -> (x,getDepth x s)) vars
+
+-- |Given a variable and a symbol table, get the depth of the variable relative to the function definition.
+-- |Local variable = 0, variable one scope higher = 1, etc.
+getDepth :: Ident -> Syms -> Int
+getDepth v [] = 0
+getDepth v (x:xs) = case lookup v (vars x) of
+    Nothing -> 1 + getDepth v xs
+    Just x  -> 0
+    
+-- |Sort a list of 'CachedVar's by depth. 
+sortBySnd :: [CachedVar] -> [CachedVar]
+sortBySnd = sortBy (\x y -> compare (snd x) (snd y))
+}
+  
+sem Decl | FunDecl			b.cachedvars   = sortBySnd $ generateCachedvars (nub @b.usedvars \\ (map fst $ @b.env)) (@loc.params : @lhs.syms)
+                            loc.cachedvars = sortBySnd $ generateCachedvars (nub @b.usedvars \\ (map fst $ @b.env)) (@loc.params : @lhs.syms)
+ 
+  
+-------------------------------------------------------------------------------
+-- UsedVars
+-------------------------------------------------------------------------------
+
+attr Prog Decl Decls Stmt Stmts Exp Exps
+  syn usedvars use {++} {[]} :: {[Ident]}
+  
+sem Prog | TopLevelDecls    lhs.usedvars = @ds.usedvars
+sem Decl | FunDecl          lhs.usedvars = nub @b.usedvars
+	     | VarDecl			lhs.usedvars = []
+
+sem Stmt | Assign           lhs.usedvars = @x : @e.usedvars
+         | Call_            lhs.usedvars = @es.usedvars
+         | Print            lhs.usedvars = @e.usedvars
+         | Return           lhs.usedvars = @e.usedvars
+         | If               lhs.usedvars = @e.usedvars ++ @s1.usedvars ++ @s2.usedvars
+         | Block            lhs.usedvars = @b.usedvars
+		 | Empty			lhs.usedvars = []
+		 | Decl				lhs.usedvars = []
+         
+sem Exp  | Int     			lhs.usedvars = []
+		 | False_			lhs.usedvars = []
+         | True_			lhs.usedvars = []
+		 | Var              lhs.usedvars = [@x]
+         | Call             lhs.usedvars = @es.usedvars
+         | Add              lhs.usedvars = @e1.usedvars ++ @e2.usedvars
+         | Sub              lhs.usedvars = @e1.usedvars ++ @e2.usedvars
+         | Mul              lhs.usedvars = @e1.usedvars ++ @e2.usedvars
+         | Div              lhs.usedvars = @e1.usedvars ++ @e2.usedvars
+         | Lt               lhs.usedvars = @e1.usedvars ++ @e2.usedvars
+         | Eq               lhs.usedvars = @e1.usedvars ++ @e2.usedvars
+         | Gt               lhs.usedvars = @e1.usedvars ++ @e2.usedvars
+		 
+sem Stmts  | Nil			lhs.usedvars = []
+sem Exps | Nil				lhs.usedvars = []
+sem Decls | Nil				lhs.usedvars = []
+
+-------------------------------------------------------------------------------
+-- Environments
+-------------------------------------------------------------------------------
+
+{
+-- | An environment maps identifiers to symbol descriptors.
+type Env = [(Ident, Sym)]
+
+-- | A symbol descriptor either describes a variable or a function symbol.
+-- For a variable, we store its offset relative to the mark pointer; for
+-- a function we store its begin label.
+data Sym = V Int | F Int
+
+-- | Restrict environments to a particular type of descriptor.
+vars   env = [entry | entry@(_, V _     ) <- env            ]
+funs   env = [entry | entry@(_, F _     ) <- env            ]
+params env = [entry | entry@(_, V offset) <- env, offset < 0]
+}
+
+-- For each block of statements or declarations, we construct a local
+-- environment.
+
+attr Decl Decls Stmt Stmts
+  syn env use {++} {[]} :: {Env}
+
+sem Decl | VarDecl  lhs.env = [(@x, V @lhs.offset    )]
+         | FunDecl  lhs.env = [(@f, F @loc.beginLabel)]
+
+sem Stmt | Block  lhs.env = []
+
+-- Pass the final list of local variables back down to the Exps.
+
+attr Stmt Stmts Exp Exps
+  inh localVars :: {Env}
+  
+sem Decl | FunDecl			b.localVars   = vars @b.env
+
+-- Furthermore, we construct a subenvironment for the parameters of a function.
+
+sem Decl | FunDecl
+  loc.params = zipWith (\x i -> (x, V i)) @xs [- (2 + length @xs) ..]
+
+-------------------------------------------------------------------------------
+-- Symbol tables
+-------------------------------------------------------------------------------
+
+{
+-- | A symbol table contains descriptors for each variable that is in scope at
+-- a certain program point.
+-- The table consists of levels of 'Env's reflecting the nesting of functions:
+-- * The head of the list of 'Env's corresponds to the innermost function scope
+--   and so it contains the descriptors of the symbols that are allocated
+--   relative to the current mark pointer.
+-- * To access the symbols described in the tail of the list, static links are
+--   to be followed.
+type Syms = [Env]
+}
+
+-- Symbol-table construction.
+
+attr Decl Decls Stmt Stmts Exp Exps
+  inh syms :: {Syms}
+
+sem Prog | TopLevelDecls  ds.syms = [@ds.env]
+sem Decl | FunDecl        b .syms = (@loc.params ++ @b.env) : @lhs.syms
+sem Stmt | Block          b .syms = let local : global = @lhs.syms
+                                    in  (local ++ @b.env) : global
+
+-------------------------------------------------------------------------------
+-- Minimal pretty printing of Exp for use in SSM annotations
+-------------------------------------------------------------------------------
+
+attr Exp
+  syn ann use {++} {""} :: {String}
+attr Exps
+  syn anns :: {[String]}
+
+sem Exp | Int     loc.ann = show @n
+        | False_  loc.ann = "False"
+        | True_   loc.ann = "True"
+        | Var     loc.ann = @x
+        | Call    loc.ann = @f ++ "(" ++ concat (intersperse "," @es.anns) ++ ")"
+        | Add     loc.ann = @e1.ann ++ "+"  ++ @e2.ann
+        | Sub     loc.ann = @e1.ann ++ "-"  ++ @e2.ann
+        | Mul     loc.ann = @e1.ann ++ "*"  ++ @e2.ann
+        | Div     loc.ann = @e1.ann ++ "/"  ++ @e2.ann
+        | Lt      loc.ann = @e1.ann ++ "<"  ++ @e2.ann
+        | Eq      loc.ann = @e1.ann ++ "==" ++ @e2.ann
+        | Gt      loc.ann = @e1.ann ++ ">"  ++ @e2.ann
+
+sem Exps | Nil    lhs.anns = []
+         | Cons   lhs.anns = @hd.ann : @tl.anns
+
+sem Exp | *       loc.annote = annote SP 0 0 "green" @ann
+
+-------------------------------------------------------------------------------
+-- Code generation
+-------------------------------------------------------------------------------
+
+attr Decl Decls Stmt Stmts Exp Exps
+  syn codes use {.} {id} :: {CodeS}
+
+sem Prog | TopLevelDecls  loc.codes = @ds.codes .
+                                      enter @ds.env .
+                                      call "main" [@ds.env] .
+                                      ajs (- 1) .
+                                      exit @ds.env
+
+sem Decl | FunDecl  lhs.codes = bra @loc.endLabel .
+                                label @loc.beginLabel .
+                                  ldr MP .
+                                  ldrr MP SP .
+                                  enterparams @loc.params .
+                                  enter @b.env .
+                                  cache (length @b.env) @loc.cachedvars (@loc.params : @lhs.syms) .
+                                  @b.codes .
+                                  exit @b.env .
+                                  ldc 0 .
+                                  return_ @loc.cachedvars (@loc.params : @lhs.syms) .
+                                label @loc.endLabel
+
+sem Stmt | Assign  lhs.codes = @e.codes . set' (length @lhs.localVars) @x @lhs.syms (removeLocals @lhs.cachedvars @lhs.syms)
+         | Call_   lhs.codes = @es.codes .
+                               call @f @lhs.syms .
+                               ajs (- 1)
+         | Print   lhs.codes = @e.codes . trap 0
+         | Return  lhs.codes = @e.codes . return_ @lhs.cachedvars @lhs.syms
+         | If      lhs.codes = @e.codes .
+                               brf @loc.elseLabel .
+                               @s1.codes .
+                               bra @loc.fiLabel .
+                               label @loc.elseLabel .
+                                 @s2.codes .
+                               label @loc.fiLabel
+         | Block   lhs.codes = enter @b.env .
+                               @b.codes .
+                               exit @b.env
+
+sem Exp | Int     lhs.codes = ldc @n . @annote
+        | False_  lhs.codes = ldc 0 . @annote
+        | True_   lhs.codes = ldc 1 . @annote
+        | Var     lhs.codes = get' (length @lhs.localVars) @x @lhs.syms (removeLocals @lhs.cachedvars @lhs.syms) . @annote
+        | Call    lhs.codes = @es.codes . call @f @lhs.syms
+        | Add     lhs.codes = @e1.codes . @e2.codes . add . @annote
+        | Sub     lhs.codes = @e1.codes . @e2.codes . sub . @annote
+        | Mul     lhs.codes = @e1.codes . @e2.codes . mul . @annote
+        | Div     lhs.codes = @e1.codes . @e2.codes . div . @annote
+        | Lt      lhs.codes = @e1.codes . @e2.codes . lt . @annote
+        | Eq      lhs.codes = @e1.codes . @e2.codes . eq . @annote
+        | Gt      lhs.codes = @e1.codes . @e2.codes . gt . @annote
+
+attr Prog
+  syn code :: {Code}
+
+sem Prog | TopLevelDecls  lhs.code = Code (@loc.codes [])
+
+-------------------------------------------------------------------------------
+-- Auxiliary code-generation functions
+-------------------------------------------------------------------------------
+
+{
+-- |Returns true if the depth of a variable is higher than 1.
+isGlobalVar :: Syms -> CachedVar -> Bool
+isGlobalVar xs v = let depth = snd v
+                   in if depth == 0 || depth == 1 then False else True
+    
+-- |Removes any 'Cachedvar' whose depth is lower than 2.
+removeLocals :: [CachedVar] -> Syms -> [CachedVar]
+removeLocals vars envs = filter (isGlobalVar envs) vars
+
+-- |Fetches a positive offset to the MP to where an address can be cached. 
+getPos :: (Eq a) => Int -> a -> [a] -> Int
+getPos n v vars = n + 1 + (fromJust $ v `elemIndex` vars)
+
+-- |Thins out a 'CachedVar' list so that each level only has a single representative variable.
+-- |[("x",2),("y",2),("count",3)] -> [("y",2),("count",3)] 
+removeDoubleLevels :: [CachedVar] -> [CachedVar]
+removeDoubleLevels xs = nos' xs []
+ where
+   nos' [] ys = sort ys
+   nos' (x@(v,n):xs) ys = nos' xs (if elem n (map snd ys) then ys else x:ys)
+
+-- |Caches static links.
+cache :: Int -> [CachedVar] -> Syms -> CodeS
+cache n vars envs = let globals = removeDoubleLevels $ removeLocals vars envs
+                    in foldr (.) id $ map (\v -> cacheAddress n v globals envs) globals
+      
+-- |Given a 'CachedVar', create some code that caches the static link      
+cacheAddress :: Int -> CachedVar -> [CachedVar] -> Syms -> CodeS
+cacheAddress lv (v,n) levels envs = let position = getPos lv v (map fst levels)
+                                    in ldc position . getStaticLink v envs . stl position . annote SP 0 0 "green" ("cache lvl " ++ show n)
+
+-- |Fetches a static link.
+getStaticLink :: Ident -> Syms -> CodeS
+getStaticLink v (local:global) = case lookup v (vars local) of
+    Nothing -> ldl (- 2) . getStaticLink' v global
+    Just (V offset) -> id
+    
+-- |Fetches a static link.
+getStaticLink' :: Ident -> Syms -> CodeS
+getStaticLink' v []           = error ("unknown variable: " ++ v)
+getStaticLink' v (e:ev) = case lookup v (vars e) of
+  Nothing         -> lda (- 2) . getStaticLink' v ev
+  Just (V offset) -> id
+
+-- | Produces code for annotating parameters.
+enterparams :: Env -> CodeS
+enterparams env = foldr (.) id [annote MP off off "green" (x ++ " (param)") | (x, V off) <- env]
+
+-- | Produces code for entering a block.
+enter :: Env -> CodeS
+enter env = foldr (.) id [ldc 0 . annote SP 0 0 "green" (x ++ " (var)") | (x, V _) <- env]
+
+-- | Produces code for exiting a block.
+exit :: Env -> CodeS
+exit env = ajs (- length (vars env))
+
+-- | Produces code for retrieving the value of a variable.
+get :: Ident -> Syms -> CodeS
+get x (local : global) = case lookup x (vars local) of
+  Nothing         -> ldl (- 2) . getGlobal x global
+  Just (V offset) -> ldl offset
+
+-- | Produces code for retrieving the value of a variable.
+get' :: Int -> Ident -> Syms -> [CachedVar] -> CodeS
+get' n x envs@(local : global) inCache = if (elem x (map fst inCache)) 
+   then ldl (getOffset n x inCache) .
+        getGlobal' x envs
+   else get x envs
+   
+-- |Given a variable, fetches the depth of the variable and retrieves the offset of the static link address of that depth. 
+getOffset :: Int -> Ident -> [CachedVar] -> Int
+getOffset n x cache = let lvl = fromJust $ lookup x cache
+                      in getPos n lvl (map snd (removeDoubleLevels cache))
+
+-- | Produces code for retrieving the value of a global variable.
+getGlobal :: Ident -> Syms -> CodeS
+getGlobal x []           = error ("unknown variable: " ++ x)
+getGlobal x (env : envs) = case lookup x (vars env) of
+  Nothing         -> lda (- 2) . getGlobal x envs
+  Just (V offset) -> lda offset
+  
+-- | Produces code for retrieving the value of a global variable.
+getGlobal' :: Ident -> Syms -> CodeS
+getGlobal' x []           = error ("unknown variable: " ++ x)
+getGlobal' x (env : envs) = case lookup x (vars env) of
+  Nothing         -> getGlobal' x envs
+  Just (V offset) -> lda offset
+
+-- | Produces code for assigning a new value to a variable.
+set :: Ident -> Syms -> CodeS
+set x (local : global) = case lookup x (vars local) of
+  Nothing         -> ldl (- 2) . setGlobal x global
+  Just (V offset) -> stl offset
+
+-- | Produces code for - the value of a variable.
+set' :: Int -> Ident -> Syms -> [CachedVar] -> CodeS
+set' n x envs@(local : global) inCache = if (elem x (map fst inCache)) 
+   then ldl (getOffset n x inCache) .
+        setGlobal' x envs
+   else set x envs
+  
+-- | Produces code for assigning a new value to a global variable.
+setGlobal :: Ident -> Syms -> CodeS
+setGlobal x []           = error ("unknown variable: " ++ x)
+setGlobal x (env : envs) = case lookup x (vars env) of
+  Nothing         -> lda (- 2) . setGlobal x envs
+  Just (V offset) -> sta offset
+
+-- | Produces code for - the value of a global variable.
+setGlobal' :: Ident -> Syms -> CodeS
+setGlobal' x []           = error ("unknown variable: " ++ x)
+setGlobal' x (env : envs) = case lookup x (vars env) of
+  Nothing         -> setGlobal' x envs
+  Just (V offset) -> sta offset
+  
+-- | Produces code for calling a function.
+call :: Ident -> Syms -> CodeS
+call f (local : global) = case lookup f (funs local) of
+  Nothing             -> ldl (- 2) . callGlobal f global
+  Just (F beginLabel) -> ldr MP . ldcL beginLabel . jsr
+
+-- | Produces code for calling a global function.
+callGlobal :: Ident -> Syms -> CodeS
+callGlobal f []           = error ("unknown function: " ++ f)
+callGlobal f (env : envs) = case lookup f (funs env) of
+  Nothing             -> lda (- 2) . callGlobal f envs
+  Just (F beginLabel) -> ldcL beginLabel . jsr
+
+-- | Produces code for returning from a function.
+return_ :: [CachedVar] -> Syms -> CodeS
+return_ cachedvars e@(local : _) = let globals = removeDoubleLevels (removeLocals cachedvars e)
+ in
+  sts (- (length (vars local) + 3 + length globals)) .
+  ldrr SP MP .
+  str MP .
+  sts (- length (params local)) .
+  ajs (- (length (params local) - 1)) .
+  ret
+}

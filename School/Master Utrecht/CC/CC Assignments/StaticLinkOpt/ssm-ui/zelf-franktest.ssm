@@ -1,0 +1,35 @@
+;
+; Plus2Times (x, y) = x + (y*2) recursive.
+;
+        bra main
+plustwo:
+        link 0 // plus2times (x, y)
+        ldl -2 // if ( y < 1 )
+        ldc 1
+        lt
+        brt plustwor // then-case
+       
+        ldl -3 // x=x+2
+        ldc 2
+        add            
+       
+        ldl -2 // y=y-1
+        ldc 1
+        sub            
+        bsr plustwo
+       
+        bra plusend
+       
+plustwor:
+        ldl -1 // return x     
+plusend: str RR
+        unlink
+        sts -1
+        ret
+ 
+main:
+        ldc 5
+        ldc 1
+        bsr plustwo //call plus2times with 1 and 2.
+        trap 0
+        halt

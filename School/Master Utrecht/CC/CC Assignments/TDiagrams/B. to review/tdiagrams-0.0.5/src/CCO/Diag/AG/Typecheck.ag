@@ -1,0 +1,271 @@
+imports{
+import CCO.SourcePos
+import CCO.Feedback
+import CCO.Printing
+import Data.Map (Map)
+import qualified Data.Map as M
+import Data.Char
+import Text.Printf
+import Control.Applicative
+import Data.Maybe
+import Control.Monad
+}
+
+{
+fatal_ s = errorMessage $ text $ "Fatal error: " ++ s
+error_ s = message $ Warning 1 $ text $ "Error: " ++ s
+warning_ s = message $ Log 1 $ text $ "Warning: " ++ s
+message_ s = message $ Log 1 $ text $ "Message: " ++ s
+
+-- | Check whether the given monadic value yields an error and throw a
+-- fatal if that's the case.
+mkFatal :: Feedback a -> Feedback a
+mkFatal f = do
+  a <- f
+  when (failing $ wError f) (fatal_ "one or more errors found")
+  return a
+  
+-- | Make a string lowercase.
+lowercase :: String -> String
+lowercase = map toLower
+
+-- | Alternative to the standard show implementation.
+show' :: SourcePos -> String
+show' (SourcePos _ (Pos l c)) = show l ++ ":" ++ show c
+
+data Type = TProgram | TPlatform | TInterpreter | TCompiler | TNothing 
+          deriving (Show, Eq)
+
+-- | Check whether the given element is an element of the list. Throws
+-- an error message if this is not the case.
+checkOneOf :: (Show a, Eq a) => a -> SourcePos -> [a] -> SourcePos -> Feedback ()
+checkOneOf a p1 as p2 = 
+  if a `elem` as 
+    then return ()
+    else error_ $ printf "(%s) expected one of %s, found %s at (%s)" (show' p2) (show as) (show a) (show' p1)
+
+wrapDiag :: Diag -> Syn_Root
+wrapDiag d = wrap_Root (sem_Root (Root d)) Inh_Root
+
+wrapCoDiag :: CoDiag -> Syn_CoRoot
+wrapCoDiag cd = wrap_CoRoot (sem_CoRoot (CoRoot cd)) Inh_CoRoot
+}
+
+attr Root
+  -- Check whether the things are executed on platforms/interpreters
+  -- and things are compiled on compilers.
+  syn rcheck   :: {Feedback ()}
+  -- The amount of outputs unspecified.
+  syn routputs :: {Int}
+  -- The stack of CoDiagrams. The head is the final CoDiagram.
+  syn rcd      :: {[CoDiag]}
+  -- The "main" attribute.
+  syn check    :: {Feedback CoDiag}
+  
+sem Root
+  | Root  d.variables  = return $ M.empty
+          d.cd         = repeat $ CoDiag (SourcePos Stdin EOF) CoNothing
+          lhs.rcheck   = mkFatal @d.check
+          lhs.rcd      = @d.cd
+          lhs.routputs = @d.outputs
+          lhs.check    = do r <- fmap wrapDiag @d.letless
+                            rcheck_Syn_Root r
+                            when (routputs_Syn_Root r < 0) (fatal_ $ "Too much outputs specified")
+                            when (routputs_Syn_Root r > 0) (warning_ $ "Not all outputs are being used")
+                            let cd = head $ rcd_Syn_Root r
+                            typecheck_Syn_CoRoot $ wrapCoDiag cd
+                            return cd
+attr CoRoot
+  -- Typechecking happens here.
+  syn typecheck :: {Feedback ()}
+  
+sem CoRoot
+  | CoRoot d.type_   = TNothing
+           d.name    = ""
+           lhs.typecheck = do mkFatal @d.checkt -- Check whether types match.
+                              mkFatal @d.checkn -- Check whether names match.
+
+attr Diag
+  -- The map containing the variables defined thus far.
+  inh variables :: {Feedback (Map String Diag)}
+  -- The Diag with all the variables inlined.
+  syn letless   :: {Feedback Diag}
+  -- Propagate source positions.
+  syn pos       :: {SourcePos}
+  syn compiler  :: Bool
+  syn executer  :: Bool
+  -- Check (using compiler/executer bools) whether things are
+  -- compiled/executed on other things with the appropriate types.
+  syn check     :: {Feedback ()}  
+  -- Stack of CoDiags.
+  inh cd        :: {[CoDiag]}
+  syn cd        :: {[CoDiag]}
+  -- Amount of outputs unspecified.
+  syn outputs   :: {Int}
+  
+sem Diag
+  | Diag   d.pos       = @pos
+           lhs.pos     = @pos
+  
+attr Diag_
+  inh variables :: {Feedback (Map String Diag)}
+  inh pos       :: {SourcePos}
+  syn letless   :: {Feedback Diag}
+  syn compiler  :: Bool
+  syn executer  :: Bool
+  syn check     :: {Feedback ()}
+  inh cd        :: {[CoDiag]}
+  syn cd        :: {[CoDiag]}
+  syn outputs   :: {Int}
+             
+sem Diag_
+  | Program     lhs.letless    = return $ Diag @lhs.pos $ Program @p @l
+  | Platform    lhs.letless    = return $ Diag @lhs.pos $ Platform @m
+  | Interpreter lhs.letless    = return $ Diag @lhs.pos $ Interpreter @i @l @m
+  | Compiler    lhs.letless    = return $ Diag @lhs.pos $ Compiler @c @l1 @l2 @m
+  | Execute     lhs.letless    = do d1 <- @d1.letless
+                                    d2 <- @d2.letless
+                                    return $ Diag @lhs.pos $ Execute d1 d2
+  | Compile     lhs.letless    = do d1 <- @d1.letless
+                                    d2 <- @d2.letless
+                                    return $ Diag @lhs.pos $ Compile d1 d2
+  | Let         d2.variables   = do d1 <- @d1.letless
+                                    variables <- @lhs.variables
+                                    return $ M.insert (lowercase @v) d1 variables
+                lhs.letless    = @d2.letless
+  | Use         lhs.letless    = do variables <- @lhs.variables
+                                    case M.lookup (lowercase @v) variables of
+                                      Nothing -> fatal_ $ printf "(%s) variable '%s' does not exist." (show @lhs.pos) @v
+                                      Just a -> return a
+
+sem Diag_
+  | Program     loc.outputs = 1
+  | Platform    loc.outputs = 0
+  | Interpreter loc.outputs = 1
+  | Compiler    loc.outputs = 2
+  | Execute     loc.outputs = @d1.outputs + @d2.outputs - 1
+  | Compile     loc.outputs = @d1.outputs + @d2.outputs - 1
+  | Let         loc.outputs = error "Let bindings may not occur in this step."
+  | Use         loc.outputs = error "Variables may not occur in this step."
+
+                                      
+sem Diag_
+  | Program     lhs.compiler = False
+                lhs.executer = False
+  | Platform    lhs.compiler = False
+                lhs.executer = True
+  | Interpreter lhs.compiler = False
+                lhs.executer = True
+  | Compiler    lhs.compiler = True
+                lhs.executer = False
+  | Execute     lhs.compiler = @d1.compiler
+                lhs.executer = @d1.executer
+  | Compile     lhs.compiler = @d1.compiler
+                lhs.executer = @d1.executer
+  | Let         lhs.executer = error "Let bindings may not occur in this step."
+                lhs.compiler = error "Let bindings may not occur in this step."
+  | Use         lhs.executer = error "Variables may not occur in this step."
+                lhs.compiler = error "Variables may not occur in this step."
+                
+sem Diag_
+  | Program     lhs.check    = return ()
+  | Platform    lhs.check    = return ()
+  | Interpreter lhs.check    = return ()                                                    
+  | Compiler    lhs.check    = return ()
+  | Execute     lhs.check    = do unless @d2.executer (error_ $ printf "(%s) an interpreter or platform is required" (show' @d2.pos))
+                                  @d1.check
+                                  @d2.check
+  | Compile     lhs.check    = do unless @d2.compiler (error_ $ printf "(%s) a compiler is required" (show' @d2.pos))
+                                  @d1.check
+                                  @d2.check
+  | Let         lhs.check   = error_ $ "Let bindings may not occur in check step."
+  | Use         lhs.check   = error_ $ "Variables may not occur in check step."
+                
+sem Diag_
+  | Program     lhs.cd       = (\(h:s) -> (CoDiag @lhs.pos $ CoProgram @p @l h) : s) @lhs.cd
+  | Platform    lhs.cd       = (CoDiag @lhs.pos $ CoPlatform @m) : @lhs.cd
+  | Interpreter lhs.cd       = (\(h:s) -> (CoDiag @lhs.pos $ CoInterpreter @i @l @m h) : s) @lhs.cd
+  | Compiler    lhs.cd       = (\(h1:h2:s) -> (CoDiag @lhs.pos $ CoCompiler @c @l1 @l2 @m h1 h2) : s) @lhs.cd
+  | Execute     d2.cd        = @lhs.cd
+                d1.cd        = @d2.cd
+                lhs.cd       = @d1.cd
+  | Compile     d2.cd        = @lhs.cd
+                d1.cd        = @d2.cd
+                lhs.cd       = @d1.cd
+                
+attr CoDiag
+  inh type_   :: {Type}
+  syn type_   :: {Type}
+  inh name    :: {String}
+  syn name    :: {String}
+  syn checkt  :: {Feedback ()}
+  syn checkn  :: {Feedback ()}
+  syn pos     :: {SourcePos}
+  inh ppos    :: {SourcePos}
+  
+sem CoDiag
+  | CoDiag lhs.pos = @pos
+           d.pos   = @pos 
+           d.ppos  = @lhs.ppos 
+
+attr CoDiag_
+  inh type_  :: {Type}
+  syn type_  :: {Type}
+  inh name   :: {String}
+  syn name   :: {String}
+  syn checkt :: {Feedback ()}
+  syn checkn :: {Feedback ()}
+  inh pos    :: {SourcePos}
+  inh ppos   :: {SourcePos}
+
+sem CoDiag_
+  | CoProgram     d.ppos     = @lhs.pos
+  | CoInterpreter d.ppos     = @lhs.pos
+  | CoCompiler    d1.ppos    = @lhs.pos
+                  d2.ppos    = @lhs.pos
+                
+sem CoDiag_
+  | CoProgram     loc.type_  = TProgram
+                  d.type_    = TProgram
+  | CoPlatform    loc.type_  = TPlatform
+  | CoInterpreter loc.type_  = TInterpreter 
+                  d.type_    = TInterpreter
+  | CoCompiler    loc.type_  = TCompiler
+                  d1.type_   = TCompiler
+                  d2.type_   = TCompiler
+  | CoNothing     loc.type_  = TNothing
+  
+sem CoDiag_
+  | CoProgram     loc.name   = ""
+                  d.name     = @l
+  | CoPlatform    loc.name   = @m
+  | CoInterpreter loc.name   = @l
+                  d.name     = @m
+  | CoCompiler    loc.name   = @l1
+                  d1.name    = @l2
+                  d2.name    = @m
+  | CoNothing     loc.name   = ""
+
+-- Check whether types match.
+sem CoDiag_
+  | CoProgram     lhs.checkt = do checkOneOf @lhs.type_ @lhs.ppos [TNothing] @lhs.pos
+                                  @d.checkt
+  | CoPlatform    lhs.checkt = do checkOneOf @lhs.type_ @lhs.ppos [TProgram, TInterpreter, TCompiler] @lhs.pos
+  | CoInterpreter lhs.checkt = do checkOneOf @lhs.type_ @lhs.ppos [TProgram, TInterpreter, TCompiler] @lhs.pos
+                                  @d.checkt
+  | CoCompiler    lhs.checkt = do checkOneOf @lhs.type_ @lhs.ppos [TProgram, TCompiler] @lhs.pos
+                                  @d1.checkt
+                                  @d2.checkt
+  | CoNothing     lhs.checkt = return ()     
+  
+-- Check whether names match.
+sem CoDiag_
+  | CoProgram     lhs.checkn = do checkOneOf @lhs.name @lhs.ppos [@loc.name] @lhs.pos
+                                  @d.checkn
+  | CoPlatform    lhs.checkn = do checkOneOf @lhs.name @lhs.ppos [@loc.name] @lhs.pos
+  | CoInterpreter lhs.checkn = do checkOneOf @lhs.name @lhs.ppos [@loc.name] @lhs.pos
+                                  @d.checkn
+  | CoCompiler    lhs.checkn = do checkOneOf @lhs.name @lhs.ppos [@loc.name] @lhs.pos
+                                  @d1.checkn
+                                  @d2.checkn
+  | CoNothing     lhs.checkn = return ()

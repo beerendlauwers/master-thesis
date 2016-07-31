@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:latexdraw="http://latexdraw.sourceforge.net/namespaces/latexdraw"
+    version="1.1" baseProfile="full">
+    <defs/>
+    <g>
+        <g latexdraw:type="text" id="id878"
+            font-family="Times New Roman" fill="black" font-size="18" latexdraw:x="24.0">
+            <text x="24.0" y="31.0"><![CDATA[function loop (){]]></text>
+        </g>
+        <g latexdraw:type="text" id="id881"
+            font-family="Times New Roman" fill="black" font-size="18" latexdraw:x="39.0">
+            <text x="39.0" y="49.0"><![CDATA[count = count + 1;]]></text>
+        </g>
+        <g latexdraw:type="text" id="id884"
+            font-family="Times New Roman" fill="black" font-size="18" latexdraw:x="42.0">
+            <text x="42.0" y="68.0"><![CDATA[if (y == 0) ;]]></text>
+        </g>
+        <g latexdraw:type="text" id="id887"
+            font-family="Times New Roman" fill="black" font-size="18" latexdraw:x="45.0">
+            <text x="45.0" y="90.0"><![CDATA[else if (x > y) { x = x - y ; loop(); }]]></text>
+        </g>
+        <g latexdraw:type="text" id="id890"
+            font-family="Times New Roman" fill="black" font-size="18" latexdraw:x="85.0">
+            <text x="85.0" y="110.0"><![CDATA[else       { y = y - x ; loop(); }]]></text>
+        </g>
+        <g latexdraw:type="text" id="id893"
+            font-family="Times New Roman" fill="black" font-size="18" latexdraw:x="27.0">
+            <text x="27.0" y="126.0"><![CDATA[}]]></text>
+        </g>
+        <g latexdraw:type="joinedLines" id="id896">
+            <polyline
+                points="155.0,25.0 315.0,25.0 315.0,105.0 305.0,105.0 315.0,105.0 "
+                stroke-width="2.0" stroke="red" fill="none" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id899">
+            <line x1="315.0" x2="305.0" y1="85.0" y2="85.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id900">
+            <line x1="180.0" x2="315.0" y1="45.0" y2="45.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id901">
+            <line x1="135.0" x2="315.0" y1="65.0" y2="65.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id902">
+            <line x1="40.0" x2="80.0" y1="50.0" y2="50.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id903">
+            <line x1="95.0" x2="145.0" y1="50.0" y2="50.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id904">
+            <line x1="60.0" x2="75.0" y1="75.0" y2="75.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id905">
+            <line x1="95.0" x2="110.0" y1="95.0" y2="95.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id906">
+            <line x1="120.0" x2="135.0" y1="95.0" y2="95.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id907">
+            <line x1="155.0" x2="170.0" y1="95.0" y2="95.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id908">
+            <line x1="185.0" x2="200.0" y1="95.0" y2="95.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id909">
+            <line x1="210.0" x2="225.0" y1="95.0" y2="95.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id910">
+            <line x1="155.0" x2="170.0" y1="115.0" y2="115.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id911">
+            <line x1="185.0" x2="200.0" y1="115.0" y2="115.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id912">
+            <line x1="210.0" x2="225.0" y1="115.0" y2="115.0"
+                stroke-width="2.0" stroke="red" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="triangle" id="id913"
+            latexdraw:points="145.0 20.0 155.0 20.0 145.0 30.0 155.0 30.0" transform="rotate(270.0) translate(-175.00000000000003 125.0)">
+            <polygon
+                points="150.0,22.236069 153.58578,29.0 146.41422,29.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="red" fill="none"/>
+        </g>
+        <g latexdraw:type="triangle" id="id914"
+            latexdraw:points="10.0 20.0 20.0 20.0 10.0 30.0 20.0 30.0" transform="rotate(270.0) translate(-40.0 -10.000000000000005)">
+            <polygon
+                points="15.0,22.236069 18.585787,29.0 11.414213,29.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="#009900" fill="none"/>
+        </g>
+        <g latexdraw:type="line" id="id915">
+            <line x1="15.0" x2="5.0" y1="25.0" y2="25.0"
+                stroke-width="2.0" stroke="#009900" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id916">
+            <line x1="75.0" x2="5.0" y1="105.0" y2="105.0"
+                stroke-width="2.0" stroke="#009900" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id917">
+            <line x1="5.0" x2="5.0" y1="25.0" y2="105.0"
+                stroke-width="2.0" stroke="#009900" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="triangle" id="id918"
+            latexdraw:points="30.0 40.0 40.0 40.0 30.0 50.0 40.0 50.0" transform="rotate(-270.0) translate(9.999999999999993 -80.0)">
+            <polygon
+                points="35.0,42.23607 38.585785,49.0 31.414213,49.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="#009900" fill="none"/>
+        </g>
+        <g latexdraw:type="triangle" id="id919"
+            latexdraw:points="30.0 60.0 40.0 60.0 30.0 70.0 40.0 70.0" transform="rotate(-270.0) translate(30.0 -100.00000000000001)">
+            <polygon
+                points="35.0,62.23607 38.585785,69.0 31.414213,69.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="#009900" fill="none"/>
+        </g>
+        <g latexdraw:type="triangle" id="id920"
+            latexdraw:points="35.0 80.0 45.0 80.0 35.0 90.0 45.0 90.0" transform="rotate(-270.0) translate(44.999999999999986 -125.00000000000001)">
+            <polygon
+                points="40.0,82.23607 43.585785,89.0 36.414215,89.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="#009900" fill="none"/>
+        </g>
+        <g latexdraw:type="triangle" id="id921"
+            latexdraw:points="75.0 100.0 85.0 100.0 75.0 110.0 85.0 110.0" transform="rotate(-270.0) translate(24.999999999999986 -185.0)">
+            <polygon
+                points="80.0,102.23607 83.585785,109.0 76.414215,109.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="#009900" fill="none"/>
+        </g>
+        <g latexdraw:type="line" id="id922">
+            <line x1="5.0" x2="30.0" y1="45.0" y2="45.0"
+                stroke-width="2.0" stroke="#009900" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id923">
+            <line x1="5.0" x2="30.0" y1="65.0" y2="65.0"
+                stroke-width="2.0" stroke="#009900" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="line" id="id924">
+            <line x1="5.0" x2="35.0" y1="85.0" y2="85.0"
+                stroke-width="2.0" stroke="#009900" latexdraw:rotationAngle="0.0"/>
+        </g>
+        <g latexdraw:type="triangle" id="id925"
+            latexdraw:points="175.0 40.0 185.0 40.0 175.0 50.0 185.0 50.0" transform="rotate(-270.0) translate(-135.00000000000003 -225.0)">
+            <polygon
+                points="180.0,42.23607 183.58578,49.0 176.41422,49.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="red" fill="none"/>
+        </g>
+        <g latexdraw:type="triangle" id="id926"
+            latexdraw:points="130.0 60.0 140.0 60.0 130.0 70.0 140.0 70.0" transform="rotate(-270.0) translate(-70.00000000000003 -200.0)">
+            <polygon
+                points="135.0,62.23607 138.58578,69.0 131.41422,69.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="red" fill="none"/>
+        </g>
+        <g latexdraw:type="triangle" id="id927"
+            latexdraw:points="300.0 80.0 310.0 80.0 300.0 90.0 310.0 90.0" transform="rotate(-270.0) translate(-220.00000000000006 -390.0)">
+            <polygon points="305.0,82.23607 308.5858,89.0 301.4142,89.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="red" fill="none"/>
+        </g>
+        <g latexdraw:type="triangle" id="id928"
+            latexdraw:points="300.0 100.0 310.0 100.0 300.0 110.0 310.0 110.0" transform="rotate(-270.0) translate(-200.00000000000006 -410.0)">
+            <polygon
+                points="305.0,102.23607 308.5858,109.0 301.4142,109.0"
+                latexdraw:borderPos="outer" stroke-width="2.0"
+                stroke="red" fill="none"/>
+        </g>
+        <g latexdraw:type="text" id="id929"
+            font-family="Times New Roman" fill="#ff3333" font-size="18" latexdraw:x="165.0">
+            <text x="165.0" y="15.0"><![CDATA[\definecolor{color929}{rgb}{1.0,0.2,0.2}
+\color{color929}usedvars]]></text>
+        </g>
+        <g latexdraw:type="text" id="id932"
+            font-family="Times New Roman" fill="#339900" font-size="18" latexdraw:x="5.0">
+            <text x="5.0" y="15.0"><![CDATA[\definecolor{color932}{rgb}{0.2,0.6,0.0}
+\color{color932}cachedvars]]></text>
+        </g>
+    </g>
+    <metadata>
+        <latexdraw:metadata>
+            <latexdraw:displayBorders>false</latexdraw:displayBorders>
+            <latexdraw:autoAdjust>true</latexdraw:autoAdjust>
+            <latexdraw:ppc>50</latexdraw:ppc>
+            <latexdraw:zoom>2.75</latexdraw:zoom>
+            <latexdraw:unit>cm</latexdraw:unit>
+            <latexdraw:classicGrid>true</latexdraw:classicGrid>
+            <latexdraw:gridGap>10</latexdraw:gridGap>
+            <latexdraw:code>0</latexdraw:code>
+            <latexdraw:displayGrid>true</latexdraw:displayGrid>
+            <latexdraw:magneticGrid>true</latexdraw:magneticGrid>
+            <latexdraw:autoUpdate>true</latexdraw:autoUpdate>
+            <latexdraw:version>2.0.8</latexdraw:version>
+            <latexdraw:size>
+                <latexdraw:width>1296</latexdraw:width>
+                <latexdraw:height>1040</latexdraw:height>
+            </latexdraw:size>
+            <latexdraw:position>
+                <latexdraw:x>1272</latexdraw:x>
+                <latexdraw:y>-8</latexdraw:y>
+            </latexdraw:position>
+            <latexdraw:dividerPosition>0.8194444444444444</latexdraw:dividerPosition>
+            <latexdraw:displayCodePanel>true</latexdraw:displayCodePanel>
+            <latexdraw:displayXScale>true</latexdraw:displayXScale>
+            <latexdraw:displayYScale>true</latexdraw:displayYScale>
+            <latexdraw:delimitorOpacity>130</latexdraw:delimitorOpacity>
+        </latexdraw:metadata>
+    </metadata>
+</svg>

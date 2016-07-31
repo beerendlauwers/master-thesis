@@ -1,0 +1,9 @@
+function main ()
+{
+  simple( 5 );
+}
+
+function simple(x)
+{
+    return x;
+}

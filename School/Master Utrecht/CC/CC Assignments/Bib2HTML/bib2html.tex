@@ -1,0 +1,62 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+
+\author{Beerend Lauwers and Frank Wijmans}
+\title{Building a BibTeX-to-HTML compiler}
+\begin{document}
+\section{Data types}	
+	Haskell data type:
+
+   	 \begin{lstlisting}
+    data Bibtex   = BibTex [Entry]
+    data Entry    = Entry Type Title [Attr]
+    data Type     = Book | Inproceedings | Article | ..
+    type Title    = String
+    data Attr     = Attr AttrType String
+    data AttrType = Author | Title | Year | ..	
+    \end{lstlisting}
+	
+	In an ATerm it would look like:
+	
+	\texttt{List [} 
+	
+	\texttt{App ``Entry'' [ App ``Book'', }
+		
+	\texttt{String ``This is the books title.'', }
+		
+	\texttt{[ App ``Attr'' [ App ``Year'' [] , String ``2002''  ] ] ] }
+	
+	\texttt{]}
+	
+	
+	\section{Proposal}
+	
+	Three elements, as given in the project description.
+    
+Firstly, parse a string to the datatype above. We might consider parsing directly into the $ ATerm $ datatype to speed up this process.
+	This seems to be a straight-forward computation using the datatype as a red line through the parser.
+    If we haven't done so directly, build an $ ATerm $ from that datatype.
+\newline\newline
+Secondly, the input (an $ ATerm $) is converted back into a $ BibTex $ value and checked for rules given in the LaTeX documentation. 
+	Why convert it back? $ \rightarrow $ Added type safety, especially handy for type of entry and attributes types.
+	Finally, convert the checked $ BibTex $ database into an HTML-format $ ATerm $. Also, we sort the entries by type, and sort entry attributes as well.
+\newline\newline
+Lastly, pretty-print the $ ATerm $ so that we output an  HTML representation.
+	HTML is tree-like structured, so every node gets three lines, one for each begin and end tag, and a line for the inner value.
+	Every leaf would be printed on one line.
+	In a simple example:
+\newline\newline
+	\texttt{<p>}\newline
+	\texttt{<b>Bolded text in a paragraph</b>}\newline
+	\texttt{</p>}\newline
+
+	\subsection{Excluded functionality}
+	Certain BibTeX functionality, like some lenient notation and non-standard characters, might be troublesome to parse in Haskell. We choose to first get minimal functionality, and afterwards add some corner cases to the existing code.
+	
+	
+	
+\end{document}

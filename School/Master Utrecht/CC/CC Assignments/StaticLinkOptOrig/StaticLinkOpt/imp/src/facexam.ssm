@@ -1,0 +1,94 @@
+    bra L1
+L0:
+    ldr MP
+    ldrr MP SP
+    annote MP -3 -3 green "y (param)"
+    ldl -3
+    annote SP 0 0 green "y"
+    ldc 0
+    annote SP 0 0 green "0"
+    eq
+    annote SP 0 0 green "y==0"
+    brf L2
+    ldc 1
+    annote SP 0 0 green "1"
+    sts -4
+    ldrr SP MP
+    str MP
+    sts -1
+    ajs 0
+    ret
+    bra L3
+L2:
+    ldl -3
+    annote SP 0 0 green "y"
+    ldl -2
+    lda 2
+    annote SP 0 0 green "multiplier"
+    mul
+    annote SP 0 0 green "y*multiplier"
+    ldl -3
+    annote SP 0 0 green "y"
+    ldc 1
+    annote SP 0 0 green "1"
+    sub
+    annote SP 0 0 green "y-1"
+    ldl -2
+    ldc L0
+    jsr
+    mul
+    annote SP 0 0 green "y*multiplier*fac(y-1)"
+    sts -4
+    ldrr SP MP
+    str MP
+    sts -1
+    ajs 0
+    ret
+    ajs 0
+L3:
+    ajs 0
+    ldc 0
+    sts -4
+    ldrr SP MP
+    str MP
+    sts -1
+    ajs 0
+    ret
+L1:
+    bra L5
+L4:
+    ldr MP
+    ldrr MP SP
+    ldc 2
+    annote SP 0 0 green "2"
+    ldl -2
+    sta 2
+    ldc 3
+    annote SP 0 0 green "3"
+    ldl -2
+    ldc L0
+    jsr
+    ldl -2
+    sta 1
+    ldl -2
+    lda 1
+    annote SP 0 0 green "x"
+    trap 0
+    ajs 0
+    ldc 0
+    sts -3
+    ldrr SP MP
+    str MP
+    sts 0
+    ajs 1
+    ret
+L5:
+    ldc 0
+    annote SP 0 0 green "x (var)"
+    ldc 0
+    annote SP 0 0 green "multiplier (var)"
+    ldr MP
+    ldc L4
+    jsr
+    ajs -1
+    ajs -2

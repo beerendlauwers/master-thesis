@@ -1,0 +1,5 @@
+execute
+  program hello in Haskell
+on
+  compiler ghc from Haskell to i686-windows in i686-windows
+end

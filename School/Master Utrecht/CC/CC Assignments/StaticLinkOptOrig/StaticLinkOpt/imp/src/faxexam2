@@ -1,0 +1,16 @@
+var z;
+var multiplier;
+function fac(x,y)
+{
+    if( y == 0 )
+        return x;
+    else
+    { return y * x * multiplier * fac( x, y - 1 ); }
+}
+
+function main()
+{
+    z = 0;
+    multiplier = 2;
+    print fac( 3 );
+}

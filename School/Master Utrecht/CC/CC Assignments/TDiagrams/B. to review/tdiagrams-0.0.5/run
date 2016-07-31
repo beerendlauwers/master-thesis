@@ -1,0 +1,8 @@
+#!/bin/sh
+
+PARSER=./dist/build/parse-tdiag/parse-tdiag
+TYPECHECKER=./dist/build/tc-tdiag/tc-tdiag
+DIAGTOPICTURE=./dist/build/tdiag2picture/tdiag2picture
+PP=./dist/build/pp-picture/pp-picture
+
+cat $1.tdiag | ${PARSER} | ${TYPECHECKER} | ${DIAGTOPICTURE} | ${PP} > $1.tex;
