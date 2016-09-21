@@ -1,0 +1,19 @@
+\beamer@endinputifotherversion {3.12pt}
+\beamer@sectionintoc {1}{Quotation/Anti-quotation: short introduction}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Quotation}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Anti-quotation}{4}{0}{1}
+\beamer@subsectionintoc {1}{3}{Implementation in GHC}{5}{0}{1}
+\beamer@sectionintoc {2}{A simple example}{8}{0}{2}
+\beamer@subsectionintoc {2}{1}{DSL for natural numbers}{8}{0}{2}
+\beamer@subsectionintoc {2}{2}{The CPS Monad}{10}{0}{2}
+\beamer@sectionintoc {3}{Simple postfix and prefix parsers}{15}{0}{3}
+\beamer@subsectionintoc {3}{1}{Postfix parsers}{15}{0}{3}
+\beamer@subsectionintoc {3}{2}{Prefix parsers}{20}{0}{3}
+\beamer@sectionintoc {4}{LL(1) parsers}{24}{0}{4}
+\beamer@subsectionintoc {4}{1}{Greibach Normal Form (GNF)}{24}{0}{4}
+\beamer@subsectionintoc {4}{2}{Example grammar}{34}{0}{4}
+\beamer@subsectionintoc {4}{3}{Constructing the parser}{35}{0}{4}
+\beamer@sectionintoc {5}{LR(0) parsers}{40}{0}{5}
+\beamer@subsectionintoc {5}{1}{Example grammar}{40}{0}{5}
+\beamer@subsectionintoc {5}{2}{LR(0) Automatons 101}{41}{0}{5}
+\beamer@subsectionintoc {5}{3}{Constructing the parser}{44}{0}{5}

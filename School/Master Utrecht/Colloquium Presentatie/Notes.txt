@@ -1,0 +1,20 @@
+BEFORE PRESENTATION, WRITE DOWN ON BLACKBOARD:
+
+data Tree = Leaf | Fork Tree Tree
+
+SLIDE 9:
+
+ON BLACKBOARD: Active terminals = evaluation driven by terminals
+
+SLIDE 10:
+
+This definition of bind is a bit too complex for what we need. We can simplify it to the monad of partial continuations.
+
+Bind is now a type-restricted instance of function application.
+
+Since bind is postfix application of effectful functions, this CPS monad implements postfix function application!
+
+SLIDE 13:
+
+(Explaining quote and act_i)
+Quote initialises the state, and each active terminal act_i transforms the state.
