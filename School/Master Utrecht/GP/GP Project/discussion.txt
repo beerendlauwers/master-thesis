@@ -1,0 +1,33 @@
+discussion.txt
+
+v1: 11-10-2011 - Frank Wijmans
+V2: 24-10-2011
+
+---------------------
+
+
+Initial paper:
+
+http://www.cs.uu.nl/wiki/Alexey/ComparingLibrariesForGenericProgrammingInHaskell
+
+ - Benchmarking
+
+Find libraries on hackage
+
+
+ - Libraries
+
+All libraries have been uploaded into the SVN repository. Now we need to fill in the benchmarkings for every library.
+
+- TeX and others go into doc
+
+Remark on TeX, is it possible to hold version control inside a tex file? i would like to see inside the tex when somebody edited it.
+
+
+
+
+COPIED FROM lib/discussion.txt:
+
+The folder structure should be used to hold the latest, and working versions of the libraries, furthermore there is the indication which libraries we are going to compare.
+
+I think it is good to add some information about which library is working etc.

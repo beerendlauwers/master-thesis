@@ -1,0 +1,13 @@
+- Doesn't seem to support GMap because mapFamily expects an Identity functor, so it will reject any function that changes the types
+
+- Doesn't seem to support support generic functions (in the sense of, say, EMGM's CrushRight functions) because there is no representation plate that data types could be converted to
+
+- Does support generic traversal of a plate
+
+- Does support collection of values in a structure
+
+- Does support updating values in a structure, but they have to remain the same type
+
+- It is interesting to see how similar plate construction is for different functions, automatic construction of boilerplate code for a certain data type using the data type and a meta-description of the generic function might be worth looking into for someone else
+
+- Doesn't seem to support nested datatypes

@@ -1,8 +1,13 @@
-{-# OPTIONS_GHC -XGADTs #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE RankNTypes      #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE GADTs #-}
+Grade Total: 6.64
+
+Comment: The LANGUAGE pragmas also need '>'
+
+> {-# OPTIONS_GHC -XGADTs #-}
+> {-# LANGUAGE TypeOperators #-}
+> {-# LANGUAGE TypeFamilies #-}
+> {-# LANGUAGE RankNTypes      #-}
+> {-# LANGUAGE KindSignatures #-}
+> {-# LANGUAGE GADTs #-}
 
 > module BeerendLauwers1 where
 
@@ -15,7 +20,6 @@ Beerend Lauwers
 
 Exercise 1
 
-Grade: 0.375 + 0.415 + 0.05 = 0.84 / 1.5
 a, b, c) 
 
 data Tree a b	:	Regular					[ * -> * -> * ]				a :+: ((Tree a b) :*: b :*: (Tree a b))
@@ -25,8 +29,19 @@ data HFix f a	:	Higher-Order	        [ ( * -> * ) -> * -> * ]
 data Exists b	:	Regular, Higher-Order	[ * -> * ]	                Exists
 data Exp		:	Regular					[*]                         Bool :+: Int :+: Exp :+: Exp :+: Exp
 
+Comment 1(a): Missing existential for Exists: -0.083
+Grade 1(a): 0.417
+
+Comment 1(b): Kind of HFix is incorrect: -0.083
+Grade 1(b): 0.417
+
+Comment 1(c): Incorrect Bush type. Missing HFix and explanation for Exists.
+              Incorrect Exp type. Missing everything else. +0.01
+Grade 1(c): 0.01
+
+Grade 1: 0.844
+
 Exercice 2
-Grade: 0.5 / 0.5
 
 a)
 
@@ -64,8 +79,10 @@ Test cases:
 > fails3 = eval $  If (IsZero (Int 0)) (Add (Int 5) (Bool False)) (Add (Int 5) (Int 0))
 > fails4 = eval $  If (IsZero (Int 0)) (Add (Bool False) (Int 5)) (Add (Int 5) (Int 0))
 
+Comment 2(a): Why use error when you have Nothing? -0.2
+Grade 2(a): 0.3
+
 b)
-Grade: 0.5 / 0.5
 
 > data ExpF r where
 >   BoolF :: Bool -> ExpF r
@@ -77,8 +94,9 @@ Grade: 0.5 / 0.5
 > newtype Fix f = In { out :: f (Fix f) }
 > type Exp' = Fix ExpF
 
-c) 
-Grade: 1.0 / 1.0
+Grade 2(b): 0.5
+
+c)
 
 > instance Functor ExpF where
 >   fmap f (BoolF b) = BoolF b
@@ -95,13 +113,17 @@ Grade: 1.0 / 1.0
 > evalAlg (IfF (Just (Right p)) r1 r2) = if p then r1 else r2
 > evalAlg _ = Nothing
 
+Comment 2(c): The last case is unnecessary. Again, you are not using the Maybe
+to determine when things don't evaluate: -0.2
+
 > fold :: (Functor f) => (f a -> a) -> Fix f -> a
 > fold f = f . fmap (fold f) . out
 > eval' :: Exp' -> Result
 > eval' = fold evalAlg
 
+Grade 2(c): 0.8
+
 d)
-Grade: 0.6 / 1.0 (No example of impossible value, BoolTF and IntTF are wrong)
 
 r (kind * -> *) is partially applied type (HFix f) (note: f = ExpTF)
 Only when another type is given (for example, Bool),
@@ -109,8 +131,8 @@ does it become a complete type and can it be used to typecheck
 
 
 > data ExpTF :: (* -> *) -> * -> * where
->    BoolTF :: ExpTF r Bool
->    IntTF :: ExpTF r Int
+>    BoolTF :: Bool -> ExpTF r Bool
+>    IntTF :: Int -> ExpTF r Int
 >    IsZeroTF :: (r Int) -> ExpTF r Bool
 >    AddTF :: (r Int) -> (r Int) -> ExpTF r Int
 >    IfTF :: (r Bool) -> (r s) -> (r s) -> ExpTF r s
@@ -118,40 +140,51 @@ does it become a complete type and can it be used to typecheck
 > data HFix f a = HIn { hout :: f (HFix f) a }
 > type ExpT' = HFix ExpTF
 
-e) 0.7 / 1.5 (Doesn't work, looks correct)
+Comment 2(d): Missing Int, Bool in IntTF, BoolTF: -0.1. Missing expression that
+              cannot be defined in ExpT': -0.2
+
+Grade 2(d): 0.7
+
+e)
 
 I seem to be getting a very odd kind error here.
 
 g = HFix f bit
 
 
- class HFunctor f where
- hfmap :: (forall b . g b -> h b) -> f g a -> f h a
- hfold :: (HFunctor f) => (forall b . f r b -> r b) -> HFix f a -> r a
- hfold f = f . hfmap (hfold f) . hout
- newtype Id a = Id { unId :: a }
- evalT' ::ExpT' a -> a
- evalT' = unId . hfold evalAlgT
- evalAlgT ::ExpTF Id a -> Id a
+> {-
+> class HFunctor f where
+>   hfmap :: (forall b . g b -> h b) -> f g a -> f h a
+> hfold :: (HFunctor f) => (forall b . f r b -> r b) -> HFix f a -> r a
+> hfold f = f . hfmap (hfold f) . hout
+> newtype Id a = Id { unId :: a }
+> evalT' ::ExpT' a -> a
+> evalT' = unId . hfold evalAlgT
 
- instance HFunctor ExpTF where
- hfmap f (IntTF x) = IntTF x
- hfmap f (BoolTF x) = BoolTF x
- hfmap f (IsZeroTF x) = IsZeroTF (f x)
- hfmap f (AddTF x y) = AddTF (f x) (f y)
- hfmap f (IfTF p x y) = IfTF (f p) (f x) (f y)
+> instance HFunctor ExpTF where
+>   hfmap f (IntTF x) = IntTF x
+>   hfmap f (BoolTF x) = BoolTF x
+>   hfmap f (IsZeroTF x) = IsZeroTF (f x)
+>   hfmap f (AddTF x y) = AddTF (f x) (f y)
+>   hfmap f (IfTF p x y) = IfTF (f p) (f x) (f y)
 
- evalAlgT exp = case exp of
-                  (IntTF x) -> Id x
-                  (BoolTF x) -> Id x
-                  (IsZeroTF x) -> evalAlgT x
-                  (AddTF x y) -> let (Id resx) = evalAlgT x
-                                     (Id resy) = evalAlgT y
-                                 in Id ( resx + resy )
-                  (IfTF (BoolTF p) x y) -> if p then evalAlgT x else evalAlgT y
+> evalAlgT ::ExpTF Id a -> Id a
+> evalAlgT exp = case exp of
+>                  (IntTF x) -> Id x
+>                  (BoolTF x) -> Id x
+>                  (IsZeroTF x) -> Id (x == 0)
+>                  (AddTF x y) -> let (Id resx) = x
+>                                     (Id resy) = y
+>                                 in Id ( resx + resy )
+>                  (IfTF (p) x y) -> if unId p then unId x else unId y
+> -}
+
+Comment 2(e): Too many small problems to fix.
+Grade 2(e): 0
+
+Grade 2: 2.3
 
 Exercise 3
-Grade: 1.75 / 2.0 (Single generic function, support functions weren't necessary)
 
 > type InfoResult = (Int, Maybe Char, [String])
 
@@ -171,7 +204,7 @@ Grade: 1.75 / 2.0 (Single generic function, support functions weren't necessary)
 > combine (i1, c1, l1) (i2, c2, l2) = (i1+i2, getMaxChar c1 c2, l1 ++ l2)
  
 > getMaxChar :: Maybe Char -> Maybe Char -> Maybe Char
-> getMaxChar (Just x) (Just y) = Just $ chr $ max (ord x) (ord y)
+> getMaxChar (Just x) (Just y) = Just $ max x y
 > getMaxChar (Just x) _ = Just x
 > getMaxChar _ (Just x) = Just x
 > getMaxChar _  _ = Nothing
@@ -183,8 +216,11 @@ Grade: 1.75 / 2.0 (Single generic function, support functions weren't necessary)
 
 > typeinfoTest3 = typeinfo (RCon "Testing" (RCon "Test2" (RProd RInt (RCon "Test4" (RProd RInt RChar))))) (50 :*: (150 :*: 'n'))
 
+Comment 3: No need to do ord/chr. Why Maybe Char and not also Maybe Int? Extra
+           res parameter not needed because you have recursion: -0.5
+Grade 3: 1.5
+
 Exercise 4
-Grade: 1.4 / 2.0 (No recursion!)
 
 > class Desum a where
 >   type Desummed a
@@ -206,5 +242,6 @@ Grade: 1.4 / 2.0 (No recursion!)
    type Desummed (Either a b) = (Maybe a, Maybe b)
    desum (Left a) = (Just a, Nothing)
    desum (Right b) = (Nothing, Just b)
-   
-TOTAL GRADE: 0.84 + 0.5 + 0.5 + 1 + 0.6 + 0.7 + 1.75 + 1.4 = 7.29
+
+Comment 4: Missing recursion in (a,b) and Either a b: -1
+Grade 4: 2

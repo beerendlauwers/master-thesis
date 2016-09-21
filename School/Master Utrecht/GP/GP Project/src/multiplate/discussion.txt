@@ -1,0 +1,86 @@
+Multiplate
+
+The Multiplate library is a combination of the Uniplate and the Compos libraries. [O’Connor, 2011] shows that
+the core data types of Uniplate and Compos are isomorphic, allowing features of both Uniplate and Compos to be used
+and even combined. The only compiler extension the library requires is rank-3-polymorphism.
+
+The library natively supports multi-type traversals for mutually recursive datatypes. Uniplate requires
+multi-parameter type classes for this functionality. Multiplate's implementation is also more intuitive compared
+to Uniplate.
+
+Evaluation
+
+Universe Size
+The Multiplate library scores good on universe size, supporting nearly all datatypes. Only nested datatypes were unclear how to define them.
+
+Subuniverses
+Multiplate does not support subuniverses in the meaning of the comparison paper, so it scores bad.
+
+First-class generic functions
+Like Uniplate, it is not clear how gmapQ would be implemented in Multiplate, so it scores bad.
+
+Abstraction over type constructors
+Multiplate only represents types of kind *. Hence, it does not support gmap or crushRight and scores bad.
+
+Separate Compilation
+Multiplate supports generic universe extension by defining a Plate for the data type, which can then
+be used in the generic traversal functions. Thus, it scores good.
+
+Ad-hoc definitions for datatypes
+Multiplate easily supports ad-hoc cases for certain datatypes through the function purePlate:
+
+(TODO: put simple example of purePlate here)
+
+The library scores good.
+
+Ad-hoc definitions for constructors
+Like Uniplate, Multiplate supports ad-hoc definitions for constructors. It scores good.
+
+Extensibility
+Multiplate does not support exensible generic functions. It scores bad on this criterion.
+
+Multiple Arguments
+It was unclear how to write a generic equality function for Multiplate. Thus, it scores bad.
+
+Constructor Names
+Multiplate does not provide any way to access constructor names, so it scores bad.
+
+Consumers, transformers, and producers.
+The Multiplate library does not contain any means for writing producer functions, so it scores bad on this criterion.
+
+Performance.
+TODO: wait for other libraries
+
+Portability
+Multiplate only requires rank-3 polymorphism, which could potentially be brought down to rank-2 polymorphism [O’Connor, 2011],
+so it scores good.
+
+Overhead of library use
+*Automatic generation of representations: While Multiplate currently does contain any means of automatic
+generation, it should be trivial to generate the Plate record type for a data type using Template Haskell.
+But for the moment, it scores bad.
+
+*Number of structure representations: The Multiplate library only requires a single representation, namely the
+Plate representation.
+
+*Work to instantiate a generic function: The only boilerplate code that must be written in Multiplate is
+the Plate record type for a data type and an instance of that data type for the Multiplate class.
+
+*Work to define a generic function: The Multiplate library scores good on this criterion, as only a Plate record
+with functions has to be defined.
+
+Practical aspects
+The Multiplate library is available online via Hackage, but is in a very early state. It scores sufficient.
+
+Implementation mechanisms
+Multiplate uses a novel way of encoding as data type, namely via a Plate record type. It also uses this record type
+to define update functions on the data type, as well as collection functions.
+
+View
+Like Uniplate, the core of the Multiplate library is the multiplate function, which, given a Plate of functions over some applicative functor f,
+creates a new Plate that applies those functions to the children of each data type in the plate.
+
+Ease of learning and use
+Because Multiplate is currently a very small library, there are not many functions available. However, the basic concept of converting a data type
+into a Plate record type is relatively painless, especially so for mutually recursive data types.
+
