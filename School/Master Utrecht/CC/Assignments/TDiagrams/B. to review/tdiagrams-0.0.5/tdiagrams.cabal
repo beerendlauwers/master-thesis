@@ -1,0 +1,66 @@
+name:                  tdiagrams
+version:               0.0.5
+synopsis:              Utilities for drawing T-diagrams in LaTeX
+description:           Project distribution for Mini Project B of the course on
+                       Compiler Construction (INFOMCCO) at Utrecht University.
+license:               AllRightsReserved
+license-file:          LICENSE
+category:              Compilers/Interpreters
+copyright:             (c) 2012 Utrecht University
+author:                Gabe Dijkstra & Hidde Verstoep
+maintainer:            G.Dijkstra@students.uu.nl
+stability:             provisional
+homepage:              http://www.cs.uu.nl/wiki/Cco/MiniProjects
+tested-with:           GHC == 7.0.3
+build-type:            Simple
+cabal-version:         >= 1.2
+extra-source-files:    AUTHORS, Makefile, src/CCO/Diag/AG.ag,
+                       src/CCO/Diag/AG/Base.ag, src/CCO/Picture/AG.ag,
+                       src/CCO/Picture/AG/Base.ag, 
+                       src/CCO/Picture/AG/Printing.ag,
+                       src/CCO/Diag/AG/Typecheck.ag,
+                       src/CCO/Diag/AG/TDiag2Picture.ag
+                       Design.pdf,
+                       run,
+                       runall,
+                       README,
+                       examples/0.tdiag,
+                       examples/1.tdiag,
+                       examples/2.tdiag,
+                       examples/3.tdiag,
+                       examples/4.tdiag,
+                       examples/5.tdiag,
+                       examples/6.tdiag,
+                       examples/7.tdiag,
+                       examples/8.tdiag,
+                       examples/9.tdiag,
+                       examples/10.tdiag,
+                       examples/11.tdiag,
+                       examples/12.tdiag,
+                       examples/13.tdiag,
+                       examples/14.tdiag
+                       
+executable parse-tdiag
+  main-is:             ParseTDiag.hs
+  build-depends:       base, cco >= 0.0.4
+  other-modules:       CCO.Diag, CCO.Diag.AG, CCO.Diag.Base, CCO.Diag.Lexer,
+                       CCO.Diag.Parser
+  hs-source-dirs:      src
+  
+executable tc-tdiag
+  main-is:             TcTDiag.hs
+  build-depends:       base, containers, cco >= 0.0.4
+  other-modules:       CCO.Diag
+  hs-source-dirs:      src
+  
+executable tdiag2picture
+  main-is:             TDiag2Picture.hs
+  build-depends:       base, containers, cco >= 0.0.4
+  other-modules:       CCO.Diag
+  hs-source-dirs:      src      
+
+executable pp-picture
+  main-is:             PpPicture.hs
+  build-depends:       base, cco >= 0.0.4
+  other-modules:       CCO.Picture, CCO.Picture.AG
+  hs-source-dirs:      src

@@ -1,0 +1,29 @@
+execute
+    execute
+        program hello in Haskell
+    on
+        compile
+        execute
+            interpreter H2CSharp for Haskell in CSharp
+        on
+            interpreter CSharp2Java for CSharp in Java
+        end
+        with
+            execute
+                compiler uuagc from Java to ByteCode in VM
+            on
+                execute
+                    interpreter visor for VM in i686-windows
+                on
+                    platform i686-windows
+                end
+            end
+        end
+    end
+on
+    execute
+        interpreter JIT for ByteCode in SSM
+    on
+        platform SSM
+   end
+end

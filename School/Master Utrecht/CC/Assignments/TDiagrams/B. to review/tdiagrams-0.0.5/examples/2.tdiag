@@ -1,0 +1,5 @@
+compile
+  program hello in Haskell
+with
+  interpreter hugs for Haskell in i686-windows
+end

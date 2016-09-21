@@ -1,0 +1,124 @@
+
+module {CCO.HM2SystemF} {} {}
+
+include "CCO/HM/AG/Base.ag"
+
+imports
+{
+import Data.Set (Set,fromList,union,difference,toList)
+import CCO.DerivingInstances
+import qualified CCO.SystemF as SF
+}
+
+{
+data Subst = Id | Sub SF.Ty SF.Ty | AppSub Subst Subst
+		   
+type Environment = [(Var, SF.Ty)]
+type Label = Int
+type Vars = Int
+}
+
+attr Tm
+    syn ty :: {SF.Ty}
+    syn subst :: {Subst}
+    syn env   :: {Environment}
+    inh env   :: {Environment}
+    syn vars  :: {Vars}
+    inh vars  :: {Vars}
+sem Tm
+    | Tm lhs.ty = @t.ty
+         lhs.subst = @t.subst
+         lhs.env = @t.env
+         lhs.vars = @t.vars
+
+attr Tm_
+    syn ty    :: {SF.Ty}
+    syn subst :: {Subst}
+    syn vars  :: {Vars}
+    inh vars  :: {Vars}
+    
+	syn env   :: {Environment}
+    inh env   :: {Environment}
+	
+	
+sem Tm_ | Lam loc.newVar = undefined
+              lhs.env   = [(@x, @loc.newVar)]
+              t1.env    = @lhs.env
+              lhs.ty  = applySubst @t1.subst (Arr (lookup @x t1.env) (@t1.ty))
+              lhs.subst = @t1.subst
+        | App loc.newVar = undefined
+              t2.env    = applySubstEnv @t1.subst @lhs.env
+              loc.s3    = unify (applySubst @t2.subst @t1.ty) (Arr (@t2.ty) @loc.newVar) @lhs.env
+              lhs.ty  = applySubst @loc.s3 @loc.newVar
+              lhs.subst = AppSub @loc.s3 (AppSub @t2.subst @t1.subst)
+        | Var lhs.ty = inst (lookup @x @lhs.env)
+              lhs.subst = Id
+
+{
+unify :: SF.Ty -> SF.Ty -> Environment -> Subst
+unify f@(SF.TyVar a) s@(SF.TyVar a') env = 
+ if a == a' 
+	then Id
+	else case (lookup a env) of
+	 (Just _) -> case (lookup a' env) of
+				(Just _) -> error "fail"
+				Nothing -> Sub s f
+	 Nothing -> Sub f s
+unify f@(SF.Arr t1 t2) s@(SF.Arr t1' t2') env = AppSub (Sub t1 t1') (Sub t2 t2')
+unify _ _ _ = error "fail"
+
+applySubst :: Subst -> SF.Ty -> SF.Ty
+applySubst Id           a           = a
+applySubst sub          (SF.Arr t1 t2) = SF.Arr (applySubst sub t1) (applySubst sub t2)
+applySubst (Sub a t0)   (SF.Forall a' ty1) = if a /= (SF.TyVar a') then SF.Forall a' (applySubst (Sub a t0) ty1) else SF.Forall a' ty1
+applySubst (Sub a t0)   a'          = if a /= a' then a' else t0
+applySubst (AppSub s1 s2) ty        = applySubst s1 $ applySubst s2 ty
+
+applySubstEnv :: Subst -> Environment -> Environment
+applySubstEnv s = map (\(x,ty) -> (x,applySubst s ty))
+
+inst :: SF.Ty -> SF.Ty
+inst (SF.Forall a (SF.Forall b xs)) = let newVar = undefined -- getNewVar
+                                      in applySubst (Sub (SF.TyVar a) newVar) $ inst (SF.Forall b xs)
+inst (SF.Forall a xs)               = let newVar = undefined -- getNewVar
+                                      in applySubst (Sub (SF.TyVar a) newVar) xs
+                                
+gen :: Environment -> SF.Ty -> SF.Ty
+gen env t1 = let tyset = ftvty t1 `difference` ftvenv env
+             in foldr (\(SF.TyVar x) xs -> SF.Forall x xs) t1 (toList tyset)
+  
+algoW :: Environment -> Tm -> (SF.Ty,Subst)
+algoW env (Tm _ (Var x)) = 
+ case lookup x env of -- is this correct?
+  Just a  ->  (inst a,Id)
+  Nothing -> error "Nope"
+
+algoW env (Tm _ (Lam x t1)) =
+ let newVar = undefined -- getNewVar
+     (ty2,sub1) = algoW (applySubstEnv (Sub (SF.TyVar x) newVar) env) t1 
+ in (applySubst sub1 (SF.Arr newVar ty2),sub1)
+ 
+algoW env (Tm _ (App t1 t2)) =
+ let newVar = undefined -- getNewVar
+     (ty1,sub1) = algoW env t1
+     (ty2,sub2) = algoW (applySubstEnv sub1 env) t2
+     sub3       = unify (applySubst sub2 ty1) (SF.Arr ty2 newVar) env
+ in ((applySubst sub3 newVar),(AppSub sub3 (AppSub sub2 sub1)))
+ 
+algoW env (Tm _ (Let x t1 t2)) =
+ let (ty1,sub1) = algoW env t1
+     (ty, sub2) = algoW (applySubstEnv sub1 $ applySubstEnv (Sub (SF.TyVar x) $ gen (applySubstEnv sub1 env) ty1) env) t2 -- ask Atze if this corresponds with slides
+ in (ty,(AppSub sub2 sub1))
+
+-- TODO: use these functions in the appropriate places
+ftv :: SF.Ty -> Environment -> Set SF.Ty
+ftv ty env = ftvty ty `union` ftvenv env
+
+ftvty :: SF.Ty -> Set SF.Ty
+ftvty (SF.TyVar a) = fromList [SF.TyVar a]
+ftvty (SF.Arr t1 t2) = ftvty t1 `union` ftvty t2
+ftvty (SF.Forall a xs) = ftvty xs `difference` (fromList [SF.TyVar a]) -- check if this really is difference, or is intersection
+
+ftvenv :: Environment -> Set SF.Ty
+ftvenv xs = foldr union (fromList []) $ map (\(x,ty) -> ftvty ty) xs
+}

@@ -1,0 +1,5 @@
+compile
+  program hello in Haskell
+with
+  platform Haskell
+end

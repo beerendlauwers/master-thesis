@@ -1,0 +1,102 @@
+imports
+{
+import CCO.SourcePos        (SourcePos)
+import CCO.Tree             (ATerm (App), Tree (fromTree, toTree))
+import CCO.Tree.Parser      (parseTree, app, arg)
+import Control.Applicative  (Applicative ((<*>)), (<$>), pure)
+}
+
+-------------------------------------------------------------------------------
+-- Syntax
+-------------------------------------------------------------------------------
+
+{
+type Ident = String
+}
+
+data Diag_
+  | Program      p  :: {Ident}  l  :: {Ident}
+  | Platform     m  :: {Ident}
+  | Interpreter  i  :: {Ident}  l  :: {Ident}  m  :: {Ident}
+  | Compiler     c  :: {Ident}  l1 :: {Ident}  l2 :: {Ident}  m :: {Ident}
+  | Execute      d1 :: Diag     d2 :: Diag
+  | Compile      d1 :: Diag     d2 :: Diag
+  | Let          v  :: {Ident}  d1 :: Diag     d2 :: Diag
+  | Use          v  :: {Ident}
+
+data Root
+  | Root d :: Diag
+  
+data Diag
+  | Diag  pos  :: {SourcePos}  d :: Diag_
+
+data CoDiag_  
+  | CoProgram p :: Ident l :: Ident d :: CoDiag
+  | CoPlatform m :: Ident 
+  | CoInterpreter i :: Ident l :: Ident m :: Ident d :: CoDiag
+  | CoCompiler c :: Ident l1 :: Ident l2 :: Ident m :: Ident d1 :: CoDiag d2 :: CoDiag
+  | CoNothing
+
+data CoRoot
+  | CoRoot d :: CoDiag
+  
+data CoDiag
+  | CoDiag pos :: SourcePos d :: CoDiag_  
+  
+-------------------------------------------------------------------------------
+-- Tree instances
+-------------------------------------------------------------------------------
+
+{
+instance Tree Diag where
+  fromTree (Diag pos d) = App "Diag" [fromTree pos, fromTree d]
+  toTree = parseTree [app "Diag" (Diag <$> arg <*> arg)]
+
+instance Tree Diag_ where
+  fromTree (Program p l)        = App "Program"  [fromTree p, fromTree l]
+  fromTree (Platform m)         = App "Platform" [fromTree m]
+  fromTree (Interpreter i l m)  = App "Interpreter"
+                                    [fromTree i, fromTree l, fromTree m]
+  fromTree (Compiler c l1 l2 m) =
+    App "Compiler" [fromTree c, fromTree l1, fromTree l2, fromTree m]
+  fromTree (Execute d1 d2)      = App "Execute" [fromTree d1, fromTree d2]
+  fromTree (Compile d1 d2)      = App "Compile" [fromTree d1, fromTree d2]
+  fromTree (Let v d1 d2)        = App "Let" [fromTree v, fromTree d1, fromTree d2]
+  fromTree (Use v)              = App "Use" [fromTree v]
+
+  toTree = parseTree 
+             [ app "Program"     (Program     <$> arg <*> arg                )
+             , app "Platform"    (Platform    <$> arg                        )
+             , app "Interpreter" (Interpreter <$> arg <*> arg <*> arg        )
+             , app "Compiler"    (Compiler    <$> arg <*> arg <*> arg <*> arg)
+             , app "Execute"     (Execute     <$> arg <*> arg                )
+             , app "Compile"     (Compile     <$> arg <*> arg                )
+             , app "Let"         (Let         <$> arg <*> arg <*> arg        )
+             , app "Use"         (Use         <$> arg                        )
+             ]
+
+instance Tree CoDiag where
+  fromTree (CoDiag pos d) = App "CoDiag" [fromTree pos, fromTree d]
+  toTree = parseTree [app "CoDiag" (CoDiag <$> arg <*> arg)]
+
+instance Tree CoDiag_ where
+  fromTree (CoProgram p l d)       = App "CoProgram"  
+                                     [fromTree p, fromTree l, fromTree d]
+  fromTree (CoPlatform m)          = App "CoPlatform" [fromTree m]
+  fromTree (CoInterpreter i l m d) = App "CoInterpreter"
+                                     [fromTree i, fromTree l, fromTree m, fromTree d]
+  fromTree (CoCompiler c l1 l2 m d1 d2) =
+    App "CoCompiler" [fromTree c, fromTree l1, fromTree l2, fromTree m,
+                      fromTree d1, fromTree d2 ]
+  fromTree CoNothing               = App "CoNothing" []
+
+  toTree = parseTree 
+             [ app "CoProgram"     (CoProgram     <$> arg <*> arg <*> arg        )
+             , app "CoPlatform"    (CoPlatform    <$> arg                        )
+             , app "CoInterpreter" (CoInterpreter <$> arg <*> arg <*> arg <*> arg)
+             , app "CoCompiler"    (CoCompiler    <$> arg <*> arg <*> arg <*> arg 
+                                                          <*> arg <*> arg        )
+             , app "CoNothing"     (pure CoNothing)
+             ]
+
+}

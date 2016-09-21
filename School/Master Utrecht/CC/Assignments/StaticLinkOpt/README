@@ -1,0 +1,18 @@
+STATIC-LINK OPTIMISATION README
+-------------------------------
+Team Members: Beerend Lauwers and Frank Wijmans
+GHC Version used: 7.2.1
+
+
+IMPLEMENTED FUNCTIONALITY
+-------------------------
+We have implemented the functionality as described in the mini-project description.
+
+USAGE
+-----
+For implementation details, refer to the documentation PDF.
+
+INSTALLATION INSTRUCTIONS
+-------------------------
+For those on Windows, you can run the command "type ..\test\gcd | runghc ImpC.hs > ..\test\gcdoutput.ssm"
+in a command line in the directory where ImpC.hs is located to test output. We have included the SSM UI created by Atze in the folder 'ssm-ui'.

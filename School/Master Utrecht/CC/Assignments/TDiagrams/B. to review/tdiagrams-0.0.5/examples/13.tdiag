@@ -1,0 +1,5 @@
+execute
+  program hello in i686-windows
+on
+  use undefined
+end

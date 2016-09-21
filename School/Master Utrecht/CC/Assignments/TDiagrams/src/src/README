@@ -1,0 +1,32 @@
+T-DIAGRAMS README
+-----------------
+Team Members: Tim Kuipers, Frank Wijmans and Beerend Lauwers
+GHC Version used: 7.2.1
+Build dependencies: base >= 4, ansi-terminal >= 0.5, cco, uulib >= 0.9, containers >= 0.4
+
+IMPLEMENTED FUNCTIONALITY
+-------------------------
+We have implemented a type-checking system and a powerful T-Diagram to LaTeX generator using UUAG.
+All modules are iowrapped Components, allowing one to process diagram files via the command line.
+
+USAGE
+-----
+For implementation details, refer to the Haddock documentation, found under "documentation".
+
+Firstly, compile the .ag source files as follows:
+
+uuagc ["-Hdfcswm"] "TcTDiag.ag"
+uuagc ["-Hdfcswm"] "TDiag2Picture.ag"
+
+Then, you can execute the modules via the command line as such:
+
+(Windows)
+
+type basic1.tdiag | runghc ParseTDiag.hs | runghc TcTDiag.hs | runghc TDiag2Picture.hs | runghc PpPicture.hs | runghc toFullTex.hs > testtex.tex
+
+Several well-typed examples have been provided: basic1.tdiag, basic2.tdiag, basic3, basic4 and basic5.tdiag.
+Two ill-typed examples are provided: illtyped1.tdiag and illtyped2.tdiag.
+
+The example advanced1.tdiag shows the limitations of the system: adding an interpreter between a compiler and a platform
+(in the example, this is the 'visor' interpreter) requires us to offset both the interpreter horizontally, and the right-hand side 
+block horizontally and vertically. Solving this proved very hard in our system, which was already quite complex.

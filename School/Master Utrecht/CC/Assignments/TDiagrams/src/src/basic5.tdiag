@@ -1,0 +1,9 @@
+execute
+    compiler uuagc from HHH to Java in i686-windows
+on
+    execute
+        interpreter hugs for i686-windows in AAA
+    on
+        platform AAA
+    end
+end

@@ -1,0 +1,9 @@
+compile
+  program hello in Haskell
+with
+  compile
+    compiler ghc from Haskell to i686-windows in i686-windows
+  with
+    compiler ghc' from i686-windows to i568-windows in i686-windows
+  end
+end

@@ -1,0 +1,10 @@
+type basic.tdiag | runghc ParseTDiag.hs
+
+type basic.tdiag | runghc ParseTDiag.hs | runghc ..\..\src\src\bs.hs
+
+typeCheck.hs ipv bs.hs
+
+
+
+
+type basic.tdiag | runghc ParseTDiag.hs | runghc ..\..\src\src\TimsTDiag2Picture.hs | runghc PpPicture.hs

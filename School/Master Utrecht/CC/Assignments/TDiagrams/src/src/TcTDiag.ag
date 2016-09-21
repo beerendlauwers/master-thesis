@@ -1,0 +1,150 @@
+{
+import CCO.SourcePos
+import CCO.Component  (Component, component, printer, ioWrap)
+import CCO.Tree       (ATerm, Tree (toTree), parser)
+import Control.Arrow  ((>>>), arr)
+import CCO.Feedback
+import CCO.Printing (text)
+}
+
+include "CCO\\Diag\\AG\\Base.ag"
+
+{
+
+-- *Datatypes
+
+-- |Type synonym used in 'Ty' for clarity.
+type LanguageType       = Ident
+
+-- |Type synonym used in 'Ty' for clarity.
+type PlatformNameType   = Ident
+
+-- |Types of diagram blocks. Does not incorporate names, as these are not part of any type.
+data Ty = ProgramType LanguageType
+        | PlatformType PlatformNameType 
+        | InterpreterType LanguageType PlatformNameType 
+        | CompilerType LanguageType LanguageType PlatformNameType
+        | TyErr [String]
+        deriving (Eq) -- Show not derived
+        
+instance Show Ty where
+ show (ProgramType l) = "Program (in " ++ l++")"
+ show (PlatformType p) = "Platform (" ++ p++")"
+ show (InterpreterType l p) = "Interpreter (for " ++ l ++ " in " ++ p++")"
+ show (CompilerType l1 l2 p) = "Compiler (from " ++ l1 ++ " to " ++ l2 ++ " in " ++ p++")"
+ show (TyErr str) = "***> Uncaught type-error! :\n" ++ concat str
+}
+
+attr Diag
+    syn ty :: { Ty }
+sem Diag
+    | Diag lhs.ty = @d @pos
+
+attr Diag_
+    syn ty :: { SourcePos -> Ty }
+sem Diag_
+    | Program           lhs.ty = const $ ProgramType @l
+    | Platform          lhs.ty = const $ PlatformType @m
+    | Interpreter       lhs.ty = const $ InterpreterType @l @m
+    | Compiler          lhs.ty = const $ CompilerType @l1 @l2 @m
+    | Execute           lhs.ty = genericEvaluate @d1.ty @d2.ty "execute"
+    | Compile           lhs.ty = genericEvaluate @d1.ty @d2.ty "compile"
+{
+
+-- *Helper functions for typechecking
+
+-- |Evaluates two 'Ty' values to a valid 'Ty', or a 'TyErr'. This function catches nonsensical constructs shared between 'Execute' and 'Compile' actions.
+genericEvaluate :: Ty -> Ty -> String -> (SourcePos -> Ty)
+genericEvaluate a@(PlatformType _) b t  = \pos -> noConstruct a b pos t
+genericEvaluate (TyErr e1) (TyErr e2) _ = const $ TyErr (e1 ++ e2)
+genericEvaluate e@(TyErr _) _ _         = const $ e
+genericEvaluate _ e@(TyErr _) _         = const $ e
+genericEvaluate a b t | t == "execute"  = evaluateExecute a b t
+genericEvaluate a b t | t == "compile"  = evaluateCompile a b t
+
+-- |Evaluates two 'Ty' values to a valid 'Ty', or a 'TyErr'. Handles 'Execute'-specific rules.
+evaluateExecute :: Ty -> Ty -> String -> (SourcePos -> Ty)
+evaluateExecute a (InterpreterType l m) t =
+ if getOutLang a == l
+  then const $ substituteLangFor m a
+  else \pos -> noMatch (getOutLang a) l pos
+evaluateExecute (CompilerType l1 l2 m') (PlatformType m) t =
+ if m == m'
+  then const $ CompilerType l1 l2 m
+  else \pos -> noMatch m' m pos
+evaluateExecute a (PlatformType m) t =
+ if getOutLang a == m
+  then const $ PlatformType (getInLang a)
+  else \pos -> noMatch (getOutLang a) m pos
+evaluateExecute a b t = \pos -> noConstruct a b pos t
+
+-- |Evaluates two 'Ty' values to a valid 'Ty', or a 'TyErr'. Handles 'Compile'-specific rules.
+evaluateCompile :: Ty -> Ty -> String -> (SourcePos -> Ty)
+evaluateCompile a (CompilerType l1 l2 m) t = 
+ if getOutLang a == l1
+  then const $ substituteLangFor l2 a
+  else \pos -> noMatch (getOutLang a) l1 pos 
+evaluateCompile a b t = \pos -> noConstruct a b pos t
+
+-- |Given a 'Ty', get the language it works on.
+getOutLang :: Ty -> String
+getOutLang (ProgramType l) = l
+getOutLang (InterpreterType l m) = m
+getOutLang (CompilerType l1 l2 m) = m
+getOutLang _ = error "Platform has no destination language."
+
+-- |Given a 'Ty', get the language it works with.
+getInLang :: Ty -> String
+getInLang (PlatformType l) = l
+getInLang (InterpreterType l m) = l
+getInLang (CompilerType l1 l2 m) = l1
+getInLang _ = error "Program has no origin language."
+
+-- |Substitutes the language in the given 'Ty'.
+substituteLangFor :: String -> Ty -> Ty
+substituteLangFor l a = rep a
+ where
+  rep (ProgramType _) = ProgramType l
+  rep (InterpreterType l1 _) = InterpreterType l1 l
+  rep (CompilerType l1 _ m) = CompilerType l1 l m
+  rep _ = error "Platform has no destination language." 
+
+-- |Generates a 'TyErr' with a pretty-printed error message.
+noMatch :: String -> String -> SourcePos -> Ty
+noMatch     a b pos         = TyErr [showPos pos++"\n\tThe types\n\t\t"++a++"\n\tand\n\t\t"++b++"\n\tdon't match.\n"]
+
+-- |Generates a 'TyErr' with a pretty-printed error message.
+noConstruct :: Ty -> Ty -> SourcePos -> String -> Ty
+noConstruct a b pos constr  = TyErr [showPos pos++"\n\tCannot "++constr++" a\n\t\t"++show a++"\n\twith a\n\t\t"++show b++"\n"]
+
+-- |Converts a 'SourcePos' to a 'String'.
+showPos :: SourcePos -> String
+showPos (SourcePos source p) = showS source ++ ":" ++ showP p ++ ":"
+    where
+    showP (Pos a b) = show a ++ ":" ++ show b
+    showP EOF = "end-of-file"
+    showS Stdin = "<interactive>"
+    showS (File path) = path
+
+-- *Component code
+ 
+-- |Given an 'ATerm', converts it to a 'Diag' and typechecks it, either returning the original 'ATerm' or halting execution with errors.
+typeCheck :: Component ATerm ATerm
+typeCheck = component $ typecheck'
+ where
+   typecheck' = \aterm ->
+    ( (toTree aterm :: Feedback Diag) >>= (\diag -> diag2feedback diag) ) >> return aterm
+
+-- |Given a 'Diag', validates it and either prints out typecheck error messages or finishes.
+diag2feedback :: Diag -> Feedback ()
+diag2feedback d = let validate = \file -> ty_Syn_Diag $ wrap_Diag (sem_Diag file) (Inh_Diag) 
+                  in case validate d of
+                       TyErr e -> sequence_ $ map (errorMessage.text) e
+                       _       -> return ()
+
+-- |Parses, typechecks and prints out a diagram 'ATerm'.                 
+main :: IO ()
+main = ioWrap (parser >>> typeCheck >>> printer)
+
+-- *UUAGC-generated code
+}

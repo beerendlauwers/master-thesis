@@ -1,0 +1,129 @@
+imports{
+import CCO.Picture.AG
+import Data.Map (Map)
+import qualified Data.Map as M
+import Data.Char
+import Text.Printf
+import Control.Applicative
+import Data.Maybe
+import Control.Monad
+}
+
+{
+data Draw = Draw { width :: Double
+                 , height :: Double
+                 , draw :: Double -> Double -> [Command] -> [Command]
+                 }
+
+mindim :: Draw -> Draw -> Draw
+mindim d1 d2 = Draw (max (width d1) (width d2))
+                    (max (height d1) (height d2))
+                    (draw d2)                
+                    
+-- | Translate a Draw by its height.
+neg :: Draw -> Draw
+neg d = d { draw = (\x y -> draw d x (y - height d)) }
+                 
+}
+
+attr CoRoot
+  syn draw  :: {Picture}
+  
+sem CoRoot
+  | CoRoot lhs.draw  = let d = @d.draw in Picture (width d, height d) (draw d 0 (height d) [])
+
+attr CoDiag
+  syn draw    :: {Draw}
+  inh program :: {String -> Draw}
+  
+attr CoDiag_
+  syn draw   :: {Draw}
+  inh program :: {String -> Draw}
+
+sem CoDiag_
+  | CoProgram     d.program  = drawProgram @p
+  | CoCompiler    d1.program = @lhs.program
+  
+sem CoDiag_
+  | CoProgram     lhs.draw = let lhs = drawProgram @p @l
+                                 d   = @d.draw
+                             in mindim lhs $ case @d.type_ of
+                                  TCompiler -> Draw (width d - 57.5)
+                                                    (height lhs + height d - 10)
+                                                    (\x y z -> draw lhs x y $ draw d (x + 57.5) (y - height lhs + 10) z)
+                                  _ ->         Draw (width d + 7.5)
+                                                    (height lhs + height d)
+                                                    (\x y z -> draw lhs x y $ draw d (x + 7.5) (y - height lhs) z)
+  | CoPlatform    lhs.draw = drawPlatform @m
+  | CoInterpreter lhs.draw = let lhs = drawInterpreter @i @l @m
+                                 d   = @d.draw
+                             in mindim lhs $ 
+                                  Draw (width d)
+                                       (height lhs + height d)
+                                       (\x y z -> draw lhs x y $ draw d x (y - height lhs) z)
+  | CoCompiler    lhs.draw = let lhs = drawCompiler @c @l1 @l2 @m
+                                 d1  = @d1.draw
+                                 d2  = @d2.draw
+                                 p   = @lhs.program @l2
+                                 r@(Draw w h d) = mindim lhs $ case @d1.type_ of
+                                   TCompiler -> Draw (max (width lhs + width d1) (50 + width d2))
+                                                     (max (height d1) (height lhs + height d2))
+                                                     (\x y z -> draw lhs x y $ draw d1 (x + width lhs) y $ draw d2 (x + 50) (y - 30) z)
+                                   _         -> Draw (max (width lhs + width d1) (50 + width d2))
+                                                     (max (10 + height d1) (height lhs + height d2))
+                                                     (\x y z -> draw lhs x y $ draw d1 (x + width lhs) (y - 10) $ draw d2 (x + 50) (y - 30) $ draw p (x + width lhs - 7.5) (y + height p - 10) z)
+                             in r
+  | CoNothing     lhs.draw = drawNothing                                                
+                                           
+
+{
+drawProgram p l = neg $ Draw 65 30
+  (\x y z -> 
+    Put (x+7.5,y+0) (Line (1,0) 50) :
+    Put (x+7.5,y+0) (Line (0,1) 15) :
+    Put (x+7.5,y+15) (Line (-1,2) 7.5) :
+    Put (x+57.5,y+15) (Line (1,2) 7.5) :
+    Put (x+57.5,y+0) (Line (0,1) 15) :
+    Put (x+0,y+30) (Line (1,0) 65) :
+    Put (x+7.5,y+15) (Makebox (50,15) p) :
+    Put (x+7.5,y+0) (Makebox (50,15) l) :
+    z)
+    
+drawPlatform m = neg $ Draw 50 30
+  (\x y z -> 
+    Put (x+0,y+15) (Line (5,-3) 25) :
+    Put (x+25,y+0) (Line (5,3) 25) :
+    Put (x+0,y+15) (Line (0,1) 15) :
+    Put (x+0,y+30) (Line (1,0) 50) :
+    Put (x+50,y+30) (Line (0,-1) 15) :
+    Put (x+0,y+15) (Makebox (50,15) m) :
+    z)
+    
+drawInterpreter i l m = neg $ Draw 50 30
+  (\x y z -> 
+    Put (x+0,y+0) (Framebox (50,30) "") :
+    Put (x+0,y+20) (Makebox (50,10) l) :
+    Put (x+0,y+10) (Makebox (50,10) i) :
+    Put (x+0,y+0) (Makebox (50,10) m) :
+    z)
+    
+drawCompiler c l1 l2 m = neg $ Draw 150 30
+  (\x y z -> 
+    Put (x+50,y+0) (Line (0,1) 20) :
+    Put (x+50,y+20) (Line (-1,0) 50) :
+    Put (x+0,y+20) (Line (0,1) 10) :
+    Put (x+0,y+30) (Line (1,0) 150) :
+    Put (x+150,y+30) (Line (0,-1) 10) :
+    Put (x+150,y+20) (Line (-1,0) 50) :
+    Put (x+100,y+20) (Line (0,-1) 20) :
+    Put (x+100,y+0) (Line (-1,0) 50) :
+    Put (x+0,y+20) (Makebox (50,10) l1) :
+    Put (x+50,y+20) (Makebox (50,10) "$\\longrightarrow$") :
+    Put (x+100,y+20) (Makebox (50,10) l2) :
+    Put (x+50,y+10) (Makebox (50,10) c) :
+    Put (x+50,y+0) (Makebox (50,10) m) :
+    z)
+    
+drawNothing = neg $ Draw 0 0
+  (\x y z -> z)
+}

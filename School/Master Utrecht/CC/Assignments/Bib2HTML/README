@@ -1,0 +1,58 @@
+BIBTEX2HTML README
+---------------
+Team Members: Beerend Lauwers and Frank Wijmans
+GHC Version used: 7.2.1
+Build dependencies: base >= 4, ansi-terminal >= 0.5, cco, uulib >= 0.9, containers >= 0.4
+
+IMPLEMENTED FUNCTIONALITY
+-------------------------
+We have largely concentrated on a dual functionality of the library and a high level of modularity of the bibtex2html module.
+The library provides two modes of usage, which are described in the section USAGE.
+Our BibTex-checking module is very flexible, and allows for the easy adding of more checks and transformations of the BibTex datatype.
+We have used a Component-oriented approach wherever possible.
+Furthermore, our HTML-generating code allows for ad-hoc formatting of attribute types and arbitrary sorting of the attribute types.
+The 'createEntryText' function can easily be extended to even allow for entry-specific arbitrarily sorted attributes.
+
+We have also implemented a very basic combinator-based parser using the uulib package, and a simple but very elegant HTML pretty-printer.
+
+USAGE
+-----
+For implementation details, refer to the Haddock documentation.
+
+There are two forms of usage:
+
+1) File Input - File Output mode:
+Call bibtex2html with two parameters: a path to an input BibTex file and a path to an output HTML file.
+
+Example: Main.exe "test.bib" "test.html" reads test.bib, parses it, checks it, outputs possible warning messages,
+and generates pretty-printed HTML that is written to test.html.
+
+2) Piped mode:
+Use pipes to pass intermediate results between the individual programs and output the final result to a file.
+NOTE: This mode has not been tested, but should work.
+
+INSTALLATION INSTRUCTIONS
+-------------------------
+
+1) File Input - File Output mode:
+
+Install the bibtex2html package with the following commands:
+
+runhaskell Setup configure
+runhaskell Setup build
+
+Unix / Linux:
+sudo runhaskell Setup install
+
+Windows (As Administrator):
+runhaskell Setup install
+
+To specifically build for a certain compiler, do:
+
+runhaskell Setup configure --with-compiler=PATH_TO_GHC_BINARY --user
+
+(other commands remain the same)
+
+2) Piped mode:
+
+Compile the Bib2HTML.hs, ParseBib.hs and PPHTML.hs source files with the ghc command and use them with pipes.

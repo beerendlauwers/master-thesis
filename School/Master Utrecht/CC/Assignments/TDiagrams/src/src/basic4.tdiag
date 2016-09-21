@@ -1,0 +1,17 @@
+execute
+    execute
+        program hello in Haskell
+    on
+        compile
+            interpreter hugs for Haskell in HHH
+        with
+            execute
+                compiler uuagc from HHH to Java in i686-windows
+            on
+                platform i686-windows
+            end
+        end
+    end
+on
+    platform Java
+end
