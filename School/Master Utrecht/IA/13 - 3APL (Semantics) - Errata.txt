@@ -1,0 +1,1 @@
+Erratum: p 14, def 9: in conclusion of transition rule: "\pi" should read "\pi \eta"

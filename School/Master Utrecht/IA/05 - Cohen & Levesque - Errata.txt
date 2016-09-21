@@ -1,0 +1,1 @@
+Errata:: p 251, Thm 7.2, 3rd line: "INTEND2" -> "INTEND1"; pagina 236, prop 4.2, first part of first clause "p \/ q". should read "p /\ q".
