@@ -1,0 +1,28 @@
+	Thu Dec 01 19:01 2011 Time and Allocation Profiling Report  (Final)
+
+	   ProfileF1.exe +RTS -hd -p -K100M -RTS
+
+	total time  =        0.16 secs   (8 ticks @ 20 ms)
+	total alloc =  40,002,520 bytes  (excludes profiling overheads)
+
+COST CENTRE                    MODULE               %time %alloc
+
+f1                             Main                  87.5  100.0
+main                           Main                  12.5    0.0
+
+
+                                                                                               individual    inherited
+COST CENTRE              MODULE                                               no.    entries  %time %alloc   %time %alloc
+
+MAIN                     MAIN                                                   1           0   0.0    0.0   100.0  100.0
+ main                    Main                                                 232           1  12.5    0.0    12.5    0.0
+ CAF:main2               Main                                                 226           1   0.0    0.0     0.0    0.0
+  main                   Main                                                 233           0   0.0    0.0     0.0    0.0
+ CAF:f1                  Main                                                 225           1   0.0    0.0     0.0    0.0
+  f1                     Main                                                 234           1   0.0    0.0     0.0    0.0
+ CAF:f6                  Main                                                 224           1   0.0    0.0     0.0    0.0
+  f1                     Main                                                 235           0   0.0    0.0     0.0    0.0
+ CAF:f1_xs               Main                                                 223           1   0.0    0.0    87.5  100.0
+  f1                     Main                                                 236           0  87.5  100.0    87.5  100.0
+ CAF                     GHC.IO.Handle.FD                                     153           2   0.0    0.0     0.0    0.0
+ CAF                     GHC.IO.Encoding.CodePage                             125           1   0.0    0.0     0.0    0.0

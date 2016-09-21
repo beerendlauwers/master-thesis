@@ -1,0 +1,64 @@
+Name:                s3720942-s3728420-Assignment02
+Version:             0.1
+Synopsis:            Second assignment for the Advanced Functional Programming courses 2011/2012.
+License:             BSD3
+License-file:        LICENSE
+Author:              Beerend Lauwers, Augusto Passalaqua	
+Maintainer:          A.PassalaquaMartins@students.uu.nl       
+Category:            Data
+Build-type:          Simple
+Cabal-version:       >=1.2
+
+extra-source-files:
+  LICENSE,
+  src/Profiles/conc/ProfileConc.hp,
+  src/Profiles/conc/ProfileConc.hs,
+  src/Profiles/conc/ProfileConc.prof,
+  src/Profiles/conc/ProfileConc_simple.ps,
+  src/Profiles/conc/ProfileConc_types.ps,
+  src/Profiles/concprime/ProfileConcPrime.hp,
+  src/Profiles/concprime/ProfileConcPrime.hs,
+  src/Profiles/concprime/ProfileConcPrime.prof,
+  src/Profiles/concprime/ProfileConcPrime_closure.ps,
+  src/Profiles/concprime/ProfileConcPrime_simple.ps,
+  src/Profiles/concprime/ProfileConcPrime_type.ps,
+  src/Profiles/f1/ProfileF1.hp,
+  src/Profiles/f1/ProfileF1.hs,
+  src/Profiles/f1/ProfileF1.prof,
+  src/Profiles/f1/ProfileF1_closure.ps,
+  src/Profiles/f1/ProfileF1_simple.ps,
+  src/Profiles/f1/ProfileF1_type.ps,
+  src/Profiles/f1better.hp,
+  src/Profiles/f1better.hs,
+  src/Profiles/f1better.prof,
+  src/Profiles/f1better.ps,
+  src/Profiles/f2/ProfileF2.hp,
+  src/Profiles/f2/ProfileF2.hs,
+  src/Profiles/f2/ProfileF2.prof,
+  src/Profiles/f2/ProfileF2_closure.ps,
+  src/Profiles/f2/ProfileF2_simple.ps,
+  src/Profiles/f2/ProfileF2_type.ps,
+  src/Profiles/profiling explanation.txt,
+  src/Profiles/rev/ProfileRev.hp,
+  src/Profiles/rev/ProfileRev.hs,
+  src/Profiles/rev/ProfileRev.prof,
+  src/Profiles/rev/ProfileRev_closure.ps,
+  src/Profiles/rev/ProfileRev_simple.ps,
+  src/Profiles/rev/ProfileRev_type.ps,
+  src/Profiles/revprime/ProfileRevPrime.hp,
+  src/Profiles/revprime/ProfileRevPrime.hs,
+  src/Profiles/revprime/ProfileRevPrime.prof,
+  src/Profiles/revprime/ProfileRevPrime_closure.ps,
+  src/Profiles/revprime/ProfileRevPrime_simple.ps,
+  src/Profiles/revprime/ProfileRevPrime_type.ps
+
+Library
+  hs-source-dirs: src
+  
+  Exposed-modules:
+    Assignment.Tree,
+    Assignment.Fix,
+    Assignment.TypeAB
+
+  build-depends:
+    base		>= 4   && < 5

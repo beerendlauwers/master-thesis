@@ -1,0 +1,31 @@
+The development of dynamic web pages is a field that has been mostly dominated by dynamic programming languages. % \cite{}
+These languages tend to have a good level of expressibility, flexibility and they usually provide good (or even just ``good enough'') performance for this use.
+However, they usually lack most of the advantages many functional programming languages provide, such as type--safety and referential transparency.
+The use of the web has also evolved in the past decade to provide sets of dynamic web pages as a single application for end--users, following a client/server model.
+Given the stateless nature of HTTP as the underlying protocol this only aggravates the need for a set of good programming tools to abstract away from this limitation.
+In this report we present an elaboration on this issue and some solutions developed using the Clean programming language and some web frameworks for Haskell.
+
+Haskell is a functional programming language that has been presented by some as an option for web development. \cite{snap,warp}
+It is a lazy and strongly typed language that provides the programmer with type safety that can catch several common programming mistakes.
+However, the presence of a type inference system also frees the programmer from having to extensively and explicitly declare types, reducing the amount of work required, and giving the same ``feel'' provided by dynamic languages such as Ruby or Python, which are popular for web development.
+The availability of a mature implementation in the form of the Haskell Platform also enables the language user to take advantage of the language laziness without taking too much or any of a performance hit.
+
+From a programming point of view, the major issue with interactive applications based on the web is the stateless nature of the environment.
+Most developed solutions to this issue involve some sort of abstraction mechanism by storing and reloading state information on each connection.
+The iTask work flow management framework developed in Clean presents an alternative solution to solving the statelessness issue by storing partial computation as the state data.
+\sref{problem} presents the issue and these developments with more detail.
+
+In general, a web framework will provide state management and I/O both from web connections and from back--end storages such as databases.
+Several frameworks provide other features such as automatic URL generation, type--safe HTML form generation, extensive authentication capabilities and in--memory databases.
+Furthermore, some frameworks provide scaffolding tools for easy installation and configuration of a website.
+In \sref{frameworks} we present the following frameworks for web development in Haskell:
+\begin{enumerate}
+	\item Happstack
+	\item Snap
+	\item Yesod
+\end{enumerate}
+These frameworks have been selected because of our impression that they are the most promising frameworks with the most active development communities.
+In \sref{comp}, we present a more in--depth comparison of the advanced features that are present in the libraries available for the Haskell developer.
+We also present a comparison of the web frameworks cited above considering both the advanced features and external factors such as quality of documentation and project status.
+
+In section \ref{conclusion} we present a conclusion of the comparison of frameworks and list some of the promising developments.

@@ -1,0 +1,39 @@
+Lemma: length( xs ++ ys) = length xs + length ys
+
+Case []
+
+length([] ++ ys) = length [] + length ys
+= {def. (++) and def. length}
+length( ys ) = 0 + length ys
+= {0 is neutral element for +}
+length ys = length ys
+
+Case (x:xs)
+
+length( (x:xs) ++ ys) = length (x:xs) + length ys
+= {def. (++)}
+length( x : xs ++ ys) = length (x:xs) + length ys
+= {def. length and + is associative}
+1 + length( xs ++ ys) = 1 + (length xs + length ys)
+
+(We can now once again expand length( xs ++ ys ) and (length xs + length ys) for the lhs and rhs, respectively, to further construct a proof.)
+
+Theorem: length( flatten x ) = size x
+
+Case (Leaf x)
+
+length( flatten (Leaf x) ) = size (Leaf x)
+= {def. size and def. flatten}
+length( [x] ) = 1
+= {def. length}
+1 = 1
+
+Case (Node l r)
+
+length( flatten (Node l r) ) = size (Node l r)
+= {def. flatten and def. size}
+length( flatten l ++ flatten r ) = size l + size r
+= {Lemma}
+length( flatten l ) + length( flatten r ) = size l + size r
+
+(We can now further construct our proof by proving length( flatten l ) = size l and length( flatten r ) = size r, as a + b = c + d iff a = c and b = d.)

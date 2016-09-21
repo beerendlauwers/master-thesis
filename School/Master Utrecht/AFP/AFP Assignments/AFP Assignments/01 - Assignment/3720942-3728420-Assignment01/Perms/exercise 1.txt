@@ -1,0 +1,15 @@
+Exercise 1
+
+The core problem with this concept is that functions of this type will not always return the same value, breaking referential transparency.
+
+Let us assume we have a function readLn of type IO a -> a that reads a single line from the input, and outputs a string.
+
+The compiler could decide to optimize the expression [readLn, readLn], resulting in some odd results:
+
+1) The compiler could execute readLn once because it believes referential transparency is still in effect,
+   causing the expression [readLn, readLn] to result in something like ["Line 1", "Line 1"]
+   
+2) The compiler could decide to thread the execution of the expression [readLn, readLn]. The race condition caused
+   by the second readLn thread finishing earlier than the first could result in a result like ["Line 2", "Line 1"],
+   because the second readLn will have consumed the first line, causing the first readLn to consume the second.
+   

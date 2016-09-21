@@ -1,0 +1,33 @@
+With the increasing use of the web as a platform for interactive applications, the need for better tools for developing those applications also increases.
+The main technique used is the abstraction away from the stateless nature of the HTTP protocol.
+
+A web application is one or a set of web pages that are at least partially dynamically generated and may allow the user to perform actions such as input or query data stored remotely.
+It is usual for the user to initiate the application by loading a web page with which the user receives some session identifying information.
+Each action the user performs or, through client side scripts, that the browser performs on the user's behalf, can potentially require informing or querying the server.
+Receiving the request, the server has to identify the client session and fetch (or even calculate) the user data, possibly from external sources.
+This can put unnecessary strain on the server or its external sources. 
+A common solution is to save user information along with the session identifying information.
+While this may impact bandwidth usage, it does mean that only user identification information must be saved server--side.
+
+Interactive applications present another issue: that of validation.
+Since data presentation (on the client) and processing (on the server) are decoupled and the presentation is out of the application's control, it is also important to validate form data with caution on every request.
+It must be assumed that the received data could have been altered, tampered with or corrupted, and not validating data can allow issues such as disrupting non--critical services or exposing sensitive or personal data.
+It is also important from a practical point of view to have ways to properly validate and format outgoing data in automated ways to reduce the amount of potential programming errors passing unnoticed.
+
+Research has shown that the type--safety provided by strongly typed languages, when used properly, can automatically detect or even eliminate some of the validation and formatting issues cited above. \cite{SEW}
+
+One example can be found in Clean, a functional programming language somewhat similar to Haskell:
+iData, which stands for $ i $nteractive $ Data $, is a toolkit developed in the Clean functional programming language.\cite{Plasmeijer06idatafor}
+It provides functionality to automatically generate interconnected HTML forms from $ iData $ elements.
+An $ iData $ element can be manipulated by both the programmer (via code) and the users (via a HTML form).
+The (possibly modified) serialized state of an $ iData $ element can be saved on disk on the server, on the HTML page itself, or in the session data.
+This serialized state is used to provide type--safety when data has been entered, by checking if the input value is of the same type as in the serialized state.
+
+Built upon this system is iTask, a work flow management system written in Clean with a web front--end.
+In iTask, one can define work flows for processes and data \cite{itaskIntro}.
+Work flows can contain forms with default values for data input, data processing and storage or display of data.
+iTask relies and improves upon iData to provide automatic generation of type--safe work flows, even when multiple users and  complex task dependencies are involved.
+
+Apart from abstracting away from statelessness, web applications may become increasingly complex and require a large amount of resources.
+Web frameworks that are able to mitigate this by providing easy generation of HTML, automatic generation of URL routing and efficient use of server resources and bandwidth are then a welcoming sight.
+Haskell's type safety and laziness allows web frameworks written in it to perform quite well, with even the slowest Haskell-based web framework outperforming PHP--, Ruby-- and Python--based web servers tenfold. \cite{warp}

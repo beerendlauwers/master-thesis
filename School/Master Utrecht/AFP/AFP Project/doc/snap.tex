@@ -1,0 +1,21 @@
+Snap is a web framework launched to the public on May 2010 centered on the creation and use of modules called Snaplets.
+The framework is composed of a core package with most of the common code and the API for writing Snaplets and Snaplet packages for wrapping access for individual functionality.
+
+The top--level Snap web application initializes and parametrizes every Snaplet it will use in an initialization function.
+On this initialization function, sub--Snaplets are created, routes are added to the project and any other setup activity is defined and a $ SnapletInit $ data type is returned encapsulating a record with all the immediate sub--Snaplets' handlers (of type $ Handler $).
+This record is usually created with the $ makeLenses $ Template Haskell function.
+
+It is through the created $ SnapletInit $ that the Snap application is initialized and served.
+This function is also called automatically on reload.
+
+\subsubsection{Snaplets}
+
+Each application developed in Snap is usually composed by one or more different (sub) Snaplets but is also itself a Snaplet.
+This allows for modularization as each Snaplet can be treated as an isolated application/component and can also be instantiated multiple times in the same application.
+After being initialized, each Snaplet is used (possibly by other sub--Snaplets) through a $ Handler $.
+
+The $ Handler $ has a $ MonadState $ instance that allows the user to use the regular $ get $ and $ set $ methods from the State monad.
+It is worth mentioning that the states seen by all Snaplets, except for external interactions using IO (e.g. with databases or file system), are isolated per served request.
+
+Snap has an API that focuses on allowing Snaplets to have access to environment and state data.
+Most code that do not depend on either can be left outside any Snaplet (and, in fact, be used by any other Haskell web--framework).

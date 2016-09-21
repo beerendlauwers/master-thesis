@@ -1,0 +1,55 @@
+l -> list of items
+n -> number
+b -> boolean (or maybe, and at most, tristate)
+s -> subjective evaluation (backed up by some data)
+
+Usability
+s- ease of learning/learning curve
+n+s- overhead of code
+ (number of lines/tokens/something else + description of common boilerplate cases or issues)
+s- Haskell concepts being used
+  - Monads, Lenses, etc used within the library and how it makes harder/easier to read/write/extend code
+   (Check "Features" bellow.)
+ 
+Practical aspects
+s- install issues
+ s- frequency of updates
+ s- backwards compatibility
+
+Portability
+n- dependencies
+n- install size
+l- Haskell extensions
+s- architecture or external application dependencies (such as libraries that are not written in Haskell)
+
+Feature set
+l- make list
+ (include only what's not included in 'Capabilities')
+
+Performance
+n- how fast is the service
+
+Capabilities
+b- Authorizations & Sessions
+b- DB Communication
+b- Web Services
+b- AJAX
+b- NoSQL Support
+b- Forms & Form Processing
+b- HTML5 Support
+ (FIXME: What would be HTML5 support?)
+b- Ability to include external files (plain CSS, or has to be Haskellized CSS?)
+b+n- Caching
+ (availability + performance improvements)
+
+Features
+b- Integrating Haskell code in HTML templates
+b- Data structure generation <-- ?
+ (FIXME: What is this?)
+b- Inline (=in Haskell file) HTML, CSS, Javascript
+b- Type Safety 
+  b- in Routing/URLs
+  b- in binding data to HTML templates
+b- Development Environment
+  b- Code reloading
+b- Extensibility (through the use of a common extension pattern, such as snaplets)

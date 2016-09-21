@@ -1,0 +1,29 @@
+	Thu Dec 01 18:47 2011 Time and Allocation Profiling Report  (Final)
+
+	   ProfileConcPrime.exe +RTS -hd -p -K100M -RTS
+
+	total time  =        3.46 secs   (173 ticks @ 20 ms)
+	total alloc = 438,877,124 bytes  (excludes profiling overheads)
+
+COST CENTRE                    MODULE               %time %alloc
+
+main                           Main                  97.1   94.5
+conc'                          Main                   2.9    5.5
+
+
+                                                                                               individual    inherited
+COST CENTRE              MODULE                                               no.    entries  %time %alloc   %time %alloc
+
+MAIN                     MAIN                                                   1           0   0.0    0.0   100.0  100.0
+ CAF:main1               Main                                                 229           1   0.0    0.0    79.8   76.3
+  main                   Main                                                 236           1  79.8   76.3    79.8   76.3
+ CAF:main2               Main                                                 228           1   0.0    0.0     0.0    0.0
+ CAF:main7               Main                                                 227           1   0.0    0.0     2.9    5.5
+  main                   Main                                                 238           0   0.0    0.0     2.9    5.5
+   conc'                 Main                                                 239     1004906   2.9    5.5     2.9    5.5
+ CAF:main8               Main                                                 226           1   0.0    0.0     8.1    9.1
+  main                   Main                                                 240           0   8.1    9.1     8.1    9.1
+ CAF:main3               Main                                                 225           1   0.0    0.0     9.2    9.1
+  main                   Main                                                 241           0   9.2    9.1     9.2    9.1
+ CAF                     GHC.IO.Handle.FD                                     155           2   0.0    0.0     0.0    0.0
+ CAF                     GHC.IO.Encoding.CodePage                             127           1   0.0    0.0     0.0    0.0

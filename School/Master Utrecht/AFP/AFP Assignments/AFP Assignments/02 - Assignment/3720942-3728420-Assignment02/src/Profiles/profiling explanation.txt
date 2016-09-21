@@ -1,0 +1,137 @@
+HEAP PROFILE INFORMATION: 
+
+All heap profiles, except that of rev', were generated on an Intel Atom N270 1.60GHz (1 core) with 2GB of DDR2 SDRAM. (Acer Aspire One D250)
+The rev' profile was generated on a Intel Core2 Quad Q6600 2.40Ghz (4 cores) with 4GB of DDR3 SDRAM.
+
+rev
+---
+
+foldl definition
+
+foldl f z []     = z                  
+foldl f z (x:xs) = foldl f (f z x) xs
+
+rev definition
+
+rev = foldl (flip (:)) []
+
+[STEP 1] foldl (flip (:)) [] [1..100000]
+=
+[STEP 2] foldl (flip (:)) (flip (:) [] 1) [2..100000]
+=
+[STEP 3] foldl (flip (:)) (flip (:) (flip (:) [] 1) 2) [3..100000]
+=
+[STEP 4] foldl (flip (:)) (flip (:) [1] 2) [3..100000]
+=
+[STEP 5] foldl (flip (:)) [2,1] [3..100000]
+
+(Referenced profile: ProfileRev_type.ps)
+The heap profile shows that the expression is built in the manner shown above (steps 1, 2 and 3).
+That expression is then rapidly evaluated ( flip runs in O(1) time ) in the manner of steps 4 and 5, which causes the sharp drops in the graph, as after printing, the data structures are garbage collected.
+
+rev'
+----
+
+foldr definition
+
+foldr f z []     = z 
+foldr f z (x:xs) = f x (foldr f z xs) 
+
+rev' definition
+
+rev' = foldr (\x r -> r ++ [x]) []
+
+[STEP 1] foldr (\x r -> r ++ [x]) [] [1..50000]
+=
+[STEP 2] (\x r -> r ++ [x]) 1 (foldr (\x r -> r ++ [x]) [] [2..50000])
+=
+[STEP 3] (\x r -> r ++ [x]) 1 ((\x r -> r ++ [x]) 2 (foldr (\x r -> r ++ [x]) [] [3..50000]))
+=
+[STEP 4] (\r -> r ++ [1]) ((\x r -> r ++ [x]) 2 (foldr (\x r -> r ++ [x]) [] [3..50000]))
+=
+[STEP 5] ((\x r -> r ++ [x]) 2 (foldr (\x r -> r ++ [x]) [] [3..50000])) ++ [1]
+=
+[STEP 6] ((\r -> r ++ [2]) (foldr (\x r -> r ++ [x]) [] [3..50000])) ++ [1]
+=
+[STEP 7] ( (foldr (\x r -> r ++ [x]) [] [3..50000]) ++ [2] ) ++ [1]
+
+
+(Referenced profile: ProfileRevPrime_closure.ps)
+The heap profile displays a highly erratic graph. The very first thing that happens is construction of a gigantic expression of which steps 1, 2 and 3 are the first steps.
+The program then must evaluate some parts of it, as shown in steps 4 through 7, to print it out.
+The size of the expression, in average, is reduced as it is being printed and garbage collected.
+However, due to the way the garbage collector works, by freeing memory in chunks instead as it is being left unused, memory is freed in blocks causing the sharp dips.
+As memory is freed, more of the expression can be evaluated causing the following spikes.
+This continues until all values have been printed out.
+
+
+conc
+----
+
+foldr definition
+
+foldr f z []     = z 
+foldr f z (x:xs) = f x (foldr f z xs) 
+
+conc definition
+
+conc xs ys = foldr (:) ys xs
+
+
+[STEP 1] foldr (:) [1 .. 1000000] [1 .. 1000000]
+=
+[STEP 2] (:) 1 (foldr (:) [1 .. 1000000] [2 .. 1000000])
+=
+[STEP 3] (:) 1 ( (:) 2 (foldr (:) [1 .. 1000000] [3 .. 1000000]) )
+
+(Referenced profile: ProfileConc_simple.ps)
+This heap profile is actually quite stable and fast, as well as requiring very little space.
+The reason for this is as follows:
+In steps 1 through 3, it is shown how an expression is built up.
+This first part of this expression can be evaluated immediately for printing, after which it is garbage collected.
+In other words, garbage collection follows immediately after evaluation, which means an expression can be built (at the foldr) and broken down (at the head) at the same time for constant space usage.
+
+conc'
+-----
+
+foldl definition
+
+foldl f z []     = z                  
+foldl f z (x:xs) = foldl f (f z x) xs
+
+conc' definition
+
+conc' = foldl (\k x -> k . (x:)) id
+
+[STEP 1] foldl (\k x -> k . (x:)) id [1..10] [11..20]
+=
+[STEP 2] foldl (\k x -> k . (x:)) ( (\k x -> k . (x:)) id 1) [2..10] [11..20]
+=
+[STEP 3] foldl (\k x -> k . (x:)) ( (\k x -> k . (x:)) ( (\k x -> k . (x:)) id 1) 2) [3..10] [11..20]
+=
+[STEP 4] foldl (\k x -> k . (x:)) ( (\k x -> k . (x:)) (1:) 2 ) [3..10] [11..20]
+=
+[STEP 5] foldl (\k x -> k . (x:)) ( (1:) . (2:) ) [3..10] [11..20]
+
+(Referenced profile: ProfileConcPrime_type.ps)
+This heap profile appears to first build up a very large expression as seen in steps 1 through 3.
+When values are requested for printing (the top of the graph), the lambda functions are applied as seen in steps 4 and 5 to get a very large pointfree expression.
+After evaluating a part of the pointfree expression, it is discarded. This continues until all values have been printed.
+
+f1 and f2
+---------
+
+f1 definition
+
+f1 = let xs = [1 .. 1000000] in if length xs > 0 then head xs else 0
+
+f2 definition
+
+f2 = if length [1 .. 1000000] > 0 then head [1 .. 1000000] else 0
+
+(Referenced profile for f1: ProfileF1_closure.ps)
+(Referenced profile for f2: ProfileF2_simple.ps)
+The heap profile of f1 shows construction of the xs value for use in the length function, after which it is broken down again (except for the first value, which should be kept to evaluate 'head xs').
+This differs greatly from f2, which can construct a single element of the list for the length function, and then immediately discard it again afterwards, causing constant space usage.
+In other words, f2 does not have to keep the list in memory, because it is only used in the length function.
+f1 does have to keep it in memory, because it will be used in two places. Replacing the last xs reference ('head xs') from the definition of f1 will result in the same performance as f2.
