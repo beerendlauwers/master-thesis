@@ -1,0 +1,202 @@
+\documentclass[10pt,a4paper]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\author{Bruce Edmonds (2002)
+\newline
+\newline
+Paper presented by Beerend Lauwers}
+\title{How Formal Logic Can Fail to be Useful for Modelling or Designing MAS}
+
+\begin{document}
+	
+\frame{\titlepage}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Introduction}
+\subsection{Motivation}
+
+\begin{frame}{Bruce Edmond's motivation}
+\begin{itemize}
+\item Formal systems are only a tool, not the content
+\item Choosing the wrong system introduces biases
+\item New formal systems should prove themselves!
+\end{itemize}
+\end{frame}
+
+\subsection{Some History}
+
+\begin{frame}{Some History}
+\begin{itemize}
+\item 1962: Whitehead and Russell prove that set theory can be formalised with first-order predicate logic
+\item Many different logics emerge, with two camps:
+\begin{itemize}
+\item Philosophical approach
+\begin{itemize}
+\item Concentration on axioms of the logic
+\item Proof theory and formal semantic "more of an afterthought"
+\item Intuitionistic logic, Free logic, Relevance logic, Modal logic
+\end{itemize}
+\item Pragmatic approach
+\begin{itemize}
+\item Extensions of first-order predicate logic
+\item Practically-oriented: Semantics checkable, easy to model, inference, do computation with?
+\item SDML as an example
+\end{itemize}
+\end{itemize}
+\item First approach appears more popular and AI and MAS
+\item Logics are compared and discussed based only on a small set of properties
+\item Edmonds argues against this approach: not useful for understanding or building MAS!
+\end{itemize}
+\end{frame}
+
+\section{Problems with generalization}
+
+\subsection{Generalization of logics}
+
+\begin{frame}{Generalization of logics}
+\begin{itemize}
+\item General theories appear to be preferred
+\item Three common ways to generalize (and their costs!):
+\end{itemize}
+\begin{enumerate}
+\item Abstract away from details, only look at broad domain truths \textbf{(post-hoc abstraction)}
+\begin{itemize}
+\item Loss of information by ignoring particular cases!
+\item Information may be crucial to your research goal!
+\end{itemize}
+\item Determine structure beforehand, ignore contradicting cases \textbf{(a priori abstraction)}
+\begin{itemize}
+\item Loss of relevance!
+\item May exclude what you're researching!
+\end{itemize}
+\item Allow for adaptation to particular cases \textbf{(adaptive generality)}
+\begin{itemize}
+\item Computationally expensive: may be unrealistic!
+\end{itemize}
+\end{enumerate}
+\begin{itemize}
+\item Philosophical approach tends to generalize fruitlessly
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Edmond's arguments against needless generalization}
+\begin{itemize}
+\item Increased generality isn't a necessity
+\item Thinking up new logics is usually a better idea
+\item OTOH, choosing an incorrect specific formal system biases development of one's theory!
+\item \textbf{Conclusion:} Comparing systems by their level of expressivity is a weak justification
+\begin{itemize}
+\item The generalized version also supports it
+\item Easy to go wrong with it
+\end{itemize}
+\item But of course, we still need these formal systems!
+\end{itemize}
+\end{frame}
+
+\subsection{High-level theories}
+
+\begin{frame}{High-level theories}
+\begin{itemize}
+\item Highly generalized  logics aren't the way to go
+\begin{itemize}
+\item Too general to be useful
+\item Too complex to be insightful
+\end{itemize}
+\item Any such proposed 'high-level' theories should be scrutinized
+\item Intermediate levels of abstraction work very well, too
+\item Established theories and methods are still up in the air
+\item Some papers seem to think otherwise, assuming their foundations to be established and proven
+\end{itemize}
+\end{frame}
+
+\section{Problems with the type of logics}
+
+\subsection{What logics are suitable?}
+
+\begin{frame}{What logics \emph{are} suited for MAS?}
+\begin{itemize}
+\item In the past:
+\begin{itemize}
+\item Non-temporal
+\begin{itemize}
+\item Example: BDI logic's temporal element is implicit
+\item Using a single state (timewise) is bound to lead to problems
+\end{itemize}
+\item Context-independent
+\begin{itemize}
+\item Reasoning about norms, goals, etc. requires knowledge of contexts
+\end{itemize}
+\item Propositional
+\begin{itemize}
+\item Most proposed logics do not support numbers
+\item G\"{o}del’s incompleteness theorem is the culprit here
+\item But we can never prove all of a MAS' properties anyway!
+\end{itemize}
+\item Lack of formal semantics
+\begin{itemize}
+\item Philosophical approach emphasises 'meaning'
+\item Surely formal semantics are important, then?
+\end{itemize}
+\end{itemize}
+\item Abstracting away from time, context and numbers to get a general theory?
+\begin{itemize}
+\item Onus is upon the authors that it is valuable
+\end{itemize}
+\item Better would be to use:
+\begin{itemize}
+\item Temporal
+\item Contextual
+\item Predicate
+\end{itemize}
+\item More complex, but MAS aren't simple systems!
+\end{itemize}
+\end{frame}
+
+\subsection{The audience}
+
+\begin{frame}{The audience}
+\begin{itemize}
+\item People first want to know if a work is worth learning: communication is paramount!
+\item Formal logic is claimed to aid communication
+\item It may be precise, but aiding in communication?
+\begin{itemize}
+\item Logics require some knowledge to understand
+\end{itemize}
+\item Most people are used to this kind of approach, aiding acceptance of papers
+\item Some of the papers were simply unproved ideas and intuitions
+\item Papers that do not show the usefulness of a formalism prevent the audience from evaluating it properly
+\item Using a formal system to model a realistic MAS will prove more valuable than intuition-based papers
+\end{itemize}
+\end{frame}
+
+\subsection{Arguments for formalism}
+
+\begin{frame}{Arguments for formalism}
+\begin{itemize}
+\item Edmonds doesn't want to inhibit experimentation with new logics
+\item But the relevance of new formal systems has to be demonstrated
+\item Some papers don't solve particular problems but also refrain from formal theorems and proofs - unacceptable!
+\item Cheap computational power allows for quicker experimentation
+\end{itemize}
+\end{frame}
+
+\section{How to go forward?}
+
+\begin{frame}{How to go forward?}
+More pragmatic approach:
+\begin{itemize}
+\item Begin with less abstract models, chain models of different levels of abstraction together
+\item Sceptical view at unproved abstract theories
+\item Similarly for papers based on intuition and nothing else
+\item Papers suggesting formal systems for MAS should provide a demo MAS
+\end{itemize}
+A 'shortcut' to a powerful high-level theory (to bypass the empirical work required) may be nice, but is unrealistic and doesn't provide the necessary chain of abstractions to guide further search.
+\end{frame}
+	
+\end{document}
+		

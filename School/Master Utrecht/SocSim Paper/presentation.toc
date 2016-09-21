@@ -1,0 +1,12 @@
+\beamer@endinputifotherversion {3.12pt}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Motivation}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Some History}{4}{0}{1}
+\beamer@sectionintoc {2}{Problems with generalization}{5}{0}{2}
+\beamer@subsectionintoc {2}{1}{Generalization of logics}{5}{0}{2}
+\beamer@subsectionintoc {2}{2}{High-level theories}{7}{0}{2}
+\beamer@sectionintoc {3}{Problems with the type of logics}{8}{0}{3}
+\beamer@subsectionintoc {3}{1}{What logics are suitable?}{8}{0}{3}
+\beamer@subsectionintoc {3}{2}{The audience}{9}{0}{3}
+\beamer@subsectionintoc {3}{3}{Arguments for formalism}{10}{0}{3}
+\beamer@sectionintoc {4}{How to go forward?}{11}{0}{4}
