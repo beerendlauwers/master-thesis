@@ -1,0 +1,7 @@
+\beamer@endinputifotherversion {3.12pt}
+\beamer@sectionintoc {1}{Aim of the paper}{3}{0}{1}
+\beamer@sectionintoc {2}{Case studies}{4}{0}{2}
+\beamer@subsectionintoc {2}{1}{Cryptol}{4}{0}{2}
+\beamer@subsectionintoc {2}{2}{Data Description Languages}{12}{0}{2}
+\beamer@subsectionintoc {2}{3}{Relational Algebra}{23}{0}{2}
+\beamer@sectionintoc {3}{Conclusions}{31}{0}{3}

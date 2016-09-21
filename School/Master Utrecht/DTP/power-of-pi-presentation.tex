@@ -1,0 +1,612 @@
+\documentclass[10pt]{beamer}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{ stmaryrd }
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usetheme{Antibes}
+\lstset{language=Haskell}
+\lstset{breaklines=true}
+
+\newcommand\doubleplus{+\kern-1.3ex+\kern0.8ex}
+\newcommand\mdoubleplus{\ensuremath{\mathbin{+\mkern-10mu+}}}
+
+\newcommand\monadbind{\gg\!\!=}
+
+\author{
+	Nicolas Oury and Wouter Swierstra\\
+	\ \\
+	\ \\
+	\
+	Presented by Beerend Lauwers\\
+	\
+	Utrecht University, The Netherlands
+}
+\date{\today}
+\title{The Power Of Pi}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Aim of the paper}
+\begin{frame}{Aim of the paper}
+
+\begin{itemize}
+\item Dependently-typed programming matters!
+\item Three case studies to exemplify this:
+	\begin{itemize}
+	\item Cryptol (DSL)
+	\item Data Description Languages
+	\item Relational Algebra
+	\end{itemize}
+\item In each case study, commonly-used DTP concepts are introduced as they are required.
+\item Agda is used as the dependently-typed language.
+\end{itemize}
+
+\end{frame}
+
+\section{Case studies}
+\subsection{Cryptol}
+\begin{frame}[fragile]{Cryptol - Overview}
+
+\begin{itemize}
+\item DSL for cryptographic protocols, developed by Galois with help from the NSA.
+\item Built for high-level descriptions of low-level cryptographic algorithms.
+\item Two distinguishing features:
+	\begin{itemize}
+	\item Word length is recorded in the type:
+	\begin{lstlisting}
+	x : [8];
+	x = 42;
+	\end{lstlisting}
+	\item Special pattern-matching for splitting words into pieces:
+	\begin{lstlisting}[mathescape=true]
+	swab : [32] $ \rightarrow $ [32];
+	swab [a b c d] = [b a c d]; -- 4 words of 8 bits
+	-- [a b] would have pattern-matched on 2 words of 16 bits
+	\end{lstlisting}
+	\end{itemize}
+\item Not embedded! Has its own interpreter and compiler.
+\item Let's try and replicate this in Agda.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Cryptol - Cryptol's types in Agda}
+\begin{itemize}
+\item 
+	\begin{lstlisting}[mathescape=true]
+	data Bit : Set where
+	 O : Bit
+ I : Bit
+	Word : Nat $ \rightarrow $ Set
+	Word n = Vec Bit n
+	\end{lstlisting}
+\item Great, but how can we define that special pattern matching behaviour?
+\item First DTP concept: \textbf{Views}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{DTP concept: Views}
+
+\begin{itemize}
+\item Views = defining custom pattern matches
+\item Example: SnocView : recursing over a list, reversed.
+\item First, define a datatype:
+	\begin{lstlisting}[mathescape=true]
+	data SnocView {A : Set} : List A $ \rightarrow $ Set where
+	Nil : SnocView Nil
+	Snoc : (xs : List A) $ \rightarrow $ (x : A) $ \rightarrow $ SnocView (append xs (Cons x Nil))
+	\end{lstlisting}
+\item Second, define a conversion function:
+	\begin{lstlisting}[mathescape=true]
+	view : {A : Set} $ \rightarrow $ (xs : List A) $ \rightarrow $ SnocView xs
+	view Nil = Nil
+	view (Cons x xs) with view xs
+	view (Cons x $ \lfloor $Nil$ \rfloor $) | Nil = Snoc Nil x
+	view (Cons x $ \lfloor $append ys (Cons y Nil)$ \rfloor $) | Snoc ys y = Snoc (Cons x ys) y
+	\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{DTP concept: Views}
+
+\begin{itemize}
+\item To apply the custom pattern match, we apply it to a list.
+\item We can then use the result as usual:
+	\begin{lstlisting}[mathescape=true]
+	rotateRight : {A : Set} $ \rightarrow $ List A $ \rightarrow $ List A
+	rotateRight xs with view xs
+	rotateRight $ \lfloor $Nil$ \rfloor $ | Nil = Nil
+	rotateRight $ \lfloor $append ys (Cons y Nil)$ \rfloor $ | Snoc ys y = Cons y ys
+	\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Building Cryptol's view}
+Same steps.
+\begin{itemize}
+\item Define a data type:
+	\begin{lstlisting}[mathescape=true]
+	data SplitView {A:Set} : {n:Nat} $ \rightarrow $ (m:Nat) $ \rightarrow $ Vec A (m $\times$ n) $ \rightarrow $ Set where
+	$[$_$]$ : forall {m n} $ \rightarrow $ (xss:Vec (Vec A n) m) $ \rightarrow $ SplitView m (concat xss)
+	\end{lstlisting}
+\item Define a conversion function:
+	\begin{lstlisting}[mathescape=true]
+	view n m xs = $[$split n m xs$]$
+	\end{lstlisting}
+\item But this returns \textit{SplitView m (concat (split n m xs))} !
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Building Cryptol's view}
+\begin{itemize}
+\item We need a lemma:
+	\begin{lstlisting}[mathescape=true]
+	splitConcatLemma : forall {A n m} $\rightarrow$ (xs:Vec A (m $\times$ n)) $\rightarrow$ concat (split n m xs) $\equiv$ xs
+	\end{lstlisting}
+\item Conversion function again:
+	\begin{lstlisting}[mathescape=true]
+	view : {A:Set} $ \rightarrow $ (n:Nat) $ \rightarrow $ (m:Nat) $ \rightarrow $ (xs : Vec A (m $\times$ n)) $ \rightarrow $ SplitView m xs
+	view n m xs with concat (split n m xs) | $[$split n m xs$]$  | splitConcatLemma m xs
+	view n m xs | $\lfloor$xs$\rfloor$ | v | Refl = v
+	\end{lstlisting}
+\end{itemize}
+\textbf{Note:} Only the view designer has to define all of this.
+\end{frame}
+
+\begin{frame}[fragile]{Building Cryptol's view}
+
+\begin{itemize}
+\item Finally, we can define the \textit{swab} function:
+	\begin{lstlisting}[mathescape=true]
+	swab : Word 32 $ \rightarrow $ Word 32
+	swab xs with view 8 4 xs
+	swab $\lfloor$_$\rfloor$ | $[$a::b::c::d::Nil$]$ 
+	= concat $[$b::a::c::d::Nil$]$
+	\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Case Study 1 - Discussion}
+
+\begin{itemize}
+\item Our Cryptol-like view doesn't take the patterns into account, so we have to explicitly provide this information.
+\item Could we define this in Haskell?
+	\begin{lstlisting}[mathescape=true]
+	data SnocView a = Nil | Snoc (SnocView a) a
+	view :: [a] $ \rightarrow $ SnocView a
+	\end{lstlisting}
+	\begin{itemize}
+	\item We lose the link with the original list!
+	\item Haskell is too general:
+	\begin{lstlisting}[mathescape=true]
+	view = const Nil :: [a] $ \rightarrow $ SnocView a
+	\end{lstlisting}
+	\item Compare with Agda:
+	\begin{lstlisting}[mathescape=true]
+	view : {A:Set} $ \rightarrow $ (xs:List A) $\rightarrow $ SnocView xs
+	\end{lstlisting}
+	\end{itemize}
+\item Rule of thumb: You can always view data in another way, as long as you \textbf{don't throw away information}.
+\end{itemize}
+
+\end{frame}
+
+\subsection{Data Description Languages}
+\begin{frame}[fragile]{Data Description Languages - Overview}
+
+\begin{itemize}
+\item Data isn't standardized, so we have to write parsers :(
+\item Data description languages to the rescue!
+\item Give precise description of data format, use it to generate data types and parsers.
+\item Unfortunately, still an external tool.
+\item Let's implement a simple combinator library in Agda.
+\item This case study has a rich generic programming flavour.
+\item But first, second DTP concept: \textbf{Universes}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{DTP concept: Universes}
+
+\begin{itemize}
+\item Agda doesn't have type classes! How can we do ad-hoc polymorphism?
+\item Type classes are used to describe type collections that support certain operations, like equality.
+\item Type theory has the same issue, and we can apply the employed techniques.
+\item The type \textit{U} is a collection of 'codes' for types:
+	\begin{lstlisting}[mathescape=true]
+	data U : Set where
+	BIT : U
+	CHAR : U
+	NAT : U
+	VEC : U $ \rightarrow $ Nat $ \rightarrow $ U
+	\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{DTP concept: Universes}
+
+\begin{itemize}
+\item Mapping universe codes to actual types:
+	\begin{lstlisting}[mathescape=true]
+	el : U $ \rightarrow $ Set
+	el BIT = Bit
+	el CHAR = Char
+	el NAT = Nat
+	el (VEC u n) = Vec (el u) n
+	\end{lstlisting}
+\item A pair of a type \textit{U} and a function \textit{el : U $ \rightarrow $ Set} is a \textbf{universe}.
+\textbf{Note:} This is a closed universe.
+\item We can define type-generic functions by induction on \textit{U}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{DTP concept: Universes - Generic functions}
+Generic \textit{show}:
+	\begin{lstlisting}[mathescape=true]
+	show : {u:U} $ \rightarrow $ el u $ \rightarrow $ String
+	show {BIT} O = "0"
+	show {BIT} I = "1"
+	show {CHAR} c = charToString c
+	show {NAT} Zero = "Zero"
+	show {NAT} (Succ k) = "Succ " $\doubleplus$ parens (show k)
+	show {VEC u Zero} Nil = "Nil"
+	show {VEC u (Succ k)} (x::xs) = parens (show x) $\doubleplus$ " :: " $\doubleplus$ parens (show xs)
+	\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{DDL - Building the Format universe}
+	\begin{lstlisting}[mathescape=true]
+	data Format : Set where
+	Bad : Format
+	End : Format
+	Base : U $ \rightarrow $ Format
+	Plus : Format $ \rightarrow $ Format $ \rightarrow $ Format
+	Skip : Format $ \rightarrow $ Format $ \rightarrow $ Format
+	Read : (f : Format) $ \rightarrow $ ( $\llbracket$f$\rrbracket$$ \rightarrow $ Format) $ \rightarrow $ Format
+	\end{lstlisting}
+	\begin{lstlisting}[mathescape=true]
+	$\llbracket$_$\rrbracket$ : Format $ \rightarrow $ Set
+	$\llbracket$Bad$\rrbracket$ = Empty
+	$\llbracket$End$\rrbracket$ = Unit
+	$\llbracket$Base u$\rrbracket$ = el u
+	$\llbracket$Plus f1 f2$\rrbracket$ Either $\llbracket$f1$\rrbracket$ $\llbracket$f2$\rrbracket$
+	$\llbracket$Read f1 f2$\rrbracket$ Sigma $\llbracket$f1$\rrbracket$ ($\lambda$x $ \rightarrow $ $\llbracket$f2$\rrbracket$ x)
+	$\llbracket$Skip _ f$\rrbracket$ = $\llbracket$f$\rrbracket$
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{DDL - Format combinators}
+	\begin{lstlisting}[mathescape=true]
+	char : Char $ \rightarrow $ Format
+	char c = Read (Base CHAR) ($\lambda$c' $ \rightarrow $ if c $ \equiv $ c' then End else Bad)
+
+	satisfy : (f:Format) $ \rightarrow $ ($\llbracket$f$\rrbracket$ $ \rightarrow $ Bool) $ \rightarrow $ Format
+	satisfy f pred = Read f ($\lambda$x $ \rightarrow $ if (pred x) then End else Bad)
+
+	_ $ \gg $ _ : Format $ \rightarrow $ Format $ \rightarrow $ Format
+	f1 $ \gg $ f2 = Skip f1 f2
+
+	_ $ \monadbind $ _ : (f : Format) $ \rightarrow $ ($\llbracket$f$\rrbracket$ $ \rightarrow $ Format) $ \rightarrow $ Format
+	x $ \monadbind $ f = Read x f
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Example Format}
+The NETPBM format:\newline
+\texttt{P4 100 60}\newline
+\texttt{OIOOOOOOOOOIIIOIIIIOOIIIIIIIIOOO...}
+
+	\begin{lstlisting}[mathescape=true]
+	pbm : Format
+	pbm = char 'P' $ \gg $ char '4' $ \gg $ char ' ' $ \gg $
+	      Base NAT $ \monadbind $ $\lambda$n $ \rightarrow $ char ' ' $ \gg $
+	      Base NAT $ \monadbind $ $\lambda$m $ \rightarrow $ char '\n' $ \gg $
+	      Base (VEC (VEC BIT m) n) $ \monadbind $ $ \lambda $bs $ \rightarrow $ End
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{DDL - Generic parsers}
+	\begin{lstlisting}[mathescape=true]
+	parse : (f:Format)$ \rightarrow $List Bit$ \rightarrow $Maybe ($\llbracket$f$\rrbracket$,List Bit)
+	parse Bad bs = Nothing
+	parse End bs = Just (unit, bs)
+	parse (Base u) bs = read u bs
+	parse (Plus f1 f2) bs with parse f1 bs
+	... | Just (x,cs) = Just (Inl x, cs)
+	... | Nothing with parse f2 bs
+	... | Just (y, ds) = Just (Inr y, ds)
+	... | Nothing = Nothing 
+	parse (Skip f1 f2) bs with parse f1 bs
+	... | Nothing = Nothing
+	... | Just (_,cs) = parse f2 cs
+	parse (Read f1 f2) bs with parse f1 bs
+	... | Nothing = Nothing
+	... | Just (x,cs) with parse (f2 x) cs
+	... | Nothing = Nothing
+	... | Just (y,ds) = Just (Pair x y, ds) 
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{DDL - Generic printers}
+	\begin{lstlisting}[mathescape=true]
+	print : (f:Format)$ \rightarrow $  $\llbracket$f$\rrbracket$ $ \rightarrow $ List Bit
+	print Bad ()
+	print End _ = Nil
+	print (Base u) x = toBits (show x)
+	print (Plus f1 f2) (Inl x) = print f1 x
+	print (Plus f1 f2) (Inr x) = print f2 x
+	print (Read f1 f2) (Pair x y) 
+	  = append (print f1 x) (print (f2 x) y)
+	print (Skip f1 f2) = ???
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{DDL - Generic printers - Fixing Skip}
+
+\begin{itemize}
+\item To print \textit{Skip f1 f2}, we need values of types $\llbracket$f1$\rrbracket$ and $\llbracket$f2$\rrbracket$, but we only have $\llbracket$f2$\rrbracket$!
+\item Solution: change the type of \textit{Skip}: 
+\begin{lstlisting}[mathescape=true]
+	Skip : (f:Format) $\rightarrow$ $\llbracket$f$\rrbracket$ $\rightarrow$ Format $\rightarrow$ Format
+\end{lstlisting}
+\item The new value of type $\llbracket$f$\rrbracket$ can be used to print out the \textit{f1}.
+\item Update the \textit{print} function:
+	\begin{lstlisting}[mathescape=true]
+	print : (f:Format)$ \rightarrow $  $\llbracket$f$\rrbracket$ $ \rightarrow $ List Bit
+	print (Skip f1 v f2) x 
+	  = append (print f1 v) (print f2 x)
+	\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Case Study 2 - Discussion}
+
+\begin{itemize}
+\item Our \textit{Format} data type does not support recursion: Agda complains of possible non-termination.
+\item Possible solutions:
+	\begin{itemize}
+	\item Extend \textit{Format} with another constructor: \textit{Many : Format $ \rightarrow $ Format}
+	\item More generally: Extend it with variables and least-fixed points.
+	\end{itemize}
+\item A lot like Haskell-like generic programming. However:
+	\begin{itemize}
+	\item Agda uses dependent pairs, while Haskell uses normal pairs. In Parsec, we can parse a "Vector":
+	\begin{lstlisting}[mathescape=true]
+	parseVec = do n $ \leftarrow $ parseInt
+	              xs $ \leftarrow $ count n parseBit
+	              return (n,xs)
+	\end{lstlisting}
+	\item Returns a (Int,[Bit]) : The link between both elements is lost!
+	\end{itemize}
+\item $\llbracket$f$\rrbracket$ is usually a nested tuple of values. But we can define a record-like view if we want.
+\end{itemize}
+Metatheoretical note: We can get a value of type $\llbracket$f$\rrbracket$ only if we can construct one (which implies succesful parsing). Hence, we get this important metatheoretic property (receiving a value of $\llbracket$f$\rrbracket$ $\Leftrightarrow$ succesful parse) for free!
+
+\end{frame}
+
+\subsection{Relational Algebra}
+\begin{frame}[fragile]{Relational Algebra - Overview}
+
+\begin{itemize}
+\item Database communication is a crucial element in modern computing. However, some issues:
+	\begin{itemize}
+	\item Hardly any static checking: easy to make queries that make no sense.
+	\item Programmers have to learn (and switch to) another language for communication.
+	\end{itemize}
+\item Several EDSLs for database queries in Haskell available. Again, several issues:
+	\begin{itemize}
+	\item Problematic to express all concepts of relational algebra (especially join and cartesian product)
+	\item Several language extensions required (MultiParamTypeClasses, Extensible Records, Fundeps)
+	\item Have to know what kind of data a database contains. Usually in the form of a preprocessor.
+	\end{itemize}
+\item Because of these issues, many libraries resort to dynamic typing.
+\item The root of the problem? Haskell's type system differs fundamentally from DB query language.
+\item We can do better with Agda!
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Relational Algebra - Schemas, tables, rows}
+An example table: \newline
+    \begin{tabular}{ | l | l | l |}
+    \hline
+    Model & Time & Wet \\ \hline
+    Ascari A10 & 1:17.3 & False \\ \hline
+    Koenigsegg CCX & 1:17.6 & True\\ \hline
+    Pagani Zonda C12 F & 1:18.4 & False \\ \hline
+    Maserati MC12 & 1:18.9 & False \\ \hline
+    \end{tabular}
+
+\begin{itemize}
+\item \textbf{Schema:} Type of a table:
+\begin{lstlisting}[mathescape=true]
+	Schema : Set
+	Schema = List Attribute
+	Attribute : Set
+	Attribute = (String, U)
+\end{lstlisting}
+\item Example schema for our example table:
+\begin{lstlisting}[mathescape=true]
+	Cars : Schema
+	Cars = Cons ("Model", VEC CHAR 20) (Cons ("Time", VEC CHAR 6) (Cons ("Wet", BOOL) Nil))
+\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Relational Algebra - Schemas, tables, rows}
+
+\begin{itemize}
+\item We can then define tables as lists of rows:
+\begin{lstlisting}[mathescape=true]
+	data Row : Schema $\rightarrow$ Set where
+	EmptyRow : Row Nil
+	ConsRow : forall {name u s} $ \rightarrow $ el u $ \rightarrow $ Row s $\rightarrow$ Row (Cons (name,u) s)
+
+	Table : Schema $\rightarrow$ Set
+	Table s = List (Row s)
+\end{lstlisting}
+\item Example row of our table:
+\begin{lstlisting}[mathescape=true]
+	zonda : Row Cars
+	zonda = ConsRow "Pagani Zonda C12 F" (ConsRow "1:18.4" (ConsRow False EmptyRow))
+\end{lstlisting}
+\item Heterogenous lists! More complex in Haskell.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Relational Algebra - Setting up a connection}
+
+\begin{itemize}
+\item Most Haskell database interfaces provide functions like these:
+\begin{lstlisting}[mathescape=true]
+	connect :: ServerName $\rightarrow$ IO Connection
+	query :: String $\rightarrow$ Connection $\rightarrow$ IO String
+\end{lstlisting}
+\item Types are very poor: no static checks possible.
+\item With dependent types, we can be far more precise:
+\begin{lstlisting}[mathescape=true]
+	Handle : Schema $\rightarrow$ Set
+	connect : ServerName $\rightarrow$ TableName $\rightarrow$ (s:Schema) $\rightarrow$ IO (Handle s)
+\end{lstlisting}
+\item We connect to a specific table of the database.
+\item We even provide the schema to which the table should adhere to!
+\item \textit{connect} function asks DB for a table description, parses it and compares it to \textit{s}.
+\item If connection succeeds, the rest of the program cannot go wrong.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Relational Algebra - Constructing queries}
+Let's embed relational algebra operators in Agda:
+\begin{lstlisting}[mathescape=true]
+	RA : Schema $\rightarrow$ Set whre
+	Read : forall {s} $\rightarrow$ Handle s $\rightarrow$ RA s
+	Union : forall {s} $\rightarrow$ RA s $\rightarrow$ RA s $\rightarrow$ RA s
+	Diff : forall {s} $\rightarrow$ RA s $\rightarrow$ RA s $\rightarrow$ RA s
+	Product : forall {s s'} $\rightarrow$ {So (disjoint s s')} $\rightarrow$ RA s $\rightarrow$ RA s' $\rightarrow$ RA (append s s')
+	Project : forall {s} $\rightarrow$ (s' : Schema) $\rightarrow$ {So (sub s' s)} $\rightarrow$ RA s $\rightarrow$ RA s'
+	Select : forall {s} $\rightarrow$ SQLExpr s BOOL $\rightarrow$ RA s $\rightarrow$ RA s
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape=true]
+	So : Bool $\rightarrow$ Set
+	So True = Unit
+	So False = Empty
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Relational Algebra - Constructing queries}
+\begin{itemize}
+\item Project example:
+\end{itemize}
+\begin{lstlisting}[mathescape=true]
+	Models : Schema
+	Models = Cons ("Model", VEC CHAR 20) Nil
+	models : Handle Cars $\rightarrow$ RA Models
+	models h = Project Models (Read h)
+\end{lstlisting}
+\begin{itemize}
+\item Select needs a way to filter results:
+\end{itemize}
+\begin{lstlisting}[mathescape=true]
+	data SQLExpr : Schema $\rightarrow$ U $\rightarrow$ Set where
+	equal : forall {u s} $\rightarrow$ SQLExpr s u $\rightarrow$ SQLExpr s u $\rightarrow$ SQLExpr s BOOL
+	lessThan : forall {u s} $\rightarrow$ SQLExpr s u $\rightarrow$ SQLExpr s u $\rightarrow$ SQLExpr s BOOL
+	_!_ : (s:Schema) $\rightarrow$ (name:String) $\rightarrow$ {So (occurs name s)} $\rightarrow$ SQLExpr s (lookup name s p)
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape=true]
+	wet : Handle Cars $\rightarrow$ RA Models
+	wet h = Project Models (Select (Cars ! "Wet") (Read h))
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Relational Algebra - Executing queries}
+
+\begin{itemize}
+\item We know how to construct queries, but how can we send them?
+\item Naive approach:
+\begin{lstlisting}[mathescape=true]
+	toSQL: forall {s} $\rightarrow$ RA s $\rightarrow$ String
+\end{lstlisting}
+\item We lose a lot of type information! Better approach:
+\begin{lstlisting}[mathescape=true]
+	query : {s:Schema} $\rightarrow$ RA s $\rightarrow$ IO (List (Row s))
+\end{lstlisting}
+\item We now know how to parse the DB's response in a type-safe way.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Case Study 3 - Discussion}
+
+\begin{itemize}
+\item \textit{Schema} is a List, so there can be duplicates, and element order matters.
+\item Modify \textit{Cons} constructor for no duplicates:
+\begin{lstlisting}[mathescape=true]
+	Cons : (name:String) $\rightarrow$ (u:U) $\rightarrow$ (s:Schema) $\rightarrow$ {So ($\neg$(elem name s))} $\rightarrow$ Schema
+\end{lstlisting}
+\item Making element order irrelevant is harder.
+	\begin{itemize}
+	\item Quotient types (to hide information)?
+	\item Add proof arguments to our constructors?
+	\begin{lstlisting}[mathescape=true]
+	Union : forall {s s'} $\rightarrow$ {So (permute s s')} $\rightarrow$ RA s $\rightarrow$ RA s' $\rightarrow$ RA s
+	\end{lstlisting}
+	\item Use sorted list or trie?
+	\end{itemize}
+\item Lap time was modeled as fixed-length string, why not use a triple of integers?
+	\begin{itemize}
+	\item DB's only support a limited amount of datatypes
+	\item Using views, we can marshall data to and fro
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}[fragile]{Conclusions}
+
+\begin{itemize}
+\item Unlike Haskell, we can compute new types from data:
+	\begin{itemize}
+	\item File format description $\rightarrow$ compute type of the parser
+	\item Compute type of a table given a description
+	\end{itemize}
+\item We can have precise data types in dependently-typed languages. (The head of an empty list is an absurd value, but it is possible in Haskell!)
+\item With views, it is possible to destruct data in a custom manner. (Haskell struggles to offer such support.)
+\item Generic programming is a hot topic in Haskell right now. Universes and its assorted techniques can be implemented even more elegantly in a dependently-typed language.
+\item There are many papers about type systems being published to solve specific problems. With a dependently-typed language, we can experiment with types as much as we want, and \textbf{spend our time writing programs instead of typing rules}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\begin{center}
+Thanks for your time! Any questions?
+\end{center}
+
+\end{frame}
+
+
+\end{document}

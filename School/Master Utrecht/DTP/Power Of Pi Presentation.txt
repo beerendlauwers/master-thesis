@@ -1,0 +1,16 @@
+Introduction
+- [s]Introduction[/s] -- Doesn't work, Agda says there's no structural recursion here
+- Aim of the paper
+- Three examples of DTP
+-- Cryptol
+-- Data Description
+-- Relational Algebra
+- Conclusion
+
+Why DTP
+
+
+
+
+
+Conclusions
