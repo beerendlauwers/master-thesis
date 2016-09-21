@@ -1,0 +1,59 @@
+module {Attributes} {} {}
+
+optpragmas
+{
+{-# LANGUAGE TupleSections #-}
+}
+
+imports
+{
+import Data.Set (Set)
+import qualified Data.Set as S
+import Data.Map (Map, (!))
+import qualified Data.Map as M
+import Text.Printf 
+import Debug.Trace
+import Data.Maybe
+import Control.Arrow
+}
+
+include "Datatypes.ag"
+include "Scope.ag"
+include "Flow.ag"
+include "Transfer.ag"
+
+data Root
+  | Root jsp :: JSProgram
+  
+attr Root
+  syn edges :: {Set Edge}
+  syn vertices :: {Map Vertex String}
+  syn dotfile :: String
+  syn interedges :: {Set (Edge,Edge)}
+  
+{
+prefixv :: Map Vertex String -> Map Vertex String
+prefixv = M.mapWithKey (\i v -> printf "%d: %s" i v)
+
+postfixt :: Data -> Map Vertex String -> Map Vertex String
+postfixt m = M.mapWithKey (\i v -> printf "%s (%s)" v (show $ S.toList $ m ! i))
+}  
+  
+sem Root
+  | Root jsp.vertex      = 2
+         jsp.ifunctions  = concat @jsp.sfunctions
+         jsp.variables   = M.empty
+         jsp.functions   = head @jsp.sfunctions
+
+         loc.interedges  = @jsp.interedges
+         loc.edges       = S.unions [ @jsp.edges, S.map (0,) @jsp.first ]
+         loc.vertices    = M.unions [ @jsp.vertices, M.fromList [ (0, "program-begin"), (1, "program-end") ] ]
+         loc.tfs         = M.unions [ @jsp.tfs, M.fromList $ zip (S.toList $ S.map (0,) @jsp.first) (repeat id) ]
+
+         jsp.follow      = S.fromList [ 1 ]
+         jsp.return      = 1
+         jsp.break       = S.empty
+         jsp.continue    = S.empty
+
+         loc.alg         = alg (S.fromList [0.. @jsp.vertex-1]) @loc.edges @loc.interedges @loc.tfs
+         lhs.dotfile     = graph (postfixt (@loc.alg ! 1) (prefixv @loc.vertices)) @loc.edges @loc.interedges

@@ -1,0 +1,17 @@
+Team members:
+
+Beerend Lauwers
+Hidde   Verstoep
+Frank   Wijmans
+
+
+Source language: Javascript
+Implementation language: Haskell
+Parser: HJS
+Analysis: Soft typing
+
+Language restrictions: 
+We will be starting out primitively.
+Our goal is to extend towards nested functions, closures and scoping.
+
+http://www.planetpdf.com/codecuts/pdfs/tutorial/jsspec.pdf

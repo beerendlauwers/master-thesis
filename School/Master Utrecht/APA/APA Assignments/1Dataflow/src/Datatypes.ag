@@ -1,0 +1,152 @@
+module {Datatypes} {} {}
+
+{-
+Literal PrimExpr PropNameAssignEPair PropNameAssignEPairGetterPutterEither PropNameAssignEPairGetterPutterEitherList GetterPutter PropName ArrayLit MemberExpr CallExpr NewExpr LeftExpr PostFix UExpr AExpr CondE AssignOp AssignE AssignEList AssignEMaybe Expr ExprMaybe VarDecl VarDeclList IfStmt ItStmt TryStmt Catch CatchList Stmt StmtList Stmt' CaseClause CaseClauseList FuncDecl SourceElement SourceElementList JSProgram StringList StringMaybe
+-}
+
+data Literal 
+  | LitInt v :: Int
+  | LitString v :: String
+  | LitNull
+  | LitBool v :: Bool
+  
+data PrimExpr
+  | Literal l :: Literal
+  | Ident i :: String
+  | Brack e :: Expr
+  | This
+  | Regex m :: String r :: String 
+  | Array a :: ArrayLit
+  | Object o :: PropNameAssignEPairGetterPutterEitherList
+  | PEFuncDecl f :: FuncDecl
+
+type PropNameAssignEPair = (PropName, AssignE)
+
+type PropNameAssignEPairGetterPutterEither = either PropNameAssignEPair GetterPutter
+
+type PropNameAssignEPairGetterPutterEitherList = [PropNameAssignEPairGetterPutterEither]
+ 
+data GetterPutter
+  | GetterPutter pn :: PropName fd :: FuncDecl
+  | Putter fd :: FuncDecl
+  
+data PropName 
+  | PropNameId pn :: String
+  | PropNameStr pn :: String
+  | PropNameInt pn :: Int
+  
+data ArrayLit
+  | ArrSimple ael :: AssignEList
+
+data MemberExpr
+  | MemPrimExpr pe :: PrimExpr
+  | ArrayExpr me :: MemberExpr e :: Expr
+  | MemberNew me :: MemberExpr ael :: AssignEList
+  | MemberCall me :: MemberExpr s :: String
+  | MemberCall2 me :: MemberExpr me2 :: MemberExpr
+  
+data CallExpr
+  | CallPrim me :: MemberExpr
+  | CallMember me :: MemberExpr ael :: AssignEList
+  | CallCall ce :: CallExpr ael :: AssignEList
+  | CallSquare ce :: CallExpr e :: Expr
+  | CallDot ce :: CallExpr s :: String
+  
+data NewExpr
+  | MemberExpr me :: MemberExpr
+  | NewNewExpr ne :: NewExpr
+  
+data LeftExpr
+  | NewExpr ne :: NewExpr
+  | CallExpr ce :: CallExpr
+
+data PostFix
+  | LeftExpr le :: LeftExpr
+  | POp i :: String le :: LeftExpr
+
+data UExpr
+  | PostFix pf :: PostFix
+  | UOp i :: String ue :: UExpr
+  
+data AExpr
+  | AEUExpr ue :: UExpr
+  | AOp i :: String ae1 :: AExpr ae2 :: AExpr
+  
+data CondE
+  | AExpr ae :: AExpr
+  | CondIf ae :: AExpr a1 :: AssignE a2 :: AssignE
+  
+data AssignE  
+  | CondE ce :: CondE
+  | Assign le :: LeftExpr i :: String ae :: AssignE
+
+type AssignEList = [AssignE]
+
+type AssignEMaybe = maybe AssignE
+  
+data Expr
+  | AssignE ae :: AssignE
+
+type ExprMaybe = maybe Expr
+  
+data VarDecl
+  | VarDecl i :: String aem :: AssignEMaybe
+  
+type VarDeclList = [VarDecl]
+  
+data IfStmt
+  | IfElse e :: Expr s1 :: Stmt s2 :: Stmt
+  | IfOnly e :: Expr s1 :: Stmt
+
+data ItStmt 
+  | DoWhile s :: Stmt e :: Expr
+  | While e :: Expr s :: Stmt
+  | ForVar vdl :: VarDeclList em1 :: ExprMaybe em2 :: ExprMaybe s :: Stmt
+  | ForIn le :: LeftExpr e :: Expr s :: Stmt
+ 
+data TryStmt
+  | TryTry b :: StmtList c :: CatchList f :: StmtList -- what is this?
+
+data Catch
+  | CatchCatch i :: String me :: ExprMaybe sm :: StmtList
+
+type CatchList = [Catch]
+  
+data Stmt 
+  | StmtPos l :: Int c :: Int s :: Stmt'
+
+type StmtList = [Stmt]
+  
+data Stmt'
+  | IfStmt s :: IfStmt
+  | EmptyStmt
+  | ExprStmt e :: Expr
+  | ItStmt is :: ItStmt
+  | Block s :: StmtList
+  | VarStmt vd :: VarDeclList
+  | TryStmt ts :: TryStmt
+  | ContStmt sm :: {Maybe String}
+  | BreakStmt sm :: {Maybe String}
+  | ReturnStmt em :: ExprMaybe
+  | WithStmt e :: Expr s :: Stmt
+  | LabelledStmt l :: String s :: Stmt
+  | Switch e :: Expr cc :: CaseClauseList
+  | ThrowExpr e :: Expr
+
+data CaseClause 
+  | CaseClause e :: Expr s :: StmtList
+  | DefaultClause s :: StmtList
+  
+type CaseClauseList = [CaseClause]
+  
+data FuncDecl
+  | FuncDecl sm :: {Maybe String} ss :: {[String]} se :: SourceElementList
+  
+data SourceElement 
+  | Stmt s :: Stmt
+  | SEFuncDecl fd :: FuncDecl 
+  
+type SourceElementList = [SourceElement]
+  
+data JSProgram
+  | JSProgram se :: SourceElementList

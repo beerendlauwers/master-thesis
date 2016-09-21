@@ -1,0 +1,118 @@
+module {Transfer.ag} {} {}
+
+{
+data Type = TFunction Vertex 
+          | TNumber 
+          | TString 
+          | TBool 
+          | TArray
+          deriving (Eq, Ord, Show)
+
+bottom = S.empty
+number = S.singleton TNumber
+string = S.singleton TString
+bool = S.singleton TBool
+function = S.singleton . TFunction
+
+class Eq a => Lattice a where
+  join :: a -> a -> a
+  meet :: a -> a -> a
+
+a <== b = a == meet a b
+--or: a <== b = b == join a b
+  
+instance Ord a => Lattice (Set a) where
+  join = S.union
+  meet = S.intersection
+  
+instance (Ord k, Lattice v) => Lattice (Map k v) where
+  join = M.unionWith join
+  meet = M.intersectionWith meet
+  
+type TLattice = Set Type  
+  
+type Data = Map Vertex TLattice
+
+at :: Vertex -> (TLattice -> TLattice) -> TransferFunction
+at = flip M.adjust
+
+type TransferFunction = Data -> Data
+}
+
+attr Literal PrimExpr PropNameAssignEPair PropNameAssignEPairGetterPutterEither PropNameAssignEPairGetterPutterEitherList GetterPutter PropName ArrayLit MemberExpr CallExpr NewExpr LeftExpr PostFix UExpr AExpr CondE AssignE AssignEList AssignEMaybe Expr ExprMaybe VarDecl VarDeclList IfStmt ItStmt TryStmt Catch CatchList Stmt StmtList Stmt' CaseClause CaseClauseList FuncDecl SourceElement SourceElementList JSProgram 
+  syn tfs use {`M.union`} {M.empty} :: {Map Edge TransferFunction} -- Transform functions
+
+sem Literal 
+  | LitInt    loc.f   = at @lhs.vertex (join number)
+  | LitString loc.f   = at @lhs.vertex (join string)
+  | LitBool   loc.f   = at @lhs.vertex (join bool)
+  | LitNull   loc.f   = at @lhs.vertex (join bottom)
+  | *         lhs.tfs = M.fromList [ ((@lhs.vertex, v), @loc.f) | v <- S.toList @lhs.follow ]
+  
+sem PrimExpr  
+  | Ident      loc.f   = \m -> at @lhs.vertex (join $ foldr join bottom [ m ! v | v <- @loc.vrefs ]) m
+               lhs.tfs = M.unions [ M.fromList [ ((@lhs.vertex, v), @loc.f) | v <- S.toList @lhs.follow ] ]
+  | PEFuncDecl loc.f   = at @lhs.vertex (join $ function $ @lhs.vertex+1)
+               lhs.tfs = M.unions [ @f.tfs, M.fromList [ ((@lhs.vertex, v), @loc.f) | v <- S.toList @lhs.follow ] ]
+             
+sem CallExpr     
+  | CallMember loc.fto   = \(RefFunction _ _ as _) m -> foldr (.) id (zipWith (\a b -> at a (join $ m ! b)) as @ael.pis) m
+               loc.ffrom = \(RefFunction _ e _  _) m -> at (@lhs.vertex +1) (join $ m ! e) m
+               lhs.tfs   = M.unions [ @me.tfs, @ael.tfs, M.fromList $ concat [ [ ((@lhs.vertex,b),@loc.fto f), ((e,@lhs.vertex+1),@loc.ffrom f) ] | f@(RefFunction b e _ _) <- @me.frefs ], M.fromList [ ((@lhs.vertex+1,v),id) | v <- S.toList @lhs.follow] ]
+
+sem AExpr 
+  | AOp       loc.f   = case @i of
+                          "-" -> at @lhs.vertex (join number)
+                          "+" -> at @lhs.vertex (join number)
+                          "*" -> at @lhs.vertex (join number)
+                          "/" -> at @lhs.vertex (join number)
+                          "&&" -> at @lhs.vertex (join bool)
+                          "||" -> at @lhs.vertex (join bool)
+                          "==" -> at @lhs.vertex (join bool)
+                          "!=" -> at @lhs.vertex (join bool)
+                          "<" -> at @lhs.vertex (join bool)
+                          ">" -> at @lhs.vertex (join bool)
+                          "<=" -> at @lhs.vertex (join bool)
+                          ">=" -> at @lhs.vertex (join bool)
+                          "^" -> at @lhs.vertex (join number)
+              lhs.tfs = M.unions [ @ae1.tfs, @ae2.tfs, M.fromList [ ((@lhs.vertex, v), @loc.f) | v <- S.toList @lhs.follow ] ]
+
+sem AssignE  
+  | Assign    loc.t   = \m -> case @i of
+                          "=" -> m ! @ae.pi
+                          "*=" -> number
+                          "/=" -> number
+                          "%=" -> number
+                          "+=" -> number
+                          "-=" -> number
+              loc.f   = \m -> foldr (.) id [ at v (join $ @loc.t m) | v <- @le.vrefs ] $ 
+                              at @lhs.vertex (join $ @loc.t m) $ m 
+              lhs.tfs = M.unions [ @le.tfs, @ae.tfs, M.fromList [ ((@lhs.vertex, v), @loc.f) | v <- S.toList @lhs.follow ] ]
+              
+sem VarDecl
+  | VarDecl    loc.f   = \m -> at @lhs.vertex (join $ m ! @aem.pi) m       
+               lhs.tfs = M.unions [ @aem.tfs, M.fromList [ ((@lhs.vertex, v), @loc.f) | v <- S.toList @lhs.follow ] ]       
+              
+sem Stmt'              
+  | ReturnStmt loc.f   = \m -> at @lhs.vertex (join $ m ! @em.pi) $
+                               at @lhs.return (join $ m ! @em.pi) $ m
+               lhs.tfs = M.unions [ @em.tfs, M.fromList [ ((@lhs.vertex, @lhs.return), @loc.f) ] ]       
+              
+sem FuncDecl
+  | FuncDecl  loc.f   = at @lhs.vertex (join bottom)
+              lhs.tfs = M.unions [ @se.tfs, M.fromList [ ((@lhs.vertex, v), @loc.f) | v <- S.toList @se.first ] ]              
+              
+{
+alg :: Set Vertex -> Set Edge -> Set (Edge, Edge) -> Map Edge TransferFunction -> Map Vertex Data
+alg vertices edges interedges tfs = iter (S.toList edges') (M.fromList [ (v, M.fromList [ (v, bottom) | v <- S.toList vertices]) | v <- S.toList vertices ]) where
+  edges' = S.unions [ edges, S.map fst interedges, S.map snd interedges ]
+  iter :: [Edge] -> Map Vertex Data -> Map Vertex Data
+  iter [] a = a
+  iter (e@(l,l'):w) a = 
+    let f = fromMaybe (trace (printf "missing transfer function for: %s" (show e)) $ id) $ M.lookup e tfs
+        a' = M.insert l' (join (a ! l') (f $ a ! l)) a
+        w' = (S.toList $ S.filter ((== l') . fst) edges') ++ w
+    in if not $ (f $ a ! l) <== (a ! l')
+         then iter w' a'
+         else iter w a
+}              

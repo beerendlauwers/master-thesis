@@ -1,0 +1,183 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fontenc}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{listings}
+
+\newcommand{\comment}[1]{}
+
+\title{Documentation: Dimension Analysis}
+\author{Beerend Lauwers \and Frank Wijmans}
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This document describes the source code for the dimension analysis on a simple language.
+The analysis we do is inspired by a thesis\cite{langanddim} by Andrew Kennedy.
+He wrote his Ph.D. on the topic of dimension analysis in 1996.
+In his thesis, he argues that  in the field of physics it is required to specify the dimensions, while in programming it is normal to leave numbers dimensionless, allowing very severe bugs to creep in the code that a normal typing system is unable to detect.
+
+The rest of this document is structured as follows.
+Section \ref{problem} elaborates on the problem at hand.
+In section \ref{lang} we briefly show the target language on which we analyse.
+Next we will talk about the implementation of our analysis in section \ref{imp}.
+After which we will conclude in section \ref{conclusion}.
+
+\section{Problem description and approach}\label{problem}
+
+In programs, numbers are used all the time for multiple purposes. 
+The original programmer knows the context within which they are used and maybe even by looking at the variable's name, knows that some number is a length, some currency value or even a compound value (say, meters per second).
+This context (for a single number: its specific dimension) is implicit.
+This implicit context is not always so clear for others, and allows the creation of hard-to-find bugs.
+
+We analyse a given piece of code, coupled with an environment that specifies what function or variable maps to what dimensional value.
+Dimensional values can either be monomorphic or polymorphic.
+For instance, $3 m^2$ would map to the dimension multiplication of two meter dimensions. 
+Meter is a unit inside the Length base.
+But a function $id :: a \rightarrow a$ works for every monomorphic dimensional value: hence, it is a polymorphic dimensional value.
+
+In the thesis it is made clear that a dimension analysis can be done by extending the programming language itself with dimension types.
+We show with our analysis that if the dimension types are given externally, so not embedded in the language itself, that check is possible as well.
+Future work could be implementing the dimension types in the language itself.
+
+Using the extra information given, we can suggest coercions between, for instance, the metric and imperial systems for measurement of lengths.
+Furthermore, we generate errors that inform the programmer of incorrect function application. For example, if you have a function that takes two values in meters (or some other length value) and creates a surface (or a multiplication of two lengths), it would be wrong to give it anything but two lengths.
+Like a type system, it will give more information to the compiler which in its turn informs the programmer of any problems encountered during compilation.
+
+Next, let's take a look at the language.
+
+\section{Language}\label{lang}
+
+The target language is the simply typed Lambda calculus with non-recursive let statements (see figure \ref{datalang}). 
+
+\begin{figure}[h]
+\begin{lstlisting}
+data Term
+  | Var String
+  | Lam String Term
+  | App Term   Term
+  | Let String Term Term
+\end{lstlisting}
+\caption{Simply typed lambda calculus with let-constructs.}\label{datalang}
+\end{figure}
+
+With these four language constructs, we are able to model a subset of Haskell.
+In our analysis, we build up dimensions as follows:
+\begin{itemize}
+	\item \texttt{Var} - Fetches a \texttt{DimVar} from the environment or generates a fresh one.
+	\item \texttt{Lam} - Generates a \texttt{DimArrow} to indicate a dimensional function.
+	\item \texttt{App} - Application takes the right hand side of the \texttt{DimArrow} of the function and returns that as its dimension. (e.g. (f::a$\rightarrow$b) x, hence dimension of (f x) is b)
+	\item \texttt{Let} - \texttt{Let} returns the dimension of its body.
+\end{itemize}
+
+A \texttt{Let} construct adds a new constraint equality to the environment and passes it down to its body.
+
+\section{Implementation}\label{imp}
+
+The Hindley-Milner typing code was recycled from the last CCO assignment by Augusto Martins and Jo\~{a}o Alpuim. We were allowed to use their code with their permission.
+
+We have used attribute grammars to define how the constraints are built.
+The file \texttt{DimensionTyping.ag} contains the code for building up constraint equalities and dimension inference.
+Constraint equalities are tuples of two dimensions, a constraint tells us two dimensions were found to be equal.
+
+Dimensions are defined as follows from figure \ref{datadim}, note that this is AG notation.
+\begin{figure}[h]
+\begin{lstlisting}
+data Dimension
+   | DimArrow a1 :: Dimension a2 :: Dimension
+   | DimBase b :: Base
+   | DimVar v :: {String}
+   | DimPoly v :: {String}
+   | DimInverse a :: Dimension
+   | DimMult a1 :: Dimension a2 :: Dimension
+\end{lstlisting}
+\caption{Dimension as defined in our implementation in AG notation.}\label{datadim}
+\end{figure}
+
+Respectively the constructors formulate: functions, bases, variables, polymorphic variables, inverse and multiplication. Inverse is used to define division.
+
+The \texttt{Base} datatype describes five main physical quantities.
+\begin{figure}[h]
+\begin{lstlisting}
+data Base 
+   | Mass s :: MassScale
+   | Length s :: LengthScale
+   | Time s :: TimeScale
+   | ElectricCharge s :: ElectricScale 
+   | AbsoluteTemperature s :: TemperatureScale
+\end{lstlisting}
+\caption{Bases for dimensions in AG notation.}\label{database}
+\end{figure}
+
+Although we are aware that there are more quantities to add, for simplicity we only implemented Mass and Length fully.
+It is enough to show how the analysis works.
+It is always possible to extend the amount of bases, such as adding currency and other possible contexts for numbers.
+
+For now, the analysis is based on the dimensions and bases as given above.
+In the case of an error, we figured we want to tell the programmer what went wrong, and where.
+The collection of constraints in the implementation is a list of \texttt{AnnConstraint}, which is a tuple of a single constraint equality, its position in the source code and the code term from which it originated.
+
+Next, we built a constraint solver. The code can be found in \texttt{ConstraintSolver.hs}.
+At the end of the analysis we have built up a large list of constraints, which we should try to rewrite such that it finds that it either is completely correct or there is some error.
+In the last case we will return the message to help the programmer.
+
+The solver consists of a couple of steps.
+\begin{itemize}
+	\item \texttt{flattenArrows} 
+		This function is applied on the collection of constraints, where it checks if the constraint is an equality between two \texttt{DimArrow}s.
+		If this is the case, it splits up the \texttt{DimArrow}, creating new unique constraints.
+	\item \texttt{solve} and \texttt{solve'}
+		The first is the entry function, it applies the flattening function and calls \texttt{solve'}. \texttt{solve'} checks a single constraint equality with the \texttt{rewrite} function, which results in either an error (after which analysis halts), or a (possibly empty) list of warnings, after which the next constraint equality in the list is evaluated.
+	\item \texttt{rewrite} 
+		This function does three things:
+		\begin{itemize}
+		\item Reordering the list by swapping the sides of an equality and pushing down not yet solvable multiplication equations.
+		\item Rewriting the constraint list by replacing variables.
+		\item Calling the validation functions if a solvable equality is found.
+		\end{itemize}
+	\item \texttt{valid}, \texttt{validBases} and \texttt{validMult} 
+	\begin{itemize}
+		\item The function \texttt{valid} checks whether a single constraint is a valid constraint. This is usually called when the analysed code ends up generating a collection of constraints that solve to an equality like \texttt{DimVar a = DimBase (Length Meter)}, which is not really wrong, but is not a valuable conclusion.
+		\item \texttt{validBases} checks whether the dimensions are coercible: a constraint equality of \texttt{DimBase a = DimBase b} generates either a(n) (empty) coercion message, or a coercion error to indicate the dimension types \texttt{a} and \texttt{b} cannot be coerced into each other.
+		\item \texttt{validMult} checks dimensional multiplications on their validity. Multiplications are special because they should first be simplified and reduced: a dimension type of the form \texttt{$(m*s) / (m / (m*s))$} will be simplified to the form \texttt{$(m*s) * (m * (m*s)^{-1})^{-1}$}, which further simplifies to \texttt{$m*s*m^{-1}*m*s$}. This form can then be reduced to \texttt{$m*s*s$}. It is these simplified and reduced forms that are used to verify if a multiplication equality is valid.
+		A multiplication equality is valid if the "base count" is the same, that is, if each side of the equality has the same amount of bases for each type of base. For example, the equality \texttt{m*s = s*m} holds because each side has the same amount of bases for each type of base. If a multiplication equality is valid, the bases of each side are flattened to a list, sorted, zipped up, and compared if they are coercible.
+	\end{itemize}
+		
+\end{itemize}
+
+\section{Examples}\label{examples}
+The \texttt{examples} folder provides a few examples of the analysis in action. To analyze an example, go to \texttt{src/hm} and run \texttt{runtest.sh} with the path to an example file as a parameter, like so: \texttt{runtest.sh examples/id.hm}.
+Four examples have been provided:
+\begin{itemize}
+	\item \texttt{id.hm} - a dimension of \texttt{m*cm} is passed to a length function  \texttt{lengthfunc}, which generates a  \texttt{foot*timevar}, which is passed to the identity function and finally getting applied to \texttt{lengthgramfunc}, which expects a \texttt{foot*gram}, so an error is raised. Remove \texttt{lengthgramfunc} to see the coercion suggestions in action.
+	\item \texttt{inverse.hm} - gives an example of how a dimensionally polymorphic function \texttt{invert}, which inverts its argument, applied twice, will be simplified to the original argument. A coercion is suggested as well.
+	\item \texttt{divmult.hm} - here, a dimension of the type \texttt{m / (g*m)} is built up and passed to a function that expects a mass base. The dimension type is simplified to a mass type by removing the \texttt{m}. A coercion is suggested.
+	\item \texttt{complex.hm} - as the name suggests, this one does some elaborate things behind the scenes. A dimension type of the form \texttt{(m*g) * (m / (m*g))} is built up and passed to a function. It is simplified to the form of  \texttt{m*g*g}. The function itself expects a \texttt{(mass*length*mass)}, so the bases are reordered to allow the dimension type to be accepted by the function, with some coercions placed in the right spots.
+\end{itemize}
+
+\section{Future work}\label{futurework}
+There are still several loose ends that were not addressed due to time constraints:
+\begin{itemize}
+	\item Dimensions for functions and variables are defined through an external environment instead of written down as extra signatures in the program code.
+	\item Dimensionless constants (such as the number 20) are currently unsupported. If we had gone for a different datatype (for example, a 5-tuple) that captures the bases and their exponentials in the following form,
+\begin{center}
+	$[X] = L^\alpha \centerdot M^\beta \centerdot T^\gamma \centerdot I^\delta \centerdot \Theta^\epsilon$
+\end{center}
+we could have defined the dimension type of a dimensionless constant as (0,0,0,0,0).
+	\item We started with a very simple functional language which we hoped to extend later on with things like recursive lets.
+\end{itemize}
+
+
+\bibliographystyle{ieeetr}
+\bibliography{doc}
+
+
+\end{document}
