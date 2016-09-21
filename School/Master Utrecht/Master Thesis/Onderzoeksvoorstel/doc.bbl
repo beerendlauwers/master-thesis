@@ -1,0 +1,98 @@
+\begin{thebibliography}{14}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Gerdes(2012)]{Gerdes:2012:phd}
+Alex Gerdes.
+\newblock \emph{Ask-Elle: a Haskell Tutor}.
+\newblock PhD thesis, Open Universiteit, November 2012.
+
+\bibitem[Stutterheim(2013)]{Stutterheim:2013:thesis}
+Jurri\"en Stutterheim.
+\newblock Contract inferencing for functional programs.
+\newblock Master's thesis, Utrecht University, January 2013.
+
+\bibitem[Hinze et~al.(2006)Hinze, Jeuring, and L\"{o}h]{Hinze06typedcontracts}
+Ralf Hinze, Johan Jeuring, and Andres L\"{o}h.
+\newblock Typed contracts for functional programming.
+\newblock In \emph{In FLOPS '06: Functional and Logic Programming: 8th
+  International Symposium}, pages 208--225. Springer-Verlag, 2006.
+
+\bibitem[Findler and Felleisen(2002)]{Findler:2002:CHF:583852.581484}
+Robert~Bruce Findler and Matthias Felleisen.
+\newblock Contracts for higher-order functions.
+\newblock \emph{SIGPLAN Not.}, 37\penalty0 (9):\penalty0 48--59, September
+  2002.
+\newblock ISSN 0362-1340.
+\newblock \doi{10.1145/583852.581484}.
+\newblock URL \url{http://doi.acm.org/10.1145/583852.581484}.
+
+\bibitem[Findler(2002)]{Findler02behavioralsoftware}
+Robert~Bruce Findler.
+\newblock Behavioral software contracts, 2002.
+
+\bibitem[Degen et~al.(2009)Degen, Thiemann, and Wehr]{DegenThiemannWehr2009}
+Markus Degen, Peter Thiemann, and Stefan Wehr.
+\newblock True lies: Lazy contracts for lazy languages (faithfulness is better
+  than laziness).
+\newblock In \emph{4. Arbeitstagung Programmiersprachen (ATPS'09)}, L\"{u}beck,
+  Germany, October 2009.
+
+\bibitem[Xu et~al.(2009)Xu, Peyton~Jones, and
+  Claessen]{Xu:2009:SCC:1594834.1480889}
+Dana~N. Xu, Simon Peyton~Jones, and Koen Claessen.
+\newblock Static contract checking for haskell.
+\newblock \emph{SIGPLAN Not.}, 44\penalty0 (1):\penalty0 41--52, January 2009.
+\newblock ISSN 0362-1340.
+\newblock \doi{10.1145/1594834.1480889}.
+\newblock URL \url{http://doi.acm.org/10.1145/1594834.1480889}.
+
+\bibitem[Cousot et~al.()Cousot, Cousot, Logozzo, and Barnett]{cousotabstract}
+Patrick Cousot, Radhia Cousot, Francesco Logozzo, and Michael Barnett.
+\newblock An abstract interpretation framework for refactoring with application
+  to extract methods with contracts.
+
+\bibitem[Rondon et~al.(2008)Rondon, Kawaguci, and Jhala]{rondon2008liquid}
+Patrick~M Rondon, Ming Kawaguci, and Ranjit Jhala.
+\newblock Liquid types.
+\newblock \emph{ACM SIGPLAN Notices}, 43\penalty0 (6):\penalty0 159--169, 2008.
+
+\bibitem[Rondon et~al.(2013)Rondon, Vazou, and Jhala]{rondon2013refinement}
+Patrick~M Rondon, Niki Vazou, and Ranjit Jhala.
+\newblock Abstract refinement types.
+\newblock In \emph{ESOP}, 2013.
+
+\bibitem[Terauchi(2010)]{terauchi2010dependent}
+Tachio Terauchi.
+\newblock Dependent types from counterexamples.
+\newblock In \emph{ACM Sigplan Notices}, volume~45, pages 119--130. ACM, 2010.
+
+\bibitem[Jhala et~al.(2010)Jhala, Majumdar, and
+  Rybalchenko]{jhala2010refinement}
+Ranjit Jhala, Rupak Majumdar, and Andrey Rybalchenko.
+\newblock Refinement type inference via abstract interpretation.
+\newblock \emph{arXiv preprint arXiv:1004.2884}, 2010.
+
+\bibitem[Dimoulas and Felleisen(2011)]{Dimoulas:2011:CSH:2039346.2039348}
+Christos Dimoulas and Matthias Felleisen.
+\newblock On contract satisfaction in a higher-order world.
+\newblock \emph{ACM Trans. Program. Lang. Syst.}, 33\penalty0 (5):\penalty0
+  16:1--16:29, November 2011.
+\newblock ISSN 0164-0925.
+\newblock \doi{10.1145/2039346.2039348}.
+\newblock URL \url{http://doi.acm.org/10.1145/2039346.2039348}.
+
+\bibitem[Greenberg et~al.(2010)Greenberg, Pierce, and
+  Weirich]{Greenberg:2010:CMM:1707801.1706341}
+Michael Greenberg, Benjamin~C. Pierce, and Stephanie Weirich.
+\newblock Contracts made manifest.
+\newblock \emph{SIGPLAN Not.}, 45\penalty0 (1):\penalty0 353--364, January
+  2010.
+\newblock ISSN 0362-1340.
+\newblock \doi{10.1145/1707801.1706341}.
+\newblock URL \url{http://doi.acm.org/10.1145/1707801.1706341}.
+
+\end{thebibliography}

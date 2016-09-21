@@ -1,0 +1,68 @@
+infer en inferDebug geven je een contract
+
+inferWE = infer With Environment
+
+
+
+
+TODO:
+
+Stap 0: Vervang de vreemde definities in file.hs met nieuwe in de vorm van de wrongInsert' assertion hieronder.
+
+ORIG PROG --> ORIG AST --> ANNOTATED AST --> ANNOTATED PROG --> APPLY QC COUNTEREXAMPLE TO ANNOTATED PROG
+
+Stap 1: Kijk na wat er nodig is om van een ongeannoteerd programma een geannoteerd te maken, en dat dan te vertalen naar echte GHC-code.
+Stap 2: Eens dat gedaan is, probeer een Quickcheck counterexample te genereren van het originele programma, en pas het toe op het geannoteerde programma en zie wat er gebeurt.
+
+
+
+
+
+Johan Jeuring's library voorbeelden:
+C.app C.head' 0 [2,1,2]
+C.app C.head' 0 []
+
+> wrongInsert :: (Ord aT) => aT -> [aT] -> [aT]
+> wrongInsert a   []                       =  [a]
+> wrongInsert a1  (a2 : as)  |  a1 <= a2   =  a2 : a1 : as
+>                            |  otherwise  =  a2 : wrongInsert a1 as
+   
+> wrongInsert' = assert "wrongInsert" (true >-> ord >-> ord) (fun (\ a -> fun (\ x -> wrongInsert a x)))
+
+app (app wrongInsert' 0 1) 1 [0,2,3,4]
+
+Vragen voor Jurrien:
+- Waar is de relatiecode (bv. int naar nat) in de AG?
+- Ik zie dat met mkCtrd de asserts kunnen worden geïntegreerd in de originele code. Is er ook een manier om deze geannoteerde code te evalueren? In je thesis schrijf je dat je de geannoteerde code kan vertalen naar de contract library van Johan. Ik heb met het lijntje
+
+writeContractedCode = do writeFile "contractedCodeExample" ((show . pprint) isortMkCtrd)
+
+de geannoteerde code in een file opgevangen, maar deze typecheckt niet, bv:
+
+let __ctrt_insert = \ctrt -> \z -> \zs -> apply (assert "insert" ctrt) (app (app (fun (insert (__ctrt_insert ctrt))) z) zs)
+
+resulteert in 
+
+    Couldn't match expected type `aT0 :-> bT0'
+                with actual type `aT1 -> aT1'
+    In the return type of a call of `assert'
+
+, omdat (assert "insert" ctrt) van type aT -> aT is, en apply als eerste parameter iets van type (aT :-> bT) verwacht.
+
+De expressie (app (app (fun (insert (__ctrt_insert ctrt))) z) zs) typecheckt ook niet, omdat de uiterste app opnieuw iets van type (aT :-> bT) verwacht, maar de binnenste app heeft de fun al omgezet naar iets van type (aT -> bT). Als ik een extra fun applicatie toevoeg, typecheckt het wel (ik heb de recursieve call van insert er uit gelaten):
+
+app (fun insert) 0 "5" -- typecheckt
+app (app (fun insert) 0 '5') 1 "test" -- typecheckt niet
+app (fun (app (fun insert) 0 '5')) 1 "test" --typecheckt
+
+Zou dit een manier zijn om het probleem op te lossen, of heb ik een stap gemist in het vertalingsproces?
+
+test = let __ctrt_insert = \ctrt -> \z -> \zs -> C.app ( C.app (__assert_insert ctrt) 0 z) 1 zs
+           __assert_insert ctrt = C.assert "insert" ctrt (C.fun (\z -> (C.fun (\zs -> C.insert z zs))))
+       in __ctrt_insert C.true 0 [2,3,4]
+
+
+
+
+
+

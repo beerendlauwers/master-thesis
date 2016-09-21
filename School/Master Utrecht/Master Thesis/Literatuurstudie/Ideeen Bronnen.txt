@@ -1,0 +1,19 @@
+http://www.botkes.nl/wp-content/uploads/HaskellTutor.pdf
+
+P9: Java tutoring - "Both of the Java tutors require students to submit full programs (which may be
+very small), which are then scrutinised to determine the students intent (JITS) or
+whether or not properties are violated (J-LATTE)."
+
+P10: Haskell Tutoring - "López et al. (2002) use unit testing to detect errors in student programs"
+
+intersection-type-parameters.pdf
+
+Intersection types kunnen misschien de relatie definitie vervangen. Is het waardevol om dit rijkere typing systeem te implementeren? Johan denkt misschien van wel, maar ik weet het niet zo.
+
+CousotCousotLogozzo-OOPSLA2012
+
+Deze paper gebruikt contract inferencing voor imperatieve talen. Verder lezen om vergelijkingen met Haskell-implementatie te kunnen maken. Wordt gebruikt voor refactoring analysis, niet voor leerdoeleinden.
+
+http://www.staff.science.uu.nl/~jeuri101/homepage/Publications/Contract.pdf
+
+Deze paper is waar Stutterheim is van begonnen.
