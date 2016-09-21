@@ -1,6 +1,6 @@
-Chapter 3 : From begin to 3.3.4. + section 3.4 to 3.4.4
-Chapter 5 : From begin to 5.1.4 + sections 5.2 to 5.2.3
-Chapter 8 : From begin to end
-Chapter 9 : From begin to end
-Chapter 10: From begin to section 10.3
-Chapter 11: From begin to end
+Chapter 3 : From begin to 3.3.4. (p47 - p91 (veel theorema's)) + section 3.4 to 3.4.4 (p92 - p102)
+Chapter 5 : From begin to 5.1.4 (p136 - p148) + sections 5.2 to 5.2.3 (p148 - p161)
+Chapter 8 : From begin to end (p254 - p271)
+Chapter 9 : From begin to end (p272 - p290)
+Chapter 10: From begin to section 10.3 (p292 - p307) (Hebben we quasilinear gezien???)
+Chapter 11: From begin to end (p348 - p400)
