@@ -1,0 +1,17 @@
+Question 1 : 30
+    + Ziet er heel mooi uit
+    - De code
+>   sum (map (*2) xs)
+    % kan veel beter geschreven worden als
+> 2 * sum xs
+    ~ Er staan best veel haakjes in je code
+    % Kijk eens naar de syntax diagrammen op http://www.hck.sk/users/peter/HaskellEx.htm
+
+Question 2 : 40
+    ~ Het is niet nodig om dit of dat te doen, je
+    % kunt ook zus en zo doen. 
+    - De functie rekent de omgekeerde lijst uit. 
+    ~ de functie
+> foldr op e [] = e
+> foldr op e (x:xs) = e `op` foldr op e xs
+    % kan beter geschreven worden in termen van ``foldr``.

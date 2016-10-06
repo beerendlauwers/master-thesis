@@ -1,0 +1,39 @@
+Question 1: 10
+    + Goed gebruik van datatypes en typering waar nodig.
+Question 2: 15
+    ~ In plaats van
+>   (DATA) <$ epsilon
+    % kon je ook
+>   succeed (DATA)
+    % hebben gebruikt, maar dat is een kwestie van smaak ;).
+    + Heel mooi gebruik van je anyOf functie!
+Question 3: 5
+    ~ Je kon ook filter hebben gebruikt om de recursie te verstoppen.
+Question 4: 10
+    ~ Netjes
+Question 5: 5
+    ~ Alles in orde
+Question 6: 5
+
+Question 7: 5
+
+Question 8: 15
+    ~ Je kon
+>   <* del
+>   *> del
+    % misschien hebben geabstraheerd:
+>   pSpaceR p = p <* del
+>   pSpaceL p = del *> p
+Question 9: 5
+    ~ In orde
+Question 10: 5
+
+Question 11: 10
+    + Goed gebruik van abstractie
+    + Leuke manier om de veroverde stukken te doorlopen
+Question 12: 5
+Question 13: 0
+Question 14: 0
+Question 15: 0
+Question 16: 0
+Question 17: 0

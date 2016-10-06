@@ -1,0 +1,53 @@
+Question 1: 10
+    ~ Je kon File en Rank ook het type String en Int hebben gegeven.
+Question 2: 15
+    ~ Opmerking: hulpfunctie
+>   tuple x y = (x,y)
+    % doet hetzelfde als:
+>   (,)
+    + Interessant gebruik van de manySymbol functie.
+Question 3: 5
+
+Question 4: 10
+    + Mooi gebruik van de lookup functie.
+Question 5: 5
+    ~ Alles in orde
+Question 6: 5
+    ~ Kort maar krachtig
+Question 7: 5
+    ~ OK
+Question 8: 5
+    ~ De code
+>   id <$> many ParseGame
+    % is hetzelfde als
+>   many ParseGame
+
+    ~ Bij je typering
+>   type Tags = Maybe [Tag]
+    % mag je de Maybe weglaten, en dan checken op de lege lijst.
+    
+    - Bij de functie parseRestSymbols gebruik je best een vorm van many in plaats van manuele recursie.
+    
+    - Je had de functies parseCharacter en parseLetter ook kunnen schrijven in de vorm van je hulpfunctie readChar.
+    
+    - Je gebruikt een erg vreemde amalgaam van lexen en parsen die niet echt goed werkt (zie onder).
+    
+    - Je parser let niet op witruimtes bij het parsen van moves, waardoor de moves
+>   e4 e5
+    % worden geparst als een enkele move!! Je parseWhitespace functie doet hier ook niets aan.
+Question 9: 5
+    ~ OK
+Question 10: 4
+    - De code
+>   concat $ map printTag tags
+    % kon je ook schrijven als
+>   concatMap printTag tags
+Question 11: 4
+    ~ Leuk dat je ook de onbesliste wedstrijden er bij telt.
+    - checkPieces is niet afgewerkt.
+Question 12: 0
+Question 13: 0
+Question 14: 0
+Question 15: 0
+Question 16: 0
+Question 17: 0

@@ -1,0 +1,56 @@
+The reviewing work you will have to do is accompanied by a template review-form,
+in which you can enter your reviewing results. This file should adhere to a simple
+pre-specified format. The grammar for this format is given below:
+
+Review      -> Questions
+Questions   -> Question Nl Questions | epsilon
+Question    -> "Question" Qnum ':' Qgrade Nl Remarks
+Remarks     -> Remark Nl Remarks | Epsilon
+Remark      -> Modality Line Content
+Modality    -> '+' | '-' | '~'
+Content     -> Code Nl Content | Comment NL Content | Epsilon
+Code        -> '>' Line
+Comment     -> '%' Line
+
+Line -> LChar*
+LChar -> All chars except '\n'
+Qnum -> natural
+Qgrade ->  natural
+Nl -> '\n'
+
+Whitespaces can exist between all nonterminals. Note that newlines are an active part of the grammar.
+Here is an example file.
+
+Question 1 : 30
+    + Ziet er heel mooi uit
+    - De code
+>   sum (map (*2) xs)
+    % kan veel beter geschreven worden als
+> 2 * sum xs
+    ~ Er staan best veel haakjes in je code
+    % Kijk eens naar de syntax diagrammen op http://www.hck.sk/users/peter/HaskellEx.htm
+
+Question 2 : 40
+    ~ Het is niet nodig om dit of dat te doen, je
+    % kunt ook zus en zo doen. 
+    - De functie rekent de omgekeerde lijst uit. 
+    ~ de functie
+> foldr op e [] = e
+> foldr op e (x:xs) = e `op` foldr op e xs
+    % kan beter geschreven worden in termen van ``foldr``.
+    
+Each question is identified by its number, the mark given for each question is given after the colon. Each
+Question can be accompanied by remarks, which can be classified as positive (+), negative (-) or neutral(~).
+Each remark can be further be further explained using a mixture of code (>) and comments (%).
+
+The Examination package contains a tool examination, with which the your submission files
+can be checked against the specification. It can be installed using:
+
+ > cabal install
+
+Then you can run it using the command:
+
+ > examination <your file>
+ 
+Please make sure that the files you hand in adhere to the specification!
+
