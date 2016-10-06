@@ -1,0 +1,443 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script language="javascript" id="dsshim" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/shimdata.js"></script><script language="javascript" id="dsfunc" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/oth.js"></script><script language="javascript" id="dstimeout" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/sessiontimeout.js"></script><script language="javascript" id="dsvar">var dsnodocwrites = 0 ; var DanaCookie="JSESSIONID=5174D84C00CA4E46E4D5B6DF7560AFB0"; var DSHost="remote.khm.be"; var DSLang="nl"; var DSObfuscateHostname=1;;danaSetDSHost();</script>
+    
+
+         <title>SoftCache: Dynamic Optimizations for Power and Area Reduction in Embedded Systems (II) - Georgia Tech's Institutional Repository</title>
+
+        <title>Georgia Tech's Institutional Repository: SoftCache: Dynamic Optimizations for Power and Area Reduction in Embedded Systems (II)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="Generator" content="DSpace">
+        <link rel="stylesheet" href="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_002.css" type="text/css">
+        <link rel="stylesheet" href="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo.css" media="print" type="text/css">
+        <link rel="shortcut icon" href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+favicon.ico" type="image/x-icon">
+
+<link rel="schema.DCTERMS" href="https://remote.khm.be/dc/terms/,DanaInfo=.apvtoDtxn+"><link rel="schema.DC" href="https://remote.khm.be/dc/elements/1.1/,DanaInfo=.apvtoDtxn+"><meta name="DC.creator" content="Fryman, Joshua Bruce"><meta name="DC.creator" content="Lee, Hsien-Hsin Sean"><meta name="DC.creator" content="Huneycutt, Chad Marcus"><meta name="DCTERMS.dateAccepted" content="2005-03-17T19:36:25Z" scheme="DCTERMS.W3CDTF"><meta name="DCTERMS.available" content="2005-03-17T19:36:25Z" scheme="DCTERMS.W3CDTF"><meta name="DCTERMS.issued" content="2005" scheme="DCTERMS.W3CDTF"><meta name="DC.identifier" content="http://hdl.handle.net/1853/5915" scheme="DCTERMS.URI"><meta name="DCTERMS.abstract" content="We propose a SoftCache for low-power and reduced die area while providing application flexibility. Our implementations demonstrate that the network is a power efficient means for accessing remote memory. The impact of this work suggests that SoftCache systems may be useful in future consumer electronics. Our results show that die power is reduced by 20%, die area is reduced by 10%, and trans- ferring applications over the network is more energy-delay effective than local DRAM." xml:lang="en"><meta name="DC.description" content="Submitted by Karen Smith (karen.smith@library.gatech.edu) on 2005-03-17T19:35:35Z
+No. of bitstreams: 1
+git-cercs-05-07.pdf: 126966 bytes, checksum: b9180a7ba5661f02ac054aba10e9542b (MD5)" xml:lang="en"><meta name="DC.description" content="Approved for entry into archive by Karen Smith(karen.smith@library.gatech.edu) on 2005-03-17T19:36:24Z (GMT) No. of bitstreams: 1
+git-cercs-05-07.pdf: 126966 bytes, checksum: b9180a7ba5661f02ac054aba10e9542b (MD5)" xml:lang="en"><meta name="DC.description" content="Made available in DSpace on 2005-03-17T19:36:25Z (GMT). No. of bitstreams: 1
+git-cercs-05-07.pdf: 126966 bytes, checksum: b9180a7ba5661f02ac054aba10e9542b (MD5)
+  Previous issue date: 2005" xml:lang="en"><meta name="DCTERMS.extent" content="126966 bytes"><meta name="DC.format" content="application/pdf"><meta name="DC.language" content="en_US" scheme="DCTERMS.RFC1766"><meta name="DC.publisher" content="Georgia Institute of Technology" xml:lang="en"><meta name="DC.relation" content="CERCS;GIT-CERCS-05-07"><meta name="DC.subject" content="Die area"><meta name="DC.subject" content="Die power"><meta name="DC.subject" content="DRAM"><meta name="DC.subject" content="Network application transfer"><meta name="DC.subject" content="Power efficiency"><meta name="DC.subject" content="Remote memory"><meta name="DC.subject" content="SoftCache"><meta name="DC.subject" content="Client-server computing models"><meta name="DC.title" content="SoftCache: Dynamic Optimizations for Power and Area Reduction in Embedded Systems (II)" xml:lang="en"><meta name="DC.type" content="Technical Report" xml:lang="en">
+
+        
+    <script type="text/javascript" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_002.js"></script>
+    </head><body><iframe style="position: absolute; top: 0px; left: 0px; display: none; width: auto; height: auto;" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/blank.htm" name="dstbIframe" id="dstbIframe" scrolling="no" frameborder="0"></iframe><div id="dsl0" style="padding: 1px; position: absolute; top: 0pt; left: 0pt; visibility: hidden; z-index: 500000;"><table style="border: 1px ridge rgb(102, 102, 102); padding: 0px; height: auto; background-color: rgb(238, 238, 238); text-align: center; vertical-align: middle;"><tbody><tr><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;" valign="middle" align="center"><a onclick="RepositionTlb();return false;" href="#"><img alt="Reposition toolbar" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/smallposition.gif" width="9" border="0" height="24"></a></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;" bgcolor="#cccccc"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/space.gif" width="1" height="1"></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/space.gif" width="2" height="1"></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;"><a target="_top" href="https://remote.khm.be/dana/home/index.cgi"><img title="Bookmarks" alt="Bookmarks" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/welcome.gif" border="0"></a></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/space.gif" width="2" height="1"></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;" bgcolor="#cccccc"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/space.gif" width="1" height="1"></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;" id="dslMain"><table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;" bgcolor="#666666"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/space.gif" width="1" height="1"></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/space.gif" width="2" height="1"></td><td><a target="_top" href="https://remote.khm.be/dana-na/auth/logout.cgi"><img title="Sign out" alt="Sign out" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/btnNavSignOut.gif" width="24" border="0" height="24"></a></td><td style="border: 0px none ; margin: 0px; padding: 0px; text-align: center; vertical-align: middle;"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/space.gif" width="2" height="1"></td></tr></tbody></table></td></tr></tbody></table></div>
+
+        
+        
+
+         <table class="pageBanner" width="100%" border="0" cellpadding="0" cellspacing="0">
+
+           
+            <tbody><tr>
+                 <td width="456">
+ 
+                     <a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_004.gif" alt="SMARTech" width="456" border="0" height="78"></a></td>
+ 
+                 <td background="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20(II)_bestanden/DanaInfo_002.gif" bgcolor="#ffffff">&nbsp;</td>
+ 
+                 <td valign="middle" width="195">
+                       <a href="https://remote.khm.be/,DanaInfo=.awxyCpnhyi08Ksn7tsyRxxD+"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo.gif" alt="Library Home" width="195" border="0" height="78"></a></td>
+            </tr>
+            <tr class="stripe"> 
+                <td colspan="3">&nbsp;</td>
+            </tr>
+        </tbody></table>
+
+        
+
+
+
+
+
+        
+
+        
+        <table class="centralPane" width="100%" border="0" cellpadding="3" cellspacing="1">
+
+            
+            <tbody><tr valign="top">
+
+            
+
+            <td class="navigationBar">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form autocomplete="off" method="get" action="/,DanaInfo=.asncuxjioHpk4qpvOuuA+simple-search">
+
+
+  <table class="searchBox" width="100%">
+    <tbody><tr>
+      <td>
+        <table width="100%" border="0" cellspacing="0">
+          <tbody><tr>
+            <td class="searchBoxLabel"><label for="tequery">Search&nbsp;SMARTech</label></td>
+          </tr>
+          <tr>
+            <td class="searchBoxLabelSmall" valign="middle" nowrap="nowrap">
+              
+              <input name="query" id="tequery" size="8" type="text"><input name="submit" value="Go" type="submit">
+              <br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+advanced-search">Advanced Search</a>
+
+            </td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr>
+  </tbody></table>
+</form>
+
+
+<table width="100%" border="0" cellpadding="2" cellspacing="2">
+  <tbody><tr class="navigationBarItem">
+    <td>
+      <img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    </td>
+
+    <td class="navigationBarItem" nowrap="nowrap">
+      <a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+">Home</a>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="navigationBarSublabel" nowrap="nowrap">Browse</td>
+  </tr>
+
+  <tr class="navigationBarItem">
+    <td>
+      <img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    </td>
+    <td class="navigationBarItem" nowrap="nowrap">
+      <a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+community-list">Communities<br>&amp;&nbsp;Collections</a>
+    </td>
+  </tr>
+
+
+
+
+
+		<tr class="navigationBarItem">
+    		<td>
+      			<img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    		</td>
+    		<td class="navigationBarItem" nowrap="nowrap">
+      			<a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=dateissued">Date</a>
+    		</td>
+  		</tr>
+	
+		<tr class="navigationBarItem">
+    		<td>
+      			<img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    		</td>
+    		<td class="navigationBarItem" nowrap="nowrap">
+      			<a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=author">Author</a>
+    		</td>
+  		</tr>
+	
+		<tr class="navigationBarItem">
+    		<td>
+      			<img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    		</td>
+    		<td class="navigationBarItem" nowrap="nowrap">
+      			<a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=title">Title</a>
+    		</td>
+  		</tr>
+	
+		<tr class="navigationBarItem">
+    		<td>
+      			<img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    		</td>
+    		<td class="navigationBarItem" nowrap="nowrap">
+      			<a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject">Subject</a>
+    		</td>
+  		</tr>
+	
+		<tr class="navigationBarItem">
+    		<td>
+      			<img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    		</td>
+    		<td class="navigationBarItem" nowrap="nowrap">
+      			<a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=type">Type</a>
+    		</td>
+  		</tr>
+	
+
+
+
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="navigationBarSublabel" nowrap="nowrap">Sign on to:</td>
+  </tr>
+
+  <tr class="navigationBarItem">
+    <td>
+      <img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    </td>
+    <td class="navigationBarItem" nowrap="nowrap">
+      <a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+subscribe">Receive email<br>updates</a>
+    </td>
+  </tr>
+
+  <tr class="navigationBarItem">
+    <td>
+      <img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    </td>
+    <td class="navigationBarItem" nowrap="nowrap">
+      <a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+mydspace">My SMARTech </a><br>
+      <small>authorized users</small>
+    </td>
+  </tr>
+
+  <tr class="navigationBarItem">
+    <td>
+      <img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    </td>
+    <td class="navigationBarItem" nowrap="nowrap">
+      <a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+profile">Edit Profile</a>
+    </td>
+  </tr>
+
+
+
+  <tr>
+    <td colspan="2">&nbsp;</td>
+  </tr>
+
+  <tr class="navigationBarItem">
+    <td>
+      <img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    </td>
+    <td class="navigationBarItem" nowrap="nowrap">
+            <script type="text/javascript">
+<!-- Javascript starts here
+DanaMethodWrite("write",document,'<a href="#" onClick="var popupwin = window.open(\'/help/index.html\',\'dspacepopup\',\'height=600,width=550,resizable,scrollbars\');popupwin.focus();return false;">Help<\/a>');
+// -->
+</script><a href="#" onclick="var popupwin = DanaMethodOpen('open',window,'/help/index.html','dspacepopup','height=600,width=550,resizable,scrollbars');popupwin.focus();return false;">Help</a><script> if(DanaFlushWrite) DanaFlushWrite();
+</script><noscript><a href="/help/index.html" target="dspacepopup">Help</a></noscript>
+    </td>
+  </tr>
+
+  <tr class="navigationBarItem">
+    <td>
+      <img alt="" src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo_003.gif" width="16" height="16">
+    </td>
+    <td class="navigationBarItem" nowrap="nowrap">
+    <!-- Changed to accomodate new policy page.  ba 021609 -->
+          <a href="https://remote.khm.be/help/,DanaInfo=.asncuxjioHpk4qpvOuuA+about.html" target="new">About SMARTech  </a>
+    </td>
+  </tr>
+</tbody></table>
+
+            </td>
+
+            
+
+            
+            
+            
+            <td class="pageContents" width="100%">
+
+                
+
+                
+
+
+
+
+  
+
+
+<p class="locationBar">
+
+<a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+">Georgia Tech's Institutional Repository</a>&nbsp;&gt;
+<br>
+<a href="https://remote.khm.be/handle/1853/,DanaInfo=.asncuxjioHpk4qpvOuuA+78">Center for Experimental Research in Computer Systems (CERCS)</a>&nbsp;&gt;
+<br>
+<a href="https://remote.khm.be/handle/1853/,DanaInfo=.asncuxjioHpk4qpvOuuA+79">CERCS Technical Reports</a>&nbsp;&gt;
+
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <table class="miscTable" align="center">
+        <tbody><tr>
+            <td class="evenRowEvenCol" align="center">
+                
+                <strong>Please use this identifier to cite or link to this item:
+                <code>http://hdl.handle.net/1853/5915</code></strong>
+            </td>
+
+        </tr>
+    </tbody></table>
+    <br>
+
+    
+    <center><table class="itemDisplayTable">
+<tbody><tr><td class="metadataFieldLabel">Title:&nbsp;</td><td class="metadataFieldValue">SoftCache: Dynamic Optimizations for Power and Area Reduction in Embedded Systems (II)</td></tr>
+<tr><td class="metadataFieldLabel">Authors:&nbsp;</td><td class="metadataFieldValue"><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=author&amp;value=Fryman%2C+Joshua+Bruce">Fryman, Joshua Bruce</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=author&amp;value=Lee%2C+Hsien-Hsin+Sean">Lee, Hsien-Hsin Sean</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=author&amp;value=Huneycutt%2C+Chad+Marcus">Huneycutt, Chad Marcus</a></td></tr>
+<tr><td class="metadataFieldLabel">Subjects :&nbsp;</td><td class="metadataFieldValue"><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=Die+area">Die area</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=Die+power">Die power</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=DRAM">DRAM</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=Network+application+transfer">Network application transfer</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=Power+efficiency">Power efficiency</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=Remote+memory">Remote memory</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=SoftCache">SoftCache</a><br><a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+browse?type=subject&amp;value=Client-server+computing+models">Client-server computing models</a></td></tr>
+<tr><td class="metadataFieldLabel">Issue Date:&nbsp;</td><td class="metadataFieldValue">2005 </td></tr>
+<tr><td class="metadataFieldLabel">Publisher:&nbsp;</td><td class="metadataFieldValue">Georgia Institute of Technology</td></tr>
+<tr><td class="metadataFieldLabel">Series/Report no.:&nbsp;</td><td class="metadataFieldValue">CERCS;GIT-CERCS-05-07</td></tr>
+<tr><td class="metadataFieldLabel">Abstract:&nbsp;</td><td class="metadataFieldValue">We
+propose a SoftCache for low-power and reduced die area while providing
+application flexibility. Our implementations demonstrate that the
+network is a power efficient means for accessing remote memory. The
+impact of this work suggests that SoftCache systems may be useful in
+future consumer electronics. Our results show that die power is reduced
+by 20%, die area is reduced by 10%, and trans- ferring applications
+over the network is more energy-delay effective than local DRAM.</td></tr>
+<tr><td class="metadataFieldLabel">Type:&nbsp;</td><td class="metadataFieldValue">Technical Report</td></tr>
+<tr><td class="metadataFieldLabel">URI:&nbsp;</td><td class="metadataFieldValue"><a href="https://remote.khm.be/1853/,DanaInfo=.ahenClftktnJyq6+5915">http://hdl.handle.net/1853/5915</a></td></tr>
+<tr><td class="metadataFieldLabel">Appears in Collections:</td><td class="metadataFieldValue"><a href="https://remote.khm.be/handle/1853/,DanaInfo=.asncuxjioHpk4qpvOuuA+79">CERCS Technical Reports</a><br></td></tr>
+</tbody></table></center><br>
+<table class="miscTable" align="center"><tbody><tr><td class="evenRowEvenCol"><p><strong>Files in This Item:</strong></p>
+<table cellpadding="6"><tbody><tr><th id="t1" class="standard">File</th>
+<th id="t2" class="standard">Description</th>
+<th id="t3" class="standard">Size</th><th id="t4" class="standard">Format</th></tr>
+<tr><td headers="t1" class="standard"><a target="_blank" href="https://remote.khm.be/bitstream/1853/5915/1/,DanaInfo=.asncuxjioHpk4qpvOuuA+git-cercs-05-07.pdf">git-cercs-05-07.pdf</a></td><td headers="t2" class="standard"></td><td headers="t3" class="standard">123.99 kB</td><td headers="t4" class="standard">Adobe PDF</td><td class="standard" align="center"><a target="_blank" href="https://remote.khm.be/bitstream/1853/5915/1/,DanaInfo=.asncuxjioHpk4qpvOuuA+git-cercs-05-07.pdf">View/Open</a></td></tr></tbody></table>
+</td></tr></tbody></table>
+
+
+
+    <div align="center">
+
+    <form autocomplete="off" method="get" action="/handle/1853/,DanaInfo=.asncuxjioHpk4qpvOuuA+5915">
+        <input name="mode" value="full" type="hidden">
+        <input name="submit_simple" value="Show full item record" type="submit">
+    </form>
+
+    </div>
+
+
+
+
+    
+
+    
+
+    <p class="submitFormHelp">Items in SMARTech are protected by copyright, with all rights reserved, unless otherwise indicated.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+                    <p>&nbsp;</p>
+                </td>
+
+            
+
+            </tr>
+
+            
+             <tr class="pageFooterBar">
+                <td colspan="2" class="pageFootnote">
+                    <table class="pageFooterBar" width="100%">
+                        <tbody><tr>
+                            <td>
+                                <a href="https://remote.khm.be/,DanaInfo=.avbnlhfzvzI6CL15v+check?uri=referer"><img src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo.png" alt="Valid XHTML 1.0!" width="88" height="31"></a>
+                            </td>
+                            <td class="pageFootnote">
+                                <a target="_blank" href="https://remote.khm.be/,DanaInfo=.awxyChxvhknJz3t+">DSpace Software</a> Copyright&nbsp;©&nbsp;2002-2007&nbsp;<a target="_blank" href="https://remote.khm.be/,DanaInfo=.awfdCqnzGmm4+">MIT</a>&nbsp;and&nbsp;<a target="_blank" href="https://remote.khm.be/,DanaInfo=.awxyCluFjwv+">Hewlett-Packard</a>&nbsp;-
+                                <a target="_blank" href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+feedback">Feedback</a>
+                                <a href="https://remote.khm.be/,DanaInfo=.asncuxjioHpk4qpvOuuA+htmlmap"></a>
+                            </td>
+                            <td valign="middle" nowrap="nowrap"> 
+                            </td>
+                        </tr>
+                    </tbody></table>
+                </td>
+            </tr>
+        </tbody></table>
+
+      
+         
+        <script src="Dynamic%20Optimizations%20for%20Power%20and%20Area%20Reduction%20in%20Embedded%20Systems%20%28II%29_bestanden/DanaInfo.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+        _uacct = "UA-1493928-1";
+        urchinTracker();
+        </script><script> if(DanaFlushWrite) DanaFlushWrite();
+</script>
+
+    <script language="javascript" id="dstb-id"> var DSxmlxsl = 1; setTimeout("dstb()",0);</script></body></html>

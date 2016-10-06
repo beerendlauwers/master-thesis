@@ -1,0 +1,33 @@
+
+
+06/18/2010 14:59:15:
+[ONBEKENDE FOUT] Fout in VersieDAL.vb::tblVersieDataTable GetAllVersie(): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: SQL Network Interfaces, error: 26 - Error Locating Server/Instance Specified)
+
+
+
+
+Stack trace:
+Bestand: C:\School\RefManual\App_Code\Classes\ErrorLogger.vb | Method: Void WriteError(ErrorLogger ByRef) | Lijn: 131
+Bestand: C:\School\RefManual\App_Code\Data Access Layer\VersieDAL.vb | Method: tblVersieDataTable GetAllVersie() | Lijn: 60
+Bestand: C:\School\RefManual\Default.aspx.vb | Method: Int32 VersieValideren() | Lijn: 127
+Bestand: C:\School\RefManual\Default.aspx.vb | Method: Void Page_Load(System.Object, System.EventArgs) | Lijn: 21
+Bestand:  | Method: Void OnLoad(System.EventArgs) | Lijn: 0
+Bestand:  | Method: Void LoadRecursive() | Lijn: 0
+Bestand:  | Method: Void ProcessRequestMain(Boolean, Boolean) | Lijn: 0
+Bestand:  | Method: Void ProcessRequest(Boolean, Boolean) | Lijn: 0
+Bestand:  | Method: Void ProcessRequest() | Lijn: 0
+Bestand:  | Method: Void ProcessRequestWithNoAssert(System.Web.HttpContext) | Lijn: 0
+Bestand:  | Method: Void ProcessRequest(System.Web.HttpContext) | Lijn: 0
+Bestand:  | Method: Void ProcessRequest(System.Web.HttpContext) | Lijn: 0
+Bestand:  | Method: Void System.Web.HttpApplication.IExecutionStep.Execute() | Lijn: 0
+Bestand:  | Method: System.Exception ExecuteStep(IExecutionStep, Boolean ByRef) | Lijn: 0
+Bestand:  | Method: Void ResumeSteps(System.Exception) | Lijn: 0
+Bestand:  | Method: System.IAsyncResult System.Web.IHttpAsyncHandler.BeginProcessRequest(System.Web.HttpContext, System.AsyncCallback, System.Object) | Lijn: 0
+Bestand:  | Method: Void ProcessRequestInternal(System.Web.HttpWorkerRequest) | Lijn: 0
+Bestand:  | Method: Void ProcessRequestNoDemand(System.Web.HttpWorkerRequest) | Lijn: 0
+Bestand:  | Method: Void ProcessRequest(System.Web.HttpWorkerRequest) | Lijn: 0
+Bestand:  | Method: Void Process() | Lijn: 0
+Bestand:  | Method: Void ProcessRequest(Microsoft.VisualStudio.WebHost.Connection) | Lijn: 0
+__________________________________________________
+
+

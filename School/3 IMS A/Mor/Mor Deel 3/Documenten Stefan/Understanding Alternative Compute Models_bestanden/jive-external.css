@@ -1,0 +1,33 @@
+/*
+jive-external.css :
+*/
+/* main default header */
+#jive-global-header {
+    background: #210c4f url(../images/jive-hdr-bg1-ext.png) repeat-x top;
+    border-bottom: 1px #e9e9e9 solid;
+	}
+#jive-global-header-texture {
+    background: transparent url(../images/jive-hdr-bg2-ext.png) no-repeat;
+    padding: 10px 15px;
+    width: 836px;
+    }
+
+/* default logos */
+#jive-global-header .jive-header-logo-external {
+    background-image: url(../images/jive-hdr-logo-ext.png);
+    background-repeat: no-repeat;
+    height: 52px;
+    overflow: hidden;
+    width: 273px;
+    }
+#jive-global-header .jive-header-logo-external a.jive-global-header-logolink {
+    display: block;
+    height: 52px;
+    left: 15px;
+    position: absolute;
+    top: 9px;
+    width: 273px;
+    }
+/*
+END jive-external.css
+*/

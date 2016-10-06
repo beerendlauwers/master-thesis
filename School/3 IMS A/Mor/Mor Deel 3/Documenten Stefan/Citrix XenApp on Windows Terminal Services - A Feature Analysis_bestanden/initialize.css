@@ -1,0 +1,78 @@
+/* @group RESET */
+
+/* CSS Reset
+http://meyerweb.com/eric/thoughts/2007/04/14/reworked-reset/ */
+html, body, div, span,applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dd, dl, dt, li, ol, ul, fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font-weight: inherit;
+	font-style:  inherit;
+	line-height: inherit;
+	font-family: inherit;
+}
+a img, :link img, :visited img {border: 0;}
+table {	border-collapse: collapse;	border-spacing: 0;}
+/*ol,*/ ul {list-style: none;}
+q:before, q:after, blockquote:before, blockquote:after {content: "";}
+
+h1, h2, h3, h4, h5, h6, p {
+  position: relative;
+} 
+
+/* @end */
+
+/* @group LAYOUT */
+
+/* IE PNG Fix
+http://bjorkoy.com/past/2007/4/8/the_easiest_way_to_png/ 
+
+NOTE: Make sure to add .htc to Apache's mime types or won't work:
+in .htaccess add the following line:
+
+AddType text/x-component .htc
+
+*/ 
+img, input { behavior: url(/site/resources/v4_includes/css/iepngfix.htc);}
+
+/* Content Alignment */
+.left {float: left; margin: 2px 16px 16px 0;}
+.right { float: right; margin: 2px 0 18px 18px;}
+.righttight {float: right; margin-left: 16px; }
+.across {margin: 0 0 18px;}
+.abs_bottomright {position: absolute;bottom: 0;right: 0;}
+
+/* Text Alignment */
+.alignleft { text-align: left; }
+.alignright { text-align: right; }
+.aligncenter {text-align: center;}
+
+/* Vertical Spacing */
+.snug {margin-top: -18px !important;}
+.snugloose {margin-top: -9px !important;}
+.pad {margin-top: 18px !important;}
+.padtight {margin-top: 9px !important;}
+.padsuper { margin-top: 36px !important;}
+
+/* Horizontal Spacing */
+.flushleft {margin-left: 0px !important;}
+
+/* Float Clearers */
+.clear { clear: both; }
+.clearer { clear: both; display: block; margin: 0; padding: 0; height: 0; line-height: 1px; font-size: 1px; }
+
+/* Bug Finders */
+.bugborder {border: 1px solid red;}
+/* @end */
+
+
+
+

@@ -1,0 +1,334 @@
+body {
+	margin-left: 10%;
+	margin-right: 5%;
+	margin-top: 5%;
+	margin-bottom:5%;
+	background-color:#FFFFFF;
+}
+
+
+p {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 80%;
+	color : Black;
+	font-weight:normal;
+	line-height : 15px;
+}
+.top-right-nav
+{
+	margin-left: 70%;
+	text-align:center;
+	font-size:70%;
+    line-height : 20px;
+}
+
+.italic
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 80%;
+	color : Black;
+	font-weight:normal;
+	font-style:italic;
+	line-height : 15px;
+	font-style : italic;
+}
+
+.center
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	color : Black;
+	font-weight:normal;
+	text-align:center;
+}
+.byline
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	color : Black;
+	font-weight:normal;
+	text-align:center;
+}
+
+
+.right
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	color : Black;
+	font-weight:normal;
+	text-align:right;
+}
+
+.block
+{
+	margin-left: 25%;
+	margin-right:25%;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	color : Black;
+	font-weight:normal;
+	text-align:justify;
+	background-color: #CCCCC8;
+	border : Black;
+}
+
+.block2
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	color : Black;
+	font-weight:normal;
+	text-align:left;
+	background-color: #CCCCC8;
+	border : Black;
+}
+
+dl
+
+{
+margin-left: 5%;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+ 	color : Black;
+	font-weight:normal;
+	    font-size:80%;
+	
+}
+
+
+
+.small {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 70%;
+	color : Black;
+	font-weight:normal;
+}
+
+
+.caption
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 80%;
+	color : Black;
+	font-weight:bold;
+	text-align: center;
+}
+
+
+.caption-right
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 80%;
+	color : Black;
+	font-weight:bold;
+	text-align: right;
+}
+
+a {
+		font-family: arial;
+	font-weight:normal;
+	text-decoration:underline;
+	}
+
+img {border: 0	
+}
+
+h1
+
+{
+	font-family: Arial, sans-serif;
+	font-size:28px;
+	color : Black;
+	font-style: normal;
+	text-align :center;
+	font-weight:bold;
+}
+
+
+h2
+
+{
+	font-family: Arial, sans-serif;
+	font-size: 18px;
+	color : Black;
+	font-style: normal;
+	text-align :left;
+	font-weight:bold;
+}
+
+
+table {
+font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 90%;
+	color : Black;
+	font-weight:normal;
+	line-height : 15px;
+	}
+th,td
+{font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 90%;
+	color : Black;	
+}
+
+
+
+h3
+
+{
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+		color : Black;
+	font-style: normal;
+	text-align :left;
+	font-weight:bold;
+}
+
+
+h4
+
+{
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+		color : Black;
+	font-style: normal;
+	text-align :left;
+	font-weight:bold;
+}
+
+
+h5
+
+{
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	color : Black;
+	font-style: normal;
+	text-align :left;
+	font-weight:bold;
+}
+
+
+ul,  ol,  li 
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+ 	color : Black;
+	font-weight:normal;
+	    font-size:90%;
+}
+
+
+
+.authors {
+	margin-left : 10%;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+ 	color : Black;
+	font-weight:normal;
+	font-size:80%;
+}
+
+.footer
+{
+	margin-left : 10%;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+ 	color: Black;
+	font-size:70%;
+}
+
+
+pre
+{
+	margin-left: 5%;
+	margin-right:5%;
+	font-family: "Courier New", Courier, monospace;
+	color : Black;
+	font-weight:normal;
+	background-color: #CCCCC8;
+	font-size:75%;
+	}
+
+	
+.subarticles
+{
+margin-left: 20%;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+ 	color : Black;
+	font-weight:normal;
+	    font-size:80%;	
+}
+
+.indent
+{
+margin-left: 5%;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+ 	color : Black;
+	font-weight:normal;
+	    font-size:80%;	
+}
+
+.box{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	border: thin solid Black;
+	font-weight:normal;
+	text-align: left;
+	padding-left: 5%;
+	padding-right: 5%;
+	padding-bottom:5%;
+	padding-top: 5%;
+}
+
+#content
+{
+font-family: Arial, Verdana, Helvetica, sans-serif;
+	float: right;
+	width: 50%;
+	text-align:justify;
+	vertical-align: top;
+	height:200px;
+	border: thin solid Black;
+	padding-bottom:2%;
+	padding-top: 2%;
+	padding-left:2%;
+	padding-right: 2%;
+    font-size:80%;
+}
+
+.courier
+	{
+	font-family: "Courier New", Courier, monospace;
+	  font-size:90%;
+}
+
+.table-single-border {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 90%;
+	color : Black;
+	font-weight:normal;
+	line-height : 15px;
+	border : thin solid Black;
+}
+
+.news-table
+ {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 100%;
+	color : Black;
+	font-weight:normal;
+	line-height : 15px;
+}
+th,td
+{
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 100%;
+	color : Black;
+}
+
+hr
+{
+	width : 1px;
+	color: black;
+	width:50%;
+}
+
+blockquote
+{
+margin-left: 5%;
+font-family: Arial, Verdana, Helvetica, sans-serif;
+color : Black;
+font-weight:normal;
+font-size:80%;	
+}

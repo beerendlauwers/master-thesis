@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logindata>
+	<!-- Als er geen versie in de querystring werd meegegeven, wordt deze versie gekozen. -->
+	<defaultVersie>010302</defaultVersie>
+	
+	<!-- Als er geen taal in de querystring werd meegegeven, wordt deze taal gekozen. -->
+	<defaultTaal>NL</defaultTaal>
+	
+	<!-- Het bedrijf waarvaan de boomstructuur altijd zichtbaar is. -->
+	<defaultBedrijf>AAAFinancials</defaultBedrijf>
+	
+	<!-- Het paswoord om toegang te krijgen tot de applicatie. -->
+	<password>!AppligenS_J_W_X_W_J_SnegilppA!</password>
+	
+	<!-- Of de applicatie live is of niet. Kan 1 of 0 zijn. -->
+	<applicatieLive>0</applicatieLive>
+	
+	<!-- De default taal voor de lokalisatie. Gebruikt het TaalID in localisatie.xml. -->
+	<defaultLokalisatieTaal>10</defaultLokalisatieTaal>
+</logindata>

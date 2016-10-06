@@ -1,0 +1,90 @@
+body
+{
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+	background-color: #FFF;
+	font-family: Verdana,Arial;
+	font-size: 80%;
+}
+
+h1
+{
+	color:#FFFFFF;
+	background-color:#444;
+	padding: 2px 2px 2px 2px;
+}
+
+h2
+{
+	color:#FFFFFF;
+	background-color:#444;
+	padding: 2px 2px 2px 2px;
+}
+
+h3
+{
+	color:#FFFFFF;
+	background-color:#444;
+	padding: 2px 2px 2px 2px;
+}
+
+#mainbody
+{
+}
+
+#sidebar
+{
+	background-color: #EEE;
+	margin-top: 100px;
+	float: left;
+	position: fixed;
+	margin-left: 10px;
+	padding-left: 10px;
+	width: 179px;
+	border-top: 1px solid gray;
+	border-left: 1px solid gray;
+	border-bottom: 1px solid gray;
+	border-right: 1px solid #EEE;
+}
+
+#content
+{
+	background-color: #EEE;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-left: 200px;
+	margin-right: 40px;
+}
+
+.suboptions
+{
+	padding-left: 20px;
+}
+
+.code
+{
+	background-color: #D3D3D3;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 3px 0px 3px;
+	font-family: Lucida Console;
+}
+
+.hoveren
+{
+	text-decoration:underline;
+	color: #1E90FF;
+}
+
+.hoverenopt
+{
+	text-decoration:underline;
+	color: #228B22;
+}
+
+.opm
+{
+	border: 1px dashed black;
+	padding: 2px 2px 2px 2px;
+}

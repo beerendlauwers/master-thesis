@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Reference Manual handleiding</title>
+<link href="link/style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="link/shadowbox/shadowbox.css">
+<link rel="stylesheet" type="text/css" href="link/prototip.css" />
+<script type='text/javascript' src='link/prototype.js'></script>
+<script type='text/javascript' src='link/prototip.js'></script>
+<script type="text/javascript" src="link/shadowbox/shadowbox.js"></script>
+<script type="text/javascript">
+Shadowbox.init();
+</script>
+</head>
+<body>
+	<div id="mainbody">
+		<div id="sidebar">
+			<p style="text-align:center;">Overzicht</p>
+			<img src="img/import.png" border="0"/> Importeerdocumentatie<br/>
+			<div class="suboptions">
+				- <a href="#connectie">Database-connectie instellen</a><br/>
+				- <a href="#nieuweversie">Nieuwe versie importeren</a><br/>
+				- <a href="#versiekopie">Links van gekopieerde versie herstellen</a>
+			</div>
+			<img src="img/database.png" border="0"/> <a href="database.htm">Databasedocumentatie<br/></a>
+			<img src="img/application.png" border="0"/> <a href="application.htm">Applicatiedocumentatie<br/></a>
+			<p>&nbsp;</p>
+		</div>
+		<div id="content">
+		<h1>Importeerdocumentatie</h1>
+		<p>Deze documentatie neemt aan dat u over de <span class="code">Import</span> folder beschikt, waar de benodigde PHP-scripts inzitten tesamen met enkele voorbeelden.</p>
+		<h2><a name="connectie">Database-connectie instellen</a></h2>
+		In de <span class="code">inc</span> subfolder van de <span class="code">Import</span> folder vindt u het bestand <span class="code">db_open.php</span>. De variabelen in het lichtblauw dienen gewijzigd te worden. Beweeg er over met de muis voor meer informatie.</p>
+		<p class="code">
+		&lt;?php<br/>
+			/* Specify the server and connection string attributes. */<br/>
+			<span class="hoveren" id="servernaamtip">$serverName = "WINSVR01\SQLEXPRESS";</span><br/>
+            <br/>
+			* Connect using Windows Authentication. */<br/>
+			<span class="hoveren" id="windowsauthtip">//$connectionInfo = array( "Database"=>"Reference_manual" );<br/></span>
+            <br/>
+			/* Connect using SQL Server Authentication. */<br/>
+			<span class="hoveren" id="serverauthtip">$connectionInfo = array( "UID"=>"appligen",<br/>
+                         "PWD"=>"appligen!",<br/>
+                         "Database"=>"Reference_Manual");<br/></span>
+            <br/>
+			$conn = sqlsrv_connect( $serverName, $connectionInfo);<br/>
+            <br/>
+			if( $conn === false )<br/>
+			{<br/>
+     			echo "Unable to connect.</br>";
+     			die( print_r( sqlsrv_errors(), true));<br/>
+			}<br/>
+            <br/>
+		?&gt;
+		</p>
+				
+		<!-- Tooltip code -->
+		<script type="text/javascript">
+		new Tip('servernaamtip', 'Wijzig <span class="code">$serverName</span> naar de juiste databasenaam. Deze bestaat uit de computernaam, een backslash en SQLEXPRESS.<br/><br/>Voorbeeld:<br/><img src="img/import/serverName.png"/>', { width: '600' } );
+		new Tip('windowsauthtip', 'Als de SQL-Server op dezelfde server draait als de ASP.Net applicatie, gebruik dan Windows Authentication: zet deze regel uit commentaar en de onderstaande connectie-info in commentaar.<br/>', { width: '600' } );
+		new Tip('serverauthtip', 'Gebruik SQL Server Authentication indien de SQL-Server op een andere machine draait. Wijzig <span class="code">$UID</span> (username) en <span class="code">$PWD</span> (password) naar de juiste gegevens.<br/>', { width: '600' } );
+		</script>
+		
+		<h2><a name="nieuweversie">Nieuwe versie importeren</a></h2>
+		<h3>dumper.php</h3>
+		<p>Dit scriptje neemt de JavaScript-code van een door CHMDecoder-gegenereerde  helpfile en kopieert de boomstructuur in het JavaScript-bestand over naar  een MSSQL-database. Zowel categorieën als artikels worden overgekopieerd.</p>
+		<p class="opm"><strong>OPMERKING:</strong> Dit script neemt aan dat er reeds een versie, taal en bedrijf in de database aanwezig is.</p>
+		<p>Eerst hebben we de nodige helpfile en JavaScript code nodig. Gebruik CHMDecoder om een CHM-bestand te decoderen. CHMDecoder kan gevonden worden onder <span class="code">\\sjwswf\AAACARE\Reference Manual Setup\chm.</span></p>
+		<p class="opm"><strong>OPMERKING:</strong>Voor de talen Nederlands en Frans werden er reeds de nodige bestanden aangemaakt. Ook werden er een hoop incorrecte links in de oorspronkelijke HTML-bestanden reeds in orde gebracht. Deze staan in een folder met de suffix “_GEFIXT”.<br/><br/>
+		<strong>Overzicht van de reeds aanwezige bestanden:</strong><br/>
+		<strong>Nederlands:</strong></br>
+		JavaScript-bestand: javacript.txt</br>
+		Foldernaam: AAAFRMN_GEFIXT</br></br>
+		<strong>Frans:</strong></br>
+		JavaScript-bestand: javacriptFR.txt</br>
+		Foldernaam: AAAFRMF_GEFIXT</br></br>
+		</p>
+		<p>Hierna moet u het JavaScript bestand aanmaken. Open het indexbestand (normaal gezien genaamd <span class="code">__left.HTM</span> in de folder die dezelfde naam heeft als het CHM-bestand) in Notepad of Notepad++. <span class="hoveren" id="javascriptip">(Voorbeeld)</span></p>
+		
+		<!-- Tooltip code -->
+		<script type="text/javascript">
+		new Tip('javascriptip', '<strong>Voorbeeld:</strong><br/>CHM-bestand: AAAFRMN.CHM<br/>Foldernaam: AAAFRMN<br/>Indexbestand: AAAFRMN/___left.htm <i><-- Dit openen</i>', { width: 'auto' } );
+		</script>
+		
+		<p>Het bestand zal er ongeveer zo uitzien <a href="img/import/js1.png" rel="shadowbox">(Grotere versie)</a>:</p>
+		<img src="img/import/js1.png" width="100%"/>
+		<p>Kopieer alles vanaf de tweede <span class="code">d.add</span> lijn, tot op het einde:</p>
+		<img src="img/import/js2.png" width="100%"/>
+		<p>tot</p>
+		<img src="img/import/js3.png" width="100%"/>
+		<p>Kopieer deze selectie, plak ze in een tekstbestandje en geef deze een duidelijke naam.</p>
+		<hr/>
+		<p>Open <span class="code">dumper.php</span> in Notepad of Notepad++. De variabelen in het lichtblauw dienen gewijzigd te worden. De variabelen in het groen zijn optioneel. Beweeg er over met de muis voor meer informatie.</p>
+		
+		<p class="code">
+		// De locatie van het JavaScript-tekstbestand.<br/>
+		<span class="hoveren" id="dumper_js">$CONST_JS = "javascriptFR.txt";</span><br/>
+		<br/>
+		// De locatie van de hulpbestanden.<br/>
+		<span class="hoveren" id="dumper_bestanden">$CONST_HTMLBESTANDEN = "C:/xampp/htdocs/javascript/AAAFRMF_GEFIXT/";</span><br/>
+		<br/>
+		// Parameters om de taal, versie en het bedrijf van de te importeren manual in te stellen.<br/>
+		// De waardes zijn de Primary Keys van tblTaal, tblVersie en tblBedrijf.<br/>
+		<span class="hoveren" id="dumper_versieid">$CONST_VERSIEID = 52;</span><br/>
+		<span class="hoveren" id="dumper_taalid">$CONST_TAALID = 15;</span><br/>
+		<span class="hoveren" id="dumper_bedrijfid">$CONST_BEDRIJFID = 16;</span><br/>
+		<br/>
+		// Uncomment deze variabelen als je testtabellen wilt gebruiken in plaats van tblCategorie en tblArtikel.<br/>
+		// Voorwaarde is dat deze bestaan en dezelfde structuur (constraints maken niet uit) hebben.<br/>
+		<span class="hoverenopt" id="dumper_testtabellen">//$TABEL_ART = "tblArtikelTEST";<br/>
+		//$TABEL_CAT = "tblCategorieTEST";</span><br/>
+		<br/>
+		// De versie van het artikel.<br/>
+		<span class="hoveren" id="dumper_versietekst">$CONST_VERSIE = "010302";</span><br/>
+		<br/>
+		// De taalafkorting die voor elke tag van een artikel wordt geplaatst.<br/>
+		// Bv. 'FR-' geeft 'FR_DTA/FINAN.HTM'.<br/>
+		<span class="hoveren" id="dumper_taalafkorting">$CONST_TAALAFKORTING = 'FR';</span><br/>
+		<br/>
+		// De volledige naam van de taal.<br/>
+		<span class="hoveren" id="dumper_taaltekst">$CONST_TAAL = 'frans';</span><br/>
+		<br/>
+		// Module waaronder tags die nog geen module hebben, geplaatst worden.<br/>
+		<span class="hoveren" id="dumper_module">$CONST_MODULE = 'VARIA';</span><br/>
+		<br/>
+		//De prefix die voor bijna elk artikel staat.<br/>
+		// Bv. De 'N' bij 'NWELKOM01.HTM'.<br/>
+		<span class="hoveren" id="dumper_taalprefix">$CONST_TAALPREFIX = 'F';</span><br/>
+		<br/>
+		// De tag van het bedrijf waaronder dit artikel gepubliceerd wordt.<br/>
+		<span class="hoveren" id="dumper_bedrijftekst">$CONST_BEDRIJF = "AAAFinancials";</span><br/>
+		<br/>
+		// Parameters om de debug-informatie te zien van een bepaald artikel of categorie.<br/>
+		// Zet SKIPPEN op 1 en BEGIN_VANAF als de titel waarvoor debug-info moet worden weergegeven<br/>
+		<span class="hoverenopt" id="dumper_skippen">$SKIPPEN = 0;<br/>
+		$BEGIN_VANAF = "Werken met functies (ASE13RC1)";</span><br/>
+		<br/>
+		// Parameter om alle debug-informatie te zien.<br/>
+		<span class="hoverenopt" id="dumper_debug">$ISDEBUG = FALSE;</span><br/>
+		<br/>
+		// Wijzig deze variabele naar 1 als je de root node (begin van de boomstructuur) wilt inserten in de database.<br/>
+		<span class="hoveren" id="dumper_rootnode">$INSERTROOTNODE = 0;</span><br/>
+		</p>
+		
+		<!-- Tooltip code -->
+		<script type="text/javascript">
+		new Tip('dumper_js', 'De locatie van het zojuist aangemaakte tekstbestandje met JavaScript-code erin. Deze locatie kan relatief of absoluut zijn.', { width: '600' } );
+		new Tip('dumper_bestanden', 'De locatie van de folder met alle HTML-bestanden erin. Deze locatie kan relatief of absoluut zijn.', { width: '600' } );
+		new Tip('dumper_versieid', 'De primary key van de gewenste versie. Haal deze uit tblVersie.', { width: '600' } );
+		new Tip('dumper_taalid', 'De primary key van de gewenste taal. Haal deze uit tblTaal.', { width: '600' } );
+		new Tip('dumper_bedrijfid', 'De primary key van het gewenste bedrijf. Haal deze uit tblBedrijf.', { width: '600' } );
+		new Tip('dumper_testtabellen', 'Als u de import wil testen, kan u deze variabelen gebruiken om testtabellen te gebruiken. De tabellen moeten wel reeds bestaan en de juiste structuur hebben.', { width: '600' } );
+		new Tip('dumper_versietekst', 'De versie in tekstvorm van de versie met de primary key <span class="code">$CONST_VERSIEID</span>.', { width: '600' } );
+		new Tip('dumper_taaltekst', 'De volledige naam van de taal met de primary key <span class="code">$CONST_TAALID</span>. Wordt gebruikt om in de talenvergelijkingstabel na te kijken of de taal geen dubbele tags bevat.', { width: '600' } );
+		new Tip('dumper_taalafkorting', 'De taalafkorting van de taal met de primary key <span class="code">$CONST_TAALID</span>.', { width: '600' } );
+		new Tip('dumper_module', 'Artikels die nog geen tag hebben worden onder deze module geplaatst.', { width: '600' } );
+		new Tip('dumper_taalprefix', 'In de twee gedecodeerde CHM-bestanden die we hadden ontvangen was er altijd een kleine prefix voor elk HTML-bestand. Dit wordt verwijderd om talen correct te kunnen vergelijken.', { width: '600' } );
+		new Tip('dumper_bedrijftekst', 'De naam van het bedrijf met de primary key <span class="code">$CONST_BEDRIJFID</span>.', { width: '600' } );
+		new Tip('dumper_debug', 'Geeft debug-informatie weer wanneer op TRUE.', { width: '600' } );
+		new Tip('dumper_skippen', 'Zet <span class="code">$SKIPPEN</span> op 1 en <span class="code">$BEGIN_VANAF</span> als de titel vanaf waar men moet beginnen in het geval dat een import gedeeltelijk gefaald is.', { width: '600' } );
+		new Tip('dumper_rootnode', 'Deze variabele dient, de eerste keer dat iets wordt geïmporteerd, op 1 te staan. Hierna mag deze op 0 staan.', { width: '600' } );
+		</script>
+		
+		<p>Nu dat alles is geconfigureerd, kan u <span class="code">dumper.php</span> uitvoeren.</p>
+		
+		<h3>linkfixer.php</h3>
+		<p>Dit scriptje gaat op zoek naar links met de extensie HTM of HTML, en zoekt dan naar een equivalent in de database. Indien gevonden, wijzigt hij de tekst en slaat alles op in de database.</p>
+		
+		<p>Er ziin twee modi voor dit script:</p>
+		<p>1.	Zoekmodus<br/>
+		Het script zoekt naar links en probeert een equivalent te zoeken in de database. Links die niet worden gevonden worden op het scherm weergegeven. Links worden geüpdatet in de tekst, maar niet weggeschreven naar de database.
+		<br/><br/>
+		Deze modus is handig om gebroken links (verkeerde vorm, dus niet in de vorm van <span class="code">…/&lt;MODULE&gt;/&lt;PAGINATITEL&gt;.HTM(L)</span>) te vinden en links naar onbestaande artikels ( voor de Nederlandse en Franse reference manual is dit de Copyrightpagina en Single Point Of Contact).</p>
+		<p>
+		
+		<p>Om in zoekmodus te gaan, open het bestand <span class="code">linkfixer.php</span> en wijzig de variabelen in het blauw (ga er over met de muis voor meer informatie):</p>
+		
+		<p class="code">
+		//Toon debug-informatie.<br/>
+		$debug = FALSE;<br/>
+		//Toon de artikels.<br/>
+		$toonartikel = FALSE;<br/>
+		<br/>
+		<span class="hoveren" id="linkfixer_zoek_linkswegschrijven">$linkswegschrijven = FALSE;</span><br/>
+		<br/>
+		//Toon een overzicht van de vervangen links.<br/>
+		<span class="hoveren" id="linkfixer_zoek_toonlinks">$vervangenlinkstonen = TRUE;</span><br/>
+		<br/>
+		//Definieer deze array indien je enkel een bepaald artikel wil onderzoeken. Gebruikt de ArtikelIDs.<br/>
+		$checkwaardes = array(  );<br/>
+		<br/>
+		//Zet de zoekmodus aan of uit.<br/>
+		<span class="hoveren" id="linkfixer_zoek_onbekendelinks">$enkelonbekendelinks = TRUE;</span><br/>
+		<br/>
+		//Taalgerelateerde variabelen.<br/>
+		$CONST_TAALPREFIX = 'F';<br/>
+		$CONST_TAALID = 15;<br/>
+		<br/>
+		$CONST_VERSIEID = 52;<br/>
+		$CONST_BEDRIJFID = 16;<br/>
+		<br/>
+		// Testtabel<br/>
+		//$TABEL_ART = "tblArtikelTest";<br/>
+		</p>
+		
+		<!-- Tooltip code -->
+		<script type="text/javascript">
+		new Tip('linkfixer_zoek_linkswegschrijven', 'Deze variabele controleert of links echt worden weggeschreven naar de database. Zet op FALSE.', { width: '600' } );
+		new Tip('linkfixer_zoek_toonlinks', 'Indien TRUE krijgt men een overzicht van de vervangen links in de teksten. Moet niet, maar mag.', { width: '600' } );
+		new Tip('linkfixer_zoek_onbekendelinks', 'Zet op TRUE. U krijgt op het einde van het document een lijst te zien van alle onbekende links.', { width: '600' } );
+		</script>
+		
+		<p>2.	Fixmodus<br/>
+		Het script zoekt naar links en probeert een equivalent te zoeken in de database. Links worden geüpdatet in de tekst, en deze tekst wordt weggeschreven naar de database.<br/>
+		<br/>
+		Om in fixmodus te gaan, open het bestand <span class="code">linkfixer.php</span> en wijzig de variabelen in het blauw (ga er over met de muis voor meer informatie):
+		
+		<p class="code">
+		//Toon debug-informatie.<br/>
+		$debug = FALSE;<br/>
+		//Toon de artikels.<br/>
+		$toonartikel = FALSE;<br/>
+		<br/>
+		<span class="hoveren" id="linkfixer_fix_linkswegschrijven">$linkswegschrijven = TRUE;</span><br/>
+		<br/>
+		//Toon een overzicht van de vervangen links.<br/>
+		<span class="hoveren" id="linkfixer_fix_toonlinks">$vervangenlinkstonen = TRUE;</span><br/>
+		<br/>
+		//Definieer deze array indien je enkel een bepaald artikel wil onderzoeken. Gebruikt de ArtikelIDs.<br/>
+		$checkwaardes = array(  );<br/>
+		<br/>
+		//Zet de zoekmodus aan of uit.<br/>
+		<span class="hoveren" id="linkfixer_fix_onbekendelinks">$enkelonbekendelinks = FALSE;</span><br/>
+		<br/>
+		//Taalgerelateerde variabelen.<br/>
+		<span class="hoveren" id="linkfixer_fix_taalprefix">$CONST_TAALPREFIX = 'F';</span><br/>
+		<span class="hoveren" id="linkfixer_fix_taal">$CONST_TAALID = 15;</span><br/>
+		<br/>
+		<span class="hoveren" id="linkfixer_fix_versie">$CONST_VERSIEID = 52;</span><br/>
+		<span class="hoveren" id="linkfixer_fix_bedrijf">$CONST_BEDRIJFID = 16;</span><br/>
+		</p>
+		
+		<!-- Tooltip code -->
+		<script type="text/javascript">
+		new Tip('linkfixer_fix_linkswegschrijven', 'Deze variabele controleert of links echt worden weggeschreven naar de database. Zet op TRUE.', { width: '600' } );
+		new Tip('linkfixer_fix_toonlinks', 'Indien TRUE krijgt men een overzicht van de vervangen links in de teksten. Moet niet, maar mag.', { width: '600' } );
+		new Tip('linkfixer_fix_onbekendelinks', 'Zet op FALSE. U krijgt op het einde van het document een lijst te zien van alle onbekende links.', { width: '600' } );
+		new Tip('linkfixer_fix_taalprefix', 'De taalprefix van de link. Deze is hetzelfde als de variabele <span class="code">$CONST_TAALPREFIX</span> in <span class="code">dumper.php</span>. Hier wordt ze gebruikt om de prefix van de links te verwijderen.', { width: '600' } );
+		new Tip('linkfixer_fix_versie', 'De primary key van de versie van de te herstellen artikels. Haal deze uit tblVersie.', { width: '600' } );
+		new Tip('linkfixer_fix_taal', 'De primary key van de taal van de te herstellen artikels. Haal deze uit tblTaal.', { width: '600' } );
+		new Tip('linkfixer_fix_bedrijf', 'De primary key van het bedrijf van de te herstellen artikels. Haal deze uit tblBedrijf.', { width: '600' } );
+		new Tip('linkfixer_fix_testtabel', 'Een variabele die u kan gebruiken om de linkfixer op een testtabel uit te voeren in plaats van tblArtikel. Deze testtabel dient reeds te bestaan en dezelfde structuur te hebben.', { width: '600' } );
+		</script>
+		
+		<p><u>Extra variabelen:</u></p>
+		
+		<p class="code">
+		//Toon debug-informatie.<br/>
+		<span class="hoverenopt" id="linkfixer_debug">$debug = FALSE;</span><br/>
+		//Toon de artikels.<br/>
+		<span class="hoverenopt" id="linkfixer_toonartikel">$toonartikel = FALSE;</span><br/>
+		<br/>...<br/><br/>
+		//Definieer deze array indien je enkel een bepaald artikel wil onderzoeken. Gebruikt de ArtikelIDs.<br/>
+		<span class="hoverenopt" id="linkfixer_checkwaardes">$checkwaardes = array(  );</span><br/>
+		<br/>...<br/><br/>
+		// Testtabel<br/>
+		<span class="hoverenopt" id="linkfixer_testtabel">//$TABEL_ART = "tblArtikelTest";</span><br/>
+		</p>
+		
+		<!-- Tooltip code -->
+		<script type="text/javascript">
+		new Tip('linkfixer_testtabel', 'Een variabele die u kan gebruiken om de linkfixer op een testtabel uit te voeren in plaats van tblArtikel. Deze testtabel dient reeds te bestaan en dezelfde structuur te hebben.', { width: '600' } );
+		new Tip('linkfixer_toonartikel', 'Toont de gewijzigde artikels (voor en na). Zet dit niet TRUE als u een groot aantal (of alle) artikels nakijkt!', { width: '600' } );
+		new Tip('linkfixer_debug', 'Geeft gedetailleerde debug-informatie weer over hoe een link wordt opgesplitst en nagekeken.', { width: '600' } );
+		new Tip('linkfixer_checkwaardes', 'Deze array verwacht ArtikelIDs, gescheiden door een komma. Indien iets in de array zit, zal het script enkel deze artikels uit de database lezen en verwerken. Handig om na te kijken wat er mis is bij de links van een specifiek artikel in combinatie met <span class="code">$toonartikel</span>.', { width: '600' } );
+		</script>
+		
+		<p class="opm">
+		<strong>Opmerkingen:</strong><br/>
+		Dit script mag verschillende keren worden uitgevoerd op dezelfde combinatie van taal, versie en bedrijf, aangezien het enkel verderzoekt bij de extensies .HTM en .HTML. Voor het wijzigen van gefixte links naar een andere combinatie van taal, versie en bedrijf, gebruikt u de versiekopielinkfixer.
+		</p>
+		
+		<h3>Database opschonen</h3>
+		<p>Hoewel het script enkele opschoonacties zelf uitvoert, kunnen deze mogelijk falen. Daarnaast dient ook de talentabel (die gebruikt wordt om talen te vergelijken) te worden herbouwd.</p>
+		<p>De SQL-query is:</p>
+		<p class="code">SELECT * FROM tblVglTaal WHERE Nederlands > 1 OR français > 1<br/>
+		-- enzovoort voor elke andere taal</p>
+		<p>De verkregen resultaten tonen tags weer die in meer dan één artikel voorkomen (wat niet mag). Selecteer alle artikels die een dubbele tag gebruiken met de SQL-query:</p>
+		<p class="code">SELECT artikelID, titel, tag FROM tblArtikel WHERE tag = ‘&lt;TAGNAAM&gt;’</p>
+		<p>Wijzig hierna één van de dubbele tags met een UPDATE-statement.<br/>
+		Voer deze stappen uit voor elk van de dubbele tags.</p>
+		<p>Hiernaast zijn er ook enkele incorrect gevormde tags aangezien sommige artikels geen module hebben. Maak eerst via de website een module <span class="code">VARIA</span> aan. Voer hierna de stored procedure <span class="code">Manual_HerstelTags</span> uit (rechterklik op stored procedure en kies Execute ) en vul ‘VARIA’ in in het gevraagde veldje in de rechterkant van het scherm.</p>
+		<p>De artikels met een incorrect gevormde tag zouden nu een juiste tag moeten hebben. Om dit na te kijken kan u de volgende query gebruiken (zou geen resultaten mogen teruggeven):</p>
+		<p class="code">SELECT titel, tag FROM tblArtikel A WHERE ( SELECT count(data) FROM dbo.SplitTekst( A.tag, '_' ) ) < 5</p>
+		<p>Nadat al deze acties voltooid zijn, voert u de stored procedure <span class="code">Manual_ MaakTalenTabel</span> uit. Dit kan even duren. Hierna voert u terug de volgende SQL-query uit.</p>
+		<p class="code">SELECT * FROM tblVglTaal WHERE Nederlands > 1 OR français > 1<br/>
+		-- enzovoort voor elke andere taal </p>
+		<p>Er zouden nu geen rijen terug mogen komen. Indien dit wel het geval is, refereer dan naar <a href="database.htm#talenoverzicht">de databasedocumentatie</a> om dit op te lossen.</p>
+		
+		<h2><a name="versiekopie">versiekopielinkfixer.php</a></h2>
+		<p>Dit script neemt een versieID van een versie en zoekt naar links die “page.aspx” bevatten. Hierna wordt het artikelID uit de link genomen en opgezocht in de database. Op basis van de tag van het artikelID wordt er dan een equivalent artikel gezocht voor de opgegeven versie. Indien dit werd gevonden, wordt de link gewijzigd en (op het einde) de tekst opgeslagen in de database. Dit script gaat door elke combinatie van de opgegeven versie en elke taal en bedrijf.</p>
+		<p>Dit script kan ook in testmodus worden gerund, waarbij er niets wordt weggeschreven naar de database.</p>
+		<p>Een overzicht van de scriptvariabelen:</p>
+		
+		<p class="code">
+		//Toon debug-informatie.<br/>
+		<span class="hoverenopt" id="linkkopie_debug">$debug = FALSE;</span><br/>
+		//Toon de artikels.<br/>
+		<span class="hoverenopt" id="linkkopie_toonartikel">$toonartikel = FALSE;</span><br/>
+		<br/>
+		<span class="hoveren" id="linkkopie_linkswegschrijven">$linkswegschrijven = TRUE;</span><br/>
+		<br/>
+		//Toon een overzicht van de vervangen links.<br/>
+		<span class="hoveren" id="linkkopie_toonlinks">$vervangenlinkstonen = TRUE;</span><br/>
+		<br/>
+		//Definieer deze array indien je enkel een bepaald artikel wil onderzoeken. Gebruikt de ArtikelIDs.<br/>
+		<span class="hoverenopt" id="linkkopie_checkwaardes">$checkwaardes = array(  );</span><br/>
+		<br/>
+		//Het versieID waarvan de artikels dienen gefixt te worden.<br/>
+		<span class="hoveren" id="linkkopie_versie">$CONST_VERSIEID = 52;</span><br/>
+		<br/>
+		// Gebruik deze debugvariablelen om slechts een bepaalde combinatie van versie, taal en bedrijf te fixen. Indien niet nodig, zet op -1000.<br/>
+		<span class="hoverenopt" id="linkkopie_specifieketaalofbedrijf">$ENKEL_DEZE_TAAL = -1000;<br/>
+		$ENKEL_DIT_BEDRIJF = -1000;</span><br/>
+		<br/>
+		// Testtabel<br/>
+		<span class="hoverenopt" id="linkkopie_testtabel">//$TABEL_ART = "tblArtikelTest";</span><br/>
+		</p>
+		
+		<!-- Tooltip code -->
+		<script type="text/javascript">
+		new Tip('linkkopie_testtabel', 'Een variabele die u kan gebruiken om de linkfixer op een testtabel uit te voeren in plaats van tblArtikel. Deze testtabel dient reeds te bestaan en dezelfde structuur te hebben.', { width: '600' } );
+		new Tip('linkkopie_toonartikel', 'Toont de gewijzigde artikels (voor en na). Zet dit niet TRUE als u een groot aantal (of alle) artikels nakijkt!', { width: '600' } );
+		new Tip('linkkopie_debug', 'Geeft gedetailleerde debug-informatie weer over hoe een link wordt opgesplitst en nagekeken.', { width: '600' } );
+		new Tip('linkkopie_checkwaardes', 'Deze array verwacht ArtikelIDs, gescheiden door een komma. Indien iets in de array zit, zal het script enkel deze artikels uit de database lezen en verwerken. Handig om na te kijken wat er mis is bij de links van een specifiek artikel in combinatie met <span class="code">$toonartikel</span>.', { width: '600' } );
+		new Tip('linkkopie_linkswegschrijven', 'Schrijft de gewijzigde links weg naar de database indien TRUE.', { width: '600' } );
+		new Tip('linkkopie_toonlinks', 'Toont een overzicht van de vervangen links indien TRUE.', { width: '600' } );
+		new Tip('linkkopie_versie', 'Het versieID waarvan de artikellinks dienen gewijzigd te worden.', { width: '600' } );
+		new Tip('linkkopie_specifieketaalofbedrijf', 'Gebruik deze debugvariablelen om slechts een specifieke combinatie van versie, taal en bedrijf te herstellen. Indien niet nodig, zet op -1000.', { width: '600' } );
+		</script>
+		
+		<p>&nbsp;</p>
+		
+		</div>
+	</div>
+</body>
+</html>

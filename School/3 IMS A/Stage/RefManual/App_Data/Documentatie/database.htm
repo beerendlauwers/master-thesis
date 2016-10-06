@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Reference Manual handleiding</title>
+<link href="link/style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="link/shadowbox/shadowbox.css">
+<link rel="stylesheet" type="text/css" href="link/prototip.css" />
+<script type='text/javascript' src='link/prototype.js'></script>
+<script type='text/javascript' src='link/prototip.js'></script>
+<script type="text/javascript" src="link/shadowbox/shadowbox.js"></script>
+<script type="text/javascript">
+Shadowbox.init();
+</script>
+</head>
+<body>
+	<div id="mainbody">
+		<div id="sidebar">
+			<p style="text-align:center;">Overzicht</p>
+			<img src="img/import.png" border="0"/> <a href="import.htm">Importeerdocumentatie<br/></a>
+			<img src="img/database.png" border="0"/> Databasedocumentatie<br/>
+			<div class="suboptions">
+				- <a href="#newdatabase">Database aanmaken</a><br/>
+				- <a href="#troubleshooting">Troubleshooting</a><br/>
+			</div>
+			<img src="img/application.png" border="0"/> <a href="application.htm">Applicatiedocumentatie<br/></a>
+			<p>&nbsp;</p>
+		</div>
+		<div id="content">
+		<h1>Databasedocumentatie</h1>
+		<h2><a name="newdatabase">Database aanmaken</a></h2>
+		<h3>Tabellen aanmaken</h3>
+		<p>Maak een nieuwe database aan (rechtsklik op de databases, new database).<br/>
+		Vink de checkbox “use fulltext indexing” aan, dit is niet verplicht, later wordt nog eens uitgelegd hoe dit via query gedaan wordt.</p>
+		
+		<p>Maak vervolgens de tabellen met volgende scripts aan:</p>
+		<p>tblArtikel</p>
+		<p class="code">
+		CREATE TABLE [dbo].[tblArtikel](<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[ArtikelID] [int] IDENTITY(1,1) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Titel] [varchar](255) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_Categorie] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_Taal] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_Bedrijf] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_Versie] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Tekst] [nvarchar](max) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Tag] [varchar](255) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Is_final] [int] NOT NULL,<br/>
+		CONSTRAINT [PK_tblArtikel] PRIMARY KEY CLUSTERED <br/>
+		(<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[ArtikelID] ASC<br/>
+		))<br/>
+		</p>
+		
+		<p>tblBedrijf</p>
+		<p class="code">
+		CREATE TABLE [dbo].[tblBedrijf](<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[BedrijfID] [int] IDENTITY(1,1) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Naam] [varchar](255) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Tag] [nvarchar](255) NOT NULL,<br/>
+		CONSTRAINT [PK_tblBedrijf] PRIMARY KEY CLUSTERED <br/>
+		(<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[BedrijfID] ASC<br/>
+		))<br/>
+		</p>
+		
+		<p>tblCategorie</p>
+		<p class="code">
+		CREATE TABLE [dbo].[tblCategorie](<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[CategorieID] [int] IDENTITY(1,1) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Categorie] [varchar](255) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Diepte] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Hoogte] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_parent] [int] NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_taal] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_bedrijf] [int] NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[FK_versie] [int] NOT NULL,<br/>
+		CONSTRAINT [PK_tblCategorie] PRIMARY KEY CLUSTERED <br/>
+		(<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[CategorieID] ASC<br/>
+		))<br/>
+		</p>
+		
+		<p>tblTaal</p>
+		<p class="code">
+		CREATE TABLE [dbo].[tblTaal](<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[TaalID] [int] IDENTITY(2,1) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Taal] [varchar](50) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[TaalTag] [varchar](50) NULL,<br/>
+		CONSTRAINT [PK_tblTaal] PRIMARY KEY CLUSTERED <br/>
+		(<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[TaalID] ASC<br/>
+		)) <br/>
+		</p>
+		
+		<p>tblModule</p>
+		<p class="code">
+		CREATE TABLE [dbo].[tblModule](<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[moduleID] [int] IDENTITY(1,1) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[module] [varchar](50) NOT NULL,<br/>
+		CONSTRAINT [PK_tblModule] PRIMARY KEY CLUSTERED <br/>
+		(<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[moduleID] ASC<br/>
+		))<br/>
+		</p>
+		
+		<p>tblVersie</p>
+		<p class="code">
+		CREATE TABLE [dbo].[tblVersie](<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[VersieID] [int] IDENTITY(2,1) NOT NULL,<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[Versie] [varchar](50) NOT NULL,<br/>
+		CONSTRAINT [PK_tblVersie] PRIMARY KEY CLUSTERED <br/>
+		(<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;[VersieID] ASC<br/>
+		))<br/>
+		</p>
+		
+		<p>Doe dan volgende check voor elk van de aangemaakte tabellen:<br/>
+		- Rechterklik op de tabel, “Design”. Selecteer dan de kolom waar de primary key op staat.<br/>
+		- In het venster “column properties” zoek je de tab “Identity specification”.<br/>
+		- Zorg ervoor dat <span class="code">(Is Identity)</span> op “yes” staat en <span class="code">identity increment</span> op “1”. De seed mag niet kleiner dan nul zijn, wel groter.<p>
+		
+		<p>
+		Maak vervolgens een database diagram aan: rechterklik op <span class="code">database diagrams</span> en dan <span class="code">new database diagram</span>.<br/>
+		Verbind daarin alle ID’s met hun foreign key’s:<br/>
+		- CategorieID slepen naar FK_Categorie van tblArtikel<br/>
+		- VersieID slepen naar FK_versie van tblArtikel<br/>
+		- Doe dit voor alle ID’s die FK’s hebben in tblArtikel.<br/>
+		- Doe dit vervolgens ook voor alle FK’s in de tblCategorie. Vergeet vooral niet de CategorieID te slepen naar de FK_Parent (parent is een andere categorie…)<br/>
+		</p>
+		
+		<p>Vervolgens moet u de scipts runnen waarin alle stored procedures staan (<span class="code">FinaalStoredProcedures30-04.sql</span>), hetgene waarin alle functions staan (<span class="code">FinaalFunctions30-04.sql</span>) en tenslotte hetgene waarin alle triggers staan (<span class="code">FinaalTriggersTaal30-04.sql</span> en <span class="code">FinaalTriggersArtikel30-04.sql</span>). Deze scripts staan in de <span class="code">Nodige SQL</span> folder.</p>
+
+		<h3>Startdata toevoegen</h3>
+		<p>Om versies te importeren dient er minstens één versie, taal en bedrijf in de database aanwezig te zijn. Deze kunnen manueel worden toegevoegd op de volgende manier:</p>
+		<p class="code">
+		INSERT INTO tblTaal VALUES(‘Nederlands’,’NL’);<br/>
+		INSERT INTO tblBedrijf VALUES(‘AAAFinancials’,’AAAFinancials’);<br/>
+		INSERT INTO tblVersie VALUES(‘010302’);<br/>
+		</p>
+		
+		<p>Ook dient de module 'VARIA' aanwezig te zijn, omdat deze gebruikt wordt in de welkompagina en enkele andere pagina's.</p>
+		<p class="code">
+		INSERT INTO tblModule VALUES(‘VARIA’);
+		</p>
+		
+		<p>De andere modules kan u importeren op de volgende wijze:<br/>
+		<p class="opm"><strong>OPMERKING:</strong> Er bestaat reeds een Access-bestand met de benodigde modules in de <span class="code">App_Data</span> folder genaamd <span class="code">modules.mdb</span>, maar deze is mogelijk niet up-to-date.</p>
+		1.	Haal het Excel-bestand op met de meest recente lijst modules (Wij hebben dit via e-mail doorgekregen).<br/>
+		2.	Maak een nieuw Access (.mdb) bestand aan.<br/>
+		3.	Ga naar bestand --> Externe gegevens ophalen --> Importeren.<br/>
+		4.	Selecteer het Excel-bestand (verander indien nodig in de dropdownlijst de bestandstypes naar .xls).<br/>
+		5.	Selecteer "Werkbladen weergeven".<br/>
+		6.	Selecteer het werkblad "Product & module" en klik op 'volgende'.<br/>
+		7.	Zet een vinkje bij "Eerste rij bevat kolomkoppen". Klik op 'volgende'.<br/>
+		8.	Kies de optie om de gegevens in een nieuwe tabel te plaatsen, u mag zelf een naam kiezen. Klik tweemaal op 'volgende' en dan op 'voltooien'.<br/>
+		9.	De gegevens zijn normaal gezien nu geïmporteerd.<br/>
+		10.	Verplaats het aangemaakte Access bestand naar de <span class="code">App_Data</span> folder.<br/></p>
+		
+		<p>Vervolgens open je de pagina <span class="code">MaakModules.aspx</span> in Visual studio.</p>
+		<p>Ga in Design View, klik op het <strong>></strong> tekentje rechts de Access Data Source en kies "Configure Datasource" <a href="img/db/maakmodules.png" rel="shadowbox">(Grotere versie)</a>:</p>
+		<img src="img/db/maakmodules.png" width="100%"/>
+		
+		<p>Volg nu de wizard:<br/>
+		1.	Browse naar de map waar het Access-bestand werd geplaatst.<br/>
+		2.	Klik op de map. Het Access-bestand verschijnt in het rechtergedeelte van het scherm (Indien dit niet zo is, annuleer de wizard en rechterklik op het bovenste item in de projectlijst (in de bovenstaande screenshot aan de rechterzijde) en selecteer "Refresh Folder".)<br/>
+		3.	Klik op 'volgende'. Vink de kolom met de modulenamen aan (in ons geval was dit MDUL14).<br/>
+		4.	Klik op 'volgende' en 'voltooien'.<br/></p>
+		
+		<p>Ga met een webbrowser naar de pagina <span class="code">MaakModules.aspx</span> en doe het volgende:<br/>
+		1.	Klik op de knop "Maak aan".<br/>
+		2.	Wacht tot er feedback wordt gegeven.<br/>
+		3.	Klik op de knop ernaast.<br/>
+		4.	Wacht tot er feedback wordt gegeven. Als er geen feedback wordt gegeven, kijk dan in het errorlog.<br/></p>
+		
+		<h3>Connectie leggen met applicatie</h3>
+		<p>Maak eerst een nieuwe SQL-login aan:<br/>
+		<img src="img/db/login.png"/><br/><br/>
+		1.	Kies een loginnaam.<br/>
+		2.	Kies de optie "SQL Server authentication en vul een paswoord in.<br/>
+		3.	Verwijder het vinkje bij "Enforce password policy".<br/>
+		4.	De "Default database" is de zojuist aangemaakte database (niet in screenshot zichtbaar).<br/></p>
+		<img src="img/db/newuser.png">
+		<p>
+		5.	Ga naar de tab "Server Roles" (zie linkerzijde).<br/>
+		6.	Vink de optie "sysadmin" aan.<br/>
+		7.	Ga naar de tab "User Mapping".<br/>
+		8.	Vink de zojuist aangemaakte database aan.<br/>
+		9.	Vink in het onderste gedeelte de rol "db_owner" aan.<br/>
+		
+		<p>Ga via de Solution Explorer (= de projectlijst) in Visual Studio naar het bestand <span class="code">web.config</span>.<p>
+		<p>Hierin staan "Connection strings" voor databases. De zojuist aangemaakte login moet in een dergelijke string worden gezet.</p>
+		<p>Vul de juiste waarden in in de volgende connectionstring en plaats deze tussen de <span class="code">connectionStrings</span> XML-tags:</p>
+		<p class="code">
+		&lt;add name="naam_van_connectionstring" connectionString="Data Source=naam_van_PC\naam_van_sql_server_meestal_SQLEXPRESS;Initial Catalog=naam_van_DataBase_bij_ons_Reference_manual;User ID=login_die_je_juist_aanmaakte;Password=Paswoord_van_die_login;Connection Lifetime=180"providerName="System.Data.SqlClient" /&gt;
+		</p>
+		<p>Bijvoorbeeld:</p>
+		<p class="code">
+		&lt;connectionStrings&gt;<br/>
+		&lt;add name="Reference_manualConnectionString" connectionString="Data Source=RDC118\SQLEXPRESS;Initial Catalog=Reference_manual;User ID=beerend;Password=beerend!" providerName="System.Data.SqlClient" /&gt;<br/>
+		&lt;/connectionStrings&gt;</p>
+		
+		<p><strong>BELANGRIJK:</strong> Zorg dat dit alles op één regel staat.</p>
+		<p>Het beste is dat je de connectiestring die er nu staat aanpast met de naam van de pc, servernaam, nieuwe login etc, omdat de naam van die connectiestring op redelijk wat plaatsen gebruikt wordt, en het dus veel lastiger wordt om die overal te gaan vervangen dan gewoon de string te bewerken.</p>
+		<p>De connectiestring die tot nu toe gebruikt werd is <span class="code">Reference_manualConnectionString</span>.<br/>
+		Dus die moet je aanpassen en best de naam ervan niet veranderen.</p>
+
+		<h3>Full Text Search</h3>
+		<p>Voor fulltext searching op te zetten op de kolom Tekst in tblArtikel zodat er gezocht kan worden op woorden in de tekst.</p>
+		<p>Ga eerst kijken in SQL management studio bij tblArtikel in het mapje “keys” of daar iets in de aard van PK_artikel staat. Als er niks staat moet er nog een index aangemaakt worden.<br/>
+		Dat wil waarschijnlijk zeggen dat ArtikelID nog geen primary key is. Dus dan maak je daar eerst de primary key van. Als dat wel al een primary key is kan je proberen die even te verwijderen en terug toe te voegen.</p>
+		<p>Als die er wel staat, kunnen we beginnen met een fulltext index op te zetten.</p>
+		<P>Voer de volgende queries uit:</p>
+		<p class="opm"><strong>OPMERKING:</strong> Deze queries zullen niet werken als ze allemaal in één keer worden uitgevoerd. Voer ze dus per blok uit.</p>
+		<p class="code">
+		USE 'databasenaam'<br/>
+		EXEC sp_fulltext_database 'enable'
+		</p>
+		<br/>
+		<p class="code">
+		CREATE FULLTEXT CATALOG naam_van_catalog
+		</p>
+		<br/>
+		<p class="code">
+		CREATE FULLTEXT INDEX on databasenaam.dbo.tblArtikel<br/>
+		(<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;Tekst<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;Language 1043<br/>
+		)<br/>
+		KEY INDEX PK_tblArtikel ON naamvancatalog<br/>
+		WITH CHANGE_TRACKING AUTO<br/>
+		
+		<p class="opm"><strong>OPMERKING:</strong> PK_tblArtikel is de sleutel waarvoor we daarstraks zijn gaan nakijken of hij bestond in “keys”.</p>
+		</p>
+
+		<h2><a name="troubleshooting">Troubleshooting</a></h2>
+		<h3>Overzicht</h3>
+		- <a href="#talenoverzicht">Er is een fout in het talenoverzicht</a><br/>
+		- <a href="#kapottetag">Er zijn kapotte tags</a><br/>
+		- <a href="#outstandingresultset">Error: "A trigger returned a resultset and/or was running with SET NOCOUNT OFF while another outstanding result set was active"</a><br/>
+		- <a href="#geenzoekresultaten">Er zijn geen zoekresultaten terwijl u er zeker van bent dat deze er moeten zijn</a><br/>
+		<h3><a name="talenoverzicht">Er is een fout in het talenoverzicht</a></h3>
+		<p>Rechterklik op de stored procedure <span class="code">MaakTalenTabel</span> --> "Execute Stored Procedure" --> OK.</p>
+		<p>Voer dan volgende query uit:</p>
+		<p class="code">SELECT * FROM tblVglTaal where [ZIE UITLEG]</p>
+		<p class="opm"><strong>Uitleg:</strong> in de where zet je voor elke taal die bestaat in de tblTaal taalnaam>1 met daartussen OR</p>
+		<p>Bijvoorbeeld:<br/>
+		<p class="code">SELECT * FROM tblVglTaal where Nederlands>1 OR français>1 OR Deutsch>1</p>
+		<p>Kijk vervolgens naar de resultaten van je query. Als hij resultaten vindt, zoals rijen met een 2 of iets hogers in, betekent dat, dat er op een of andere manier toch dubbele gegevens in de tblArtikel zijn gekropen. Als hij geen resultaten weergeeft, is het probleem reeds opgelost.</p>
+		<p>Indien er wel resultaten zijn, voer dan volgende stappen uit:<br/>
+		1.	Kopieer de waarde uit de kolom 'tag'.<br/>
+		2.	Plak de waarde op de plaats van <span class="code">uwgekopieerdewaardevantag</span> en voer volgende query uit:<br/></p>
+		<p class="code">SELECT ArtikelID,Tag,titel,FK_Versie,FK_Bedrijf,FK_Taal,FK_Categorie FROM tblArtikel<br/>
+						WHERE tag LIKE ‘%uwgekopieerdewaardevantag%’</p>
+		<p>3.	Nu ziet u welke artikels dubbele tags hebben.<br/>
+		4.	Update dan één van de artikels door er een unieke tag aan te geven.<br/>
+		De oude tag zal dan iets zijn in de aard van: <span class="code">0103022_NL_AAAFinancials_ALG_ONDERVR.HTM</span><br/>
+		De nieuwe tag zal dan de oude tag zijn met daarachter een 0 of iets dergelijks kunnen zijn om deze terug uniek te maken.<br/></p>
+		<p class="code">
+		UPDATE tblArtikel SET Tag=’Nieuwetag’ WHERE ArtikelID=@ArtikelID<br/>
+		-- @ArtikelID is het arikelID van het artikel waarvan je de tag wenst uniek te maken.
+		</p>
+
+		<p>Herhaal dit proces tot er voor de eerstgebruikte query (<span class="code">SELECT * FROM tblVglTaal ...</span>) geen resultaten meer zijn en er dus enkel nog unieke tags aanwezig zijn. Voer dan opnieuw de stored procedure <span class="code">MaakTalenTabel</span> uit.<br/>
+		
+		<h3><a name="kapottetag">Er zijn kapotte tags</a></h3>
+		
+		<p>Voorbeeld van een kapotte tag: <span class="code">010302_NL_bedrijfnaam_WELKOM.HTM</span></p>
+		<p>Deze tag heeft geen module. Deze fix dient dan ook enkel voor als een tag van een artikel geen module heeft!</p>
+		<p>Wat je moet doen als er kapotte tags zijn is de procedure <span class="code">Manual_hersteltags</span> runnen, en in het value-veld vul je de naam in van de gewenste module waar je die artikels in wilt steken. (bijv. VARIA). Zorg er wel eerst voor dat deze module bestaat in tblModule. Of als je toch eerst de procedure hebt uitgevoerd, maak daarna dan zeker die module aan!</p>
+		
+		<h3>Er was een time-out bij het wijzigen van een versie-, taal- of bedrijftag:</h3>
+		<p>Ga terug naar de beheerpagina en wijzig wat je gewijzigd hebt terug naar het origineel. Alles zou dan terug op hetzelfde moeten staan. Maar aangezien dat niet echt is wat gewenst was gaan we dat op volgende wijze oplossen:</p>
+		<p>Ga in de errorlogs kijken voor het uitvoeren van welke stored procedure er een time-out is gebeurd.</p>
+		<p>Kopieer de naam van stored procedure. Ga dan naar de code bestanden van de applicatie.</p>
+		<p>Doe met Notepad++, Visual Studio of andere teksteditor een search in alle bestanden met ‘ DAL’ erachter.</p>
+		<p>In elke functie waar die stored procedure gebruikt werd, ga je volgende regel code toevoegen: <span class="code">c.CommandTimeout = 600</span></p>
+		<p>600 betekent 10 minuten, dus stel dat je een versie wil kopiëren waar zo’n 7000 artikels inzitten, dan kan het zijn dat je de timeout ergens moet verhogen van 600 of wat het ook is naar iets hogers. (regel is 1500 artikels kopiëren duurt zo’n 5 minuten, 7000 artikels zou dus een timeout nodig hebben van zo’n 25 min tot een half uur) </p>
+		
+		<p>Indien dit succesvol is verlopen dan moet je vervolgens het bestand “web.config” openen. Zoek hierin naar de regel <span class="code">httpruntime</span>. Daar zul je zien staan <span class="code">executionTimeout="eengetal"</span>: dit is de timeout van de applicatie. Dit moet je dan ook gaan verhogen of je zult geen resultaat van je uitgevoerde acties zien. Vervang dus de waarde die er staat voor <span class="code">executionTimeout</span> door hetzelfde als je in <span class="code">c.CommandTimeout</span> hebt gebruikt.
+
+		<h3><a name="outstandingresultset">Error: "A trigger returned a resultset and/or was running with SET NOCOUNT OFF while another outstanding result set was active"</a></h3>
+		<p>Voer de volgende queries apart uit:</p>
+		<p class="code">
+		Sp_configure ‘show advanced options’,1<br/>
+		Reconfigure
+		</p>
+		<br/>
+		<p class="code">
+		Sp_configure ‘disallow results from triggers’,1<br/>
+		Reconfigure
+		</p>
+		
+		<h3><a name="geenzoekresultaten">Er zijn geen zoekresultaten terwijl u er zeker van bent dat deze er moeten zijn</a></h3>
+		<p>De tekstcatalogus dient opnieuw opgebouwd te worden.</p>
+		<p>Voer de volgende query uit:</p>
+		<p class="code">ALTER FULLTEXT CATALOG naam_van_catalog<br/>
+		REBUILD WITH ACCENT_SENSITIVITY = OFF</p>
+		<p class="opm"><strong>OPMERKING:</strong> Een overzicht van de catalognamen kan worden gevonden met de SQL-query <span class="code">SELECT * FROM sys.fulltext_catalogs;</span> .</p>
+
+		
+		
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+<title>1. enkele basisbegrippen en -concepten</title>
+</head><body bgcolor="#ffffff">
+
+<p align="center"><a href="http://wwwling.arts.kuleuven.ac.be/genling/statistiek/entrance.htm">(home)</a> <a href="http://wwwling.arts.kuleuven.ac.be/genling/statistiek/2.htm">[ga naar volgende]</a></p>
+
+<h1 align="center">1. enkele basisbegrippen en -concepten</h1>
+
+<p align="left">CAVEAT: in deze bijzonder summiere eerste sectie worden heel wat begrippen
+eerder aangeraakt dan toegelicht. Deze pagina is niet bedoeld als autonoom document, maar
+als referentiekader om naar terug te grijpen bij de lectuur van de concrete technieken.
+Dit geldt in het bijzonder voor het stuk over toetsen van hypothesen, waarin een abstract
+kader wordt opgehangen dat pas inhoud krijgt wanneer het door een concrete techniek wordt
+ingevuld. Het is dan ook volstrekt zinloos om te proberen deze pagina in elk detail te
+begrijpen vooraleer men de lectuur van de volgende secties aanvat.</p>
+
+<hr>
+
+<ul>
+  <li><a href="#levels"><em>meetniveau's</em> (levels of measurement)</a><ul>
+      <li>begrippen: nominaal, ordinaal, interval en ratio</li>
+    </ul>
+  </li>
+  <li><a href="#beschrijv"><em>beschrijvende statistiek</em> (descriptive statistics)</a><ul>
+      <li>begrippen: statistieken</li>
+    </ul>
+  </li>
+  <li><a href="#verklar"><em>verklarende statistiek</em> of kortweg <em>statistiek</em>
+    (statistical inference)</a><ul>
+      <li>begrippen: toetsen van hypothesen, verdeling, p-waarde, nulhypothese, alternatieve
+        hypothese, kracht van een test, alfa-niveau, beta-niveau, teststatistiek, significant</li>
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2><a name="levels"><em>meetniveau's</em> (levels of measurement)</a></h2>
+
+<p>Om statistische bewerkingen te kunnen verrichten op gegevens, moeten die gegevens
+beschreven zijn op een formele, eenduidige manier. De gegevens worden beschreven als een
+verzameling van <font color="#ff0000"><strong>observaties</strong></font>, waarvan één
+of meerdere kenmerken worden geëxpliciteerd in de vorm van <strong><font color="#ff0000">variabelen</font></strong>.
+Een courante representatievorm is de tabel, waarin rijen voor observaties staan, en
+kolommen voor variabelen. </p>
+
+<blockquote>
+  <ul>
+    <li>bij een (psychologisch) experiment zijn de observaties veelal metingen, en zijn de
+      variabelen vaak eigenschappen van de proefpersoon of van de omstandigheden van de meting,
+      of de meetresultaten zelf</li>
+    <li>bij een enquête zijn de observaties vaak antwoorden van ondervraagden, en zijn de
+      variabelen vaak eigenschappen van de ondervraagde of van de antwoorden</li>
+    <li>bij corpusonderzoek zijn de observaties vaak voorkomens van een bepaald linguïstische
+      fenomeen, en zijn de variabelen vaak kenmerken van de tekstuele context ervan</li>
+  </ul>
+</blockquote>
+
+<p>Even belangrijk als de identificatie van observaties en variabelen, is de identificatie
+van het <strong><font color="#ff0000">meetniveau</font></strong> (level of measurement)
+van de variabelen. <strong>Het meetniveau van de variabelen bepaalt welke statistieken
+(beschrijvende statistiek) en technieken (verklarende statistiek) zinvol zijn voor de
+gegevens en welke niet !!! </strong>De mogelijke meetniveau's zijn toegelicht in
+onderstaande tabel. </p>
+
+<p>Omdat het de invoer en verwerking van gegevens in computerprogramma's vaak
+vergemakkelijkt, worden variabelen van alle vier de meetniveau's in de praktijk vaak door
+getallen voorgesteld - let wel, dit is een vaststelling, geen advies-, zodat de computer
+ze allemaal als 'echte getallen' zou kunnen interpreteren, waardoor zowat elke berekening
+op zowat alle gegevens steeds resultaten geven, maar niet altijd zinvolle resultaten. Deze
+conventie verhoogt het gevaar van zinloze berekeningen, en maakt het nog extra belangrijk
+dat men zich te allen tijde bewust is van het meetniveau van elke variabele.</p>
+
+<table width="100%" bgcolor="#ffffcc" border="1">
+  <tbody><tr>
+    <td width="25%" align="center" bgcolor="#808000"><font color="#ffffcc">MEETNIVEAU</font></td>
+    <td width="25%" align="center" bgcolor="#808000"><font color="#ffffcc">nominaal</font></td>
+    <td width="25%" align="center" bgcolor="#808000"><font color="#ffffcc">ordinaal</font></td>
+    <td width="25%" align="center" bgcolor="#808000"><font color="#ffffcc">interval</font></td>
+    <td width="25%" align="center" bgcolor="#808000"><font color="#ffffcc">ratio</font></td>
+  </tr>
+  <tr>
+    <td width="25%" bgcolor="#808000"><p align="center"><font color="#ffffcc">OMSCHRIJVING</font></p></td>
+    <td width="25%">een <strong><font color="#ff0000">nominale variabele</font></strong> is
+    een variabele waarvan de mogelijke waarden voor geen enkele rekenkundige operatie of
+    vergelijking in aanmerking komen. </td>
+    <td width="25%">een <strong><font color="#ff0000">ordinale variabele</font></strong> is
+    een variabele waarvan de waarden een inherente orderelatie hebben, maar zonder de garantie
+    dat rekenkundige operaties zoals tellen of vermenigvuldigen zinvol zijn.</td>
+    <td width="25%">een <strong><font color="#ff0000">intervalvariable</font></strong> is een
+    variabele waarvan de waarden niet alleen een inherente orderelatie hebben, maar waar ook
+    de afstand tussen de waarden betekenis heeft is. Door dat laatste wordt tellen zinvol. De
+    schaal heeft&nbsp; echter slechts een arbitrair nulpunt, zodat vermenigvuldigen niet
+    zinvol is. </td>
+    <td width="25%">een <strong><font color="#ff0000">ratiovariabele</font></strong> is een
+    variabele waarvan de waarden een inherente orderelatie hebben, en bovendien op een schaal
+    liggen waarop afstand tussen waarden meetbaar en vergelijkbaar is en&nbsp;&nbsp; waarop
+    het nulpunt niet arbitrair is.</td>
+  </tr>
+  <tr>
+    <td width="25%" bgcolor="#808000"><p align="center"><font color="#ffffcc">VOORBEELD</font></p></td>
+    <td width="25%">Een voorbeeld is het gebruik van de variabele <em>woordsoort</em>, met
+    mogelijke waarden <em>nomen</em>, <em>pronomen</em>, <em>adverbium</em>, enz. Je zou
+    diezelfde waarden even goed anders kunnen noemen, bv. <em>1</em>, <em>2</em>, <em>3</em>,
+    ..., maar dan wel in de wetenschap dat 1, 2, 3, enz. hier ontdaan zijn van elke
+    rekenkundige associatie. (Zo zou je&nbsp; nomen <em>1</em> kunnen noemen, en pronomen <em>2</em>,
+    maar je zou het evengoed net omgekeerd kunnen doen, dus <em>2</em> voor nomen en <em>1</em>
+    voor pronomen)</td>
+    <td width="25%">Een voorbeeld is het gebruik van de variabele <em>grammaticaliteitsoordeel,
+    </em>met bv. als drie mogelijke waarden<em> absoluut ongrammaticaal, licht ongrammaticaal </em>en<em>
+    grammaticaal. </em>Ook hier is het mogelijk deze namen te vervangen door <em>1</em>, <em>2</em>
+    en <em>3</em>, en het is nu mogelijk om gebruik te maken van de klassieke getalorderelatie
+    om&nbsp;door getallen als namen te gebruiken de inherente orderelatie in de waarden van de
+    variabele uit te drukken (in het voorbeeld is die inherente orderelatie de volgorde van
+    punten op een schaal van grammaticaliteit). Het blijft evenwel onzin om te gaan tellen of
+    vermenigvuldigen met de waarden. (De namen voor de waarden hadden net zo goed <em>1</em>, <em>10</em>
+    en <em>100</em> kunnen zijn, i.p.v. 1, 2 en 3)</td>
+    <td width="25%">Een voorbeeld is de variabele <em>graden Celsius</em>. De waarden hebben
+    een orderelatie: 20 is kleiner dan 40. Bovendien kan je op een zinvolle manier tellen met
+    graden. Het verschil tussen 20 graden en 40 graden is even groot als het verschil tussen
+    40 graden en 60 graden. Anderzijds is vermenigvuldigen niet zinvol op de manier waarop het
+    dat we is bij ratio variabelen (cf. volgende kolom). Wat we bedoelen is dat als
+    temperatuur X bv. met 2 vermenigvuldigd wordt, het resultaat niet intrinsiek kan
+    geïnterpreteerd worden als "dubbel zo groot" (omdat 0 graden Celcius een
+    arbitrair punt is, en bv. wat anders is dan 0 graden Fahrenheit.) Een ander voorbeeld van
+    een intervalvariabele is <em>jaartal</em>.</td>
+    <td width="25%">Een voorbeeld is de variabele <em>reactietijd</em>. Het is zinvol om de
+    grootte van reactietijden te vergelijken. Het is zinvol om reactietijden op te tellen. Het
+    is zinvol om reactietijd X bv. met 2 te vermenigvuldigen. (0 is 0, onafhankelijk van met
+    welke tijdseenheden je werkt)</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center" bgcolor="#808000"><font color="#ffffcc">voorbeelden van
+    ZINVOLLE<br>
+    rekenkundige formules (met waarheidswaarde)</font></td>
+    <td width="25%">-</td>
+    <td width="25%"><ul>
+      <li>1 &lt; 2</li>
+    </ul>
+    </td>
+    <td width="25%"><ul>
+      <li>1 &lt; 2</li>
+      <li>1 + 2 = 3</li>
+    </ul>
+    </td>
+    <td width="25%"><ul>
+      <li>1 &lt; 2</li>
+      <li>1 + 2 = 3</li>
+      <li>1 * 2 = 2</li>
+    </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="25%" align="center" bgcolor="#808000"><font color="#ffffcc">voorbeelden van
+    ONZINNIG<br>
+    rekenkundige formules (zonder waarheidswaarde)</font></td>
+    <td width="25%"><ul>
+      <li>1 &lt; 2</li>
+      <li>1 + 2 = 3</li>
+      <li>1 * 2 = 2 </li>
+    </ul>
+    </td>
+    <td width="25%"><ul>
+      <li>1 + 2 = 3</li>
+      <li>1 * 2 = 2 </li>
+    </ul>
+    </td>
+    <td width="25%"><ul>
+      <li>1 * 2 = 2 </li>
+    </ul>
+    </td>
+    <td width="25%">-</td>
+  </tr>
+</tbody></table>
+
+<p>Enkele vaak opduikende gevaarlijke situaties: 
+
+</p><ul>
+  <li><small><font face="Courier New">de verleiding om te tellen met ordinale variabelen</font></small></li>
+  <li><small><font face="Courier New">niet echt een statistische opmerking, maar toch
+    belangrijk: het samengooien op één schaal (d.i. in één variabele stoppen) van wat bij
+    nader inzien verschillende grootheden zijn (bv. grammaticaal en semantisch zinvol)</font></small></li>
+</ul>
+
+<h2><a name="beschrijv"><em>beschrijvende statistiek</em> (descriptive statistics)</a>
+&nbsp; </h2>
+
+<p>Beschrijvende statistiek is een tak van de statistiek die gericht is op het distilleren
+van enkele zeer informatieve, samenvattende getallen (de zogenaamde <strong><font color="#ff0000">statistieken</font></strong> - inderdaad, de term is zo ambigu als de pest
+-) uit de veelheid van informatie die in de gegevens opgeslagen zit. In tegenstellen tot
+de <a href="#verklar">verklarende statistiek (cf. infra)</a> is de beschrijvende
+statistiek een exacte discipline die precieze, zekere resultaten oplevert.</p>
+
+<h2><a name="verklar"><em>verklarende statistiek</em> of kortweg <em>statistiek</em>
+(statistical inference)</a></h2>
+
+<p>Verklarende statistiek is een tak van de statistiek die gericht is op het maken van
+inferenties op basis van partiële informatie.&nbsp; In tegenstellen tot de <a href="#beschrijv">beschrijvende statistiek (cf. supra)</a> is de verklarende statistiek
+een discipline die resultaten oplevert die slechts een benadering zijn van de reële
+situatie of die slechts een zekere kans hebben om overeen te stemmen met de reële
+situatie. Verklarende statistiek, de studie van het berekende risico, is een hulpmiddel
+dat ingeschakeld wordt wanneer het niet mogelijk is om een domein exhaustief te
+observeren. Op basis van een <strong><font color="#ff0000">steekproef</font></strong> (een
+collectie van effectief vergaarde gegevens) tracht men conclusies te trekken over de ganse
+<strong><font color="#ff0000">populatie</font></strong> waaruit de steekproef genomen is.
+De populatie is het ganse domein waarover men een uitspraak wil doen, de collectie van
+alle instanties van het fenomeen waarvan men er een deel heeft geobserveerd in de
+steekproef.&nbsp; Enkele voorbeelden: 
+
+</p><ul>
+  <li>bij een (psychologisch) experiment of enquête wordt de populatie vaak geïdentificeerd
+    door een afbakening van de subjecten (personen) waarvan men het gedrag bestudeert (bv.
+    alle personen met het Nederlands als moedertaal die in 1998 Romaanse talen studeren aan
+    een universiteit in het Nederlandstalige landsgedeelte van België) en die dus in theorie
+    hadden kunnen figureren in de steekproef </li>
+  <li>bij corpusonderzoek wordt de populatie vaak geïdentificeerd door de afbakening van de
+    teksten waarin men de taalfenomenen bestudeert (bv. alle in het Nederlands gestelde
+    literaire teksten gepubliceerd in de 19de eeuw in het Nederlandstalige landsgedeelte van
+    België) en waaruit in theorie passages hadden kunnen figureren in de steekproef</li>
+</ul>
+
+<p>De identificatie van de populatie is even belangrijk als die van de concrete
+observaties en variabelen in de steekproef. Het explicitiet maken van deze identificatie
+kan misverstanden helpen voorkomen. Om maar één voorbeeld te geven: 
+
+</p><ul>
+  <li><small><font face="Courier New">wanneer de gegevens van de ganse populatie beschikbaar
+    zijn, zijn vaak andere formules of technieken aangewezen dan wanneer men slechts over de
+    gegevens van een steekproef beschikt, en is met name het verderop beschreven mechanisme
+    van toetsen van hypothesen niet van toepassing</font></small></li>
+  <li><small><font face="Courier New">een goed beeld van de populatie is cruciaal voor het
+    ontwerpen van een steekproef die representatief geacht kan worden voor de ganse populatie
+    &nbsp;&nbsp; </font></small></li>
+</ul>
+
+<p>Het fundamentele schema dat aangewend wordt om op basis van een steekproef uitspraken
+met een zekere kans te doen over de ganse populatie, is de (abstracte) techniek van het <strong><font color="#ff0000">toetsen van hypothesen</font></strong>. De concrete technieken, de <strong>testen</strong>,
+die in latere secties aan bod zullen komen, zijn instantiaties van dit schema. Omdat alle
+concrete technieken hun beperkingen hebben (ze zijn meestal ontworpen om slechts één of
+hooguit een paar soorten hypothesen te testen; ze kunnen vaak niet op alle meetniveau's
+toegepast worden, enz.) is een belangrijke aspect van toegepaste statistiek het vinden van
+de juiste techniek voor de vraag die men wil stellen (een zoektocht waarin naast de
+vraagstelling vooral ook het meetniveau een sleutelrol speelt). Daarnaast is het evenwel
+inzichtbevorderend als met in de concrete technieken het algemene schema van het toetsten
+van hypothesen herkent. Daarom wordt hieronder dit algemene patroon (met bijhorend jargon)
+summier geschetst. Zoals in het begin van deze pagina reeds vermeld werd, is de bedoeling
+van deze passage eerder dat er nadien wordt naar teruggegrepen, dan dat men er nu al te
+lang naar kijkt. </p>
+
+<p>We beginnen met de introductie van enkele termen. </p>
+
+<blockquote>
+  <p>De methodes voor het toetsen van een hypothese steunen doorgaans cruciaal op één of
+  andere statistiek, de zogenaamde teststatistiek voor die methode. Statistiek wordt hier
+  gebruikt in zijn betekenis van "zeer informatief, samenvattend getal" (m.a.w.
+  het vertrekpunt van de verklarende statistiek is steeds de beschrijvende statistiek). Op
+  basis van die statistiek (en het feit dat op theoretische basis geweten is welke <strong>verdeling</strong>
+  die statistiek heeft) wordt een <strong>p-waarde</strong> berekend die de theoretische
+  kans geeft, dat, ervan uitgaand dat de <strong>nulhypothese</strong> klopt, de
+  teststatistiek minstens even afwijkend is als het geval is in de steekproef. Als die
+  p-waarde kleiner is dan het gekozen <strong>significantie-niveau</strong>, <em>dan mag de
+  nulhypothese verworpen worden</em>. Als p groter is, <em>dan is men er niet in geslaagd om
+  de nulhypothese te verwerpen</em>. (bemerk dat bij de meeste vormen van nulhypothese het
+  niet mogelijk is om de nulhypothese te bewijzen, men kan hoogstens er niet in slagen ze te
+  verwerpen).</p>
+</blockquote>
+
+<p>Wat toelichting bij de vetgedrukte termen in de vorige paragraaf: 
+
+</p><ul>
+  <li><em><strong>verdeling</strong></em> of <em><strong>waarschijnlijkheidverdeling</strong></em>
+    (distribution, probability distribution): de waarschijnlijkheidsverdeling van een
+    variabele is een mathematische constructie: het is een functie die elke mogelijke waarde
+    van die variabele afbeeldt op de theoretische kans dat bij een steekproef die waarde wordt
+    geobserveerd; een verdeling kan worden samengevat door de zogenaamde <em>parameters</em>
+    van de verdeling. Sommige testen stellen eisen voor de verdeling van de variabelen die
+    getest worden. Dit noemt men geparametriseerde testen. Daarnaast berust de werking van
+    testen op het feit dat de verdeling van de teststatistiek gekend is.&nbsp;&nbsp; </li>
+  <li><em><strong>p-waarde</strong></em> (p-value): een getal tussen 0 en 1, berekend op basis
+    van de teststatistiek, de verdeling van de teststatistiek en het aantal <em>vrijheidsgraden</em>
+    (degrees of freedom) van de test (de berekening van het aantal vrijheidsgraden, een maat
+    voor het 'aantal stukken informatie in de test', hangt af van het type test)</li>
+  <li><em><strong>nulhypothese</strong></em> (null hypothesis): de hypothese die men tracht
+    onderuit te halen met de test; naast de nulhypothese formuleert men ook een alternatieve
+    hypothese (alternative hypothesis), die geldt als de nulhypothese niet geldt.</li>
+  <li><em><strong>alfa-niveau</strong></em> of<em><strong> significantieniveau</strong></em>
+    (significance level): typische alfa-niveau's zijn 0.10, 0.05 en 0.01. Bij het
+    overschrijden van deze alfa-niveau's spreekt men vaak respectievelijk van een <em>tendens</em>
+    (moderately significant), een <em>significant fenomeen</em> (significant) en een <em>hoogsignificant
+    fenomeen</em> (highly significant). </li>
+</ul>
+
+<p>Wat toelichting bij het praktische gebruik van de techniek: </p>
+
+<blockquote>
+  <p>Het is fundamenteel ingebakken in de aard van de verklarende statistiek in het
+  algemeen, en van het toetsen van hypothesen in het bijzonder, dat de resulterende
+  uitspraken (bv. de uitspraak "de nulhypothese mag verworpen worden") uitspraken
+  zijn met een zekere kans om fout te zijn. Men maakt onderscheid tussen twee types van
+  fouten:</p>
+  <p>TYPE 1 FOUT: NULHYPOTHESE VERWERPEN, TERWIJL ZE KLOPT. Met het alfa-niveau kan de kans
+  op een dergelijk fout gecontroleerd worden. Kiest men voor 0.05, dan betekent dit men een
+  kans van 5 percent accepteert dat men de foute conclusie trekt uit de steekproef. Men laat
+  de <em><strong>keuze van het significantieniveau</strong></em> dan ook best afhangen van
+  de omstandigheden. Om een hypothese aan te vallen die in een vakgebied belangrijk is en
+  algemeen aangehangen wordt, kiest men best een lage alfa-waarde (0.01 of zelfs 0.001). Als
+  de consequenties van een foute conclusie minder dramatisch zouden zijn, dan wordt vaak een
+  alfa-waarde van 0.05 (of soms 0.10) gekozen als het meest aangewezen compromis tussen
+  werkbaarheid en veiligheid. Bij verkennend onderzoek ziet men in publicaties trouwens vaak
+  af van de keuze van het significantieniveau en het uitspreken van een verdict in de stijl
+  van "hypothese X wordt op significantieniveau Y verworpen", maar <em>beperkt men
+  zich tot het geven van de verkregen p-waarde</em> als een 'maat van bewijsmateriaal' tegen
+  de nulhypothese. Hoe kleiner p, hoe meer de nulhypothese in twijfel kan worden getrokken.</p>
+  <p>TYPE 2 FOUT: NULHYPOTHESE NIET VERWERPEN, TERWIJL ZE NIET KLOPT. Zoals men de kans op
+  een type 1 fout het alfa-niveau van een test noemt, zo noemt men de kans op een type 2
+  fout het beta-niveau van een test. Net als het alfa-niveau wordt het beta-niveau
+  uitgedrukt als een waarde tussen nul en één. Het manipuleren van het beta-niveau gebeurt
+  door <em><strong>het manipuleren van de kracht van de test</strong></em>. Het instellen
+  van de kracht van een test (gedefiniëerd als "één min het beta-niveau") is
+  complex omdat deze kracht afhangt van verschillende factoren: het alfa-niveau, de
+  componenten van de berekening van de teststatistiek en de specifieke alternatieve
+  hypothese die beschouwd wordt. Belangrijk dat is een toename van de steekproefgrootte een
+  toename van de kracht van de test tot gevolg heeft. De keuze van een steekproefgrootte is
+  een belangrijke aangelegenheid, omdat ze bepalend is voor de relatie tussen statistische
+  significantie en <em>praktische significantie</em> (practical significance). Met
+  statistische significantie bedoelt men dat de p-waarde van een fenomeen het alfa-niveau
+  niet overschrijdt. Praktische significantie is geen technische kwestie, maar wordt door
+  het gezonde verstand bepaald. Bij een test die niet krachtig genoeg is bestaat het gevaar
+  dat praktische significante fenomenen statistisch niet significant zijn. Bij een test die
+  te krachtig is bestaat het gevaar (nu ja, 'is er kans op de oncomfortabele situatie') dat
+  fenomenen zonder praktische significantie statistisch significant zijn. </p>
+  <blockquote>
+    <p>Een voorbeeld. Stel dat je wil onderzoeken of studenten Germaanse talen die afstuderen
+    in universiteit X gemiddeld meer dt-fouten maken dan hun collega's die afstuderen in
+    universiteit Y, en je laat de studenten een toets maken die gequoteerd wordt op 100. Bij
+    een enorme steekproefgrootte zou een minimaal verschil tussen de gemiddelden (bv. een
+    halve percent) statistisch significant kunnen zijn. Maar het gezond verstand zegt wellicht
+    dat dit fenomeen, hoe reëel ook, te onbeduidend is om bv. aan de alarmbel te trekken en
+    aan het curriculum te gaan sleutelen. Anderzijds zou bij een heel geringe
+    steekproefgrootte een beduidend verschil tussen de gemiddelden (bv. vijftien percent)
+    statistisch niet significant kunnen zijn. En hier zegt het gezond verstand wellicht wel
+    dat het om een belangrijk verschil gaat. De conclusie is dan ook dat bij de design van een
+    steekproef rekening moet worden gehouden met de kracht van de test.&nbsp; </p>
+  </blockquote>
+</blockquote>
+
+<hr>
+
+<p><img src="basisbegrippen%20meetniveau_bestanden/sedesr.gif" alt="KULeuven" align="left" hspace="0"> Copyright 1998,
+Katholieke Universiteit Leuven<br>
+Informatieleverancier: Katholieke Universiteit Leuven<br>
+Reacties voor de auteur: <a href="mailto:Dirk.Speelman@arts.kuleuven.ac.be">Dirk Speelman<br>
+<br>
+</a><font size="1">URL: http://wwwling.arts.kuleuven.ac.be/genling/statistiek/1.htm</font>
+<!-- ------ --></p>
+</body></html>

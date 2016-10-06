@@ -1,0 +1,153 @@
+/* @override 
+http://localhost:9507/site/resources/v4_includes/css/accordion.css
+*/
+
+/*
+	Vertical Accordions
+*/
+.accordion_box {
+    font-size: 11px;
+    margin-bottom: 18px;
+    line-height: 14px;
+}		
+
+
+
+
+.accordion_toggle {
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #000;
+    color: #fff;
+    background-image: url(../accordion_off.gif);
+    background-color: #c2c2c4;
+    font-size: 12px;
+	line-height: 14px;
+    padding-bottom: 5px;
+    padding-top: 6px;
+    cursor: pointer;
+    cursor: hand;
+	padding-left: 23px;
+}
+
+.accordion_hover {
+	background-image: url(../accordion_over.gif);
+
+}
+h3.accordion_toggle {
+	cursor: pointer;
+    cursor: hand;
+}
+
+.accordion_toggle_active {
+	border-top: 1px solid #b9d5f1;
+	border-bottom: 1px solid #3a75aa;
+    color: #fff;
+    background: #4791d5 url(../accordion_in.gif) repeat-x;
+    font-size: 12px;
+    padding-left: 23px;
+	line-height: 14px;
+    padding-bottom: 5px;
+    padding-top: 6px;
+	cursor: default;
+}
+
+h3.accordion_toggle_active{
+		cursor: default;
+}
+
+
+.accordion_content {
+	border-bottom: 1px solid #bdccdc;
+	border-top: 1px solid #e6f0fa;
+    background: #d1e3f5 url(../sidebarbox_secondarybg.gif) repeat-x;
+    display: none;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.accordion_image {
+	margin-left: -6px;
+	margin-right: -6px;
+}
+
+
+
+.accordion_image_first{
+
+	margin-top:  -1px;
+	margin-left: -6px;
+	margin-right: -6px;
+}
+
+
+ul.iconlist {
+	margin: 6px 0;
+	padding: 0;
+}
+
+.iconlist li {
+	margin-left: 0;
+	padding-left: 0;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	background: url(../sidebar_divider.png) repeat-x 0 top;
+
+}
+.iconlist  li.first {
+	background: none repeat-x 0 top;
+	padding-top: 0;
+	border-top: none;
+
+}
+	
+.iconlist li img {
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+.iconlist li.last {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+
+.iconlist li.text {
+	padding-left: 0;
+}
+
+.iconlist li a {
+	color: #000;
+}
+ul.bubblelist {
+	padding-left: 0;
+	margin-left: 0;
+	margin-bottom: 0;
+}
+ul.bubblelist ul {
+	margin-bottom: 7px;
+}
+ul.bubblelist li {
+	padding-top: 8px;
+	margin-top: 0;
+	font-size: 11px;
+	line-height: 14px;
+	padding-left: 0;
+	margin-left: 0;
+	background: url(../sidebar_divider.png) repeat-x 0 top;
+}
+ul.bubblelist li.first {
+	background: none;
+}
+ul.bubblelist li li {
+		background: none;
+		margin-top: 0px;
+	padding-top: 0;
+}
+ul.bubblelist li.nodivider {
+	padding-top: 0px;
+	border-top: none;
+}
+ul.bubblelist li h3 {
+	font-size: 13px;
+	line-height: 18px;
+}

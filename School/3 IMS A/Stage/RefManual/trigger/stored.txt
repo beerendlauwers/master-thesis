@@ -1,0 +1,35 @@
+USE [Reference_manual]
+GO
+/****** Object:  StoredProcedure [dbo].[DeleteAllArtikelsForBedrijf]    Script Date: 04/28/2010 16:11:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[DeleteAllArtikelsForBedrijf] 
+	@BedrijfID int
+AS
+BEGIN
+	DELETE from tblArtikel WHERE FK_Bedrijf=@BedrijfID
+	DELETE from tblCategorie WHERE FK_Bedrijf=@BedrijfID and Categorie!='root_node'
+END
+
+
+
+USE [Reference_manual]
+GO
+/****** Object:  StoredProcedure [dbo].[deleteAllArtikelsForVersie]    Script Date: 04/28/2010 16:11:45 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[deleteAllArtikelsForVersie]
+	@VersieID int
+AS
+BEGIN
+	
+DELETE from tblArtikel where FK_Versie=@VersieID
+DELETE from tblCategorie where FK_Versie=@VersieID and Categorie!='root_node'
+    
+END

@@ -1,0 +1,168 @@
+/* html element styles     */
+
+
+/* margin-less body is a requirement of xcoll-bbag only */
+BODY { margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; padding-right: 0px }
+
+H1,H2,H3,H4,H5 { /* set font families  */ }
+
+A {  text-decoration: none }
+A:hover {  text-decoration: underline }
+A.nav {  color: #FFFFFF;  text-decoration: none }
+A.nav:hover { color : #FFCC33; text-decoration: underline }
+
+
+PRE { font-family: monospace; font-size: 0.75em }
+
+TT { font-family: monospace; font-size: 0.75em }
+
+IMG { border: 0 }
+
+IMG.figure { 
+             border-top-width: 1px;
+             border-right-width: 1px;
+             border-bottom-width: 1px;
+             border-left-width: 1px;
+             border-top-style: solid;
+             border-right-style: solid;
+             border-bottom-style: solid;
+             border-left-style: solid;
+}
+
+LI { font-family: Arial, Helvetica, sans-serif }
+
+UL { padding-top : 0px; padding-bottom : 5px; border-top : 0px; border-bottom : 0px; margin-bottom : 0px; margin-top : 0px }
+
+
+
+/*      custom styles       */
+
+
+/*  styles for headers and navigation bars  - ANYTEXT XCOLL-BBAG -  */
+.tophead { font-family : Helvetica, Verdana, Arial, sans-serif; font-size : 16px; font-weight : bold }
+.topheadlink { font-family : Helvetica, Verdana, Arial, sans-serif; font-size : 16px; font-weight : bold; color: #000000; text-decoration: none }
+.greysubheader { color: #8C8A73; font-weight: bold }
+
+
+.navhrcolor { background-color:#666666}
+.navcolor { background-color: #9999CC}
+.footernavcolor { background-color: #BDBDBD }
+.hdrcolor { background-color: #FFFFFF }
+.bbnavcolor { background-color: #990000 }
+.tabfont { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; text-decoration: none ; line-height: 1.5em}
+.navlinks { font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #000000; text-decoration: none}
+.navhicolor { background-color: #FFFFFF }
+.navhilinks { font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none }
+.navdivision { background-color: #666666}
+.selectmenu { font-size: 11px }
+.navlinksroman { font-family: Arial, Helvetica, sans-serif; font-weight: normal; text-decoration: none ; font-size: 12px}
+.xcollnavcolor { background-color: #CCCCFF }
+.navinfo {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal}
+
+.resultsheader {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; font-style: normal; font-weight: normal }
+.resultsheaderbig {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 14px; font-style: normal; font-weight: bold }
+
+
+.nextprev { /* probably superceded by resultsheader  - ANYTEXT - */  }
+
+
+.indentHdr { /* available to attach to a div for indenting a header block  */}
+
+/* probably superceded by resultsheader  - ANYTEXT - */ 
+.nameOfThisSlice { font-family : Arial, sans-serif; font-size : 12px; font-weight :  bold }
+
+/* probably superceded by resultsheader  - ANYTEXT - */
+.fisheye { font-family : Arial, sans-serif; font-size : 12px;}
+
+
+
+
+/*  header styles for search results lists  - ANYTEXT  XCOLL-BBAG -  */
+.mainheader  { font-family : Arial, Helvetica, sans-serif; font-weight : bold; color : #333333;  margin-top: 1em; margin-bottom: 0px; padding-bottom: 0px }
+
+.div1head { display : block; font-family : Arial, Helvetica, sans-serif; margin-bottom : 0px;  padding-bottom : 0px; padding-top : 0px; font-weight: normal}
+
+.div2head { display : block; font-family : Arial, Helvetica, sans-serif; margin-bottom : 0px; padding-bottom : 0px;  padding-top : 0px; margin-top : 0px;  font-weight: normal}
+	
+.div3head { display : block;  font-family : Arial, Helvetica, sans-serif; margin-bottom : 0px; padding-bottom : 0px;  padding-top : 0px; margin-top : 0px; }
+
+.div4head  { display : block; font-family : Arial, Helvetica, sans-serif; margin-bottom : 0px; padding-bottom : 0px;  padding-top : 0px; margin-top : 0px;  font-weight: normal} 
+
+	
+/*  styles for toc bib pages   - ANYTEXT  XCOLL-BBAG -  */
+.bibinfo {  font-family: Arial, Helvetica, sans-serif; font-size: 12px }
+
+.hdroptions {  font-family: Arial, Helvetica, sans-serif; font-size: 12px }
+
+
+/*  other misc body styles   */
+
+.hilite { font-weight: bold; color: #CC0000 }
+.hilitebox { border: 1px; border-color: #999999 }
+
+.releaseversion {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; font-style: normal; color: #666666 }
+
+.wwquicklink { font-family : Arial, sans-serif; font-size : 12px  } 
+
+.smalltext {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 9px; font-style: normal }
+
+.smallheadernormal {  font-family: Arial, Helvetica, sans-serif; font-size: 12px }
+.smallheader {  font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold }
+
+.indentBlock {  margin-right: 7px; margin-left: 15px }
+
+
+/* attached to div blocks to indent results  - ANYTEXT  XCOLL-BBAG -  */
+.resultslist { margin-left: 10px; margin-right: 10px }
+
+.pageBreak { text-align: center }  /* - ANYTEXT - */
+
+
+
+
+/* styles for a target window  - ANYTEXT - */
+.trgttophead { font-family : serif; font-size : 1.25em; font-weight : bold }
+
+.trgtdiv2head { display : block; font-family : serif; font-size : 1.3em; padding-bottom : 3px }
+	
+.trgtdiv3head { font-family : serif; font-size : 1.2em; display : block; padding-bottom : 3px }
+
+.trgtdiv4head { font-family : serif; font-size : 1.1em; display : block }
+
+.trgttextblock { font-family : serif; font-size : 1.0em; margin-left: 1.0em }
+
+
+/* styles as yet not in use    */
+
+/* corresponding heading styles for text pages  */
+.textmainheader { display : block; margin-top : 20px; font-family : sans-serif; font-weight : bold; font-size : 18px; }
+
+.textdiv2head { display : block; font-family : Arial, Helvetica, sans-serif; font-size : 12px; text-decoration : none; margin-bottom : 0px; border-bottom : 0px; padding-bottom : 0px; border-top : 0px; padding-top : 0px; margin-top : 0px; padding-left : 0.8em; ; font-weight: bold }
+
+.textdiv3head { font-family : Arial, Helvetica, sans-serif; font-size : 12px; text-decoration : none; display : block; margin-bottom : 0px; border-bottom : 0px; padding-bottom : 0px; border-top : 0px; padding-top : 0px; margin-top : 0px; padding-left : 0.8em; }
+
+.textdiv4head { font-family : Helvetica,Verdana,Arial,sans-serif; font-size : 1.0em; text-decoration : none; display : block; padding-left : 0.8em; padding-bottom : 0em; }
+
+  
+
+/* corresponding heading styles for toc pages  */
+
+.tocmainheader { display : block; margin-top : 20px; font-family : sans-serif; font-weight : bold; font-size : 18px; }
+
+.tocdiv2head { display : block; font-family : Arial, Helvetica, sans-serif; font-size : 12px; text-decoration : none; margin-bottom : 0px; border-bottom : 0px; padding-bottom : 0px; border-top : 0px; padding-top : 0px; margin-top : 0px; padding-left : 0.8em; ; font-weight: bold }
+
+.tocdiv3head { font-family : Arial, Helvetica, sans-serif; font-size : 12px; text-decoration : none; display : block; margin-bottom : 0px; border-bottom : 0px; padding-bottom : 0px; border-top : 0px; padding-top : 0px; margin-top : 0px; padding-left : 0.8em; }
+
+.tocdiv4head { font-family : Helvetica,Verdana,Arial,sans-serif; font-size : 1.0em; text-decoration : none; display : block; padding-left : 0.8em; padding-bottom : 0em; }
+
+.helpnavhead {  font-size: 12px; font-weight: bold; color: #000000}
+.helpnav {  color: #000000;  font-size: 10pt }
+.helpnavlink {  text-decoration: none; font-size: 10pt }
+.helpnavheadlink { font-size: 12px; font-weight: bold; color: #000000 ; text-decoration: none}
+.formfont {  font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif }
+.smallformfont {  font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif }
+
+.formfontbuff {  font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; line-height: 1.35em }
+.largerformfont { font-size: 14px; font-family: Verdana, Arial, Helvetica, sans-serif; ; font-weight: bold}
+.subnavhilite { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none }
+.smalltextbuff { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; font-style: normal ; line-height: 1.35em}

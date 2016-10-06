@@ -1,0 +1,1767 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+
+
+    <title>Intel Communities:  Emerging Compute Models White Paper - Intel </title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Language" content="en-US">
+<meta name="keywords" content="">
+
+<link rel="search" href="http://communities.intel.com/opensearch.xml" title="Intel Communities" type="application/opensearchdescription+xml">
+
+
+    <link rel="shortcut icon" href="http://communities.intel.com/favicon_x.ico">
+    <link rel="icon" type="image/png" href="http://communities.intel.com/favicon_x.png">
+
+    
+    <script type="text/javascript" src="Understanding%20Alternative%20Compute%20Models_bestanden/engine.js"></script>
+    <script type="text/javascript" src="Understanding%20Alternative%20Compute%20Models_bestanden/util.js"></script>
+
+    <script type="text/javascript">
+        if (typeof(_jive_base_url) == "undefined") {
+            var _jive_base_url = "/";
+            <!-- need to strip ;jsessionid=3rjp0oit23hk7 from urls -->
+            if (_jive_base_url.indexOf(";") > 0) {
+                _jive_base_url = _jive_base_url.substring(0, _jive_base_url.indexOf(";"));
+            }
+            if (_jive_base_url.charAt(_jive_base_url.length -1) == '/') {
+                _jive_base_url = _jive_base_url.substring(0,_jive_base_url.length -1);
+            }
+        }
+    </script>
+
+    <script type="text/javascript" src="Understanding%20Alternative%20Compute%20Models_bestanden/omniture.js"></script>
+
+
+
+    <script type="text/javascript">
+        window.SPELL_LANGS = "English (Canada)=en_ca,English (United Kingdom)=en_gb,+English (United States)=en_us,French=fr,French (Canada)=fr_ca,German=de,Italian=it,Spanish=es";
+        window.CS_BASE_URL = "";
+        window.tinyMCEPreInit = {
+            suffix : "_src",
+            base : CS_BASE_URL + "/resources/scripts/tiny_mce3"
+        };
+    </script>
+     
+
+
+
+
+
+
+    
+
+    <script type="text/javascript">
+        var profileShortUrl = "/profile-short.jspa";
+        var profileLoadingTooltip = "Loading user profile";
+        var profileErrorTooltip = "There was an error loading that profile information.";
+
+        var projectChooserUrl = "/project-chooser!input.jspa";
+        var groupChooserUrl = "/group-chooser!input.jspa";
+    </script>
+
+
+
+    <link rel="stylesheet" href="Understanding%20Alternative%20Compute%20Models_bestanden/aqua.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="Understanding%20Alternative%20Compute%20Models_bestanden/jive-global.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="Understanding%20Alternative%20Compute%20Models_bestanden/jive-userbar.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="Understanding%20Alternative%20Compute%20Models_bestanden/jive-sidebar.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="Understanding%20Alternative%20Compute%20Models_bestanden/jive-external.css" type="text/css" media="screen">
+
+
+
+
+    <!--[if IE 6]>
+    <style type="text/css">
+    /* hack for IE6's lack of alpha PNG support */
+    * html #jive-wrapper .ie6png,
+    * html #jive-wrapper #jive-global-header *.ie6png,
+    * html #jive-wrapper #user-bar-wrapper *.ie6png,
+    * html #jive-wrapper #jive-body *.ie6png,
+    * html #jive-wrapper #jive-footer *.ie6png {
+        background-image: expression(
+        this.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src=" +
+        (this.tagName=='IMG' ? this.src : this.currentStyle.backgroundImage.split('\"')[1]) + ")",
+        this.runtimeStyle.backgroundImage = "none",
+        this.src = "/images/transparent.png"
+        );
+        }
+    </style>
+    <![endif]-->
+
+
+    
+    
+
+    <style type="text/css" media="screen">
+        @import "/styles/jive-wiki.css";
+    </style>
+
+
+    
+    <script type="text/javascript">
+        window.SPELL_LANGS = "English (Canada)=en_ca,English (United Kingdom)=en_gb,+English (United States)=en_us,French=fr,French (Canada)=fr_ca,German=de,Italian=it,Spanish=es";
+        window.CS_BASE_URL = "";
+        window.tinyMCEPreInit = {
+            suffix : "_src",
+            base : CS_BASE_URL + "/resources/scripts/tiny_mce3"
+        };
+    </script>
+     
+
+
+
+    <script>
+    // can't just use property as a boolean, in case it's doesn't exist and is null
+            // checking perm helper
+        window._images_enabled = false;
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="Understanding%20Alternative%20Compute%20Models_bestanden/advimage.css">
+    <link rel="stylesheet" type="text/css" href="Understanding%20Alternative%20Compute%20Models_bestanden/window.css">
+    
+<script type="text/javascript">
+if (dwr == null) var dwr = {};
+if (dwr.engine == null) dwr.engine = {};
+if (DWREngine == null) var DWREngine = dwr.engine;
+
+dwr.engine._origScriptSessionId = "255AC157F2927B64A81B23CB17FB1B72";
+dwr.engine._sessionCookieName = "JSESSIONID"; // JSESSIONID
+dwr.engine._allowGetForSafariButMakeForgeryEasier = "true";
+dwr.engine._scriptTagProtection = "throw 'allowScriptTagRemoting is false.';";
+dwr.engine._defaultPath = "/dwr/interface";
+dwr.engine._pollWithXhr = "false";
+</script>
+
+    
+        <link rel="alternate" type="application/rss+xml" title="Emerging Compute Models White Paper - Intel  Version History Feed" href="http://communities.intel.com/community/feeds/document-history/DOC-2550">
+
+        <link rel="alternate" type="application/rss+xml" title="Emerging Compute Models White Paper - Intel  Comments Feed" href="http://communities.intel.com/community/feeds/document-comments/DOC-2550">
+
+    
+
+
+
+
+
+    <script type="text/javascript">
+        var documentID = 2550;
+
+        function publishDraft() {
+        	submitToOmniture('Publish', 'Emerging Compute Models White Paper - Intel ', 'documentPublished', 'documentPublished', 'ANONYMOUS');
+            $('documentPublishForm').submit();
+        }
+
+        function restoreVersion(version) {
+           if (confirm('Are you sure you want to restore this version of the document text?')){
+                $('documentRestoreForm').submit();
+           }
+        }
+
+        function deleteDocument() {
+            if (confirm('Are you sure you want to delete this document?')){
+                $('documentDeleteForm').submit();
+            }
+        }
+        
+        DWREngine._defaultPath = "/dwr";
+    </script>
+
+
+    
+	<link rel="stylesheet" type="text/css" id="HAT-linkStyle" href="Understanding%20Alternative%20Compute%20Models_bestanden/ltr_header.css">
+	<link rel="stylesheet" type="text/css" href="Understanding%20Alternative%20Compute%20Models_bestanden/intel.css" media="all">
+
+    <style type="text/css">/* custom-css */
+#jive-userbar[
+div.sdmenu {
+	width: 170px;
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	padding-bottom: 10px;
+	background: url(http://www.vproexpert.com/E24VZ/sdmenu/bottom.gif) no-repeat  right bottom;
+	color: #cddfef;
+}
+
+div.sdmenu div {
+	background: url(http://www.vproexpert.com/E24VZ/sdmenu/title.gif) repeat-x;
+	overflow: hidden;
+	color: #0860A8;
+}
+div.sdmenu div:first-child {
+	background: url(http://www.vproexpert.com/E24VZ/sdmenu/title.gif);
+	
+}
+div.sdmenu div:second-child {
+	background: url(SubTitle.gif);
+	
+}
+div.sdmenu div.collapsed {
+	height: 25px;
+}
+div.sdmenu div span {
+	display: block;
+	padding: 5px 28px;
+	font-weight: bold;
+	color: #0860a8;
+	background: url(http://www.vproexpert.com/E24VZ/sdmenu/expanded.gif) no-repeat 1px center;
+	cursor: default;
+	border-bottom: 1px solid #a6cae1;
+}
+div.sdmenu div.collapsed span {
+	background-image: url(http://www.vproexpert.com/E24VZ/sdmenu/collapsed.gif);
+}
+div.sdmenu div a {
+	padding: 5px 10px;
+	background: white;
+	display: block;
+	border-bottom: .25px solid #a6cae1;
+	color: #0860a8;
+}
+div.sdmenu div a.current {
+	background : #ffffff;
+}
+div.sdmenu div a:hover {
+	background : #CDDFEF url(http://www.vproexpert.com/E24VZ/sdmenu/titletwo.gif) repeat center;
+	color: white;
+	text-decoration: none;
+}</style>
+    <style type="text/css">/* custom-css-container in vpro-expert theme */
+#jive-global-header {
+	background-image: url(/themes/intelv25/images/marquee-vpro.jpg);
+	}</style>
+
+    <script type="text/javascript">
+
+        var omnitureData = ""
+        var omnitureLinkName = ""
+
+        /* Sends data to omniture */
+        function sendToOmniture()
+        {
+            // alert('Test');
+            waTrackAsLink(omnitureLinkName,'o', omnitureData);
+        }
+
+        function buildOmnitureParam(omnitureField, omnitureValue)
+        {
+            if (omnitureValue != null && omnitureValue != '')
+                return '' + omnitureField + '=' + omnitureValue;
+            else
+                return '';
+        }
+
+        // Removes unnecessary characters from parameter string
+        function prepareOmnitureParamString(paramString)
+        {
+            if (paramString != null && paramString != '')
+            {
+                paramString = paramString.replace(/[\&+]+/g,'&');
+                if (paramString.lastIndexOf("&") == paramString.length - 1)
+                {
+                    // last character of parameter string is &, needs to be removed
+                    paramString = paramString.substring(0, paramString.length - 1);
+                }
+                if (paramString.charAt(0) == "&")
+                     paramString = paramString.substring(1, paramString.length);
+
+                // return formated string
+                return paramString;
+            }
+            else
+                return null;
+        }
+
+        /*
+           setTitle is not used because the title is set in the begining of the page load.
+           setAuthor NEEDS to be set to username of a currently logged in user, the one that creates a reply
+           setContent is not used because it is set at the top of the page
+           wa_custom03 - content
+           wa_custom05 - title
+           wa_custom06 - action
+           wa_events - event
+           wa_custom02 - author
+           wa_custom01 - user
+        */
+        function submitToOmniture(linkName, title, action, event, author)
+        {
+                var user = "";
+                omnitureLinkName = linkName;
+
+                // Content set by checking current section of the site, i.e. Blog, Thread, etc
+                var content = "";
+                // set content parameter
+
+
+                     content = 'document';
+
+                // Set user name
+                    user = 'ANONYMOUS';
+
+                action = omniturePropTable.get(action);
+
+                omnitureData = "";
+
+                omnitureData = buildOmnitureParam('wa_custom03','blog') + '&' +
+                    buildOmnitureParam('wa_custom05', formatString(title)) + '&' + buildOmnitureParam('wa_custom06', action) + '&' +
+                    buildOmnitureParam('wa_events', event) + '&' + buildOmnitureParam('wa_custom02', author) + '&' +
+                    buildOmnitureParam('wa_custom01', user);
+                omnitureData = prepareOmnitureParamString(omnitureData);
+
+                if (omnitureData != null)
+                {
+
+                    // send information to omniture
+                    // alert(omnitureData);
+                    window.setTimeout(sendToOmniture,0);
+                }
+
+                return true;
+
+        }
+        </script>
+
+<script type="text/javascript" language="JavaScript" src="Understanding%20Alternative%20Compute%20Models_bestanden/68ec70e58084ae3be742d20ace5e41af.js"></script>
+<script type="text/javascript" language="JavaScript">
+        Zapatec.Calendar._TT["DEF_DATE_FORMAT"] = "%m/%d/%Y";
+
+
+        // begin list of custom CSS
+        jive.rte.defaultStyles = new Array();
+        // end list of custom CSS
+
+
+            var jiveControl = new jive.model.Controller();
+
+
+    
+jive.rte.macros.push(new jive.rte.Macro("color","","TEXT", true, false, [], [{name: "0",value: ""},{name: "__default_attr",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("size","","TEXT", true, false, [], [{name: "0",value: ""},{name: "__default_attr",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("font","","TEXT", true, false, [], [{name: "0",value: ""},{name: "__default_attr",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("toc","","INLINE", true, true, [], [], true,false));
+jive.rte.macros.push(new jive.rte.Macro("code","","TEXT", false, true, [{ name: "sql", deleteAll: true, params: [{ name: "__default_attr", value :"sql"} ]},{ name: "html", deleteAll: true, params: [{ name: "__default_attr", value :"html"} ]},{ name: "xml", deleteAll: true, params: [{ name: "__default_attr", value :"xml"} ]},{ name: "java", deleteAll: true, params: [{ name: "__default_attr", value :"java"} ]},{ name: "plain", deleteAll: true, params: [{ name: "__default_attr", value :"plain"} ]}], [{name: "__default_attr",value: ["sql","html","xml","java","plain"]}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("noformat","","TEXT", true, false, [], [], true,false));
+jive.rte.macros.push(new jive.rte.Macro("thread","thread/","INLINE", true, false, [], [{name: "id",value: ""},{name: "0",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("message","message/","INLINE", true, false, [], [{name: "id",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("document","docs/","INLINE", true, false, [], [{name: "id",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("blogpost","blogs/","INLINE", true, false, [], [{name: "id",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("blog","blogs/","INLINE", true, false, [], [{name: "id",value: ""},{name: "name",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("community","community/","INLINE", true, false, [], [{name: "id",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("space","community/","INLINE", true, false, [], [{name: "id",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("user","","INLINE", true, false, [], [{name: "id",value: ""},{name: "username",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("project","project/","INLINE", true, false, [], [{name: "id",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("task","view-task.jspa?task=","INLINE", true, false, [], [{name: "id",value: ""},{name: "0",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("group","groups/","INLINE", true, false, [], [{name: "id",value: ""},{name: "__default_attr",value: ""},{name: "title",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("quote","","TEXT", false, true, [], [{name: "title",value: ""},{name: "__default_attr",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("vimeo","","IMAGE", false, false, [], [{name: "__default_attr",value: ""},{name: "width",value: ""},{name: "height",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("veoh","","IMAGE", false, false, [], [{name: "__default_attr",value: ""},{name: "width",value: ""},{name: "height",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("dailymotion","","IMAGE", false, false, [], [{name: "__default_attr",value: ""},{name: "width",value: ""},{name: "height",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("google","","IMAGE", false, false, [], [{name: "__default_attr",value: ""},{name: "width",value: ""},{name: "height",value: ""}], true,false));
+jive.rte.macros.push(new jive.rte.Macro("youtube","","IMAGE", false, false, [], [{name: "__default_attr",value: ""},{name: "width",value: ""},{name: "height",value: ""}], true,false));
+
+
+
+        if(typeof(tinyMCE) != "undefined"){ // could be Safari 2, which dies with tinyMCE
+            tinyMCE.addI18n('en.jivemacros',{
+            });
+        }
+
+
+        function RawHTMLSaveFunction(element_id, html, body){
+            var text = $('wysiwygtext');
+            if(text.style.display == "none"){
+                return html;
+            }else{
+                return text.value;
+            }
+        }
+        jive.rte.multiRTE = new Array();
+
+        function refreshLinks(){
+            for(var i=0;i<jive.rte.multiRTE.length;i++){
+                if(!$(jive.rte.multiRTE[i] + '_parent')){
+                    // safari 2, text only
+                    $(jive.rte.multiRTE[i] + '_toggle_html').style.display = "none";
+                    $('jivePreferredEditorModeLinkHREF').style.display = "none";
+                    return;
+                }
+                if($(jive.rte.multiRTE[i] + '_parent').style.display == "none"){
+                    $(jive.rte.multiRTE[i] + '_toggle_html').style.display = "block";
+                }else{
+                    $(jive.rte.multiRTE[i] + '_toggle_html').style.display = "none";
+                }
+                if(preferredMode == currentMode){
+                    $('jivePreferredEditorModeLinkHREF').style.display = "none";
+                }else{
+                    $('jivePreferredEditorModeLinkHREF').style.display = "block";
+                }
+            }
+        }
+
+
+
+
+// timeout for dwr calls
+var DWRTimeout = 20000;
+
+
+function getEditorMode() {
+    return currentMode;
+}
+
+function setPreferredEditorMode(mode) {
+    WikiTextConverter.setPreferredEditorMode(mode,
+        {
+            callback: function() {
+                preferredMode = mode;
+                refreshLinks();
+            },
+            timeout: DWRTimeout // 20 seconds
+        }
+    );
+}
+
+
+            function startWatch() {
+                Watches.watchDocument(documentID, {
+                        callback:function(){
+                            $('jive-link-document-startWatch').hide();
+                            $('jive-link-document-stopWatch').show();
+                            Jive.AlertMessage('thread.watch.notify', {
+                                    beforeStart:function() {
+                                        $('thread.watch.notify').innerHTML
+                                            = '<div>You are receiving email notifications for this document. To unsubscribe,click \"Stop email notifications\" below.</div>';
+                                    }
+                             });
+                        }
+                });
+            }
+
+            function stopWatch() {
+                Watches.removeDocumentWatch(documentID, {
+                        callback:function(){
+                            $('jive-link-document-startWatch').show();
+                            $('jive-link-document-stopWatch').hide();
+                            Jive.AlertMessage('thread.watch.notify', {
+                                    beforeStart:function() {
+                                        $('thread.watch.notify').innerHTML
+                                            = '<div>You have stopped receiving email notifications for this document. To subscribe to changes to this document via email,click \"Receive email notifications\" below.</div>';
+                                    }
+                             });
+                        }
+                });
+            }
+
+
+    function writeMoreLikeThisResults(data) {
+        var results = data.results;
+        var ul = $("jive-more-like-this-" + __objectType + "-" + __objectID);
+        if (results.length > 0) {
+            ul.update('');
+            results.each(function(result) {
+                ul.insert(new Element("li").update(resultFormatter(result)));
+            });
+        }
+        else {
+            ul.update(new Element("li").update(new Element("span").update(msg_noContent)));
+        }
+    }
+
+    function resultFormatter(data) {
+        return new Element("a", {href: _jive_base_url + data.objectURL, "class": data.objectClass})
+            .insert(new Element("span").update(data.subject));
+    }
+
+    document.observe("dom:loaded", function() {
+    MoreLikeThis.getMoreLikeThisResults(__objectType, __objectID, __numResults, {
+       callback:function(data) {
+           writeMoreLikeThisResults(data);
+        },
+        errorHandler:function(errorString) {
+            $("jive-more-like-this-" + __objectType + "-" + __objectID).update("<li><span>" + msg_errorContent + " " +
+                    + errorString + "</span></li>");
+         }}
+     );
+     });
+
+
+        var quickuserprofile = new QuickUserProfile("jive-note-user-body", profileShortUrl, profileLoadingTooltip,
+                profileErrorTooltip);
+        var jiveprojectchooser = new JiveProjectChooser(projectChooserUrl);
+        var jivegroupchooser = new JiveGroupChooser(groupChooserUrl);
+
+
+</script>
+
+<link media="all" href="Understanding%20Alternative%20Compute%20Models_bestanden/widget05.css" type="text/css" rel="stylesheet"></head><body class="jive-body-content jive-body-content-document HAT-narrowbg"><div style="position: absolute; left: 10px; top: 10px; visibility: hidden; z-index: 525;" id="ZoomSpin"><img src="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-spin-1.png" id="SpinImage"></div><div style="position: absolute; left: 10px; top: 10px; visibility: hidden; z-index: 499;" id="ZoomBox"><img style="display: block; width: 10px; height: 10px; cursor: pointer;" id="ZoomImage" src="Understanding%20Alternative%20Compute%20Models_bestanden/spacer.gif" border="0"><div style="position: absolute; left: -15px; top: -15px; visibility: hidden;" id="ZoomClose"><img style="cursor: pointer;" src="Understanding%20Alternative%20Compute%20Models_bestanden/closebox.png" width="30" border="0" height="30"></div></div><div style="position: absolute; visibility: hidden; margin-left: auto; margin-right: auto; z-index: 501;" id="ZoomCapDiv"><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td align="right"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-caption-l.png" width="13" height="26"></td><td style="font-size: 14px; font-family: Helvetica; font-weight: bold; color: rgb(255, 255, 255); text-shadow: 0px 2px 4px rgb(0, 0, 0); white-space: nowrap;" id="ZoomCaption" valign="middle" background="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-caption-fill.png"></td><td><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-caption-r.png" width="13" height="26"></td></tr></tbody></table></div><div style="position: absolute; left: 50px; top: 50px; width: 100px; height: 100px; visibility: hidden; z-index: 498;" id="ShadowBox"><table width="100%" border="0" cellpadding="0" cellspacing="0" height="100%"><tbody><tr style="height: 25px;"><td style="width: 27px;"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow1.png" width="27" height="25"></td><td background="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow2.png"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/spacer.gif" width="1" height="1"></td><td style="width: 27px;"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow3.png" width="27" height="25"></td></tr><tr><td background="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow4.png"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/spacer.gif" width="1" height="1"></td><td bgcolor="#ffffff"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/spacer.gif" width="1" height="1"></td><td background="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow5.png"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/spacer.gif" width="1" height="1"></td></tr><tr style="height: 26px;"><td style="width: 27px;"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow6.png" width="27" height="26"></td><td background="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow7.png"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/spacer.gif" width="1" height="1"></td><td style="width: 27px;"><img style="display: block;" src="Understanding%20Alternative%20Compute%20Models_bestanden/zoom-shadow8.png" width="27" height="26"></td></tr></tbody></table></div>
+
+<!-- BEGIN Omniture integration -->
+<script type="text/javascript" src="Understanding%20Alternative%20Compute%20Models_bestanden/wa_setup.js"></script>
+<script type="text/javascript">
+
+/* Function to modify strings before input to omniture */
+
+function wap_setUser(user) {
+    wa_custom01 = user;
+	}
+
+function wap_setAuthor(author) {
+    wa_custom02 = author;
+}
+
+function wap_setContent(content) {
+    wa_custom03 = content;
+}
+
+function wap_setCommunity(community) {
+    wa_custom04 = community;
+}
+
+function wap_setTitle(title) {
+    wa_custom05 = formatString(title);
+}
+
+function wap_setAction(act) {
+    wa_custom06 = act;
+}
+
+function wap_setEvent(evt) {
+    wa_events = evt;
+}
+
+/***** Make changes here *****/
+	var wa_pageName= window.location
+	var wa_org1="iop"
+	var wa_org2=""
+	var wa_org3=""
+	var wa_org4=""
+	var wa_orgX=""
+	var wa_geo="asmo-na"
+	var wa_language="english"
+	var wa_reportSuites="intelcorpopenport"
+	var wa_events=""
+	var wa_custom01=""
+	var wa_custom02=""
+	var wa_custom03=""
+	var wa_custom04=""
+    var wa_custom05=""
+    var wa_custom06=""
+    var wa_custom07=""
+    var wa_custom08=""
+    var wa_custom09=""
+    var wa_custom10=""
+    var wa_custom11=""
+    var wa_custom12=""
+    var wa_custom13=""
+    var wa_custom14=""
+    var wa_custom15=""
+    var wa_eCustom22=""
+	var wa_eCustom23=""
+	var wa_eCustom24=""
+	var wa_eCustom25=""
+	var wa_eCustom26=""
+	var wa_eCustom27=""
+	var wa_eCustom28=""
+	var wa_eCustom29=""
+	var wa_eCustom30=""
+	var wa_eCustom31=""
+	var wa_eCustom32=""
+	var wa_eCustom33=""
+	var wa_eCustom34=""
+	var wa_eCustom35=""
+	var wa_visitId=""
+	var wa_referrer=""
+	var wa_urlQueryString=""
+
+    wap_setTitle(document.title);
+
+        wap_setUser("ANONYMOUS");
+        var wa_eCustom21="ANONYMOUS";
+        /* TODO: This needs have the DWR call enabled. Right now, it will throw a JavaScript error.
+        var ipipID = GetUserProfileFieldValue.getProfileFieldValue("ANONYMOUS", "IPIP_UID");
+        if(ipipID.equals("")) {
+            wa_custom07 = "Standard Member";
+        } else {
+            wa_custom07 = "IPIP Member";
+        }
+        */
+
+
+
+
+	        wap_setAuthor("adbatra");
+	    wap_setContent("document");
+	    wap_setAction(omniturePropTable.get('documentView'));
+
+/*****************************/
+</script>
+<!-- END Omniture integration -->
+
+    <div id="jive-wrapper" class="clearfix">
+
+<div id="top-menu-intel" style="width: 960px;" class="clearfix">
+<!--10/07/2008 12:11:04-->
+<!--v44-->
+		<script type="text/javascript" src="Understanding%20Alternative%20Compute%20Models_bestanden/header.js"></script> 
+	<script type="text/javascript">
+		if (typeof HAT == "undefined" || !HAT) {
+		var HAT = {};
+		}
+		HAT.SearchFilterLUT = {
+		head:"Filter Your Results",
+		inputName:"category",
+		qs:[
+			{
+			filter:"Products",
+			term:"Products"
+			},
+			{
+			filter:"SuppDown",
+			term:"Support &#38; Downloads"
+			},
+			{
+			filter:"BlogComm",
+			term:"Blogs &#38; Communities"
+			},
+			{
+			filter:"Reseller",
+			term:"Reseller"
+			},
+			{
+			filter:"Software",
+			term:"Software"
+			},
+			{
+			filter:"AboutIntel",
+			term:"About Intel"
+			},
+			{
+			filter:"HAT-adv1",
+			term:"Advanced Search"
+			}
+			]
+			}
+	</script> 
+	<div id="HAT-globalheader" class="HAT-quirks HAT-font1" style="width: 840px; float: right;">
+		<a href="http://www.intel.com/index.htm?iid=hdr+logo" class="logo"><img src="Understanding%20Alternative%20Compute%20Models_bestanden/intlogo.gif" alt="Logo - Intel" title="Logo - Intel" border="0" height="47"></a> 
+		<ul>
+			<li id="HAT-gh0">
+				<a class="on" href="http://www.intel.com/business/index.htm?iid=hdr+work">Work</a> 
+			</li>
+			<li id="HAT-gh1">
+				<a href="http://www.intel.com/consumer/index.htm?iid=hdr+play">Play</a> 
+			</li>
+			<li id="HAT-gh2">
+				<a href="http://www.intel.com/support/index.htm?iid=hdr+support">Support</a> 
+			</li>
+			<li id="HAT-gh3">
+				<a href="http://www.intel.com/intel/index.htm?iid=hdr+about">About Intel</a> 
+			</li>
+			<li id="HAT-gh4">
+				<a href="http://www.intel.com/intel/nav/locator.htm?iid=hdr+location">Change Location</a> 
+			</li>
+			<li class="search">
+				<form method="get" name="FORMSearchHeader" action="http://mysearch.intel.com/corporate/default.aspx">
+					<input id="culture" name="culture" value="en_US" type="hidden"> 
+					<label for="q">Search</label> 
+					<span><input id="q" name="q" size="10" maxlength="255" class="HAT-searchbox" autocomplete="off" type="text"></span> 
+					<input value="all" name="category" id="category" type="hidden"> <input value="0" name="adv" id="adv" type="hidden"> 
+					<input value="0" name="value" id="value" type="hidden">
+					<input class="searchbutton" name="searchsubmit" src="Understanding%20Alternative%20Compute%20Models_bestanden/searchbtn_en.gif" id="searchsubmit" alt="Search" type="image" width="57" border="0" height="20">
+				</form>
+			</li>
+		</ul>
+	<ul id="HAT-filter-menu"><li id="HAT-filterhead">Filter Your Results</li><li><a href="http://communities.intel.com/docs/DOC-2550;jsessionid=81A7D27721D4353C4DBEAF369150DD04?Products">Products</a></li><li><a href="http://communities.intel.com/docs/DOC-2550;jsessionid=81A7D27721D4353C4DBEAF369150DD04?SuppDown">Support &amp; Downloads</a></li><li><a href="http://communities.intel.com/docs/DOC-2550;jsessionid=81A7D27721D4353C4DBEAF369150DD04?BlogComm">Blogs &amp; Communities</a></li><li><a href="http://communities.intel.com/docs/DOC-2550;jsessionid=81A7D27721D4353C4DBEAF369150DD04?Reseller">Reseller</a></li><li><a href="http://communities.intel.com/docs/DOC-2550;jsessionid=81A7D27721D4353C4DBEAF369150DD04?Software">Software</a></li><li><a href="http://communities.intel.com/docs/DOC-2550;jsessionid=81A7D27721D4353C4DBEAF369150DD04?AboutIntel">About Intel</a></li><li><a href="http://communities.intel.com/docs/DOC-2550;jsessionid=81A7D27721D4353C4DBEAF369150DD04?HAT-adv1">Advanced Search</a></li></ul></div>
+</div>
+<style>
+    body.HAT-narrowbg {
+        background: none;
+    }
+    </style> 
+<!--10/07/2008 12:11:05-->
+<!--v44-->
+<div id="HAT-subheader" class="subheaderId-HAT-gh0 HAT-quirks HAT-font1" style="float: right; z-index: 99;">
+	<ul>
+		<li id="HAT-sh0">
+			<a href="http://www.intel.com/products/index.htm?iid=subhdr+prod">Products</a> 
+			<ul>
+				<li>
+					<a href="http://www.intel.com/products/processor/index.htm?iid=subhdr+prod_proc">Processors</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/motherboard/index.htm?iid=subhdr+prod_boards">Motherboards</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/chipsets/index.htm?iid=subhdr+prod_chipsets">Chipsets</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/desktop/index.htm?iid=subhdr+prod_desktop">Desktop</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/notebook/index.htm?iid=subhdr+prod_notebook">Notebook</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/server/index.htm?iid=subhdr+prod_server">Server</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/workstation/index.htm?iid=subhdr+prod_workstn">Workstation</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/businesspc/index.htm?iid=subhdr+prod_bizpc">Business PCs</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/embedded/index.htm?iid=subhdr+prod_embcomm">Embedded &amp; Communications</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/cd/software/products/asmo-na/eng/index.htm?iid=subhdr+prod_sw">Software</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/products/sitemap.htm?iid=subhdr+prod_all">All Products</a> 
+				</li>
+			</ul>
+		</li>
+		<li id="HAT-sh1">
+			<a href="http://www.intel.com/technology/index.htm?iid=subhdr+tech">Technology</a> 
+			<ul>
+				<li>
+					<a href="http://www.intel.com/technology/architecture-silicon/index.htm?iid=subhdr+tech_arch">Architecture &amp; Silicon</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/technology/product/index.htm?iid=subhdr+tech_prodtech">Product Technologies</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/technology/manufacturing/index.htm?iid=subhdr+tech_mfg">Manufacturing</a> 
+				</li>
+				<li>
+					<a href="http://techresearch.intel.com/articles/index.html?iid=subhdr+tech_research">Research</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/standards/index.htm?iid=subhdr+tech_stds">Standards</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/idf/index.htm?iid=subhdr+tech_idf">Intel Developer Forum</a> 
+				</li>
+			</ul>
+		</li>
+		<li id="HAT-sh2">
+			<a href="http://www.intel.com/communities/index.htm?iid=subhdr+communities">Communities</a> 
+		</li>
+		<li id="HAT-sh3">
+			<a href="http://downloadcenter.intel.com/default.aspx?iid=subhdr+downloads">Downloads</a> 
+		</li>
+		<li id="HAT-sh4">
+			<a href="http://www.intel.com/cd/channel/reseller/asmo-na/eng/index.htm?iid=subhdr+reseller">Reseller</a> 
+			<ul>
+				<li>
+					<a href="http://www.intel.com/cd/channel/reseller/asmo-na/eng/index.htm?iid=subhdr+reseller_ctr">Intel® Reseller Center</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/cd/channel/distributor/asmo-na/eng/index.htm?iid=subhdr+reseller_disti">Intel® Distributor Resource Center</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/cd/channel/reseller/asmo-na/eng/293121.htm?iid=subhdr+reseller_cpp">Intel® Channel Partner Program</a> 
+				</li>
+				<li>
+					<a href="http://www.intel.com/cd/software/partner/asmo-na/eng/index.htm?iid=subhdr+reseller_spp">Intel® Software Partner Program</a> 
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+	<div id="intel-wrapper">
+		<a href="http://communities.intel.com/" id="intel-logo">
+			<img src="Understanding%20Alternative%20Compute%20Models_bestanden/intel-logo.htm" alt="Intel: Leap ahead">
+		</a>
+	</div>
+
+<!-- BEGIN header -->
+	<div id="jive-global-header">
+		<span>
+			<a href="http://communities.intel.com/" id="jive-global-header-logo"></a>
+		</span>
+	</div>
+<!-- END header -->
+
+<!-- BEGIN user bar -->
+<div id="user-bar-wrapper">
+        
+        
+<div id="jive-userbar">
+
+    
+        <div id="jive-userbar-login">
+            <form action="/cs_login" method="post" name="loginform" autocomplete="off">
+                
+                
+
+				<span class="jive-userbar-login-welcome" id="jiveLoginWelcome">
+					<span class="jive-userbar-login-guest">
+						<!-- Welcome, -->
+                        Guest
+                    </span>
+
+                    <span class="jive-userbar-login-loginlink">
+						<a href="#" onclick="jivetoggleLogin(); return false;" accesskey="L"><u>L</u>ogin</a>
+                    </span>
+
+						<span class="jive-userbar-login-new">
+							<a href="http://communities.intel.com/create-account.jspa" accesskey="R"><u>R</u>egister</a>
+						</span>
+                </span>
+
+                <span class="jive-userbar-login-form" id="jiveLoginForm" style="display: none;">
+
+					<span class="jive-userbar-login-username">
+						<label for="login-username">
+Username:						</label>
+						<input name="username" size="20" maxlength="150" value="" tabindex="1" id="login-username" type="text">
+					</span>
+
+					<span class="jive-userbar-login-password">
+						<label for="login-password">
+Password:						</label>
+							<a href="http://communities.intel.com/docs/emailPasswordToken%21input.jspa" title="I forgot my password ">(?)</a>
+						<input name="password" size="20" maxlength="150" value="" tabindex="2" id="login-password" type="password">
+					</span>
+
+					<span class="jive-userbar-login-auto">
+						<input name="autoLogin" id="login-auto" value="true" tabindex="3" type="checkbox">
+						<label for="login-auto">Remember Me</label>
+					</span>
+
+					<span class="jive-userbar-login-submit">
+						<input name="login" value="Login" tabindex="4" class="jive-login-button" type="submit">
+						<input name="doCancel" value="Cancel" tabindex="5" class="jive-cancel-button" onclick="jivetoggleLogin();" type="reset">
+					</span>
+
+				</span>
+
+            </form>
+        </div>
+
+
+    <!-- BEGIN choose-container create panel -->
+    <div class="jive-contentcreate-menu" id="jiveContentCreatePanel" style="display: none;">
+        <div class="jive-contentcreate-menu-container" id="jiveContentCreateContainer"></div>
+    </div>
+    <!-- END choose-container create panel -->
+
+
+	<!-- BEGIN right-aligned user bar items -->
+    <div id="jive-userbar-right">
+
+            <div id="jive-userbar-search">
+                <form action="/search.jspa" method="get">
+                        <input name="resultTypes" value="BLOG_POST" type="hidden">
+                        <input name="resultTypes" value="DOCUMENT" type="hidden">
+                        <input name="resultTypes" value="MESSAGE" type="hidden">
+                        <input name="resultTypes" value="BLOG" type="hidden">
+                        <input name="resultTypes" value="COMMUNITY" type="hidden">
+                        <input name="resultTypes" value="TASK" type="hidden">
+                        <input name="resultTypes" value="PROJECT" type="hidden">
+                        <input name="resultTypes" value="SOCIAL_GROUP" type="hidden">
+                        <input name="resultTypes" value="COMMENT" type="hidden">
+                <input name="peopleEnabled" value="true" type="hidden">
+                <input id="jive-query" name="q" value="Community Search" class="jive-userbar-search-field" autocomplete="off" type="text">
+                <button type="submit" value="Search" class="jive-userbar-search-button">Search</button>
+                <a href="#" onfocus="$('jive-query').focus(); return false;" accesskey="S"></a>
+                </form>
+
+                <div id="jive-spotlight-search-container"></div>
+                    <script type="text/javascript">
+                        var spotlightSearchUrl = "/spotlight-search.jspa";
+                    </script>
+
+            </div>
+
+
+    </div>
+    <!-- END right-aligned user bar items -->
+</div>
+
+</div>
+<!-- END user bar -->
+
+
+        <div id="jive-body">
+
+<div id="jive-breadcrumb" class="clearfix">
+	<!-- INTEL customization: AddThis social bookmarks Button BEGIN -->
+	<div id="soc">
+		<script type="text/javascript">
+			addthis_pub  = 'johnnyjive';
+			addthis_logo = 'http://communities.intel.com/openport/themes/intelv25/images/intel-logo.gif/>';
+			addthis_logo_color = '0860a8';
+			addthis_options = 'technorati, digg, stumbleupon, delicious, more'; 
+			//addthis_offset_top = 2; /* in pixels */
+			//addthis_offset_left = 2; /* in pixels */
+			//addthis_brand = 'Intel Open Port';
+			addthis_brand = 'Intel Communities:  Emerging Compute Models White Paper - Intel ';
+		</script>
+		&nbsp;<a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '[URL]', '[TITLE]')" onmouseout="addthis_close()" onclick="return addthis_sendto()"><img src="Understanding%20Alternative%20Compute%20Models_bestanden/button1-share.gif" alt="" width="125" border="0" height="16"></a><script type="text/javascript" src="Understanding%20Alternative%20Compute%20Models_bestanden/addthis_widget.js"></script>
+	</div>
+	<!-- AddThis social bookmarks Button END -->
+	
+<!-- BEGIN breadcrumb -->
+
+	<span><a href="http://intel.com/">Home</a> &gt; 
+
+
+
+                <a href="http://communities.intel.com/">Intel Communities</a> &gt; 
+
+                <a href="http://communities.intel.com/community/openportit">Open Port IT Community</a> &gt; 
+
+                <a href="http://communities.intel.com/community/openportit/vproexpert">Intel® vPro™ Expert Center</a> &gt; 
+
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing">Emerging Compute Model Forum</a> &gt; 
+
+
+
+
+        <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=documents" class="jive-breadcrumb-last">Documents</a></span>
+<!-- END breadcrumb -->
+</div>
+
+            
+
+    <form id="documentRestoreForm" method="post" action="/docs/DOC-2550/restore">
+        <input name="version" value="1" type="hidden">
+    <input name="jive.token.name" value="document.restore.DOC-2550" type="hidden">
+    <input name="document.restore.DOC-2550" value="3ZNDEDTBTQYN22OLJ7C9B7PVRC3RTVUS" type="hidden">
+    </form>
+
+    <form id="documentDeleteForm" method="post" action="/docs/DOC-2550/delete">
+    <input name="jive.token.name" value="document.delete.DOC-2550" type="hidden">
+    <input name="document.delete.DOC-2550" value="I63NH3IDXEU8RAF6WGJ4TRXW5B49VY89" type="hidden">
+    </form>
+
+    <form id="documentPublishForm" method="post" action="/doc-publish.jspa">
+    <input name="jive.token.name" value="document.publish.DOC-2550" type="hidden">
+    <input name="document.publish.DOC-2550" value="1A63ULN2WYC9IUDW9QZTYL04XVEET3SC" type="hidden">
+        <input name="document" value="DOC-2550" type="hidden">
+    </form>
+
+    <div id="success-moderation-edit" class="jive-success-box" style="display: none;">
+    </div>
+
+    <!-- BEGIN header & intro  -->
+    <div id="jive-body-intro">
+        <div id="jive-body-intro-content">
+
+            <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=documents" class="jive-link-more">Up to Documents in Emerging Compute Model Forum</a>
+        </div>
+    </div>
+    <!-- END header & intro -->
+
+    <!-- BEGIN main body -->
+    <div id="jive-body-main">
+
+        <!-- BEGIN main body column -->
+        <div id="jive-body-maincol-container">
+
+            <div id="jive-body-maincol">
+
+                <div id="thread.watch.notify" class="jive-info-box" style="display: none;"></div>
+
+
+
+                    
+                    
+
+
+
+<!-- BEGIN document -->
+<div class="jive-wiki">
+    <div class="jive-wiki-subject">
+        <div class="jive-wiki-subject-content">
+            <div class="jive-wiki-post-moderating">Currently Being Moderated</div>
+            <div class="jive-wiki-subject-content-title">
+                <div>
+                    <h2> Emerging Compute Models White Paper - Intel </h2>
+                </div>
+            </div>
+            <div class="jive-wiki-version">
+                <span class="jive-wiki-version-details">
+                    <span>VERSION 1</span>
+
+                </span>
+            </div>
+
+            <h3>
+
+Created on: Jan 21, 2009 6:14 PM by
+<a href="http://communities.intel.com/people/adbatra" id="jive-lpMRzmRE7qFqsXzb" onmouseover="quickuserprofile.getUserProfileTooltip(19023);" onmouseout="quickuserprofile.cancelTooltip();" class="jiveTT-hover-user jive-username-link">Arjun Batra</a>
+                <span>-</span>
+
+Last Modified:&nbsp;
+Jan 21, 2009 6:20 PM
+by <a href="http://communities.intel.com/people/adbatra" id="jive-71VCdBfdGIfgw7F0" onmouseover="quickuserprofile.getUserProfileTooltip(19023);" onmouseout="quickuserprofile.cancelTooltip();" class="jiveTT-hover-user jive-username-link">Arjun Batra</a>
+            </h3>
+        </div>
+    </div>
+    <div class="jive-wiki-body">
+
+        <div class="jive-wiki-body-content">
+        <!-- BEGIN uploaded document summary -->
+        <div class="jive-wiki-body-summary">
+            <p>Driven by ever-increasing pressure on a multitude of issues – including cost control,
+<br>manageability, security, regulatory compliance, and business continuity – some IT
+<br>managers are considering centralized compute models as an alternative to traditional
+<br>distributed software deployment.
+<br>Thanks to recent advances in technology, IT has a range of centrally-managed
+<br>compute models from which to choose. From Terminal Services to VDI, from blade PCs
+<br>through application and OS streaming, each model has its advantages and trade-offs.
+<br>Rarely is a single compute model adequate to meet the needs of all users and all
+<br>applications. Instead, the needs of each group of users, as well as IT requirements
+<br>and existing infrastructure, must be carefully considered. In most cases, an enterprise
+<br>solution will likely involve a combination of models.
+<br>Although thin terminals may be suitable hardware for certain purely server-based
+<br>models, rich PC platforms based on technology such as Intel® Core™2 processor with
+<br>vPro™ technology for desktops and Intel® Centrino® 2 with vPro™ technology for
+<br>notebooks offer highly manageable and secure platforms on which to deploy a
+<br>wide range of solutions.
+<br>This white paper describes the variety of compute models available, how each works,
+<br>and the advantages and limitations of each model for key vectors such as security,
+<br>manageability, and power consumption. Also identified are the major providers of
+<br>software solutions and the end-point devices to deploy each model.</p>
+        </div>
+        <!-- END uploaded document summary -->
+    
+
+    <!-- BEGIN uploaded document -->
+    <div class="jive-wiki-body-download">
+
+        <span class="jive-wiki-body-thumbnail">
+
+                <a href="http://communities.intel.com/servlet/JiveServlet/previewBody/2550-102-1-3597/Alternative_Compute_Model_WP_20090120.pdf" target="_new">
+                   <img src="Understanding%20Alternative%20Compute%20Models_bestanden/JiveServlet.gif" border="0">
+                </a>
+        </span>
+
+        <span class="jive-wiki-body-file">
+            <span class="jive-wiki-body-file-info">
+
+
+                <a rel="nozoom" href="http://communities.intel.com/servlet/JiveServlet/downloadBody/2550-102-1-3597/Alternative_Compute_Model_WP_20090120.pdf">Alternative_Compute_Model_WP_20090120.pdf</a> (1.2 MB)
+             </span>
+
+             <span class="jive-wiki-body-file-actions">
+             <a href="http://communities.intel.com/servlet/JiveServlet/previewBody/2550-102-1-3597/Alternative_Compute_Model_WP_20090120.pdf" target="_new">View</a>&nbsp;
+             <a rel="nozoom" href="http://communities.intel.com/servlet/JiveServlet/downloadBody/2550-102-1-3597/Alternative_Compute_Model_WP_20090120.pdf">Download</a>
+
+
+                </span>
+           </span>
+        
+
+    </div>
+    <!-- END uploaded document -->
+    
+
+
+<!-- BEGIN attachments -->
+<!-- END attachments -->
+    <!-- BEGIN content details -->
+    <div class="jive-wiki-details">
+    <div class="jive-wiki-details-container">
+
+        <div class="jive-wiki-tags">Tags:
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=application_streaming">application_streaming</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=vhd">vhd</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=video">video</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=ecmf">ecmf</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=saas">saas</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=virtual_hosted_desktop">virtual_hosted_desktop</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=streamed_computing">streamed_computing</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=streaming">streaming</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=application_delivery">application_delivery</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=rich_client">rich_client</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=thin_client">thin_client</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=vpro">vpro</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=software_delivery_models">software_delivery_models</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=alternate_compute_models">alternate_compute_models</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=streaming_computing">streaming_computing</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=emerging_compute">emerging_compute</a>,
+                <a href="http://communities.intel.com/community/openportit/vproexpert/emergingcomputing?view=tags&amp;tags=virtualization">virtualization</a>
+        </div>
+
+    </div>
+    </div>
+
+    <!-- END content -->
+        </div>
+    </div>
+</div>
+<!-- END document -->
+
+                    
+                    
+
+
+
+    <div id="jive-content-rating">
+        
+
+            <div id="jive-content-avgrating">
+
+                <div id="jive-content-avgrating-title">Average User Rating</div>
+
+    <div id="jive-content-avgrating-score" title="Average User Rating: 0">
+            <span id="jive-icon-avgrating-1" class="jive-icon-avgrating-off"></span>
+            <span id="jive-icon-avgrating-2" class="jive-icon-avgrating-off"></span>
+            <span id="jive-icon-avgrating-3" class="jive-icon-avgrating-off"></span>
+            <span id="jive-icon-avgrating-4" class="jive-icon-avgrating-off"></span>
+            <span id="jive-icon-avgrating-5" class="jive-icon-avgrating-off"></span>
+    </div>
+
+                <div id="jive-content-avgrating-count">(0 ratings)</div>
+
+            </div>
+
+    </div>
+
+    
+    <br><br>
+    <br><br>
+
+
+
+
+
+    <a name="comments"></a>
+
+    <!-- BEGIN tabs -->
+    <div class="jive-body-tabbar">
+
+            <span id="jive-comments-tab" class="jive-body-tab jive-body-tabcurrent">
+                <a href="#" onclick="jiveToggleTab('jive-comments', new Array('jive-authordiscussion')); return false;">Comments (<span id="jive-comments-count">0</span>)</a>
+            </span>
+
+    </div>
+    <!-- END tabs -->
+
+        <div id="jive-comments">
+
+        <div class="jive-content-commentbar">
+        </div>
+
+        <script type="text/javascript">var commentsCount = 0;</script>
+
+            <div class="jive-content-comment">
+                    <p>There are no comments on this document</p>
+            </div>
+
+
+
+
+        </div>
+
+    <a name="cf"></a>
+
+    <div class="wysiwygtext_html_link" id="wysiwygtext_html_link" style="display: block;">
+        <a href="javascript:;" id="toggle_html" style="display: none;">Show Full Editor</a>
+        <a href="javascript:void(0);" onmousedown="setPreferredEditorMode(getEditorMode());return false;" class="jive-description" style="font-size: 7pt; display: none;" id="jivePreferredEditorModeLinkHREF">Always use this editor</a>
+    </div>
+    <div id="jive-comment-post-block" style="display: none;">
+        <span>
+        <form method="post" action="/doc-comment-create.jspa" name="jive-comment-post-form" onsubmit="if (!validatePost(true)) {return false;}; if (checkFieldValue('comment-body')) { submitToOmniture('Add Comment', 'Emerging Compute Models White Paper - Intel ', 'documentAddComment', 'documentAddComment', 'adbatra') }; return true;">
+            <input name="document" value="" type="hidden">
+            <input name="parentCommentID" value="" type="hidden">
+            <input name="commentMode" value="" type="hidden">
+    <input name="jive.token.name" value="document.comment.DOC-2550" type="hidden">
+    <input name="document.comment.DOC-2550" value="LEAFRDAFQOYVUC6X5RAWK1KENVONPAFU" type="hidden">
+
+            <h2>Post a comment</h2>
+
+
+
+                <div class="jive-comment-post-anonymous">
+                    <div>
+                        <input id="comment-author" name="commentGuestName">
+                        <label for="comment-author">Name <span>(required)</span></label>
+                    </div>
+                    <div>
+                        <input id="comment-email" name="commentGuestEmail">
+                        <label for="comment-email">Email Address <span>(required, will not be published)</span></label>
+                    </div>
+                    <div>
+                        <input id="comment-url" name="commentGuestUrl">
+                        <label for="comment-url">Website Address</label>
+                    </div>
+                </div>
+
+            <div>
+                <textarea name="wysiwygtext" rows="10" class="jive-comment-textarea"></textarea>
+                <textarea name="commentBody" rows="10" style="display: none;" class="jive-comment-textarea"></textarea>
+                <a name="add-comment"></a>
+            </div>
+
+            <div style="display: none;" class="jive-doc-comment-preview" id="jive-doc-comment-preview"></div>
+
+            <div>
+                <input name="post" value="Add Comment" type="submit">
+
+                <input name="preview" value="Preview" id="comment-preview-button" class="comment-preview-button jive-button" onclick="previewComment(); return false;" type="button">
+
+                &nbsp;&nbsp;&nbsp;&nbsp;
+
+                <input name="cancel" value="Cancel" onclick="toggleCommentForm(this.form.parentNode.id);return false;" type="button">
+            </div>
+
+        </form>
+        </span>
+    </div>
+
+<script type="text/javascript">
+    <!-- used to hold the currently open comment form -->
+    var currentTargetID = "";
+
+    <!-- load the correct tab when a comment is posted -->
+
+    <!-- show form if an error occured while posting a comment -->
+
+
+
+
+
+        //
+        // set the editor's mode to the user's preference
+        // on page startup
+        preferredMode = 'advanced';
+        currentMode = 'advanced';
+
+    var __postSubmitted = false;
+    function validatePost() {
+        if (!__postSubmitted) {
+            // move the html from the wysiwyg to the body
+            var currentTarget = $(currentTargetID);
+            var elem = $A(currentTarget.getElementsByTagName('textarea'))[2];
+            var body = window.editor.get("wysiwygtext").getHTML();
+            elem.value = body;
+            // safari 1.x and 2.x bug: http://lists.apple.com/archives/Web-dev/2005/Feb/msg00106.html
+            if(window.editor.get('wysiwygtext').isTextOnly()){
+                elem.style.display = "inline";
+                elem.innerHTML = "";
+                elem.appendChild(document.createTextNode(body));
+                elem.style.display = "none";
+            }
+            __postSubmitted = true;
+            return true;
+        }
+        return false;
+    }
+    function closeCurrentCommentForm() {
+        // close current target, if exists
+        if (currentTargetID != "") {
+            var currentTarget = $(currentTargetID);
+            if (currentTarget && currentTarget.getElementsByTagName("form").length != 0) {
+                document.body.appendChild($('wysiwygtext_html_link'));
+                $('wysiwygtext_html_link').style.display = "none";
+                window.editor.get("wysiwygtext").destroy();
+
+                currentTarget.removeChild(currentTarget.getElementsByTagName("form")[0]);
+                currentTargetID = "";
+                window.editor.clear("wysiwygtext");
+            }
+        }
+    }
+    
+    function focus(){
+		$("comment-author").focus();
+    }
+   
+    function initEditor() {
+        if(tinymce.isIE){
+            // IE fails at rendering the mini rte in comments
+            // unless i toggle it twice. super awesome.
+            window.editor.get('wysiwygtext').toggleEditorMode();
+            window.editor.get('wysiwygtext').toggleEditorMode();
+        }
+        currentMode = "advanced";
+
+        var list = new jive.rte.RTEListener();
+        list.doneTogglingMode = function(){
+            if(currentMode == "advanced"){
+                currentMode = "rawhtml";
+            }else{
+                currentMode = "advanced";
+            }
+            refreshLinks();
+        }
+        window.editor.get('wysiwygtext').addListener(list);
+
+        if(preferredMode == "rawhtml"){
+            window.setTimeout(function(list){ return function(){
+                window.editor.get('wysiwygtext').toggleEditorMode();
+            }}(list),333);
+        }
+
+        window.setTimeout("focus()", 333);
+        refreshLinks();
+    }
+
+
+    function initRTE(){
+        if(!window.editor.get('wysiwygtext').isReady()){
+            window.setTimeout("initRTE()", 33);
+            return;
+        }
+        if(window.editor.get('wysiwygtext').isTextOnly()){
+            $('wysiwyg-panel').removeClassName('loading');
+            preferredMode = 'rawhtml';
+            currentMode = 'rawhtml';
+            return;
+        }else{
+            preferredMode = 'advanced';
+            currentMode = 'advanced';
+        }
+
+        initEditor();
+        refreshLinks();
+    }
+
+    function toggleCommentForm(target, parentCommentID, commentMode) {
+        try{
+
+            // close the current target if exists
+            closeCurrentEditCommentForm();
+            if (target != currentTargetID) {
+                closeCurrentCommentForm();
+            }
+
+            var targetElement = $(target);
+            if (targetElement.getElementsByTagName("form").length == 0) {
+                var form2clone = $('jive-comment-post-block').getElementsByTagName("form")[0].cloneNode(true);
+
+                var elements = $A(form2clone.getElementsByTagName('INPUT'));
+                for (var i = 0; i <elements.length; i++) {
+                    var e = elements[i];
+                    if (e.name == 'document') {
+                        e.value = 'DOC-2550';
+                    }
+                    else if (e.name == 'parentCommentID') {
+                        e.value = parentCommentID;
+                    }
+                    else if (e.name == 'commentMode') {
+                        e.value = commentMode;
+                    }
+                }
+
+                targetElement.appendChild(form2clone);
+                currentTargetID = targetElement.id;
+                Element.scrollTo(targetElement);
+                var elem = $A(form2clone.getElementsByTagName('textarea'))[0];
+                elem.id = elem.name;
+                if (elem) {  elem.focus();  }
+                elem.parentNode.insertBefore($('wysiwygtext_html_link'), elem);
+                $('wysiwygtext_html_link').style.display = "block";
+                var rte = new jive.rte.RTE(jiveControl, "wysiwygtext", "mini-w-quote");
+                window.editor.put('wysiwygtext', rte);
+                if(parentCommentID != "-1"){
+                    var quote = document.createElement('BLOCKQUOTE');
+                    quote.innerHTML = $('comment-body-' + parentCommentID).innerHTML.strip();
+                    var div = quote.childNodes[1]; // node 0 and 2 are comments
+                    while(div.childNodes.length) quote.appendChild(div.childNodes[0]);
+                    quote.removeChild(div);
+                    div.appendChild(quote);
+                    window._jive_gui_quote_text = "<DIV>" + div.innerHTML.strip() + "</DIV>";
+                }else{
+                    window._jive_gui_quote_text = "<div><p><br></p></div>";
+                }
+                var list = new jive.rte.RTEListener();
+                list.initFinished = function(){
+                    window.setTimeout("focus()", 333);
+                }
+                rte.addListener(list);
+                initRTE();
+
+            } else {
+                closeCurrentCommentForm();
+            }
+        }catch(e){
+            // node insert exception. i can insert this try catch, or spend 2 hours debugging...
+        }
+    }
+
+
+
+        function previewComment() {
+            var taExpression = 'div#' + currentTargetID + ' textarea';
+            var buExpression = 'div#' + currentTargetID + ' .comment-preview-button';
+            var peExpression = 'div#' + currentTargetID + ' .jive-doc-comment-preview';
+            var comment = $$(taExpression)[0];
+            var button = $$(buExpression)[0];
+            var preview = $$(peExpression)[0];
+//            var html = comment.value;
+            var html = window.editor.get("wysiwygtext").getHTML();
+            button.value = 'Previewing...';
+            Comment.previewComment(102, 2550, html, {
+                callback:function(data) {
+                    preview.innerHTML = data;
+                    button.value = 'Preview';
+                    new Effect.Appear(preview);
+                }
+            });
+        }
+
+        var currentComment = null;
+
+        function closeCurrentEditCommentForm(){
+            if(currentComment){
+                document.body.appendChild($('wysiwygtext_html_link'));
+                $('wysiwygtext_html_link').style.display = "none";
+                var container = $('comment-edit-form-' + currentComment);
+                Element.toggle(container);
+                Element.toggle('comment-body-' + currentComment);
+                var tempdata = window.editor.get('wysiwygtext').getHTML();
+                window.editor.get('wysiwygtext').destroy();
+                window.editor.clear('wysiwygtext');
+                var elem = $A(container.getElementsByTagName('textarea'))[0];
+                elem.id = "";
+                elem.value = tempdata;
+                currentComment = null;
+            }
+        }
+
+        function toggleEditForm(commentID) {
+            closeCurrentCommentForm();
+            if(currentComment != commentID){
+                closeCurrentEditCommentForm();
+            }
+            var container = $('comment-edit-form-' + commentID);
+            window._jive_gui_quote_text = "";
+            if(container.style.display == "none"){
+                Element.toggle(container);
+                Element.toggle('comment-body-' + commentID);
+                var elem = $A(container.getElementsByTagName('textarea'))[0];
+                elem.id = "wysiwygtext";
+                $(elem.id).style.display = "block";
+                elem.parentNode.insertBefore($('wysiwygtext_html_link'), elem);
+                $('wysiwygtext_html_link').style.display = "block";
+                var rte = new jive.rte.RTE(jiveControl, 'wysiwygtext', "mini");
+                var list = new jive.rte.RTEListener();
+                list.initFinished = function(){
+                    window.editor.get('wysiwygtext').focus();
+                    window.setTimeout("focus()", 33);
+                    window.setTimeout("focus()", 333);
+                }
+                rte.addListener(list);
+                window.editor.put('wysiwygtext', rte);
+                currentComment = commentID;
+                initRTE();
+            }else{
+                closeCurrentEditCommentForm();
+            }
+        }
+
+        function updateCommentViaAjax(commentID, anonymous) {
+            var name,email,url,body,comment;
+//            body = $F('comment-body-edit-' + commentID);
+            body = window.editor.get('wysiwygtext').getHTML();
+            if (body.strip() == '') {
+                alert('The body of a comment cannot be empty.');
+                return false;
+            }
+            if (anonymous) {
+                name = $F('comment-author-edit-' + commentID);
+                email = $F('comment-email-edit-' + commentID);
+                url = $F('comment-url-edit-' + commentID);
+                comment = { objectType:102, objectID:2550, commentID:commentID, name:name, URL:url, email:email, body:body };
+            } else {
+                comment = { objectType:102, objectID:2550, commentID:commentID, body:body };
+            }
+
+            Comment.updateComment(comment, {
+                callback:function(data) {
+                    if (anonymous) {
+                       if ($('comment-url-' + commentID)) {
+                           if (url.length > 0) {
+                               $('comment-url-' + commentID).href = url;
+                           } else {
+                               $('comment-url-' + commentID).href = '#';
+                           }
+                       }
+
+                       if (name.length > 0) {
+                           $('comment-name-' + commentID).innerHTML = name;
+                       } else {
+                           $('comment-name-' + commentID).innerHTML = 'Guest';
+                       }
+                    }
+
+                     if (data.isModerated) {
+                         // highlight and fade before doing ajax call, feels snappier
+                         new Effect.Highlight('comment-' + commentID);
+                         new Effect.Fade('comment-' + commentID);
+                         commentCount = $('jive-comments-count').innerHTML;
+                         commentCount = commentCount - 1;
+                         $('jive-comments-count').innerHTML = commentCount;
+                         $('success-moderation-edit').innerHTML = '<div style="background: transparent url(/images/success-16x16.gif) no-repeat 6px 6px;">Your comment was posted successfully but will need to be approved by the administrator of this blog before it will appear.</div>';
+                         $('success-moderation-edit').show();
+                         return;
+                    }
+                    
+                    $('comment-body-' + commentID).innerHTML = data.body;
+                    toggleEditForm(commentID);
+                    new Effect.Highlight('comment-' + commentID);
+                }
+             });
+        }
+
+        function deleteCommentViaAjax(mode, commentID) {
+            var confirmDelete = confirm('Are you sure you want to delete this comment?');
+            if (confirmDelete) {
+                // highlight and fade before doing ajax call, feels snappier
+                new Effect.Highlight('comment-' + commentID);
+                new Effect.Fade('comment-' + commentID);
+                Comment.deleteComment(102, 2550, commentID);
+                if (mode == 'backchannel') {
+                    backchannelCount = backchannelCount - 1;
+                    $('jive-authordiscussion-count').innerHTML = backchannelCount;
+                } else {
+                    commentsCount = commentsCount - 1;
+                    $('jive-comments-count').innerHTML = commentsCount;
+
+                }
+            }
+        }
+
+        jive.ext.x.xAddEventListener(window, "load", function(){
+            Event.observe($('toggle_html'), "click", function(){
+                window.editor.get('wysiwygtext').toggleEditorMode();
+            });
+        });
+
+    window.editor = new jive.ext.y.HashTable();
+
+
+</script>
+
+            </div>
+        </div>
+        <!-- END main body column -->
+
+
+        <!-- BEGIN sidebar column -->
+        <div id="jive-body-sidebarcol-container">
+
+            <div id="jive-body-sidebarcol">
+
+
+    <!-- BEGIN sidebar box 'ACTIONS' -->
+    <div style="display: none;" id="jive-action-sidebar" class="jive-sidebar">
+		<div id="jive-action-sidebar-body" class="jive-sidebar-body jive-sidebar-body-actions">
+
+
+            <div style="display: none;" id="jive-action-sidebar-tab-_document-actions-tab" class="jive-action-sidebar-tab-first">
+				<h4 id="jive-action-sidebar-tab-header_document-actions-tab">Actions</h4>
+
+
+                <ul id="jive-action-sidebar-tab-list_document-actions-tab" class="">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				</ul>
+			</div>
+
+                <script type="text/javascript">$('jive-action-sidebar-tab-_document-actions-tab').hide();</script>
+
+	
+		</div>
+    </div>
+        <script type="text/javascript">$('jive-action-sidebar').hide();</script>                
+    <!-- END sidebar box 'ACTIONS' -->
+
+
+                    
+                    
+<!-- BEGIN sidebar box 'More Like This' -->
+<div class="jive-sidebar">
+    <div class="jive-sidebar-body">
+        <h4>More Like This</h4>
+        <div class="jive-sidebar-usercontent">
+            <ul id="jive-more-like-this-102-2550"><li><a class="jive-link-doctype-acrobat" href="http://communities.intel.com/docs/DOC-1518"><span>Evaluating Thin Clients &amp; Alternative Compute Models</span></a></li><li><a class="jive-link-doctype-acrobat" href="http://communities.intel.com/docs/DOC-1481"><span>Understanding Alternative Compute Models</span></a></li><li><a class="jive-link-doctype-acrobat" href="http://communities.intel.com/docs/DOC-1483"><span>Application &amp; Desktop Virtualization Forum Presentation - Citrix</span></a></li><li><a class="jive-link-doctype-acrobat" href="http://communities.intel.com/docs/DOC-1288"><span>CompModelsTCO1107</span></a></li><li><a class="jive-link-doctype-acrobat" href="http://communities.intel.com/docs/DOC-1484"><span>Application &amp; Desktop Virtualization Forum Presentation - Intel's Opening Remarks</span></a></li></ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var msg_noContent = "No similar content found";
+    var msg_errorContent = "Unable to retrieve content from the server:";
+
+    var __objectType = 102;
+    var __objectID = 2550;
+    var __numResults = 5;
+</script>
+
+<!-- END sidebar box 'More Like This' -->
+                    
+                    
+
+                        
+                        
+                        
+                        
+                        
+
+<!-- BEGIN sidebar box 'User Content' -->
+<div class="jive-sidebar">
+    <div class="jive-sidebar-body">
+    <h4>More by Arjun Batra</h4>
+        <div class="jive-sidebar-usercontent">
+            <ul>
+                        <li>
+                            <a href="http://communities.intel.com/docs/DOC-2581" class="jive-link-doctype-video"><span> Intel and Symantec Executives answer key questions about Application Virtualization</span></a>
+                        </li>
+                        <li>
+                            <a href="http://communities.intel.com/docs/DOC-2543" class="jive-link-doctype-acrobat"><span> Providence Health &amp; Services – Oregon -- Case Study in OS Streaming and Application Virtualization</span></a>
+                        </li>
+                        <li>
+                            <a href="http://communities.intel.com/docs/DOC-2542" class="jive-link-doctype-acrobat"><span> Improving Manageability with OS Streaming in Training Rooms - IT@Intel White Paper</span></a>
+                        </li>
+                        <li>
+                            <a href="http://communities.intel.com/docs/DOC-2541" class="jive-link-doctype-acrobat"><span> OS Streaming and Application Virtualization  - A Case Study from Financial Services</span></a>
+                        </li>
+                        <li>
+                            <a href="http://communities.intel.com/docs/DOC-2540" class="jive-link-doctype-acrobat"><span> Education goes virtual - City University of New York pilots application streaming project</span></a>
+                        </li>
+            </ul>
+        <a href="http://communities.intel.com/people/adbatra" class="jive-sidebar-viewall"><strong>View Arjun Batra's profile</strong></a>
+        </div>
+    </div>
+</div>
+<!-- END sidebar box 'User Content' -->
+
+
+
+            </div>
+
+        </div>
+        <!-- END sidebar column -->
+
+
+    </div>
+
+
+
+        </div>
+
+<!-- BEGIN footer -->
+    <div id="jive-footer">
+      <p> This site
+contains user submitted content, comments and opinions and is for
+informational and entertainment purposes only. INTEL MAKES NO
+WARRANTIES, EXPRESS OR IMPLIED, WITH REGARDS TO THIS CONTENT. All
+postings and use of the content on this site are subject to the <a href="http://www.intel.com/sites/corporate/termsofuse.htm?iid=ftr+terms">Terms of Use</a> and <a href="http://communities.intel.com/docs/DOC-1426">Terms of Service</a> of the site.
+      </p>
+      <ul class="jive-footer-nav">
+           <li><a href="http://www.intel.com/sites/corporate/termsofuse.htm?iid=ftr+terms">Terms of Use</a></li>
+           <li><a href="http://www.intel.com/sites/corporate/termsofservice.htm">Terms of Service</a></li>
+           <li><a href="http://www.intel.com/sites/corporate/tradmarx.htm?iid=ftr+trademark">*Trademarks</a></li>
+           <li><a href="http://www.intel.com/sites/sitewide/en_US/social-media.htm">*Intel Social Media Guidelines</a></li>
+           <li><a href="http://www.intel.com/sites/corporate/privacy.htm?iid=ftr+privacy">Privacy Policy</a></li>
+           <li><a href="http://www.intel.com/sites/corporate/tradmarx.htm?iid=homepage+ftr_legal">Legal Information</a></li>
+           <li class="last">©Intel Corporation </li>
+      </ul>
+    </div>
+<!-- END footer -->
+
+
+    </div>
+
+
+<div id="jiveTT-note-user" class="jive-tooltip2 notedefault snp-mouseoffset">
+	<div class="jive-tooltip2-top"></div>
+	<div class="jive-tooltip2-mid">
+		<div class="jive-tooltip2-mid-padding" id="jive-note-user-body"></div>
+	</div>
+	<div class="jive-tooltip2-btm"></div>
+</div>
+
+    <script src="Understanding%20Alternative%20Compute%20Models_bestanden/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2660482-1";
+urchinTracker();
+</script>
+
+<!-- BEGIN Omniture integration -->
+<script type="text/javascript">
+
+
+
+
+
+var pageName = wa_pageName + "";
+pageName = pageName.slice(pageName.indexOf("/", 8));
+wa_pageName = pageName.slice(0,96);
+
+var subPages = pageName.split("/")
+var orgField = 2;
+var xField = '';
+
+for(var i = 0; i < subPages.length; i++) {
+    var subPage = subPages[i];
+    if(subPage && subPage != "") {
+        if(orgField <= 4) {
+            eval("wa_org" + orgField + " = '" + subPage + "'");
+            orgField++;
+        } else {
+            xField += subPage;
+            if(i + 1 < subPages.length)
+                xField += "|";
+        }
+    }
+}
+wa_orgX = xField;
+
+</script>
+<script type="text/javascript" src="Understanding%20Alternative%20Compute%20Models_bestanden/wa_process.js"></script>
+<!-- END Omniture integration -->
+
+<script type="text/javascript" language="JavaScript" src="Understanding%20Alternative%20Compute%20Models_bestanden/92d433be2d67b4c4b84fa44d759923e6.js"></script>
+<script type="text/javascript" language="JavaScript">
+                    var jivespotlightsearch = new JiveSpotlightSearch("jive-query", "jive-spotlight-search-container", spotlightSearchUrl);
+
+
+</script>
+
+<script type="text/javascript">
+zoomImagesURI   = "/resources/scripts/fancyzoom/images/";
+setupZoom();
+</script>
+
+</body></html>

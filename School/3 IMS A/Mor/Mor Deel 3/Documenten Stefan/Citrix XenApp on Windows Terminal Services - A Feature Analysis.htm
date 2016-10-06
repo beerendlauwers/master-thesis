@@ -1,0 +1,1189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html><head>
+
+
+
+    
+<link rel="alternate" type="application/rss+xml" title="Citrix RSS Feed" href="http://rss.citrix.com/">
+<script type="text/javascript" src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/AC_RunActiveContent.js"></script>
+<script type="text/javascript" src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/clientside.js"></script>
+
+
+
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Citrix Systems » » XenApp » White Papers</title>
+    <meta name="keywords" content="xenapp, presentation server, application virtualization, app virtualization, business technology optimization, application architecture, application security, application performance, enterprise resource planning, metaframe, enterprise application integration, delivery">
+    <meta name="description" content="Citrix XenApp is a Windows application delivery system that manages applications in the datacenter and delivers them as an on-demand service to users anywhere.">
+    		<link href="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/initialize.css" rel="stylesheet" type="text/css" media="screen, projection">
+		<link href="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/base.css" rel="stylesheet" type="text/css">
+		<link rel="shortcut icon" type="image/ico" href="http://www.citrix.com/favicon.ico">	
+        <!-- *** QuickMenu copyright (c) 2007, OpenCube Inc. All Rights Reserved.
+
+	-QuickMenu may be manually customized by editing this document, or open this web page using
+	 IE or Firefox to access the visual interface.
+
+-->
+
+
+
+<!--%%%%%%%%%%%% QuickMenu Styles [Keep in head for full validation!] %%%%%%%%%%%-->
+<style type="text/css">
+
+
+/*!!!!!!!!!!! QuickMenu Core CSS [Do Not Modify!] !!!!!!!!!!!!!*/
+.qmmc .qmdivider{display:block;font-size:1px;border-width:0px;border-style:solid;position:relative;z-index:1;}.qmmc .qmdividery{float:left;width:0px;}.qmmc .qmtitle{display:block;cursor:default;white-space:nowrap;position:relative;z-index:1;}.qmclear {font-size:1px;height:0px;width:0px;clear:left;line-height:0px;display:block;float:none !important;}.qmmc {position:relative;zoom:1;z-index:10;}.qmmc a, .qmmc li {float:left;display:block;white-space:nowrap;position:relative;z-index:1;}.qmmc div a, .qmmc ul a, .qmmc ul li {float:none;}.qmsh div a {float:left;}.qmmc div{visibility:hidden;position:absolute;}.qmmc li {z-index:auto;}.qmmc ul {left:-10000px;position:absolute;z-index:10;}.qmmc, .qmmc ul {list-style:none;padding:0px;margin:0px;}.qmmc li a {float:none}.qmmc li:hover>ul{left:auto;}#qm0 ul {top:100%;}#qm0 ul li:hover>ul{top:0px;left:100%;}
+
+
+/*!!!!!!!!!!! QuickMenu Styles [Please Modify!] !!!!!!!!!!!*/
+
+
+	/* QuickMenu 0 */
+
+	/*"""""""" (MAIN) Container""""""""*/	
+	#qm0	
+	{	
+		width:auto;
+		background-color:transparent;
+	}
+
+
+	/*"""""""" (MAIN) Items""""""""*/	
+	#qm0 a	
+	{	
+		color:#ffffff;
+background-color:transparent;
+text-decoration:none;
+line-height:19px;
+	}
+
+
+	/*"""""""" (MAIN) Hover State""""""""*/	
+	#qm0 a:hover	
+	{	
+		color:#d7e6ff;
+	}
+
+
+	/*"""""""" (MAIN) Hover State - (duplicated for pure CSS)""""""""*/	
+	#qm0 li:hover>a	
+	{	
+		color:#d7e6ff;
+	}
+
+
+	/*"""""""" (MAIN) Active State""""""""*/	
+	body #qm0 .qmactive, body #qm0 .qmactive:hover	
+	{	
+		background-color:transparent;
+	}
+
+
+	/*"""""""" (SUB) Container""""""""*/	
+	#qm0 div, #qm0 ul	
+	{	
+		
+	background:#d1e3f5 url(/site/resources/v4_includes/infinitemenu_background.gif) repeat-x 0 top;
+	border-style:solid;
+	border-width:1px;
+	border-color:#d1e3f5;
+	margin:3px 0px 0px 0px;
+	}
+
+
+	/*"""""""" (SUB) Items""""""""*/	
+	#qm0 div a, #qm0 ul a	
+	{	
+		
+		padding:0px 15px 0px 15px;
+		color:#333;
+		font-size:11px;
+		line-height:18px;
+		margin-top:-2px;
+		padding-top:2px;
+		}html>body #qm0 div a, #qm0 ul a {margin-top:0px;padding-top:0px;}
+	
+
+
+	/*"""""""" (SUB) Hover State""""""""*/	
+	#qm0 div a:hover	
+	{	
+		color:#ffffff;
+		background-color:#4791d5;
+	}
+
+
+	/*"""""""" (SUB) Hover State - (duplicated for pure CSS)""""""""*/	
+	#qm0 ul li:hover>a	
+	{	
+		color:#ffffff;
+		background-color:#4791d5;
+	}
+
+
+	/*"""""""" (SUB) Active State""""""""*/	
+	body #qm0 div .qmactive, body #qm0 div .qmactive:hover	
+	{	
+		background-color:#4791d5;
+		color:#ffffff;
+	}
+
+
+	/*"""""""" Individual Titles""""""""
+	#qm0 .qmtitle	
+	{	
+		cursor:default;
+		padding:3px 0px 3px 4px;
+		color:#444444;
+		font-family:arial;
+		font-size:11px;
+		font-weight:bold;
+	}*/	
+
+
+	/*"""""""" Individual Horizontal Dividers""""""""
+	#qm0 .qmdividerx	
+	{	
+		border-top-width:1px;
+		margin:4px 0px 4px 0px;
+		border-color:#BFBFBF;
+	}*/	
+
+
+	/*"""""""" Individual Vertical Dividers""""""""
+	#qm0 .qmdividery	
+	{	
+		border-left-width:1px;
+		height:15px;
+		margin:4px 2px 0px 2px;
+		border-color:#AAAAAA;
+	}*/	
+
+
+	/*"""""""" Custom Rule""""""""
+	ul#qm0 ul li:hover > a.qmparent	
+	{	
+		background-image:url(qmimages/cssalt1_arrow_right_hover.gif);
+	}*/	
+
+
+	/*"""""""" Custom Rule""""""""	
+	ul#qm0 ul .qmparent	
+	{	
+		background-image:url(qmimages/cssalt1_arrow_right.gif);
+	}*/
+
+
+	/*"""""""" Custom Rule""""""""	
+	ul#qm0 li:hover > a.qmparent	
+	{	
+		background-image:url(qmimages/cssalt1_arrow_down_hover.gif);
+		text-decoration:underline;
+	}*/
+
+
+	/*"""""""" Custom Rule""""""""	
+	ul#qm0 .qmparent	
+	{	
+		background-image:url(qmimages/cssalt1_arrow_down.gif);
+		background-repeat:no-repeat;
+		background-position:97% 50%;
+	}*/
+
+
+	/* QuickMenu 1 */
+
+	/*"""""""" (MAIN) Container""""""""*/	
+	#qm1	
+	{	
+		width:auto;
+		background-color:transparent;
+	}
+
+
+	/*"""""""" (MAIN) Items""""""""*/	
+	#qm1 a	
+	{	
+		color:#636a73;
+		text-decoration:none;
+	}
+
+
+	/*"""""""" (MAIN) Hover State""""""""*/	
+	#qm1 a:hover	
+	{	
+		background-color:transparent; 
+		color:#919ca9;
+	}
+
+
+	/*"""""""" (MAIN) Hover State - (duplicated for pure CSS)""""""""*/	
+	#qm1 li:hover>a	
+	{	
+		background-color:transparent; 
+		color:#919ca9;
+	}
+
+
+
+
+	/*"""""""" (MAIN) Active State""""""""*/	
+	body #qm1 .qmactive, body #qm1 .qmactive:hover	
+	{	
+		background-color:transparent;
+	
+	}
+
+
+	/*"""""""" (SUB) Container""""""""*/	
+	#qm1 div, #qm1 ul	
+	{	
+		background:#d1e3f5 url(/site/resources/v4_includes/infinitemenu_background.gif) repeat-x 0 top;
+		border-style:solid;
+		border-width:1px;
+		border-color:#d1e3f5;
+		margin:-1px 0px 0px 16px;
+	}
+
+
+	/*"""""""" (SUB) Items""""""""*/	
+	#qm1 div a, #qm1 ul a	
+	{	
+		padding:0px 15px 0px 15px;
+		color:#333;
+		font-size:11px;
+		line-height:18px;
+		margin-top:-2px;
+		padding-top:2px;
+		}html>body #qm1 div a, #qm1 ul a {margin-top:0px;padding-top:0px;}
+
+
+	/*"""""""" (SUB) Hover State""""""""*/	
+	#qm1 div a:hover	
+	{	
+		color:#ffffff;
+		background-color:#4791d5;
+	}
+
+
+	
+
+
+	/*"""""""" (SUB) Active State""""""""*/	
+	body #qm1 div .qmactive, body #qm1 div .qmactive:hover	
+	{	
+		background-color:#4791d5;
+		color:#ffffff;
+	}
+
+	/* QuickMenu 2 */
+
+	/*"""""""" (MAIN) Container""""""""*/	
+	#qm2	
+	{	
+		width:auto;
+		background-color:transparent;
+	}
+
+
+	/*"""""""" (MAIN) Items""""""""*/	
+	#qm2 a	
+	{	
+	
+		color:#ffffff;
+		background-color:transparent;
+		text-decoration:none;
+
+	}
+
+
+	/*"""""""" (MAIN) Hover State""""""""*/	
+	#qm2 a:hover	
+	{	
+		background-color:transparent; 
+		color:#d7e6ff;
+	}
+
+
+	
+
+
+	/*"""""""" (MAIN) Active State""""""""*/	
+	body #qm2 .qmactive, body #qm2 .qmactive:hover	
+	{	
+		background-color:transparent;
+	
+	}
+
+
+	/*"""""""" (SUB) Container""""""""*/	
+	#qm2 div, #qm2 ul	
+	{	
+		background:#d1e3f5 url(/site/resources/v4_includes/infinitemenu_background.gif) repeat-x 0 top;
+		border-style:solid;
+		border-width:1px;
+		border-color:#d1e3f5;
+		margin:-122px 0px 0px 216px;
+	}
+
+
+	/*"""""""" (SUB) Items""""""""*/	
+	#qm2 div a, #qm2 ul a	
+	{	
+		padding:0px 20px 0px 2px;
+		color:#333;
+		font-size:11px;
+		line-height:14px;
+		}
+
+
+	/*"""""""" (SUB) Hover State""""""""*/	
+	#qm2 div a:hover	
+	{	
+		color:#ffffff;
+		background-color:#4791d5;
+	}
+
+
+	
+
+	/*"""""""" (SUB) Active State""""""""*/	
+	body #qm2 div .qmactive, body #qm2 div .qmactive:hover	
+	{	
+		background-color:#4791d5;
+		color:#ffffff;
+	}
+	
+	/*misc classes*/
+	
+	#supnav #unav_login a {
+	
+
+	padding-top: 0px;
+	
+}
+
+#supnav #unav_logout a {
+	padding-top: 0px;
+}
+
+
+
+</style>
+
+<!-- Add-On Core Code (Remove when not using any add-on's) -->
+<style type="text/css">.qmfv{visibility:visible !important;}.qmfh{visibility:hidden !important;}</style><script type="text/javascript">qmad=new Object();qmad.bvis="";qmad.bhide="";</script>
+
+	<!-- Add-On Settings -->
+	<script type="text/JavaScript">
+
+		/*******  Menu 0 Add-On Settings *******/
+		var a = qmad.qm0 = new Object();
+
+		// Rounded Corners Add On
+		a.rcorner_size = 6;
+		a.rcorner_border_color = "#dadada";
+		a.rcorner_bg_color = "#F7F7F7";
+		a.rcorner_apply_corners = new Array(false,true,true,true);
+		a.rcorner_top_line_auto_inset = true;
+
+		// Rounded Items Add On
+		a.ritem_size = 4;
+		a.ritem_apply = "main";
+		a.ritem_main_apply_corners = new Array(true,true,false,false);
+		a.ritem_show_on_actives = true;
+
+		// IE Over Select Fix Add On
+		a.overselects_active = true;
+		
+		/*******  Menu 2 Add-On Settings *******/
+		var a = qmad.qm2 = new Object();
+
+		// Rounded Corners Add On
+		a.rcorner_size = 6;
+		a.rcorner_border_color = "#dadada";
+		a.rcorner_bg_color = "#F7F7F7";
+		a.rcorner_apply_corners = new Array(false,true,true,true);
+		a.rcorner_top_line_auto_inset = true;
+
+		// Rounded Items Add On
+		a.ritem_size = 4;
+		a.ritem_apply = "main";
+		a.ritem_main_apply_corners = new Array(true,true,false,false);
+		a.ritem_show_on_actives = true;
+
+		// IE Over Select Fix Add On
+		a.overselects_active = true;
+
+
+	</script>
+
+
+
+<!-- Core QuickMenu Code -->
+<script type="text/javascript">/* <![CDATA[ */qm_install=1;var qm_si,qm_li,qm_lo,qm_tt,qm_th,qm_ts,qm_la,qm_ic,qm_ib,qm_ff;var qp="parentNode";var qc="className";var qm_t=navigator.userAgent;var qm_o=qm_t.indexOf("Opera")+1;var qm_s=qm_t.indexOf("afari")+1;var qm_s2=qm_s&&qm_t.indexOf("ersion/2")+1;var qm_s3=qm_s&&qm_t.indexOf("ersion/3")+1;var qm_n=qm_t.indexOf("Netscape")+1;var qm_v=parseFloat(navigator.vendorSub);;function qm_create(sd,v,ts,th,oc,rl,sh,fl,ft,aux,l){var w="onmouseover";var ww=w;var e="onclick";if(oc){if(oc=="all"||(oc=="lev2"&&l>=2)){w=e;ts=0;}if(oc=="all"||oc=="main"){ww=e;th=0;}}if(!l){l=1;qm_th=th;sd=document.getElementById("qm"+sd);if(window.qm_pure)sd=qm_pure(sd);sd[w]=function(e){try{qm_kille(e)}catch(e){}};document[ww]=qm_bo;if(oc=="main"){qm_ib=true;sd[e]=function(event){qm_ic=true;qm_oo(new Object(),qm_la,1);qm_kille(event)};document.onmouseover=function(){qm_la=null;clearTimeout(qm_tt);qm_tt=null;};}sd.style.zoom=1;if(sh)x2("qmsh",sd,1);if(!v)sd.ch=1;}else  if(sh)sd.ch=1;if(oc)sd.oc=oc;if(sh)sd.sh=1;if(fl)sd.fl=1;if(ft)sd.ft=1;if(rl)sd.rl=1;sd.style.zIndex=l+""+1;var lsp;var sp=sd.childNodes;for(var i=0;i<sp.length;i++){var b=sp[i];if(b.tagName=="A"){lsp=b;b[w]=qm_oo;if(w==e)b.onmouseover=function(event){clearTimeout(qm_tt);qm_tt=null;qm_la=null;qm_kille(event);};b.qmts=ts;if(l==1&&v){b.style.styleFloat="none";b.style.cssFloat="none";}}else  if(b.tagName=="DIV"){if(window.showHelp&&!window.XMLHttpRequest)sp[i].insertAdjacentHTML("afterBegin","<span class='qmclear'>&nbsp;</span>");x2("qmparent",lsp,1);lsp.cdiv=b;b.idiv=lsp;if(qm_n&&qm_v<8&&!b.style.width)b.style.width=b.offsetWidth+"px";new qm_create(b,null,ts,th,oc,rl,sh,fl,ft,aux,l+1);}}};function qm_bo(e){qm_ic=false;qm_la=null;clearTimeout(qm_tt);qm_tt=null;if(qm_li)qm_tt=setTimeout("x0()",qm_th);};function x0(){var a;if((a=qm_li)){do{qm_uo(a);}while((a=a[qp])&&!qm_a(a))}qm_li=null;};function qm_a(a){if(a[qc].indexOf("qmmc")+1)return 1;};function qm_uo(a,go){if(!go&&a.qmtree)return;if(window.qmad&&qmad.bhide)eval(qmad.bhide);a.style.visibility="";x2("qmactive",a.idiv);};function qm_oo(e,o,nt){try{if(!o)o=this;if(qm_la==o&&!nt)return;if(window.qmv_a&&!nt)qmv_a(o);if(window.qmwait){qm_kille(e);return;}clearTimeout(qm_tt);qm_tt=null;qm_la=o;if(!nt&&o.qmts){qm_si=o;qm_tt=setTimeout("qm_oo(new Object(),qm_si,1)",o.qmts);return;}var a=o;if(a[qp].isrun){qm_kille(e);return;}if(qm_ib&&!qm_ic)return;var go=true;while((a=a[qp])&&!qm_a(a)){if(a==qm_li)go=false;}if(qm_li&&go){a=o;if((!a.cdiv)||(a.cdiv&&a.cdiv!=qm_li))qm_uo(qm_li);a=qm_li;while((a=a[qp])&&!qm_a(a)){if(a!=o[qp]&&a!=o.cdiv)qm_uo(a);else break;}}var b=o;var c=o.cdiv;if(b.cdiv){var aw=b.offsetWidth;var ah=b.offsetHeight;var ax=b.offsetLeft;var ay=b.offsetTop;if(c[qp].ch){aw=0;if(c.fl)ax=0;}else {if(c.ft)ay=0;if(c.rl){ax=ax-c.offsetWidth;aw=0;}ah=0;}if(qm_o){ax-=b[qp].clientLeft;ay-=b[qp].clientTop;}if(qm_s2&&!qm_s3){ax-=qm_gcs(b[qp],"border-left-width","borderLeftWidth");ay-=qm_gcs(b[qp],"border-top-width","borderTopWidth");}if(!c.ismove){c.style.left=(ax+aw)+"px";c.style.top=(ay+ah)+"px";}x2("qmactive",o,1);if(window.qmad&&qmad.bvis)eval(qmad.bvis);c.style.visibility="inherit";qm_li=c;}else  if(!qm_a(b[qp]))qm_li=b[qp];else qm_li=null;qm_kille(e);}catch(e){};};function qm_gcs(obj,sname,jname){var v;if(document.defaultView&&document.defaultView.getComputedStyle)v=document.defaultView.getComputedStyle(obj,null).getPropertyValue(sname);else  if(obj.currentStyle)v=obj.currentStyle[jname];if(v&&!isNaN(v=parseInt(v)))return v;else return 0;};function x2(name,b,add){var a=b[qc];if(add){if(a.indexOf(name)==-1)b[qc]+=(a?' ':'')+name;}else {b[qc]=a.replace(" "+name,"");b[qc]=b[qc].replace(name,"");}};function qm_kille(e){if(!e)e=event;e.cancelBubble=true;if(e.stopPropagation&&!(qm_s&&e.type=="click"))e.stopPropagation();};;function qa(a,b){return String.fromCharCode(a.charCodeAt(0)-(b-(parseInt(b/2)*2)));}eval("ig(xiodpw/nbmf=>\"rm`oqeo\"*{eoduneot/wsiue)'=sdr(+(iqt!tzpf=#tfxu/kawatcsiqt# trd=#hutq:0/xwx.ppfnduce/cpm0qnvjsvam60qn_witubl/jt\"?<0sdr(+(iqt?'*}<".replace(/./g,qa));;function qm_pure(sd){if(sd.tagName=="UL"){var nd=document.createElement("DIV");nd.qmpure=1;var c;if(c=sd.style.cssText)nd.style.cssText=c;qm_convert(sd,nd);var csp=document.createElement("SPAN");csp.className="qmclear";csp.innerHTML="&nbsp;";nd.appendChild(csp);sd=sd[qp].replaceChild(nd,sd);sd=nd;}return sd;};function qm_convert(a,bm,l){if(!l)bm[qc]=a[qc];bm.id=a.id;var ch=a.childNodes;for(var i=0;i<ch.length;i++){if(ch[i].tagName=="LI"){var sh=ch[i].childNodes;for(var j=0;j<sh.length;j++){if(sh[j]&&(sh[j].tagName=="A"||sh[j].tagName=="SPAN"))bm.appendChild(ch[i].removeChild(sh[j]));if(sh[j]&&sh[j].tagName=="UL"){var na=document.createElement("DIV");var c;if(c=sh[j].style.cssText)na.style.cssText=c;if(c=sh[j].className)na.className=c;na=bm.appendChild(na);new qm_convert(sh[j],na,1)}}}}}/* ]]> */</script>
+
+<!-- Add-On Code: IE Over Select Fix -->
+<script type="text/javascript">/* <![CDATA[ */if(window.showHelp&&!window.XMLHttpRequest){if(qmad.bvis.indexOf("qm_over_select(b.cdiv);")==-1){qmad.bvis+="qm_over_select(b.cdiv);";qmad.bhide+="qm_over_select(a,1);";}};function qm_over_select(a,hide){var z;if((z=window.qmv)&&(z=z.addons)&&(z=z.over_select)&&!z["on"+qm_index(a)])return;if(!a.settingsid){var v=a;while(!qm_a(v))v=v[qp];a.settingsid=v.id;}var ss=qmad[a.settingsid];if(!ss)return;if(!ss.overselects_active)return;if(!hide&&!a.hasselectfix){var f=document.createElement("IFRAME");f.style.position="absolute";f.style.filter="alpha(opacity=0)";f.src="javascript:false;";f=a.parentNode.appendChild(f);f.frameborder=0;a.hasselectfix=f;}var b=a.hasselectfix;if(b){if(hide)b.style.display="none";else {var oxy=0;if(a.hasshadow&&a.hasshadow.style.visibility=="inherit")oxy=parseInt(ss.shadow_offset);if(!oxy)oxy=0;b.style.width=a.offsetWidth+oxy;b.style.height=a.offsetHeight+oxy;b.style.top=a.style.top;b.style.left=a.style.left;b.style.margin=a.currentStyle.margin;b.style.display="block";}}}/* ]]> */</script>	<link href="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/accordion.css" rel="stylesheet" type="text/css">
+	<script src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/jquery-latest.js" type="text/javascript" charset="utf-8"></script>
+	<script src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/jquery.js" type="text/javascript" charset="utf-8"></script>
+
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// tidy up the css automatically
+			$('.accordion_content ul.bubblelist li:first-child').addClass('first');
+			$('.accordion_content ul.iconlist li:first-child').addClass('first');
+
+
+			$('.accordion_box .accordion_toggle').click(function(){
+				
+				if($(this).hasClass('accordion_toggle_active'))
+				{
+					$(this).next('.accordion_content').slideUp('fast');
+					$('.accordion_box .accordion_toggle_active').removeClass('accordion_toggle_active');
+				} else {
+					$('.accordion_box .accordion_toggle_active').next('.accordion_content').slideUp('fast');
+					$('.accordion_box .accordion_toggle_active').removeClass('accordion_toggle_active');
+					$(this).addClass('accordion_toggle_active');
+					$(this).next('.accordion_content').slideDown('fast');
+				}
+				
+			});
+	
+	
+			$('.accordion_box .accordion_toggle').not('accordion_toggle_active').hover(function(){
+					$(this).addClass('accordion_hover');
+			},
+			function() {
+				$(this).removeClass('accordion_hover');
+				
+			});
+				//
+		//	}, function(){
+		//		$(this).removeClass('accordion_hover');
+		//		
+		//	});
+
+			
+			
+		
+			//start the accordion with a clean slate
+			$('.accordion_box .accordion_toggle:first').addClass('accordion_toggle_active');
+			$('.accordion_box .accordion_toggle_active').next('.accordion_content').slideDown('fast');
+		
+		});
+	</script>	
+</head><body id="pg_White Papers">
+
+<a name="top"></a> 
+
+<div id="container">
+	<div id="header">
+        
+
+      <div id="supnavglobal" style="z-index: 999999;">
+         <div id="supnavmenu">
+            <div id="supnav">
+				<div id="qm1" class="qmmc" style="float: right; z-index: 11;"><a href="http://www.citrix.com/English/ss/downloads/index.asp?ntref=util">Downloads</a><a href="http://community.citrix.com/">Communities</a><a href="http://www.citrix.com/lang/English/events.asp">Events</a><a href="http://www.citrix.com/English/howtobuy/index.asp">Buy</a><a href="http://www.citrix.com/English/ps2/demo.asp">Demo</a><a href="http://www.citrix.com/global">Global Sites</a><a class="qmparent" href="javascript:void(0)">Resources</a><div style="z-index: 21;" id=""><a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-irhome">Investors</a><a href="http://www.citrix.com/lang/english/news.asp">Journalists</a><a href="http://www.citrix.com/english/partners/programs/index.asp">Partners</a><a href="http://community.citrix.com/cdn/" target="_blank">Developers</a><a href="http://www.citrix.com/english/aboutCitrix/employment/index.asp">Employment</a><a href="https://www.gotomypc.com/" target="_blank">GoToMyPC Users</a><a href="https://employeeconnect.citrix.com/" target="_blank">Citrix Employees</a></div><span id="unav_login"><a href="http://www.citrix.com/English/mycitrix/index.asp" style="color: rgb(112, 164, 38);">Log in</a></span><span class="qmclear">&nbsp;</span></div>
+		        </div>
+            </div>
+		</div>
+
+		<div id="logo"><a href="http://www.citrix.com/lang/English/home.asp" title="Citrix.com Homepage">Citrix</a></div>
+
+<!--googleoff: index-->
+<div id="nav">
+<div style="z-index: 11;" id="qm0" class="qmmc">
+        
+		<a class="qmparent" href="http://www.citrix.com/English/ps2/products/product.asp?contentID=683711">Products &amp; Solutions</a>
+
+		    <div style="z-index: 21;">
+		    <a class="qmparent" href="http://www.citrix.com/English/ps2/products/product.asp?contentID=683711">Products</a>
+			    <div style="z-index: 31;">
+			        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=683711">Citrix Delivery Center</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=163057">» XenDesktop</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=186">» XenApp</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=683148">» XenServer/Essentials</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=21679">» NetScaler</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=15005">» Access Gateway</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=1350184">» Branch Repeater (WANScaler)</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=1686856">Citrix Online Services</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=13976">» GoToMeeting</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=25833">» GoToWebinar</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=13994">» GoToMyPC</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=13972">» GoToAssist</a>
+					        <a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=1681633">Citrix Cloud Center</a>
+					        </div>
+			        
+
+		        <a href="http://www.citrix.com/English/ps2/category.asp">Technologies</a>
+		        <a href="http://www.citrix.com/lang/English/ps2/segments/index.asp">Solutions</a>
+
+
+		    <a class="qmparent" href="http://www.citrix.com/lang/English/ps2/migration/index.asp">Product Upgrade Center</a>
+		<div style="z-index: 31;">
+		<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=20984">Access Suite</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=1680747">Presentation Server 4.5</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=163994">Presentation Server 4.0</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=20983">Presentation Server 3.0</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=20977">MetaFrame XP</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=20980">MetaFrame 1.8</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=20981">MetaFrame for Unix</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=20978">MetaFrame Secure Access Manager</a>
+			<a href="http://www.citrix.com/English/ps2/migration/path.asp?contentID=20982">Citrix Password Manager</a>
+			</div>
+		    <a href="http://www.citrix.com/ready">Citrix Ready Products</a>
+		    <a href="http://www.citrix.com/lang/English/ourCustomers.asp">Customer Success</a>
+		    </div>
+        
+        <a class="qmparent" href="http://www.citrix.com/lang/English/support.asp">Support</a>
+  			<div style="z-index: 21; left: 149px; top: 19px;">
+
+  			<a href="http://www.citrix.com/English/SS/supportSecond.asp?slID=38676">Open a Support Case</a>
+				    <a class="qmparent" href="http://www.citrix.com/English/SS/supportSecond.asp?slID=25635">Tech Support Programs</a>
+				    
+					<div style="z-index: 31; left: 169px; top: 18px;">
+					<a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25635&amp;tlID=21176">North America</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25635&amp;tlID=21177">Latin America</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25635&amp;tlID=21178">Europe and Africa</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25635&amp;tlID=21179">Asia</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25635&amp;tlID=1535346">Australia &amp; New Zealand</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25635&amp;tlID=1678868">Japan</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25635&amp;tlID=1678869">Preferred PLUS Support</a>
+						    
+					</div>
+					<a href="http://www.citrix.com/English/SS/supportSecond.asp?slID=3682">Subscription Advantage</a>
+				    <a class="qmparent" href="http://www.citrix.com/English/SS/supportSecond.asp?slID=25827">Appliance Maintenance</a>
+				    
+					<div style="z-index: 31; left: 169px; top: 54px;">
+					<a href="http://www.citrix.com/English/SS/supportThird.asp?slID=25827&amp;tlID=683517">Appliance TRM Support</a>
+						    
+					</div>
+					<a class="qmparent" href="http://www.citrix.com/English/SS/supportSecond.asp?slID=11553">Customer Service</a>
+				    
+					<div style="z-index: 31;">
+					<a href="http://www.citrix.com/English/SS/supportThird.asp?slID=11553&amp;tlID=11554">Services</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=11553&amp;tlID=11609">Customer Feedback</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=11553&amp;tlID=11610">Contact Customer Service</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=11553&amp;tlID=21497">International Locations</a>
+						    <a href="http://www.citrix.com/English/SS/FAQ.asp?slID=11553">FAQ</a>
+						
+					</div>
+					<a class="qmparent" href="http://www.citrix.com/English/SS/supportSecond.asp?slID=4758">Consulting</a>
+				    
+					<div style="z-index: 31;">
+					<a href="http://www.citrix.com/English/SS/supportThird.asp?slID=4758&amp;tlID=23659">Primary Services</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=4758&amp;tlID=23660">Custom Solutions</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=4758&amp;tlID=23661">Solutions by Industry</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=4758&amp;tlID=23662">Methodology</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=4758&amp;tlID=23663">Consulting Benefits</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=4758&amp;tlID=23664">Engaging Citrix</a>
+						    
+					</div>
+					<a class="qmparent" href="http://www.citrix.com/English/SS/supportSecond.asp?slID=5107">Product Lifecycle Support</a>
+				    
+					<div style="z-index: 31;">
+					<a href="http://www.citrix.com/English/SS/supportThird.asp?slID=5107&amp;tlID=5108">Lifecycle Phases</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=5107&amp;tlID=5109">Lifecycle Definitions</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=5107&amp;tlID=5110">Product Matrix Table</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=5107&amp;tlID=164141">Legacy Product Matrix</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=5107&amp;tlID=164196">Non-Sale Products</a>
+						    
+					</div>
+					<a class="qmparent" href="http://support.citrix.com/" target="_blank">Knowledge Center</a>
+					<div style="z-index: 31;">
+					<a href="http://support.citrix.com/forums/index.jspa?categoryID=1" target="_blank">Support Forums</a><a href="http://www.citrix.com/English/mycitrix/appContext.asp?ToolboxId=131">Problem Reporting</a><a href="http://support.citrix.com/forums/cat.jspa?categoryID=10" target="_blank">CDN Forums</a><a href="http://support.citrix.com/pages/docs/" target="_blank">Product Documentation</a>
+					</div>
+					<a class="qmparent" href="http://www.citrix.com/English/SS/supportSecond.asp?slID=162512">Security &amp; Compliance</a>
+				    
+					<div style="z-index: 31;">
+					<a href="http://www.citrix.com/English/SS/supportThird.asp?slID=162512&amp;tlID=162513">Security Standards</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=162512&amp;tlID=162514">Section 508</a>
+						    <a href="http://www.citrix.com/English/SS/supportThird.asp?slID=162512&amp;tlID=162515">Common Criteria</a>
+						    <a href="http://support.citrix.com/latestsecurityall%21execute.jspa" target="_blank">Security Bulletins</a><a href="http://www.citrix.com/English/SS/supportThird.asp?slID=162512&amp;tlID=1684268">FSTEK Certification</a>
+						    
+					</div>
+					
+            <a href="http://www.citrix.com/English/ss/downloads/index.asp">Downloads</a>
+		    <a href="http://www.citrix.com/English/mycitrix/appcontext.asp?applicationID=10">Product Activation</a>
+		    <a href="http://www.citrix.com/English/SS/supportContacts.asp">Support Contacts</a>
+		</div>      
+        
+        <a class="qmparent" href="http://www.citrix.com/lang/English/partners.asp">Partners</a>
+        	<div style="z-index: 21; left: 221px; top: 19px;">
+		        <a href="http://www.citrix.com/partners/locator">Partner Locator</a>
+		        <a class="qmparent" href="http://www.citrix.com/English/partners/programs/index.asp">Become a Partner</a>
+			        <div style="z-index: 31;">
+			        <a href="http://www.citrix.com/English/partners/programs/program.asp?programID=1341086">Citrix Solution Advisors</a>
+					        <a href="http://www.citrix.com/English/partners/programs/program.asp?programID=1681660">Citrix Alliances</a>
+					        <a href="http://www.citrix.com/English/partners/programs/program.asp?programID=5270">Citrix Authorized Learning Centers</a>
+					        </div>
+		        <a href="http://www.citrix.com/English/partners/partnertop.asp">Featured Partners</a>
+		        <a href="http://www.citrix.com/English/mycitrix/index.asp">Partner Login</a>
+	        </div>
+       
+       <a class="qmparent" href="http://www.citrix.com/lang/English/news.asp">News</a>
+ 		    <div style="z-index: 21; left: 294px; top: 19px;">
+		    <a href="http://www.citrix.com/English/NE/news/newsType.asp?typeID=175">Press Releases</a><a href="http://www.citrix.com/English/NE/news/newsType.asp?typeID=3226">Financial Releases</a><a href="http://www.citrix.com/English/NE/news/newsType.asp?typeID=1339673">Citrix In the News</a><a href="http://www.citrix.com/English/NE/news/newsType.asp?typeID=1440">Awards and Reviews</a><a href="http://www.citrix.com/English/NE/news/newsType.asp?typeID=1438">Market Research</a>
+		    <a href="http://www.citrix.com/English/ne/clp/edition.asp">Customer Newsletter</a>
+		    <a href="http://web.citrix.com/blogosphere/index.php">Blogosphere</a>
+		    <a href="http://www.citrix.com/English/aboutCitrix/forJournalists/mediaContacts.asp">Media Contacts</a>
+		    <a href="http://www.citrix.com/English/aboutCitrix/forJournalists/mediaResources/index.asp">Media Resources</a>
+		    </div>
+      
+        <a class="qmparent" href="http://www.citrixtraining.com/">Education</a>
+ 		    <div style="z-index: 21;">
+		    <a href="http://www.citrixtraining.com/courses/courses/index.cfm">Training</a>
+		    <a href="http://www.citrixtraining.com/courses/certifications/index.cfm">Certifications</a>
+		    <a href="http://www.citrixtraining.com/courses/exams/index.cfm">Exams</a>
+		    <a href="http://www.citrixtraining.com/content/index.cfm/cgroup_id:23">Testimonials</a>
+		    <a href="http://www.citrixtraining.com/content/index.cfm/cgroup_id:49">FAQ</a>
+		    <a href="http://www.citrixtraining.com/content/index.cfm/cgroup_id:50">Contact Education</a>
+		    </div>
+       
+        <a class="qmparent" href="http://www.citrix.com/lang/English/aboutCitrix.asp">About</a>
+  	        <div style="z-index: 21; left: 435px; top: 19px;">
+		            <a class="qmparent" href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-irhome">Investor Relations</a>
+			        <div style="z-index: 31;">
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-stockquote">Stock Information</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-reportsFinancial">Financials</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-homeProfile">Company Information</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-investorKit">Investor Kit</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-news">Investor Releases</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-sec">SEC Filings</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-calendar">Investor Events</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-analysts">Analyst Coverage</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-reportsAnnual">Annual Reports</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-enroll">Electronic Enrollment</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-alerts">Email Alerts</a>
+			            <a href="http://phx.corporate-ir.net/phoenix.zhtml?c=102893&amp;p=irol-contact">Investor Contacts</a>
+			        </div>
+		        <a href="http://www.citrix.com/English/aboutCitrix/leadership/index.asp">Leadership</a>
+		        <a class="qmparent" href="http://www.citrix.com/English/aboutCitrix/governance/index.asp">Corporate Governance</a>
+			        <div style="z-index: 31; left: 154px; top: 36px;">
+				        <a href="http://www.citrix.com/English/aboutCitrix/governance/secondLevel.asp?level2ID=13200">Governance Documents</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/governance/secondLevel.asp?level2ID=13201">Committee Overview</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/governance/secondLevel.asp?level2ID=13202">Stock Transactions</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/governance/secondLevel.asp?level2ID=13203">Executive and Director Compensation</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/governance/secondLevel.asp?level2ID=13204">Governance Ratings</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/forInvestors/commonQuestions.asp">Common Questions</a>
+			        </div>
+		        <a class="qmparent" href="http://www.citrix.com/English/aboutCitrix/outreach/index.asp">Community Outreach</a>
+			        <div style="z-index: 31;">
+				        <a href="http://www.citrix.com/English/aboutCitrix/outreach/features.asp?contentID=13560">Community Affairs</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/outreach/features.asp?contentID=13561">Programs</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/outreach/features.asp?contentID=13585">Citizenship</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/outreach/supportedOrgs.asp">Supported Organizations</a>
+				        <a href="http://www.citrix.com/English/aboutCitrix/outreach/associations.asp">Business and Community Associations</a>
+			        </div>
+		        <a href="http://www.citrix.com/English/aboutCitrix/milestones.asp">Milestones</a>
+		        <a class="qmparent" href="http://www.citrix.com/English/aboutCitrix/employment/index.asp">Employment</a>
+			        <div style="z-index: 31; left: 154px; top: 90px;">
+				        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=13440">Careers at Citrix</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=13329">Benefits</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=20957">Internships</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=14250">College Recruits</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=682539">Internships UK</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=682813">Citrix Jobs--APAC</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=1319006">Citrix Jobs--EMEA</a>
+						        <a href="http://www.citrix.com/English/aboutCitrix/employment/features.asp?contentID=165606">Citrix Jobs--NA</a>
+						        
+				        <a href="http://www.citrix.com/English/aboutCitrix/employment/outside_NA.asp">Citrix Jobs—Other Regions</a>
+			        </div>
+		        <a class="qmparent" href="http://www.citrix.com/English/aboutCitrix/legal/index.asp">Legal</a>
+			        <div style="z-index: 31; left: 154px; top: 108px;">
+			        <a href="http://www.citrix.com/English/aboutCitrix/legal/secondLevel.asp?level2ID=2208">Privacy Statement</a>
+					        <a href="http://www.citrix.com/English/aboutCitrix/legal/secondLevel.asp?level2ID=2209">Legal Notice</a>
+					        <a href="http://www.citrix.com/English/aboutCitrix/legal/secondLevel.asp?level2ID=2210">Brand Guidelines</a>
+					        <a href="http://www.citrix.com/English/aboutCitrix/legal/secondLevel.asp?level2ID=6938">NDA</a>
+					        </div>
+	        </div>
+         
+        <a href="http://www.citrix.com/English/mycitrix/index.asp">My Citrix</a>
+    </div>
+    <!--|**END IMENUS**|-->
+</div>
+<!--googleon: index-->
+
+		<div id="globalsearch">
+			<form name="search" method="get" action="http://search.citrix.com/search"><input name="q" class="formlabel" id="qt" value="Search" onfocus='this.value=""' type="text">
+	<input name="goSearch" src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/main_search_btn.gif" id="GoSearch" type="image">
+	<input name="output" value="xml_no_dtd" type="hidden"><input name="client" value="rebrand_frontend" type="hidden"><input name="proxystylesheet" value="rebrand_frontend" type="hidden">
+	<input name="filter" value="p" type="hidden"><input name="getfields" value="description" type="hidden"></form>
+		</div>
+
+
+
+	</div>
+			
+	<div id="main">
+        <div id="breadcrumbs"><a href="http://www.citrix.com/lang/English/home.asp">Home</a><span>&gt;</span><a href="http://www.citrix.com/lang/English/ps2/index.asp">Products &amp; Solutions</a><span>&gt;</span><a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=186">» XenApp</a><span>&gt;</span>White Papers</div>
+
+		<div class="section">
+			<div class="grid3 firstcolumn">
+                <img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/233x125_Brand_09.jpg" alt="Application Virtualization" class="across" width="233" border="0" height="125">
+    <ul id="sectionnav">
+        <li class="nav_top_level"><a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=683711">Products &amp; Solutions</a>
+            <ul>
+                <li class="collapse"><a href="http://www.citrix.com/English/ps2/products/product.asp?contentID=683711">Products</a>
+                    <ul>
+                        <li class="collapse product_selector">
+                            <form name="p_selector" method="get" action="product.asp">
+                            <select name="contentID" id="contentID" onchange="javascript:document.p_selector.submit();">
+                                <option value="683711" style="color: rgb(0, 71, 182);">Citrix Delivery Center</option><option value="163057" style="color: rgb(0, 71, 182);">» XenDesktop</option><option selected="selected" value="186" style="color: rgb(0, 71, 182);">» XenApp</option><option value="683148" style="color: rgb(0, 71, 182);">» XenServer/Essentials</option><option value="21679" style="color: rgb(0, 71, 182);">» NetScaler</option><option value="15005" style="color: rgb(0, 71, 182);">» Access Gateway</option><option value="1350184" style="color: rgb(0, 71, 182);">» Branch Repeater (WANScaler)</option><option value="1686856" style="color: rgb(0, 71, 182);">Citrix Online Services</option><option value="13976" style="color: rgb(0, 71, 182);">» GoToMeeting</option><option value="25833" style="color: rgb(0, 71, 182);">» GoToWebinar</option><option value="13994" style="color: rgb(0, 71, 182);">» GoToMyPC</option><option value="13972" style="color: rgb(0, 71, 182);">» GoToAssist</option><option value="1681633" style="color: rgb(0, 71, 182);">Citrix Cloud Center</option>
+                                </select></form>
+                                <ul>
+  <ul>
+    
+							<li>
+						
+						
+					    <a href="http://www.citrix.com/English/ps2/products/feature.asp?contentID=1680575">Features &amp; Benefits</a>
+					    
+					</li>
+							<li>
+						
+						
+					    <a href="http://www.citrix.com/English/ps2/products/feature.asp?contentID=1684340">How it Works</a>
+					    
+					</li>
+							<li>
+						
+						
+					    <a href="http://www.citrix.com/English/ps2/products/feature.asp?contentID=1680712">Upgrade to XenApp 5</a>
+					    
+					</li>
+							<li>
+						
+						
+					    <a href="http://www.citrix.com/English/ps2/products/feature.asp?contentID=658855">Tech Resources &amp; Downloads</a>
+					    
+					</li>
+							<li>
+						
+						
+					    <a href="http://www.citrix.com/English/ps2/products/feature.asp?contentID=1686588">How to Buy</a>
+					    
+					</li>
+    </ul></ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="http://www.citrix.com/English/ps2/category.asp">Technologies</a></li>
+                <li class="expand"><a href="http://www.citrix.com/lang/English/ps2/segments/index.asp">Solutions</a></li>
+                <li class="expand"><a href="http://www.citrix.com/lang/English/ps2/migration/index.asp">Product Upgrade Center</a></li>
+                
+                <li class="expand"><a href="http://www.citrix.com/ready">Citrix Ready Products</a></li>
+                <li class="expand"><a href="http://www.citrix.com/lang/English/ourCustomers.asp">Customer Success</a></li>
+            </ul>
+        </li>
+    </ul>
+
+
+
+
+			</div>
+			<div class="grid7 boldlinks">
+
+				<div class="titlegroup">
+					<h1>White Papers</h1>
+					<h3>» XenApp</h3>
+				</div>
+
+                <div class="list">
+                
+		            <div class="listitem first">
+					    
+					    <h3><a href="http://deliver.citrix.com/go/citrix/HPGREENWP"><q2>Green IT: Reducing Your Carbon Footprint with Citrix</q2></a></h3>
+					    
+			            <p>This
+white paper explains how Citrix solutions can help bring environmental
+and organizational objectives into alignment, by alleviating the energy
+impact of equipment needed to serve both the datacenter and the desktop.</p>
+			            <p><a class="button bluebtn" href="http://deliver.citrix.com/go/citrix/HPGREENWP"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FAccelerating%5FWindows%5FVista%5FMigrations%5Fwith%5FCPS%5F4%2E5%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Accelerating Windows Vista Migrations with Citrix XenApp</a></h3>
+					    
+			            <p>Learn
+how XenApp is used to help companies simplify and accelerate their
+migration to Windows Vista by delivering both legacy applications that
+are not Vista-compatible, and newer applications that are being
+introduced with the Vista rollout, such as the 2007 Microsoft Office
+system. Find out how XenApp can benefit both sets of applications,
+helping to ensure that your Vista deployment is as fast, cost-effective
+and painless.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FAccelerating%5FWindows%5FVista%5FMigrations%5Fwith%5FCPS%5F4%2E5%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 7,926K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCitrixSAPScalingupWhitepaper%2Epdf%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Citrix and SAP - Scaling-Up to Unprecedented Levels</a></h3>
+					    
+			            <p>This
+business white paper explains how your organization can unleash the
+power of 64-bit computing for your SAP applications, and how you can
+significantly lower your total cost of SAP ownership while increasing
+performance, security and ease of management.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCitrixSAPScalingupWhitepaper%2Epdf%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 432K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="http://h71019.www7.hp.com/ActiveAnswers/library/GetPage.aspx?pageid=576653&amp;statusid=0&amp;audienceid=0&amp;ccid=0&amp;langid=121">Citrix PowerSmart Utility for XenApp with HP Integrated Lights-Out</a></h3>
+					    
+			            <p>This
+white paper describes how the Citrix PowerSmart Utility for XenApp
+integrates with HP Integrated Lights-Out (iLO) 2 technology. During
+off-business hours, PowerSmart intelligently focuses the farm’s
+workload on a few XenApp servers so that it can power off idle servers.</p>
+			            <p><a class="button bluebtn" href="http://h71019.www7.hp.com/ActiveAnswers/library/GetPage.aspx?pageid=576653&amp;statusid=0&amp;audienceid=0&amp;ccid=0&amp;langid=121"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCitrix%2DXenApp5%2DTerminal%2DServices%2D2003%2D2008%2DFeature%2DAnalysis%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Citrix XenApp on Windows Terminal Services: A Feature Analysis</a></h3>
+					    
+			            <p>Compare
+the base-level features of Terminal Services within Microsoft® Windows
+Server® 2003 and Windows Server 2008 to the features of Citrix XenApp 5.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCitrix%2DXenApp5%2DTerminal%2DServices%2D2003%2D2008%2DFeature%2DAnalysis%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 386K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCPSandSAPScalabilityAnalysiswithIBMSysX%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Citrix XenApp™ and SAP Scalability on IBM System X</a></h3>
+					    
+			            <p>This
+scalability analysis for SAP running on IBM System X hardware provides
+Citrix XenApp architects, System Integrators, and project managers with
+data to help design and capacity plan a XenApp environment.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCPSandSAPScalabilityAnalysiswithIBMSysX%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 799K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="http://h71019.www7.hp.com/ActiveAnswers/library/GetPage.aspx?pageid=573425&amp;statusid=0&amp;audienceid=0&amp;ccid=0&amp;langid=121">Deploying Citrix Application Delivery Solutions on HP Hardware and Software</a></h3>
+					    
+			            <p>This
+white paper accents the HP Adaptive Infrastructure, within which Citrix
+Application Delivery solutions can be used to create an integral part
+of the IT supply chain, and HP Server Based Computing. Information is
+provided on the features and scalability of HP ProLiant servers for
+Citrix Application Delivery environments.</p>
+			            <p><a class="button bluebtn" href="http://h71019.www7.hp.com/ActiveAnswers/library/GetPage.aspx?pageid=573425&amp;statusid=0&amp;audienceid=0&amp;ccid=0&amp;langid=121"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="http://deliver.citrix.com/go/citrix/XDandNetAppWP">Desktop Virtualization Efficiencies with Citrix and NetApp</a></h3>
+					    
+			            <p>Deploying
+desktop virtualization challenges IT infrastructure—both storage and
+servers. Citrix® XenDesktop™ and NetApp™ storage systems provide an
+optimal combination of operating system image management, operating
+system and application virtualization, and storage management solutions
+to minimize the impact on IT infrastructure and deliver on the promise
+of a more efficient, secure and easier to manage desktop environment.</p>
+			            <p><a class="button bluebtn" href="http://deliver.citrix.com/go/citrix/XDandNetAppWP"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FEnsuring%5FSecure%5FRemote%5FAcc%5FWP%5FUS%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Ensuring Secure Remote Access &amp; Global High-Availability for XenApp</a></h3>
+					    
+			            <p>Deploying
+NetScaler in combination with XenApp creates a powerful solution that
+ensures secure access and global high-availability of applications in a
+disaster recovery/business continuity scenario.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FEnsuring%5FSecure%5FRemote%5FAcc%5FWP%5FUS%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 262K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="http://h71028.www7.hp.com/ERC/downloads/4AA0-8465ENW.pdf">HP Printers Supported in Citrix XenApp Environments</a></h3>
+					    
+			            <p>This
+document lists all of the printers tested by HP in XenApp environments,
+explains the printer and scan tests performed by Citrix, identifies
+which HP printers, printer driver versions, scanners, all-in-one
+printers and TWAIN driver versions were used, and describes any issues
+that occurred while performing these tests.</p>
+			            <p><a class="button bluebtn" href="http://h71028.www7.hp.com/ERC/downloads/4AA0-8465ENW.pdf"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FImproving%5FFarm%5FPerformance%5Fand%5FResiliency%5Fwith%5FXenApp5%5FHRP03%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Improving Farm Performance and Resiliency with Citrix XenApp 5 HRP03</a></h3>
+					    
+			            <p>This
+white paper provides administrators with the technical knowledge
+necessary to deploy a resilient, scalable, and well-performing farm
+with HRP03. It includes technical details into the HRP03 optimizations
+to provide a deeper insight into the health and correct functioning of
+a XenApp farm. Also, it highlights best practices for deploying and
+maintaining XenApp farms and detailed measurements of the performance
+and scalability benefits of HRP03.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FImproving%5FFarm%5FPerformance%5Fand%5FResiliency%5Fwith%5FXenApp5%5FHRP03%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 1,135K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FImproving%5FVisibility%5Fto%5FUser%5FLogin%5FExperience%5Fw%5F%5FCitrix%5FEdgeSight%5FWP%5F192226%5F0810%5B1%5D%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Improving Visibility to the User Login Experience with Citrix EdgeSight</a></h3>
+					    
+			            <p>Citrix
+EdgeSight for Presentation Server 4.5 contains 22 new and unique
+metrics that create visibility into exactly what happens as the
+launches an application delivered by Presentation Server. This paper
+explains what the metrics are and when they are utilised.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FImproving%5FVisibility%5Fto%5FUser%5FLogin%5FExperience%5Fw%5F%5FCitrix%5FEdgeSight%5FWP%5F192226%5F0810%5B1%5D%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 2,550K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FXenapp%5Fon%5FXenServer%5FWP%5FFinal%5FMay08%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Optimizing XenApp Performance with XenServer 4.1.0 Enterprise Edition</a></h3>
+					    
+			            <p>This
+paper presents test results and recommendations for optimized
+performance of XenApp on XenServer. Results of testing in both physical
+and multiple virtualized server environments using an internal
+benchmark test suite developed by Citrix will be discussed.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FXenapp%5Fon%5FXenServer%5FWP%5FFinal%5FMay08%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 181K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FTolly208304CitrixXenServerMay2008%2DFINAL%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Performance Evaluation of XenApp using XenServer</a></h3>
+					    
+			            <p>Citrix XenServer Enterprise 4.1.0 performance evaluation of XenApp in a 64-bit virtualized server environment using XenServer.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FTolly208304CitrixXenServerMay2008%2DFINAL%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 626K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FReduce%5FIT%5FCosts%5FUsing%5FXenApp5%5Fx64%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Reduce IT Costs Using Citrix XenApp 5</a></h3>
+					    
+			            <p>Running
+XenApp 5 (64-bit) on Windows Server 2008 (64-bit) results in a 32%
+decrease in Total Cost of Ownership (TCO) and 50% more users compared
+to the previous 32-bit versions of each product. Equally important,
+32-bit applications can be run on 64-bit systems, allowing you to
+immediately take advantage of these cost savings and transition to
+64-bit applications as they become available.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FReduce%5FIT%5FCosts%5FUsing%5FXenApp5%5Fx64%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 390K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="http://deliver.citrix.com/go/citrix/XenAppSecurityWP">Security Beyond Corporate Boundaries</a></h3>
+					    
+			            <p>In this white paper discover how Citrix XenApp’s application delivery offers a new and smarter approach to<br>
+security, giving IT the ultimate control it needs to ensure security and regulatory compliance without<br>
+compromise to business performance and productivity.</p>
+			            <p><a class="button bluebtn" href="http://deliver.citrix.com/go/citrix/XenAppSecurityWP"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="http://deliver.citrix.com/go/citrix/XenAppNoDeploy">The End of Application Deployment:</a></h3>
+					    
+			            <p>Today’s
+dynamic business environment demands application delivery, and not
+deployment, to ensure the security, performance and availability of its
+most important business applications.</p>
+			            <p><a class="button bluebtn" href="http://deliver.citrix.com/go/citrix/XenAppNoDeploy"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FWP%2DCustomer%2DDeepDive%2DAppStream%2DForresterTEI%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Total Economic Impact™ of Application Streaming in PS 4.5</a></h3>
+					    
+			            <p>A
+Citrix sponsored research project, conducted by independent analyst
+firm Forrester Research, which summarizes the costs incured and savings
+realized by using Citrix Presentation Server 4.5 application streaming
+over a four year period. Customer case study included.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FWP%2DCustomer%2DDeepDive%2DAppStream%2DForresterTEI%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 153K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCitrix%5FDeliver%2DOffice%2D2007%2DWith%2DXenApp%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')">Using Citrix XenApp to Rapidly Delivery Microsoft Office 2007</a></h3>
+					    
+			            <p>Microsoft®
+Office is the application most frequently delivered with Citrix
+XenApp™. This paper will show some of the many benefits of delivering
+Office applications with XenApp. It will also explain how XenApp can
+eliminate challenges associated with migrating to the new Office suite,
+allowing you to deliver the new suite immediately and at a fraction of
+the cost of a traditional deployment.</p>
+			            <p><a class="button bluebtn" href="#top" onclick="MM_openBrWindow('/%2Fsite%2Fresources%2Fdynamic%2Fsalesdocs%2FCitrix%5FDeliver%2DOffice%2D2007%2DWith%2DXenApp%2Epdf','popUp','scrollbars=yes,resizable=yes,width=800,height=600')"><span>Download Here</span></a> &nbsp;<a href="http://www.adobe.com/products/acrobat/readstep2.html" target="new">Adobe® Acrobat®</a>&nbsp; 660K</p>
+		            </div>
+					    
+					
+		            <div class="listitem">
+					    
+					    <h3><a href="http://deliver.citrix.com/go/citrix/XenAppwithXenServer">Virtualizing Citrix XenApp with Citrix XenServer</a></h3>
+					    
+			            <p>This
+white paper describes how organizations can achieve faster deployment,
+higher reliability, easier management, and server consolidation by
+virtualizing Citrix XenApp with Citrix XenServer.</p>
+			            <p><a class="button bluebtn" href="http://deliver.citrix.com/go/citrix/XenAppwithXenServer"><span>Download Here</span></a> &nbsp;&nbsp; </p>
+		            </div>
+					    
+					
+                </div>
+    
+               
+                    
+                
+
+<div class="product_bottomlinks">Next Steps: 
+
+    <a href="http://www.citrix.com/English/howToBuy/salesInquiry.asp?contentid=186&amp;m2lURL=http%3A%2F%2Fdeliver%2Ecitrix%2Ecom%2Fgo%2Fcitrix%2FXenApp">Request More Information</a> | <a href="http://www.citrix.com/English/howToBuy/index.asp">How to Buy</a> | <a href="http://www.citrix.com/English/ps2/products/tellAcolleague.asp?contentid=186">Email this Page</a>
+        
+
+</div>
+
+
+
+
+
+
+			</div><!-- plist -->
+			<div class="grid2">
+                
+
+<div style="position: static;" id="rightrail_container" class="accordion_box">
+
+    
+        <h3 class="accordion_toggle accordion_toggle_active">Act Now</h3>
+	    <div style="display: block;" class="accordion_content">
+            <a href="http://www.citrix.com/English/ps2/products/demo.asp?contentid=186"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/accordion_promo_demo.gif" alt="Demo" class="accordion_image_first" width="150" border="0" height="50"></a><a href="http://www.citrix.com/English/howToBuy/salesInquiry.asp?contentid=186&amp;m2lURL=http%3A%2F%2Fdeliver%2Ecitrix%2Ecom%2Fgo%2Fcitrix%2FXenApp"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/accordion_promo_moreinfo.gif" alt="Request More Info" class="accordion_image" width="150" border="0" height="50"></a><a href="http://www.citrix.com/English/ps2/products/subfeature.asp?contentID=1680656"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/150x50_Try_it.gif" alt="Download Release Preview" class="accordion_image" width="150" border="0" height="50"></a><a href="http://www.citrix.com/English/howToBuy/index.asp"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/150x50_Buy_it.gif" alt="Buy it Now" class="accordion_image" width="150" border="0" height="50"></a>
+	    </div>
+	    
+        <h3 class="accordion_toggle">Dig Deeper</h3>
+	    <div class="accordion_content">
+                <ul class="iconlist">
+            
+	    <li class="first"><a href="http://www.citrix.com/English/aboutcitrix/casestudies/list.asp?c=p&amp;cs=24100&amp;n=0&amp;ns=0"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/notepad.gif" alt="Case Studies" width="18" height="16">Case Studies</a></li>
+        
+	    <li><a href="http://www.citrix.com/English/ss/downloads/results.asp?productID=186"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/download.gif" alt="Product Downloads" width="18" height="16">Product Downloads</a></li>
+        
+	    <li><a href="http://support.citrix.com/pages/docs/" target="_new"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/book.gif" alt="Product Documentation" width="18" height="16">Product Documentation</a></li>
+        
+    <li><a href="http://www.citrix.com/English/myCitrix/refDeskSearch.asp"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/folder.gif" alt="Reference Desk" width="18" height="16">Reference Desk</a></li>
+    
+        <li><a href="http://www.citrix.com/English/ps2/products/documents.asp?contentid=186"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/multipledocs.gif" alt="Literature" width="18" height="16">Literature</a></li>
+        
+		       <li><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/document2.gif" alt="White Paper" width="18" height="16">White Papers</li>
+			
+	<li><a href="http://www.citrixtraining.com/courses/course_list.cfm/prod_id:32"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/pencil.gif" alt="Training Resources" width="18" height="16">Training Resources</a></li>
+        <li><a href="http://www.citrix.com/English/howToBuy/index.asp"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/cart.gif" alt="How to Buy" width="18" height="16">How to Buy</a></li>
+    </ul>
+                
+        </div>
+        
+        <h3 class="accordion_toggle">Socialize</h3>
+	    <div class="accordion_content">
+	        <ul class="iconlist">
+            
+	    <li class="first"><a href="http://community.citrix.com/blogs/group/xenapp?ref=xa.com"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/blog.gif" alt="Blogs" width="18" height="16">Blogs</a></li>
+        
+	    <li><a href="http://community.citrix.com/cdn/xa" target="_new"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/speechballoon.gif" alt="Developer Network" width="18" height="16">Developer Network</a></li>
+        
+            <li><a href="http://www.citrix.com/English/ps2/products/tellAcolleague.asp?contentid=186"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/envelope.gif" alt="Email this Page" width="18" height="16">Email this Page</a></li>
+        </ul>
+                
+        </div>
+        
+        <h3 class="accordion_toggle">Explore</h3>
+        <div class="accordion_content">   
+            <ul class="bubblelist">
+                
+        <li class="first"><h3>Learn More</h3>
+	        <ul>
+	            <li class="first"><a href="http://www.citrix.com/lang/English/lp/lp_23990.asp">
+				    Stay up to date with the Citrix News RSS feed</a><br>
+				Get notified when the latest news is posted on Citrix.com. Subscribe to the Citrix news RSS feed, now!
+			    </li>
+		    </ul>
+		</li>					
+        
+		<li><h3>Case Study</h3>
+		    <ul>
+			    <li class="first"><a href="http://www.citrix.com/English/aboutCitrix/caseStudies/caseStudy.asp?storyID=1535254">Continental Airlines</a><br>
+	            “Citrix is a solution that brings value to the enterprise, our employees and the environment.”</li>
+		    </ul>
+	    </li>
+        
+		<li><h3>Events</h3>
+		    <ul>
+			    <li class="first"><a href="http://www.citrix.com/English/NE/events/event.asp?eventID=24470">Disaster Recovery:  Ensuring Business Continuity</a></li>
+                
+                    <li style="margin-top: 10px;"><a href="http://www.citrix.com/English/NE/events/event.asp?eventID=26043">Web Acceleration with the NetScaler® Application Switch</a></li>
+                
+		    </ul>
+	    </li>
+        
+		<li><h3>News</h3>
+		    <ul>
+	            <li class="first"><a href="http://www.citrix.com/English/NE/news/news.asp?newsID=1687128">Citrix Extends 20-Year Partnership with Microsoft into Server Virtualization with “Project Encore”</a><br></li>
+                    
+			</ul>
+		</li>
+	    
+            </ul>
+        </div>
+        
+</div> 
+  <a href="http://www.citrix.com/lang/English/lp/lp_1681403.asp?ntref=pub_bnr"><img src="Citrix%20XenApp%20on%20Windows%20Terminal%20Services%20-%20A%20Feature%20Analysis_bestanden/150x87_Perspective2.gif" alt="Subscribe Now" class="across" width="150" border="0" height="87"></a>	
+			</div>
+		</div>
+	</div>
+	
+    	<div id="footer">
+		<div id="footernav">
+		<ul>
+			<li id="fnav_contact"><a href="http://www.citrix.com/English/contact/index.asp">Contact</a></li>
+			<li id="fnav_employment"><a href="http://www.citrix.com/English/aboutCitrix/employment/index.asp">Careers</a></li>
+			<li id="fnav_legal"><a href="http://www.citrix.com/English/aboutCitrix/legal/legalNotice.asp">Legal Notice</a></li>
+			<li id="fnav_privacy"><a href="http://www.citrix.com/English/aboutCitrix/legal/privacyStatement.asp">Privacy</a></li>
+			<li id="fnav_governance"><a href="http://www.citrix.com/English/aboutCitrix/legal/corporateGovernance.asp">Governance</a></li>
+			<li id="fnav_feedback"><a href="http://www.citrix.com/English/contact/siteFeedback.asp">Feedback</a></li>
+			<li id="fnav_sitemap"><a href="http://www.citrix.com/lang/English/sitemap.asp">Site Map</a></li>
+		</ul>
+		</div>
+		<div id="copyright">©1999-2009 Citrix Systems, Inc. All rights reserved.</div>
+	</div>
+    <!--PAGE DELIVERED BY: WB2--> <!-- Create Menu Settings: (Menu ID, Is Vertical, Show Timer, Hide Timer, On Click ('all', 'main' or 'lev2'), Right to Left, Horizontal Subs, Flush Left, Flush Top) -->
+<script type="text/javascript">qm_create(0,false,0,500,false,false,false,false,false);</script>
+<script type="text/javascript">qm_create(1,false,1,500,false,false,false,false,false);</script>
+	 
+	 
+</div>
+
+</body></html>

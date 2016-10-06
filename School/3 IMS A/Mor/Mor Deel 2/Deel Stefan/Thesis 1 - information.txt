@@ -1,0 +1,4 @@
+http://wiki.hip.fi/ubuntu/doc/thesis.pdf
+
+Grid: netwerk 
+premises: veronderstelling
